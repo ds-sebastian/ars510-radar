@@ -33,6 +33,7 @@ done. Outputs:
   replay (SubMaster frequency checks use wall time), stock and patched alike; the planner does not gate on it;
 - <out>/<label>.tracks.csv.gz: one row per radarTracks;
 - <out>/<label>.meta.json: CarParams, RadarInterface timing;
+- with --dump-points: <out>/<label>.points.csv.gz, every published radar point;
 - compare: <out>/compare.json;
 - with --save-logs DIR: per-segment rlogs under DIR/<label>/, for openpilot's own viewers. In each one:
   - card, radard and plannerd outputs replace the logged ones;
@@ -158,6 +159,15 @@ def run(args) -> int:
       d = [p.dRel for p in rt.points]
       w.writerow([m.logMonoTime / 1e9, len(d), int(m.valid), int(rt.errors.canError), int(rt.errors.radarUnavailableTemporary),
                   round(min(d), 2) if d else ""])
+
+  if args.dump_points:
+    with gzip.open(args.out / f"{args.label}.points.csv.gz", "wt", newline="") as f:
+      w = csv.writer(f)
+      w.writerow(["t", "trackId", "dRel", "yRel", "vRel"])
+      for m in out:
+        if m.which() == "radarTracks":
+          for p in m.radarTracks.points:
+            w.writerow([m.logMonoTime / 1e9, p.trackId, round(p.dRel, 3), round(p.yRel, 3), round(p.vRel, 3)])
 
   meta = {"label": args.label, "opendbc": str(Path(opendbc.__file__).parent), "segments": [str(p) for p in args.rlogs],
           "replay_wall_s": round(wall, 1),
@@ -309,6 +319,7 @@ def main() -> int:
   r.add_argument("--out", type=Path, required=True)
   r.add_argument("--mpc-shadow", type=Path, default=None)
   r.add_argument("--save-logs", type=Path, default=None, help="write per-segment rlogs with the replayed outputs here")
+  r.add_argument("--dump-points", action="store_true", help="also write every published radar point (<label>.points.csv.gz)")
   r.add_argument("rlogs", type=Path, nargs="+")
   c = sub.add_parser("compare")
   c.add_argument("--out", type=Path, required=True)

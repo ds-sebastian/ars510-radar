@@ -84,6 +84,48 @@ Ideas **not yet tried** that might break the trade-off ([10](10_open_questions.m
 - Asymmetric gating: accept radar-led braking only if vision's lead distance trend is not clearly opening.
 - Two-car ground truth to learn what excursions look like, if they have any signature.
 
+## Re-test of interface-only options against the driver (pre-registered, 2026-09-24)
+
+The defences above were judged on 12 camera-classified events. This re-test uses the driver as the yardstick instead:
+- brake presses, speed-ups and overrides;
+- 20 held-out routes, 4.56 hours with the driver in control of speed;
+- only changes inside the radar interface; openpilot, radard and the planner are untouched.
+
+Numbers: [`interface_filters_preregistered.json`](../data/analysis/summaries/interface_filters_preregistered.json)
+(research-workspace run, provenance-labelled).
+
+**Where the jitter comes from.** 92% of radar → vision lead switches in radard (738 of 799 on the development
+drives) happen with the radar point still published. The lead flips because the radar and vision distances diverge
+beyond radard's gate of max(25% d, 5 m): median gap +11.7 m at the switch, and both sides move.
+
+| profile (on top of `OPENPILOT_CONFIG`) | lead switches per hour | extra error vs driver over vision-only (m/s²) | reaction vs vision | reacts to driver brakes (≥ 1 m/s²) | radar-only brakes the driver overrode with gas |
+|---|---|---|---|---|---|
+| baseline | 541 | +0.0116 | 0.15 s earlier | 44.3% | 0.88/h |
+| K1 `range_fusion_gain=0.1` | **391 (−28%)** | +0.0116 | 0.15 s earlier | **45.5%** | 0.66/h |
+| K2 range-slope clip (4 s, ±3.5 m/s) | 545 | +0.0114 | 0.07 s earlier | 43.7% | 0.88/h |
+| K3 `vrel_smooth_far_tau_s=1.0` | 541 | **+0.0092** | 0.09 s earlier | 43.7% | 0.66/h |
+| K4 = K1 + K3 | **391** | +0.0095 | 0.08 s earlier | 44.3% | **0.44/h** |
+
+(Vision-only reacts to 40.1% of the driver's brake presses.)
+
+**Pre-registered outcome: nothing is promoted and `OPENPILOT_CONFIG` stays as it was.**
+- The rule required the candidate to match vision-only on moment-to-moment agreement. None did.
+- K1 removes over a quarter of the lead flip-flopping at no measured cost, but that did not change the primary
+  error measure. So the remaining excess is mostly radar-lead vRel noise, not switching.
+- K3 and K4 cut about 20% of that excess, and give up about half of radar's timing advantage in return.
+- K1 or K4 are reasonable opt-in choices for anyone who wants a steadier lead.
+
+**What other openpilot radar ports do.** The in-tree interfaces (Toyota, Tesla's Continental ARS4-B, Hyundai,
+Ford Delphi MRR, GM, Honda, Chrysler) do not smooth vRel. They:
+- gate validity: status or tracked flags, valid counters;
+- keep track IDs clean;
+- in Ford's case, cluster raw detections into one point per object.
+
+radard's per-track Kalman filter does the smoothing. That makes clean track identity the main lever an interface
+has: a Chrysler parsing bug that mixed stationary objects into a track "ruin[ed] the kalman speed"
+([opendbc#1165](https://github.com/commaai/opendbc/issues/1165)). Fixes to lead flip-flopping found elsewhere change
+radard's matching ([example](https://github.com/xiaoxx970/openpilot/issues/7)), which this project avoids.
+
 ## Other opt-in candidates in the interface
 
 `range_fusion_gain=0.1`: velocity-aided range, which predicts dRel with vRel and corrects toward the measurement.

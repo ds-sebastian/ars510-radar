@@ -189,10 +189,10 @@ This is the thorough version of the exploratory check above.
 - It does nothing for speeding up.
 - The development drives (1.06 h) showed the same pattern.
 
-The clearest next step is to reduce that jitter before re-testing, with a new pre-registration. Candidates:
-- stricter radar-vision distance matching;
-- keeping one radar track per lead;
-- smoothing vRel.
+A follow-up tested interface-only ways to reduce that jitter against the same yardstick. See
+[06](06_known_limitations.md#re-test-of-interface-only-options-against-the-driver-pre-registered-2026-09-24).
+- `range_fusion_gain=0.1` cuts lead flip-flopping by 28% at no measured cost.
+- None of the candidates matched vision-only's moment-to-moment agreement, so the default profile is unchanged.
 
 Limits:
 - open-loop replay;
