@@ -197,3 +197,19 @@ def test_generated_dbc_matches_checked_in_layout() -> None:
     assert "ARS510_SHELL85_CELL_09" in text
     assert "ARS510_SHELL85_CELL_10" not in text
     assert "BO_ 1899 ARS510_SHELL85_CRC: 8" in text
+
+
+def test_move_state_and_oncoming_flag_decode_from_their_bits():
+    from ars510.objects import MOVE_STATE_NAMES, decode_native_slot, encode_slot
+    obj = decode_native_slot(0, encode_slot(age_cycles=80, long_dist=800, lat_dist_left=2048, move_state=2, oncoming_flag=1))
+    assert obj.move_state == 2 and MOVE_STATE_NAMES[obj.move_state] == "moving_toward"
+    assert obj.oncoming_flag is True
+    obj = decode_native_slot(0, encode_slot(age_cycles=80, long_dist=800, lat_dist_left=2048, move_state=0))
+    assert obj.move_state == 0 and obj.oncoming_flag is False
+
+
+def test_objects_dbc_names_the_tested_movement_fields():
+    text = (Path(__file__).resolve().parents[1] / "dbc" / "ars510_objects_vbus.dbc").read_text()
+    assert "SG_ MOVE_STATE : 109|2@1+" in text and "SG_ ONCOMING_FLAG : 14|1@1+" in text
+    assert 'MOVE_STATE 0 "moving away"' in text and 'ONCOMING_FLAG 0 "not oncoming"' in text
+    assert "UNK_109_2" not in text and "UNK_14_1" not in text

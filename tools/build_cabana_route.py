@@ -56,18 +56,23 @@ NAMED_COMMENTS = {
     "DREL": "Longitudinal distance forward of the radar, m. 1/16 m, zero code 160 (exactly -10 m). Camera ground contact at 5-25 m: slope 0.99-1.00 on three drives, zero within 0.2 m (0.7 m on a hilly drive). Settled tracks walk by metres record to record at 40 m+; young tracks can be far off.",
     "YREL_LEFT": f"Lateral offset, LEFT positive (openpilot yRel), m. 1/64 m, offset binary around 2048. Cartesian (constant across range), not an angle. Correct side 97.9-99.3% on held-out drives; scale bounded to about +/-10%. |code-2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
     "VLONG_OVER_GROUND": "Longitudinal velocity OVER GROUND, m/s. 0.15 m/s/code, zero 510.5. vRel = this - ego speed. Radar-only scale check (own range slope vs GPS ego) gives 0.150/0.149/0.153 on three drives. Beats zero and range differencing against a camera reference, but has unflagged ~1 s excursions at range. Unsettled for age < ~60.",
-    "VLAT_OVER_GROUND_PROV": "Provisional lateral velocity over ground (left positive), same scale and zero as VLONG; not independently pinned.",
-    "ALONG_LIKE_84": "Acceleration-like, zero code 511 at standstill. Follows the VLONG change over the PREVIOUS ~1 s, so it cannot flag or lead a velocity excursion. Scale not pinned; centred codes.",
+    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, LEFT positive (sign confirmed). Scale NOT pinned: the factor shown (0.15) is a placeholder. Radar-only estimates from its own lateral position change range 0.097-0.147 m/s per code across data sets, and the pre-registered test was unverified. See docs/14.",
+    "ALONG_LIKE_84": "Acceleration-like, zero code 511 at standstill. Follows the VLONG change with a ~0.5 s lag, so it cannot flag or lead a velocity excursion. Radar-only scale about 0.04 m/s^2 per code on most data but drive-dependent (0.03-0.11); centred codes (docs/14).",
     "UNK_96": "Unnamed 10-bit carry chain centred near 511; no relation to velocity or range error on three drives.",
 }
 CANDIDATE_NOTES = {
     "UNK_8_6": " Ramps up with age and saturates at 62; tracks range and scenario, not measured error.",
-    "UNK_224_7": " Scales with range (r~0.8); no range-controlled relation to velocity or range error.",
-    "UNK_240_7": " Scales with range (r~0.8); after range control a weak velocity-error correlate (rho 0.15-0.20), uncertainty-like, but it does not single out excursions.",
-    "UNK_232_7": " Scales with |yRel| (r~0.6): lateral-uncertainty-like; no range-controlled error relation.",
-    "UNK_248_7": " Scales with |yRel| (r~0.56); no range-controlled error relation.",
-    "UNK_256_5": " Rises with track age (r~+0.7): existence/confidence-like candidate.",
-    "UNK_264_5": " Falls with track age (r~-0.8): uncertainty-like candidate.",
+    "UNK_20_3": " Missed-detection countdown candidate: 6 on 88-92% of settled rows, counts down about 5 -> 3 -> 2 -> 1 before deletion. Does not predict whether identity survives an occlusion (docs/14).",
+    "UNK_107_1": " Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).",
+    "UNK_56_7": " Size / class candidate: per-track median follows camera vehicle height (partial rho 0.48-0.61 at fixed range) and truck/bus class (docs/14).",
+    "UNK_216_6": " Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).",
+    "UNK_272_5": " Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).",
+    "UNK_224_7": " Uncertainty candidate: scales with range (r~0.8), falls with age at fixed range (rho -0.29 to -0.36), larger when range steps are noisier, rises before deletion. Weak near-range error indicator; does not single out excursions.",
+    "UNK_240_7": " Uncertainty candidate: scales with range (r~0.8), falls with age at fixed range (rho -0.50 to -0.62), larger when range steps are noisier, rises before deletion. Does not single out excursions.",
+    "UNK_232_7": " Lateral-uncertainty candidate: scales with |yRel| (r~0.6), falls with age at fixed range (rho -0.50 to -0.59).",
+    "UNK_248_7": " Uncertainty candidate: scales with |yRel| (r~0.56), falls with age at fixed range (rho -0.70 to -0.75).",
+    "UNK_256_5": " Existence / confidence candidate: rises with age at fixed range (rho +0.86 to +0.90), drops about 1.5 codes before deletion. Compare ARS4-B ProbExist (5 bits).",
+    "UNK_264_5": " Uncertainty candidate: falls with age at fixed range (rho -0.61 to -0.68), rises before deletion.",
     "CONST_2_6": " Physical slot index or 63 when unallocated; not an object category. Lane correlations reflect allocation.",
 }
 
@@ -117,6 +122,16 @@ def dbc_text() -> str:
             if f["start"] == 0 and f["len"] == 2:
                 out.append(_sig("STATE_CODE", 0, 2, 1, 0, 0, 3, "raw"))
                 comments.append(f'CM_ SG_ {m} STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";')
+                continue
+            if f["start"] == 109 and f["len"] == 2:
+                out.append(_sig("MOVE_STATE", 109, 2, 1, 0, 0, 3, ""))
+                comments.append(f'CM_ SG_ {m} MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";')
+                vals.append(f'VAL_ {m} MOVE_STATE 0 "moving away" 1 "not clearly moving" 2 "moving toward" 3 "not clearly moving (3)" ;')
+                continue
+            if f["start"] == 14 and f["len"] == 1:
+                out.append(_sig("ONCOMING_FLAG", 14, 1, 1, 0, 0, 1, ""))
+                comments.append(f'CM_ SG_ {m} ONCOMING_FLAG "1 = oncoming now or earlier in the track life (persists after an oncoming object slows). Pre-registered test on unseen segments: over-ground speed < 0 on 100% of flagged rows, 88.5% of objects approaching faster than 2 m/s flagged (docs/14).";')
+                vals.append(f'VAL_ {m} ONCOMING_FLAG 0 "not oncoming" 1 "oncoming (now or earlier)" ;')
                 continue
             if f["start"] == 2 and f["len"] == 6:
                 out.append(_sig("SLOT_INDEX_CODE", 2, 6, 1, 0, 0, 63, "raw"))

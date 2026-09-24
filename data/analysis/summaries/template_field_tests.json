@@ -1,0 +1,191 @@
+{
+ "source": "research workspace test SCR-109, 2026-09-24 (pre-registered). Labels come from the radar's own over-ground velocity.",
+ "derive": {
+  "A": {
+   "vlat": {
+    "windows": 33,
+    "slope": 0.1473,
+    "ci90": [
+     0.1221,
+     0.1755
+    ],
+    "r": 0.91
+   },
+   "accel": {
+    "best_lag_s": 0.5,
+    "windows": 3592,
+    "slope": 0.0409,
+    "ci90": [
+     0.037,
+     0.0455
+    ],
+    "r": 0.381
+   }
+  },
+  "B": {
+   "vlat": {
+    "windows": 90,
+    "slope": 0.1309,
+    "ci90": [
+     0.1182,
+     0.1404
+    ],
+    "r": 0.904
+   },
+   "accel": {
+    "best_lag_s": 0.5,
+    "windows": 7519,
+    "slope": 0.0512,
+    "ci90": [
+     0.0485,
+     0.0538
+    ],
+    "r": 0.419
+   }
+  },
+  "C": {
+   "vlat": {
+    "windows": 37,
+    "slope": 0.135,
+    "ci90": [
+     0.1206,
+     0.1494
+    ],
+    "r": 0.883
+   },
+   "accel": {
+    "best_lag_s": 0.5,
+    "windows": 4636,
+    "slope": 0.0295,
+    "ci90": [
+     0.0267,
+     0.0324
+    ],
+    "r": 0.332
+   }
+  },
+  "pooled": {
+   "vlat": {
+    "windows": 160,
+    "slope": 0.1365,
+    "ci90": [
+     0.1259,
+     0.146
+    ],
+    "r": 0.898
+   },
+   "accel": {
+    "best_lag_s": 0.5,
+    "windows": 15747,
+    "slope": 0.0418,
+    "ci90": [
+     0.0399,
+     0.0436
+    ],
+    "r": 0.383
+   }
+  }
+ },
+ "round1_endpoints": {
+  "vlat": {
+   "windows": 15,
+   "slope": -0.0083,
+   "ci90": [
+    -0.0261,
+    0.0058
+   ],
+   "r": -0.211
+  },
+  "accel": {
+   "best_lag_s": 0.5,
+   "windows": 606,
+   "slope": 0.1098,
+   "ci90": [
+    0.0989,
+    0.1212
+   ],
+   "r": 0.517
+  },
+  "move_state_precision_by_value": {
+   "0": {
+    "moving": 0.8,
+    "oncoming": 0.0023,
+    "slow": 0.1977
+   },
+   "1": {
+    "moving": 0.0308,
+    "oncoming": 0.0174,
+    "slow": 0.9518
+   },
+   "2": {
+    "moving": 0.0,
+    "oncoming": 0.9478,
+    "slow": 0.0522
+   },
+   "3": {
+    "moving": 0.0728,
+    "oncoming": 0.0103,
+    "slow": 0.9169
+   }
+  },
+  "oncoming_flag_precision_by_value": {
+   "0": {
+    "moving": 0.0901,
+    "oncoming": 0.0079,
+    "slow": 0.9019
+   },
+   "1": {
+    "moving": 0.0,
+    "oncoming": 0.745,
+    "slow": 0.255
+   }
+  },
+  "verdicts": {
+   "V1": "unverified",
+   "M1": "fail",
+   "O1": "fail"
+  }
+ },
+ "round2_unseen_midroute": {
+  "segments": 12,
+  "move_state": {
+   "precision": {
+    "0": 0.9965,
+    "2": 0.9988,
+    "1or3": 0.8945
+   },
+   "counts": {
+    "0": 8381,
+    "2": 1706,
+    "1or3": 7111
+   },
+   "verdict": "pass"
+  },
+  "oncoming_flag": {
+   "precision_v_lt_0": 1.0,
+   "recall_oncoming": 0.8846,
+   "flagged": 1743,
+   "verdict": "pass"
+  },
+  "vlat": {
+   "windows": 23,
+   "slope": 0.0967,
+   "ci90": [
+    0.0731,
+    0.1174
+   ],
+   "r": 0.662,
+   "verdict": "unverified"
+  },
+  "accel_report_only": {
+   "best_lag_s": 0.5,
+   "windows": 1471,
+   "slope": 0.0402,
+   "ci90": [
+    0.0357,
+    0.0447
+   ],
+   "r": 0.377
+  }
+ }
+}

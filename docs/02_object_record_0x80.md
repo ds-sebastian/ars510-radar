@@ -39,8 +39,10 @@ Almost every earlier attempt read these bits in the wrong frame: byte-aligned, b
 | **DREL** | `32\|12` | `(code − 160) × 1/16` m | forward distance from the radar; additive offset is −10 m, code 160 decodes to 0 m |
 | **YREL** | `44\|12` | `(code − 2048) × 1/64` m | lateral, **left positive**, offset binary; \|code − 2048\| ≥ 2000 is a sentinel |
 | **VLONG** | `64\|10` | `(code − 510.5) × 0.15` m/s | longitudinal velocity **over ground** |
-| VLAT | `74\|10` | `(code − 510.5) × 0.15` m/s | lateral velocity over ground, left positive; provisional |
-| ACCEL? | `84\|10` | `code − 511` | acceleration-like, scale unknown (~0.035–0.4 m/s² per code), **lags** velocity by ~1 s |
+| VLAT | `74\|10` | `(code − 510.5) × 0.15` m/s (placeholder) | lateral velocity over ground, left positive (sign confirmed). Scale **not pinned**: radar-only estimates from its own lateral position change are 0.147 / 0.131 / 0.135 on A / B / C but 0.097 on new mid-route data, and the pre-registered test was unverified ([14](14_stationary_objects_and_field_roles.md)) |
+| MOVE_STATE | `109\|2` | enum | 0 moving away, 2 moving toward (oncoming), 1 / 3 not clearly moving. Passed a pre-registered test on 12 unseen segments ([14](14_stationary_objects_and_field_roles.md)) |
+| ONCOMING_FLAG | `14\|1` | flag | oncoming now or earlier in the track's life. Passed a pre-registered test on 12 unseen segments |
+| ACCEL? | `84\|10` | `code − 511` | acceleration-like; radar-only scale about 0.04 m/s² per code on most data but drive-dependent (0.03–0.11), **lags** velocity by ~0.5 s |
 | UNK_96 | `96\|10` | raw | carry chain centred near 511; no relation to anything tested |
 
 `vRel = VLONG − v_ego`, which is what openpilot's RadarPoint wants.
@@ -139,7 +141,12 @@ The automatic split (`slot_bit_map.json`) finds several small fields in each slo
 | `8\|6` | ramps with age and saturates at 62 |
 | `224\|7`, `240\|7` | scale with range (r ≈ 0.8); `240\|7` is weakly uncertainty-like (ρ 0.15–0.2 with velocity error after range control) but does not single out excursions |
 | `232\|7`, `248\|7` | scale with \|yRel\| (lateral-uncertainty-like) |
-| `256\|5` / `264\|5` | rise / fall with track age (existence / uncertainty-like) |
+| `256\|5` / `264\|5` | rise / fall with track age at fixed range (rho +0.86-0.90 / -0.61 to -0.68 on three drives); existence-like / uncertainty-like; `264\|5` rises and `256\|5` drops before deletion |
+| `20\|3` | 6 on 88-92% of settled rows; counts down about 5 -> 3 -> 2 -> 1 in the last records before deletion (missed-detection countdown candidate) |
+| `107\|1` | about 0.02 in settled life, 0.5-0.66 just before deletion (coasting-flag candidate) |
+| `56\|7`, `216\|6`, `272\|5` | per-track medians follow camera vehicle height (partial rho 0.41-0.71 at fixed range) and truck/bus class; size / class / RCS candidates |
+
+Candidate roles are from three-drive replication with an ARS408-style template as the hypothesis source; see [14](14_stationary_objects_and_field_roles.md). None has pinned units.
 
 The 17-byte prefix has a 15-bit field at bit 17 that correlates with ego speed (r = −0.74) and a few mux-like nibbles. No tested field has established a transferable excursion guard. Correlation is not proof of a speed field or of absent quality information. Later conditional-quality tests and their limits are in [13](13_evidence_review.md).
 

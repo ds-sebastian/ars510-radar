@@ -42,6 +42,9 @@ IDs `D-xxx` keep the original research IDs, so older notes can be cross-referenc
 | D-053c | 4 s range-slope clip (pre-registered) | Contradicted braking only 4 → 3 |
 | D-053d | Inverse-variance vision blend (pre-registered) | Kills real early warnings (4/12 kept) |
 | D-053e | Range-dependent smoothing, radar-only state-space filter (pre-registered) | Delays or drops real closings (8/12, 6/12 kept) |
+| D-055 | Parked cars or Doppler-stationary objects as range / lateral / velocity truth while driving | The radar deletes new stationary objects at about age 5 once ego is above ~2-3 m/s; no settled stationary track exists while moving ([14](14_stationary_objects_and_field_roles.md)) |
+| D-056 | Stopped leads during approach as a range-scale reference | Leads usually stop together with ego: only 3 qualifying runs on all drives |
+| D-057 | Coast-out fields (`20\|3` countdown, `107\|1`) to rescue track identity through occlusion | They appear in lost and surviving tracks alike; losses depend on the radar starting a new track nearby |
 | — | Two's-complement or relative-velocity reading of `64\|10` | Over-ground is proven by standstill piles at 510.5 and pace-keeping objects at v_ego/0.15 |
 | — | "vRel error is just 0xB4 scale" | 0xB4 explains about 0.2–0.4 m/s at highway speed, not ±5 m/s excursions |
 

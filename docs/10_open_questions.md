@@ -8,13 +8,18 @@ Ordered by how much each would move openpilot integration forward.
    - *Learn the excursion signature from an optional instrumented reference,* with a measured timing/error budget (see [09](09_testing_a_new_drive.md#7-optional-instrumented-reference)).
 2. **Does stock openpilot's alpha-longitudinal path silence the radar's bus-1 object output?** It sends a UDS communication-control to 0x750. If it does, radar tracks and openpilot longitudinal can't coexist on stock openpilot. On the logged FrogPilot build the objects kept flowing. Check with one short drive.
 3. **Lateral gate for radard.** No lateral sanity gate exists today, so an adjacent-lane object is accepted as lead when the true lead is missing. This matters for any radar, not just the ARS510.
-4. **Lateral scale.** ±10% today: lane peaks give ~64 codes/m, the camera ~70. Pin it with a surveyed lateral offset (a parked car at a measured offset), or with a radar-only method that doesn't depend on assumed lane width.
+4. **Lateral scale.** ±10% today: lane peaks give ~64 codes/m, the camera ~70.
+   - Pin it with a surveyed lateral offset measured with ego **parked**; the radar only lists stationary objects while ego is below ~2 m/s ([14](14_stationary_objects_and_field_roles.md)).
+   - A corner reflector at tape-measured positions (5-150 m, several lateral offsets) would also give absolute range scale.
+   - Driving past parked cars does not work.
 5. **Range zero on a flat road with a measured gap.** Stop behind a car on level ground and measure the bumper gap with a tape. That separates the +0.7 m hilly-road reading from camera pitch.
 6. **trackId beyond 60 m.** The camera identity reference fails there, so re-link precision at 60–120 m is unverified. It needs a better far identity reference (narrow camera with a better tracker, or two-car truth).
-7. **What 0x85 encodes.** Clusters or detections? A second list? Pair fill counts versus scene clutter is a cheap first test.
+7. **What 0x85 encodes.** It stays active, with about 4 changing cells, while the object list is empty along a street of parked cars ([14](14_stationary_objects_and_field_roles.md)). So it may be the detection / cluster or stationary-object list that ARS408-style radars send beside objects. Next: decode the cells as detections, with per-cell association across records.
 8. **State `0|2`, score-like `16|8`, and the 0x191 descriptor tuple.** Test state transitions and future error variance after matching identity, age, range and ego motion. `2|6` is the physical slot index, not an object category; its apparent position bias was allocation confounding.
 9. **0x192 as a sanity signal.** It is the radar's own smoothed target distance with a lane bin. It can't be a vRel source, but "radar ACC also has a target in my lane near this distance" might gate false leads.
-10. **Other cars and firmware.** Does every ARS510 car use the same layout? Are 0x500 / 0x502 unit-specific?
+10. **Is there a stationary-target list anywhere else?** Nothing on the radar bus carries the stationary objects missing from the list ([14](14_stationary_objects_and_field_roles.md)). The car bus (bus 0) has not been searched for radar-originated pre-collision or stationary-target messages.
+11. **Uncertainty candidates for consumer weighting.** `224|7`, `232|7`, `240|7`, `248|7` and `264|5` behave like uncertainty estimates. A pre-registered weighting test could say whether they help radard without delaying real closings.
+12. **Other cars and firmware.** Does every ARS510 car use the same layout? Are 0x500 / 0x502 unit-specific?
 
 ## New leads from the visual tour ([11](11_visual_tour.md))
 

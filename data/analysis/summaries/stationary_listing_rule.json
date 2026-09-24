@@ -1,0 +1,119 @@
+{
+ "source": "research workspace test SCR-108, 2026-09-24. RAW decode, every occupied slot, 122 one-minute segments: drives A, B, C plus the first and last segment of 21 further drives (the owner's street).",
+ "segments": 122,
+ "tracks": 4051,
+ "never_moving_tracks": 653,
+ "never_moving_ending_at_age_5": 401,
+ "never_moving_long_lived_share_by_ego_speed": {
+  "(-0.5, 1.0]": 0.091,
+  "(1.0, 3.0]": 0.056,
+  "(3.0, 6.0]": 0.0,
+  "(6.0, 10.0]": 0.0,
+  "(10.0, 40.0]": 0.0
+ },
+ "survival_of_age5_decision": [
+  {
+   "object_abs_vground_mps": "(0.0, 0.2]",
+   "ego_speed_mps": "(-0.5, 2.0]",
+   "share_survived": 0.443,
+   "objects": 296
+  },
+  {
+   "object_abs_vground_mps": "(0.0, 0.2]",
+   "ego_speed_mps": "(10.0, 40.0]",
+   "share_survived": 0.07,
+   "objects": 86
+  },
+  {
+   "object_abs_vground_mps": "(0.0, 0.2]",
+   "ego_speed_mps": "(2.0, 5.0]",
+   "share_survived": 0.344,
+   "objects": 32
+  },
+  {
+   "object_abs_vground_mps": "(0.0, 0.2]",
+   "ego_speed_mps": "(5.0, 10.0]",
+   "share_survived": 0.118,
+   "objects": 51
+  },
+  {
+   "object_abs_vground_mps": "(0.2, 0.4]",
+   "ego_speed_mps": "(-0.5, 2.0]",
+   "share_survived": 0.65,
+   "objects": 117
+  },
+  {
+   "object_abs_vground_mps": "(0.2, 0.4]",
+   "ego_speed_mps": "(10.0, 40.0]",
+   "share_survived": 0.294,
+   "objects": 51
+  },
+  {
+   "object_abs_vground_mps": "(0.2, 0.4]",
+   "ego_speed_mps": "(2.0, 5.0]",
+   "share_survived": 0.667,
+   "objects": 21
+  },
+  {
+   "object_abs_vground_mps": "(0.2, 0.4]",
+   "ego_speed_mps": "(5.0, 10.0]",
+   "share_survived": 0.457,
+   "objects": 46
+  },
+  {
+   "object_abs_vground_mps": "(0.4, 0.8]",
+   "ego_speed_mps": "(-0.5, 2.0]",
+   "share_survived": 0.596,
+   "objects": 52
+  },
+  {
+   "object_abs_vground_mps": "(0.4, 0.8]",
+   "ego_speed_mps": "(10.0, 40.0]",
+   "share_survived": 0.516,
+   "objects": 31
+  },
+  {
+   "object_abs_vground_mps": "(0.4, 0.8]",
+   "ego_speed_mps": "(2.0, 5.0]",
+   "share_survived": 0.875,
+   "objects": 8
+  },
+  {
+   "object_abs_vground_mps": "(0.4, 0.8]",
+   "ego_speed_mps": "(5.0, 10.0]",
+   "share_survived": 0.484,
+   "objects": 31
+  },
+  {
+   "object_abs_vground_mps": "(0.8, 40.0]",
+   "ego_speed_mps": "(-0.5, 2.0]",
+   "share_survived": 0.845,
+   "objects": 296
+  },
+  {
+   "object_abs_vground_mps": "(0.8, 40.0]",
+   "ego_speed_mps": "(10.0, 40.0]",
+   "share_survived": 0.827,
+   "objects": 1335
+  },
+  {
+   "object_abs_vground_mps": "(0.8, 40.0]",
+   "ego_speed_mps": "(2.0, 5.0]",
+   "share_survived": 0.802,
+   "objects": 101
+  },
+  {
+   "object_abs_vground_mps": "(0.8, 40.0]",
+   "ego_speed_mps": "(5.0, 10.0]",
+   "share_survived": 0.775,
+   "objects": 417
+  }
+ ],
+ "raw_empty_stretch": {
+  "segment": "B1",
+  "window_s": "215-230 (log time)",
+  "records": 249,
+  "occupied_slots": 0,
+  "note": "residential street lined with parked cars; ego 7 m/s braking to a stop sign at about 222 s; zero slots while moving and while stopped; 0xB4 ego speed present"
+ }
+}

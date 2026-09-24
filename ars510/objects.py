@@ -35,18 +35,29 @@ LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, 1.0 / 64.0, "m", "valida
 # Longitudinal velocity OVER GROUND (not relative). 10-bit, 0.15 m/s per code, zero 510.5.
 # vRel = this - ego speed.
 LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s", "validated_with_caveats")
-# Lateral velocity over ground, left positive (provisional: same scale/zero assumed, not independently pinned).
-LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "provisional")
-# Acceleration-like, zero code 511 at standstill; lags velocity by ~1 s; scale not pinned.
+# Lateral velocity over ground, left positive (sign confirmed). Scale NOT pinned: radar-only estimates (own lateral
+# position change in straight driving) range 0.097-0.147 m/s per code across data sets, and the pre-registered test
+# was unverified (docs/14). 0.15 is kept as a placeholder; openpilot does not use this field (yvRel stays NaN).
+LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "scale_not_pinned")
+# Acceleration-like, zero code 511 at standstill; follows the velocity change with a ~0.5 s lag. Radar-only scale about
+# 0.04 m/s^2 per code on most data, but drive-dependent (0.03-0.11), so it stays in centred codes (docs/14).
 ACCEL_LIKE = NativeField("accel_like_84", 84, 10, 511.0, 1.0, "code", "unnamed")
 # Track age in radar cycles (~60 ms): 1 at birth, saturates at 126, 0 = slot being retired.
 AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")
+# Movement state (passed a pre-registered test on unseen data, docs/14): 0 = moving away / same direction,
+# 2 = moving toward (oncoming), 1 and 3 = not clearly moving (the difference between 1 and 3 is unresolved).
+MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "tested_semantics")
+# Oncoming flag (passed a pre-registered test): 1 = oncoming now or earlier in the track's life (it persists after
+# an oncoming object slows or stops).
+ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
+
+MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward", 3: "not_clearly_moving_3"}
 
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, ONCOMING_FLAG)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -80,6 +91,8 @@ class NativeObject:
     v_long_ground: float  # m/s over ground (NOT relative)
     v_lat_ground: float  # m/s, provisional
     accel_like_code: int  # centred code, unscaled
+    move_state: int  # 0 moving away, 2 moving toward, 1/3 not clearly moving (MOVE_STATE_NAMES)
+    oncoming_flag: bool  # oncoming now or earlier in the track's life
     geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
     lateral_valid: bool  # lateral code is not the sentinel
 
@@ -97,6 +110,8 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         v_long_ground=field_value(slot, LONG_VEL_GROUND),
         v_lat_ground=field_value(slot, LAT_VEL),
         accel_like_code=int(field_code(slot, ACCEL_LIKE) - ACCEL_LIKE.zero_code),
+        move_state=int(field_code(slot, MOVE_STATE)),
+        oncoming_flag=bool(field_code(slot, ONCOMING_FLAG)),
         geometry_valid=age >= 1,
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
     )
