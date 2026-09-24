@@ -1,0 +1,19 @@
+{
+  "provenance": "Imported research-workspace event-level audit; not a bundled rerun",
+  "policy": "Availability-corrected existing 1 m/s optional ACC clip",
+  "confirmation_events": 71,
+  "finite_paired_first_crossings": 65,
+  "unchanged_first_crossing": 59,
+  "later_first_crossing": 5,
+  "earlier_first_crossing": 1,
+  "later_cases_comparing_different_first_episodes": 5,
+  "later_overlapping_episode_same_tick": 4,
+  "later_overlapping_episode_one_tick": 1,
+  "one_tick_difference_s": 0.045354752999628545,
+  "default_finite_corrected_missing_and_anticipation_lost": 1,
+  "uniform_oem_latency_established": false,
+  "suppressed_request_physical_safety_resolved": false,
+  "frozen_scores_changed": false,
+  "clip_promoted": false,
+  "limitations": "Selected failure cases from reused confirmation data. Episode identity is a consumer-threshold observation, not physical target truth. Qualitative low-resolution video and noisy model estimates do not certify safe request suppression."
+}

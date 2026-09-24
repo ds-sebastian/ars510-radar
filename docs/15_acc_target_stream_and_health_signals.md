@@ -104,9 +104,9 @@ the ACC target to an object by position (cost < 1, clear margin, age ≥ 60) and
 A pre-registered test against the driver used a ±1.0 m/s clip, the p95 of normal disagreement:
 - It lowered the error against the driver and cut radar-only brake requests, from 1.97 to 1.53 per hour over all 20
   routes.
-- On the confirmation routes, though, radar reacted 0.13-0.16 s later, so the guards failed.
-- 0x235 is smoother than native vRel and trails it slightly at the start of real closings. A tight clip therefore
-  holds back real braking too.
+- On the confirmation routes, first-crossing timing differed by 0.13-0.16 s, so the guards failed.
+- This is not itself a measurement of OEM latency or delayed physical braking. The event-level correction below
+  distinguishes earlier separate requests from a genuinely suppressed request; 0x235 smoothness alone does not settle either.
 
 A wider clip that only acts on gross disagreements (for example ±3 m/s) is the obvious next variant. It needs new
 drives to test fairly.
@@ -125,11 +125,34 @@ The fixed 1 m/s clip was replayed with only this correction on the same 20
 chains. Original K7 and clip-off baseline each reproduced all 23,519 ticks of
 one reference chain exactly. Corrected driver-agreement MAE is 0.18351 versus
 0.18613 for default, but the fixed confirmation subset still fails the timing
-guards: lag +0.158 s, interval [+0.052, +0.267] s, unchanged by the correction.
+guards: first-crossing lag +0.158 s, interval [+0.052, +0.267] s, unchanged by the correction.
 Thus invalid-target handling was a real bug, **not the explanation for the
 clip's delayed braking**. Clipping stays disabled and unpromoted. These are
 provenance-labelled research-workspace replay results, not bundled reruns or
 physical velocity accuracy: [summary](../data/analysis/summaries/acc_availability_correction.json).
+
+### Timing interpretation correction
+
+An event-level audit of the unchanged confirmation scores found 65 finite paired
+first-crossing lags: 59 unchanged, five later and one earlier. **All five later
+cases compare different first braking episodes**, not a delayed onset of the
+same episode. In four, the later overlapping episode starts on the same planner
+tick; in the fifth it differs by one tick (0.045 s). The first-crossing score
+can credit an earlier isolated dip as anticipation. Its numerical result and
+failed guards remain intact, but it does not establish uniform OEM delay.
+
+One additional event genuinely loses a sustained braking request under the clip.
+Input replay confirms clipping on the same reported lead, with active OEM
+targets and unchanged native IDs/geometry. Its native velocity implies about
+12 m closing while native range ends nearly unchanged; OEM increments, raw
+model outputs and time-aligned low-resolution video favor a native excursion.
+However, they do not establish physical identity, calibrated velocity, or that
+suppressing the request was safe. Human braking alone does not establish that
+the lead was slowing. No clip is promoted and no acceptance gate is relaxed.
+
+These imported research-workspace results are not bundled reruns; the visual
+control is qualitative and the fixed cohort has been inspected repeatedly.
+See [machine-readable scope](../data/analysis/summaries/acc_clip_timing_scope.json).
 
 ## Other confirmed signals
 
