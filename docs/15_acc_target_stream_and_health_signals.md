@@ -28,6 +28,19 @@ fields are in [`ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.
 | 0x237 lateral | bits 28..38 × 0.01667 − 16.70 m, left positive (`A237_ACC_TARGET_LAT`) | Pearson 0.80 / 0.97 |
 | 0x237 coarse distance | bits 47..51 × 5.26 + 9.6 m, about 5 m steps (`A237_ACC_TARGET_DIST_COARSE`) | Pearson 0.81; enough to match the target to an object together with the lateral position |
 
+**Where it comes from (checked, because it agrees with vision so well):**
+- **Not sent by openpilot.** The frames are received on the radar's private bus (bus 1). openpilot's transmissions
+  (`sendcan`) on these drives are only 0x2E4, 0x191, 0x343 and 0x412, all on bus 0, and nothing is ever sent on
+  bus 1. (0x191 on bus 0 is openpilot's steering command; 0x191 on bus 1 is an unrelated radar message.)
+- **Not driven by openpilot's timing.** After an ignition start, 0x235 / 0x237 appear 0.19 s after the first CAN
+  frame. openpilot's first transmission comes at 4.1 s, and the object list at 5.9 s.
+- **Tracks the lead, not openpilot's command.** Spearman with the lead's closing speed is 0.72 while the driver
+  controls speed and 0.70 while openpilot does. With openpilot's acceleration command it is 0.01 and 0.43 (the latter
+  only because openpilot brakes for closing leads).
+- **Open.** Toyota's system may fuse its factory camera into this target. If so, 0x235 is Toyota's production
+  camera + radar estimate rather than raw radar. That would partly explain its agreement with openpilot's vision
+  model, and it is still an independent second opinion.
+
 **It is a second witness for velocity.** The target was matched to an object by position only. When the object
 list's native vRel and 0x235 disagree by more than 3 m/s, the vision lead sides with 0x235:
 - discovery: 90% (n = 715);
