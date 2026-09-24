@@ -106,7 +106,18 @@ beyond radard's gate of max(25% d, 5 m): median gap +11.7 m at the switch, and b
 | K3 `vrel_smooth_far_tau_s=1.0` | 541 | **+0.0092** | 0.09 s earlier | 43.7% | 0.66/h |
 | K4 = K1 + K3 | **391** | +0.0095 | 0.08 s earlier | 44.3% | **0.44/h** |
 
+| K5 confidence-weighted smoothing (`vrel_smooth_unc_tau_s=1.0`, from field `240\|7`) | 541 | +0.0111 | **0.14 s earlier** | 44.3% | 0.88/h |
+| K6 = K5 + K1 | **391** | +0.0113 | 0.12 s earlier | 44.9% | 0.66/h |
+
 (Vision-only reacts to 40.1% of the driver's brake presses.)
+
+K5 and K6 were a separate pre-registration, after the uncertainty candidate `240|7` turned out to track velocity error
+([14](14_stationary_objects_and_field_roles.md)).
+- K5 smooths only tracks the radar itself marks as uncertain. It keeps nearly all of radar's timing advantage (0.14 s
+  vs 0.15 s), but removes only a little of the excess error (−0.0005 m/s², significant).
+- Compared with K3's uniform smoothing, K5 reacts 0.06 s sooner and removes less of the excess.
+- So the confidence field moves along the same trade-off rather than breaking it. Nothing was promoted.
+  Numbers: [`uncertainty_weighting_preregistered.json`](../data/analysis/summaries/uncertainty_weighting_preregistered.json).
 
 **Pre-registered outcome: nothing is promoted and `OPENPILOT_CONFIG` stays as it was.**
 - The rule required the candidate to match vision-only on moment-to-moment agreement. None did.

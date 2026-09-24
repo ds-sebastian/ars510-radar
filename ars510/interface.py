@@ -60,6 +60,11 @@ class NativeInterfaceConfig:
     vrel_range_clip_mps: float = 3.5
     # Causal EMA on vRel with tau = clip((dRel-30)/30, 0, 1) * this value (0 disables).
     vrel_smooth_far_tau_s: float = 0.0
+    # Uncertainty-weighted vRel smoothing: tau = this value * clip((code - lo) / (hi - lo), 0, 1), where code is the
+    # candidate velocity-uncertainty field 240|7. Confident tracks pass through unsmoothed (0 disables).
+    vrel_smooth_unc_tau_s: float = 0.0
+    vrel_smooth_unc_lo: float = 25.0
+    vrel_smooth_unc_hi: float = 42.0
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -189,9 +194,13 @@ class Ars510NativeRadarInterface:
         m = self.config.vrel_range_clip_mps
         return min(max(vrel, slope - m), slope + m)
 
-    def _smoothed_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
+    def _smoothed_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float, unc_code: int = 0) -> float:
+        cfg = self.config
         prev = self._vrel_smooth.get(tid)
-        tau = min(max((d_meas - 30.0) / 30.0, 0.0), 1.0) * self.config.vrel_smooth_far_tau_s
+        tau = min(max((d_meas - 30.0) / 30.0, 0.0), 1.0) * cfg.vrel_smooth_far_tau_s
+        if cfg.vrel_smooth_unc_tau_s > 0 and cfg.vrel_smooth_unc_hi > cfg.vrel_smooth_unc_lo:
+            w = (unc_code - cfg.vrel_smooth_unc_lo) / (cfg.vrel_smooth_unc_hi - cfg.vrel_smooth_unc_lo)
+            tau = max(tau, min(max(w, 0.0), 1.0) * cfg.vrel_smooth_unc_tau_s)
         if prev is None or not isfinite(vrel) or not isfinite(prev[1]) or not 0.0 < time_s - prev[0] <= 0.5 or tau <= 0:
             out = vrel
         else:
@@ -227,8 +236,8 @@ class Ars510NativeRadarInterface:
             vrel = float(v_ground - v_ego) if v_ego is not None else nan
             if cfg.vrel_range_clip_window_s > 0:
                 vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
-            if cfg.vrel_smooth_far_tau_s > 0:
-                vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel)
+            if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:
+                vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel, obj.vel_unc_code)
             d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
             if obj.age >= 2:
                 self._first.setdefault(tid, (time_s, obj.d_rel, obj.y_rel))

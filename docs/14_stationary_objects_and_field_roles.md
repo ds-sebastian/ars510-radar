@@ -76,7 +76,7 @@ is coarse (40-79 tracks per drive, 3-8 trucks or buses).
 |---|---|---|
 | `20\|3` | 6 on 88-92% of settled rows; counts down about 5 -> 3 -> 2 -> 1 over the last records before deletion | missed-detection countdown |
 | `107\|1` | about 0.02 in settled life, 0.5-0.66 just before deletion | coasting / not-measured flag |
-| `224\|7`, `240\|7`, `248\|7` | scale with range or \|yRel\|; fall with age at fixed range (rho -0.29 to -0.75); larger when range steps are noisier; rise before deletion | range / velocity uncertainty |
+| `224\|7`, `240\|7`, `248\|7` | scale with range or \|yRel\|; fall with age at fixed range (rho -0.29 to -0.75); larger when range steps are noisier; rise before deletion. `240\|7` also tracks vRel error against the camera (stratified AUC 0.62) | range / velocity uncertainty (`240\|7`: velocity) |
 | `232\|7` | scales with \|yRel\|; falls with age at fixed range (rho -0.50 to -0.59) | lateral uncertainty |
 | `264\|5` | falls with age at fixed range (rho -0.61 to -0.68); rises before deletion | uncertainty |
 | `256\|5` | rises with age at fixed range (rho +0.86 to +0.90); drops about 1.5 codes before deletion | existence / confidence |
@@ -91,8 +91,17 @@ is coarse (40-79 tracks per drive, 3-8 trucks or buses).
   - Mid-life dips of `20|3` (8-12% of settled rows) carry about 1.3x the share of \|vRel error\| > 2 m/s at
     30-100 m. That is weak.
   - `240|7` did not separate contradicted from confirmed braking episodes earlier ([08](08_dead_ends.md)).
-- **Consumer weighting: open.** The uncertainty candidates might weight vRel and dRel in a consumer. That needs its
-  own pre-registered test.
+- **Consumer weighting: tested (2026-09-24).** `240|7` is the one candidate that tracks velocity error.
+  - It was checked on settled tracks paired with the camera's scale-based closing speed.
+  - It is higher when native vRel and the camera disagree by more than 2 m/s: AUC 0.70 at 30-60 m, per drive 0.65,
+    0.73 and 0.67.
+  - The signal survives stratification by 5 m range bins, saturated age and drive: 0.62, and again 0.62 after
+    regressing out range, age and ego speed.
+  - The other candidates fall to about 0.5.
+  - The decoder now exposes it as `vel_unc_code` (relative only).
+  - A pre-registered test used it for confidence-weighted vRel smoothing (`vrel_smooth_unc_tau_s`). The result is in
+    [06](06_known_limitations.md): it works as designed, but it moves along the same smoothing-versus-timing
+    trade-off rather than breaking it.
 
 ## The bit ledger
 

@@ -1,0 +1,232 @@
+{
+ "candidates": {
+  "K5": {
+   "J1_mae": {
+    "baseline": 0.18612553548183502,
+    "candidate": 0.18562424098983604,
+    "diff_ci": [
+     -0.0005012944919989826,
+     [
+      -0.000956630501763412,
+      -0.0001562230261545883
+     ],
+     0.001
+    ]
+   },
+   "J2_switches": {
+    "per_human_hour": {
+     "vision": 540.7,
+     "radar": 541.36
+    },
+    "diff_per_hour_ci": [
+     0.6572566358103737,
+     [
+      0.0,
+      2.2304726444435192
+     ],
+     0.705
+    ]
+   },
+   "guard_ant10_baseline_minus_K": [
+    0.0,
+    [
+     0.0,
+     0.0
+    ],
+    1.0
+   ],
+   "guard_ant10_ok": true,
+   "guard_lag_K_minus_baseline": [
+    0.01554709133757927,
+    [
+     -0.0024126635561428707,
+     0.03897917673835308
+    ],
+    0.106
+   ],
+   "guard_lag_ok": true,
+   "vs_vision_decision": {
+    "P1": {
+     "pass": false,
+     "holm_p": 0.1962890625
+    },
+    "P2": {
+     "pass": false,
+     "holm_p": 0.7711259545436796
+    },
+    "P3": {
+     "pass": false,
+     "holm_p": 0.0
+    },
+    "P4": {
+     "pass": false,
+     "holm_p": 0.578125
+    },
+    "G1_timing_not_later": {
+     "pass": true,
+     "mean_diff_ci": [
+      -0.14388954309458846,
+      [
+       -0.24842799957247497,
+       -0.050076650027314845
+      ],
+      0.001
+     ]
+    },
+    "radar_only_on_gas_per_human_hour": 0.88,
+    "verdict": "no evidence of benefit",
+    "worse_for_radar": [
+     "P3"
+    ]
+   },
+   "vs_vision_P3_mae_diff_ci": [
+    0.011084894899680009,
+    [
+     0.006290674736371738,
+     0.015538846729139971
+    ],
+    0.0
+   ],
+   "J1_pass": true,
+   "J1_holm_p": 0.002,
+   "verdict": "reduces jitter; P3 vs vision still worse"
+  },
+  "K6": {
+   "J1_mae": {
+    "baseline": 0.18612553548183502,
+    "candidate": 0.1858122795944933,
+    "diff_ci": [
+     -0.0003132558873417124,
+     [
+      -0.0014634604303677336,
+      0.0005303103324892577
+     ],
+     0.53
+    ]
+   },
+   "J2_switches": {
+    "per_human_hour": {
+     "vision": 540.7,
+     "radar": 390.63
+    },
+    "diff_per_hour_ci": [
+     -150.07359851003534,
+     [
+      -205.21596367528306,
+      -98.72717108011952
+     ],
+     0.0
+    ]
+   },
+   "guard_ant10_baseline_minus_K": [
+    -0.005917159763313584,
+    [
+     -0.01980198019801982,
+     0.0
+    ],
+    0.704
+   ],
+   "guard_ant10_ok": true,
+   "guard_lag_K_minus_baseline": [
+    0.03799915196154229,
+    [
+     0.005424467702613623,
+     0.07485220776620183
+    ],
+    0.013
+   ],
+   "guard_lag_ok": true,
+   "vs_vision_decision": {
+    "P1": {
+     "pass": false,
+     "holm_p": 0.11572265625
+    },
+    "P2": {
+     "pass": false,
+     "holm_p": 0.8942872167244413
+    },
+    "P3": {
+     "pass": false,
+     "holm_p": 0.0
+    },
+    "P4": {
+     "pass": false,
+     "holm_p": 0.359375
+    },
+    "G1_timing_not_later": {
+     "pass": true,
+     "mean_diff_ci": [
+      -0.12014686004728657,
+      [
+       -0.22013608364160522,
+       -0.03956139477779668
+      ],
+      0.001
+     ]
+    },
+    "radar_only_on_gas_per_human_hour": 0.66,
+    "verdict": "no evidence of benefit",
+    "worse_for_radar": [
+     "P3"
+    ]
+   },
+   "vs_vision_P3_mae_diff_ci": [
+    0.011291654383938171,
+    [
+     0.006177498548278417,
+     0.01601605276431479
+    ],
+    0.0
+   ],
+   "J1_pass": false,
+   "J1_holm_p": 0.53,
+   "verdict": "no improvement"
+  }
+ },
+ "promote": null,
+ "provenance": "research-workspace run 2026-09-24 (SCR-114), pre-registered; provenance-labelled, not a bundled rerun",
+ "candidates_config": {
+  "K5": "vrel_smooth_unc_tau_s=1.0, vrel_smooth_unc_lo=25, vrel_smooth_unc_hi=42",
+  "K6": "K5 + range_fusion_gain=0.1"
+ },
+ "field_240_7_dev_evidence": {
+  "auc_by_range": {
+   "10-30": 0.771,
+   "30-60": 0.702,
+   "60-100": 0.677
+  },
+  "auc_30_60_per_drive": {
+   "A": 0.65,
+   "B": 0.73,
+   "C": 0.67
+  },
+  "stratified_auc": 0.62,
+  "stratified_auc_residualized": 0.616,
+  "other_fields_stratified_auc": {
+   "224|7": 0.53,
+   "248|7": 0.51,
+   "256|5": 0.48,
+   "264|5": 0.45,
+   "20|3": 0.5
+  },
+  "reference": "|native vRel - camera scale-based vRel (vcam4)| > 2 m/s, settled tracks, drives A-C"
+ },
+ "K5_vs_K3": {
+  "lag_diff_K5_minus_K3_ci": [
+   -0.059467975012731225,
+   [
+    -0.12256554361737997,
+    -0.013089659752239118
+   ],
+   0.003
+  ],
+  "mae_diff_ci": [
+   0.0018266544383521988,
+   [
+    0.0006452796204169303,
+    0.0028579185379433965
+   ],
+   0.0
+  ]
+ }
+}

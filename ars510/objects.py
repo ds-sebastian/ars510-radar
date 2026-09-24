@@ -51,13 +51,18 @@ MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "tested_semanti
 # an oncoming object slows or stops).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
+# Candidate velocity-uncertainty code (unnamed; behaves like an rms field). Among settled tracks it is higher when the
+# native velocity disagrees with the camera's by > 2 m/s, also within 5 m range bands at fixed age (stratified AUC
+# about 0.62 on drives A-C). Unit and meaning are unpinned: use it only as a relative confidence signal (docs/14).
+VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
+
 MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward", 3: "not_clearly_moving_3"}
 
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, ONCOMING_FLAG)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, ONCOMING_FLAG, VEL_UNC_240)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -93,6 +98,7 @@ class NativeObject:
     accel_like_code: int  # centred code, unscaled
     move_state: int  # 0 moving away, 2 moving toward, 1/3 not clearly moving (MOVE_STATE_NAMES)
     oncoming_flag: bool  # oncoming now or earlier in the track's life
+    vel_unc_code: int  # candidate velocity-uncertainty code (240|7), relative confidence only
     geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
     lateral_valid: bool  # lateral code is not the sentinel
 
@@ -112,6 +118,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         accel_like_code=int(field_code(slot, ACCEL_LIKE) - ACCEL_LIKE.zero_code),
         move_state=int(field_code(slot, MOVE_STATE)),
         oncoming_flag=bool(field_code(slot, ONCOMING_FLAG)),
+        vel_unc_code=int(field_code(slot, VEL_UNC_240)),
         geometry_valid=age >= 1,
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
     )

@@ -220,3 +220,27 @@ def test_far_vrel_smoothing_leaves_near_raw_and_lags_far() -> None:
     raw_after = 0.15 * 99.5 - 25.0
     assert vals[10] > raw_after + 3.0  # not jumped yet
     assert abs(vals[-1] - raw_after) < 0.5  # converged ~3.6 s after the step
+
+
+def _vrel_step_response(unc_code: int) -> list[float]:
+    """vRel published for a track whose velocity steps by +20 codes (3 m/s) after 5 records."""
+    from ars510.objects import encode_slot
+    cfg = NativeInterfaceConfig(vrel_smooth_unc_tau_s=1.0, vrel_smooth_unc_lo=25, vrel_smooth_unc_hi=42)
+    iface = Ars510NativeRadarInterface(cfg)
+    out = []
+    for k in range(10):
+        t = 0.06 * k
+        vel = 600 + (20 if k >= 5 else 0)
+        slot = encode_slot(long_dist=160 + 16 * 40, lat_dist_left=2048, long_vel_over_ground=vel, age_cycles=70 + k,
+                           vel_uncertainty_candidate=unc_code)
+        (p,) = iface.update_many([speed_frame(t, 10.0)] + frames(record({2: slot}), t + 0.001))[0]["radarData"]["points"]
+        out.append(p["vRel"])
+    return out
+
+
+def test_uncertainty_weighted_smoothing_leaves_confident_tracks_alone() -> None:
+    confident, uncertain = _vrel_step_response(20), _vrel_step_response(50)
+    step = 20 * 0.15
+    assert confident[5] - confident[4] == pytest.approx(step, abs=1e-6)  # passes straight through
+    assert 0 < uncertain[5] - uncertain[4] < 0.2 * step  # tau 1 s: one 60 ms record moves ~6% of the step
+    assert uncertain[-1] < confident[-1]
