@@ -448,5 +448,69 @@
    }
   },
   "promote": null
+ },
+ "round2_clean_labels": {
+  "definition": "glitch: |native-0x235|>3 and |native-vision|>3 and |0x235-vision|<1.5; normal: |native-0x235|<0.7 and |native-vision|<1; matched ACC target, age>=60",
+  "discovery": {
+   "glitch_records": 344,
+   "episodes": 79,
+   "D1_range_resid_auc": 0.759,
+   "D2_264_eq1_auc": 0.692,
+   "D3_accel_field_auc": 0.222,
+   "D4_false_closing": 0.84,
+   "D4_rate_ratio": 31.0,
+   "D5_slopes": [
+    0.991,
+    1.001
+   ],
+   "D6": [
+    0.534,
+    0.493,
+    0.514
+   ],
+   "D7_240_auc": 0.647
+  },
+  "confirmation": {
+   "D1": 0.5933852140077821,
+   "D2": 0.6273230390817163,
+   "D3": 0.3755807597704291,
+   "D4": {
+    "episodes": 32,
+    "false_closing_share": 0.875,
+    "rate_ratio_60_80_vs_20_40": 21.732576277531663,
+    "rate_20_40": 0.010255291293912285,
+    "rate_60_80": 0.22287390029325513
+   },
+   "D5": {
+    "40-60": {
+     "n": 711,
+     "slope": 0.9892736114556369
+    },
+    "60-80": {
+     "n": 125,
+     "slope": 1.0218481445838299
+    }
+   },
+   "D6": {
+    "lat_jump_0.3": 0.5457486967463598,
+    "restart_1.0": 0.5597840940147581,
+    "n_near": 0.5093604810057393
+   },
+   "D7": 0.8539730800765236,
+   "n": {
+    "glitch_records": 230,
+    "normal_records": 16228,
+    "routes": 7
+   },
+   "confirmed": {
+    "D1": 0.0,
+    "D2": 1.0,
+    "D3": 1.0,
+    "D4": true,
+    "D5": true,
+    "D6": true,
+    "D7": 1.0
+   }
+  }
  }
 }

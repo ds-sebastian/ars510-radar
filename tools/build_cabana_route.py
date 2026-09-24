@@ -68,11 +68,11 @@ CANDIDATE_NOTES = {
     "UNK_216_6": " Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).",
     "UNK_272_5": " Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).",
     "UNK_224_7": " Uncertainty candidate: scales with range (r~0.8), falls with age at fixed range (rho -0.29 to -0.36), larger when range steps are noisier, rises before deletion. Weak near-range error indicator; does not single out excursions.",
-    "UNK_240_7": " Velocity-uncertainty candidate (like ARS408 VrelLong_rms): scales with range, falls with age, rises before deletion. Higher when native vRel disagrees with the camera by > 2 m/s (stratified AUC ~0.62 on drives A-C); moderate, not a clean excursion flag (docs/14). Decoded as vel_unc_code.",
+    "UNK_240_7": " Velocity-uncertainty candidate (like ARS408 VrelLong_rms): scales with range, falls with age, rises before deletion. Flags velocity glitches: stratified AUC 0.65 / 0.85 (discovery / confirmation) against clean labels where native vRel disagrees with both the radar ACC target (0x235) and vision (docs/15). Decoded as vel_unc_code.",
     "UNK_232_7": " Lateral-uncertainty candidate: scales with |yRel| (r~0.6), falls with age at fixed range (rho -0.50 to -0.59).",
     "UNK_248_7": " Uncertainty candidate: scales with |yRel| (r~0.56), falls with age at fixed range (rho -0.70 to -0.75).",
     "UNK_256_5": " Existence / confidence candidate: rises with age at fixed range (rho +0.86 to +0.90), drops about 1.5 codes before deletion. Compare ARS4-B ProbExist (5 bits).",
-    "UNK_264_5": " Uncertainty candidate: falls with age at fixed range (rho -0.61 to -0.68), rises before deletion.",
+    "UNK_264_5": " Carry chains show 4 live bits (264..267; bit 268 constant). Young tracks: counts down with age (13 at age 2 to ~5 at age 80). Settled tracks: values 1-4 depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m), consistent with a near-scan / far-scan measurement state (unconfirmed semantics). Value 1 is more common during velocity glitches (stratified AUC 0.69 / 0.63).",
     "CONST_2_6": " Physical slot index or 63 when unallocated; not an object category. Lane correlations reflect allocation.",
 }
 

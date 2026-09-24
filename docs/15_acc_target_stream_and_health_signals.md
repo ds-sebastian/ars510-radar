@@ -96,3 +96,47 @@ drives to test fairly.
   smartDSU-type device, so it is not observable here.
 - **Rare status states.** A second 0x24D state (one ~100 s episode) and 0x101 = 0x21 (a 0.1 s blip) are too rare
   to interpret. 0x502 is uninterpreted.
+
+## Using the ACC target as a reference: what the velocity glitches are (2026-09-24)
+
+0x235 is not used as a radar value (see above). Here it serves as a research yardstick.
+- **Clean glitch labels:** records where native vRel is more than 3 m/s from both 0x235 and the vision lead, while
+  those two agree within 1.5 m/s.
+- **Clean normal:** all three agree.
+- Discovery: 344 glitch records (79 episodes). Confirmation: 230 (32 episodes, 7 routes).
+- The candidates below were fixed before confirmation. Numbers are in the summary JSON.
+
+**What a glitch looks like (confirmed):**
+- **Mostly false closings:** 84% / 88% of episodes. Native vRel says the lead is approaching faster than it is.
+- **Strongly range-dependent:** about 0.1 per 1000 records below 20 m, 4 at 20-40 m and 130 at 60-80 m (the ratio of
+  the 60-80 and 20-40 m rates is 31× / 22×). The rate is also higher above 30 m/s ego speed.
+- **A smooth drift, not a jump.** The native−0x235 gap ramps from about −1 to −3.4 m/s over about 1.5 s and decays
+  over about 2 s. Record-to-record steps stay small; only 1.7% exceed 2 m/s. So this is not a Doppler-ambiguity
+  flip.
+- **The radar's whole motion state drifts.** The accel field `84|10` goes negative with it (AUC 0.22 / 0.38).
+- **Not re-association.** There is no lateral jump, no track restart and no neighbouring object (all AUC ≈ 0.5).
+  Tracks are settled (median age saturated).
+- **The radar's own range does not follow the drift** (discovery AUC 0.76). But range noise makes this too weak to
+  confirm as a flag (0.59): range walks as long as the glitch lasts.
+
+**Fields that flag glitches (confirmed, moderate):**
+- `240|7` (velocity uncertainty): AUC 0.65 / 0.85.
+- `264|4` == 1: AUC 0.69 / 0.63.
+  - `264|4` has 4 live bits by carry chain, not 5.
+  - On young tracks it counts down with age.
+  - On settled tracks, values 1-4 depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m). That fits a near-scan /
+    far-scan measurement state (unconfirmed).
+  - Glitches coincide with more state-1 readings, the suspected near-scan-only state, at ranges where the far scan
+    should also see the object.
+
+**Other checks:**
+- **Velocity scale:** against 0x235, the native over-ground velocity has slope 0.99 / 1.02 at 40-80 m. The
+  0.149/0.15 correction holds where it was least tested.
+
+**Reading.** The glitch is the radar tracker's velocity and acceleration state drifting for a second or two on a
+settled track at range, while its range measurements do not follow. It fits Doppler measurements from a different
+scattering point or path feeding the tracker. It also explains the trade-off every radar-only filter hit: the only
+radar-internal witness is range, and range wanders about as long as the drift lasts. The confirmed flags (`240|7`,
+`264|4`, the accel field) are moderate. A combined flag is the next interface-only candidate, and it needs new drives
+to test.
+
