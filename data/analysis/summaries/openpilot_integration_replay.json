@@ -1,0 +1,181 @@
+{
+ "what": "End-to-end replay of openpilot/ (installed into opendbc 4134c0d) through openpilot 10b9e73 process_replay: card -> radard -> plannerd, stock vs patched opendbc, same logs. Open-loop; FrogPilot-recorded drives; alpha long off in replay (see tools/openpilot_replay/process_replay_ars510.py).",
+ "provenance": "research-workspace run 2026-09-24, provenance-labelled; not a bundled rerun (the rlogs are not in this repo)",
+ "drives": {
+  "A": {
+   "minutes": 26.0,
+   "segments": 26,
+   "starts_at_ignition": false,
+   "fingerprint": "TOYOTA_RAV4_TSS2_2023",
+   "ars510_flag_set": true,
+   "radarUnavailable": false,
+   "radarTracks_hz": 16.59,
+   "radarTracks_max_gap_s": 0.1,
+   "radarTracks_error_msgs": 0,
+   "points_per_msg_mean": 1.05,
+   "first_points_after_s": 0.04,
+   "lead_present_share": 0.5535,
+   "lead_radar_matched_share": 0.5061,
+   "fcw_ticks": {
+    "patched": 8,
+    "stock": 0
+   },
+   "fcw_events_patched": 1,
+   "a_target_patched_minus_stock": {
+    "p01": -1.119,
+    "p05": -0.324,
+    "median": 0.0,
+    "p95": 0.399,
+    "p99": 0.728,
+    "min": -3.6135,
+    "max": 1.7909000000000002
+   },
+   "braking_only_patched_episodes": 9,
+   "braking_only_stock_episodes": 3,
+   "radar_interface_update_us": {
+    "mean_us": 8.6,
+    "p99_us": 24.4,
+    "max_us": 446.4
+   }
+  },
+  "B (first route)": {
+   "minutes": 21.8,
+   "segments": 22,
+   "starts_at_ignition": true,
+   "fingerprint": "TOYOTA_RAV4_TSS2_2023",
+   "ars510_flag_set": true,
+   "radarUnavailable": false,
+   "radarTracks_hz": 16.6,
+   "radarTracks_max_gap_s": 0.509,
+   "radarTracks_error_msgs": 13,
+   "points_per_msg_mean": 1.27,
+   "first_points_after_s": 47.72,
+   "lead_present_share": 0.6843,
+   "lead_radar_matched_share": 0.6197,
+   "fcw_ticks": {
+    "patched": 0,
+    "stock": 0
+   },
+   "fcw_events_patched": 0,
+   "a_target_patched_minus_stock": {
+    "p01": -0.952,
+    "p05": -0.347,
+    "median": 0.0,
+    "p95": 0.181,
+    "p99": 0.63,
+    "min": -2.3409,
+    "max": 1.2303
+   },
+   "braking_only_patched_episodes": 7,
+   "braking_only_stock_episodes": 1,
+   "radar_interface_update_us": {
+    "mean_us": 9.5,
+    "p99_us": 31.3,
+    "max_us": 229.2
+   }
+  },
+  "B (second route)": {
+   "minutes": 20.2,
+   "segments": 21,
+   "starts_at_ignition": true,
+   "fingerprint": "TOYOTA_RAV4_TSS2_2023",
+   "ars510_flag_set": true,
+   "radarUnavailable": false,
+   "radarTracks_hz": 16.6,
+   "radarTracks_max_gap_s": 0.484,
+   "radarTracks_error_msgs": 17,
+   "points_per_msg_mean": 1.13,
+   "first_points_after_s": 107.12,
+   "lead_present_share": 0.418,
+   "lead_radar_matched_share": 0.3333,
+   "fcw_ticks": {
+    "patched": 0,
+    "stock": 0
+   },
+   "fcw_events_patched": 0,
+   "a_target_patched_minus_stock": {
+    "p01": -0.907,
+    "p05": -0.287,
+    "median": 0.0,
+    "p95": 0.205,
+    "p99": 0.611,
+    "min": -2.2218,
+    "max": 1.7619999999999998
+   },
+   "braking_only_patched_episodes": 4,
+   "braking_only_stock_episodes": 0,
+   "radar_interface_update_us": {
+    "mean_us": 9.3,
+    "p99_us": 28.8,
+    "max_us": 246.4
+   }
+  },
+  "C": {
+   "minutes": 24.0,
+   "segments": 24,
+   "starts_at_ignition": false,
+   "fingerprint": "TOYOTA_RAV4_TSS2_2023",
+   "ars510_flag_set": true,
+   "radarUnavailable": false,
+   "radarTracks_hz": 16.59,
+   "radarTracks_max_gap_s": 0.093,
+   "radarTracks_error_msgs": 0,
+   "points_per_msg_mean": 1.43,
+   "first_points_after_s": 24.46,
+   "lead_present_share": 0.8761,
+   "lead_radar_matched_share": 0.7728,
+   "fcw_ticks": {
+    "patched": 0,
+    "stock": 0
+   },
+   "fcw_events_patched": 0,
+   "a_target_patched_minus_stock": {
+    "p01": -0.742,
+    "p05": -0.31,
+    "median": 0.0,
+    "p95": 0.125,
+    "p99": 0.397,
+    "min": -3.4978000000000002,
+    "max": 1.0406
+   },
+   "braking_only_patched_episodes": 11,
+   "braking_only_stock_episodes": 0,
+   "radar_interface_update_us": {
+    "mean_us": 9.8,
+    "p99_us": 27.9,
+    "max_us": 160.0
+   }
+  }
+ },
+ "cold_start": {
+  "what": "time from first logged CAN to first 0x80 / 0x85 frame on bus 1, route-start segments whose log includes the radar FW query (ignition starts)",
+  "routes": 11,
+  "first_0x80_s": [
+   5.83,
+   5.92
+  ],
+  "first_0x191_s": [
+   0.15,
+   0.87
+  ],
+  "consequence": "0x80/0x85 are absent during CAN fingerprinting, so detection uses the radar FW version; a bus-1-only rule missed the radar on every ignition start in replay"
+ },
+ "episode_cross_check": {
+  "what": "braking-only-in-patched episodes matched (within 1 s) to the earlier camera-classified census in docs/05 / braking_episodes.csv",
+  "C": {
+   "episodes": 11,
+   "matched": 10,
+   "classes_of_matched": {
+    "camera confirms closing": 3,
+    "camera ~steady (native overstated)": 5,
+    "CAMERA OPENING (contradicted)": 1,
+    "vision-led (planner history)": 1
+   }
+  },
+  "A": {
+   "episodes": 9,
+   "matched": 6,
+   "fcw_event": "the known false FCW (A07, ~26.3 s): lead vRel swings to about -6 m/s at 45-50 m while vision reads about -1 m/s"
+  }
+ }
+}

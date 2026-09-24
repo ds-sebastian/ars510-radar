@@ -255,6 +255,7 @@ class Ars510NativeRadarInterface:
             }
             if cfg.include_metadata:
                 point.update(slot=slot, age=obj.age, v_long_ground=float(v_ground), native_id=tid,
+                             move_state=obj.move_state, oncoming_flag=obj.oncoming_flag,
                              vrel_status=NATIVE_VREL_STATUS if v_ego is not None else UNRESOLVED_NAN)
             points.append(point)
         self._prune(time_s)

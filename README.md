@@ -12,7 +12,11 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 > - Native dRel/yRel fields and slot lifecycle have substantial supporting evidence. Reported passes use exploratory consumer-tolerance thresholds, not demonstrated drive-grade accuracy or complete object recall.
 > - `64|10` is the leading ground-velocity interpretation, not a fully solved vRel contract. Decoded excursions produce camera-contradicted braking in offline replay (4 events in 24 highway minutes). Mapping, timing, association, state semantics and tracker behaviour remain competing explanations.
 >
+> - **The object list leaves out stationary objects while you are moving.** A new object whose over-ground speed is about 0 is deleted after about 0.3 s once ego is above ~2-3 m/s. Objects first seen moving are kept after they stop. So the radar cannot flag a car that was already stopped when it came into view (a stalled or parked car in lane). See [docs/14](docs/14_stationary_objects_and_field_roles.md).
+>
 > Nothing here has driven a car. Everything was checked offline, by replaying logged drives through openpilot.
+>
+> **To try it in openpilot:** [`openpilot/`](openpilot) installs into current opendbc with a three-file Toyota patch. It detects the radar by FW version, because the object stream starts ~6 s after power-up, after fingerprinting. It has run end to end through openpilot's own card, radard and planner on 92 minutes of logged driving; see [docs/07](docs/07_openpilot_integration.md#end-to-end-replay-of-the-installed-integration-2026-09-24).
 
 **Start with [the evidence review and latest follow-up](docs/13_evidence_review.md).** It corrects two structural errors (the ID85 CRC boundary and slot-index field), explains what the references can and cannot establish, and records newer stopped-target tests that weaken the earlier near-range validation claim.
 
@@ -25,11 +29,11 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 | [`dbc/ars510_objects_vbus.dbc`](dbc/ars510_objects_vbus.dbc) | DBC for the reassembled object records, published on a virtual bus. Use it with `tools/build_cabana_route.py` to see objects in Cabana |
 | [`tools/decode_log.py`](tools/decode_log.py) | rlog/qlog or CAN CSV → one CSV row per published radar point |
 | [`tools/build_cabana_route.py`](tools/build_cabana_route.py) | Appends reassembled objects to your rlogs so Cabana can plot them next to the video |
-| [`examples/opendbc_radar_interface.py`](examples/opendbc_radar_interface.py) | Sketch of an opendbc `RadarInterface` using this decoder; works with opendbc structs, never driven |
+| [`openpilot/`](openpilot) | Installable opendbc integration for current openpilot: Toyota detection and hand-over patch, `RadarInterface`, installer and self-check. Tested by replaying logged drives through openpilot's real card, radard and planner; never driven |
 | [`data/sample/`](data/sample) | Two short real CAN captures: radar frames plus wheel speed, times rebased to 0 |
 | [`data/analysis/`](data/analysis) | Anonymized analysis dataset (~21 MB): every decoded object sample from 88 minutes over three drives with all raw fields, 89k radar-camera pairs, ground-contact and lateral camera pairs, replay episodes, fault injection results, summary JSONs |
 | [`tools/make_analysis_figures.py`](tools/make_analysis_figures.py), [`tools/compute_stats.py`](tools/compute_stats.py) | Rebuild every chart and statistic from that dataset |
-| [`tools/openpilot_replay/`](tools/openpilot_replay) | Replay logs through openpilot's real radard + planner; FCW and radar-only braking census |
+| [`tools/openpilot_replay/`](tools/openpilot_replay) | Replay logs through openpilot: `process_replay_ars510.py` runs the installed integration end to end (card → radard → plannerd, stock vs patched); `replay_radard.py` compares interface profiles in radard + planner |
 | [`data/reference/slot_bit_map.json`](data/reference/slot_bit_map.json) | Measured field split of every bit of the object slot, the record header and the 0x85 record |
 | [`docs/`](docs) | Everything learned, including what failed |
 
@@ -78,9 +82,12 @@ The object list arrives on **bus 1, 0x80** as a 742-byte record split over 106 C
 | yRel (left +) | `44\|12` | `(code - 2048) / 64` m | sign 98–99%; scale ±10% |
 | v over ground | `64\|10` | `(code - 510.5) * 0.15` m/s | supported candidate; range history + ego motion constrain scale, standstill constrains zero |
 | vRel | — | `v_over_ground - v_ego` | see limitations |
-| lateral v | `74\|10` | same scale, provisional | not pinned |
+| lateral v | `74\|10` | `(code - 510.5)`, left + | sign confirmed; scale **not pinned** (radar-only estimates 0.097-0.147 m/s per code; 0.15 kept as a placeholder) |
+| movement state | `109\|2` | 0 moving away, 2 moving toward, 1/3 not clearly moving | passed a pre-registered test on unseen segments; 1 vs 3 unresolved ([docs/14](docs/14_stationary_objects_and_field_roles.md)) |
+| oncoming flag | `14\|1` | 1 = oncoming now or earlier | passed a pre-registered test on unseen segments |
 | accel-like | `84\|10` | zero 511, lags velocity by ~1 s | unnamed |
 | trackId | slot + age | new ID when a slot's age restarts | no radar identity error found within 60 m |
+| unnamed fields | e.g. `20\|3`, `107\|1`, `224\|7`-`264\|5`, `56\|7`, `216\|6`, `272\|5` | raw | candidate lifecycle, uncertainty, existence and size roles, replicated on 3 drives but not pre-registered; see [docs/14](docs/14_stationary_objects_and_field_roles.md) |
 
 The field is **over-ground** velocity, not relative velocity. Use ego speed from Toyota `0xB4` (bus 0) or `carState.vEgo`. [docs/02](docs/02_object_record_0x80.md) has the details and the evidence.
 
@@ -99,6 +106,7 @@ The field is **over-ground** velocity, not relative velocity. Use ego speed from
 11. [docs/12 Statistics](docs/12_statistics.md): descriptive statistics of the dataset.
 12. [docs/cabana.md](docs/cabana.md): viewing objects in Cabana.
 13. [docs/13 Evidence review](docs/13_evidence_review.md): corrections, latest stopped-target results, reproducible wire checks, and next experiments.
+14. [docs/14 Stationary objects and field roles](docs/14_stationary_objects_and_field_roles.md): why stationary objects are missing from the list, and likely roles (uncertainty, existence, size, lifecycle) for unnamed slot fields.
 
 ## Where the evidence comes from
 

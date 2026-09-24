@@ -1,0 +1,417 @@
+{
+ "definitions": "(fixed before any result was looked at):\n- DRIVER BRAKE: brakePressed rising edge, held >= 0.3 s, vEgo >= 3 m/s, no earlier onset in the previous 3 s.\n  Lead context = the stock run has a vision lead at the onset.\n  For each planner and threshold thr in (-0.5, -1.0) m/s^2:\n    - anticipated = aTarget <= thr at some tick in [onset - 3 s, onset + 0.5 s];\n    - lead_s = onset - first such tick;\n    - magnitude: min aTarget in [onset - 1, onset + 1] vs the driver's min aEgo in [onset, onset + 3].\n- PLANNER BRAKE EPISODE: aTarget <= -1 m/s^2 for >= 0.3 s (gaps <= 0.5 s merged), vEgo >= 3.\n  - Driver response: the driver SLOWED if the brake is pressed in [start - 1, start + 3] or the min aEgo in\n    [start, start + 3] <= -0.5 m/s^2; otherwise ON GAS if gasPressed at the start or in the next 1 s; otherwise HELD.\n  - Episodes are split into only-radar+vision, only-vision (the other planner stays >= -0.3 throughout), and both.",
+ "pooled": {
+  "driver_brakes_all": {
+   "n": 111,
+   "stock": {
+    "anticipated_-0.5": 0.505,
+    "anticipated_-1.0": 0.243,
+    "median_lead_s_-0.5": 2.25,
+    "median_min_a": -0.51
+   },
+   "ars510": {
+    "anticipated_-0.5": 0.559,
+    "anticipated_-1.0": 0.306,
+    "median_lead_s_-0.5": 2.17,
+    "median_min_a": -0.6
+   },
+   "driver_median_min_a": -1.25,
+   "radar_earlier_or_only": 14,
+   "vision_earlier_or_only": 5
+  },
+  "driver_brakes_with_vision_lead": {
+   "n": 59,
+   "stock": {
+    "anticipated_-0.5": 0.644,
+    "anticipated_-1.0": 0.322,
+    "median_lead_s_-0.5": 2.1,
+    "median_min_a": -0.8
+   },
+   "ars510": {
+    "anticipated_-0.5": 0.729,
+    "anticipated_-1.0": 0.441,
+    "median_lead_s_-0.5": 1.37,
+    "median_min_a": -1.03
+   },
+   "driver_median_min_a": -1.32,
+   "radar_earlier_or_only": 13,
+   "vision_earlier_or_only": 5
+  },
+  "driver_brakes_with_lead_hard_driver_brake": {
+   "n": 19,
+   "stock": {
+    "anticipated_-0.5": 0.789,
+    "anticipated_-1.0": 0.421,
+    "median_lead_s_-0.5": 0.34,
+    "median_min_a": -1.0
+   },
+   "ars510": {
+    "anticipated_-0.5": 0.842,
+    "anticipated_-1.0": 0.632,
+    "median_lead_s_-0.5": 0.51,
+    "median_min_a": -1.41
+   },
+   "driver_median_min_a": -1.97,
+   "radar_earlier_or_only": 5,
+   "vision_earlier_or_only": 2
+  },
+  "planner_episodes_stock_only_this_planner": {
+   "n": 0,
+   "slowed": 0,
+   "held": 0,
+   "on_gas": 0
+  },
+  "planner_episodes_stock_all": {
+   "n": 61,
+   "slowed": 44,
+   "held": 0,
+   "on_gas": 17
+  },
+  "planner_episodes_ars510_only_this_planner": {
+   "n": 7,
+   "slowed": 2,
+   "held": 0,
+   "on_gas": 5
+  },
+  "planner_episodes_ars510_all": {
+   "n": 75,
+   "slowed": 53,
+   "held": 0,
+   "on_gas": 22
+  }
+ },
+ "per_drive": {
+  "A": {
+   "driver_brakes_all": {
+    "n": 20,
+    "stock": {
+     "anticipated_-0.5": 0.5,
+     "anticipated_-1.0": 0.4,
+     "median_lead_s_-0.5": 2.98,
+     "median_min_a": -0.38
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.55,
+     "anticipated_-1.0": 0.4,
+     "median_lead_s_-0.5": 2.97,
+     "median_min_a": -0.38
+    },
+    "driver_median_min_a": -1.11,
+    "radar_earlier_or_only": 1,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_vision_lead": {
+    "n": 6,
+    "stock": {
+     "anticipated_-0.5": 0.333,
+     "anticipated_-1.0": 0.333,
+     "median_lead_s_-0.5": 2.95,
+     "median_min_a": -0.31
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.5,
+     "anticipated_-1.0": 0.333,
+     "median_lead_s_-0.5": 0.57,
+     "median_min_a": -0.22
+    },
+    "driver_median_min_a": -0.96,
+    "radar_earlier_or_only": 1,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_lead_hard_driver_brake": {
+    "n": 1,
+    "stock": {
+     "anticipated_-0.5": 0.0,
+     "anticipated_-1.0": 0.0,
+     "median_lead_s_-0.5": null,
+     "median_min_a": -0.18
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.0,
+     "anticipated_-1.0": 0.0,
+     "median_lead_s_-0.5": null,
+     "median_min_a": -0.18
+    },
+    "driver_median_min_a": -2.46,
+    "radar_earlier_or_only": 0,
+    "vision_earlier_or_only": 0
+   },
+   "planner_episodes_stock_only_this_planner": {
+    "n": 0,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_stock_all": {
+    "n": 9,
+    "slowed": 3,
+    "held": 0,
+    "on_gas": 6
+   },
+   "planner_episodes_ars510_only_this_planner": {
+    "n": 1,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 1
+   },
+   "planner_episodes_ars510_all": {
+    "n": 12,
+    "slowed": 5,
+    "held": 0,
+    "on_gas": 7
+   }
+  },
+  "B1": {
+   "driver_brakes_all": {
+    "n": 37,
+    "stock": {
+     "anticipated_-0.5": 0.514,
+     "anticipated_-1.0": 0.189,
+     "median_lead_s_-0.5": 0.34,
+     "median_min_a": -0.7
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.595,
+     "anticipated_-1.0": 0.297,
+     "median_lead_s_-0.5": 0.95,
+     "median_min_a": -0.83
+    },
+    "driver_median_min_a": -1.32,
+    "radar_earlier_or_only": 7,
+    "vision_earlier_or_only": 2
+   },
+   "driver_brakes_with_vision_lead": {
+    "n": 21,
+    "stock": {
+     "anticipated_-0.5": 0.619,
+     "anticipated_-1.0": 0.286,
+     "median_lead_s_-0.5": 0.34,
+     "median_min_a": -0.87
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.762,
+     "anticipated_-1.0": 0.476,
+     "median_lead_s_-0.5": 1.37,
+     "median_min_a": -1.1
+    },
+    "driver_median_min_a": -1.37,
+    "radar_earlier_or_only": 7,
+    "vision_earlier_or_only": 2
+   },
+   "driver_brakes_with_lead_hard_driver_brake": {
+    "n": 7,
+    "stock": {
+     "anticipated_-0.5": 0.857,
+     "anticipated_-1.0": 0.286,
+     "median_lead_s_-0.5": 0.09,
+     "median_min_a": -0.87
+    },
+    "ars510": {
+     "anticipated_-0.5": 1.0,
+     "anticipated_-1.0": 0.429,
+     "median_lead_s_-0.5": 0.24,
+     "median_min_a": -1.1
+    },
+    "driver_median_min_a": -2.34,
+    "radar_earlier_or_only": 3,
+    "vision_earlier_or_only": 1
+   },
+   "planner_episodes_stock_only_this_planner": {
+    "n": 0,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_stock_all": {
+    "n": 27,
+    "slowed": 16,
+    "held": 0,
+    "on_gas": 11
+   },
+   "planner_episodes_ars510_only_this_planner": {
+    "n": 3,
+    "slowed": 1,
+    "held": 0,
+    "on_gas": 2
+   },
+   "planner_episodes_ars510_all": {
+    "n": 32,
+    "slowed": 19,
+    "held": 0,
+    "on_gas": 13
+   }
+  },
+  "B2": {
+   "driver_brakes_all": {
+    "n": 38,
+    "stock": {
+     "anticipated_-0.5": 0.316,
+     "anticipated_-1.0": 0.132,
+     "median_lead_s_-0.5": 2.1,
+     "median_min_a": -0.23
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.342,
+     "anticipated_-1.0": 0.184,
+     "median_lead_s_-0.5": 2.06,
+     "median_min_a": -0.29
+    },
+    "driver_median_min_a": -1.14,
+    "radar_earlier_or_only": 3,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_vision_lead": {
+    "n": 19,
+    "stock": {
+     "anticipated_-0.5": 0.579,
+     "anticipated_-1.0": 0.211,
+     "median_lead_s_-0.5": 2.1,
+     "median_min_a": -0.56
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.579,
+     "anticipated_-1.0": 0.316,
+     "median_lead_s_-0.5": 2.06,
+     "median_min_a": -0.56
+    },
+    "driver_median_min_a": -1.25,
+    "radar_earlier_or_only": 2,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_lead_hard_driver_brake": {
+    "n": 6,
+    "stock": {
+     "anticipated_-0.5": 0.667,
+     "anticipated_-1.0": 0.333,
+     "median_lead_s_-0.5": 2.1,
+     "median_min_a": -0.7
+    },
+    "ars510": {
+     "anticipated_-0.5": 0.667,
+     "anticipated_-1.0": 0.667,
+     "median_lead_s_-0.5": 2.06,
+     "median_min_a": -1.31
+    },
+    "driver_median_min_a": -1.89,
+    "radar_earlier_or_only": 1,
+    "vision_earlier_or_only": 1
+   },
+   "planner_episodes_stock_only_this_planner": {
+    "n": 0,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_stock_all": {
+    "n": 10,
+    "slowed": 10,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_ars510_only_this_planner": {
+    "n": 1,
+    "slowed": 1,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_ars510_all": {
+    "n": 12,
+    "slowed": 12,
+    "held": 0,
+    "on_gas": 0
+   }
+  },
+  "C": {
+   "driver_brakes_all": {
+    "n": 16,
+    "stock": {
+     "anticipated_-0.5": 0.938,
+     "anticipated_-1.0": 0.438,
+     "median_lead_s_-0.5": 2.17,
+     "median_min_a": -1.19
+    },
+    "ars510": {
+     "anticipated_-0.5": 1.0,
+     "anticipated_-1.0": 0.5,
+     "median_lead_s_-0.5": 2.22,
+     "median_min_a": -1.19
+    },
+    "driver_median_min_a": -1.28,
+    "radar_earlier_or_only": 3,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_vision_lead": {
+    "n": 13,
+    "stock": {
+     "anticipated_-0.5": 0.923,
+     "anticipated_-1.0": 0.538,
+     "median_lead_s_-0.5": 2.17,
+     "median_min_a": -1.3
+    },
+    "ars510": {
+     "anticipated_-0.5": 1.0,
+     "anticipated_-1.0": 0.615,
+     "median_lead_s_-0.5": 2.17,
+     "median_min_a": -1.41
+    },
+    "driver_median_min_a": -1.38,
+    "radar_earlier_or_only": 3,
+    "vision_earlier_or_only": 1
+   },
+   "driver_brakes_with_lead_hard_driver_brake": {
+    "n": 5,
+    "stock": {
+     "anticipated_-0.5": 1.0,
+     "anticipated_-1.0": 0.8,
+     "median_lead_s_-0.5": 0.77,
+     "median_min_a": -1.5
+    },
+    "ars510": {
+     "anticipated_-0.5": 1.0,
+     "anticipated_-1.0": 1.0,
+     "median_lead_s_-0.5": 0.77,
+     "median_min_a": -1.62
+    },
+    "driver_median_min_a": -2.19,
+    "radar_earlier_or_only": 1,
+    "vision_earlier_or_only": 0
+   },
+   "planner_episodes_stock_only_this_planner": {
+    "n": 0,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_stock_all": {
+    "n": 15,
+    "slowed": 15,
+    "held": 0,
+    "on_gas": 0
+   },
+   "planner_episodes_ars510_only_this_planner": {
+    "n": 2,
+    "slowed": 0,
+    "held": 0,
+    "on_gas": 2
+   },
+   "planner_episodes_ars510_all": {
+    "n": 19,
+    "slowed": 17,
+    "held": 0,
+    "on_gas": 2
+   }
+  }
+ },
+ "provenance": "research-workspace run 2026-09-24 (SCR-111), exploratory, not pre-registered; provenance-labelled, not a bundled rerun",
+ "paired_timing_both_anticipated_with_lead": {
+  "n": 37,
+  "median_radar_minus_vision_s": 0.0,
+  "radar_earlier_gt_0.2s": 8,
+  "vision_earlier_gt_0.2s": 4
+ },
+ "lead_brakes_only_one_planner_anticipated": {
+  "radar_plus_vision": 6,
+  "vision_only": 1,
+  "neither": 15
+ }
+}

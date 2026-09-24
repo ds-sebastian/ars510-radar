@@ -54,6 +54,8 @@ See [02](02_object_record_0x80.md#young-tracks-are-unconverged). Hold tracks unt
 
 ## 4. Things the radar doesn't report
 
+- **Stationary objects while ego moves.** A new object with over-ground speed near 0 is deleted at about age 5 (0.3 s) once ego is above about 2-3 m/s. A street lined with parked cars gives an empty object list. Objects first seen moving are kept after they stop. A vehicle that was already stopped when it came into view is therefore not reported. See [14](14_stationary_objects_and_field_roles.md).
+
 - Cars about 4 m ahead while ego is stopped are sometimes not in the list at all. radard then uses vision.
 - Objects are dropped during occlusions and not always re-acquired; about 1 in 3 camera-confirmed occlusions loses the ID.
 - Lateral velocity (`74|10`) and the accel-like field are not trustworthy enough to publish. `yvRel` and `aRel` stay NaN.

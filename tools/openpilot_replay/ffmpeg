@@ -1,0 +1,9 @@
+#!/bin/bash
+# ffmpeg >= 8 dropped -vsync; openpilot's FrameReader still passes "-vsync 0". Use the output option -fps_mode instead.
+args=(); vs=0
+while [ $# -gt 0 ]; do
+  if [ "$1" = "-vsync" ]; then vs=1; shift 2; continue; fi
+  args+=("$1"); shift
+done
+if [ $vs = 1 ]; then n=${#args[@]}; args=("${args[@]:0:n-1}" -fps_mode passthrough "${args[n-1]}"); fi
+exec /usr/bin/ffmpeg "${args[@]}"

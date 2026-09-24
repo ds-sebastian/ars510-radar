@@ -36,6 +36,47 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$OP:$OP/opendbc_repo:. $OP/.venv/bin/python
 
 The contradicted rate per engaged hour is the number that decides whether this radar can ever be trusted for braking. Replay is open-loop, so it cannot tell you what the car would have done.
 
+### End to end, with the installed integration, and watching it
+
+`tools/openpilot_replay/process_replay_ars510.py` tests the real install rather than the decoder alone. It runs
+openpilot's own process_replay (`card` → `radard` → `plannerd`) twice: once with a stock opendbc, once with a copy
+that has [`openpilot/`](../openpilot) installed. Then it compares:
+- detection;
+- radarTracks rate, gaps and errors;
+- radar-matched leads;
+- FCW;
+- braking only in one of the two runs.
+
+```bash
+cp -r $OP/opendbc_repo /tmp/opendbc_ars510 && python openpilot/install.py /tmp/opendbc_ars510
+PY=$OP/.venv/bin/python
+$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc $OP/opendbc_repo --mpc-shadow op_shadow \
+    --label stock  --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_ars510 --mpc-shadow op_shadow \
+    --label ars510 --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr stock ars510
+```
+
+To **watch** an episode, render openpilot's UI over the road video from the saved logs. It shows the planned path
+and the lead chevron from the replayed radarState. The time window is in seconds from the start of the route:
+
+```bash
+PYTHONPATH=$OP $PY $OP/openpilot/tools/clip/run.py "a510a510a510a510/<route>/<start>/<end>" -d pr/logs/ars510 --big -o ars510.mp4
+```
+
+To **plot** signals, open a saved `rlog.zst` in PlotJuggler (`$OP/openpilot/tools/plotjuggler/juggle.py`), for
+example:
+- `longitudinalPlan.aTarget`, the acceleration openpilot would request;
+- `radarState.leadOne.dRel` and `.vRel`;
+- `radarTracks`.
+
+Replay is open-loop and does not run controlsd with openpilot longitudinal. So "gas / brake" is the planner's
+requested acceleration, not an actuator command. Steering is unaffected by radar.
+
+- System ffmpeg 8 and newer dropped `-vsync`, which openpilot's FrameReader still passes. If clip fails in ffmpeg,
+  put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on PATH (`PATH=$PWD/tools/openpilot_replay:$PATH`). It turns `-vsync 0` into the output option `-fps_mode passthrough`.
+- The viewer logs carry a few documented display fixes; see the script docstring.
+
 ## 4. Pre-register before you look
 
 Some tests in this repo were pre-registered; others were exploratory or later follow-ups. Do not treat previously inspected B/C data as an untouched holdout. Before a new confirmatory test, write:
