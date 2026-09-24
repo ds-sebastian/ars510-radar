@@ -1,0 +1,865 @@
+[
+ {
+  "constant": "DREL 32|12 scale 1/16 m",
+  "class": "structure + physics",
+  "evidence": {
+   "A": {
+    "n": 2086,
+    "vehicles": 13,
+    "slope_cam_per_radar": 1.001,
+    "slope_90ci": [
+     0.9508,
+     1.0241
+    ],
+    "intercept_m": 0.126,
+    "median_cam_minus_radar_m": -0.007
+   },
+   "B": {
+    "n": 3525,
+    "vehicles": 30,
+    "slope_cam_per_radar": 0.9917,
+    "slope_90ci": [
+     0.933,
+     1.0384
+    ],
+    "intercept_m": 0.984,
+    "median_cam_minus_radar_m": 0.722
+   },
+   "C": {
+    "n": 1809,
+    "vehicles": 11,
+    "slope_cam_per_radar": 0.9926,
+    "slope_90ci": [
+     0.952,
+     1.0423
+    ],
+    "intercept_m": 0.379,
+    "median_cam_minus_radar_m": 0.218
+   }
+  },
+  "simpler_representation": "12-bit unsigned fixed point, 1/16 m, span -10..245.9 m",
+  "limits": "absolute scale camera-checkable only at 5-25 m; modelV2 ratio 0.96-1.07 out to 150 m on held-out",
+  "heldout_vs_modelv2": [
+   {
+    "band": "0-15",
+    "n": 9455,
+    "radard_acceptance": 0.96,
+    "accepted_median_err_vs_modelv2_m": 0.473,
+    "threshold_m": 2.5,
+    "ratio_median": 1.065
+   },
+   {
+    "band": "15-30",
+    "n": 6291,
+    "radard_acceptance": 0.943,
+    "accepted_median_err_vs_modelv2_m": 1.692,
+    "threshold_m": 2.5,
+    "ratio_median": 1.028
+   },
+   {
+    "band": "30-60",
+    "n": 22953,
+    "radard_acceptance": 0.948,
+    "accepted_median_err_vs_modelv2_m": 3.355,
+    "threshold_m": 4.41,
+    "ratio_median": 0.958
+   },
+   {
+    "band": "60-100",
+    "n": 11219,
+    "radard_acceptance": 0.89,
+    "accepted_median_err_vs_modelv2_m": 5.645,
+    "threshold_m": 7.44,
+    "ratio_median": 0.959
+   },
+   {
+    "band": "100-150",
+    "n": 2245,
+    "radard_acceptance": 0.839,
+    "accepted_median_err_vs_modelv2_m": 8.543,
+    "threshold_m": 10.8,
+    "ratio_median": 0.996
+   }
+  ]
+ },
+ {
+  "constant": "DREL zero code 160 (-10 m)",
+  "class": "teacher-fitted originally; physics on A and C",
+  "evidence": {
+   "A": {
+    "median_cam_minus_radar_m_5_25": -0.007
+   },
+   "B": {
+    "median_cam_minus_radar_m_5_25": 0.722
+   },
+   "C": {
+    "median_cam_minus_radar_m_5_25": 0.218
+   }
+  },
+  "simpler_representation": "exactly 10.000 m = 160 x 1/16",
+  "limits": "+0.72 m on hilly city B, within the flat-road camera's pitch uncertainty (0.25 deg); carried as +/-0.7 m"
+ },
+ {
+  "constant": "DREL short-term consistency",
+  "class": "physics (sensor behaviour, not a constant)",
+  "evidence": {
+   "A": {
+    "span_s": 1.5,
+    "5-40": {
+     "n": 4865,
+     "vehicles": 11,
+     "range_change_err_m_p50_p90": [
+      1.51,
+      5.02
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      0.47,
+      1.5
+     ],
+     "share_range_worse": 0.787
+    },
+    "40-80": {
+     "n": 9518,
+     "vehicles": 21,
+     "range_change_err_m_p50_p90": [
+      3.21,
+      8.75
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      1.0,
+      3.24
+     ],
+     "share_range_worse": 0.784
+    },
+    "80-160": {
+     "n": 3592,
+     "vehicles": 20,
+     "range_change_err_m_p50_p90": [
+      5.56,
+      14.21
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      1.78,
+      5.5
+     ],
+     "share_range_worse": 0.784
+    }
+   },
+   "B": {
+    "span_s": 1.5,
+    "5-40": {
+     "n": 6122,
+     "vehicles": 40,
+     "range_change_err_m_p50_p90": [
+      1.26,
+      4.45
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      0.59,
+      2.2
+     ],
+     "share_range_worse": 0.717
+    },
+    "40-80": {
+     "n": 11828,
+     "vehicles": 71,
+     "range_change_err_m_p50_p90": [
+      3.69,
+      9.92
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      1.7,
+      7.02
+     ],
+     "share_range_worse": 0.692
+    },
+    "80-160": {
+     "n": 3422,
+     "vehicles": 42,
+     "range_change_err_m_p50_p90": [
+      7.26,
+      20.88
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      5.03,
+      17.17
+     ],
+     "share_range_worse": 0.6
+    }
+   },
+   "C": {
+    "span_s": 1.5,
+    "5-40": {
+     "n": 7159,
+     "vehicles": 18,
+     "range_change_err_m_p50_p90": [
+      1.9,
+      6.21
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      0.49,
+      1.67
+     ],
+     "share_range_worse": 0.821
+    },
+    "40-80": {
+     "n": 14554,
+     "vehicles": 28,
+     "range_change_err_m_p50_p90": [
+      3.48,
+      9.19
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      1.06,
+      3.41
+     ],
+     "share_range_worse": 0.8
+    },
+    "80-160": {
+     "n": 3848,
+     "vehicles": 29,
+     "range_change_err_m_p50_p90": [
+      6.01,
+      15.77
+     ],
+     "integrated_vrel_err_m_p50_p90": [
+      2.56,
+      7.97
+     ],
+     "share_range_worse": 0.713
+    }
+   }
+  },
+  "velocity_aided_range_K0.1": {
+   "A": {
+    "5-40": [
+     1.04,
+     3.93
+    ],
+    "40-80": [
+     1.99,
+     5.81
+    ],
+    "80-160": [
+     3.61,
+     8.91
+    ]
+   },
+   "B": {
+    "5-40": [
+     0.79,
+     3.37
+    ],
+    "40-80": [
+     2.55,
+     7.57
+    ],
+    "80-160": [
+     5.8,
+     17.11
+    ]
+   },
+   "C": {
+    "5-40": [
+     1.29,
+     4.56
+    ],
+    "40-80": [
+     2.27,
+     6.48
+    ],
+    "80-160": [
+     4.46,
+     12.68
+    ]
+   }
+  },
+  "limits": "range walks 2-4x integrated-vRel error; opt-in fusion halves them, not promoted (H1 failed beyond 80 m on B)"
+ },
+ {
+  "constant": "YREL 44|12 zero 2048, left positive",
+  "class": "structure",
+  "evidence": {
+   "A": {
+    "sign_agreement_camera": 0.993,
+    "intercept_m": 0.087
+   },
+   "B": {
+    "sign_agreement_camera": 0.983,
+    "intercept_m": 0.121
+   },
+   "C": {
+    "sign_agreement_camera": 0.979,
+    "intercept_m": -0.027
+   }
+  },
+  "heldout_side_vs_modelv2": {
+   "n": 4910,
+   "correct_side_vs_modelv2_lead": 0.993,
+   "median_abs_lateral_diff_m": 0.229
+  },
+  "simpler_representation": "12-bit offset binary, 2048 = 2^11 midpoint"
+ },
+ {
+  "constant": "YREL scale 1/64 m",
+  "class": "teacher + yaw sweep; bounded by lane peaks and camera",
+  "evidence": {
+   "A": {
+    "lane_peaks_codes_per_m_at_3.66": 63.9,
+    "lane_peaks_90ci": [
+     62.3,
+     66.8
+    ],
+    "camera_outer_edge_codes_per_m": 68.9
+   },
+   "B": {
+    "lane_peaks_codes_per_m_at_3.66": 67.3,
+    "lane_peaks_90ci": [
+     59.7,
+     70.8
+    ],
+    "camera_outer_edge_codes_per_m": 69.7
+   },
+   "C": {
+    "lane_peaks_codes_per_m_at_3.66": 62.8,
+    "lane_peaks_90ci": [
+     58.9,
+     65.0
+    ],
+    "camera_outer_edge_codes_per_m": 72.8
+   }
+  },
+  "simpler_representation": "power of two; kept",
+  "limits": "lane peaks (3.66 m lanes assumed) 62.8-67.3 vs camera 69-73: +/-10%"
+ },
+ {
+  "constant": "VLONG_OVER_GROUND 64|10 scale 0.15 m/s",
+  "class": "structure + physics",
+  "evidence": {
+   "A": {
+    "3-30": {
+     "mse_native": 0.243,
+     "mse_zero": 2.854,
+     "mse_range_derivative": 5.854
+    },
+    "30-60": {
+     "mse_native": 1.346,
+     "mse_zero": 4.808,
+     "mse_range_derivative": 16.526
+    },
+    "60-100": {
+     "mse_native": 4.553,
+     "mse_zero": 10.327,
+     "mse_range_derivative": 41.42
+    }
+   },
+   "B": {
+    "3-30": {
+     "mse_native": 0.676,
+     "mse_zero": 5.654,
+     "mse_range_derivative": 4.271
+    },
+    "30-60": {
+     "mse_native": 3.506,
+     "mse_zero": 9.731,
+     "mse_range_derivative": 17.808
+    },
+    "60-100": {
+     "mse_native": 23.652,
+     "mse_zero": 34.453,
+     "mse_range_derivative": 88.485
+    }
+   },
+   "C": {
+    "3-30": {
+     "mse_native": 0.369,
+     "mse_zero": 4.585,
+     "mse_range_derivative": 10.472
+    },
+    "30-60": {
+     "mse_native": 1.593,
+     "mse_zero": 2.718,
+     "mse_range_derivative": 22.152
+    },
+    "60-100": {
+     "mse_native": 7.133,
+     "mse_zero": 13.279,
+     "mse_range_derivative": 71.859
+    }
+   }
+  },
+  "steady_following": {
+   "A": {
+    "30-60": {
+     "mse_native": 0.849,
+     "mse_zero": 0.534,
+     "mse_range_derivative": 11.137
+    },
+    "60-100": {
+     "mse_native": 2.874,
+     "mse_zero": 1.246,
+     "mse_range_derivative": 28.02
+    }
+   },
+   "B": {
+    "30-60": {
+     "mse_native": 2.709,
+     "mse_zero": 1.791,
+     "mse_range_derivative": 14.199
+    },
+    "60-100": {
+     "mse_native": 18.07,
+     "mse_zero": 13.337,
+     "mse_range_derivative": 44.038
+    }
+   },
+   "C": {
+    "30-60": {
+     "mse_native": 0.945,
+     "mse_zero": 0.743,
+     "mse_range_derivative": 15.958
+    },
+    "60-100": {
+     "mse_native": 2.355,
+     "mse_zero": 2.371,
+     "mse_range_derivative": 32.483
+    }
+   }
+  },
+  "radar_only_scale_vs_own_range_slope": {
+   "A": {
+    "windows": 424,
+    "tracks": 38,
+    "vs_gps": 0.15037,
+    "vs_gps_90ci": [
+     0.1484,
+     0.1518
+    ],
+    "vs_0xB4": 0.14754,
+    "vs_0xB4_90ci": [
+     0.1456,
+     0.1487
+    ],
+    "decode": 0.15,
+    "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+   },
+   "B": {
+    "windows": 424,
+    "tracks": 74,
+    "vs_gps": 0.14869,
+    "vs_gps_90ci": [
+     0.1463,
+     0.1514
+    ],
+    "vs_0xB4": 0.14916,
+    "vs_0xB4_90ci": [
+     0.1472,
+     0.1512
+    ],
+    "decode": 0.15,
+    "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+   },
+   "C": {
+    "windows": 484,
+    "tracks": 41,
+    "vs_gps": 0.15304,
+    "vs_gps_90ci": [
+     0.1508,
+     0.155
+    ],
+    "vs_0xB4": 0.15058,
+    "vs_0xB4_90ci": [
+     0.1486,
+     0.1524
+    ],
+    "decode": 0.15,
+    "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+   }
+  },
+  "limits": "beats zero and range differencing everywhere except steady following; unflagged ~1 s excursions (RET-053)"
+ },
+ {
+  "constant": "VLONG zero 510.5",
+  "class": "physics (standstill)",
+  "evidence": {
+   "A": {
+    "weighted_zero": 510.486,
+    "codes": {
+     "510": 1159,
+     "511": 1065,
+     "512": 205,
+     "509": 198,
+     "513": 100,
+     "508": 68
+    }
+   },
+   "B": {
+    "weighted_zero": 510.4,
+    "codes": {
+     "510": 2669,
+     "511": 1708,
+     "509": 263,
+     "512": 257,
+     "508": 116,
+     "513": 85
+    }
+   },
+   "C": {
+    "weighted_zero": 510.198,
+    "codes": {
+     "510": 1303,
+     "511": 973,
+     "509": 239,
+     "508": 107,
+     "512": 103,
+     "507": 91
+    }
+   }
+  },
+  "simpler_representation": "zero code 511 with truncating encode predicts equal 510/511 counts; observed ratio 1.1-1.6, so not cleanly supported",
+  "limits": "zero uncertain by ~0.2 code (0.03 m/s)"
+ },
+ {
+  "constant": "0.149 vs 0.15 (vground_scale 0.149/0.15 in OPENPILOT_CONFIG)",
+  "class": "external (ego-speed reference)",
+  "evidence": "0xB4 reads ~1.5% below GPS / wheel speed; hypotheses not separable beyond ~0.3 m/s",
+  "simpler_representation": "an ego-reference mismatch, not a radar constant",
+  "current_value": 0.9933333333333333
+ },
+ {
+  "constant": "ALONG_LIKE_84 84|10 zero 511",
+  "class": "structure; scale unpinned",
+  "evidence": {
+   "A": {
+    "span_s": 2.0,
+    "lag_s": -1.0,
+    "n": 24657,
+    "r": 0.422,
+    "slope_fwd": 0.0352,
+    "slope_rev": 0.1971
+   },
+   "B": {
+    "span_s": 2.0,
+    "lag_s": -1.0,
+    "n": 42491,
+    "r": 0.328,
+    "slope_fwd": 0.0453,
+    "slope_rev": 0.4206
+   },
+   "C": {
+    "span_s": 2.0,
+    "lag_s": -1.0,
+    "n": 30193,
+    "r": 0.37,
+    "slope_fwd": 0.0253,
+    "slope_rev": 0.1844
+   }
+  },
+  "limits": "lags velocity by ~1 s; cannot lead or flag excursions"
+ },
+ {
+  "constant": "vRel range-dependent smoothing (opt-in)",
+  "class": "heuristic candidate",
+  "evidence": {
+   "A": [
+    {
+     "subset": "all",
+     "band": "3-30",
+     "n": 2399,
+     "mse_zero": 2.862,
+     "mse_native": 0.243,
+     "mse_smoothed": 0.243
+    },
+    {
+     "subset": "all",
+     "band": "30-60",
+     "n": 6854,
+     "mse_zero": 3.527,
+     "mse_native": 1.285,
+     "mse_smoothed": 1.081
+    },
+    {
+     "subset": "all",
+     "band": "60-100",
+     "n": 6791,
+     "mse_zero": 5.87,
+     "mse_native": 3.758,
+     "mse_smoothed": 3.279
+    },
+    {
+     "subset": "steady",
+     "band": "3-30",
+     "n": 607,
+     "mse_zero": 0.255,
+     "mse_native": 0.169,
+     "mse_smoothed": 0.169
+    },
+    {
+     "subset": "steady",
+     "band": "30-60",
+     "n": 1224,
+     "mse_zero": 0.475,
+     "mse_native": 0.587,
+     "mse_smoothed": 0.463
+    },
+    {
+     "subset": "steady",
+     "band": "60-100",
+     "n": 762,
+     "mse_zero": 1.653,
+     "mse_native": 2.379,
+     "mse_smoothed": 2.489
+    },
+    {
+     "subset": "moving",
+     "band": "3-30",
+     "n": 1792,
+     "mse_zero": 3.746,
+     "mse_native": 0.268,
+     "mse_smoothed": 0.268
+    },
+    {
+     "subset": "moving",
+     "band": "30-60",
+     "n": 5630,
+     "mse_zero": 4.19,
+     "mse_native": 1.437,
+     "mse_smoothed": 1.216
+    },
+    {
+     "subset": "moving",
+     "band": "60-100",
+     "n": 6029,
+     "mse_zero": 6.403,
+     "mse_native": 3.932,
+     "mse_smoothed": 3.379
+    }
+   ],
+   "B": [
+    {
+     "subset": "all",
+     "band": "3-30",
+     "n": 3521,
+     "mse_zero": 5.53,
+     "mse_native": 0.676,
+     "mse_smoothed": 0.676
+    },
+    {
+     "subset": "all",
+     "band": "30-60",
+     "n": 9468,
+     "mse_zero": 8.415,
+     "mse_native": 3.458,
+     "mse_smoothed": 3.109
+    },
+    {
+     "subset": "all",
+     "band": "60-100",
+     "n": 5928,
+     "mse_zero": 21.684,
+     "mse_native": 22.741,
+     "mse_smoothed": 20.813
+    },
+    {
+     "subset": "steady",
+     "band": "3-30",
+     "n": 476,
+     "mse_zero": 0.552,
+     "mse_native": 0.414,
+     "mse_smoothed": 0.414
+    },
+    {
+     "subset": "steady",
+     "band": "30-60",
+     "n": 2026,
+     "mse_zero": 1.539,
+     "mse_native": 2.028,
+     "mse_smoothed": 2.043
+    },
+    {
+     "subset": "steady",
+     "band": "60-100",
+     "n": 824,
+     "mse_zero": 13.544,
+     "mse_native": 18.658,
+     "mse_smoothed": 17.605
+    },
+    {
+     "subset": "moving",
+     "band": "3-30",
+     "n": 3045,
+     "mse_zero": 6.309,
+     "mse_native": 0.717,
+     "mse_smoothed": 0.717
+    },
+    {
+     "subset": "moving",
+     "band": "30-60",
+     "n": 7442,
+     "mse_zero": 10.287,
+     "mse_native": 3.847,
+     "mse_smoothed": 3.399
+    },
+    {
+     "subset": "moving",
+     "band": "60-100",
+     "n": 5104,
+     "mse_zero": 22.998,
+     "mse_native": 23.4,
+     "mse_smoothed": 21.331
+    }
+   ],
+   "C": [
+    {
+     "subset": "all",
+     "band": "3-30",
+     "n": 2912,
+     "mse_zero": 4.139,
+     "mse_native": 0.35,
+     "mse_smoothed": 0.35
+    },
+    {
+     "subset": "all",
+     "band": "30-60",
+     "n": 13871,
+     "mse_zero": 2.385,
+     "mse_native": 1.577,
+     "mse_smoothed": 1.327
+    },
+    {
+     "subset": "all",
+     "band": "60-100",
+     "n": 6974,
+     "mse_zero": 5.724,
+     "mse_native": 5.413,
+     "mse_smoothed": 4.846
+    },
+    {
+     "subset": "steady",
+     "band": "3-30",
+     "n": 730,
+     "mse_zero": 0.34,
+     "mse_native": 0.322,
+     "mse_smoothed": 0.322
+    },
+    {
+     "subset": "steady",
+     "band": "30-60",
+     "n": 4093,
+     "mse_zero": 0.674,
+     "mse_native": 0.902,
+     "mse_smoothed": 0.827
+    },
+    {
+     "subset": "steady",
+     "band": "60-100",
+     "n": 462,
+     "mse_zero": 2.713,
+     "mse_native": 3.099,
+     "mse_smoothed": 2.739
+    },
+    {
+     "subset": "moving",
+     "band": "3-30",
+     "n": 2182,
+     "mse_zero": 5.41,
+     "mse_native": 0.36,
+     "mse_smoothed": 0.36
+    },
+    {
+     "subset": "moving",
+     "band": "30-60",
+     "n": 9778,
+     "mse_zero": 3.101,
+     "mse_native": 1.859,
+     "mse_smoothed": 1.536
+    },
+    {
+     "subset": "moving",
+     "band": "60-100",
+     "n": 6512,
+     "mse_zero": 5.938,
+     "mse_native": 5.577,
+     "mse_smoothed": 4.996
+    }
+   ]
+  },
+  "limits": "S1 pass, S2 and S3 fail; ~0.5 s later true braking"
+ },
+ {
+  "constant": "min_publish_age 60",
+  "class": "heuristic",
+  "evidence": "raw profile publishes 166 age-1 zero-range sentinels, 21 points > 200 m, 52 |vRel| > 60 on A; the openpilot profile none"
+ },
+ {
+  "constant": "relink_max_gap_s 3.5",
+  "class": "heuristic (pre-registered test)",
+  "evidence": {
+   "A": {
+    "2.5": {
+     "survival": 1.0,
+     "confirmed": 3,
+     "verdicts": {
+      "unverified": 4,
+      "same_vehicle": 3
+     }
+    },
+    "3.5": {
+     "survival": 1.0,
+     "confirmed": 3,
+     "verdicts": {
+      "unverified": 4,
+      "same_vehicle": 3
+     }
+    }
+   },
+   "B": {
+    "2.5": {
+     "survival": 0.769,
+     "confirmed": 13,
+     "verdicts": {
+      "unverified": 17,
+      "different_vehicle": 3,
+      "same_vehicle": 3
+     }
+    },
+    "3.5": {
+     "survival": 0.769,
+     "confirmed": 13,
+     "verdicts": {
+      "unverified": 17,
+      "different_vehicle": 3,
+      "same_vehicle": 3
+     }
+    }
+   },
+   "C": {
+    "2.5": {
+     "survival": 0.625,
+     "confirmed": 16,
+     "verdicts": {
+      "unverified": 5,
+      "same_vehicle": 4,
+      "camera_id_changed_box_continuous": 2
+     }
+    },
+    "3.5": {
+     "survival": 0.688,
+     "confirmed": 16,
+     "verdicts": {
+      "same_vehicle": 8,
+      "unverified": 5,
+      "camera_id_changed_box_continuous": 2
+     }
+    }
+   }
+  },
+  "limits": "wrong-vehicle verdicts only at 60-120 m, where camera identity is unreliable"
+ },
+ {
+  "constant": "drop_unresolved_vrel",
+  "class": "consumer safety guard",
+  "evidence": "radard KF1D never recovers from one NaN vRel (SCR-086)",
+  "current_value": true
+ }
+]

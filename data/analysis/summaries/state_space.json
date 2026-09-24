@@ -1,0 +1,84 @@
+{
+ "A": {
+  "fcw_op": 6,
+  "fcw_kf2": 0,
+  "op": {
+   "camera confirms closing": 6,
+   "camera ~steady (native overstated)": 2,
+   "no camera pair": 1,
+   "CAMERA OPENING (contradicted)": 1
+  },
+  "kf2": {
+   "camera confirms closing": 3,
+   "CAMERA OPENING (contradicted)": 1
+  },
+  "confirmed_kept": [
+   2,
+   6
+  ],
+  "brake_lead_s": {
+   "brake_000": {
+    "op": -0.11,
+    "kf2": null
+   },
+   "brake_001": {
+    "op": null,
+    "kf2": null
+   },
+   "brake_002": {
+    "op": -0.59,
+    "kf2": null
+   },
+   "brake_003": {
+    "op": -1.54,
+    "kf2": null
+   },
+   "brake_004": {
+    "op": -2.88,
+    "kf2": -2.23
+   },
+   "brake_005": {
+    "op": null,
+    "kf2": null
+   }
+  }
+ },
+ "B": {
+  "fcw_op": 0,
+  "fcw_kf2": 0,
+  "op": {
+   "vision-led (planner history)": 5,
+   "camera confirms closing": 5,
+   "no camera pair": 2
+  },
+  "kf2": {
+   "vision-led (planner history)": 3,
+   "no camera pair": 1,
+   "camera confirms closing": 1
+  },
+  "confirmed_kept": [
+   4,
+   5
+  ]
+ },
+ "C": {
+  "fcw_op": 0,
+  "fcw_kf2": 0,
+  "op": {
+   "camera ~steady (native overstated)": 9,
+   "camera confirms closing": 7,
+   "CAMERA OPENING (contradicted)": 4,
+   "vision-led (planner history)": 2
+  },
+  "kf2": {
+   "vision-led (planner history)": 2,
+   "camera ~steady (native overstated)": 1,
+   "camera confirms closing": 1,
+   "CAMERA OPENING (contradicted)": 1
+  },
+  "confirmed_kept": [
+   2,
+   7
+  ]
+ }
+}

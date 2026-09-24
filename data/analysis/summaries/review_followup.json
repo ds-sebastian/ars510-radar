@@ -1,0 +1,66 @@
+{
+  "provenance": {
+    "review_date": "2026-09-23",
+    "source_experiment": "SCR-104",
+    "source_artifact": "ars510_native_video_stationary_truth/summary.json",
+    "scope": "Selected aggregate fields copied from research-workspace output; full window inputs not bundled",
+    "target": "video/odometry stationary hypothesis, not independently surveyed truth",
+    "all_age_rows": true,
+    "settled_age60_results": "diagnostic, not the original all-age acceptance population"
+  },
+  "B": {
+    "stationary_windows": 28,
+    "bands": {
+      "5-30": {
+        "n": 934,
+        "windows": 14,
+        "vrel_err_rms": 0.711,
+        "v_ground_median_abs": 0.225
+      },
+      "30-60": {
+        "n": 393,
+        "windows": 10,
+        "vrel_err_rms": 1.349,
+        "v_ground_median_abs": 0.675
+      },
+      "60-100": {
+        "n": 5,
+        "windows": 2,
+        "status": "unverified"
+      }
+    },
+    "settled_5_30_vrel_err_rms": 0.542,
+    "settled_30_60_v_ground_median_abs": 0.825
+  },
+  "C": {
+    "stationary_windows": 10,
+    "bands": {
+      "5-30": {
+        "n": 427,
+        "windows": 7,
+        "vrel_err_rms": 0.551,
+        "v_ground_median_abs": 0.225
+      },
+      "30-60": {
+        "n": 203,
+        "windows": 6,
+        "vrel_err_rms": 2.197,
+        "v_ground_median_abs": 1.875
+      },
+      "60-100": {
+        "n": 0,
+        "windows": 0,
+        "status": "unverified"
+      }
+    },
+    "settled_5_30_vrel_err_rms": 0.537,
+    "settled_30_60_status": "unverified"
+  },
+  "visual_review": {
+    "note": "overlay frames plus modelV2 and odometry on three stationary-labelled windows",
+    "B_night_queue": "video label wrong: modelV2 and radar range both show the lead creeping 1-3 m/s; radar ground speed agrees in sign",
+    "C_red_light_approach": "radar range walk on a settled lead: range fell 6.4 m while ego travelled ~13.7 m, own ground speed read stopped; modelV2 closed at the odometer rate",
+    "B_left_lane_car": "undecided (no modelV2 reference)",
+    "consequence": "30-60 m stationary results measure the video label as much as the radar; 5-30 m settled result is the usable output"
+  }
+}

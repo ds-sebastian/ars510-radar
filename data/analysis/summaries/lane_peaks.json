@@ -1,0 +1,72 @@
+{
+ "lane_m_assumed": 3.66,
+ "A": {
+  "rows": 10043,
+  "tracks": 30,
+  "peaks_code": {
+   "left": 227.0,
+   "own": -12.0,
+   "right": -241.0
+  },
+  "half_separation_code": 234.0,
+  "half_separation_90ci": [
+   228.0,
+   244.5
+  ],
+  "codes_per_m_at_3.66": 63.9,
+  "codes_per_m_90ci": [
+   62.3,
+   66.8
+  ],
+  "rows_near_left_right": [
+   2642,
+   2534
+  ]
+ },
+ "B": {
+  "rows": 3779,
+  "tracks": 29,
+  "peaks_code": {
+   "left": 269.0,
+   "own": -15.0,
+   "right": -224.0
+  },
+  "half_separation_code": 246.5,
+  "half_separation_90ci": [
+   218.5,
+   259.1
+  ],
+  "codes_per_m_at_3.66": 67.3,
+  "codes_per_m_90ci": [
+   59.7,
+   70.8
+  ],
+  "rows_near_left_right": [
+   2035,
+   616
+  ]
+ },
+ "C": {
+  "rows": 14017,
+  "tracks": 55,
+  "peaks_code": {
+   "left": 225.0,
+   "own": -2.0,
+   "right": -235.0
+  },
+  "half_separation_code": 230.0,
+  "half_separation_90ci": [
+   215.5,
+   238.0
+  ],
+  "codes_per_m_at_3.66": 62.8,
+  "codes_per_m_90ci": [
+   58.9,
+   65.0
+  ],
+  "rows_near_left_right": [
+   3049,
+   3617
+  ]
+ }
+}

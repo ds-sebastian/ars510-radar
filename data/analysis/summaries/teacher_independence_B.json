@@ -1,0 +1,567 @@
+{
+ "range_camera_ground_contact": {
+  "5-15": {
+   "n": 1694,
+   "vehicles": 18,
+   "slope_cam_per_radar": 0.8529,
+   "slope_90ci": [
+    0.5581,
+    0.9723
+   ],
+   "intercept_m": 2.286,
+   "median_cam_minus_radar_m": 0.706
+  },
+  "5-25": {
+   "n": 3525,
+   "vehicles": 30,
+   "slope_cam_per_radar": 0.9917,
+   "slope_90ci": [
+    0.933,
+    1.0384
+   ],
+   "intercept_m": 0.984,
+   "median_cam_minus_radar_m": 0.722
+  },
+  "10-25": {
+   "n": 2723,
+   "vehicles": 28,
+   "slope_cam_per_radar": 1.0415,
+   "slope_90ci": [
+    0.9934,
+    1.0711
+   ],
+   "intercept_m": 0.021,
+   "median_cam_minus_radar_m": 0.633
+  }
+ },
+ "velocity_ego_reference": [
+  {
+   "subset": "lead",
+   "ego_mps": "0-12",
+   "n": 3918,
+   "bias_vs_cam_b4_0.150": -0.18,
+   "margin_vs_zero_b4_0.150": 8.181,
+   "bias_vs_rangeslope10_b4_0.150": 0.049,
+   "bias_vs_cam_b4_0.149": -0.217,
+   "margin_vs_zero_b4_0.149": 8.17,
+   "bias_vs_rangeslope10_b4_0.149": 0.011,
+   "bias_vs_cam_carState_0.150": -0.272,
+   "margin_vs_zero_carState_0.150": 8.132,
+   "bias_vs_rangeslope10_carState_0.150": -0.043,
+   "bias_vs_cam_gps_0.150": -0.309,
+   "margin_vs_zero_gps_0.150": 7.723,
+   "bias_vs_rangeslope10_gps_0.150": -0.058,
+   "gps_over_b4": 1.0393,
+   "cs_over_b4": 1.0134
+  },
+  {
+   "subset": "lead",
+   "ego_mps": "12-22",
+   "n": 6578,
+   "bias_vs_cam_b4_0.150": -0.425,
+   "margin_vs_zero_b4_0.150": 1.448,
+   "bias_vs_rangeslope10_b4_0.150": -0.491,
+   "bias_vs_cam_b4_0.149": -0.535,
+   "margin_vs_zero_b4_0.149": 1.367,
+   "bias_vs_rangeslope10_b4_0.149": -0.602,
+   "bias_vs_cam_carState_0.150": -0.648,
+   "margin_vs_zero_carState_0.150": 1.218,
+   "bias_vs_rangeslope10_carState_0.150": -0.713,
+   "bias_vs_cam_gps_0.150": -0.537,
+   "margin_vs_zero_gps_0.150": 1.268,
+   "bias_vs_rangeslope10_gps_0.150": -0.582,
+   "gps_over_b4": 1.0065,
+   "cs_over_b4": 1.0133
+  },
+  {
+   "subset": "lead",
+   "ego_mps": "22-28",
+   "n": 726,
+   "bias_vs_cam_b4_0.150": -0.197,
+   "margin_vs_zero_b4_0.150": 2.464,
+   "bias_vs_rangeslope10_b4_0.150": -0.675,
+   "bias_vs_cam_b4_0.149": -0.345,
+   "margin_vs_zero_b4_0.149": 2.403,
+   "bias_vs_rangeslope10_b4_0.149": -0.825,
+   "bias_vs_cam_carState_0.150": -0.514,
+   "margin_vs_zero_carState_0.150": 2.251,
+   "bias_vs_rangeslope10_carState_0.150": -0.996,
+   "bias_vs_cam_gps_0.150": -0.484,
+   "margin_vs_zero_gps_0.150": 2.227,
+   "bias_vs_rangeslope10_gps_0.150": -0.958,
+   "gps_over_b4": 1.0093,
+   "cs_over_b4": 1.0136
+  },
+  {
+   "subset": "lead_steady",
+   "ego_mps": "0-12",
+   "n": 527,
+   "bias_vs_cam_b4_0.150": -0.09,
+   "margin_vs_zero_b4_0.150": -0.311,
+   "bias_vs_rangeslope10_b4_0.150": 0.27,
+   "bias_vs_cam_b4_0.149": -0.121,
+   "margin_vs_zero_b4_0.149": -0.306,
+   "bias_vs_rangeslope10_b4_0.149": 0.238,
+   "bias_vs_cam_carState_0.150": -0.157,
+   "margin_vs_zero_carState_0.150": -0.319,
+   "bias_vs_rangeslope10_carState_0.150": 0.202,
+   "bias_vs_cam_gps_0.150": -0.11,
+   "margin_vs_zero_gps_0.150": -0.584,
+   "bias_vs_rangeslope10_gps_0.150": 0.25,
+   "gps_over_b4": 1.038,
+   "cs_over_b4": 1.0135
+  },
+  {
+   "subset": "lead_steady",
+   "ego_mps": "12-22",
+   "n": 1970,
+   "bias_vs_cam_b4_0.150": -0.421,
+   "margin_vs_zero_b4_0.150": -1.522,
+   "bias_vs_rangeslope10_b4_0.150": -0.214,
+   "bias_vs_cam_b4_0.149": -0.536,
+   "margin_vs_zero_b4_0.149": -1.609,
+   "bias_vs_rangeslope10_b4_0.149": -0.329,
+   "bias_vs_cam_carState_0.150": -0.654,
+   "margin_vs_zero_carState_0.150": -1.77,
+   "bias_vs_rangeslope10_carState_0.150": -0.447,
+   "bias_vs_cam_gps_0.150": -0.567,
+   "margin_vs_zero_gps_0.150": -1.686,
+   "bias_vs_rangeslope10_gps_0.150": -0.36,
+   "gps_over_b4": 1.0077,
+   "cs_over_b4": 1.0134
+  },
+  {
+   "subset": "lead_steady",
+   "ego_mps": "22-28",
+   "n": 294,
+   "bias_vs_cam_b4_0.150": -0.184,
+   "margin_vs_zero_b4_0.150": -0.94,
+   "bias_vs_rangeslope10_b4_0.150": -0.202,
+   "bias_vs_cam_b4_0.149": -0.338,
+   "margin_vs_zero_b4_0.149": -1.005,
+   "bias_vs_rangeslope10_b4_0.149": -0.356,
+   "bias_vs_cam_carState_0.150": -0.509,
+   "margin_vs_zero_carState_0.150": -1.159,
+   "bias_vs_rangeslope10_carState_0.150": -0.527,
+   "bias_vs_cam_gps_0.150": -0.533,
+   "margin_vs_zero_gps_0.150": -1.236,
+   "bias_vs_rangeslope10_gps_0.150": -0.551,
+   "gps_over_b4": 1.0176,
+   "cs_over_b4": 1.0138
+  },
+  {
+   "subset": "all",
+   "ego_mps": "0-12",
+   "n": 4590,
+   "bias_vs_cam_b4_0.150": -0.338,
+   "margin_vs_zero_b4_0.150": 8.905,
+   "bias_vs_rangeslope10_b4_0.150": -0.033,
+   "bias_vs_cam_b4_0.149": -0.377,
+   "margin_vs_zero_b4_0.149": 8.874,
+   "bias_vs_rangeslope10_b4_0.149": -0.071,
+   "bias_vs_cam_carState_0.150": -0.436,
+   "margin_vs_zero_carState_0.150": 8.809,
+   "bias_vs_rangeslope10_carState_0.150": -0.128,
+   "bias_vs_cam_gps_0.150": -0.476,
+   "margin_vs_zero_gps_0.150": 8.498,
+   "bias_vs_rangeslope10_gps_0.150": -0.166,
+   "gps_over_b4": 1.037,
+   "cs_over_b4": 1.0134
+  },
+  {
+   "subset": "all",
+   "ego_mps": "12-22",
+   "n": 10228,
+   "bias_vs_cam_b4_0.150": -0.393,
+   "margin_vs_zero_b4_0.150": 1.662,
+   "bias_vs_rangeslope10_b4_0.150": -0.47,
+   "bias_vs_cam_b4_0.149": -0.503,
+   "margin_vs_zero_b4_0.149": 1.604,
+   "bias_vs_rangeslope10_b4_0.149": -0.582,
+   "bias_vs_cam_carState_0.150": -0.621,
+   "margin_vs_zero_carState_0.150": 1.434,
+   "bias_vs_rangeslope10_carState_0.150": -0.698,
+   "bias_vs_cam_gps_0.150": -0.538,
+   "margin_vs_zero_gps_0.150": 1.45,
+   "bias_vs_rangeslope10_gps_0.150": -0.597,
+   "gps_over_b4": 1.0076,
+   "cs_over_b4": 1.0134
+  },
+  {
+   "subset": "all",
+   "ego_mps": "22-28",
+   "n": 1280,
+   "bias_vs_cam_b4_0.150": -0.322,
+   "margin_vs_zero_b4_0.150": 3.335,
+   "bias_vs_rangeslope10_b4_0.150": -0.724,
+   "bias_vs_cam_b4_0.149": -0.467,
+   "margin_vs_zero_b4_0.149": 3.238,
+   "bias_vs_rangeslope10_b4_0.149": -0.87,
+   "bias_vs_cam_carState_0.150": -0.639,
+   "margin_vs_zero_carState_0.150": 3.033,
+   "bias_vs_rangeslope10_carState_0.150": -1.044,
+   "bias_vs_cam_gps_0.150": -0.567,
+   "margin_vs_zero_gps_0.150": 3.089,
+   "bias_vs_rangeslope10_gps_0.150": -0.963,
+   "gps_over_b4": 1.008,
+   "cs_over_b4": 1.0136
+  }
+ ],
+ "lateral_camera_ground_point_range_paired": {
+  "n": 12257,
+  "vehicles": 147,
+  "m_per_code": 0.01261,
+  "codes_per_m": 79.3,
+  "m_per_code_90ci": [
+   0.01209,
+   0.01301
+  ],
+  "intercept_m": 0.121,
+  "sign_agreement_abs_cam_gt_1m": 0.983,
+  "median_abs_resid_m_by_scale": {
+   "1/48": 1.573,
+   "1/60": 0.602,
+   "1/64": 0.363,
+   "1/68": 0.167,
+   "1/72": 0.132,
+   "1/96": 0.48
+  },
+  "adjacent_vehicles_outer_edge": {
+   "n": 7151,
+   "vehicles": 138,
+   "codes_per_m_median_ratio_center_column": 73.8,
+   "codes_per_m_median_ratio_outer_edge": 69.7,
+   "median_abs_resid_outer_edge_by_scale": {
+    "1/48": 1.703,
+    "1/60": 0.651,
+    "1/64": 0.402,
+    "1/68": 0.232,
+    "1/72": 0.295,
+    "1/96": 1.019
+   }
+  },
+  "note": "box-center lateral is biased toward the image center for off-lane cars (visible near flank); the outer edge is not"
+ },
+ "mode_search": {
+  "joined_rows": {
+   "range_m": 16389,
+   "lateral_m": 12257,
+   "vrel_mps": 17835
+  },
+  "replicated_effects": [
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 50,
+    "n": 272,
+    "effect_half0": 0.895,
+    "effect_half1": 2.43,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 57,
+    "n": 557,
+    "effect_half0": -7.505,
+    "effect_half1": -7.189,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 58,
+    "n": 780,
+    "effect_half0": -7.835,
+    "effect_half1": -5.125,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 59,
+    "n": 1086,
+    "effect_half0": -3.93,
+    "effect_half1": -4.212,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 60,
+    "n": 621,
+    "effect_half0": -1.307,
+    "effect_half1": -2.977,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 61,
+    "n": 924,
+    "effect_half0": -0.563,
+    "effect_half1": -2.01,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits8_13",
+    "value": 62,
+    "n": 9957,
+    "effect_half0": 2.062,
+    "effect_half1": 1.476,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits18_19",
+    "value": 0,
+    "n": 901,
+    "effect_half0": -1.62,
+    "effect_half1": -1.501,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits18_19",
+    "value": 3,
+    "n": 118,
+    "effect_half0": -6.839,
+    "effect_half1": -0.802,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits20_22",
+    "value": 4,
+    "n": 85,
+    "effect_half0": -5.954,
+    "effect_half1": -2.328,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "hdr_bits20_22",
+    "value": 5,
+    "n": 1079,
+    "effect_half0": -1.297,
+    "effect_half1": -0.706,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "rec_b14",
+    "value": 9,
+    "n": 2022,
+    "effect_half0": 0.847,
+    "effect_half1": 2.615,
+    "replicated_effect": true
+   },
+   {
+    "residual": "range_m",
+    "field": "rec_b14",
+    "value": 57,
+    "n": 120,
+    "effect_half0": 3.355,
+    "effect_half1": 4.364,
+    "replicated_effect": true
+   },
+   {
+    "residual": "lateral_m",
+    "field": "hdr_bits2_7",
+    "value": 3,
+    "n": 360,
+    "effect_half0": -0.361,
+    "effect_half1": -0.32,
+    "replicated_effect": true
+   },
+   {
+    "residual": "lateral_m",
+    "field": "hdr_bits2_7",
+    "value": 5,
+    "n": 638,
+    "effect_half0": -0.874,
+    "effect_half1": -0.325,
+    "replicated_effect": true
+   },
+   {
+    "residual": "lateral_m",
+    "field": "hdr_bit14",
+    "value": 1,
+    "n": 115,
+    "effect_half0": -1.105,
+    "effect_half1": -0.807,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 32,
+    "n": 179,
+    "effect_half0": -5.725,
+    "effect_half1": -2.051,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 48,
+    "n": 253,
+    "effect_half0": -0.994,
+    "effect_half1": -1.705,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 49,
+    "n": 220,
+    "effect_half0": -1.74,
+    "effect_half1": -1.497,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 50,
+    "n": 286,
+    "effect_half0": -0.845,
+    "effect_half1": -0.789,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 51,
+    "n": 200,
+    "effect_half0": -0.958,
+    "effect_half1": -0.715,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 52,
+    "n": 188,
+    "effect_half0": -0.904,
+    "effect_half1": -1.513,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 53,
+    "n": 274,
+    "effect_half0": -1.299,
+    "effect_half1": -0.865,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 54,
+    "n": 153,
+    "effect_half0": -0.603,
+    "effect_half1": -1.927,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 55,
+    "n": 119,
+    "effect_half0": -0.362,
+    "effect_half1": -1.14,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 56,
+    "n": 253,
+    "effect_half0": -1.024,
+    "effect_half1": -0.687,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 57,
+    "n": 845,
+    "effect_half0": -1.061,
+    "effect_half1": -0.65,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "hdr_bits8_13",
+    "value": 62,
+    "n": 9505,
+    "effect_half0": 0.354,
+    "effect_half1": 0.386,
+    "replicated_effect": true
+   },
+   {
+    "residual": "vrel_mps",
+    "field": "rec_b14",
+    "value": 49,
+    "n": 632,
+    "effect_half0": -0.73,
+    "effect_half1": -0.98,
+    "replicated_effect": true
+   }
+  ],
+  "groups_tested": 137
+ },
+ "standstill_velocity_codes": {
+  "510": 2669,
+  "511": 1708,
+  "509": 263,
+  "512": 257,
+  "508": 116,
+  "513": 85
+ },
+ "standstill_zero_code_weighted": 510.4,
+ "range_short_term_consistency_camera": {
+  "span_s": 1.5,
+  "5-40": {
+   "n": 6122,
+   "vehicles": 40,
+   "range_change_err_m_p50_p90": [
+    1.26,
+    4.45
+   ],
+   "integrated_vrel_err_m_p50_p90": [
+    0.59,
+    2.2
+   ],
+   "share_range_worse": 0.717
+  },
+  "40-80": {
+   "n": 11828,
+   "vehicles": 71,
+   "range_change_err_m_p50_p90": [
+    3.69,
+    9.92
+   ],
+   "integrated_vrel_err_m_p50_p90": [
+    1.7,
+    7.02
+   ],
+   "share_range_worse": 0.692
+  },
+  "80-160": {
+   "n": 3422,
+   "vehicles": 42,
+   "range_change_err_m_p50_p90": [
+    7.26,
+    20.88
+   ],
+   "integrated_vrel_err_m_p50_p90": [
+    5.03,
+    17.17
+   ],
+   "share_range_worse": 0.6
+  }
+ }
+}

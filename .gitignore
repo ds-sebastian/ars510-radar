@@ -1,0 +1,16 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+build/
+# local outputs of the tools; never commit drives
+cabana_out/
+replay_out/
+op_shadow/
+*.rlog
+rlog
+rlog.*
+qlog
+qlog.*
+*.hevc
+*.ts

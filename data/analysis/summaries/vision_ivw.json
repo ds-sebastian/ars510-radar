@@ -1,0 +1,77 @@
+{
+ "B": {
+  "fcw_op": 0,
+  "fcw_ivw": 0,
+  "op": {
+   "vision-led (planner history)": 5,
+   "camera confirms closing": 5,
+   "no camera pair": 2
+  },
+  "ivw": {
+   "vision-led (planner history)": 3,
+   "camera confirms closing": 1,
+   "no camera pair": 1
+  },
+  "confirmed_kept": [
+   3,
+   5
+  ]
+ },
+ "C": {
+  "fcw_op": 0,
+  "fcw_ivw": 0,
+  "op": {
+   "camera ~steady (native overstated)": 9,
+   "camera confirms closing": 7,
+   "CAMERA OPENING (contradicted)": 4,
+   "vision-led (planner history)": 2
+  },
+  "ivw": {
+   "camera confirms closing": 1
+  },
+  "confirmed_kept": [
+   1,
+   7
+  ]
+ },
+ "A": {
+  "fcw_op": 6,
+  "fcw_ivw": 0,
+  "op": {
+   "camera confirms closing": 6,
+   "camera ~steady (native overstated)": 2,
+   "no camera pair": 1,
+   "CAMERA OPENING (contradicted)": 1
+  },
+  "ivw": {
+   "camera confirms closing": 4,
+   "CAMERA OPENING (contradicted)": 1
+  },
+  "confirmed_kept": [
+   3,
+   6
+  ],
+  "brake_lead_s": {
+   "brake_000": {
+    "op": -0.11,
+    "ivw": null,
+    "vision": null
+   },
+   "brake_002": {
+    "op": -0.59,
+    "ivw": null,
+    "vision": null
+   },
+   "brake_003": {
+    "op": -1.54,
+    "ivw": -1.09,
+    "vision": null
+   },
+   "brake_004": {
+    "op": -2.88,
+    "ivw": -2.4,
+    "vision": null
+   }
+  }
+ }
+}

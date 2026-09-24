@@ -1,0 +1,42 @@
+"""0x80 object record: CRC check and slot extraction."""
+from __future__ import annotations
+
+import zlib
+from typing import Iterator
+
+from .constants import (
+    ID80_CRC_END,
+    ID80_CRC_FIELD,
+    ID80_CRC_START,
+    ID80_IDLE_SLOT,
+    ID80_OBJECT_COUNT,
+    ID80_OBJECT_LEN,
+    ID80_OBJECT_START,
+    ID80_RECORD_LEN,
+)
+
+
+def id80_crc_ok(record: bytes) -> bool:
+    """zlib CRC32 over record[1:737], stored little-endian at record[737:741]."""
+    if len(record) != ID80_RECORD_LEN:
+        return False
+    observed = int.from_bytes(record[ID80_CRC_FIELD[0]:ID80_CRC_FIELD[1]], "little")
+    return observed == (zlib.crc32(record[ID80_CRC_START:ID80_CRC_END]) & 0xFFFFFFFF)
+
+
+def id80_crc(record_body: bytes) -> int:
+    """CRC value for record[1:737] (useful for building synthetic records)."""
+    return zlib.crc32(record_body) & 0xFFFFFFFF
+
+
+def slot_bytes(record: bytes, slot: int) -> bytes:
+    start = ID80_OBJECT_START + slot * ID80_OBJECT_LEN
+    return record[start:start + ID80_OBJECT_LEN]
+
+
+def occupied_slots(record: bytes) -> Iterator[tuple[int, bytes]]:
+    """(slot index, 36 slot bytes) for every slot that is not the idle template."""
+    for slot in range(ID80_OBJECT_COUNT):
+        b = slot_bytes(record, slot)
+        if b != ID80_IDLE_SLOT:
+            yield slot, b

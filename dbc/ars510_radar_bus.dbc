@@ -1,0 +1,555 @@
+VERSION "Toyota/Continental ARS510 radar bus (comma harness bus 1), frame-level. Object records need reassembly: see ars510/ and dbc/ars510_objects_vbus.dbc"
+
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    BA_DEF_DEF_
+    VAL_
+
+BS_:
+
+BU_: RADAR XXX
+
+BO_ 128 ARS510_ID80_SEGMENT: 8 RADAR
+ SG_ ID80_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID80_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 133 ARS510_ID85_SEGMENT: 8 RADAR
+ SG_ ID85_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ ID85_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 129 ARS510_ID80_RECORD_CYCLE_MARKER: 8 RADAR
+ SG_ A081_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A081_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 134 ARS510_ID85_RECORD_CYCLE_MARKER: 8 RADAR
+ SG_ A086_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A086_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 256 ARS510_A100_CANDIDATE: 7 RADAR
+ SG_ A100_STARTUP_WORD_BE16 : 7|16@0+ (1,0) [0|65535] "raw" RADAR
+ SG_ A100_B2_B6_RESERVED_ZERO40 : 23|40@0+ (1,0) [0|1099511627775] "raw" RADAR
+
+BO_ 257 ARS510_A101_CANDIDATE: 6 RADAR
+ SG_ A101_STARTUP_STATE8 : 0|8@1+ (1,0) [0|255] "state" RADAR
+ SG_ A101_B1_B5_RESERVED_ZERO40 : 15|40@0+ (1,0) [0|1099511627775] "raw" RADAR
+
+BO_ 258 ARS510_A102_CANDIDATE: 3 RADAR
+ SG_ A102_B0_RESERVED_ZERO8 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A102_B1_RESERVED_ZERO3 : 8|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A102_CONTEXT_BIT11 : 11|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A102_B1_RESERVED4_5_ZERO2 : 12|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A102_CONTEXT_BIT14 : 14|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A102_B1_RESERVED7_ZERO1 : 15|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A102_B2_RESERVED_ZERO5 : 16|5@1+ (1,0) [0|31] "raw" RADAR
+ SG_ A102_CONTEXT_BIT21 : 21|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A102_B2_RESERVED6_7_ZERO2 : 22|2@1+ (1,0) [0|3] "raw" RADAR
+
+BO_ 259 ARS510_A103_CANDIDATE: 2 RADAR
+ SG_ A103_B0_RESERVED_ZERO8 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A103_B1_RESERVED_ZERO8 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 384 ARS510_A180_CANDIDATE: 5 RADAR
+ SG_ A180_OBSERVED_CONSTANT_BE40 : 7|40@0+ (1,0) [0|1099511627775] "raw" RADAR
+
+BO_ 400 ARS510_A190_CANDIDATE: 7 RADAR
+ SG_ A190_STATUS_0_4 : 0|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A190_B0_HIGH4 : 4|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A190_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A190_TIMESTAMP_US : 23|32@0+ (1,0) [0|4294967295] "us" RADAR
+ SG_ A190_COUNTER_RESERVED0 : 48|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A190_COUNTER4 : 52|4@1+ (1,0) [0|15] "counter" RADAR
+
+BO_ 405 ARS510_A195_CANDIDATE: 8 RADAR
+ SG_ A195_WORD0_CODE16 : 7|16@0+ (1,0) [0|65535] "code" RADAR
+ SG_ A195_B2_RESERVED_ZERO3 : 23|3@0+ (1,0) [0|7] "raw" RADAR
+ SG_ A195_B2_RESERVED_ONE2 : 20|2@0+ (1,0) [0|3] "raw" RADAR
+ SG_ A195_FIELD1_CODE7 : 18|7@0+ (1,0) [0|127] "code" RADAR
+ SG_ A195_B3_B4_RESERVED_ZERO5 : 27|5@0+ (1,0) [0|31] "raw" RADAR
+ SG_ A195_FIELD2_CODE7 : 38|7@0+ (1,0) [0|127] "code" RADAR
+ SG_ A195_B5_RESERVED_ZERO1 : 47|1@0+ (1,0) [0|1] "raw" RADAR
+ SG_ A195_FIELD3_CODE11 : 46|11@0+ (1,0) [0|2047] "code" RADAR
+ SG_ A195_B6_RESERVED_ZERO1 : 51|1@0+ (1,0) [0|1] "raw" RADAR
+ SG_ A195_FIELD4_CODE11 : 50|11@0+ (1,0) [0|2047] "code" RADAR
+
+BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
+ SG_ A196_B0_RESERVED_ONE2 : 7|2@0+ (1,0) [0|3] "raw" RADAR
+ SG_ A196_FIELD0_CODE6 : 5|6@0+ (1,0) [0|63] "code" RADAR
+ SG_ A196_B1_B4_RESERVED_ZERO26 : 15|26@0+ (1,0) [0|67108863] "raw" RADAR
+ SG_ A196_FIELD1_CODE6 : 37|6@0+ (1,0) [0|63] "code" RADAR
+ SG_ A196_B5_RESERVED_ZERO3 : 47|3@0+ (1,0) [0|7] "raw" RADAR
+ SG_ A196_FIELD2_CODE5 : 44|5@0+ (1,0) [0|31] "code" RADAR
+ SG_ A196_B6_RESERVED_ZERO1 : 55|1@0+ (1,0) [0|1] "raw" RADAR
+ SG_ A196_FIELD3_CODE7 : 54|7@0+ (1,0) [0|127] "code" RADAR
+ SG_ A196_B7_RESERVED_ZERO2 : 63|2@0+ (1,0) [0|3] "raw" RADAR
+ SG_ A196_FIELD4_CODE6 : 61|6@0+ (1,0) [0|63] "code" RADAR
+
+BO_ 407 ARS510_A197_CANDIDATE: 2 RADAR
+ SG_ A197_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A197_STARTUP_PHASE1 : 8|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A197_B1_RESERVED1_7 : 9|7@1+ (1,0) [0|127] "raw" RADAR
+
+BO_ 408 ARS510_A198_CANDIDATE: 1 RADAR
+ SG_ A198_OBSERVED_CONSTANT_BE8 : 7|8@0+ (1,0) [0|255] "raw" RADAR
+
+BO_ 514 ARS510_A202_CANDIDATE: 5 RADAR
+ SG_ A202_CHECK_BYTE8 : 0|8@1+ (1,0) [0|255] "debug" RADAR
+ SG_ A202_B1_RESERVED_ZERO4 : 8|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A202_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
+ SG_ A202_B2_B4_OBSERVED_CONSTANT_BE24 : 23|24@0+ (1,0) [0|16777215] "raw" RADAR
+
+BO_ 528 ARS510_A210_CANDIDATE: 7 RADAR
+ SG_ A210_RSA_SPEED_SIGN_PRESENT1 : 0|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A210_B0_RESERVED1_7 : 1|7@1+ (1,0) [0|127] "raw" RADAR
+ SG_ A210_RSA_SPEED_LIMIT_VALUE8 : 8|8@1+ (1,0) [0|255] "display_speed" RADAR
+ SG_ A210_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A210_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A210_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A210_B5_RESERVED0_5 : 40|6@1+ (1,0) [0|63] "raw" RADAR
+ SG_ A210_RSA_MASTER_SWITCH1 : 46|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A210_B5_STATUS_BIT7 : 47|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A210_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 576 ARS510_A240_CANDIDATE: 8 RADAR
+ SG_ A240_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
+ SG_ A240_MUX_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
+ SG_ A240_MIRROR_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A240_MIRROR_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A240_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 577 ARS510_A241_CANDIDATE: 8 RADAR
+ SG_ A241_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
+ SG_ A241_MUX_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
+ SG_ A241_MIRROR_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A241_MIRROR_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A241_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 580 ARS510_A244_CANDIDATE: 8 RADAR
+ SG_ A244_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
+ SG_ A244_MUX_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
+ SG_ A244_MIRROR_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A244_MIRROR_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A244_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 581 ARS510_A245_CANDIDATE: 8 RADAR
+ SG_ A245_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
+ SG_ A245_MUX_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
+ SG_ A245_MIRROR_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A245_MIRROR_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A245_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 584 ARS510_A248_CANDIDATE: 8 RADAR
+ SG_ A248_B0_RESERVED_ZERO2 : 0|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A248_STARTUP_STATUS2 : 2|2@1+ (1,0) [0|3] "state" RADAR
+ SG_ A248_MUX_PHASE_RESERVED0 : 4|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A248_MUX_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
+ SG_ A248_B1_RESERVED_ZERO8 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A248_STARTUP_PHASE2 : 16|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A248_B2_RESERVED1_7 : 17|7@1+ (1,0) [0|127] "raw" RADAR
+ SG_ A248_B3_B5_RESERVED_ZERO24 : 31|24@0+ (1,0) [0|16777215] "raw" RADAR
+ SG_ A248_B6_RESERVED_ZERO1 : 48|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A248_EVENT_PULSE1 : 49|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A248_B6_RESERVED2_6 : 50|6@1+ (1,0) [0|63] "raw" RADAR
+ SG_ A248_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 589 ARS510_A24D_CANDIDATE: 7 RADAR
+ SG_ A24D_OBSERVED_CONSTANT_BE56 : 7|56@0+ (1,0) [0|72057594037927935] "raw" RADAR
+
+BO_ 591 ARS510_A24F_CANDIDATE: 1 RADAR
+ SG_ A24F_B0_RESERVED_ZERO6 : 0|6@1+ (1,0) [0|63] "raw" RADAR
+ SG_ A24F_STARTUP_PHASE1 : 6|1@1+ (1,0) [0|1] "state" RADAR
+ SG_ A24F_B0_RESERVED_ZERO1 : 7|1@1+ (1,0) [0|1] "raw" RADAR
+
+BO_ 1280 ARS510_A500_CANDIDATE: 6 RADAR
+ SG_ A500_OBSERVED_CONSTANT_BE48 : 7|48@0+ (1,0) [0|281474976710655] "raw" RADAR
+
+BO_ 1281 ARS510_A501_CANDIDATE: 7 RADAR
+ SG_ A501_B0_B3_OBSERVED_CONSTANT_BE32 : 7|32@0+ (1,0) [0|4294967295] "raw" RADAR
+ SG_ A501_B4_OBSERVED_CONSTANT8 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A501_STATUS_40_4 : 40|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A501_B5_HIGH4 : 44|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A501_B6_OBSERVED_CONSTANT8 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 1282 ARS510_A502_CANDIDATE: 8 RADAR
+ SG_ A502_B0_CONST8 : 0|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A502_SLOW_CODE0_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A502_SLOW_CODE1_BE16 : 23|16@0+ (1,0) [0|65535] "raw" RADAR
+ SG_ A502_TAIL_CONST_BE32 : 39|32@0+ (1,0) [0|4294967295] "raw" RADAR
+
+BO_ 1664 ARS510_A680_CANDIDATE: 8 RADAR
+ SG_ A680_STATUS_0_4 : 0|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A680_B0_HIGH4 : 4|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A680_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A680_STATUS_56_4 : 56|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A680_B7_HIGH4 : 60|4@1+ (1,0) [0|15] "raw" RADAR
+
+BO_ 401 ARS510_A191_COMPANION: 8 RADAR
+ SG_ A191_B0_RESERVED0 : 0|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A191_PAIR_SCORE_CODE7 : 1|7@1+ (1,0) [0|127] "code" RADAR
+ SG_ A191_B1_RESERVED0 : 8|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A191_PAIR_TRACK_AGE7 : 9|7@1+ (1,0) [0|127] "radar_cycle" RADAR
+ SG_ A191_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A191_B3_RESERVED0_2 : 24|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A191_PAIR_TRACK_ID6 : 26|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A191_B4_RESERVED0_2 : 32|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A191_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A191_B5_RESERVED0_3 : 40|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A191_PAIR_FIELD5_CODE5 : 43|5@1+ (1,0) [0|31] "code" RADAR
+ SG_ A191_B6_RESERVED0 : 48|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A191_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (1,0) [0|127] "code" RADAR
+ SG_ A191_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (1,0) [0|255] "code" RADAR
+
+BO_ 402 ARS510_A192_COMPANION: 4 RADAR
+ SG_ A192_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A192_PAIR_RANGE_CODE13 : 4|13@0+ (0.046875,0) [0|383.95] "m" RADAR
+ SG_ A192_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A192_PAIR_FIELD1_CODE13 : 20|13@0+ (1,0) [0|8191] "code" RADAR
+
+BO_ 403 ARS510_A193_COMPANION: 8 RADAR
+ SG_ A193_B0_RESERVED0 : 0|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A193_PAIR_SCORE_CODE7 : 1|7@1+ (1,0) [0|127] "code" RADAR
+ SG_ A193_B1_RESERVED0 : 8|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A193_PAIR_TRACK_AGE7 : 9|7@1+ (1,0) [0|127] "radar_cycle" RADAR
+ SG_ A193_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A193_B3_RESERVED0_2 : 24|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A193_PAIR_TRACK_ID6 : 26|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A193_B4_RESERVED0_2 : 32|2@1+ (1,0) [0|3] "raw" RADAR
+ SG_ A193_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A193_B5_RESERVED0_3 : 40|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A193_PAIR_FIELD5_CODE5 : 43|5@1+ (1,0) [0|31] "code" RADAR
+ SG_ A193_B6_RESERVED0 : 48|1@1+ (1,0) [0|1] "raw" RADAR
+ SG_ A193_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (1,0) [0|127] "code" RADAR
+ SG_ A193_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (1,0) [0|255] "code" RADAR
+
+BO_ 404 ARS510_A194_COMPANION: 4 RADAR
+ SG_ A194_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A194_PAIR_RANGE_CODE13 : 4|13@0+ (0.046875,0) [0|383.95] "m" RADAR
+ SG_ A194_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
+ SG_ A194_PAIR_FIELD1_CODE13 : 20|13@0+ (1,0) [0|8191] "code" RADAR
+
+BO_ 565 ARS510_A235_COMPANION: 8 RADAR
+ SG_ A235_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
+ SG_ A235_STATUS_MUX4 : 8|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A235_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
+ SG_ A235_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 567 ARS510_A237_COMPANION: 8 RADAR
+ SG_ A237_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
+ SG_ A237_STATUS_MUX4 : 8|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A237_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
+ SG_ A237_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 569 ARS510_A239_COMPANION: 8 RADAR
+ SG_ A239_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
+ SG_ A239_STATUS_MUX4 : 8|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A239_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
+ SG_ A239_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_B3 : 24|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_B4 : 32|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 571 ARS510_A23B_COMPANION: 3 RADAR
+ SG_ A23B_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
+ SG_ A23B_STATUS_MUX4 : 8|4@1+ (1,0) [0|15] "state" RADAR
+ SG_ A23B_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
+ SG_ A23B_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+
+BO_ 573 ARS510_A23D_COMPANION: 8 RADAR
+ SG_ A23D_OBSERVED_CONSTANT_BE64 : 7|64@0+ (1,0) [0|18446744073709551615] "raw" RADAR
+
+CM_ "ARS510 low-level frame-local DBC. This file intentionally exposes only raw transport bytes for 0x80/0x85, observed 0x81/0x86 record-cycle markers, pair-local track identity/age fields for 0x191/0x193, startup and sync/debug structure, and recurring raw candidate frames. Multi-frame reconstruction, object geometry, publication, selection, global lifecycle, and quality/state semantics remain parser-runtime owned. See docs/ in the ars510-radar repo.";
+CM_ BO_ 128 "ARS510 ID80 segmented object-record frame. Runtime reassembly starts on bytes 0x12 0xE4 and appends bytes 1..7 from 106 frames into a 742-byte record.";
+CM_ BO_ 133 "ARS510 ID85 segmented metadata-record frame. Runtime reassembly starts on bytes 0x10 0x90 and appends bytes 1..7 from 21 frames into a 147-byte record.";
+CM_ BO_ 129 "ARS510 ID80 record-cycle companion marker. Across the recorded drives, one fixed 30 00 00 00 00 00 00 00 frame follows each ID80 12 E4 record start within 20 ms. Framing/synchronization only; not object validity, lifecycle, publication, selection, quality, or geometry.";
+CM_ BO_ 134 "ARS510 ID85 record-cycle companion marker. Across the recorded drives, one fixed 30 00 00 00 00 00 00 00 frame follows each ID85 10 90 record start within 20 ms. Framing/synchronization only; not object validity, lifecycle, publication, selection, quality, or geometry.";
+CM_ BO_ 256 "ARS510 0x100 startup/context frame. The first big-endian 16-bit word is normally zero; one recorded startup frame contains 0xFFFF. Bytes 2..6 are zero on every recorded frame. Startup/configuration structure only; no object semantics are promoted.";
+CM_ BO_ 257 "ARS510 0x101 startup-state frame. State 0x1D changes once to 0x11 exactly 70 ms before A197_STARTUP_PHASE1 on the recorded drives. State 0x21 is a rare unresolved transient. Bytes 1..5 are reserved zero; no object semantics are promoted.";
+CM_ BO_ 258 "ARS510 0x102 sparse state/context frame. Only bits 11, 14, and 21 change on recorded drives; their Toyota cruise/brake comparisons do not support semantic naming. All other bits are reserved zero. Context metadata only; no object semantics are promoted.";
+CM_ BO_ 259 "ARS510 0x103 reserved guard frame. Both payload bytes are zero on every recorded drive frame; no object or operational semantics are promoted.";
+CM_ BO_ 384 "ARS510 0x180 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 400 "ARS510 0x190 radar-cycle timing header. Bytes 2..5 are a observed big-endian microsecond timestamp and byte 6 high nibble is a modulo-16 rolling counter advancing +3 per nominal cycle; synchronization metadata only, not object semantics.";
+CM_ BO_ 401 "ARS510 0x191 pair-track summary frame. Sentinel payload FEFEFEFCFCFFFEFF. Byte 0 bits 1..7 are a score-like 91..100 active code, byte 1 bits 1..7 are a saturating pair-local track-age counter, and byte 3 bits 2..7 are a pair-local track identity code. Bytes 4, 6, and 7 form an identity-stable descriptor tuple with unresolved OEM meaning; byte 5 is a separate dynamic code. These fields are not promoted as confidence, validity, publication, selection, dimensions, or class truth.";
+CM_ BO_ 402 "ARS510 0x192 target summary (4 bytes). Sentinel 00FF00FF = no target. A filtered summary of the target the radar selects itself (probably for ACC / pre-collision), NOT a better lead measurement: bytes 0-1 are a big-endian distance of about 3/64 m per code, heavily smoothed and lagging the 0x80 track by 10-15 m in closings; byte 2 is a lateral bin of that target (7/8 own lane, 6 and 9 adjacent lanes, 10-13 far left, 2-5 oncoming side); byte 3 unknown. It matches some 0x80 track within 1.5 m only 18-39% of the time. 0x191 is its companion (score, age, id).";
+CM_ BO_ 403 "ARS510 0x193 pair-track summary frame. Sentinel payload FEFEFEFCFCFFFEFF. Byte 0 bits 1..7 are a score-like 91..100 active code, byte 1 bits 1..7 are a saturating pair-local track-age counter, and byte 3 bits 2..7 are a pair-local track identity code. Bytes 4, 6, and 7 form an identity-stable descriptor tuple with unresolved OEM meaning; byte 5 is a separate dynamic code. These fields are not promoted as confidence, validity, publication, selection, dimensions, or class truth.";
+CM_ BO_ 404 "ARS510 0x194 target summary, same shape as 0x192 (second selected target?). Not characterised; 0x193 is its companion.";
+CM_ BO_ 405 "ARS510 0x195 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 406 "ARS510 0x196 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 407 "ARS510 0x197 startup-phase frame. Bit 8 is zero only during the initial recorded-drive startup interval and then changes once to one without reverting; startup metadata only, not object validity, lifecycle, publication, selection, quality, or geometry.";
+CM_ BO_ 408 "ARS510 0x198 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 514 "ARS510 0x202 recurring bus-1 candidate frame. Byte 1 high nibble is a observed modulo-16 counter candidate; no object semantics are promoted.";
+CM_ BO_ 528 "ARS510 0x210 replicated Toyota road-sign-assist context frame. Byte-0 bit 0 mirrors speed-sign presence, byte 1 mirrors RSA1.SPDVAL1, and byte-5 bit 6 mirrors RSA3.TSRMSW on the recorded drives. The speed unit is selected externally by RSA2.SPDUNT. Not radar object semantics.";
+CM_ BO_ 565 "ARS510 0x235 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
+CM_ BO_ 567 "ARS510 0x237 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
+CM_ BO_ 569 "ARS510 0x239 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
+CM_ BO_ 571 "ARS510 0x23B companion/debug frame. Three-byte member of the synchronized 0x23x family; byte 1 is split into mux/counter nibbles, with no direct geometry, lifecycle, publication, selection, quality, or candidate-generation truth promoted.";
+CM_ BO_ 573 "ARS510 0x23D companion/debug frame. Route evidence recorded it as an all-zero guard/debug frame; no object semantics are promoted.";
+CM_ BO_ 576 "ARS510 0x240 synchronized mirror frame. Byte 0 carries a observed 3-bit mux phase; bytes 1..6 are two exactly equal raw BE24 words and byte 7 is reserved zero. The four mirror addresses are byte-identical whenever observed together; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 577 "ARS510 0x241 synchronized mirror frame. Byte 0 carries a observed 3-bit mux phase; bytes 1..6 are two exactly equal raw BE24 words and byte 7 is reserved zero. The four mirror addresses are byte-identical whenever observed together; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 580 "ARS510 0x244 synchronized mirror frame. Byte 0 carries a observed 3-bit mux phase; bytes 1..6 are two exactly equal raw BE24 words and byte 7 is reserved zero. The four mirror addresses are byte-identical whenever observed together; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 581 "ARS510 0x245 synchronized mirror frame. Byte 0 carries a observed 3-bit mux phase; bytes 1..6 are two exactly equal raw BE24 words and byte 7 is reserved zero. The four mirror addresses are byte-identical whenever observed together; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 584 "ARS510 0x248 synchronized startup/event context frame. Byte 0 carries startup/status context and the common 3-bit mux phase; byte-2 bit 0 is a one-way startup phase 2, and byte-6 bit 1 is a rare isolated event pulse of unresolved meaning. No object semantics are promoted.";
+CM_ BO_ 589 "ARS510 0x24D recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 591 "ARS510 0x24F recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 1280 "ARS510 0x500 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
+CM_ BO_ 1281 "ARS510 0x501 recurring bus-1 candidate frame. Observed raw coverage plus reviewed status/mux context metadata; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 1282 "ARS510 0x502 slow-state bus-1 frame. Observed on the recorded drives and on five independent native segments at a 3.000 s median interarrival with DLC 8. Byte 0 is 0x19 and bytes 4..7 are <unit-specific 32-bit constant, redacted> on every nonzero frame of all three drives; both constants are documented, not enforced. Bytes 2..3 are a carry-verified big-endian pair, while bytes 0..1 have no observed carry excitation and are therefore not grouped into a 16-bit field. The two varying fields drift by small signed steps with plateaus up to about 12 minutes and no route-stable relationship to each other. Source ECU, units, scale, and signedness are unresolved; no geometry, velocity, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ BO_ 1664 "ARS510 0x680 recurring bus-1 candidate frame. Observed raw coverage plus reviewed status/mux context metadata; no geometry, validity, quality, lifecycle, publication, selection, or candidate-generation semantics are promoted.";
+CM_ SG_ 514 A202_CHECK_BYTE8 "0x202 byte 0. Determined entirely by A202_COUNTER4 on the recorded drives via the fixed map 0:0x10 1:0x8D 2:0x37 3:0xAA 4:0x5E 5:0xC3 6:0x79 7:0xE4 8:0x8C 9:0x11 10:0xAB 11:0x36 12:0xC2 13:0x5F 14:0xE5 15:0x78, and byte 0 of a counter and of its XOR-9 partner differ only in bit 0, which is a check-byte signature. Frame-check candidate only: the payload it covers is constant on the recorded drives, so neither the algorithm nor its behavior over a varying payload is identified. Do not use it to reject frames.";
+CM_ SG_ 514 A202_B1_RESERVED_ZERO4 "0x202 byte-1 low nibble. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 514 A202_B2_B4_OBSERVED_CONSTANT_BE24 "0x202 bytes 2..4, unsigned big-endian. Observed constant 0x036D80 on every recorded bus-1 frame of the recorded drives. Documented, not enforced.";
+CM_ SG_ 591 A24F_B0_RESERVED_ZERO6 "0x24F byte-0 bits 0..5. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 591 A24F_STARTUP_PHASE1 "0x24F byte-0 bit 6. Zero for the first 24 frames of the short recorded drive (0.221 s to 0.911 s) and then one without reverting; one on every long-route frame, which begins after power-on. Startup/debug context only, matching A197_STARTUP_PHASE1; not radar-ready, object validity, lifecycle, publication, selection, or quality truth.";
+CM_ SG_ 591 A24F_B0_RESERVED_ZERO1 "0x24F byte-0 bit 7. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 1281 A501_B0_B3_OBSERVED_CONSTANT_BE32 "0x501 bytes 0..3, unsigned big-endian. Observed constant 0xFFF0FFF0 on every recorded bus-1 frame of the recorded drives. An all-ones-style word like this is often a not-available encoding, but that is not established here; documented, not enforced.";
+CM_ SG_ 1281 A501_B4_OBSERVED_CONSTANT8 "0x501 byte 4. Observed constant 0x70 on every recorded bus-1 frame of the recorded drives. Documented, not enforced.";
+CM_ SG_ 1281 A501_B6_OBSERVED_CONSTANT8 "0x501 byte 6. Observed constant 0x00 on every recorded bus-1 frame of the recorded drives. Documented, not enforced.";
+CM_ SG_ 384 A180_OBSERVED_CONSTANT_BE40 "0x180 full payload, unsigned big-endian. Observed constant 0xCFC0000000 on all 214,731 recorded bus-1 frames of the recorded drives, so this frame carries no varying field on the recorded evidence and generic raw bytes would overstate its content. The constant is documented, not enforced: any value still decodes, and a route that varies this frame falsifies the observation. The first frame on a recorded drive instead carries 0xFFC0000000, an initialization-like payload. That is an observation, not a drop rule: it is preserved and decoded like any other payload.";
+CM_ SG_ 408 A198_OBSERVED_CONSTANT_BE8 "0x198 full payload, unsigned big-endian. Observed constant 0x10 on all 214,744 recorded bus-1 frames of the recorded drives, so this frame carries no varying field on the recorded evidence and generic raw bytes would overstate its content. The constant is documented, not enforced: any value still decodes, and a route that varies this frame falsifies the observation. The first frame on a recorded drive instead carries 0x00, an initialization-like payload. That is an observation, not a drop rule: it is preserved and decoded like any other payload.";
+CM_ SG_ 573 A23D_OBSERVED_CONSTANT_BE64 "0x23D full payload, unsigned big-endian. Observed constant 0x0000000000000000 on all 644,232 recorded bus-1 frames of the recorded drives, so this frame carries no varying field on the recorded evidence and generic raw bytes would overstate its content. The constant is documented, not enforced: any value still decodes, and a route that varies this frame falsifies the observation.";
+CM_ SG_ 589 A24D_OBSERVED_CONSTANT_BE56 "0x24D full payload, unsigned big-endian. Observed constant 0x00000000000056 on all 12,885 recorded bus-1 frames of the recorded drives, so this frame carries no varying field on the recorded evidence and generic raw bytes would overstate its content. The constant is documented, not enforced: any value still decodes, and a route that varies this frame falsifies the observation.";
+CM_ SG_ 1280 A500_OBSERVED_CONSTANT_BE48 "0x500 full payload, unsigned big-endian. Observed constant <unit-specific 48-bit constant, redacted> on all 25,768 recorded bus-1 frames of the recorded drives, so this frame carries no varying field on the recorded evidence and generic raw bytes would overstate its content. The constant is documented, not enforced: any value still decodes, and a route that varies this frame falsifies the observation. The first frame on a recorded drive instead carries 0xFFF8FFC0FFC0, an initialization-like payload. That is an observation, not a drop rule: it is preserved and decoded like any other payload.";
+CM_ SG_ 405 A195_WORD0_CODE16 "0x195 bits 0..15 MSB-first, unsigned big-endian. Idle payload value 32766. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 405 A195_B2_RESERVED_ZERO3 "0x195 bits 16..18 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 405 A195_B2_RESERVED_ONE2 "0x195 bits 19..20 MSB-first, unsigned big-endian. Idle payload value 3. Held at one on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 405 A195_FIELD1_CODE7 "0x195 bits 21..27 MSB-first, unsigned big-endian. Idle payload value 126. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 405 A195_B3_B4_RESERVED_ZERO5 "0x195 bits 28..32 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 405 A195_FIELD2_CODE7 "0x195 bits 33..39 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 405 A195_B5_RESERVED_ZERO1 "0x195 bits 40..40 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 405 A195_FIELD3_CODE11 "0x195 bits 41..51 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "0x195 bits 52..52 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 405 A195_FIELD4_CODE11 "0x195 bits 53..63 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 406 A196_B0_RESERVED_ONE2 "0x196 bits 0..1 MSB-first, unsigned big-endian. Idle payload value 3. Held at one on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 406 A196_FIELD0_CODE6 "0x196 bits 2..7 MSB-first, unsigned big-endian. Idle payload value 63. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 406 A196_B1_B4_RESERVED_ZERO26 "0x196 bits 8..33 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 406 A196_FIELD1_CODE6 "0x196 bits 34..39 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 406 A196_B5_RESERVED_ZERO3 "0x196 bits 40..42 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 406 A196_FIELD2_CODE5 "0x196 bits 43..47 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 406 A196_B6_RESERVED_ZERO1 "0x196 bits 48..48 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 406 A196_FIELD3_CODE7 "0x196 bits 49..55 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 406 A196_B7_RESERVED_ZERO2 "0x196 bits 56..57 MSB-first, unsigned big-endian. Idle payload value 0. Held at zero on every non-idle frame of the recorded drives with the power-on frame excluded; reserved packed-boundary guard.";
+CM_ SG_ 406 A196_FIELD4_CODE6 "0x196 bits 58..63 MSB-first, unsigned big-endian. Idle payload value 0. Unresolved numeric code. Boundary comes from bits that stay constant across all 61 active frames of the recorded drives and also hold when idle frames are included. Dead end D-036 (docs/08_dead_ends.md) retired the object-summary and direct-geometry readings of this pair and this field does not reopen them: not range, azimuth, lateral, velocity, validity, quality, lifecycle, publication, or selection.";
+CM_ SG_ 128 ID80_B0 "Raw ID80 transport byte 0. Used by runtime start-marker/reassembly logic; not a semantic object signal.";
+CM_ SG_ 128 ID80_B1 "Raw ID80 transport byte 1. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B2 "Raw ID80 transport byte 2. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B3 "Raw ID80 transport byte 3. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B4 "Raw ID80 transport byte 4. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B5 "Raw ID80 transport byte 5. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B6 "Raw ID80 transport byte 6. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 128 ID80_B7 "Raw ID80 transport byte 7. Runtime appends bytes 1..7 into the segmented ID80 record; not a semantic object signal.";
+CM_ SG_ 133 ID85_B0 "Raw ID85 transport byte 0. Used by runtime start-marker/reassembly logic; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B1 "Raw ID85 transport byte 1. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B2 "Raw ID85 transport byte 2. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B3 "Raw ID85 transport byte 3. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B4 "Raw ID85 transport byte 4. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B5 "Raw ID85 transport byte 5. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B6 "Raw ID85 transport byte 6. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 133 ID85_B7 "Raw ID85 transport byte 7. Runtime appends bytes 1..7 into the segmented ID85 record; not a semantic metadata or quality signal.";
+CM_ SG_ 129 A081_B0 "Observed constant 0x30 in the ID80 record-cycle companion marker; framing/synchronization only.";
+CM_ SG_ 129 A081_B1 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B2 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B3 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B4 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B5 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B6 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 129 A081_B7 "Observed constant zero in the ID80 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B0 "Observed constant 0x30 in the ID85 record-cycle companion marker; framing/synchronization only.";
+CM_ SG_ 134 A086_B1 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B2 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B3 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B4 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B5 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B6 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 134 A086_B7 "Observed constant zero in the ID85 record-cycle companion marker; reserved raw byte.";
+CM_ SG_ 256 A100_STARTUP_WORD_BE16 "0x100 bytes 0..1, unsigned big-endian startup/configuration word. Normally zero; one recorded startup frame contains 0xFFFF. Exact meaning unresolved.";
+CM_ SG_ 256 A100_B2_B6_RESERVED_ZERO40 "0x100 bytes 2..6. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 257 A101_STARTUP_STATE8 "0x101 byte 0. State 0x1D changes once to 0x11 exactly 70 ms before A197_STARTUP_PHASE1 on the recorded drives. Rare state 0x21 is unresolved. Startup context only, not object validity or lifecycle.";
+CM_ SG_ 257 A101_B1_B5_RESERVED_ZERO40 "0x101 bytes 1..5. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 258 A102_B0_RESERVED_ZERO8 "0x102 byte 0. Zero on every recorded bus-1 frame.";
+CM_ SG_ 258 A102_B1_RESERVED_ZERO3 "0x102 bits 8..10. Zero on every recorded bus-1 frame.";
+CM_ SG_ 258 A102_CONTEXT_BIT11 "0x102 bit 11. Changes once from zero to one on each recorded drive. Exact operational meaning unresolved; context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 258 A102_B1_RESERVED4_5_ZERO2 "0x102 bits 12..13. Zero on every recorded bus-1 frame.";
+CM_ SG_ 258 A102_CONTEXT_BIT14 "0x102 bit 14. Persistent event/context bit with multiple transitions on the recorded drives. It does not transfer as Toyota cruise, brake, or main-state truth; context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 258 A102_B1_RESERVED7_ZERO1 "0x102 bit 15. Zero on every recorded bus-1 frame.";
+CM_ SG_ 258 A102_B2_RESERVED_ZERO5 "0x102 bits 16..20. Zero on every recorded bus-1 frame.";
+CM_ SG_ 258 A102_CONTEXT_BIT21 "0x102 bit 21. Active only during an early long-route interval and zero on the recorded short route. Route-limited context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 258 A102_B2_RESERVED6_7_ZERO2 "0x102 bits 22..23. Zero on every recorded bus-1 frame.";
+CM_ SG_ 259 A103_B0_RESERVED_ZERO8 "0x103 byte 0. Zero on every recorded bus-1 frame.";
+CM_ SG_ 259 A103_B1_RESERVED_ZERO8 "0x103 byte 1. Zero on every recorded bus-1 frame.";
+CM_ SG_ 1282 A502_B0_CONST8 "0x502 byte 0. Observed 0x19 on every nonzero frame of the recorded drives and five independent native segments. Exposed separately because bytes 0..1 show no carry excitation, so a 16-bit boundary is unproven; the constant is not enforced and the all-zero startup payload is preserved.";
+CM_ SG_ 1282 A502_SLOW_CODE0_B1 "0x502 byte 1. Slowly varying raw code; observed 0x69..0x92 across three drives with mostly plus or minus one steps and long plateaus. Units, scale, signedness, and semantics unresolved; context/debug only.";
+CM_ SG_ 1282 A502_SLOW_CODE1_BE16 "0x502 bytes 2..3, unsigned big-endian. The byte boundary is carry-verified: 80 byte-3 to byte-2 carry/borrow events on the long recorded drive. Observed 4308..4408 across three drives with small signed steps; it changes more often than byte 1 and the two fields have no route-stable relationship. Units, scale, signedness, and semantics unresolved; context/debug only.";
+CM_ SG_ 1282 A502_TAIL_CONST_BE32 "0x502 bytes 4..7, unsigned big-endian. Observed <unit-specific 32-bit constant, redacted> on every nonzero frame of the recorded drives and five independent native segments. Retained as a raw field so the constant is documented rather than enforced; no object semantics are promoted.";
+CM_ SG_ 528 A210_RSA_SPEED_SIGN_PRESENT1 "0x210 byte-0 bit 0. Across drives, replica of whether Toyota RSA1.TSGN1 carries recorded speed-sign type 36; road-sign context only, not radar object validity or publication.";
+CM_ SG_ 528 A210_B0_RESERVED1_7 "0x210 byte-0 bits 1..7. Zero on every recorded frame; reserved packed-boundary guard.";
+CM_ SG_ 528 A210_RSA_SPEED_LIMIT_VALUE8 "0x210 byte 1. Across drives, replica of Toyota RSA1.SPDVAL1 above 99.9 percent agreement. Unit is selected externally by RSA2.SPDUNT; not ego speed or radar range.";
+CM_ SG_ 528 A210_B2 "0x210 byte 2. Raw startup residue; zero except one recorded short-route startup frame.";
+CM_ SG_ 528 A210_B3 "0x210 byte 3. Zero on every recorded frame; reserved raw byte.";
+CM_ SG_ 528 A210_B4 "0x210 byte 4. Raw startup residue; zero except one recorded short-route startup frame.";
+CM_ SG_ 528 A210_B5_RESERVED0_5 "0x210 byte-5 bits 0..5. Zero on every recorded frame; reserved packed-boundary guard.";
+CM_ SG_ 528 A210_RSA_MASTER_SWITCH1 "0x210 byte-5 bit 6. Across drives, replica of Toyota RSA3.TSRMSW above 99.8 percent agreement; road-sign-assist context only.";
+CM_ SG_ 528 A210_B5_STATUS_BIT7 "0x210 byte-5 bit 7. Startup/status residue of unresolved meaning; no object semantics promoted.";
+CM_ SG_ 528 A210_B6 "0x210 byte 6. Zero on every recorded frame; reserved raw byte.";
+CM_ SG_ 514 A202_COUNTER4 "0x202 byte-1 high nibble. Strong observed modulo-16 counter candidate; sync/debug metadata only.";
+CM_ SG_ 514 A202_B1_LOW4 "0x202 byte-1 low nibble. Raw low-nibble residue recorded only to make the split-byte DBC round-trip.";
+CM_ SG_ 400 A190_TIMESTAMP_US "0x190 bytes 2..5, unsigned big-endian microseconds. Across drives, clock rate is approximately 1,000,000 units per capture second; cycle timing only, not object time or geometry.";
+CM_ SG_ 400 A190_COUNTER_RESERVED0 "0x190 byte-6 low nibble. Zero on all recorded-drive frames; reserved synchronization guard only.";
+CM_ SG_ 400 A190_COUNTER4 "0x190 byte-6 high nibble. Observed modulo-16 cycle counter advancing +3 on more than 99.996 percent of consecutive recorded-drive frames; no fixed cross-family phase offset is promoted.";
+CM_ SG_ 407 A197_STARTUP_PHASE1 "0x197 bit 8|1. Observed startup phase: observed zero initially, then one with no one-to-zero reversions on the recorded drives; not object validity or lifecycle truth.";
+CM_ SG_ 407 A197_B1_RESERVED1_7 "0x197 bits 9|7. Reserved raw residue recorded for byte-exact roundtrip; no semantics promoted.";
+CM_ SG_ 400 A190_STATUS_0_4 "0x190 bit 0|4. Observed low-cardinality status/mux context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 576 A240_B0_RESERVED_ZERO5 "0x240 bits 0..4. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 576 A240_MUX_PHASE3 "0x240 bit 5|3. Observed synchronized mux/phase selector cycling through active values 1..7 with reset/startup value 0; context metadata only, not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 576 A240_MIRROR_WORD0_BE24 "0x240 bytes 1..3, unsigned big-endian raw word. Exactly equals MIRROR_WORD1 and the corresponding words on the other three mirror addresses; observed values are 0x000000 and 0x001001 only. Startup/configuration structure, not object semantics.";
+CM_ SG_ 576 A240_MIRROR_WORD1_BE24 "0x240 bytes 4..6, unsigned big-endian raw word. Exact duplicate of MIRROR_WORD0 on the recorded drives; startup/configuration structure, not object semantics.";
+CM_ SG_ 576 A240_B7_RESERVED_ZERO8 "0x240 byte 7. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 577 A241_B0_RESERVED_ZERO5 "0x241 bits 0..4. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 577 A241_MUX_PHASE3 "0x241 bit 5|3. Observed synchronized mux/phase selector cycling through active values 1..7 with reset/startup value 0; context metadata only, not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 577 A241_MIRROR_WORD0_BE24 "0x241 bytes 1..3, unsigned big-endian raw word. Exactly equals MIRROR_WORD1 and the corresponding words on the other three mirror addresses; observed values are 0x000000 and 0x001001 only. Startup/configuration structure, not object semantics.";
+CM_ SG_ 577 A241_MIRROR_WORD1_BE24 "0x241 bytes 4..6, unsigned big-endian raw word. Exact duplicate of MIRROR_WORD0 on the recorded drives; startup/configuration structure, not object semantics.";
+CM_ SG_ 577 A241_B7_RESERVED_ZERO8 "0x241 byte 7. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 580 A244_B0_RESERVED_ZERO5 "0x244 bits 0..4. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 580 A244_MUX_PHASE3 "0x244 bit 5|3. Observed synchronized mux/phase selector cycling through active values 1..7 with reset/startup value 0; context metadata only, not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 580 A244_MIRROR_WORD0_BE24 "0x244 bytes 1..3, unsigned big-endian raw word. Exactly equals MIRROR_WORD1 and the corresponding words on the other three mirror addresses; observed values are 0x000000 and 0x001001 only. Startup/configuration structure, not object semantics.";
+CM_ SG_ 580 A244_MIRROR_WORD1_BE24 "0x244 bytes 4..6, unsigned big-endian raw word. Exact duplicate of MIRROR_WORD0 on the recorded drives; startup/configuration structure, not object semantics.";
+CM_ SG_ 580 A244_B7_RESERVED_ZERO8 "0x244 byte 7. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 581 A245_B0_RESERVED_ZERO5 "0x245 bits 0..4. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 581 A245_MUX_PHASE3 "0x245 bit 5|3. Observed synchronized mux/phase selector cycling through active values 1..7 with reset/startup value 0; context metadata only, not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 581 A245_MIRROR_WORD0_BE24 "0x245 bytes 1..3, unsigned big-endian raw word. Exactly equals MIRROR_WORD1 and the corresponding words on the other three mirror addresses; observed values are 0x000000 and 0x001001 only. Startup/configuration structure, not object semantics.";
+CM_ SG_ 581 A245_MIRROR_WORD1_BE24 "0x245 bytes 4..6, unsigned big-endian raw word. Exact duplicate of MIRROR_WORD0 on the recorded drives; startup/configuration structure, not object semantics.";
+CM_ SG_ 581 A245_B7_RESERVED_ZERO8 "0x245 byte 7. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 584 A248_B0_RESERVED_ZERO2 "0x248 bits 0..1. Zero on every recorded bus-1 frame; reserved packed-boundary guard.";
+CM_ SG_ 584 A248_STARTUP_STATUS2 "0x248 bits 2..3. Observed startup/status context values 0 and 3; no validity, ready, lifecycle, or object meaning is promoted.";
+CM_ SG_ 584 A248_MUX_PHASE_RESERVED0 "0x248 bit 4. Zero on every recorded frame while bits 5..7 cycle as mux phase.";
+CM_ SG_ 584 A248_MUX_PHASE3 "0x248 bits 5..7. Observed synchronized mux/phase selector cycling through active values 1..7; context metadata only, not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 584 A248_B1_RESERVED_ZERO8 "0x248 byte 1. Zero on every recorded bus-1 frame.";
+CM_ SG_ 584 A248_STARTUP_PHASE2 "0x248 byte-2 bit 0. Changes once from zero to one on each recorded drive, 180 ms after A197_STARTUP_PHASE1, with no reversal; startup context only, not object validity or lifecycle.";
+CM_ SG_ 584 A248_B2_RESERVED1_7 "0x248 byte-2 bits 1..7. Zero on every recorded bus-1 frame.";
+CM_ SG_ 584 A248_B3_B5_RESERVED_ZERO24 "0x248 bytes 3..5. Zero on every recorded bus-1 frame.";
+CM_ SG_ 584 A248_B6_RESERVED_ZERO1 "0x248 byte-6 bit 0. Zero on every recorded bus-1 frame.";
+CM_ SG_ 584 A248_EVENT_PULSE1 "0x248 byte-6 bit 1. A rare isolated one-frame event pulse on the recorded drives; exact meaning unresolved, context/debug only.";
+CM_ SG_ 584 A248_B6_RESERVED2_6 "0x248 byte-6 bits 2..7. Zero on every recorded bus-1 frame.";
+CM_ SG_ 584 A248_B7_RESERVED_ZERO8 "0x248 byte 7. Zero on every recorded bus-1 frame.";
+CM_ SG_ 1281 A501_STATUS_40_4 "0x501 bit 40|4. Observed low-cardinality status/mux context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 1664 A680_STATUS_0_4 "0x680 bit 0|4. Observed low-cardinality status/mux context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 1664 A680_STATUS_56_4 "0x680 bit 56|4. Observed low-cardinality status/mux context metadata only; not geometry, validity, quality, lifecycle, publication, selection, or candidate generation.";
+CM_ SG_ 401 A191_B0_RESERVED0 "0x191 byte 0 low bit. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 401 A191_PAIR_SCORE_CODE7 "0x191 bits 1|7. Exact score-like code: active values are 91..100, same-identity transitions are almost always stable or unit steps, and sentinel value is 127. Route-stable survival stratification exists, but route-heldout evidence does not justify naming this OEM confidence or using it as validity, publication, or selection truth.";
+CM_ SG_ 401 A191_B1_RESERVED0 "0x191 byte 1 low bit. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 401 A191_PAIR_TRACK_AGE7 "0x191 bits 9|7. Track-age-like counter: usually advances across nominal 60 ms cycles while identity is stable, plateaus at 126, and is 127 in the sentinel. Repeats and jumps occur; age may advance while the co-envelope 0x190 timestamp repeats. Native same-tag unsaturated examples advance through intervening sentinel output cycles; sentinel return need not reset age. Not elapsed time, a freshness gate, physical identity proof, or full OEM lifecycle/publication truth. Identity can migrate between output pairs.";
+CM_ SG_ 401 A191_B3_RESERVED0_2 "0x191 byte 3 low two bits. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 401 A191_PAIR_TRACK_ID6 "0x191 bits 26|6. Track identity code exposed at this output pair; recorded reciprocal and additional-route nonreciprocal migrations support following a code across pairs. Pair changes do not prove track birth or death. Duplicate codes, reuse, physical association and ID80 correspondence remain unresolved; not a globally stable openpilot track identifier or solved selection rule.";
+CM_ SG_ 401 A191_B4_RESERVED0_2 "0x191 byte 4 low two bits. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is zero.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR0_CODE6 "0x191 bits 34|6. First member of an identity-stable three-code descriptor tuple. Active values are 18, 22, and 25; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 401 A191_B5_RESERVED0_3 "0x191 byte 5 low three bits. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is seven.";
+CM_ SG_ 401 A191_PAIR_FIELD5_CODE5 "0x191 bits 43|5. Dynamic pair-local code with active values 9..30 and sentinel 31. It correlates with track age but fails the cross-route monotone lifecycle gate, so OEM meaning remains unresolved.";
+CM_ SG_ 401 A191_B6_RESERVED0 "0x191 byte 6 low bit. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is zero.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR1_CODE7 "0x191 bits 49|7. Second member of an identity-stable three-code descriptor tuple. Active values are 15 and 23; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR2_CODE8 "0x191 bits 56|8. Third member of an identity-stable three-code descriptor tuple. Active values are 20, 45, and 120; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 402 A192_WORD0_RESERVED_ZERO3 "0x192 first 16-bit container top three bits. Zero on every active paired row on the recorded drives; packed-field boundary guard.";
+CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Big-endian 13-bit distance code, about 3/64 m (0.047 m) per code; smoothed and lagged (see message comment).";
+CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "0x192 second 16-bit container top three bits. Zero on every active paired row on the recorded drives; packed-field boundary guard.";
+CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Bytes 2-3. Byte 2 (the high bits of this field) is a lateral bin of the target; byte 3 unknown.";
+CM_ SG_ 403 A193_B0_RESERVED0 "0x193 byte 0 low bit. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "0x193 bits 1|7. Exact score-like code: active values are 91..100, same-identity transitions are almost always stable or unit steps, and sentinel value is 127. Route-stable survival stratification exists, but route-heldout evidence does not justify naming this OEM confidence or using it as validity, publication, or selection truth.";
+CM_ SG_ 403 A193_B1_RESERVED0 "0x193 byte 1 low bit. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 403 A193_PAIR_TRACK_AGE7 "0x193 bits 9|7. Track-age-like counter: usually advances across nominal 60 ms cycles while identity is stable, plateaus at 126, and is 127 in the sentinel. Repeats and jumps occur; age may advance while the co-envelope 0x190 timestamp repeats. Native same-tag unsaturated examples advance through intervening sentinel output cycles; sentinel return need not reset age. Not elapsed time, a freshness gate, physical identity proof, or full OEM lifecycle/publication truth. Identity can migrate between output pairs.";
+CM_ SG_ 403 A193_B3_RESERVED0_2 "0x193 byte 3 low two bits. Zero on all recorded active and sentinel frames; packed-field boundary guard.";
+CM_ SG_ 403 A193_PAIR_TRACK_ID6 "0x193 bits 26|6. Track identity code exposed at this output pair; recorded reciprocal and additional-route nonreciprocal migrations support following a code across pairs. Pair changes do not prove track birth or death. Duplicate codes, reuse, physical association and ID80 correspondence remain unresolved; not a globally stable openpilot track identifier or solved selection rule.";
+CM_ SG_ 403 A193_B4_RESERVED0_2 "0x193 byte 4 low two bits. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is zero.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR0_CODE6 "0x193 bits 34|6. First member of an identity-stable three-code descriptor tuple. Active values are 18, 22, and 25; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 403 A193_B5_RESERVED0_3 "0x193 byte 5 low three bits. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is seven.";
+CM_ SG_ 403 A193_PAIR_FIELD5_CODE5 "0x193 bits 43|5. Dynamic pair-local code with active values 9..30 and sentinel 31. It correlates with track age but fails the cross-route monotone lifecycle gate, so OEM meaning remains unresolved.";
+CM_ SG_ 403 A193_B6_RESERVED0 "0x193 byte 6 low bit. Zero on every recorded active paired row; packed-field boundary guard. Sentinel value is zero.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR1_CODE7 "0x193 bits 49|7. Second member of an identity-stable three-code descriptor tuple. Active values are 15 and 23; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR2_CODE8 "0x193 bits 56|8. Third member of an identity-stable three-code descriptor tuple. Active values are 20, 45, and 120; OEM class, dimension, and scale semantics remain unresolved.";
+CM_ SG_ 404 A194_WORD0_RESERVED_ZERO3 "0x194 first 16-bit container top three bits. Zero on every active paired row on the recorded drives; packed-field boundary guard.";
+CM_ SG_ 404 A194_PAIR_RANGE_CODE13 "Big-endian 13-bit distance code, about 3/64 m (0.047 m) per code; smoothed and lagged (see message comment).";
+CM_ SG_ 404 A194_WORD1_RESERVED_ZERO3 "0x194 second 16-bit container top three bits. Zero on every active paired row on the recorded drives; packed-field boundary guard.";
+CM_ SG_ 404 A194_PAIR_FIELD1_CODE13 "Bytes 2-3. Byte 2 (the high bits of this field) is a lateral bin of the target; byte 3 unknown.";
+CM_ SG_ 565 A235_B0_CHECK_BYTE "0x235 byte 0. Deterministic check/context byte, but the general affine family retains 160 unique-tail counterexamples across the recorded drives; unresolved and not geometry, validity, quality, lifecycle, publication, selection, identity, or candidate generation.";
+CM_ SG_ 565 A235_STATUS_MUX4 "0x235 byte-1 low nibble. Legacy signal name; observed values are persistent context states, not a demonstrated cycling mux. Value 1 selects the shared companion-tail idle state of 0x235, 0x237 and 0x23B, matching that state at rate 1.0 on the recorded drives (68,722/87,640 and 193,090/556,592 frames); while it holds, those tail bytes carry a fixed payload rather than content. This is frame-local payload availability, not object validity. Retained as observed context only; not lifecycle, validity, publication, selection, quality, candidate-generation, or geometry truth.";
+CM_ SG_ 565 A235_COUNTER4 "0x235 byte-1 high nibble. Retained as observed rolling sync/loss metadata only.";
+CM_ SG_ 567 A237_B0_CHECK_BYTE "0x237 byte 0. Exact affine parity check candidate over bytes 1..DLC-1 on the recorded drives; OEM CRC/check name remains unknown and third-route validation is required; not geometry, validity, quality, lifecycle, publication, selection, identity, or candidate generation. Combined-fit input rank 50/57; long-to-short fitting misses one unique tail. Exactness uses a combined-route fit, not independent held-out validation of a unique algorithm. Behavior outside the observed input span is unidentified; do not use this candidate to reject incoming frames.";
+CM_ SG_ 567 A237_STATUS_MUX4 "0x237 byte-1 low nibble. Legacy signal name; observed values are persistent context states, not a demonstrated cycling mux. Retained as observed context only; not lifecycle, validity, publication, selection, quality, candidate-generation, or geometry truth.";
+CM_ SG_ 567 A237_COUNTER4 "0x237 byte-1 high nibble. Retained as observed rolling sync/loss metadata only.";
+CM_ SG_ 569 A239_B0_CHECK_BYTE "0x239 byte 0. Exact affine parity check candidate over bytes 1..DLC-1 on the recorded drives; OEM CRC/check name remains unknown and third-route validation is required; not geometry, validity, quality, lifecycle, publication, selection, identity, or candidate generation. Combined-fit input rank 44/57; short-to-long unique-tail accuracy is only 0.5785229255, while long-to-short fitting misses one unique tail. Exactness uses a combined-route fit, not independent held-out validation of a unique algorithm. Behavior outside the observed input span is unidentified; do not use this candidate to reject incoming frames.";
+CM_ SG_ 569 A239_STATUS_MUX4 "0x239 byte-1 low nibble. Legacy signal name; observed values are persistent context states, not a demonstrated cycling mux. Value 7 selects the same shared companion-tail idle state as A235_STATUS_MUX4 == 1, at rate 1.0 on the recorded drives. 0x239 itself has no idle tail and is free-running. Retained as observed context only; not lifecycle, validity, publication, selection, quality, candidate-generation, or geometry truth.";
+CM_ SG_ 569 A239_COUNTER4 "0x239 byte-1 high nibble. Retained as observed rolling sync/loss metadata only.";
+CM_ SG_ 571 A23B_B0_CHECK_BYTE "0x23B byte 0. Exact affine parity check candidate over bytes 1..DLC-1 on the recorded drives; OEM CRC/check name remains unknown and third-route validation is required; not geometry, validity, quality, lifecycle, publication, selection, identity, or candidate generation. Combined-fit input rank 14/17; long-to-short fitting misses one unique tail. Exactness uses a combined-route fit, not independent held-out validation of a unique algorithm. Behavior outside the observed input span is unidentified; do not use this candidate to reject incoming frames. Compact operating-frame candidate: MSB-first CRC8 poly 0x1D init 0 over B1,B2, XOR 0x59, then XOR 0x3B/0x76/0xEC/0xC5 for set bits 4/5/6/7 of B1. Both route-trained rules agree: 644230 operating frames match; two startup 000FFF frames predict 0x3E instead of 0x00. Startup handling unresolved. Evidence: data/derived/ars510_23x_crc_structure/report.md.";
+CM_ SG_ 571 A23B_STATUS_MUX4 "0x23B byte-1 low nibble. Legacy signal name; observed constant zero on 556,592/556,592 long-route and 87,638/87,640 short-route frames, the two exceptions being power-on frames, so this is a legacy name for a reserved nibble and it carries no status on the recorded evidence. Retained as observed context only; not lifecycle, validity, publication, selection, quality, candidate-generation, or geometry truth.";
+CM_ SG_ 571 A23B_COUNTER4 "0x23B byte-1 high nibble. Retained as observed rolling sync/loss metadata only.";
+VAL_ 257 A101_STARTUP_STATE8 29 "startup_0x1D" 17 "post_startup_base_0x11" 33 "transient_0x21_unresolved" ;
+VAL_ 258 A102_CONTEXT_BIT11 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 258 A102_CONTEXT_BIT14 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 258 A102_CONTEXT_BIT21 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 400 A190_STATUS_0_4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 400 A190_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
+VAL_ 407 A197_STARTUP_PHASE1 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 514 A202_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
+VAL_ 528 A210_RSA_SPEED_SIGN_PRESENT1 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 528 A210_RSA_MASTER_SWITCH1 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 528 A210_B5_STATUS_BIT7 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 576 A240_MUX_PHASE3 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" ;
+VAL_ 577 A241_MUX_PHASE3 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" ;
+VAL_ 580 A244_MUX_PHASE3 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" ;
+VAL_ 581 A245_MUX_PHASE3 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" ;
+VAL_ 584 A248_STARTUP_STATUS2 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" ;
+VAL_ 584 A248_MUX_PHASE3 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" ;
+VAL_ 584 A248_STARTUP_PHASE2 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 584 A248_EVENT_PULSE1 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 591 A24F_STARTUP_PHASE1 0 "STATE_0x0" 1 "STATE_0x1" ;
+VAL_ 1281 A501_STATUS_40_4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 1664 A680_STATUS_0_4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 1664 A680_STATUS_56_4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 565 A235_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 565 A235_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
+VAL_ 567 A237_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 567 A237_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
+VAL_ 569 A239_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 569 A239_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
+VAL_ 571 A23B_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 571 A23B_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;

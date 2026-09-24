@@ -1,0 +1,89 @@
+{
+ "A": {
+  "3-30": {
+   "n": 2367,
+   "rms_error": {
+    "native": 0.35,
+    "camera": 0.31,
+    "range_slope": 0.97
+   },
+   "native_rms_vs_camera": 0.5
+  },
+  "30-60": {
+   "n": 6753,
+   "rms_error": {
+    "native": 1.02,
+    "camera": 0.47,
+    "range_slope": 1.41
+   },
+   "native_rms_vs_camera": 1.13
+  },
+  "60-100": {
+   "n": 6659,
+   "rms_error": {
+    "native": 1.58,
+    "camera": 1.11,
+    "range_slope": 2.08
+   },
+   "native_rms_vs_camera": 1.94
+  }
+ },
+ "B": {
+  "3-30": {
+   "n": 3491,
+   "rms_error": {
+    "native": 0.54,
+    "camera": 0.6,
+    "range_slope": 0.61
+   },
+   "native_rms_vs_camera": 0.82
+  },
+  "30-60": {
+   "n": 9350,
+   "rms_error": {
+    "native": 1.26,
+    "camera": 1.34,
+    "range_slope": 1.16
+   },
+   "native_rms_vs_camera": 1.85
+  },
+  "60-100": {
+   "n": 5867,
+   "rms_error": {
+    "native": 2.73,
+    "camera": 3.8,
+    "range_slope": 1.95
+   },
+   "native_rms_vs_camera": 4.74
+  }
+ },
+ "C": {
+  "3-30": {
+   "n": 2866,
+   "rms_error": {
+    "native": 0.55,
+    "camera": 0.18,
+    "range_slope": 1.43
+   },
+   "native_rms_vs_camera": 0.59
+  },
+  "30-60": {
+   "n": 13666,
+   "rms_error": {
+    "native": 1.11,
+    "camera": 0.59,
+    "range_slope": 1.58
+   },
+   "native_rms_vs_camera": 1.26
+  },
+  "60-100": {
+   "n": 6817,
+   "rms_error": {
+    "native": 1.76,
+    "camera": 1.5,
+    "range_slope": 2.31
+   },
+   "native_rms_vs_camera": 2.32
+  }
+ }
+}

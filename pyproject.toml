@@ -1,0 +1,24 @@
+[project]
+name = "ars510"
+version = "1.0.0"
+description = "CAN decode of the Toyota / Continental ARS510 front radar for openpilot experiments"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+plots = ["matplotlib"]
+analysis = ["pandas", "pyarrow", "matplotlib", "numpy"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["ars510"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

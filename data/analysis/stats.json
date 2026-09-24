@@ -1,0 +1,331 @@
+{
+ "drives": {
+  "A": {
+   "segments": 26,
+   "minutes_decoded": 24.2,
+   "records": 19771,
+   "records_per_s": 13.62,
+   "object_samples": 37223,
+   "objects_per_record": {
+    "mean": 1.88,
+    "p95": 4.0,
+    "max": 7
+   },
+   "settled_objects_per_record_mean": 1.37,
+   "highest_slot_index_used": 7,
+   "share_of_samples_in_slots_0_4": 0.986,
+   "tracks": 559,
+   "tracks_per_minute": 23.1,
+   "tracks_reaching_age_60": 0.154,
+   "track_lifetime_s": {
+    "median": 0.55,
+    "p90": 7.28,
+    "max": 59.9,
+    "share_full_file": 0.018
+   },
+   "age1_samples_at_zero_range": 166,
+   "share_samples_age_saturated_126": 0.658,
+   "ego_speed_mps": {
+    "median": 29.6,
+    "p90": 34.7,
+    "share_records_stopped": 0.075
+   },
+   "settled_range_m": {
+    "p10": 15.2,
+    "p50": 42.0,
+    "p90": 86.9,
+    "max": 150.2
+   },
+   "settled_abs_lateral_m": {
+    "p50": 2.41,
+    "p90": 5.88
+   },
+   "settled_motion_share": {
+    "same_direction": 0.876,
+    "stationary": 0.121,
+    "oncoming": 0.003
+   },
+   "raw_code_ranges": {
+    "DREL": [
+     136,
+     4095
+    ],
+    "YREL_LEFT": [
+     78,
+     3997
+    ],
+    "VLONG_OVER_GROUND": [
+     0,
+     1023
+    ],
+    "VLAT_OVER_GROUND_PROV": [
+     381,
+     628
+    ],
+    "ALONG_LIKE_84": [
+     313,
+     689
+    ],
+    "UNK_96": [
+     460,
+     574
+    ]
+   },
+   "camera_pairs": {
+    "rows": 22684,
+    "settled_rows_with_camera_rate": 17379,
+    "camera_vehicles": 157,
+    "vrel_minus_camera_by_band": {
+     "3-30": {
+      "pairs": 2405,
+      "median_abs_diff": 0.24,
+      "p90_abs_diff": 0.79,
+      "share_abs_diff_gt2": 0.005,
+      "share_abs_diff_gt4": 0.0,
+      "disagreement_runs_ge_0.5s": 0,
+      "paired_track_hours": 0.06,
+      "runs_per_paired_track_hour": 0.0
+     },
+     "30-60": {
+      "pairs": 6866,
+      "median_abs_diff": 0.57,
+      "p90_abs_diff": 1.64,
+      "share_abs_diff_gt2": 0.059,
+      "share_abs_diff_gt4": 0.01,
+      "disagreement_runs_ge_0.5s": 2,
+      "paired_track_hours": 0.15,
+      "runs_per_paired_track_hour": 13.4
+     },
+     "60-100": {
+      "pairs": 6794,
+      "median_abs_diff": 0.86,
+      "p90_abs_diff": 3.08,
+      "share_abs_diff_gt2": 0.212,
+      "share_abs_diff_gt4": 0.056,
+      "disagreement_runs_ge_0.5s": 20,
+      "paired_track_hours": 0.15,
+      "runs_per_paired_track_hour": 136.3
+     }
+    }
+   }
+  },
+  "B": {
+   "segments": 42,
+   "minutes_decoded": 40.1,
+   "records": 33214,
+   "records_per_s": 13.8,
+   "object_samples": 86261,
+   "objects_per_record": {
+    "mean": 2.6,
+    "p95": 5.0,
+    "max": 10
+   },
+   "settled_objects_per_record_mean": 1.52,
+   "highest_slot_index_used": 9,
+   "share_of_samples_in_slots_0_4": 0.939,
+   "tracks": 1944,
+   "tracks_per_minute": 48.5,
+   "tracks_reaching_age_60": 0.146,
+   "track_lifetime_s": {
+    "median": 0.54,
+    "p90": 4.69,
+    "max": 59.9,
+    "share_full_file": 0.004
+   },
+   "age1_samples_at_zero_range": 522,
+   "share_samples_age_saturated_126": 0.472,
+   "ego_speed_mps": {
+    "median": 13.4,
+    "p90": 21.5,
+    "share_records_stopped": 0.108
+   },
+   "settled_range_m": {
+    "p10": 9.8,
+    "p50": 39.9,
+    "p90": 87.2,
+    "max": 132.8
+   },
+   "settled_abs_lateral_m": {
+    "p50": 3.33,
+    "p90": 5.95
+   },
+   "settled_motion_share": {
+    "same_direction": 0.8,
+    "stationary": 0.172,
+    "oncoming": 0.028
+   },
+   "raw_code_ranges": {
+    "DREL": [
+     160,
+     4095
+    ],
+    "YREL_LEFT": [
+     64,
+     4045
+    ],
+    "VLONG_OVER_GROUND": [
+     0,
+     1023
+    ],
+    "VLAT_OVER_GROUND_PROV": [
+     333,
+     718
+    ],
+    "ALONG_LIKE_84": [
+     405,
+     647
+    ],
+    "UNK_96": [
+     428,
+     659
+    ]
+   },
+   "camera_pairs": {
+    "rows": 31428,
+    "settled_rows_with_camera_rate": 19565,
+    "camera_vehicles": 479,
+    "vrel_minus_camera_by_band": {
+     "3-30": {
+      "pairs": 3524,
+      "median_abs_diff": 0.31,
+      "p90_abs_diff": 1.16,
+      "share_abs_diff_gt2": 0.039,
+      "share_abs_diff_gt4": 0.006,
+      "disagreement_runs_ge_0.5s": 1,
+      "paired_track_hours": 0.08,
+      "runs_per_paired_track_hour": 12.8
+     },
+     "30-60": {
+      "pairs": 9482,
+      "median_abs_diff": 0.77,
+      "p90_abs_diff": 2.85,
+      "share_abs_diff_gt2": 0.184,
+      "share_abs_diff_gt4": 0.05,
+      "disagreement_runs_ge_0.5s": 25,
+      "paired_track_hours": 0.19,
+      "runs_per_paired_track_hour": 130.6
+     },
+     "60-100": {
+      "pairs": 5932,
+      "median_abs_diff": 2.45,
+      "p90_abs_diff": 7.78,
+      "share_abs_diff_gt2": 0.572,
+      "share_abs_diff_gt4": 0.288,
+      "disagreement_runs_ge_0.5s": 73,
+      "paired_track_hours": 0.16,
+      "runs_per_paired_track_hour": 470.0
+     }
+    }
+   }
+  },
+  "C": {
+   "segments": 24,
+   "minutes_decoded": 23.9,
+   "records": 22863,
+   "records_per_s": 15.93,
+   "object_samples": 50207,
+   "objects_per_record": {
+    "mean": 2.2,
+    "p95": 4.0,
+    "max": 7
+   },
+   "settled_objects_per_record_mean": 1.49,
+   "highest_slot_index_used": 7,
+   "share_of_samples_in_slots_0_4": 0.99,
+   "tracks": 872,
+   "tracks_per_minute": 36.5,
+   "tracks_reaching_age_60": 0.158,
+   "track_lifetime_s": {
+    "median": 0.55,
+    "p90": 5.91,
+    "max": 59.9,
+    "share_full_file": 0.015
+   },
+   "age1_samples_at_zero_range": 181,
+   "share_samples_age_saturated_126": 0.584,
+   "ego_speed_mps": {
+    "median": 21.7,
+    "p90": 33.1,
+    "share_records_stopped": 0.072
+   },
+   "settled_range_m": {
+    "p10": 14.2,
+    "p50": 44.8,
+    "p90": 88.3,
+    "max": 154.0
+   },
+   "settled_abs_lateral_m": {
+    "p50": 1.61,
+    "p90": 6.23
+   },
+   "settled_motion_share": {
+    "same_direction": 0.873,
+    "stationary": 0.12,
+    "oncoming": 0.007
+   },
+   "raw_code_ranges": {
+    "DREL": [
+     142,
+     4095
+    ],
+    "YREL_LEFT": [
+     81,
+     4031
+    ],
+    "VLONG_OVER_GROUND": [
+     0,
+     1023
+    ],
+    "VLAT_OVER_GROUND_PROV": [
+     302,
+     696
+    ],
+    "ALONG_LIKE_84": [
+     308,
+     721
+    ],
+    "UNK_96": [
+     451,
+     594
+    ]
+   },
+   "camera_pairs": {
+    "rows": 35066,
+    "settled_rows_with_camera_rate": 26143,
+    "camera_vehicles": 245,
+    "vrel_minus_camera_by_band": {
+     "3-30": {
+      "pairs": 2932,
+      "median_abs_diff": 0.25,
+      "p90_abs_diff": 1.02,
+      "share_abs_diff_gt2": 0.009,
+      "share_abs_diff_gt4": 0.001,
+      "disagreement_runs_ge_0.5s": 0,
+      "paired_track_hours": 0.09,
+      "runs_per_paired_track_hour": 0.0
+     },
+     "30-60": {
+      "pairs": 13893,
+      "median_abs_diff": 0.59,
+      "p90_abs_diff": 1.84,
+      "share_abs_diff_gt2": 0.08,
+      "share_abs_diff_gt4": 0.009,
+      "disagreement_runs_ge_0.5s": 9,
+      "paired_track_hours": 0.27,
+      "runs_per_paired_track_hour": 33.3
+     },
+     "60-100": {
+      "pairs": 6977,
+      "median_abs_diff": 1.17,
+      "p90_abs_diff": 3.61,
+      "share_abs_diff_gt2": 0.285,
+      "share_abs_diff_gt4": 0.077,
+      "disagreement_runs_ge_0.5s": 26,
+      "paired_track_hours": 0.17,
+      "runs_per_paired_track_hour": 156.1
+     }
+    }
+   }
+  }
+ }
+}

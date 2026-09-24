@@ -1,0 +1,460 @@
+{
+ "A": {
+  "rows": 37223,
+  "yaw_reference": {
+   "gyro_axis": "x",
+   "gyro_sign_vs_can": 1.0,
+   "axis_r": [
+    0.992,
+    0.088,
+    0.005
+   ],
+   "gyro_over_can_slope": 0.9536,
+   "gps_bearing_rate_vs_can": {
+    "n": 377,
+    "gps_over_can_slope": 0.8484,
+    "r": 0.783
+   }
+  },
+  "range_codes_per_m": {
+   "windows": 1,
+   "tracks": 1,
+   "vs_gps": 13.135,
+   "vs_gps_90ci": [
+    NaN,
+    NaN
+   ],
+   "vs_0xB4": 16.03,
+   "vs_0xB4_90ci": [
+    NaN,
+    NaN
+   ],
+   "decode": 16
+  },
+  "velocity_zero_by_ego_speed": [
+   {
+    "ego_mps": "0-10",
+    "n": 27,
+    "median_code": 510.12
+   }
+  ],
+  "velocity_mps_per_code": {
+   "windows": 424,
+   "tracks": 38,
+   "vs_gps": 0.15037,
+   "vs_gps_90ci": [
+    0.1484,
+    0.1518
+   ],
+   "vs_0xB4": 0.14754,
+   "vs_0xB4_90ci": [
+    0.1456,
+    0.1487
+   ],
+   "decode": 0.15,
+   "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+  },
+  "joint_range_velocity_scale": {
+   "windows": 426,
+   "tracks": 38,
+   "ego_speed_spread_mps": 8.34,
+   "v_gps": {
+    "range_codes_per_m": 14.297,
+    "range_90ci": [
+     12.7449,
+     15.4709
+    ],
+    "velocity_mps_per_code": 0.14948,
+    "velocity_90ci": [
+     0.147,
+     0.1512
+    ]
+   },
+   "v_b4": {
+    "range_codes_per_m": 14.773,
+    "range_90ci": [
+     13.3575,
+     15.9718
+    ],
+    "velocity_mps_per_code": 0.14713,
+    "velocity_90ci": [
+     0.1449,
+     0.1486
+    ]
+   },
+   "decode": {
+    "range_codes_per_m": 16,
+    "velocity_mps_per_code": 0.15
+   }
+  },
+  "lateral_lane_change": {
+   "events": 4,
+   "track_samples": 4,
+   "codes_per_m_median": 71.17,
+   "codes_per_m_90ci": [
+    42.4876,
+    84.2121
+   ],
+   "events_detail": [
+    {
+     "event": "143@14132.0",
+     "side": 1,
+     "ego_disp_m": 3.52,
+     "n_tracks": 1,
+     "codes_per_m": 81.19
+    },
+    {
+     "event": "143@14154.9",
+     "side": -1,
+     "ego_disp_m": -3.13,
+     "n_tracks": 1,
+     "codes_per_m": 86.94
+    },
+    {
+     "event": "145@14280.6",
+     "side": 1,
+     "ego_disp_m": 4.0,
+     "n_tracks": 1,
+     "codes_per_m": 61.14
+    },
+    {
+     "event": "146@14314.2",
+     "side": 1,
+     "ego_disp_m": 12.96,
+     "n_tracks": 1,
+     "codes_per_m": 23.83
+    }
+   ],
+   "decode": 64
+  },
+  "lateral_codes_per_m": {
+   "windows": 2,
+   "tracks": 1,
+   "estimate": null,
+   "90ci": null,
+   "decode": 64
+  },
+  "vlong_step_counts": {
+   "n": 29561,
+   "share_abs_step_le_2": 0.9007,
+   "at_power_of_two": {
+    "16": 3,
+    "32": 1,
+    "64": 0,
+    "128": 0,
+    "256": 0
+   },
+   "neighbour_mean": {
+    "16": 4,
+    "32": 0,
+    "64": 0,
+    "128": 0,
+    "256": 0
+   },
+   "max_step": 181
+  }
+ },
+ "B": {
+  "rows": 86261,
+  "yaw_reference": {
+   "gyro_axis": "x",
+   "gyro_sign_vs_can": 1.0,
+   "axis_r": [
+    0.999,
+    0.122,
+    0.026
+   ],
+   "gyro_over_can_slope": 0.9683,
+   "gps_bearing_rate_vs_can": {
+    "n": 315,
+    "gps_over_can_slope": 0.9339,
+    "r": 0.838
+   }
+  },
+  "range_codes_per_m": {
+   "windows": 17,
+   "tracks": 8,
+   "vs_gps": 15.971,
+   "vs_gps_90ci": [
+    14.0868,
+    17.2327
+   ],
+   "vs_0xB4": 17.039,
+   "vs_0xB4_90ci": [
+    16.0323,
+    18.3464
+   ],
+   "decode": 16
+  },
+  "velocity_zero_by_ego_speed": [
+   {
+    "ego_mps": "0-10",
+    "n": 63,
+    "median_code": 510.4
+   }
+  ],
+  "velocity_mps_per_code": {
+   "windows": 424,
+   "tracks": 74,
+   "vs_gps": 0.14869,
+   "vs_gps_90ci": [
+    0.1463,
+    0.1514
+   ],
+   "vs_0xB4": 0.14916,
+   "vs_0xB4_90ci": [
+    0.1472,
+    0.1512
+   ],
+   "decode": 0.15,
+   "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+  },
+  "joint_range_velocity_scale": {
+   "windows": 439,
+   "tracks": 74,
+   "ego_speed_spread_mps": 5.51,
+   "v_gps": {
+    "range_codes_per_m": 14.896,
+    "range_90ci": [
+     14.037,
+     15.8217
+    ],
+    "velocity_mps_per_code": 0.15075,
+    "velocity_90ci": [
+     0.1483,
+     0.1532
+    ]
+   },
+   "v_b4": {
+    "range_codes_per_m": 15.424,
+    "range_90ci": [
+     14.7227,
+     15.9994
+    ],
+    "velocity_mps_per_code": 0.15094,
+    "velocity_90ci": [
+     0.1489,
+     0.1532
+    ]
+   },
+   "decode": {
+    "range_codes_per_m": 16,
+    "velocity_mps_per_code": 0.15
+   }
+  },
+  "lateral_lane_change": {
+   "events": 2,
+   "track_samples": 3,
+   "codes_per_m_median": 110.96,
+   "codes_per_m_90ci": null,
+   "events_detail": [
+    {
+     "event": "B18@1256.1",
+     "side": 1,
+     "ego_disp_m": 2.17,
+     "n_tracks": 2,
+     "codes_per_m": 109.73
+    },
+    {
+     "event": "B36@5909.7",
+     "side": -1,
+     "ego_disp_m": -2.34,
+     "n_tracks": 1,
+     "codes_per_m": 112.2
+    }
+   ],
+   "decode": 64
+  },
+  "lateral_codes_per_m": {
+   "windows": 15,
+   "tracks": 7,
+   "estimate": 77.65,
+   "90ci": [
+    59.8319,
+    130.6018
+   ],
+   "decode": 64
+  },
+  "vlong_step_counts": {
+   "n": 59807,
+   "share_abs_step_le_2": 0.8387,
+   "at_power_of_two": {
+    "16": 27,
+    "32": 4,
+    "64": 1,
+    "128": 0,
+    "256": 0
+   },
+   "neighbour_mean": {
+    "16": 33,
+    "32": 2,
+    "64": 0,
+    "128": 0,
+    "256": 0
+   },
+   "max_step": 609
+  }
+ },
+ "C": {
+  "rows": 50207,
+  "yaw_reference": {
+   "gyro_axis": "x",
+   "gyro_sign_vs_can": 1.0,
+   "axis_r": [
+    0.992,
+    0.05,
+    0.091
+   ],
+   "gyro_over_can_slope": 0.9521,
+   "gps_bearing_rate_vs_can": {
+    "n": 387,
+    "gps_over_can_slope": 0.9567,
+    "r": 0.929
+   }
+  },
+  "range_codes_per_m": {
+   "windows": 7,
+   "tracks": 4,
+   "vs_gps": 16.561,
+   "vs_gps_90ci": [
+    12.7726,
+    22.0483
+   ],
+   "vs_0xB4": 19.711,
+   "vs_0xB4_90ci": [
+    14.6534,
+    22.9434
+   ],
+   "decode": 16
+  },
+  "velocity_zero_by_ego_speed": [
+   {
+    "ego_mps": "0-10",
+    "n": 24,
+    "median_code": 509.27
+   }
+  ],
+  "velocity_mps_per_code": {
+   "windows": 484,
+   "tracks": 41,
+   "vs_gps": 0.15304,
+   "vs_gps_90ci": [
+    0.1508,
+    0.155
+   ],
+   "vs_0xB4": 0.15058,
+   "vs_0xB4_90ci": [
+    0.1486,
+    0.1524
+   ],
+   "decode": 0.15,
+   "note": "range slope uses the 1/16 m range scale; a 1% range-scale error moves s by 1%"
+  },
+  "joint_range_velocity_scale": {
+   "windows": 486,
+   "tracks": 41,
+   "ego_speed_spread_mps": 6.75,
+   "v_gps": {
+    "range_codes_per_m": 12.475,
+    "range_90ci": [
+     11.4028,
+     13.7181
+    ],
+    "velocity_mps_per_code": 0.1547,
+    "velocity_90ci": [
+     0.1527,
+     0.158
+    ]
+   },
+   "v_b4": {
+    "range_codes_per_m": 13.152,
+    "range_90ci": [
+     11.8707,
+     14.3491
+    ],
+    "velocity_mps_per_code": 0.15208,
+    "velocity_90ci": [
+     0.1495,
+     0.1553
+    ]
+   },
+   "decode": {
+    "range_codes_per_m": 16,
+    "velocity_mps_per_code": 0.15
+   }
+  },
+  "lateral_lane_change": {
+   "events": 5,
+   "track_samples": 8,
+   "codes_per_m_median": 11.72,
+   "codes_per_m_90ci": [
+    -84.4173,
+    103.1612
+   ],
+   "events_detail": [
+    {
+     "event": "C09@704.1",
+     "side": -1,
+     "ego_disp_m": -4.23,
+     "n_tracks": 1,
+     "codes_per_m": 11.72
+    },
+    {
+     "event": "C09@736.6",
+     "side": -1,
+     "ego_disp_m": -2.83,
+     "n_tracks": 1,
+     "codes_per_m": -84.42
+    },
+    {
+     "event": "C16@1110.6",
+     "side": -1,
+     "ego_disp_m": -3.57,
+     "n_tracks": 3,
+     "codes_per_m": 56.6
+    },
+    {
+     "event": "C18@1243.8",
+     "side": -1,
+     "ego_disp_m": -3.51,
+     "n_tracks": 1,
+     "codes_per_m": 7.41
+    },
+    {
+     "event": "C19@1303.5",
+     "side": 1,
+     "ego_disp_m": 2.16,
+     "n_tracks": 2,
+     "codes_per_m": 103.16
+    }
+   ],
+   "decode": 64
+  },
+  "lateral_codes_per_m": {
+   "windows": 3,
+   "tracks": 1,
+   "estimate": null,
+   "90ci": null,
+   "decode": 64
+  },
+  "vlong_step_counts": {
+   "n": 38156,
+   "share_abs_step_le_2": 0.8885,
+   "at_power_of_two": {
+    "16": 7,
+    "32": 1,
+    "64": 0,
+    "128": 0,
+    "256": 0
+   },
+   "neighbour_mean": {
+    "16": 12,
+    "32": 1,
+    "64": 0,
+    "128": 0,
+    "256": 0
+   },
+   "max_step": 333
+  }
+ }
+}
