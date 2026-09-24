@@ -1,0 +1,31 @@
+{
+  "status": "bounded_observation_and_scope_correction_not_filter_validation",
+  "provenance": "Imported from the research workspace nine-event E5 audit. Original occupied-slot bytes were verified against CRC-valid local records. Consumer figures come from saved open-loop process replay; the source routes and complete rerun are not bundled here.",
+  "cohort": {
+    "radar_only_replay_requests": 9,
+    "driver_on_gas": 4,
+    "driver_slowed": 5,
+    "events_without_eligible_core_acc_match": 2,
+    "driver_behavior_is_physical_truth": false
+  },
+  "endpoint_recovery_example": {
+    "mature_slot_age_code": 126,
+    "consecutive_velocity_endpoint_records": 6,
+    "velocity_field": "64|10",
+    "velocity_code": 1023,
+    "uncertainty_candidate_field": "240|7",
+    "uncertainty_candidate_code": 127,
+    "minimum_replayed_lead_acceleration_mps2": -31.54,
+    "minimum_replayed_planner_acceleration_mps2": -3.5,
+    "core_braking_ticks_with_positive_current_lead_vrel": 26,
+    "causal_guard_benefit_verified": false,
+    "endpoint_invalidity_semantics_verified": false
+  },
+  "parser_promotion": null,
+  "limits": [
+    "Selected extreme-disagreement labels do not cover every braking failure.",
+    "Geometric association and saturated track age do not certify physical identity.",
+    "Accelerated replay has a documented message-frequency validity artifact; these are offline computed outputs, not on-road control validation.",
+    "The observation does not solve the separate slow-drift velocity errors."
+  ]
+}

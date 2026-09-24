@@ -114,8 +114,9 @@ drives to test fairly.
   over about 2 s. Record-to-record steps stay small; only 1.7% exceed 2 m/s. So this is not a Doppler-ambiguity
   flip.
 - **The radar's whole motion state drifts.** The accel field `84|10` goes negative with it (AUC 0.22 / 0.38).
-- **Not re-association.** There is no lateral jump, no track restart and no neighbouring object (all AUC ≈ 0.5).
-  Tracks are settled (median age saturated).
+- **No discriminating exposed re-association marker in this subset.** Lateral jumps, track restarts and neighbour
+  features have AUC approximately 0.5; tracks are settled (median age saturated). This does not prove physical
+  identity through an excursion or exclude an unexposed internal target change.
 - **The radar's own range does not follow the drift** (discovery AUC 0.76). But range noise makes this too weak to
   confirm as a flag (0.59): range walks as long as the glitch lasts.
 
@@ -140,3 +141,20 @@ radar-internal witness is range, and range wanders about as long as the drift la
 `264|4`, the accel field) are moderate. A combined flag is the next interface-only candidate, and it needs new drives
 to test.
 
+### Scope correction: not every braking request is this drift
+
+The statistics above concern selected, large-disagreement samples, not all radar-led braking. Intermediate
+disagreements were excluded from the clean-label classifier, and the original vision check gated range and
+probability but not lateral agreement. A high classifier AUC therefore does not certify all consequential events.
+
+A later research-workspace audit of nine frozen radar-only replay requests found four driver-on-gas and five
+driver-slowed events; neither behaviour is physical truth. Two had no eligible core ACC association. Another
+event had a **different signature**: six CRC-valid records with a mature slot's `64|10` at `1023` and `240|7` at
+`127`, followed by recovery. The replayed lead had positive current relative speed but derived acceleration down
+to **-31.54 m/s2**, with a **-3.5 m/s2** planner request. These are imported, provenance-labelled observations,
+not a bundled rerun: [summary](../data/analysis/summaries/jitter_event_scope_audit.json).
+
+This motivates testing interface-side discontinuity handling and consumer-history reset separately from slow
+drift smoothing. It does **not** establish `1023` as an invalid sentinel, a physical meaning for uncertainty code
+`127`, or the causal benefit of a guard. No new runtime option is promoted by this audit; openpilot remains
+unchanged. Negative results for the tested smoothers are not an impossibility proof for all interface fixes.
