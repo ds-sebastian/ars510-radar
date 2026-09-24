@@ -1,7 +1,9 @@
 # openpilot integration (experimental, not drive-tested)
 
 This directory turns the decoder into radar tracks for **current openpilot**. It was built against opendbc
-`4134c0d` / openpilot `10b9e73` (September 2026). It has been checked:
+`4134c0d` / openpilot `10b9e73` (September 2026). It was re-checked on opendbc master `2801582` (2026-09-23): the
+patch applies, the self-check and 315 opendbc tests pass, and the installed files pass opendbc's ruff config. It has
+been checked:
 - by opendbc's own tests;
 - by a self-check on synthetic records;
 - by replaying logged drives through openpilot's real `card` → `radard` → `plannerd`.

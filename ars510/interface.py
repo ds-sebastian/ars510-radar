@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import isfinite, nan
-from typing import Iterable
+from collections.abc import Iterable
 
 from .constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
 from .objects import decode_native_slot

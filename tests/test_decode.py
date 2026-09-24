@@ -213,3 +213,21 @@ def test_objects_dbc_names_the_tested_movement_fields():
     assert "SG_ MOVE_STATE : 109|2@1+" in text and "SG_ ONCOMING_FLAG : 14|1@1+" in text
     assert 'MOVE_STATE 0 "moving away"' in text and 'ONCOMING_FLAG 0 "not oncoming"' in text
     assert "UNK_109_2" not in text and "UNK_14_1" not in text
+
+
+def test_header_object_count_matches_live_slots_on_real_samples() -> None:
+    from ars510.record import live_object_count
+    from ars510.objects import decode_native_slot
+    for name in ("highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz"):
+        asm = Id80RecordAssembler()
+        n = 0
+        for t, bus, addr, data in sample_frames(name):
+            if bus != 1 or addr != 0x80:
+                continue
+            rec = asm.push(t, data)
+            if rec is None or not id80_crc_ok(rec.payload):
+                continue
+            live = sum(decode_native_slot(s, b).age >= 1 for s, b in occupied_slots(rec.payload))
+            assert live_object_count(rec.payload) == live
+            n += 1
+        assert n > 300

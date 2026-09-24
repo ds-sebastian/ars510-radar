@@ -22,6 +22,20 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 
 **Start with [the evidence review and latest follow-up](docs/13_evidence_review.md).** It corrects two structural errors (the ID85 CRC boundary and slot-index field), explains what the references can and cannot establish, and records newer stopped-target tests that weaken the earlier near-range validation claim.
 
+## Recommended setup (current best, 2026-09-24)
+
+| piece | use | confidence |
+|---|---|---|
+| [`openpilot/`](openpilot) | `install.py` into opendbc (tested on opendbc master `2801582`, 2026-09-23; ruff-clean under opendbc's config). Detection by radar FW `8821F0R03100`, with 0x80/0x85 on bus 1 as fallback. Radarless (no error) until the first record; `radarUnavailableTemporary` after 0.5 s of silence | integration replayed end to end through openpilot's card → radard → plannerd; never driven |
+| `OPENPILOT_CONFIG` (unchanged) | publishes dRel, yRel, vRel and trackId for tracks aged ≥ 60 cycles; re-links IDs across gaps ≤ 3.5 s; never publishes a NaN vRel | the default. No candidate option beat it under the pre-registered rules ([06](docs/06_known_limitations.md)) |
+| dRel / yRel | forward distance (1/16 m) / left-positive lateral (1/64 m) | near range checked to ~0.1 m against camera ground contact; far-range scale open; lateral sign validated, scale ±10% |
+| vRel | over-ground velocity × 0.149/0.15 − ego speed (0xB4) | scale holds to 80 m against the radar's own ACC target. Known flaw: occasional ~1.5 s drifts, mostly false closings at 40-80 m, about 1-2 radar-only brake requests per hour of driving in replay ([15](docs/15_acc_target_stream_and_health_signals.md)) |
+| [`dbc/ars510_radar_bus.dbc`](dbc/ars510_radar_bus.dbc) | raw radar-bus frames, including the radar's own ACC target (0x235 / 0x237) and readiness states (0x101 / 0x197) | ACC target decode confirmed on drives not used to find it. Use it as a reference, not as radar input: it may include Toyota's camera |
+| [`dbc/ars510_objects_vbus.dbc`](dbc/ars510_objects_vbus.dbc) | reassembled objects for cabana: named fields, `MOVE_STATE`, `ONCOMING_FLAG`, header `OBJECT_COUNT`; unnamed fields carry their evidence in comments | named fields tested; `UNK_*` are candidates |
+
+Not used by the interface: lateral velocity, the accel-like field, the uncertainty and size candidates, and the ACC
+target. The last is off by default (`acc_target_clip_mps`); tested but not promoted.
+
 ## What you get
 
 | path | what |

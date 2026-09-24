@@ -72,7 +72,7 @@ CANDIDATE_NOTES = {
     "UNK_232_7": " Lateral-uncertainty candidate: scales with |yRel| (r~0.6), falls with age at fixed range (rho -0.50 to -0.59).",
     "UNK_248_7": " Uncertainty candidate: scales with |yRel| (r~0.56), falls with age at fixed range (rho -0.70 to -0.75).",
     "UNK_256_5": " Existence / confidence candidate: rises with age at fixed range (rho +0.86 to +0.90), drops about 1.5 codes before deletion. Compare ARS4-B ProbExist (5 bits).",
-    "UNK_264_5": " Carry chains show 4 live bits (264..267; bit 268 constant). Young tracks: counts down with age (13 at age 2 to ~5 at age 80). Settled tracks: values 1-4 depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m), consistent with a near-scan / far-scan measurement state (unconfirmed semantics). Value 1 is more common during velocity glitches (stratified AUC 0.69 / 0.63).",
+    "UNK_264_4": " 4 live bits by carry chain (bit 268 constant). Young tracks: counts down with age (13 at age 2 to ~5 at age 80). Settled tracks: values 1-4 depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m), consistent with a near-scan / far-scan measurement state (unconfirmed semantics). Value 1 is more common during velocity glitches (stratified AUC 0.69 / 0.63).",
     "CONST_2_6": " Physical slot index or 63 when unallocated; not an object category. Lane correlations reflect allocation.",
 }
 
@@ -173,6 +173,10 @@ def dbc_text() -> str:
     out.append(f"BO_ {HEADER_ADDR} ARS510_REC_HEADER: {HEADER_DLC} RADAR")
     comments.append(f'CM_ BO_ {HEADER_ADDR} "0x80 record bytes 0-16, before the 20 object slots. Byte 0 is 0xE4 (transport length low byte).";')
     for f in bm["id80_header_fields"]:
+        if f["name"] == "OBJECT_COUNT":
+            out.append(_sig("OBJECT_COUNT", f["start"], f["len"], 1, 0, 0, 20, "objects"))
+            comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "Number of live objects (slots with age >= 1) in this record. Exact on 384,144 records over 6.4 h (docs/15).";')
+            continue
         line, nm, text = _heuristic(f)
         out.append(line)
         comments.append(f'CM_ SG_ {HEADER_ADDR} {nm} "{text}";')

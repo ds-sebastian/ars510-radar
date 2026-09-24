@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import zlib
-from typing import Iterator
+from collections.abc import Iterator
 
 from .constants import (
     ID80_CRC_END,
@@ -40,3 +40,11 @@ def occupied_slots(record: bytes) -> Iterator[tuple[int, bytes]]:
         b = slot_bytes(record, slot)
         if b != ID80_IDLE_SLOT:
             yield slot, b
+
+
+def live_object_count(record: bytes) -> int:
+    """Header field (record bits 115..119, little-endian): number of live objects (slots with age >= 1).
+
+    Exact against the decoded slots on 384,144 records; usable as an integrity cross-check (docs/15).
+    """
+    return (int.from_bytes(record[14:16], "little") >> 3) & 0x1F

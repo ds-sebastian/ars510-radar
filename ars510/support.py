@@ -56,4 +56,3 @@ def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
     if len(data) < 8:
         return None
     return _be_field(data, 47, 5) * 5.26 + 9.6, _be_field(data, 28, 11) * 0.01667 - 16.70
-
