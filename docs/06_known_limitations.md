@@ -111,6 +111,12 @@ beyond radard's gate of max(25% d, 5 m): median gap +11.7 m at the switch, and b
 
 (Vision-only reacts to 40.1% of the driver's brake presses.)
 
+A third follow-up used the radar's own ACC target stream, a confirmed second witness for velocity (see
+[15](15_acc_target_stream_and_health_signals.md)):
+- K7 clips the matched lead's vRel to 0x235 ± 1 m/s; K8 adds range fusion.
+- Over all 20 routes they cut radar-only brake requests from 1.97 to 1.53 per hour.
+- On the confirmation routes they reacted 0.13-0.16 s later, so nothing was promoted.
+
 K5 and K6 were a separate pre-registration, after the uncertainty candidate `240|7` turned out to track velocity error
 ([14](14_stationary_objects_and_field_roles.md)).
 - K5 smooths only tracks the radar itself marks as uncertain. It keeps nearly all of radar's timing advantage (0.14 s

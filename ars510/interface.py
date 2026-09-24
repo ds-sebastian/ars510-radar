@@ -21,9 +21,10 @@ from dataclasses import dataclass
 from math import isfinite, nan
 from typing import Iterable
 
-from .constants import CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
+from .constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
 from .objects import decode_native_slot
 from .record import id80_crc_ok, occupied_slots
+from .support import parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
@@ -65,6 +66,11 @@ class NativeInterfaceConfig:
     vrel_smooth_unc_tau_s: float = 0.0
     vrel_smooth_unc_lo: float = 25.0
     vrel_smooth_unc_hi: float = 42.0
+    # ACC-target cross-check: the radar's own ACC target (0x235 / 0x237) is matched to an object by position. The matched
+    # object's vRel is clipped to the target's closing speed +/- this many m/s (0 disables). 1.0 is the p95 of their
+    # difference on normal samples (docs/15).
+    acc_target_clip_mps: float = 0.0
+    acc_target_max_age_s: float = 0.1
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -105,6 +111,9 @@ class Ars510NativeRadarInterface:
         self._range_est: dict[int, tuple[float, float, float]] = {}
         self._range_hist: dict[int, list[tuple[float, float]]] = {}
         self._vrel_smooth: dict[int, tuple[float, float]] = {}
+        self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
+        self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
+        self.acc_target_clips = 0
 
     # ---- inputs -----------------------------------------------------------------------------------
     def set_ego_speed(self, v_ego_mps: float, time_s: float) -> None:
@@ -123,6 +132,14 @@ class Ars510NativeRadarInterface:
             v = parse_toyota_speed_mps(bytes(data))
             if v is not None:
                 self.set_ego_speed(v, time_s)
+            return None
+        if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
+            if addr == ACC_TARGET_VREL_ADDR:
+                v = parse_acc_target_vrel(bytes(data))
+                self._acc_vrel = (time_s, v) if v is not None else self._acc_vrel
+            else:
+                p = parse_acc_target_position(bytes(data))
+                self._acc_pos = (time_s, p[0], p[1]) if p is not None else self._acc_pos
             return None
         if bus != self.config.radar_bus or addr != ID80_ADDR:
             return None
@@ -172,6 +189,23 @@ class Ars510NativeRadarInterface:
         self._claimed.add(lid)
         self.relinks += 1
         return self._out_id.get(lid, lid)
+
+    # ---- ACC-target cross-check ----------------------------------------------------------------------
+    def _acc_target_match(self, time_s: float, decoded: list) -> tuple[int | None, float]:
+        """The object the radar's own ACC target describes: best position match, cost < 1 and margin > 1, age >= 60."""
+        cfg = self.config
+        if cfg.acc_target_clip_mps <= 0 or self._acc_vrel is None or self._acc_pos is None:
+            return None, nan
+        if abs(time_s - self._acc_vrel[0]) > cfg.acc_target_max_age_s or abs(time_s - self._acc_pos[0]) > cfg.acc_target_max_age_s:
+            return None, nan
+        _, ax, ay = self._acc_pos
+        costs = sorted((abs(obj.d_rel - ax) / 6.0 + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
+                       for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
+        if not costs or costs[0][0] >= 1.0 or costs[0][2] < 60:
+            return None, nan
+        if len(costs) > 1 and costs[1][0] - costs[0][0] <= 1.0:
+            return None, nan
+        return costs[0][1], self._acc_vrel[1]
 
     # ---- candidate options --------------------------------------------------------------------------
     def _range_clipped_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
@@ -228,12 +262,17 @@ class Ars510NativeRadarInterface:
             # every occupied slot updates the lifecycle, including age 0, so a restart is never missed
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
+        acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
                 continue
             v_ground = obj.v_long_ground * cfg.vground_scale
             vrel = float(v_ground - v_ego) if v_ego is not None else nan
+            if tid == acc_tid and isfinite(vrel):
+                clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
+                self.acc_target_clips += clipped != vrel
+                vrel = clipped
             if cfg.vrel_range_clip_window_s > 0:
                 vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
             if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:

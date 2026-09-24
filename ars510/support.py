@@ -28,3 +28,32 @@ def parse_0x192(data: bytes) -> Target192 | None:
         return None
     code = int.from_bytes(data[0:2], "big") & 0x1FFF
     return Target192(code * A192_DIST_SCALE_M, data[2], data[3])
+
+
+def _be_field(data: bytes, start: int, length: int) -> int:
+    """Bit field of an 8-byte frame read as one big-endian integer (bit 0 = LSB of the last byte)."""
+    return (int.from_bytes(bytes(data[:8]).ljust(8, b"\x00"), "big") >> start) & ((1 << length) - 1)
+
+
+def parse_acc_target_vrel(data: bytes) -> float | None:
+    """0x235: closing speed of the radar's own ACC target, m/s (negative = closing).
+
+    Bits 29..39, offset 1024, 0.1 m/s. Tested against the vision-matched radar lead on 20 routes: unbiased against
+    vision (median 0.00 m/s). When native vRel and this value differ by > 3 m/s, vision agrees with this value in
+    86-90% of cases (docs/15).
+    """
+    if len(data) < 8:
+        return None
+    return (_be_field(data, 29, 11) - 1024) * 0.1
+
+
+def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
+    """0x237: (coarse distance m, lateral m left positive) of the radar's ACC target.
+
+    Lateral: bits 28..38, 1/60 m per code, offset -16.70 m (Pearson 0.97 against the matched lead). Distance is
+    coarse: bits 47..51 at about 5.26 m per code, +9.6 m (about +-5 m).
+    """
+    if len(data) < 8:
+        return None
+    return _be_field(data, 47, 5) * 5.26 + 9.6, _be_field(data, 28, 11) * 0.01667 - 16.70
+

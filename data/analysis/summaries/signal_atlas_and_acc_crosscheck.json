@@ -1,0 +1,452 @@
+{
+ "what": "SCR-115 exhaustive signal exploration (discovery/confirmation split fixed in advance) and SCR-116 consumer test of the ACC-target cross-check against the driver",
+ "provenance": "research-workspace run 2026-09-24, pre-registered; provenance-labelled, not a bundled rerun",
+ "split": {
+  "discovery": "drives A, B, C + 10 held-out routes (256 segments, 4.12 h)",
+  "confirmation": "10 other held-out routes (143 segments)"
+ },
+ "discovery": {
+  "C1_share_acc_closer_to_vision_when_native_vs_acc_gt3": 0.897,
+  "C1_n": 715,
+  "C2_lat_pearson": 0.8,
+  "C3_vrel_pearson": 0.78,
+  "C6_physics_auc": 0.689,
+  "C7_240_7_auc": 0.669,
+  "timing_best_lag_s": [
+   0.05,
+   0.1
+  ],
+  "timing_mae_accel": {
+   "lag0": 0.799,
+   "best": 0.795
+  }
+ },
+ "confirmation": {
+  "C1": {
+   "n": 421,
+   "share_acc_closer": 0.8622327790973872,
+   "ci": [
+    0.7911748366013072,
+    0.9851099233561917
+   ],
+   "routes": 7,
+   "confirmed": true
+  },
+  "C1b": {
+   "median_acc_vs_vision": 0.9951959293536512,
+   "median_native_vs_vision": 3.5576359113640024,
+   "paired_median_ci": [
+    -3.7415652676447975,
+    -1.9713355318226116
+   ],
+   "confirmed": true
+  },
+  "C2": {
+   "pearson_y": 0.9721489790140563,
+   "confirmed": true
+  },
+  "C3": {
+   "pearson_vrel": 0.821626180865378,
+   "confirmed": true
+  },
+  "C4": {
+   "match_rate": 0.9922283762779396,
+   "confirmed": true
+  },
+  "C5": {
+   "boot_states_before_first_objects": 1.0,
+   "n_boot_msgs": 715,
+   "running_state_after_10s": 1.0,
+   "confirmed": true
+  },
+  "C7": {
+   "strat_auc_240": 0.5789266741227457,
+   "confirmed": false
+  },
+  "C6": {
+   "strat_auc_physics": 0.6176445273274996,
+   "confirmed": true
+  },
+  "coverage": {
+   "acc_records": 86254,
+   "confident_matches": 24057,
+   "lead_samples": 38423,
+   "routes": 7
+  }
+ },
+ "acc_crosscheck_confirmation": {
+  "candidates": {
+   "K7": {
+    "J1_mae": {
+     "baseline": 0.19220086381209658,
+     "candidate": 0.18868826089066468,
+     "diff_ci": [
+      -0.0035126029214319066,
+      [
+       -0.004674348916304408,
+       -0.002610052088479836
+      ],
+      0.0
+     ]
+    },
+    "J2_switches": {
+     "per_human_hour": {
+      "vision": 462.36,
+      "radar": 462.36
+     },
+     "diff_per_hour_ci": [
+      0.0,
+      [
+       0.0,
+       0.0
+      ],
+      1.0
+     ]
+    },
+    "guard_ant10_baseline_minus_K": [
+     0.014084507042253502,
+     [
+      0.0,
+      0.04763339070567978
+     ],
+     0.662
+    ],
+    "guard_ant10_ok": false,
+    "guard_lag_K_minus_baseline": [
+     0.15798351576925843,
+     [
+      0.051754098007765724,
+      0.2670416459821772
+     ],
+     0.006
+    ],
+    "guard_lag_ok": false,
+    "vs_vision_decision": {
+     "P1": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "P2": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "P3": {
+      "pass": false,
+      "holm_p": 0.0
+     },
+     "P4": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "G1_timing_not_later": {
+      "pass": true,
+      "mean_diff_ci": [
+       -0.1198095922343656,
+       [
+        -0.2179267840877405,
+        0.0012856426662343325
+       ],
+       0.054
+      ]
+     },
+     "radar_only_on_gas_per_human_hour": 0.47,
+     "verdict": "no evidence of benefit",
+     "worse_for_radar": [
+      "P3"
+     ]
+    },
+    "vs_vision_P3_mae_diff_ci": [
+     0.0138447157922231,
+     [
+      0.008789608121363802,
+      0.02111098698278805
+     ],
+     0.0
+    ],
+    "J1_pass": true,
+    "J1_holm_p": 0.0,
+    "verdict": "reduces jitter but costs benefit"
+   },
+   "K8": {
+    "J1_mae": {
+     "baseline": 0.19220086381209658,
+     "candidate": 0.1880229104320678,
+     "diff_ci": [
+      -0.0041779533800287705,
+      [
+       -0.006469013045373757,
+       -0.002576752968764917
+      ],
+      0.0
+     ]
+    },
+    "J2_switches": {
+     "per_human_hour": {
+      "vision": 462.36,
+      "radar": 328.05
+     },
+     "diff_per_hour_ci": [
+      -134.30823316288743,
+      [
+       -183.13058291420364,
+       -83.52745444935704
+      ],
+      0.0
+     ]
+    },
+    "guard_ant10_baseline_minus_K": [
+     -0.014084507042253558,
+     [
+      -0.061855670103092786,
+      0.046875
+     ],
+     0.885
+    ],
+    "guard_ant10_ok": false,
+    "guard_lag_K_minus_baseline": [
+     0.13328138118461258,
+     [
+      0.023402261396219023,
+      0.22985414277330943
+     ],
+     0.015
+    ],
+    "guard_lag_ok": false,
+    "vs_vision_decision": {
+     "P1": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "P2": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "P3": {
+      "pass": false,
+      "holm_p": 0.0
+     },
+     "P4": {
+      "pass": false,
+      "holm_p": 1.0
+     },
+     "G1_timing_not_later": {
+      "pass": true,
+      "mean_diff_ci": [
+       -0.14489769767189653,
+       [
+        -0.22671868145240415,
+        -0.06380617753193468
+       ],
+       0.003
+      ]
+     },
+     "radar_only_on_gas_per_human_hour": 0.47,
+     "verdict": "no evidence of benefit",
+     "worse_for_radar": [
+      "P2",
+      "P3"
+     ]
+    },
+    "vs_vision_P3_mae_diff_ci": [
+     0.013166916974109544,
+     [
+      0.007899242448626703,
+      0.020756582324899187
+     ],
+     0.0
+    ],
+    "J1_pass": true,
+    "J1_holm_p": 0.0,
+    "verdict": "reduces jitter but costs benefit"
+   }
+  },
+  "promote": null
+ },
+ "acc_crosscheck_all20": {
+  "candidates": {
+   "K7": {
+    "J1_mae": {
+     "baseline": 0.18612553548183502,
+     "candidate": 0.18337483268247146,
+     "diff_ci": [
+      -0.002750702799363569,
+      [
+       -0.004059108981910266,
+       -0.0013153212072780861
+      ],
+      0.0
+     ]
+    },
+    "J2_switches": {
+     "per_human_hour": {
+      "vision": 540.7,
+      "radar": 540.26
+     },
+     "diff_per_hour_ci": [
+      -0.43817109054024916,
+      [
+       -1.4072774485976207,
+       0.0
+      ],
+      0.726
+     ]
+    },
+    "guard_ant10_baseline_minus_K": [
+     0.011834319526627224,
+     [
+      0.0,
+      0.026044219771241835
+     ],
+     0.22
+    ],
+    "guard_ant10_ok": true,
+    "guard_lag_K_minus_baseline": [
+     0.10001770281290691,
+     [
+      0.0363708132945631,
+      0.17153664801444418
+     ],
+     0.006
+    ],
+    "guard_lag_ok": true,
+    "vs_vision_decision": {
+     "P1": {
+      "pass": false,
+      "holm_p": 0.375
+     },
+     "P2": {
+      "pass": false,
+      "holm_p": 0.375
+     },
+     "P3": {
+      "pass": false,
+      "holm_p": 0.0
+     },
+     "P4": {
+      "pass": false,
+      "holm_p": 0.375
+     },
+     "G1_timing_not_later": {
+      "pass": true,
+      "mean_diff_ci": [
+       -0.06995700124998981,
+       [
+        -0.15051989551167705,
+        0.012101623479639211
+       ],
+       0.09
+      ]
+     },
+     "radar_only_on_gas_per_human_hour": 0.66,
+     "verdict": "no evidence of benefit",
+     "worse_for_radar": [
+      "P3"
+     ]
+    },
+    "vs_vision_P3_mae_diff_ci": [
+     0.008904971517348537,
+     [
+      0.005173602463154544,
+      0.012976330001187164
+     ],
+     0.0
+    ],
+    "J1_pass": true,
+    "J1_holm_p": 0.0,
+    "verdict": "reduces jitter; P3 vs vision still worse"
+   },
+   "K8": {
+    "J1_mae": {
+     "baseline": 0.18612553548183502,
+     "candidate": 0.1832688822268681,
+     "diff_ci": [
+      -0.0028566532549669232,
+      [
+       -0.004218294170495691,
+       -0.0013728091579965978
+      ],
+      0.0
+     ]
+    },
+    "J2_switches": {
+     "per_human_hour": {
+      "vision": 540.7,
+      "radar": 391.94
+     },
+     "diff_per_hour_ci": [
+      -148.7590852384146,
+      [
+       -206.0825838346726,
+       -98.4605375862942
+      ],
+      0.0
+     ]
+    },
+    "guard_ant10_baseline_minus_K": [
+     -0.011834319526627224,
+     [
+      -0.0394088669950739,
+      0.014492753623188415
+     ],
+     0.566
+    ],
+    "guard_ant10_ok": true,
+    "guard_lag_K_minus_baseline": [
+     0.09241403205194916,
+     [
+      0.02852778158729133,
+      0.15686883965058868
+     ],
+     0.009
+    ],
+    "guard_lag_ok": true,
+    "vs_vision_decision": {
+     "P1": {
+      "pass": true,
+      "holm_p": 0.046875
+     },
+     "P2": {
+      "pass": false,
+      "holm_p": 0.45950134124401565
+     },
+     "P3": {
+      "pass": false,
+      "holm_p": 0.0
+     },
+     "P4": {
+      "pass": true,
+      "holm_p": 0.046875
+     },
+     "G1_timing_not_later": {
+      "pass": true,
+      "mean_diff_ci": [
+       -0.0779871376486406,
+       [
+        -0.1603179089389292,
+        0.0036138354619896975
+       ],
+       0.06
+      ]
+     },
+     "radar_only_on_gas_per_human_hour": 0.44,
+     "verdict": "mixed",
+     "worse_for_radar": [
+      "P3"
+     ]
+    },
+    "vs_vision_P3_mae_diff_ci": [
+     0.008812240900821944,
+     [
+      0.0049974659859947975,
+      0.012970649372991073
+     ],
+     0.0
+    ],
+    "J1_pass": true,
+    "J1_holm_p": 0.0,
+    "verdict": "reduces jitter; P3 vs vision still worse"
+   }
+  },
+  "promote": null
+ }
+}

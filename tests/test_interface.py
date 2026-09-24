@@ -244,3 +244,38 @@ def test_uncertainty_weighted_smoothing_leaves_confident_tracks_alone() -> None:
     assert confident[5] - confident[4] == pytest.approx(step, abs=1e-6)  # passes straight through
     assert 0 < uncertain[5] - uncertain[4] < 0.2 * step  # tau 1 s: one 60 ms record moves ~6% of the step
     assert uncertain[-1] < confident[-1]
+
+
+def _acc_frames(t: float, vrel: float, x: float, y: float) -> list:
+    v = round(vrel / 0.1) + 1024
+    b235 = (v << 29 | 2 << 26).to_bytes(8, "big")
+    xc, yc = round((x - 9.6) / 5.26), round((y + 16.70) / 0.01667)
+    b237 = (xc << 47 | yc << 28).to_bytes(8, "big")
+    return [(t, 1, 0x235, b235), (t, 1, 0x237, b237)]
+
+
+def test_acc_target_decodes_round_trip() -> None:
+    from ars510.support import parse_acc_target_position, parse_acc_target_vrel
+    (_, _, _, b235), (_, _, _, b237) = _acc_frames(0.0, -2.3, 41.7, 1.2)
+    assert parse_acc_target_vrel(b235) == pytest.approx(-2.3, abs=0.05)
+    x, y = parse_acc_target_position(b237)
+    assert abs(x - 41.7) < 2.7 and y == pytest.approx(1.2, abs=0.01)
+
+
+def test_acc_target_cross_check_clips_the_matched_object_only() -> None:
+    from ars510.objects import encode_slot
+    cfg = NativeInterfaceConfig(acc_target_clip_mps=1.0)
+    iface = Ars510NativeRadarInterface(cfg)
+    # lead at 40 m in lane with a native vRel glitch (-6 m/s); a second car 3.5 m to the left with the same glitch
+    lead = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
+    side = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 224, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
+    frames = [speed_frame(0.0, 10.0)] + _acc_frames(0.005, 0.0, 40.0, 0.0) + frames_(record({0: lead, 1: side}), 0.01)
+    pts = {round(p["yRel"]): p for p in iface.update_many(frames)[0]["radarData"]["points"]}
+    assert pts[0]["vRel"] == pytest.approx(-1.0, abs=0.02)  # clipped to 0x235 (0.0) - 1.0
+    native = (round(510.5 + 4.0 / 0.15) - 510.5) * 0.15 - 10.0
+    assert pts[0]["vRel"] > native + 4  # the glitch is gone on the matched lead
+    assert pts[4]["vRel"] == pytest.approx(native, abs=1e-6)  # the side car is untouched
+    assert iface.acc_target_clips == 1
+
+
+frames_ = frames

@@ -269,6 +269,7 @@ BO_ 565 ARS510_A235_COMPANION: 8 RADAR
  SG_ A235_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.1,-102.4) [-102.4|102.3] "m/s" RADAR
 
 BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -280,6 +281,8 @@ BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A237_ACC_TARGET_LAT : 30|11@0+ (0.01667,-16.7) [-16.7|17.42] "m" RADAR
+ SG_ A237_ACC_TARGET_DIST_COARSE : 11|5@0+ (5.26,9.6) [9.6|172.66] "m" RADAR
 
 BO_ 569 ARS510_A239_COMPANION: 8 RADAR
  SG_ A239_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -322,8 +325,11 @@ CM_ BO_ 407 "ARS510 0x197 startup-phase frame. Bit 8 is zero only during the ini
 CM_ BO_ 408 "ARS510 0x198 recurring bus-1 candidate frame. Observed raw-byte coverage only; no radar object semantics are promoted.";
 CM_ BO_ 514 "ARS510 0x202 recurring bus-1 candidate frame. Byte 1 high nibble is a observed modulo-16 counter candidate; no object semantics are promoted.";
 CM_ BO_ 528 "ARS510 0x210 replicated Toyota road-sign-assist context frame. Byte-0 bit 0 mirrors speed-sign presence, byte 1 mirrors RSA1.SPDVAL1, and byte-5 bit 6 mirrors RSA3.TSRMSW on the recorded drives. The speed unit is selected externally by RSA2.SPDUNT. Not radar object semantics.";
-CM_ BO_ 565 "ARS510 0x235 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
-CM_ BO_ 567 "ARS510 0x237 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
+CM_ BO_ 565 "ARS510 0x235 (50 Hz): the radar's own ACC target. Byte 0 check byte, byte 1 mux + rolling counter. A235_ACC_TARGET_VREL is the target's closing speed (offset 1024, 0.1 m/s): unbiased against the vision lead, and when it and the object list's native vRel differ by > 3 m/s vision agrees with it in 86-90% of cases (confirmed on routes not used to find it; docs/15).";
+CM_ SG_ 565 A235_ACC_TARGET_VREL "Closing speed of the radar's ACC target, m/s, negative = closing. Pearson 0.78-0.82 with the matched object's native vRel.";
+CM_ BO_ 567 "ARS510 0x237 (50 Hz): position of the radar's own ACC target (see 0x235). Byte 0 check byte, byte 1 mux + rolling counter.";
+CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive (Pearson 0.97 with the matched object).";
+CM_ SG_ 567 A237_ACC_TARGET_DIST_COARSE "Coarse distance of the ACC target, about 5 m steps (Pearson 0.81); enough to match the target to an object together with the lateral position.";
 CM_ BO_ 569 "ARS510 0x239 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
 CM_ BO_ 571 "ARS510 0x23B companion/debug frame. Three-byte member of the synchronized 0x23x family; byte 1 is split into mux/counter nibbles, with no direct geometry, lifecycle, publication, selection, quality, or candidate-generation truth promoted.";
 CM_ BO_ 573 "ARS510 0x23D companion/debug frame. Route evidence recorded it as an all-zero guard/debug frame; no object semantics are promoted.";

@@ -35,5 +35,10 @@ RECORD_MARKER_PAYLOAD = bytes.fromhex("3000000000000000")
 # Car bus: Toyota SPEED message, big-endian 16 bit at bytes 5-6, 0.01 km/h.
 TOYOTA_SPEED_ADDR = 0xB4
 
+# The radar's own ACC target stream (radar bus, 50 Hz). 0x235 carries its closing speed, 0x237 its position. See
+# ars510/support.py and docs/15.
+ACC_TARGET_VREL_ADDR = 0x235
+ACC_TARGET_POS_ADDR = 0x237
+
 # Radar cycle is ~60 ms (records arrive at ~16.7 Hz).
 RADAR_CYCLE_S = 0.06

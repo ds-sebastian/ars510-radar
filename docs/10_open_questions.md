@@ -33,3 +33,13 @@ Ordered by how much each would move openpilot integration forward.
 - Ground-referenced `64|10` minus ego is the leading velocity interpretation. Simple bit-step tests do not rule out state/timing/association errors.
 - No usable confidence/finalised-speed/correction decoder has been established. Bounded negative searches do not prove absence.
 - Tested filters did not pass the false-braking/real-closing trade-off. This is not a proof against every possible radar-only method.
+
+## Added 2026-09-24
+
+- **A wider ACC-target clip.** For example 0x235 ± 3 m/s, acting only on gross disagreements, where 0x235 is right
+  86-90% of the time. It needs drives not yet analysed ([15](15_acc_target_stream_and_health_signals.md)).
+- **0x235 / 0x237 bytes 4-7 and 0x239 / 0x23B / 0x23D.** Target-present flags are visible, but acceleration or a
+  second target may be in there too.
+- **Rare status states** (a second 0x24D state; 0x101 = 0x21) and 0x502. Their meaning needs events such as
+  blockage, rain or misalignment to correlate against.
+
