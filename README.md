@@ -17,6 +17,8 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 > Nothing here has driven a car. Everything was checked offline, by replaying logged drives through openpilot.
 >
 > **New (2026-09-24):** the radar also publishes its own ACC target at 50 Hz (0x235 / 0x237). When the object list's closing speed and that target disagree by more than 3 m/s, vision sides with the target 86-90% of the time (confirmed on drives not used to find it). It is decoded in the DBC and in `ars510`; using it as a clip is tested but not yet promoted. See [docs/15](docs/15_acc_target_stream_and_health_signals.md).
+
+The finer 0x237 distance code is now exposed for diagnostics: OEM-only consistency supports approximately 0.02 m/count **changes**, but its absolute origin remains unresolved. It is not a replacement dRel or a jitter fix ([evidence and limits](docs/15_acc_target_stream_and_health_signals.md#finer-distance-code-increment-scale-not-absolute-range)).
 >
 > **To try it in openpilot:** [`openpilot/`](openpilot) installs into current opendbc with a three-file Toyota patch. It detects the radar by FW version, because the object stream starts ~6 s after power-up, after fingerprinting. It has run end to end through openpilot's own card, radard and planner on 92 minutes of logged driving; see [docs/07](docs/07_openpilot_integration.md#end-to-end-replay-of-the-installed-integration-2026-09-24).
 

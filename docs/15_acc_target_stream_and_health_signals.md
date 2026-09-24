@@ -36,6 +36,36 @@ nibble as though it were independent of distance. This corrects the former
 "persistent context states" description; it changes no decoded values or
 runtime policy and does not establish an exact OEM distance scale.
 
+### Finer Distance Code: Increment Scale, Not Absolute Range
+
+The contiguous **BE39|13** window extends the coarse distance by eight low bits.
+It is exposed as raw `A237_ACC_TARGET_DISTANCE_CODE` in the DBC and
+`ars510.support.parse_acc_target_range_code()`. The default interface does not
+use it. Its low byte wraps coherently at coarse-bin transitions, rather than
+behaving as an unrelated state field.
+
+A separate test used only the OEM 0x235/0x237 streams, with no modelV2,
+annotation, or native-object geometry target. Fresh active pairs formed fixed
+nonoverlapping 2 s windows with conservative lateral/continuity checks. The
+discovery-only signed ratio of integrated 0x235 vRel to the fine-code change
+was **0.0198465 m/code**. On 565 nontrivial confirmation windows across seven
+contributing drives, the median was **0.0197805**, with no opposite-sign ratios.
+The simple nominal **0.02 m/code** gave **0.0821 m** mean absolute increment
+disagreement, versus **2.0272 m** for the quantized coarse-code changes.
+These are same-OEM consistency errors, **not physical range accuracy**.
+
+This supports `distance_change ~= 0.02 * code_change` for continuous-target
+analysis, without fitting to vision. **The absolute offset is unresolved.**
+Reusing the coarse decoder's +9.6 m offset worsened absolute reference agreement;
+do not expose `0.02*code+9.6` as a new dRel decoder. Shared OEM filtering,
+possible target changes, measurement timing, and reused confirmation routes
+remain limitations. The comparison is an imported research-workspace result,
+not a bundled rerun: [machine-readable scope and results](../data/analysis/summaries/acc_distance_increment_closure.json).
+
+The next question is absolute origin and physical association, not another
+velocity-smoothing threshold. No claim of a jitter fix or driving readiness
+follows from this field alone.
+
 **Where it comes from (checked, because it agrees with vision so well):**
 - **Not sent by openpilot.** The frames are received on the radar's private bus (bus 1). openpilot's transmissions
   (`sendcan`) on these drives are only 0x2E4, 0x191, 0x343 and 0x412, all on bus 0, and nothing is ever sent on

@@ -283,6 +283,7 @@ BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_ACC_TARGET_LAT : 30|11@0+ (0.01667,-16.7) [-16.7|17.42] "m" RADAR
  SG_ A237_ACC_TARGET_DIST_COARSE : 11|5@0+ (5.26,9.6) [9.6|172.66] "m" RADAR
+ SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (1,0) [0|8191] "code" RADAR
 
 BO_ 569 ARS510_A239_COMPANION: 8 RADAR
  SG_ A239_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -330,6 +331,7 @@ CM_ SG_ 565 A235_ACC_TARGET_VREL "Closing speed of the radar's ACC target, m/s, 
 CM_ BO_ 567 "ARS510 0x237 (50 Hz): position of the radar's own ACC target (see 0x235). Byte 0 check byte, byte 1 mux + rolling counter.";
 CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive (Pearson 0.97 with the matched object).";
 CM_ SG_ 567 A237_ACC_TARGET_DIST_COARSE "Coarse distance of the ACC target, about 5 m steps (Pearson 0.81); enough to match the target to an object together with the lateral position.";
+CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Diagnostic BE39|13 raw distance code, including eight low bits omitted by DIST_COARSE. Same-OEM distance-change versus integrated 0x235 velocity tests support about 0.02 m per code increment. Absolute origin unresolved; do not add the coarse +9.6 m offset or treat the raw value as dRel. Availability and target continuity must be established separately. Not consumed by the default radar interface.";
 CM_ BO_ 569 "ARS510 0x239 companion/debug frame. Byte 1 is split into a recorded low-nibble mux and high-nibble rolling counter; no object geometry, lifecycle, publication, selection, quality, or candidate-generation truth is promoted here.";
 CM_ BO_ 571 "ARS510 0x23B companion/debug frame. Three-byte member of the synchronized 0x23x family; byte 1 is split into mux/counter nibbles, with no direct geometry, lifecycle, publication, selection, quality, or candidate-generation truth promoted.";
 CM_ BO_ 573 "ARS510 0x23D companion/debug frame. Route evidence recorded it as an all-zero guard/debug frame; no object semantics are promoted.";

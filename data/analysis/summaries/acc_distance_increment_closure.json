@@ -1,0 +1,18 @@
+{
+  "provenance": "Imported research-workspace result; raw routes and full experiment are not bundled. No new untouched-route claim.",
+  "scope": "OEM 0x235/0x237 only; no modelV2, annotation, or native-object fitting targets",
+  "field": {"address": "0x237", "big_endian_integer_lsb": 39, "length": 13, "dbc_start_bit": 11, "absolute_origin": "unresolved"},
+  "nominal_increment_m_per_code": 0.02,
+  "discovery_signed_median_m_per_code": 0.01984653184830798,
+  "confirmation_signed_median_m_per_code": 0.019780514140977687,
+  "confirmation_contributing_drives": 7,
+  "confirmation_eligible_windows": 1613,
+  "confirmation_nontrivial_windows": 565,
+  "confirmation_nontrivial_opposite_sign_ratios": 0,
+  "confirmation_nontrivial_fixed_increment_mae_m": 0.0821,
+  "confirmation_nontrivial_coarse_increment_mae_m": 2.0272,
+  "window_s": 2,
+  "interpretation": "Internal increment consistency, not independent physical range calibration or a jitter fix",
+  "default_interface_changed": false,
+  "absolute_distance_mapping_promoted": false
+}

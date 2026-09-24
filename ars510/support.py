@@ -56,3 +56,17 @@ def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
     if len(data) < 8:
         return None
     return _be_field(data, 47, 5) * 5.26 + 9.6, _be_field(data, 28, 11) * 0.01667 - 16.70
+
+
+def parse_acc_target_range_code(data: bytes) -> int | None:
+    """0x237 BE39|13 raw distance code, without an assumed absolute origin.
+
+    Changes of about 0.02 m/code agree with integrated OEM 0x235 vRel on
+    continuous-target windows. This is internal consistency, not independent
+    range truth. Do not reuse the coarse decoder's +9.6 m offset. Callers must
+    establish target availability and continuity before interpreting changes.
+    The default radar interface does not consume this diagnostic field.
+    """
+    if len(data) < 8:
+        return None
+    return _be_field(data, 39, 13)
