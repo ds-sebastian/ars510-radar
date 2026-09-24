@@ -37,6 +37,16 @@ fields are in [`ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.
 - **Tracks the lead, not openpilot's command.** Spearman with the lead's closing speed is 0.72 while the driver
   controls speed and 0.70 while openpilot does. With openpilot's acceleration command it is 0.01 and 0.43 (the latter
   only because openpilot brakes for closing leads).
+- **Same quality whatever openpilot is doing.** When native and 0x235 differ by more than 3 m/s, vision sides with
+  0x235 in 90% of cases while openpilot controls speed and 87% while the driver does.
+- **Published whether or not cruise is on.** With a lead ahead, the target is present 96.6% of the time with stock
+  cruise off, 100% with it on, and 99.3% with openpilot longitudinal active. Accuracy is the same in each state.
+- **Camera fusion: not decidable from these logs.**
+  - The decisive case is a vehicle that is already stopped when first seen. The object list drops those; a camera-fed
+    target would still show them. It never occurred in 6.4 h: every stopped lead had been seen moving first.
+  - In 5.4% of records the target sits on a vision-confirmed car with no radar object nearby. Those are short (median
+    0.12 s) and mostly beyond 60 m, where vision distance and the coarse match are weakest, so they are not evidence
+    of camera-only targets.
 - **Open.** Toyota's system may fuse its factory camera into this target. If so, 0x235 is Toyota's production
   camera + radar estimate rather than raw radar. That would partly explain its agreement with openpilot's vision
   model, and it is still an independent second opinion.
