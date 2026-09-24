@@ -28,6 +28,14 @@ fields are in [`ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.
 | 0x237 lateral | bits 28..38 × 0.01667 − 16.70 m, left positive (`A237_ACC_TARGET_LAT`) | Pearson 0.80 / 0.97 |
 | 0x237 coarse distance | bits 47..51 × 5.26 + 9.6 m, about 5 m steps (`A237_ACC_TARGET_DIST_COARSE`) | Pearson 0.81; enough to match the target to an object together with the lateral position |
 
+**Overlapping legacy alias:** `A237_STATUS_MUX4` is byte 1's low nibble,
+the high four bits of the retained coarse-distance code above. It is **not an
+independent status/multiplexing selector**. Its old name and state enumeration
+remain for compatibility only. Do not condition distance analysis on that
+nibble as though it were independent of distance. This corrects the former
+"persistent context states" description; it changes no decoded values or
+runtime policy and does not establish an exact OEM distance scale.
+
 **Where it comes from (checked, because it agrees with vision so well):**
 - **Not sent by openpilot.** The frames are received on the radar's private bus (bus 1). openpilot's transmissions
   (`sendcan`) on these drives are only 0x2E4, 0x191, 0x343 and 0x412, all on bus 0, and nothing is ever sent on
