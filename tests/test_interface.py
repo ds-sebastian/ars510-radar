@@ -248,7 +248,7 @@ def test_uncertainty_weighted_smoothing_leaves_confident_tracks_alone() -> None:
 
 def _acc_frames(t: float, vrel: float, x: float, y: float) -> list:
     v = round(vrel / 0.1) + 1024
-    b235 = (v << 29 | 2 << 26).to_bytes(8, "big")
+    b235 = (v << 29 | 2 << 26 | 4 << 48).to_bytes(8, "big")  # byte 1 bit 2: target available
     xc, yc = round((x - 9.6) / 5.26), round((y + 16.70) / 0.01667)
     b237 = (xc << 47 | yc << 28).to_bytes(8, "big")
     return [(t, 1, 0x235, b235), (t, 1, 0x237, b237)]
@@ -279,3 +279,44 @@ def test_acc_target_cross_check_clips_the_matched_object_only() -> None:
 
 
 frames_ = frames
+
+
+@pytest.mark.parametrize("address,data", [
+    (0x235, bytes.fromhex("000164800B2400FF")),
+    (0x237, bytes.fromhex("0000003E80000000")),
+    (0x235, bytes(7)), (0x237, bytes(9)),
+])
+def test_acc_unavailable_clears_both_halves(address, data):
+    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0))
+    iface.update_many(_acc_frames(0.0, -2.0, 40.0, 0.0))
+    assert iface._acc_vrel is not None and iface._acc_pos is not None
+    iface.update_frame(0.01, 1, address, data)
+    assert iface._acc_vrel is None and iface._acc_pos is None
+    iface.update_frame(*_acc_frames(0.02, -2.0, 40.0, 0.0)[0])
+    assert iface._acc_vrel is not None and iface._acc_pos is None
+    iface.update_frame(*_acc_frames(0.03, -2.0, 40.0, 0.0)[1])
+    assert iface._acc_pos is not None
+
+
+def test_idle_acc_cannot_clip_a_real_closing_object():
+    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0))
+    rec = record({0: slot_bytes(r_code=320, lat_code=2048, vel_code=537, age=80)})
+    inputs = [speed_frame(0.0, 10.0),
+              (0.001, 1, 0x235, bytes.fromhex("000164800B2400FF")),
+              (0.001, 1, 0x237, bytes.fromhex("0000003E80000000"))] + frames(rec, 0.01)
+    (point,) = iface.update_many(inputs)[0]["radarData"]["points"]
+    assert point["vRel"] == pytest.approx((537 - 510.5) * .15 - 10.)
+    assert point["dRel"] == 10.0 and iface.acc_target_clips == 0
+
+
+def test_other_bus_idle_does_not_clear_acc():
+    iface = Ars510NativeRadarInterface()
+    iface.update_many(_acc_frames(0.0, -2.0, 40.0, 0.0))
+    before = iface._acc_vrel, iface._acc_pos
+    iface.update_frame(0.01, 0, 0x235, bytes(8))
+    assert (iface._acc_vrel, iface._acc_pos) == before
+
+
+def test_acc_clip_remains_disabled_by_default():
+    assert NativeInterfaceConfig().acc_target_clip_mps == 0.0
+    assert OPENPILOT_CONFIG.acc_target_clip_mps == RAW_CONFIG.acc_target_clip_mps == 0.0

@@ -1,0 +1,24 @@
+{
+  "provenance": "Imported research-workspace frozen replay; not a bundled rerun",
+  "candidate": "Existing 1 m/s OEM velocity clip plus availability-only invalidation",
+  "default_enabled": false,
+  "clip_promoted": false,
+  "openpilot_source_changed": false,
+  "chains": 20,
+  "confirmation_routes": 10,
+  "exact_reference_ticks_each_gate": 23519,
+  "all_driver_acceleration_mae_mps2": {
+    "default": 0.18612553548183502,
+    "old_optional_clip": 0.18337483268247146,
+    "corrected_optional_clip": 0.18350765190064824
+  },
+  "confirmation_driver_acceleration_mae_mps2": {
+    "default": 0.19220086381209658,
+    "old_optional_clip": 0.18868826089066468,
+    "corrected_optional_clip": 0.18882441320629578
+  },
+  "confirmation_lag_vs_default_s": [0.15798351576925843, [0.051754098007765724, 0.2670416459821772]],
+  "confirmation_anticipation_loss_ci_upper": 0.04763339070567978,
+  "timing_guards_pass": false,
+  "limitations": "Same previously used drives. Driver behavior is not physical truth. Default clip-off invariance gate covers one reference chain. No closed-loop safety claim."
+}

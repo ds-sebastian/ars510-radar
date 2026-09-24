@@ -134,6 +134,15 @@ class Ars510NativeRadarInterface:
                 self.set_ego_speed(v, time_s)
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
+            data = bytes(data)
+            available = len(data) == 8 and (
+                bool(data[1] & 4) if addr == ACC_TARGET_VREL_ADDR
+                else data[2:] != bytes.fromhex("003E80000000")
+            )
+            if not available:
+                # Idle payloads decode numerically; neither cached half may survive target loss.
+                self._acc_vrel = self._acc_pos = None
+                return None
             if addr == ACC_TARGET_VREL_ADDR:
                 v = parse_acc_target_vrel(bytes(data))
                 self._acc_vrel = (time_s, v) if v is not None else self._acc_vrel

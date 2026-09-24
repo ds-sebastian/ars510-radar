@@ -111,6 +111,26 @@ A pre-registered test against the driver used a ±1.0 m/s clip, the p95 of norma
 A wider clip that only acts on gross disagreements (for example ±3 m/s) is the obvious next variant. It needs new
 drives to test fairly.
 
+### Availability correction, not a promoted clip
+
+The optional interface now rejects unavailable/malformed OEM frames and clears
+both cached halves. On tested data, 0x235 byte 1 bit 2 is clear for the absent
+state (status nibble 1); 0x237 holds bytes 2..7 at `00 3E 80 00 00 00`.
+Those idle payloads still decode numerically to zero relative speed and coarse
+position `(9.6, -0.03) m`. Previously they could match a real nearby object and
+incorrectly clip its velocity. Both halves must refresh after target loss;
+numeric diagnostic decode helpers themselves remain unchanged.
+
+The fixed 1 m/s clip was replayed with only this correction on the same 20
+chains. Original K7 and clip-off baseline each reproduced all 23,519 ticks of
+one reference chain exactly. Corrected driver-agreement MAE is 0.18351 versus
+0.18613 for default, but the fixed confirmation subset still fails the timing
+guards: lag +0.158 s, interval [+0.052, +0.267] s, unchanged by the correction.
+Thus invalid-target handling was a real bug, **not the explanation for the
+clip's delayed braking**. Clipping stays disabled and unpromoted. These are
+provenance-labelled research-workspace replay results, not bundled reruns or
+physical velocity accuracy: [summary](../data/analysis/summaries/acc_availability_correction.json).
+
 ## Other confirmed signals
 
 - **Object count in the record header.** 0x80 record header bits 115..118 hold the number of occupied slots (99.2%
