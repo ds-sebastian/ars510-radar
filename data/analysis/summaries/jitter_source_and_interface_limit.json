@@ -1,0 +1,184 @@
+{
+ "what": "Where radar+vision openpilot's extra output jitter comes from, and interface-only fixes (2026-09-25)",
+ "provenance": "research-workspace run (SCR-119), provenance-labelled; not a bundled rerun. Open-loop replay of openpilot 10b9e73, 20 held-out routes, 4.56 human-controlled hours; development drives A/B/C (1.06 h)",
+ "roughness_metric": "RMS of aTarget minus its centred 1 s rolling mean (> ~1 Hz), human-controlled, lead present in both builds, vEgo > 3 m/s; paired on the same ticks, route-bootstrap 95% CI",
+ "paired_roughness_radar_minus_vision": {
+  "ars510": {
+   "steady radar lead": {
+    "tick_share": 0.7204,
+    "rms_radar": 0.0901,
+    "rms_vision_same_ticks": 0.0846,
+    "diff": 0.0055,
+    "ci95": [
+     0.0027,
+     0.009
+    ],
+    "share_of_radar_energy": 0.5386
+   },
+   "switch window": {
+    "tick_share": 0.2002,
+    "rms_radar": 0.1407,
+    "rms_vision_same_ticks": 0.1092,
+    "diff": 0.0315,
+    "ci95": [
+     0.0183,
+     0.0469
+    ],
+    "share_of_radar_energy": 0.3647
+   },
+   "steady vision lead": {
+    "tick_share": 0.0794,
+    "rms_radar": 0.115,
+    "rms_vision_same_ticks": 0.1147,
+    "diff": 0.0002,
+    "ci95": [
+     -0.0001,
+     0.0007
+    ],
+    "share_of_radar_energy": 0.0967
+   },
+   "all": {
+    "tick_share": 1.0,
+    "rms_radar": 0.1042,
+    "rms_vision_same_ticks": 0.0926,
+    "diff": 0.0116,
+    "ci95": [
+     0.0068,
+     0.018
+    ],
+    "share_of_radar_energy": 1.0
+   }
+  },
+  "K1": {
+   "steady radar lead": {
+    "tick_share": 0.7757,
+    "rms_radar": 0.089,
+    "rms_vision_same_ticks": 0.085,
+    "diff": 0.004,
+    "ci95": [
+     0.002,
+     0.0061
+    ],
+    "share_of_radar_energy": 0.5745
+   },
+   "switch window": {
+    "tick_share": 0.1419,
+    "rms_radar": 0.1554,
+    "rms_vision_same_ticks": 0.1145,
+    "diff": 0.0409,
+    "ci95": [
+     0.0205,
+     0.065
+    ],
+    "share_of_radar_energy": 0.3205
+   },
+   "steady vision lead": {
+    "tick_share": 0.0825,
+    "rms_radar": 0.1167,
+    "rms_vision_same_ticks": 0.1165,
+    "diff": 0.0002,
+    "ci95": [
+     -0.0001,
+     0.0006
+    ],
+    "share_of_radar_energy": 0.105
+   },
+   "all": {
+    "tick_share": 1.0,
+    "rms_radar": 0.1034,
+    "rms_vision_same_ticks": 0.0926,
+    "diff": 0.0108,
+    "ci95": [
+     0.0057,
+     0.0181
+    ],
+    "share_of_radar_energy": 1.0
+   }
+  },
+  "H": {
+   "steady radar lead": {
+    "tick_share": 0.8422,
+    "rms_radar": 0.0934,
+    "rms_vision_same_ticks": 0.0873,
+    "diff": 0.0061,
+    "ci95": [
+     0.0031,
+     0.0094
+    ],
+    "share_of_radar_energy": 0.6862
+   },
+   "switch window": {
+    "tick_share": 0.0812,
+    "rms_radar": 0.1681,
+    "rms_vision_same_ticks": 0.1183,
+    "diff": 0.0498,
+    "ci95": [
+     0.0261,
+     0.0808
+    ],
+    "share_of_radar_energy": 0.2142
+   },
+   "steady vision lead": {
+    "tick_share": 0.0766,
+    "rms_radar": 0.118,
+    "rms_vision_same_ticks": 0.1159,
+    "diff": 0.0021,
+    "ci95": [
+     0.0001,
+     0.005
+    ],
+    "share_of_radar_energy": 0.0996
+   },
+   "all": {
+    "tick_share": 1.0,
+    "rms_radar": 0.1035,
+    "rms_vision_same_ticks": 0.0926,
+    "diff": 0.0108,
+    "ci95": [
+     0.0064,
+     0.0168
+    ],
+    "share_of_radar_energy": 1.0
+   }
+  }
+ },
+ "labels": {
+  "ars510": "OPENPILOT_CONFIG",
+  "K1": "range_fusion_gain=0.1",
+  "H": "diagnostic only: radard changed to keep the previous radar track within max(40% d, 8 m) of vision (hysteresis); not a proposal"
+ },
+ "lead_switches_per_human_hour": {
+  "ars510": 541,
+  "K1": 391,
+  "H": 108
+ },
+ "preregistered_retune": {
+  "R1 range_fusion_gain=0.02": {
+   "e4_mae_diff": 0.0004,
+   "ci95": [
+    -0.0011,
+    0.002
+   ]
+  },
+  "R2 R1 + vrel_smooth_far_tau_s=1.0": {
+   "e4_mae_diff": -0.0014,
+   "ci95": [
+    -0.0033,
+    0.0008
+   ]
+  },
+  "holm_p": 0.53,
+  "verdict": "no improvement (development gains -0.0057 / -0.0087 did not transfer)"
+ },
+ "development_negative_screens": [
+  "velocity prefilter aided by the 84|10 accel field",
+  "range-anchored velocity-bias Kalman filter (range jumps drive it; much worse)",
+  "0.15-0.45 m/s backlash on velocity",
+  "240|7 confidence gate",
+  "3 s uniform vRel smoothing",
+  "range-proportional vRel smoothing",
+  "innovation-clipped range fusion",
+  "range scale x1.015",
+  "0x235 veto at 3 / 2 m/s (same smoothing-vs-timing curve as K3)"
+ ]
+}

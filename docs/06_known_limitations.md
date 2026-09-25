@@ -128,9 +128,31 @@ K5 and K6 were a separate pre-registration, after the uncertainty candidate `240
 **Pre-registered outcome: nothing is promoted and `OPENPILOT_CONFIG` stays as it was.**
 - The rule required the candidate to match vision-only on moment-to-moment agreement. None did.
 - K1 removes over a quarter of the lead flip-flopping at no measured cost, but that did not change the primary
-  error measure. So the remaining excess is mostly radar-lead vRel noise, not switching.
+  error measure. The follow-up below shows why: the switching is a symptom, not the cause.
 - K3 and K4 cut about 20% of that excess, and give up about half of radar's timing advantage in return.
 - K1 or K4 are reasonable opt-in choices for anyone who wants a steadier lead.
+
+**Follow-up: the jitter is value excursions, not switching or flicker (2026-09-25).** Numbers:
+[`jitter_source_and_interface_limit.json`](../data/analysis/summaries/jitter_source_and_interface_limit.json)
+(research-workspace run, provenance-labelled). Jitter here is roughness of openpilot's requested acceleration above
+~1 Hz, compared with vision-only on the same moments (held-out routes, route-bootstrap CIs).
+- In steady radar-lead following, radar+vision is only slightly rougher than vision-only (+0.0055 m/s² RMS).
+- Around lead switches (20% of the time) it is much rougher (+0.031), about 70% of the extra roughness.
+- A diagnostic change to radard (not proposed), which keeps the previous radar track inside a wider gate, cut
+  switches by 80% (541 → 108 per hour) but left the roughness almost unchanged (+0.0116 → +0.0108). The rough
+  moments are those where the radar's values disagree with vision by seconds-scale amounts; radard switches
+  because of them.
+- Those values are not flicker: native velocity steps are uncorrelated from record to record (autocorrelation −0.01).
+  Native range cannot anchor velocity either: it jumps by metres (0.9 m per radard cycle beyond what vRel explains).
+- A pre-registered retune (`range_fusion_gain=0.02`, alone and with `vrel_smooth_far_tau_s=1.0`) looked good on the
+  development drives and did not transfer to the held-out routes: no improvement.
+- Other interface-only screens found no way out of the smoothing-versus-timing trade-off: a velocity filter aided by
+  the accel field `84|10`, a range-anchored velocity-bias filter, backlash on velocity, a `240|7` confidence gate,
+  range-proportional smoothing, a range scale correction, and withholding the ACC-target object while 0x235
+  disagrees by more than 2-3 m/s.
+
+So, within the DBC and the interface, the radar can be made steadier, but openpilot's output jitter barely follows.
+Removing the excursions needs a witness for the lead's velocity that the radar-side signals do not provide.
 
 **What other openpilot radar ports do.** The in-tree interfaces (Toyota, Tesla's Continental ARS4-B, Hyundai,
 Ford Delphi MRR, GM, Honda, Chrysler) do not smooth vRel. They:
