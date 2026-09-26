@@ -20,6 +20,8 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 
 The finer 0x237 distance code is now exposed for diagnostics: OEM-only consistency supports approximately 0.02 m/count **changes**, but its absolute origin remains unresolved. It is not a replacement dRel or a jitter fix ([evidence and limits](docs/15_acc_target_stream_and_health_signals.md#finer-distance-code-increment-scale-not-absolute-range)).
 
+> **New (2026-09-25): [the jitter problem, with real-drive evidence](docs/16_the_jitter_problem.md).** The extra jitter of radar+vision is the radar's velocity drifting for 1-10 s while its range does not follow (mostly false closings beyond 40 m), not flicker or lead switching. Interface-only fixes trade timing for smoothness; `range_fusion_gain=0.1` + `vrel_smooth_far_tau_s=1.0` is the recommended opt-in (about half the extra roughness for ~0.05 s). The rest needs radard.
+
 The optional ACC clip now invalidates absent-target caches. Its timing guards still fail, but event inspection shows the large first-crossing differences compare separate braking episodes, not measured sensor latency. One suppressed request remains physically unresolved; clipping stays disabled ([details](docs/15_acc_target_stream_and_health_signals.md#timing-interpretation-correction)).
 >
 > **To try it in openpilot:** [`openpilot/`](openpilot) installs into current opendbc with a three-file Toyota patch. It detects the radar by FW version, because the object stream starts ~6 s after power-up, after fingerprinting. It has run end to end through openpilot's own card, radard and planner on 92 minutes of logged driving; see [docs/07](docs/07_openpilot_integration.md#end-to-end-replay-of-the-installed-integration-2026-09-24).
@@ -127,6 +129,8 @@ The field is **over-ground** velocity, not relative velocity. Use ego speed from
 12. [docs/cabana.md](docs/cabana.md): viewing objects in Cabana.
 13. [docs/13 Evidence review](docs/13_evidence_review.md): corrections, latest stopped-target results, reproducible wire checks, and next experiments.
 14. [docs/14 Stationary objects and field roles](docs/14_stationary_objects_and_field_roles.md): why stationary objects are missing from the list, and likely roles (uncertainty, existence, size, lifecycle) for unnamed slot fields.
+15. [docs/15 ACC target stream and health signals](docs/15_acc_target_stream_and_health_signals.md): the radar's own ACC target (0x235 / 0x237) and readiness signals.
+16. [docs/16 The jitter problem](docs/16_the_jitter_problem.md): what radar+vision jitter is, what it looks like on real closed-loop drives, what the interface can and cannot fix, and radard-level ideas.
 
 ## Where the evidence comes from
 

@@ -154,6 +154,8 @@ K5 and K6 were a separate pre-registration, after the uncertainty candidate `240
 So, within the DBC and the interface, the radar can be made steadier, but openpilot's output jitter barely follows.
 Removing the excursions needs a witness for the lead's velocity that the radar-side signals do not provide.
 
+Real-drive evidence, the full trade-off chart, a corrected roughness comparison (range fusion 0.1 plus far smoothing closes about half of the extra roughness, confirmed on fresh drives) and radard-level ideas: [16](16_the_jitter_problem.md).
+
 **What other openpilot radar ports do.** The in-tree interfaces (Toyota, Tesla's Continental ARS4-B, Hyundai,
 Ford Delphi MRR, GM, Honda, Chrysler) do not smooth vRel. They:
 - gate validity: status or tracked flags, valid counters;
