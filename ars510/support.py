@@ -47,6 +47,18 @@ def parse_acc_target_vrel(data: bytes) -> float | None:
     return (_be_field(data, 29, 11) - 1024) * 0.1
 
 
+def parse_acc_target_arel(data: bytes) -> float | None:
+    """0x235 byte 2: relative acceleration of the radar's ACC target, m/s^2 (d vRel/dt, positive = opening).
+
+    (byte 2 - 100) * 0.1; the idle payload's 0x64 decodes to 0. Binned against the derivative of the 0x235 closing
+    speed it gives identical curves on discovery, confirmation and fresh drives, lagging that derivative by
+    0.1-0.2 s. The scale is approximate (0.1-0.14 m/s^2 per code). Meaningful only while the target is active (docs/15).
+    """
+    if len(data) < 8:
+        return None
+    return (data[2] - 100) * 0.1
+
+
 def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
     """0x237: (coarse distance m, lateral m left positive) of the radar's ACC target.
 

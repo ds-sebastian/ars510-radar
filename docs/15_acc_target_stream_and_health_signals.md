@@ -27,6 +27,7 @@ fields are in [`ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.
 | 0x235 closing speed | (bits 29..39 − 1024) × 0.1 m/s, negative = closing (DBC `A235_ACC_TARGET_VREL`) | Pearson 0.78 / 0.82 (discovery / confirmation) with the matched object's native vRel; median bias against the vision lead 0.00 m/s |
 | 0x237 lateral | bits 28..38 × 0.01667 − 16.70 m, left positive (`A237_ACC_TARGET_LAT`) | Pearson 0.80 / 0.97 |
 | 0x237 coarse distance | bits 47..51 × 5.26 + 9.6 m, about 5 m steps (`A237_ACC_TARGET_DIST_COARSE`) | Pearson 0.81; enough to match the target to an object together with the lateral position |
+| 0x235 relative acceleration | byte 2: (code − 100) × about 0.1 m/s², positive = opening (`A235_ACC_TARGET_AREL`, added 2026-09-26) | same binned curve against the derivative of the 0x235 closing speed on the discovery, confirmation and fresh drives; see below |
 
 **Overlapping legacy alias:** `A237_STATUS_MUX4` is byte 1's low nibble,
 the high four bits of the retained coarse-distance code above. It is **not an
@@ -35,6 +36,28 @@ remain for compatibility only. Do not condition distance analysis on that
 nibble as though it were independent of distance. This corrects the former
 "persistent context states" description; it changes no decoded values or
 runtime policy and does not establish an exact OEM distance scale.
+
+### 0x235 byte 2: the target's relative acceleration (2026-09-26)
+
+Byte 2 of 0x235, previously a raw byte, carries the ACC target's **relative acceleration**
+(d vRel/dt): `(byte2 − 100) × 0.1 m/s²`. The idle payload (`64800B2400FF`) holds 0x64 = 100 there, which decodes
+to zero, just as its closing speed decodes to zero. It is meaningful only while the target is active.
+
+| byte-2 code − 100 | ≤ −10 | −6..−3 | −3..−1 | 0 | +1..+3 | +3..+6 | ≥ +10 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| median derivative of 0x235 closing speed (m/s²) | −1.2 | −0.32 | −0.10 | 0.00 | +0.26 | +0.5 | +1.3 to +1.4 |
+
+The binned medians are the same, to within ±0.06 m/s², on the discovery drives (410k active frames), the confirmation
+drives (207k) and three further drives not used for any tuning (94k). Correlation with the derivative is
+0.57 / 0.62 / 0.83. It follows relative, not over-ground, acceleration: r 0.62 with d(vRel)/dt against 0.28 with
+the lead's absolute acceleration. The scale is approximate (0.1-0.14 m/s² per code), because the reference
+derivative is smoothed.
+
+**It is not an earlier jitter witness.** It lags the closing-speed derivative by 0.1-0.2 s. With thresholds set
+on discovery, it separates native-vRel drops that vision does not share about as well as 0x235's own speed
+change. On the confirmation drives, however, it still flags 11 of 26 real closings in the first second, and
+this label is vision-based while 0x235 may be camera-fused. Provenance-labelled research-workspace numbers:
+[summary](../data/analysis/summaries/acc_target_arel.json).
 
 ### Finer Distance Code: Increment Scale, Not Absolute Range
 
