@@ -1,0 +1,101 @@
+diff --git a/opendbc/car/toyota/interface.py b/opendbc/car/toyota/interface.py
+index 71472ba..46ef36a 100644
+--- a/opendbc/car/toyota/interface.py
++++ b/opendbc/car/toyota/interface.py
+@@ -4,7 +4,7 @@ from opendbc.car.toyota.carcontroller import CarController
+ from opendbc.car.toyota.radar_interface import RadarInterface
+ from opendbc.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
+                                                   MIN_ACC_SPEED, EPS_SCALE, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR, \
+-                                                  ToyotaSafetyFlags, LEGACY_PRIUS_CAR, TOYOTA_AUTO_HOLD_CARS
++                                                  ToyotaSafetyFlags, LEGACY_PRIUS_CAR, TOYOTA_AUTO_HOLD_CARS, ARS510_FW_VERSIONS
+ from opendbc.car.disable_ecu import disable_ecu
+ from opendbc.car.interfaces import CarInterfaceBase
+ from opendbc.safety import ALTERNATIVE_EXPERIENCE
+@@ -131,6 +131,14 @@ class CarInterface(CarInterfaceBase):
+     # No radar dbc for cars without DSU which are not TSS 2.0
+     # TODO: make an adas dbc file for dsu-less models
+     ret.radarUnavailable = Bus.radar not in DBC[candidate] or candidate in (NO_DSU_CAR - TSS2_CAR - {CAR.TOYOTA_CAMRY})
++
++    # Continental ARS510 (RAV4 2022+ radar-ACC): tracks come from its native object list on bus 1. Detected by radar FW,
++    # because after power-up the object stream starts ~6 s after first CAN, later than CAN fingerprinting; the bus 1
++    # check covers unlisted firmware when the radar was already running (e.g. an openpilot restart).
++    ars510_fw = any(fw.ecu == 'fwdRadar' and fw.fwVersion in ARS510_FW_VERSIONS for fw in car_fw)
++    if candidate in RADAR_ACC_CAR and (ars510_fw or {0x80, 0x85} <= fingerprint.get(1, {}).keys()):
++      ret.flags |= ToyotaFlags.ARS510_RADAR.value
++      ret.radarUnavailable = False
+     if candidate == CAR.TOYOTA_CAMRY:
+       ret.radarTimeStepDEPRECATED = 0.1
+ 
+diff --git a/opendbc/car/toyota/radar_interface.py b/opendbc/car/toyota/radar_interface.py
+index 131a75e..8050809 100755
+--- a/opendbc/car/toyota/radar_interface.py
++++ b/opendbc/car/toyota/radar_interface.py
+@@ -2,7 +2,8 @@
+ from opendbc.can import CANParser
+ from opendbc.car import Bus
+ from opendbc.car.structs import RadarData
+-from opendbc.car.toyota.values import CAR, DBC, TSS2_CAR
++from opendbc.car.toyota.values import CAR, DBC, TSS2_CAR, ToyotaFlags
++from opendbc.car.toyota.ars510_radar_interface import Ars510RadarInterface
+ from opendbc.car.interfaces import RadarInterfaceBase
+ 
+ RADAR_ACC_TSSP_CAR = {CAR.TOYOTA_CAMRY}
+@@ -39,11 +40,13 @@ class RadarInterface(RadarInterfaceBase):
+     super().__init__(CP)
+     self.track_id = 0
+     self.radar_acc_tssp = CP.carFingerprint in RADAR_ACC_TSSP_CAR
++    self.ars510 = Ars510RadarInterface(CP) if CP.flags & ToyotaFlags.ARS510_RADAR else None
++    no_parser = CP.radarUnavailable or self.ars510 is not None
+ 
+     if self.radar_acc_tssp:
+       self.RADAR_MSGS = TSSP_CLUSTER_MSGS
+-      self.rcp = None if CP.radarUnavailable else _create_tssp_radar_can_parser(CP.carFingerprint)
+-      self.pt_cp = None if CP.radarUnavailable else _create_wheel_speed_can_parser(CP.carFingerprint)
++      self.rcp = None if no_parser else _create_tssp_radar_can_parser(CP.carFingerprint)
++      self.pt_cp = None if no_parser else _create_wheel_speed_can_parser(CP.carFingerprint)
+       self.trigger_msg = self.RADAR_MSGS[-1]
+     else:
+       if CP.carFingerprint in TSS2_CAR:
+@@ -53,13 +56,15 @@ class RadarInterface(RadarInterfaceBase):
+         self.RADAR_A_MSGS = list(range(0x210, 0x220))
+         self.RADAR_B_MSGS = list(range(0x220, 0x230))
+       self.valid_cnt = {key: 0 for key in self.RADAR_A_MSGS}
+-      self.rcp = None if CP.radarUnavailable else _create_radar_can_parser(CP.carFingerprint)
++      self.rcp = None if no_parser else _create_radar_can_parser(CP.carFingerprint)
+       self.pt_cp = None
+       self.trigger_msg = self.RADAR_B_MSGS[-1]
+ 
+     self.updated_messages = set()
+ 
+   def update(self, can_strings):
++    if self.ars510 is not None:
++      return self.ars510.update(can_strings)
+     if self.rcp is None:
+       return super().update(None)
+ 
+diff --git a/opendbc/car/toyota/values.py b/opendbc/car/toyota/values.py
+index dede289..3066dcd 100644
+--- a/opendbc/car/toyota/values.py
++++ b/opendbc/car/toyota/values.py
+@@ -61,12 +61,21 @@ class ToyotaSafetyFlags(IntFlag):
+   ALT_CRUISE = (64 << 8)
+ 
+ 
++# Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
++# 8821F0R01100 (RAV4 2022) is likely the same family but unconfirmed: add it once 0x80 is seen on bus 1 on such a car.
++ARS510_FW_VERSIONS = {
++  b'\x018821F0R03100\x00\x00\x00\x00',
++}
++
++
+ class ToyotaFlags(IntFlag):
+   # Detected flags
+   HYBRID = 1
+   DISABLE_RADAR = 4
+   # The DSU's ACC messages are rerouted through the camera bus by an adapter.
+   DSU_BYPASS = 8192
++  # Continental ARS510 native object list (0x80 / 0x85 on bus 1): radar tracks from ars510_radar_interface
++  ARS510_RADAR = 16384
+ 
+   # Static flags
+   TSS2 = 8

@@ -28,8 +28,13 @@ from dataclasses import replace
 from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
-from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, Ars510NativeRadarInterface
+from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
 from opendbc.car.toyota.ars510.constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
+
+# Decoder profile: "default" (OPENPILOT_CONFIG) or "steady" (STEADY_CONFIG, the smoother K4 opt-in, docs/16).
+# `install.py --profile steady` rewrites this one line in the installed copy.
+PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}
+PROFILE = PROFILES["default"]
 
 STALE_S = 0.5  # radard has no staleness check of its own on track content
 NO_RECORD_WARN_S = 15.0
@@ -40,7 +45,7 @@ WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (RADAR_BUS, ACC_
 class Ars510RadarInterface(RadarInterfaceBase):
   def __init__(self, CP):
     super().__init__(CP)
-    self.ars = Ars510NativeRadarInterface(replace(OPENPILOT_CONFIG, include_metadata=False))
+    self.ars = Ars510NativeRadarInterface(replace(PROFILE, include_metadata=False))
     self.start_s: float | None = None
     self.last_record_s: float | None = None
     self.warned = False
@@ -80,7 +85,7 @@ class Ars510RadarInterface(RadarInterfaceBase):
     ret = structs.RadarData()
     points = []
     # RadarPoint is trackId / dRel / yRel / vRel (aRel, yvRel, measured are deprecated in current cereal).
-    # OPENPILOT_CONFIG never publishes a NaN vRel, which would poison radard's per-track Kalman filter.
+    # Both profiles never publish a NaN vRel, which would poison radard's per-track Kalman filter.
     for p in latest["radarData"]["points"]:
       pt = structs.RadarData.RadarPoint()
       pt.trackId = p["trackId"]

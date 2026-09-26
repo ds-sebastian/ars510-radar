@@ -16,7 +16,8 @@ It has **not** been run in a car. Read [docs/07](../docs/07_openpilot_integratio
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, copied unchanged |
 | `../dbc/*.dbc` | `opendbc/dbc/` | for cabana only; parsing does not use them |
 | `opendbc_toyota_ars510.patch` | edits 3 Toyota files | detection flag, CarParams, hand-over in Toyota's `RadarInterface` |
-| `install.py` | | copy the files and apply the patch (`--check`, `--uninstall`) |
+| `starpilot/opendbc_toyota_ars510_starpilot.patch` | edits the same 3 Toyota files in StarPilot | used with `install.py --flavor starpilot` |
+| `install.py` | | copy the files and apply the patch (`--flavor`, `--profile`, `--check`, `--uninstall`) |
 | `check_integration.py` | | self-check of an installed copy, no car or log needed |
 
 ## How it hooks in
@@ -68,6 +69,63 @@ Replay your own drives, stock versus patched. See the docstring of
 [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py). It uses
 openpilot's process_replay, so the patched fingerprinting, CarParams and RadarInterface run exactly as `card` would
 run them.
+
+## Profiles
+
+`install.py --profile` picks the decoder settings written into the installed `ars510_radar_interface.py`:
+- `default`: `OPENPILOT_CONFIG`.
+- `steady`: `STEADY_CONFIG`, the "K4" opt-in of [docs/16](../docs/16_the_jitter_problem.md):
+  `range_fusion_gain=0.1` + `vrel_smooth_far_tau_s=1.0`.
+  - It removes about half of radar's extra output roughness over vision-only (held-out routes and fresh drives).
+  - It halves radar-only brake requests that the driver overrode with gas.
+  - It costs about 0.05 s of radar's head start.
+
+Neither profile changes radard.
+
+## StarPilot
+
+StarPilot (September 2026) has the current openpilot layout: card owns the RadarInterface and publishes `liveTracks`.
+The same wrapper and decoder work there, with a StarPilot-specific hook patch.
+
+```bash
+python openpilot/install.py /data/openpilot/opendbc_repo --flavor starpilot --profile steady
+```
+
+Differences from the openpilot flavor:
+- **Flag bit.** `ToyotaFlags.ARS510_RADAR` is 16384, because StarPilot already uses 4096 for `AUTO_BRAKE_HOLD`.
+- **No DBC parser for ARS510 cars.** StarPilot's own Toyota radar parser is skipped for them; it would need a radar DBC
+  this car does not have.
+- **StarPilot's radard runs unchanged.** It is not stock radard:
+  - lead-acceleration decay 0.6 s;
+  - a lateral gate when matching radar to vision;
+  - a hysteresis that keeps the previous radar match;
+  - a gate on radar-only leads after standstill;
+  - an adjacent-lane stopped-vehicle hint ("Force Stop").
+
+  In replay, with StarPilot's radard ported into openpilot 10b9e73 (toggles at defaults, stock planner), held-out
+  routes, radar compared with StarPilot's own vision-only:
+
+  | profile | head start | extra roughness | radar-only brakes /h | overridden with gas /h |
+  |---|---|---|---|---|
+  | default | 0.30 s | +0.015 | 3.3 | 1.5 |
+  | steady | 0.24 s | +0.009 | 1.8 | 0.9 |
+
+  So use `--profile steady` on StarPilot.
+- **Radar extras turn on.** The radar is reported as available, so StarPilot's radar extras are active. They are untested
+  with this radar:
+  - adjacent-lane leads;
+  - the Force Stop hint;
+  - the radar UI.
+- **Verified on a PC against StarPilot's own opendbc** (copied from a device; `cereal.custom` and `Params` stubbed):
+  - the patch applies and ruff passes;
+  - the ARS510 is detected from the radar FW on a cold start, and from 0x80/0x85 on bus 1 without FW, but not
+    without either;
+  - other Toyotas keep StarPilot's own radar parser;
+  - 60 s of logged CAN through StarPilot's RadarInterface gives 16.6 Hz RadarData, identical to the reference decoder
+    (≤ 4e-6), with no invalid messages.
+- **Not yet checked in a car.** StarPilot's own processes, alerts and planner have not run with this radar.
+- **Updates.** A StarPilot update replaces `/data/openpilot`; reinstall after updating. Turn off automatic updates
+  while testing.
 
 ## Putting it on a comma device
 

@@ -17,7 +17,7 @@ off in both; they are documented in docs/06_known_limitations.md with their meas
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from math import isfinite, nan
 from collections.abc import Iterable
 
@@ -79,6 +79,9 @@ RAW_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
 OPENPILOT_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
 )
+# Opt-in for a steadier ride ("K4", docs/16): velocity-aided range plus far-range vRel smoothing. About half of radar's
+# extra output roughness over vision-only on held-out routes and on fresh drives, for ~0.05 s of radar's head start.
+STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"

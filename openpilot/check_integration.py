@@ -37,7 +37,7 @@ def main() -> int:
   from opendbc.car.toyota.values import CAR, ToyotaFlags
   from opendbc.car.toyota.ars510.constants import ID80_IDLE_SLOT, ID80_RECORD_LEN
   from opendbc.car.toyota.ars510.objects import encode_slot
-  from opendbc.car.toyota.ars510_radar_interface import Ars510RadarInterface
+  from opendbc.car.toyota.ars510_radar_interface import PROFILE, Ars510RadarInterface
 
   failures: list[str] = []
 
@@ -122,7 +122,11 @@ def main() -> int:
   pts = [o.points[0] for o in outs if len(o.points)]
   check(len(pts) == 95, f"settled track published on every later record (got {len(pts)})")
   p = pts[-1]
-  check(abs(p.dRel - 40.0) < 1e-3 and abs(p.yRel - 1.5) < 1e-3, f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f})")
+  # The synthetic object keeps a fixed range while its vRel is non-zero; the steady profile's velocity-aided range
+  # (range_fusion_gain) then settles a little away from the raw range, so only the default profile is exact.
+  d_tol = 1e-3 if PROFILE.range_fusion_gain == 0 else 2.5
+  check(abs(p.dRel - 40.0) < d_tol and abs(p.yRel - 1.5) < 1e-3,
+        f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f}; profile fusion gain {PROFILE.range_fusion_gain})")
   # vRel = v_ground * 0.149/0.15 - v_ego (0xB4 reference correction)
   exp = (round(510.5 + 20.0 / 0.15 + 0.5) - 510.5) * 0.15 * 0.149 / 0.15 - 18.0
   check(abs(p.vRel - exp) < 1e-3, f"vRel = over-ground velocity - ego speed (got {p.vRel:.3f}, want {exp:.3f})")
