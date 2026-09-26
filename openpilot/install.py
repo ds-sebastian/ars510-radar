@@ -46,7 +46,16 @@ def targets(root: Path) -> dict[str, Path]:
 
 
 def git_apply(root: Path, *args: str) -> bool:
-  r = subprocess.run(["git", "apply", *args, str(PATCH)], cwd=root, capture_output=True, text=True)
+  # Inside a git work tree, `git apply` resolves patch paths from the top of that tree and silently skips files
+  # outside the current directory. When opendbc_repo is vendored inside a larger repo (StarPilot's /data/openpilot)
+  # rather than being its own repo or submodule, prefix the paths with opendbc_repo's location in that tree.
+  top = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=root, capture_output=True, text=True)
+  prefix = []
+  if top.returncode == 0:
+    rel = root.resolve().relative_to(Path(top.stdout.strip()).resolve())
+    if str(rel) != ".":
+      prefix = [f"--directory={rel.as_posix()}"]
+  r = subprocess.run(["git", "apply", *prefix, *args, str(PATCH)], cwd=root, capture_output=True, text=True)
   return r.returncode == 0
 
 
