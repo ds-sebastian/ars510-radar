@@ -161,6 +161,24 @@ variants did not help:
 - feeding range into the track filter: no gain, because range is too noisy;
 - scaling `aLeadK` down when radar and vision disagree: it cost anticipation.
 
+**Is the camera right?** The camera is not treated as ground truth, and the test did not score against it: the yardstick
+was the driver's own braking and acceleration. Checked against the radar's own 4 s range slope as a referee,
+the camera's lead speed is actually noisier than this radar's:
+
+| distance | camera speed error (median) | radar speed error (median) |
+|---|---|---|
+| 20–40 m | 1.1 m/s | 0.6 m/s |
+| 40–60 m | 1.3 m/s | 0.7 m/s |
+| 60–80 m | 1.6 m/s | 0.9 m/s |
+| 80–120 m | 2.0 m/s | 1.2 m/s |
+
+The camera's own `vStd` rises with its error, but only loosely (1.2 → 1.6 m/s from the lowest to the highest quartile).
+Moment to moment, when the two disagree by more than 2 m/s, range sides with the camera only 13–22% of the time.
+In the sustained false-closing episodes that cause phantom braking, however, range sided with the camera in 22 of 33.
+The patch blends rather than replaces, and the camera's vote shrinks as its `vStd` grows. Even so,
+`VISION_V_STD_SCALE = 2` probably gives the camera more weight than it deserves. A scale of 3–4 is the natural next
+variant to test: it should keep most of the phantom-brake protection with less reliance on the camera and less delay.
+
 **Scope.** This was tested on one car (ARS510) with one recorded vision model, in open-loop replay, with one driver
 as the yardstick. Because the patch changes radarState for every radar car, upstream use would need process-replay
 reference updates and tests on other radar platforms. Numbers:
