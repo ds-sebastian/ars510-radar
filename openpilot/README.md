@@ -19,6 +19,7 @@ It has **not** been run in a car. Read [docs/07](../docs/07_openpilot_integratio
 | `starpilot/opendbc_toyota_ars510_starpilot.patch` | edits the same 3 Toyota files in StarPilot | used with `install.py --flavor starpilot` |
 | `install.py` | | copy the files and apply the patch (`--flavor`, `--profile`, `--check`, `--uninstall`) |
 | `check_integration.py` | | self-check of an installed copy, no car or log needed |
+| `radard_vision_fusion.patch` | edits `openpilot/selfdrive/controls/radard.py` | optional, **not applied by `install.py`**: fuses vision's lead speed into the matched radar lead's filter ([docs/16](../docs/16_the_jitter_problem.md#5-a-tested-radard-change-vision-speed-fusion)); `git apply openpilot/radard_vision_fusion.patch` from an openpilot checkout |
 
 ## How it hooks in
 

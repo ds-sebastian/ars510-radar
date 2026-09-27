@@ -106,13 +106,13 @@ It stays opt-in because the pre-registered promotion rule also required matching
 
 ## 4. Ideas that need radard, for anyone who wants to try
 
-These are untested proposals, ordered by how directly they address the mechanism above.
+Proposals, ordered by how directly they address the mechanism above. Ideas 1 and 2 have since been tested (section 5).
 
-1. **Let the track Kalman filter see range.**
+1. **Let the track Kalman filter see range.** Screened on the development drives: no gain, because range is too noisy.
    - `Track` filters vLead only, and dRel is passed through raw.
    - A joint [d, v, a] filter, with robust (Huber or gated) range updates, would pull a Doppler drift back within about 1-2 s. At 100 m, 3% range noise over 1.5 s of false closing is already a 3σ contradiction.
    - Range jumps of several metres exist, so the range update must be robust. Our interface-side versions failed on exactly that: range jumps drove the correction.
-2. **Fuse vision's velocity instead of switching.**
+2. **Fuse vision's velocity instead of switching.** Tested and passed; see section 5.
    - radard already computes a vision/track likelihood.
    - Using vision's `v` (with `vStd`) as a second, low-weight measurement in the matched track's filter would damp drifts vision disagrees with.
    - It would keep radar's earlier reaction when the two agree.
@@ -127,6 +127,44 @@ These are untested proposals, ordered by how directly they address the mechanism
 5. **A lateral sanity check in `match_vision_to_track`.** At 100 m and more, vision's lateral uncertainty is wide enough to match a track in the next lane ([example on another fork](https://github.com/xiaoxx970/openpilot/issues/7)).
 
 Comma closed its own radard matching change ([openpilot#35079](https://github.com/commaai/openpilot/pull/35079)) with the note "Can be closed with a better model". So these ideas are more likely to land in a fork than upstream.
+
+## 5. A tested radard change: vision speed fusion
+
+Idea 2 above, tested end to end (2026-09-26). The patch is [`openpilot/radard_vision_fusion.patch`](../openpilot/radard_vision_fusion.patch).
+It applies to openpilot master as of 2026-09 (radard unchanged since 2026-08-10) and to 0.11.2, the version it was replayed with.
+It is optional: `install.py` does not apply it.
+
+**What it changes.**
+- Each track's fixed-gain `KF1D` [vLead, aLead] becomes the same filter written with its covariance, a one-step
+  predictor with R = 1 (m/s)² and Q = diag(0.2, 2.0)·dt. That reproduces openpilot's gain table exactly, so tracks that
+  are not the vision-matched lead behave exactly as before. It matches KF1D to 3·10⁻⁸ on a test sequence, the replay
+  ticks are identical with fusion switched off, and it is cheaper (0.42 vs 0.60 µs per update).
+  (openpilot's comment says Q = diag(10, 100), R = 1000, but that does not produce its own gain table.)
+- For the track that radard matches to the vision lead (leadOne), vision's lead speed is fused as a second
+  measurement with standard deviation 2 × the model's `vStd`. When radar and vision agree, nothing changes. A radar
+  speed drift that vision does not see is pulled back before it reaches `vLeadK` and `aLeadK`.
+
+**Test.**
+- Selection: variants were chosen on the four development drives, and the rule was pre-registered.
+- Decision: the same scorer as K4 was used on the 20 held-out drive chains (4.6 h). The further fresh closed-loop drives
+  were kept untouched as a final check.
+
+| | driver-agreement error change [95% CI] | reaction vs baseline | radar-only brakes with driver on gas | lead switches |
+|---|---|---|---|---|
+| **this patch** | **−0.0043 [−0.0068, −0.0018]** (Holm p < 0.001) | +0.085 s [+0.004, +0.177] | 0.88 /h (baseline 0.88) | unchanged |
+| K4 (interface, for comparison) | −0.0021 [−0.0034, −0.0009] | +0.085 s | 0.44 /h | −28% |
+| fresh drives, this patch | −0.0005 [−0.0009, +0.0004] (not worse) | +0.004 s | 0 | unchanged |
+
+The anticipation guard passes, and radar still reacts earlier than vision-only to the driver's braking. Radar remains a little worse
+than vision-only on continuous agreement (+0.0073, down from +0.0116). On the development drives, two other radard
+variants did not help:
+- feeding range into the track filter: no gain, because range is too noisy;
+- scaling `aLeadK` down when radar and vision disagree: it cost anticipation.
+
+**Scope.** This was tested on one car (ARS510) with one recorded vision model, in open-loop replay, with one driver
+as the yardstick. Because the patch changes radarState for every radar car, upstream use would need process-replay
+reference updates and tests on other radar platforms. Numbers:
+[`radard_vision_fusion.json`](../data/analysis/summaries/radard_vision_fusion.json) (provenance-labelled research-workspace run).
 
 ## Limits
 

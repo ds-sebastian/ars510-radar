@@ -1,0 +1,52 @@
+{
+ "provenance": "research-workspace run 2026-09-26 (SCR-134), provenance-labelled, not a bundled rerun (rlogs not in this repo)",
+ "openpilot": "0.11.2 process_replay card->radard->plannerd, open loop; radard.py identical to master 2026-08-10",
+ "interface": "public OPENPILOT_CONFIG",
+ "selection": "development drives A, B (2 routes), C; pre-registered decision rule before held-out/fresh replays",
+ "decision_rule": "J1 Holm p<0.05; mean lag <=0.10 s and CI upper <=0.20 s; anticipation guard ok; radar-only-on-gas <= baseline; further drives J1 CI upper <= +0.001",
+ "heldout_20_chains": {
+  "J1_diff": -0.0043,
+  "J1_ci": [
+   -0.0068,
+   -0.0018
+  ],
+  "holm_p": "<0.001",
+  "lag_s": 0.085,
+  "lag_ci": [
+   0.004,
+   0.177
+  ],
+  "anticipation_guard_ok": true,
+  "radar_only_on_gas_per_h": 0.88,
+  "baseline_radar_only_on_gas_per_h": 0.88,
+  "switches_per_h": 541,
+  "p3_vs_vision": 0.0073,
+  "p3_vs_vision_baseline": 0.0116
+ },
+ "K4_reference_heldout": {
+  "J1_diff": -0.0021,
+  "J1_ci": [
+   -0.0034,
+   -0.0009
+  ],
+  "lag_s": 0.085,
+  "radar_only_on_gas_per_h": 0.44
+ },
+ "further_drives": {
+  "J1_diff": -0.0005,
+  "J1_ci": [
+   -0.0009,
+   0.0004
+  ],
+  "lag_s": 0.004
+ },
+ "equivalence_without_fusion": {
+  "synthetic_max_abs_diff": 2.7e-08,
+  "replay_ticks": "identical on 4 development drives (one 0.001 rounding difference)"
+ },
+ "cost_us_per_update": {
+  "upstream_KF1D": 0.6,
+  "patch": 0.42
+ },
+ "verdict": "pass"
+}
