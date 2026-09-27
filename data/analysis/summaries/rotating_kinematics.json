@@ -1,0 +1,189 @@
+{
+  "provenance": "Imported research-workspace SCR-140 aggregates; expanded raw corpus and rerun scripts are not bundled in the public repository.",
+  "status": "Supported filtered lateral-ground-acceleration-like interpretation; nominal scale and latency remain provisional.",
+  "field": {
+    "start": 96,
+    "width": 10,
+    "zero_code": 511,
+    "nominal_scale_mps2": 0.05,
+    "discovery_selected_lag_s": 0.5
+  },
+  "method": "Two-second same-slot settled windows below 60 m; rotation-corrected velocity derivatives; positive lag means field output follows reference; constant .05 and lag frozen before later-drive scoring.",
+  "limitations": [
+    "Internal kinematic consistency, not independent physical-target acceleration truth.",
+    "Lateral velocity in the derivative uses provisional .15 m/s/code.",
+    "Common-support lag cohorts exclude life boundaries.",
+    "Route-specific calibration outliers remain; no control gate or raw measurement claim."
+  ],
+  "lateral_acceleration": [
+    {
+      "part": "discovery",
+      "axis": "y",
+      "scope": "all_eligible",
+      "lag": 0.0,
+      "windows": 1807,
+      "lives": 639,
+      "slope": 0.0505823946239699,
+      "r": 0.8619060097718976,
+      "ego_r": 0.7617291013518415,
+      "residual_r": 0.7685838041028943,
+      "residual_slope": 0.0547967223909936,
+      "rmse": 0.3280615837104591,
+      "median_abs_error": 0.1406406277229027,
+      "p95_abs_error": 0.66298293331507
+    },
+    {
+      "part": "discovery",
+      "axis": "y",
+      "scope": "lag_common",
+      "lag": 0.5,
+      "windows": 1474,
+      "lives": 454,
+      "slope": 0.0513363400569616,
+      "r": 0.9243519904593156,
+      "ego_r": 0.8229924324899387,
+      "residual_r": 0.8396734232702715,
+      "residual_slope": 0.0567798728949791,
+      "rmse": 0.2236662125201111,
+      "median_abs_error": 0.105216607334727,
+      "p95_abs_error": 0.4467962861977544
+    },
+    {
+      "part": "confirmation",
+      "axis": "y",
+      "scope": "all_eligible",
+      "lag": 0.0,
+      "windows": 798,
+      "lives": 315,
+      "slope": 0.0507608954032348,
+      "r": 0.831371356361197,
+      "ego_r": 0.6510742176332092,
+      "residual_r": 0.77274188026598,
+      "residual_slope": 0.0540707778289819,
+      "rmse": 0.3995697036424517,
+      "median_abs_error": 0.1741102845362507,
+      "p95_abs_error": 0.7074034135028292
+    },
+    {
+      "part": "confirmation",
+      "axis": "y",
+      "scope": "lag_common",
+      "lag": 0.5,
+      "windows": 622,
+      "lives": 212,
+      "slope": 0.0486210672119353,
+      "r": 0.8842203062702959,
+      "ego_r": 0.7709501225589881,
+      "residual_r": 0.7828487576868021,
+      "residual_slope": 0.0506268090745379,
+      "rmse": 0.2820440563307049,
+      "median_abs_error": 0.1186184407513034,
+      "p95_abs_error": 0.479309113152838
+    },
+    {
+      "part": "fresh",
+      "axis": "y",
+      "scope": "all_eligible",
+      "lag": 0.0,
+      "windows": 307,
+      "lives": 145,
+      "slope": 0.0500951104595247,
+      "r": 0.8123285610754793,
+      "ego_r": 0.5977436431850475,
+      "residual_r": 0.7465806363868183,
+      "residual_slope": 0.0506156382793598,
+      "rmse": 0.3923038568629677,
+      "median_abs_error": 0.1457911925696978,
+      "p95_abs_error": 0.5849441917802637
+    },
+    {
+      "part": "fresh",
+      "axis": "y",
+      "scope": "lag_common",
+      "lag": 0.5,
+      "windows": 225,
+      "lives": 86,
+      "slope": 0.0505023882674467,
+      "r": 0.8993506319673419,
+      "ego_r": 0.7401205882772703,
+      "residual_r": 0.8285526711951482,
+      "residual_slope": 0.0537740027141004,
+      "rmse": 0.2320846090506669,
+      "median_abs_error": 0.0951649113279033,
+      "p95_abs_error": 0.3750697004669697
+    }
+  ],
+  "route_scale_ranges": [
+    {
+      "part": "confirmation",
+      "routes": 7,
+      "min_slope": 0.0465430000063431,
+      "max_slope": 0.0601492704661643,
+      "min_r": 0.8463841783629118
+    },
+    {
+      "part": "discovery",
+      "routes": 13,
+      "min_slope": 0.0464396791874136,
+      "max_slope": 0.0825194943581451,
+      "min_r": 0.7347636424273514
+    },
+    {
+      "part": "fresh",
+      "routes": 4,
+      "min_slope": 0.0450955049251603,
+      "max_slope": 0.0538431423525318,
+      "min_r": 0.8530890567290826
+    }
+  ],
+  "lateral_velocity": [
+    {
+      "part": "discovery",
+      "band": "all",
+      "axis": "y",
+      "windows": 729,
+      "lives": 255,
+      "slope": 0.1422105224872311,
+      "ci05": 0.1391251611598832,
+      "ci95": 0.1454611726800712,
+      "uncorrected_slope": 0.0392702685116551,
+      "r": 0.9604300462762796,
+      "rmse_010": 0.6414101965191765,
+      "rmse_0125": 0.487082422610105,
+      "rmse_015": 0.4578613856833877,
+      "rmse_frozen": 0.4500262399259769
+    },
+    {
+      "part": "confirmation",
+      "band": "all",
+      "axis": "y",
+      "windows": 323,
+      "lives": 139,
+      "slope": 0.1444112076236742,
+      "ci05": 0.1395700024722039,
+      "ci95": 0.1500107091943422,
+      "uncorrected_slope": 0.0480581952222609,
+      "r": 0.960920175212423,
+      "rmse_010": 0.7518608449744113,
+      "rmse_0125": 0.5716265438183474,
+      "rmse_015": 0.5244952749385828,
+      "rmse_frozen": 0.5207203912402987
+    },
+    {
+      "part": "fresh",
+      "band": "all",
+      "axis": "y",
+      "windows": 123,
+      "lives": 63,
+      "slope": 0.1453845540471595,
+      "ci05": 0.1381812334065743,
+      "ci95": 0.153096778712891,
+      "uncorrected_slope": 0.0678706324468233,
+      "r": 0.9592618182394756,
+      "rmse_010": 0.664542663398369,
+      "rmse_0125": 0.505899562024613,
+      "rmse_015": 0.4597980473767367,
+      "rmse_frozen": 0.4584171483671872
+    }
+  ]
+}

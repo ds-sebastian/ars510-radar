@@ -43,7 +43,7 @@ Almost every earlier attempt read these bits in the wrong frame: byte-aligned, b
 | MOVE_STATE | `109\|2` | enum | 0 moving away, 2 moving toward (oncoming), 1 / 3 not clearly moving. Passed a pre-registered test on 12 unseen segments ([14](14_stationary_objects_and_field_roles.md)) |
 | ONCOMING_FLAG | `14\|1` | flag | oncoming now or earlier in the track's life. Passed a pre-registered test on 12 unseen segments |
 | ACCEL? | `84\|10` | `code − 511` | acceleration-like; radar-only scale about 0.04 m/s² per code on most data but drive-dependent (0.03–0.11), **lags** velocity by ~0.5 s |
-| UNK_96 | `96\|10` | raw | carry chain centred near 511; no relation to anything tested |
+| UNK_96 | `96\|10` | raw; candidate `(code - 511) * 0.05` m/s² | lateral ground-acceleration-like relationship after correcting coordinate rotation; filtered/delayed, calibration provisional ([evidence](14_stationary_objects_and_field_roles.md#rotating-frame-kinematics-and-lateral-acceleration-2026-09-27)) |
 
 `vRel = VLONG − v_ego`, which is what openpilot's RadarPoint wants.
 

@@ -58,7 +58,7 @@ NAMED_COMMENTS = {
     "VLONG_OVER_GROUND": "Longitudinal velocity OVER GROUND, m/s. 0.15 m/s/code, zero 510.5. vRel = this - ego speed. Radar-only scale check (own range slope vs GPS ego) gives 0.150/0.149/0.153 on three drives. Beats zero and range differencing against a camera reference, but has unflagged ~1 s excursions at range. Unsettled for age < ~60.",
     "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, LEFT positive (sign confirmed). Scale NOT pinned: the factor shown (0.15) is a placeholder. Radar-only estimates from its own lateral position change range 0.097-0.147 m/s per code across data sets, and the pre-registered test was unverified. See docs/14.",
     "ALONG_LIKE_84": "Acceleration-like, zero code 511 at standstill. Follows the VLONG change with a ~0.5 s lag, so it cannot flag or lead a velocity excursion. Radar-only scale about 0.04 m/s^2 per code on most data but drive-dependent (0.03-0.11); centred codes (docs/14).",
-    "UNK_96": "Unnamed 10-bit carry chain centred near 511; no relation to velocity or range error on three drives.",
+    "UNK_96": "Lateral ground-acceleration-like candidate: (raw-511)*0.05 m/s^2, calibration provisional. Rotation-corrected kinematics and a discovery-selected +0.5 s lag transfer to further drives (r about 0.90). Raw code retained; no accuracy gate or runtime use. See docs/14 for route exceptions and reference limitations.",
 }
 CANDIDATE_NOTES = {
     "UNK_8_6": " Ramps up with age and saturates at 62; tracks range and scenario, not measured error.",

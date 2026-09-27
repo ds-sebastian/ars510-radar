@@ -36,6 +36,11 @@ The [expanded-corpus field audit](docs/14_stationary_objects_and_field_roles.md#
 also corrects two undersized raw windows and several constant labels in the Cabana
 DBC. These are encoding corrections; the quantities' meanings remain unresolved.
 
+The [`96|10` follow-up](docs/14_stationary_objects_and_field_roles.md#rotating-frame-kinematics-and-lateral-acceleration-2026-09-27)
+supports a filtered lateral ground-acceleration-like signal, approximately
+`(code - 511) * 0.05` m/s². Its calibration and latency remain provisional;
+the interface does not use it.
+
 ## Recommended setup (current best, 2026-09-24)
 
 | piece | use | confidence |

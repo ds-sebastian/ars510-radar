@@ -154,6 +154,59 @@ imported research results, not results reproduced by the two bundled samples.
 The historical reference bit map is preserved; the DBC generator applies explicit
 corrections. No runtime kinematics, publication rules or control behavior changed.
 
+## Rotating-frame kinematics and lateral acceleration (2026-09-27)
+
+The previously unexplained `96|10` field now has a supported **lateral
+ground-acceleration-like** interpretation. A useful candidate conversion is:
+
+```
+candidate_ay_mps2 = (raw_96_10 - 511) * 0.05
+```
+
+The scale remains provisional. Cabana continues to expose the raw code, and the
+openpilot interface does not use it.
+
+The key was accounting for the radar's rotating coordinate frame. With x forward,
+y left and positive left yaw rate `omega`, ground lateral velocity is
+`Vy = dy/dt + omega*x`, and ground lateral acceleration is
+`Ay = dVy/dt + omega*Vx`. Omitting the second term makes the field look poorly
+related to lateral motion, especially while cornering.
+
+The test uses approximately two-second settled track windows below 60 m, fresh
+IMU-derived yaw and native velocity fields. Discovery selected a coarse +0.5 s
+lag, meaning the field follows the kinematic reference. The .05 scale and lag
+were then applied unchanged to confirmation and further drives:
+
+| evidence set | windows | fitted scale | correlation | RMSE using fixed .05 |
+|---|---:|---:|---:|---:|
+| discovery | 1,474 | .0513 | .924 | .224 m/s² |
+| confirmation | 622 | .0486 | .884 | .282 m/s² |
+| further drives | 225 | .0505 | .899 | .232 m/s² |
+
+Removing the ego vehicle's own lateral acceleration still leaves correlations
+.840/.783/.829, supporting an object-specific relationship. Zero-lag and
+common-support lag results are both preserved in
+[`rotating_kinematics.json`](../data/analysis/summaries/rotating_kinematics.json).
+These are provenance-labelled research-workspace results; the expanded corpus
+is not bundled here.
+
+Limits matter: this is internal kinematic consistency with ego-motion input,
+not independent target-acceleration ground truth. It uses the provisional .15
+lateral-velocity scale. Some route-specific fits differ substantially, and the
+two-second analysis does not establish exact measurement latency. The evidence
+supports a filtered acceleration-like quantity; it does not establish an early
+velocity-excursion flag.
+
+Rotation correction also strengthens `74|10` lateral velocity: pooled fitted
+scales are .1422/.1444/.1454 across discovery/confirmation/further drives, close
+to the existing nominal .15. A discovery-route exception still fails the stated
+common-scale criterion, so its calibration remains provisional.
+
+One research-input correction: `carState.yawRate` was zero throughout this atlas
+and cannot establish straight driving. These tests use fresh `livePose` angular
+velocity. Earlier circular-code candidates were rechecked with that yaw source;
+none acquired a verified Doppler interpretation.
+
 ## Related radars as hypothesis templates
 
 Three published Continental interfaces were used to generate hypotheses. The decisions still come from this radar's data:
