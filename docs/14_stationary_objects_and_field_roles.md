@@ -248,3 +248,42 @@ with the radar's motion estimate, which is what their names claim; they are not 
 - no cell window (8-16 bits, signed or unsigned) tracks ego speed the way a stationary detection's radial velocity would (|r| <= 0.32 on 7 files);
 - cells matched on index plus bytes 2-3 show no window that moves with ego travel (|r| <= 0.14);
 - so 0x85 is scene-dependent but not a plain range / radial-velocity detection list. The encoding stays open ([10](10_open_questions.md)).
+
+## Coarse nonnegative velocity heading (2026-09-27)
+
+`208|6` closely follows the direction of the radar's ground-velocity vector,
+with an important limitation: negative angles almost always produce zero.
+An empirical prediction for the raw code is:
+
+```
+clip(floor(max(atan2(Vy, Vx), 0) * 64/pi), 0, 63)
+```
+
+This suggests bins of approximately pi/64 radians (2.8125 degrees). It is not
+a recovered firmware formula. `Vx` and `Vy` use the native velocity fields;
+this provides internal consistency evidence, not independent body-heading truth.
+The field is not elevation, an independent Doppler measurement, or a jitter flag.
+
+| evidence set | eligible rows | exact raw-code match | within one code |
+|---|---:|---:|---:|
+| discovery | 103,794 | 98.18% | 99.60% |
+| confirmation | 40,892 | 97.43% | 99.44% |
+| further drives | 25,057 | 98.34% | 99.71% |
+
+Eligibility requires settled tracks, 5–60 m forward range, lateral position
+within 20 m and native ground speed at least 5 m/s. Many rows have zero codes.
+On leftward-moving rows with motion-axis angle magnitude at least .08 radians,
+exact agreement is 81.90/81.42/80.87%, and one-bin agreement is
+94.05/94.63/95.94%. Position bearing is a much poorer explanation.
+
+Among 43,369/16,320/8,724 rightward-moving rows, only 11/1/4 have a nonzero code.
+**Zero must not be interpreted as proof of straight motion.** Oncoming objects
+with positive lateral velocity have codes approaching 63, consistent with angles
+approaching pi. Some large counterexamples remain. Clipping, internal filtering
+and field validity are not fully explained.
+
+The candidate was identified in discovery and checked on the other sets; the
+final quadrant interpretation followed those checks and is explicitly
+exploratory. It has no pristine holdout. The raw `UNK_208_6` decoder is retained,
+with no runtime use or control change. Imported research aggregates, not a
+bundled rerun: [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).

@@ -1784,7 +1784,7 @@ CM_ SG_ 1792 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1792 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1792 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1792 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1792 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1792 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1792 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1792 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1792 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1847,7 +1847,7 @@ CM_ SG_ 1793 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1793 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1793 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1793 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1793 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1793 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1793 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1793 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1793 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1910,7 +1910,7 @@ CM_ SG_ 1794 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1794 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1794 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1794 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1794 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1794 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1794 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1794 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1794 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1973,7 +1973,7 @@ CM_ SG_ 1795 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1795 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1795 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1795 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1795 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1795 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1795 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1795 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1795 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2036,7 +2036,7 @@ CM_ SG_ 1796 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1796 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1796 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1796 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1796 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1796 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1796 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1796 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1796 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2099,7 +2099,7 @@ CM_ SG_ 1797 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1797 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1797 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1797 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1797 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1797 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1797 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1797 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1797 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2162,7 +2162,7 @@ CM_ SG_ 1798 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1798 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1798 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1798 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1798 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1798 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1798 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1798 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1798 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2225,7 +2225,7 @@ CM_ SG_ 1799 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1799 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1799 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1799 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1799 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1799 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1799 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1799 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1799 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2288,7 +2288,7 @@ CM_ SG_ 1800 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1800 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1800 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1800 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1800 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1800 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1800 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1800 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1800 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2351,7 +2351,7 @@ CM_ SG_ 1801 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1801 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1801 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1801 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1801 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1801 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1801 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1801 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1801 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2414,7 +2414,7 @@ CM_ SG_ 1802 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1802 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1802 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1802 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1802 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1802 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1802 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1802 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1802 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2477,7 +2477,7 @@ CM_ SG_ 1803 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1803 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1803 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1803 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1803 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1803 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1803 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1803 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1803 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2540,7 +2540,7 @@ CM_ SG_ 1804 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1804 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1804 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1804 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1804 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1804 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1804 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1804 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1804 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2603,7 +2603,7 @@ CM_ SG_ 1805 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1805 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1805 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1805 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1805 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1805 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1805 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1805 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1805 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2666,7 +2666,7 @@ CM_ SG_ 1806 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1806 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1806 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1806 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1806 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1806 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1806 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1806 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1806 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2729,7 +2729,7 @@ CM_ SG_ 1807 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1807 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1807 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1807 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1807 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1807 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1807 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1807 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1807 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2792,7 +2792,7 @@ CM_ SG_ 1808 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1808 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1808 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1808 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1808 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1808 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1808 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1808 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1808 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2855,7 +2855,7 @@ CM_ SG_ 1809 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1809 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1809 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1809 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1809 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1809 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1809 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1809 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1809 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2918,7 +2918,7 @@ CM_ SG_ 1810 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1810 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1810 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1810 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1810 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1810 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1810 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1810 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1810 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2981,7 +2981,7 @@ CM_ SG_ 1811 UNK_183_7 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1811 UNK_190_10 "Expanded-corpus correction: Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate. See docs/14.";
 CM_ SG_ 1811 UNK_200_7 "Candidate from the carry-chain split, unverified: LSB flips 0.023 per cycle, 16 distinct values 0..127. Strongest correlation: v_over_ground r=-0.45.";
 CM_ SG_ 1811 CONST_207_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1811 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.";
+CM_ SG_ 1811 UNK_208_6 "Candidate from the carry-chain split, unverified: LSB flips 0.017 per cycle, 20 distinct values 0..63. Strongest correlation: v_over_ground r=-0.38.Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.";
 CM_ SG_ 1811 CONST_214_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1811 UNK_216_6 "Candidate from the carry-chain split, unverified: LSB flips 0.150 per cycle, 34 distinct values 3..49. Strongest correlation: age r=+0.23. Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).";
 CM_ SG_ 1811 CONST_222_2 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";

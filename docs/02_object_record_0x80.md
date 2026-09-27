@@ -144,6 +144,7 @@ The automatic split (`slot_bit_map.json`) finds several small fields in each slo
 | `256\|5` / `264\|5` | rise / fall with track age at fixed range (rho +0.86-0.90 / -0.61 to -0.68 on three drives); existence-like / uncertainty-like; `264\|5` rises and `256\|5` drops before deletion |
 | `20\|3` | 6 on 88-92% of settled rows; counts down about 5 -> 3 -> 2 -> 1 in the last records before deletion (missed-detection countdown candidate) |
 | `107\|1` | about 0.02 in settled life, 0.5-0.66 just before deletion (coasting-flag candidate) |
+| `208\|6` | coarse nonnegative velocity-heading-like output, approximately pi/64 rad per code; negative angles almost always give zero. Not a full signed heading; see [14](14_stationary_objects_and_field_roles.md) |
 | `56\|7`, `216\|6`, `272\|5` | per-track medians follow camera vehicle height (partial rho 0.41-0.71 at fixed range) and truck/bus class; size / class / RCS candidates |
 
 Candidate roles are from three-drive replication with an ARS408-style template as the hypothesis source; see [14](14_stationary_objects_and_field_roles.md). None has pinned units.

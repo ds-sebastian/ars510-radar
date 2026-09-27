@@ -61,6 +61,7 @@ NAMED_COMMENTS = {
     "UNK_96": "Lateral ground-acceleration-like candidate: (raw-511)*0.05 m/s^2, calibration provisional. Rotation-corrected kinematics and a discovery-selected +0.5 s lag transfer to further drives (r about 0.90). Raw code retained; no accuracy gate or runtime use. See docs/14 for route exceptions and reference limitations.",
 }
 CANDIDATE_NOTES = {
+    "UNK_208_6": "Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.",
     "UNK_8_6": " Ramps up with age and saturates at 62; tracks range and scenario, not measured error.",
     "UNK_20_3": " Missed-detection countdown candidate: 6 on 88-92% of settled rows, counts down about 5 -> 3 -> 2 -> 1 before deletion. Does not predict whether identity survives an occlusion (docs/14).",
     "UNK_107_1": " Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).",

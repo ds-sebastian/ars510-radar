@@ -1,0 +1,554 @@
+{
+  "status": "supported_behavior_provisional_semantics",
+  "provenance": "Imported research-workspace aggregates; full inputs not bundled. Original split and further drives; final model exploratory, no pristine holdout.",
+  "field": "208|6",
+  "candidate": "coarse nonnegative velocity heading",
+  "quantizer": "clip(floor(max(atan2(Vy,Vx),0)*64/pi),0,63)",
+  "limits": [
+    "Not a complete signed heading: almost all Vy<0 rows have code zero.",
+    "Uses native velocity as reference, not independent body-heading truth.",
+    "Exceptions remain; no runtime or excursion gate."
+  ],
+  "scores": [
+    {
+      "part": "confirmation",
+      "scope": "all",
+      "model": "always_zero",
+      "rows": 40892,
+      "exact": 0.8501173823730803,
+      "one_bin": 0.902425902376993,
+      "mae_codes": 2.104030128142424
+    },
+    {
+      "part": "confirmation",
+      "scope": "all",
+      "model": "deg3",
+      "rows": 40892,
+      "exact": 0.934461508363494,
+      "one_bin": 0.9655189279076593,
+      "mae_codes": 0.2492174508461312
+    },
+    {
+      "part": "confirmation",
+      "scope": "all",
+      "model": "pi64",
+      "rows": 40892,
+      "exact": 0.974298151227624,
+      "one_bin": 0.9944243372786852,
+      "mae_codes": 0.1312481659004205
+    },
+    {
+      "part": "confirmation",
+      "scope": "all",
+      "model": "position",
+      "rows": 40892,
+      "exact": 0.6918468160031302,
+      "one_bin": 0.8133620268023085,
+      "mae_codes": 2.32096742639147
+    },
+    {
+      "part": "confirmation",
+      "scope": "all",
+      "model": "rad005",
+      "rows": 40892,
+      "exact": 0.9477648439792624,
+      "one_bin": 0.989680133033356,
+      "mae_codes": 0.1608872151031986
+    },
+    {
+      "part": "confirmation",
+      "scope": "left_angle",
+      "model": "always_zero",
+      "rows": 4058,
+      "exact": 0.0349926071956628,
+      "one_bin": 0.1875308033514046,
+      "mae_codes": 10.179645145391818
+    },
+    {
+      "part": "confirmation",
+      "scope": "left_angle",
+      "model": "deg3",
+      "rows": 4058,
+      "exact": 0.5884672252341054,
+      "one_bin": 0.8242976835879744,
+      "mae_codes": 1.6121241991128634
+    },
+    {
+      "part": "confirmation",
+      "scope": "left_angle",
+      "model": "pi64",
+      "rows": 4058,
+      "exact": 0.8141941843272548,
+      "one_bin": 0.9462789551503205,
+      "mae_codes": 1.0965993100049285
+    },
+    {
+      "part": "confirmation",
+      "scope": "left_angle",
+      "model": "position",
+      "rows": 4058,
+      "exact": 0.1165598817151306,
+      "one_bin": 0.4622966978807294,
+      "mae_codes": 8.457614588467225
+    },
+    {
+      "part": "confirmation",
+      "scope": "left_angle",
+      "model": "rad005",
+      "rows": 4058,
+      "exact": 0.7121734844751109,
+      "one_bin": 0.917447018235584,
+      "mae_codes": 1.2143913257762444
+    },
+    {
+      "part": "confirmation",
+      "scope": "leftward",
+      "model": "always_zero",
+      "rows": 24572,
+      "exact": 0.7506104509197461,
+      "one_bin": 0.8376607520755331,
+      "mae_codes": 3.498901188344457
+    },
+    {
+      "part": "confirmation",
+      "scope": "leftward",
+      "model": "deg3",
+      "rows": 24572,
+      "exact": 0.890973465733355,
+      "one_bin": 0.942658310271854,
+      "mae_codes": 0.4121764610125346
+    },
+    {
+      "part": "confirmation",
+      "scope": "leftward",
+      "model": "pi64",
+      "rows": 24572,
+      "exact": 0.9572684356177764,
+      "one_bin": 0.9907618427478432,
+      "mae_codes": 0.2158554452222041
+    },
+    {
+      "part": "confirmation",
+      "scope": "leftward",
+      "model": "position",
+      "rows": 24572,
+      "exact": 0.5844457105648706,
+      "one_bin": 0.7535406153345271,
+      "mae_codes": 3.562957838189809
+    },
+    {
+      "part": "confirmation",
+      "scope": "leftward",
+      "model": "rad005",
+      "rows": 24572,
+      "exact": 0.9131124857561452,
+      "one_bin": 0.9828666775191276,
+      "mae_codes": 0.2651798795376851
+    },
+    {
+      "part": "confirmation",
+      "scope": "rightward",
+      "model": "always_zero",
+      "rows": 16320,
+      "exact": 0.999938725490196,
+      "one_bin": 0.999938725490196,
+      "mae_codes": 0.003860294117647
+    },
+    {
+      "part": "confirmation",
+      "scope": "rightward",
+      "model": "deg3",
+      "rows": 16320,
+      "exact": 0.999938725490196,
+      "one_bin": 0.999938725490196,
+      "mae_codes": 0.003860294117647
+    },
+    {
+      "part": "confirmation",
+      "scope": "rightward",
+      "model": "pi64",
+      "rows": 16320,
+      "exact": 0.999938725490196,
+      "one_bin": 0.999938725490196,
+      "mae_codes": 0.003860294117647
+    },
+    {
+      "part": "confirmation",
+      "scope": "rightward",
+      "model": "position",
+      "rows": 16320,
+      "exact": 0.8535539215686274,
+      "one_bin": 0.9034313725490196,
+      "mae_codes": 0.4509803921568627
+    },
+    {
+      "part": "confirmation",
+      "scope": "rightward",
+      "model": "rad005",
+      "rows": 16320,
+      "exact": 0.999938725490196,
+      "one_bin": 0.999938725490196,
+      "mae_codes": 0.003860294117647
+    },
+    {
+      "part": "discovery",
+      "scope": "all",
+      "model": "always_zero",
+      "rows": 103794,
+      "exact": 0.8814189644873499,
+      "one_bin": 0.9335896101894136,
+      "mae_codes": 1.605719020367266
+    },
+    {
+      "part": "discovery",
+      "scope": "all",
+      "model": "deg3",
+      "rows": 103794,
+      "exact": 0.9521552305528258,
+      "one_bin": 0.9741892594947684,
+      "mae_codes": 0.1533807349172398
+    },
+    {
+      "part": "discovery",
+      "scope": "all",
+      "model": "pi64",
+      "rows": 103794,
+      "exact": 0.9817715860261672,
+      "one_bin": 0.9959727922615952,
+      "mae_codes": 0.0610536254504113
+    },
+    {
+      "part": "discovery",
+      "scope": "all",
+      "model": "position",
+      "rows": 103794,
+      "exact": 0.7446287839374145,
+      "one_bin": 0.854355743106538,
+      "mae_codes": 1.850049135788196
+    },
+    {
+      "part": "discovery",
+      "scope": "all",
+      "model": "rad005",
+      "rows": 103794,
+      "exact": 0.961625912865869,
+      "one_bin": 0.9932462377401392,
+      "mae_codes": 0.0833574195040175
+    },
+    {
+      "part": "discovery",
+      "scope": "left_angle",
+      "model": "always_zero",
+      "rows": 6574,
+      "exact": 0.0448737450562823,
+      "one_bin": 0.2525098874353514,
+      "mae_codes": 5.861880133860663
+    },
+    {
+      "part": "discovery",
+      "scope": "left_angle",
+      "model": "deg3",
+      "rows": 6574,
+      "exact": 0.6729540614542135,
+      "one_bin": 0.8954974140553696,
+      "mae_codes": 0.8742013994523882
+    },
+    {
+      "part": "discovery",
+      "scope": "left_angle",
+      "model": "pi64",
+      "rows": 6574,
+      "exact": 0.8189838758746577,
+      "one_bin": 0.9405232735016732,
+      "mae_codes": 0.6213872832369942
+    },
+    {
+      "part": "discovery",
+      "scope": "left_angle",
+      "model": "position",
+      "rows": 6574,
+      "exact": 0.2109826589595375,
+      "one_bin": 0.5994828110739276,
+      "mae_codes": 4.142226954669912
+    },
+    {
+      "part": "discovery",
+      "scope": "left_angle",
+      "model": "rad005",
+      "rows": 6574,
+      "exact": 0.7827806510495893,
+      "one_bin": 0.928049893519927,
+      "mae_codes": 0.6636750836629145
+    },
+    {
+      "part": "discovery",
+      "scope": "leftward",
+      "model": "always_zero",
+      "rows": 60425,
+      "exact": 0.7964915184112537,
+      "one_bin": 0.8860901944559371,
+      "mae_codes": 2.7477534133223003
+    },
+    {
+      "part": "discovery",
+      "scope": "leftward",
+      "model": "deg3",
+      "rows": 60425,
+      "exact": 0.9179975175837816,
+      "one_bin": 0.9558295407529996,
+      "mae_codes": 0.2530244104261481
+    },
+    {
+      "part": "discovery",
+      "scope": "leftward",
+      "model": "pi64",
+      "rows": 60425,
+      "exact": 0.968870500620604,
+      "one_bin": 0.9932478278858088,
+      "mae_codes": 0.0944311129499379
+    },
+    {
+      "part": "discovery",
+      "scope": "leftward",
+      "model": "position",
+      "rows": 60425,
+      "exact": 0.6879437318990484,
+      "one_bin": 0.8386098469176665,
+      "mae_codes": 2.7215390980554406
+    },
+    {
+      "part": "discovery",
+      "scope": "leftward",
+      "model": "rad005",
+      "rows": 60425,
+      "exact": 0.9342656185353744,
+      "one_bin": 0.9885643359536616,
+      "mae_codes": 0.1327430699213901
+    },
+    {
+      "part": "discovery",
+      "scope": "rightward",
+      "model": "always_zero",
+      "rows": 43369,
+      "exact": 0.999746362609237,
+      "one_bin": 0.999769420553852,
+      "mae_codes": 0.0145495630519495
+    },
+    {
+      "part": "discovery",
+      "scope": "rightward",
+      "model": "deg3",
+      "rows": 43369,
+      "exact": 0.999746362609237,
+      "one_bin": 0.999769420553852,
+      "mae_codes": 0.0145495630519495
+    },
+    {
+      "part": "discovery",
+      "scope": "rightward",
+      "model": "pi64",
+      "rows": 43369,
+      "exact": 0.999746362609237,
+      "one_bin": 0.999769420553852,
+      "mae_codes": 0.0145495630519495
+    },
+    {
+      "part": "discovery",
+      "scope": "rightward",
+      "model": "position",
+      "rows": 43369,
+      "exact": 0.8236067236966497,
+      "one_bin": 0.8762941271415066,
+      "mae_codes": 0.6358228227535797
+    },
+    {
+      "part": "discovery",
+      "scope": "rightward",
+      "model": "rad005",
+      "rows": 43369,
+      "exact": 0.999746362609237,
+      "one_bin": 0.999769420553852,
+      "mae_codes": 0.0145495630519495
+    },
+    {
+      "part": "fresh",
+      "scope": "all",
+      "model": "always_zero",
+      "rows": 25057,
+      "exact": 0.887376780939458,
+      "one_bin": 0.9329129584547232,
+      "mae_codes": 2.304465817935108
+    },
+    {
+      "part": "fresh",
+      "scope": "all",
+      "model": "deg3",
+      "rows": 25057,
+      "exact": 0.946202657939897,
+      "one_bin": 0.9628048050444984,
+      "mae_codes": 0.2182224528075986
+    },
+    {
+      "part": "fresh",
+      "scope": "all",
+      "model": "pi64",
+      "rows": 25057,
+      "exact": 0.9834377619028616,
+      "one_bin": 0.9970866424552022,
+      "mae_codes": 0.0848864588737677
+    },
+    {
+      "part": "fresh",
+      "scope": "all",
+      "model": "position",
+      "rows": 25057,
+      "exact": 0.8657061898870575,
+      "one_bin": 0.9173484455441592,
+      "mae_codes": 2.155086403001157
+    },
+    {
+      "part": "fresh",
+      "scope": "all",
+      "model": "rad005",
+      "rows": 25057,
+      "exact": 0.9529871892086044,
+      "one_bin": 0.992537015604422,
+      "mae_codes": 0.1190086602546194
+    },
+    {
+      "part": "fresh",
+      "scope": "left_angle",
+      "model": "always_zero",
+      "rows": 1453,
+      "exact": 0.019958706125258,
+      "one_bin": 0.2642807983482449,
+      "mae_codes": 12.82931865106676
+    },
+    {
+      "part": "fresh",
+      "scope": "left_angle",
+      "model": "deg3",
+      "rows": 1453,
+      "exact": 0.5760495526496903,
+      "one_bin": 0.7845836200963524,
+      "mae_codes": 1.4803854094975912
+    },
+    {
+      "part": "fresh",
+      "scope": "left_angle",
+      "model": "pi64",
+      "rows": 1453,
+      "exact": 0.8086717136958018,
+      "one_bin": 0.9593943565037852,
+      "mae_codes": 0.8141775636613903
+    },
+    {
+      "part": "fresh",
+      "scope": "left_angle",
+      "model": "position",
+      "rows": 1453,
+      "exact": 0.1403991741225051,
+      "one_bin": 0.3867859600825877,
+      "mae_codes": 10.445285615966965
+    },
+    {
+      "part": "fresh",
+      "scope": "left_angle",
+      "model": "rad005",
+      "rows": 1453,
+      "exact": 0.6834136269786648,
+      "one_bin": 0.9167240192704748,
+      "mae_codes": 0.9731589814177564
+    },
+    {
+      "part": "fresh",
+      "scope": "leftward",
+      "model": "always_zero",
+      "rows": 16333,
+      "exact": 0.8274658666503398,
+      "one_bin": 0.897324435192555,
+      "mae_codes": 3.5199289781424112
+    },
+    {
+      "part": "fresh",
+      "scope": "leftward",
+      "model": "deg3",
+      "rows": 16333,
+      "exact": 0.917712606379722,
+      "one_bin": 0.9431825139288555,
+      "mae_codes": 0.3193534561929835
+    },
+    {
+      "part": "fresh",
+      "scope": "leftward",
+      "model": "pi64",
+      "rows": 16333,
+      "exact": 0.9748362211473705,
+      "one_bin": 0.9957754239882446,
+      "mae_codes": 0.1147982611890038
+    },
+    {
+      "part": "fresh",
+      "scope": "leftward",
+      "model": "position",
+      "rows": 16333,
+      "exact": 0.8188942631482276,
+      "one_bin": 0.8964060491030428,
+      "mae_codes": 3.159615502357191
+    },
+    {
+      "part": "fresh",
+      "scope": "leftward",
+      "model": "rad005",
+      "rows": 16333,
+      "exact": 0.9281209820608584,
+      "one_bin": 0.9887956897079532,
+      "mae_codes": 0.1671462682911895
+    },
+    {
+      "part": "fresh",
+      "scope": "rightward",
+      "model": "always_zero",
+      "rows": 8724,
+      "exact": 0.9995414947271892,
+      "one_bin": 0.9995414947271892,
+      "mae_codes": 0.0288858321870701
+    },
+    {
+      "part": "fresh",
+      "scope": "rightward",
+      "model": "deg3",
+      "rows": 8724,
+      "exact": 0.9995414947271892,
+      "one_bin": 0.9995414947271892,
+      "mae_codes": 0.0288858321870701
+    },
+    {
+      "part": "fresh",
+      "scope": "rightward",
+      "model": "pi64",
+      "rows": 8724,
+      "exact": 0.9995414947271892,
+      "one_bin": 0.9995414947271892,
+      "mae_codes": 0.0288858321870701
+    },
+    {
+      "part": "fresh",
+      "scope": "rightward",
+      "model": "position",
+      "rows": 8724,
+      "exact": 0.9533470884915176,
+      "one_bin": 0.956556625401192,
+      "mae_codes": 0.2744154057771664
+    },
+    {
+      "part": "fresh",
+      "scope": "rightward",
+      "model": "rad005",
+      "rows": 8724,
+      "exact": 0.9995414947271892,
+      "one_bin": 0.9995414947271892,
+      "mae_codes": 0.0288858321870701
+    }
+  ]
+}
