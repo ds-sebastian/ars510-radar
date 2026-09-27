@@ -64,6 +64,10 @@ What the driver noticed at that moment was mostly the planner returning to the c
 | range noise | velocity-aided range (`range_fusion_gain`) | the lead's dRel jumps 14× less, but the planner barely changes |
 | the radar tracker's own confidence | `240\|7` uncertainty and `264\|4` state as gates or smoothing weights | flags excursions (AUC up to 0.85 on clean labels) but too weakly to act on without costing timing |
 
+The `264|4` entry describes the low-bit window used by those tests. Further
+captures show that the raw quantity extends beyond four bits; its scan/quality
+meaning remains unresolved ([field-boundary correction](14_stationary_objects_and_field_roles.md#expanded-corpus-raw-field-corrections-2026-09-27)).
+
 ![where the jitter is](img/analysis/jitter_roughness_by_state.png)
 
 ![switching is a symptom](img/analysis/jitter_switching_is_a_symptom.png)

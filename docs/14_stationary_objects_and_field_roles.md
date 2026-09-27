@@ -111,8 +111,48 @@ Every bit of the object slot was re-counted from raw records:
   [02](02_object_record_0x80.md)), `15|1`, `165|3`, `190|10` and `239|1`;
 - 21 constant labels hold on all three drives.
 
-The ledger is how "we have not missed anything" becomes checkable. Every field has a status, and unexplained live
-fields are listed as such.
+The ledger records the raw partitions tested so far and lists unexplained live
+fields. It does not prove that those partitions match semantic boundaries, or
+that a desired measurement is absent from the bus.
+
+## Expanded-corpus raw-field corrections (2026-09-27)
+
+A later audit of 399 segments, including 656,953 nondefault slots from CRC-valid
+records, found 234 changing bit positions out of 288. These include the known
+kinematics and lifecycle fields; they are not 234 unknown signals. Several old
+constant labels and two raw-window boundaries needed correction.
+
+| region | structural evidence | Cabana raw view |
+|---|---|---|
+| bit 256 onward | repeated 31↔32 steps: 25 in discovery, 17 in confirmation, 6 on further drives | `UNK_256_6` plus `UNK_262_2`; the previous five-bit view wrapped these steps |
+| bit 264 onward | 199 / 126 / 98 unit steps across low-four-bit wraps in the same three sets, mostly 15↔16 | `UNK_264_5` plus `UNK_269_3`; bit 268 is not constant |
+| `15`, `63`, `165`, `182`, `190`, `239` | rare changes, including within-track changes | `UNK_*` views replace constant or fixed-per-track labels |
+
+The boundary follow-up used another 65 segments containing 109,577 slot rows on
+further drives. Discovery and confirmation carry evidence for bit 256 spans six
+and five routes respectively; the later carries occur on one route. The bit-264
+wrap evidence spans all object-bearing routes in each set. Counts include any
+multiple of the low-window modulus: the confirmation bit-264 count includes one
+31→32 step. All-crossing counts are also retained in the summary, so large jumps
+are not hidden by selecting successful unit steps.
+
+**These are expanded raw inspection windows, not fully decoded quantities.**
+Higher bits sometimes change too; complete field widths, units and meanings
+remain open. The older scan/uncertainty and confidence associations above used
+the stated low-bit windows. They do not establish a scan identifier or a physical
+uncertainty scale for the complete quantity.
+
+Bit 15 almost matches zero-range rows, but has 11 exceptions in each direction.
+Bit 190 almost matches positive age, but has three exceptions. Neither is a new
+validity gate. Bit 182 has only one short observed episode, so it cannot yet be
+named as a merge, class or elevation flag.
+
+Provenance-labelled aggregate evidence:
+[`raw_field_corrections.json`](../data/analysis/summaries/raw_field_corrections.json).
+The expanded raw corpus is not bundled in this repository; these counts are
+imported research results, not results reproduced by the two bundled samples.
+The historical reference bit map is preserved; the DBC generator applies explicit
+corrections. No runtime kinematics, publication rules or control behavior changed.
 
 ## Related radars as hypothesis templates
 

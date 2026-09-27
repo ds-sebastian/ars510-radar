@@ -71,9 +71,24 @@ CANDIDATE_NOTES = {
     "UNK_240_7": " Velocity-uncertainty candidate (like ARS408 VrelLong_rms): scales with range, falls with age, rises before deletion. Flags velocity glitches: stratified AUC 0.65 / 0.85 (discovery / confirmation) against clean labels where native vRel disagrees with both the radar ACC target (0x235) and vision (docs/15). Decoded as vel_unc_code.",
     "UNK_232_7": " Lateral-uncertainty candidate: scales with |yRel| (r~0.6), falls with age at fixed range (rho -0.50 to -0.59).",
     "UNK_248_7": " Uncertainty candidate: scales with |yRel| (r~0.56), falls with age at fixed range (rho -0.70 to -0.75).",
-    "UNK_256_5": " Existence / confidence candidate: rises with age at fixed range (rho +0.86 to +0.90), drops about 1.5 codes before deletion. Compare ARS4-B ProbExist (5 bits).",
-    "UNK_264_4": " 4 live bits by carry chain (bit 268 constant). Young tracks: counts down with age (13 at age 2 to ~5 at age 80). Settled tracks: values 1-4 depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m), consistent with a near-scan / far-scan measurement state (unconfirmed semantics). Value 1 is more common during velocity glitches (stratified AUC 0.69 / 0.63).",
     "CONST_2_6": " Physical slot index or 63 when unallocated; not an object category. Lane correlations reflect allocation.",
+}
+
+# Corrections from further CRC-valid captures (docs/14). The historical bit map
+# remains a frozen small-corpus artifact. These are raw views, not new semantics.
+RAW_FIELD_CORRECTIONS = {
+    15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions; not a validity gate.")],
+    63: [(63, 1, "Rare changing bit; only two rows in the expanded corpus.")],
+    165: [(165, 3, "Changes within some tracks; observed codes 0 and 1.")],
+    182: [(182, 1, "Rare changing bit; observed in one short track episode.")],
+    190: [(190, 10, "Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate.")],
+    239: [(239, 1, "Changes within tracks; often active near birth. The former PER_TRACK label was too strong.")],
+    256: [(256, 6, "Expanded raw window: repeated 31-to-32 and reverse carries in discovery, confirmation and further drives. Full field width, units and meaning unresolved."),
+          (262, 2, "Remaining upper bits are not universally constant. May belong to the preceding quantity; boundary unresolved.")],
+    261: [],
+    264: [(264, 5, "Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits."),
+          (269, 3, "Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved.")],
+    268: [],
 }
 
 
@@ -101,7 +116,7 @@ def _heuristic(f: dict, start: int | None = None) -> tuple[str, str, str]:
         text = f"Constant within a track, differs between tracks ({f['distinct']} values {f['min']}..{f['max']}): object attribute candidate, unverified.{corr}"
     elif f["kind"] == "constant":
         nm = f["name"]
-        text = f"Constant {f['value']} (0x{f['value']:X}) in every record observed: reserved/padding or configuration."
+        text = f"Constant {f['value']} (0x{f['value']:X}) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy."
     else:
         nm = f["name"]
         text = (f"Candidate from the carry-chain split, unverified: LSB flips {f['lsb_flip_rate']:.3f} per cycle, "
@@ -119,6 +134,12 @@ def dbc_text() -> str:
         out.append(f"BO_ {m} ARS510_OBJ_{s:02d}: {OBJ_DLC} RADAR")
         comments.append(f'CM_ BO_ {m} "Reassembled 0x80 object slot {s} (record bytes {ID80_OBJECT_START + 36 * s}-{ID80_OBJECT_START + 36 * s + 35}), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";')
         for f in bm["slot_fields"]:
+            if f["start"] in RAW_FIELD_CORRECTIONS:
+                for start, width, note in RAW_FIELD_CORRECTIONS[f["start"]]:
+                    name = f"UNK_{start}_{width}"
+                    out.append(_sig(name, start, width, 1, 0, 0, (1 << width) - 1, "raw"))
+                    comments.append(f'CM_ SG_ {m} {name} "Expanded-corpus correction: {note} See docs/14.";')
+                continue
             if f["start"] == 0 and f["len"] == 2:
                 out.append(_sig("STATE_CODE", 0, 2, 1, 0, 0, 3, "raw"))
                 comments.append(f'CM_ SG_ {m} STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";')

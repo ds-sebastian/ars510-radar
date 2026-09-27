@@ -32,6 +32,10 @@ The optional ACC clip now invalidates absent-target caches. Its timing guards st
 
 **Start with [the evidence review and latest follow-up](docs/13_evidence_review.md).** It corrects two structural errors (the ID85 CRC boundary and slot-index field), explains what the references can and cannot establish, and records newer stopped-target tests that weaken the earlier near-range validation claim.
 
+The [expanded-corpus field audit](docs/14_stationary_objects_and_field_roles.md#expanded-corpus-raw-field-corrections-2026-09-27)
+also corrects two undersized raw windows and several constant labels in the Cabana
+DBC. These are encoding corrections; the quantities' meanings remain unresolved.
+
 ## Recommended setup (current best, 2026-09-24)
 
 | piece | use | confidence |

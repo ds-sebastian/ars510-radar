@@ -199,6 +199,28 @@ def test_generated_dbc_matches_checked_in_layout() -> None:
     assert "BO_ 1899 ARS510_SHELL85_CRC: 8" in text
 
 
+def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
+    import re
+    from tools.build_cabana_route import dbc_text
+
+    text = dbc_text()
+    for slot in range(20):
+        block = text.split(f"BO_ {1792 + slot} ARS510_OBJ_{slot:02d}:", 1)[1].split("\nBO_", 1)[0]
+        fields = {name: (int(start), int(width)) for name, start, width in
+                  re.findall(r" SG_ (\w+) : (\d+)\|(\d+)@1", block)}
+        covered = [bit for start, width in fields.values() for bit in range(start, start + width)]
+        assert sorted(covered) == list(range(288))
+        assert fields["UNK_256_6"] == (256, 6)
+        assert fields["UNK_264_5"] == (264, 5)
+        # Carries must be visible as +1 rather than wrapping the old low-bit windows.
+        for name, before, after in [("UNK_256_6", 31, 32), ("UNK_264_5", 15, 16)]:
+            start, width = fields[name]
+            mask = (1 << width) - 1
+            assert (((after << start) >> start) & mask) - (((before << start) >> start) & mask) == 1
+        for start, width in [(15, 1), (63, 1), (165, 3), (182, 1), (190, 10), (239, 1)]:
+            assert fields[f"UNK_{start}_{width}"] == (start, width)
+
+
 def test_move_state_and_oncoming_flag_decode_from_their_bits():
     from ars510.objects import MOVE_STATE_NAMES, decode_native_slot, encode_slot
     obj = decode_native_slot(0, encode_slot(age_cycles=80, long_dist=800, lat_dist_left=2048, move_state=2, oncoming_flag=1))
