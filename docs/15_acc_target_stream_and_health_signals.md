@@ -1,4 +1,4 @@
-# 15. The radar's own ACC target stream, health signals, and an exhaustive signal search (2026-09-24)
+# 15. The radar's own ACC target stream, health signals, and a broad signal search (2026-09-24)
 
 This is a systematic search of every radar-bus message, every slot bit window, the record header and 0x85, for
 anything that could help openpilot without changing openpilot. It covers:
@@ -227,7 +227,7 @@ See [machine-readable scope](../data/analysis/summaries/acc_clip_timing_scope.js
 **Fields that flag glitches (confirmed, moderate):**
 - `240|7` (velocity uncertainty): AUC 0.65 / 0.85.
 - `264|4` == 1: AUC 0.69 / 0.63.
-  - `264|4` has 4 live bits by carry chain, not 5.
+  - This historical screen used only `264|4`. The expanded-corpus audit later demonstrated carries into bit 268 and rarer higher-bit changes; the full quantity is wider. See [14](14_stationary_objects_and_field_roles.md).
   - On young tracks it counts down with age.
   - On settled tracks, values 1-4 depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m). That fits a near-scan /
     far-scan measurement state (unconfirmed).

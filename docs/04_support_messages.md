@@ -35,7 +35,7 @@ It is too lagged to serve as vRel. It might be useful as a sanity check ("the ra
 
 ## 0x235–0x23D: 50 Hz companion / debug family
 
-- Byte 1 splits into a low-nibble mux and a high-nibble rolling counter.
+- Byte 1 contains the historical low-nibble status/mux view and a high-nibble rolling counter. On 0x237, that low nibble overlaps the distance field and is **not an independent selector**; see the correction in [15](15_acc_target_stream_and_health_signals.md).
 - Byte 0 is an exact affine parity check over the rest of the frame. The per-address masks are in `ars510_radar_bus.dbc`; the OEM algorithm name is unknown.
 - 0x237 bytes 1–2 correlate with lead distance (r 0.89–0.93).
 - Direct ego speed, steering, brake, accel or yaw fields were searched in 3,428 packed candidates, and none survived.
