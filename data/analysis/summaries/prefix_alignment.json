@@ -1,0 +1,54 @@
+{
+  "provenance": "Imported from research-workspace SCR-149; not a bundled rerun",
+  "status": "raw_prefix_relationship_only",
+  "runtime_changed": false,
+  "limits": [
+    "not acquisition timestamps",
+    "not cell-object identity",
+    "not body freshness"
+  ],
+  "splits": [
+    {
+      "records80": 247107,
+      "records85": 247223,
+      "pairs": 247050,
+      "ambiguous_pairs": 0,
+      "duplicate80_keys": 0,
+      "duplicate85_keys": 0,
+      "nearest_disagrees": 77634,
+      "shifted_counter_matches": 0,
+      "part": "discovery",
+      "routes": 14,
+      "match_fraction80": 0.9997693306948002,
+      "nearest_disagreement_fraction": 0.3142440801457195
+    },
+    {
+      "records80": 137037,
+      "records85": 137098,
+      "pairs": 137001,
+      "ambiguous_pairs": 0,
+      "duplicate80_keys": 0,
+      "duplicate85_keys": 0,
+      "nearest_disagrees": 50145,
+      "shifted_counter_matches": 0,
+      "part": "confirmation",
+      "routes": 10,
+      "match_fraction80": 0.9997372972262966,
+      "nearest_disagreement_fraction": 0.36601922613703547
+    },
+    {
+      "records80": 62339,
+      "records85": 62364,
+      "pairs": 62320,
+      "ambiguous_pairs": 0,
+      "duplicate80_keys": 0,
+      "duplicate85_keys": 0,
+      "nearest_disagrees": 23157,
+      "shifted_counter_matches": 0,
+      "part": "fresh",
+      "routes": 4,
+      "match_fraction80": 0.9996952148735142,
+      "nearest_disagreement_fraction": 0.37158215661103977
+    }
+  ]
+}

@@ -194,7 +194,7 @@ See [machine-readable scope](../data/analysis/summaries/acc_clip_timing_scope.js
 - **Timing.** The best lag between the radar's over-ground velocity and ego speed is +0.05-0.1 s, and it barely
   changes the error. 0xB4 with the 0.149/0.15 correction is the least-biased ego speed. Timing is not a lever.
 - **No other slot field flags glitches.** All 1-12-bit windows were screened as levels and as 0.5 s changes.
-- **Record header:** no ego speed, yaw or timestamp. 0x190 already carries a microsecond timestamp.
+- **Record header:** the original screen found no ego speed or yaw. Its earlier "no timestamp" claim was too broad: related clock-like prefix codes and counters are retained ([03](03_shell_record_0x85.md)), though acquisition-time semantics are unproved. 0x190 separately carries a cycle timestamp.
 - **0x85:** only coarse relations to ego speed and lead distance. Still undecoded.
 - **Car bus:** 0x344 is constant. The radar's own ACC command 0x343 was intercepted on these drives by a
   smartDSU-type device, so it is not observable here.

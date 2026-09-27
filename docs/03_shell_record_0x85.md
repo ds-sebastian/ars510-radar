@@ -24,6 +24,36 @@ The original independent integrity audit passed 6,967/6,967 completed records ac
 
 The working `[21:141]` projection puts a B-like half (`00fc0f00d0xx` empty motif) before an A-like half (`8403f4010000`). Co-occurrence supports it, but competing offsets also preserve repetition. `ars510/shell85.py` therefore exposes raw cells, not semantic objects or a `filled` validity flag. Cabana exports prefix, cells and CRC/trailer separately and requires a valid CRC.
 
+## Raw prefix alignment
+
+The two streams contain related clock-like codes and counters. In reassembled
+records (including the length-low byte), the retained relationship is:
+
+```python
+counter80 = int.from_bytes(record80[5:7], "little") >> 1
+counter85 = int.from_bytes(record85[5:7], "little") >> 1
+coarse80 = int.from_bytes(record80[1:5], "little")
+fine85 = int.from_bytes(record85[1:5], "little")
+agrees = counter80 == counter85 and coarse80 == fine85 // 100
+```
+
+An expanded research-workspace audit finds 446,371 unique agreeing pairs across
+28 drives, covering over 99.96% of ID80 records in each split with starts within
+120 ms. A counter-shift control yields no matches. Choosing the nearest ID80
+**start time** instead gives a different cycle for 31.42% / 36.60% / 37.16% of
+pairs in discovery / confirmation / further drives. Use raw prefix agreement
+when testing same-cycle relationships; nearby arrival times alone are ambiguous.
+
+These are existing raw structural fields, **not confirmed acquisition timestamps**.
+Clock units, epoch origin, body freshness and cell-to-object identity do not follow
+from this test. The coarse code is quantized from the fine code and resets when
+the latter wraps; do not unwrap it as an independent 32-bit timer. Record pairing
+also does not imply both completed records were available at either start time.
+
+Numbers are provenance-labelled imports from workspace SCR-149, not bundled
+reruns; see [summary](../data/analysis/summaries/prefix_alignment.json). Runtime
+object decoding and publication are unchanged.
+
 ## Important limits
 
 - Changing prefix/CRC does not prove changing body measurements. An original-log counterexample had 995 distinct CRC-valid records across about 60 seconds with one identical 120-byte body while ID80 changed.
