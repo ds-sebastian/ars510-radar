@@ -1,0 +1,35 @@
+{
+  "study": "SCR-213",
+  "date": "2026-09-28",
+  "provenance": "Imported research-workspace correction audit; original videos and full input logs are not bundled",
+  "status": "confirmed research camera projection sign error; wider historical statistics pending corrected association and rescoring",
+  "correct_forward_yaw_only": "cx + f * tan(atan2(-y_left, x_forward + forward_offset) + calibration_yaw)",
+  "correct_inverse_bearing": "atan((pixel_x - cx) / f) - calibration_yaw",
+  "recent_witness_audit": {
+    "camera_sources": 8,
+    "anchor_queries": 76,
+    "valid_anchor_queries": 73,
+    "maximum_full_resolution_shift_px": 14.138117,
+    "occlusion_comparisons": 248,
+    "fully_visible_motorcycle_frames": 6,
+    "old_within_two_pixel_allowance": 1,
+    "corrected_within_two_pixel_allowance": 3,
+    "physical_identity_established": false
+  },
+  "aspect_audit": {
+    "camera_rows": 2929,
+    "native_candidate_comparisons": 6689,
+    "in_box_decisions_changed": 9,
+    "half_degree_center_gate_decisions_changed": 193,
+    "preexisting_primary_vehicle_witnesses": 4,
+    "primary_witness_rows": 571,
+    "primary_in_box_associations_changed": 0
+  },
+  "verification": "Independent rotation matrices, source hashes, unchanged label/eligibility checks and four research geometry tests",
+  "limits": [
+    "Previously researched data, not untouched confirmation drives",
+    "Recent bounded impact does not establish the effect on older aggregate validation statistics",
+    "Yaw-only correction does not resolve lateral mounting, roll, pitch, reflector height or physical identity",
+    "No radar field, physical unit, quality semantic or runtime change is promoted"
+  ]
+}

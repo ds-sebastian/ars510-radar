@@ -16,6 +16,14 @@ Format: `t_s,bus,address,data_hex`.
 
 ## `analysis/`: anonymized analysis dataset
 
+**Historical camera-pair provenance:** a calibration-yaw sign error was found
+in several source association scripts on2026-09-28. Camera-pair tables and
+dependent statistical summaries retain their original values for provenance;
+they have not yet been regenerated with corrected pairing. They must not be
+treated as corrected physical ground truth. See
+[the correction scope](../docs/13_evidence_review.md#camera-association-correction-2026-09-28)
+and [bounded impact summary](analysis/summaries/camera_yaw_correction.json).
+
 This is the data behind every chart in `docs/11_visual_tour.md` and the numbers in `docs/12_statistics.md`.
 - **Drives:** A (development, 26 min, mixed), B (held-out city, 43 min), C (held-out highway, 24 min).
 - **Segment labels:** `A00`…`C23`, in order within a drive.

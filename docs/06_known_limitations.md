@@ -1,5 +1,11 @@
 # 06. Known limitations, and the defences that were tried
 
+**Camera-evidence correction (2026-09-28):** historical camera-paired velocity,
+range-consistency and braking-label statistics on this page require corrected
+association and rescoring after a calibration-yaw sign error was found in the
+research scripts. This does not erase raw radar inconsistencies or certify the
+proposed defences. [Scope and verified impact](13_evidence_review.md#camera-association-correction-2026-09-28).
+
 ## 1. vRel excursions (the blocker)
 
 A settled track (age 126, the lead for tens of seconds) sometimes has an over-ground velocity that swings by 3–8 m/s for about 1 s, then returns. The camera and the radar's own range disagree with it: the lead is not braking.

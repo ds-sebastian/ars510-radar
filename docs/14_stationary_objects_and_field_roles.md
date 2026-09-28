@@ -1,5 +1,10 @@
 # 14. Stationary objects, and likely roles for unnamed slot fields (2026-09-24)
 
+**Camera-association correction (2026-09-28):** camera-derived class/size and
+quality associations imported from the old simplified bearing pipeline await
+corrected pairing and rescoring. Native record counts and later raw bitfield
+corrections are separate evidence. [Details](13_evidence_review.md#camera-association-correction-2026-09-28).
+
 Findings from the research workspace after [13](13_evidence_review.md). Figures come from 122 one-minute segments:
 - drives A, B and C;
 - the first and last segment of 21 further drives, which start or end on the owner's residential street, lined with

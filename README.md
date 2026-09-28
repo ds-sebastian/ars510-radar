@@ -8,6 +8,11 @@ This repo decodes the object list from the **Toyota / Continental ARS510** front
 
 > **Status: research-grade and not validated for active control.**
 >
+> **Evidence correction (2026-09-28):** a calibration-yaw sign error affected
+> several research camera-association scripts. Their historical camera-paired
+> validation statistics await corrected pairing and rescoring. The decoder is
+> unchanged. [Correction and scope](docs/13_evidence_review.md#camera-association-correction-2026-09-28).
+>
 > The decoder produces openpilot `RadarPoint`s: dRel, yRel, vRel and trackId.
 > - Native dRel/yRel fields and slot lifecycle have substantial supporting evidence. Reported passes use exploratory consumer-tolerance thresholds, not demonstrated drive-grade accuracy or complete object recall.
 > - `64|10` is the leading ground-velocity interpretation, not a fully solved vRel contract. Decoded excursions produce camera-contradicted braking in offline replay (4 events in 24 highway minutes). Mapping, timing, association, state semantics and tracker behaviour remain competing explanations.

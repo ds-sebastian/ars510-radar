@@ -2,6 +2,12 @@
 
 The central worry is circularity: teacher agreement alone cannot establish that radar is an independent second opinion. The tests below use several references with different dependencies, including camera geometry, ego motion, radar range history and modelV2 comparisons. See [13](13_evidence_review.md) for corrections and newer evidence; the historical results below are not a drive-readiness certificate.
 
+**2026-09-28 correction:** several simplified camera-association scripts used
+the wrong calibration-yaw sign. Their camera-paired statistics below await
+corrected association and rescoring; historical pass labels are not renewed
+validation. Full-matrix projection and model-only comparisons are distinct.
+See [the correction and its scope](13_evidence_review.md#camera-association-correction-2026-09-28).
+
 ## Drives
 
 | drive | role | driving | notes |

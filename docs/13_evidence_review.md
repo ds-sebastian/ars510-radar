@@ -2,6 +2,46 @@
 
 Reviewed against the research workspace on 2026-09-23. This note separates reproducible wire facts, historical measurements, and unresolved interpretations. No geometry constants or runtime publication rules were changed by the public-repo review.
 
+## Camera-association correction (2026-09-28)
+
+Several research scripts applied calibration yaw with the wrong sign when
+matching radar bearings to image boxes. With radar coordinates forward/left,
+camera forward offset `d`, focal length `f` and horizontal center `cx`, the
+correct yaw-only projection is
+`u = cx + f * tan(atan2(-y, x + d) + calibration_yaw)`.
+The inverse image bearing subtracts calibration yaw. The old simplified
+projection subtracted it; the old inverse added it. The retained camera software
+and the already-correct full-matrix research projector establish this convention.
+Logged sensor metadata supports the focal length used in the reviewed examples.
+
+This affects sample selection as well as drawn overlays. The historical
+far-range, box-growth velocity, track-identity, occlusion and brake-event
+association scripts contain the error. Camera-paired caches also feed several
+quality, class/size and conditional error-variance studies. **Their affected
+statistics remain historical results pending corrected association and rescoring.**
+Do not use those statistics as verified physical accuracy or quality-field truth.
+This qualification applies to imported camera-pair data and associated summaries,
+including the camera-dependent parts of [05](05_validation.md),
+[06](06_known_limitations.md) and [14](14_stationary_objects_and_field_roles.md).
+
+A bounded correction audit preserved the recent images, labels, timing and
+candidate sets. Across 76 witness queries, the maximum image shift was 14.14px
+at full resolution. All 248 comparisons in an occlusion scene were recomputed;
+the putative motorcycle association improved but remained ambiguous. A separate
+6,689-candidate audit changed nine in-box decisions and 193 half-degree
+center-bearing decisions. Its four previously selected vehicle witnesses kept
+their unique in-box associations. These results do not determine the changes to
+older aggregate statistics. They are imported research-workspace evidence,
+not bundled video reruns; [machine-readable scope and results](../data/analysis/summaries/camera_yaw_correction.json).
+
+The correction changes research interpretation, not decoder output. Native
+payload/CRC facts, radar-only kinematics and model-only replay comparisons do
+not acquire this error merely by sharing the dataset. The full-matrix camera
+overlay and the video-stationary study's inverse matrix already have the correct
+yaw convention; their separate physical limitations still apply. The corrected
+yaw-only model does not solve unknown lateral mounting, roll/pitch effects or
+reflection identity. No hidden physical signal is promoted by this correction.
+
 ## Reproduce the strongest corrections locally
 
 ```bash
