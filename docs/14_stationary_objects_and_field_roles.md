@@ -524,3 +524,33 @@ no decoder, validity or control behavior changes follow.
 The [aggregate summary](../data/analysis/summaries/score16_countdown.json) imports
 workspace SCR-189 evidence with provenance labels. Full-route captures are not
 bundled reruns, and all groups had prior research use.
+
+### What happens on the next update
+
+A frozen follow-up tests a narrower current-time pattern: state 2, previous
+score at most 40, current bit107 clear, and decrement 20. It often precedes
+**allocation removal on the next complete record**:
+
+| group | pattern occurrences | next-record removals | fraction | share of all eligible removals detected |
+|---|---:|---:|---:|---:|
+| development | 63 | 54 | 85.7% | 8.4% |
+| confirmation | 35 | 30 | 85.7% | 9.5% |
+| further drives | 17 | 14 | 82.4% | 9.0% |
+
+Removal means explicit age zero or an exact idle slot, inferred from the
+complete-record atlas contract. It does not establish physical disappearance.
+All pattern occurrences have next-record coverage. **Seventeen allocations
+survive**, and one small further-drive group has zero removals in two cases.
+The pattern passes its frozen transfer gates but detects only a small minority
+of removals. These are observed cohort fractions, not calibrated probabilities.
+
+Exact-score fast/slow comparisons have no supported strata, so this does not
+establish an effect independent of score. Returning from state 2 to state 1
+also does not guarantee score restoration: the score decreases in 249/1,041,
+111/454 and 39/216 continuing transitions across the three groups.
+
+This adds a bounded lifecycle association, with no measurement-validity,
+false-detection probability, scan-source or excursion-warning interpretation.
+No filtering or decoder behavior changes. The [outcome summary](../data/analysis/summaries/score16_outcomes.json)
+imports anonymized SCR-192 aggregates; full captures are not bundled reruns,
+and all groups had prior research use.

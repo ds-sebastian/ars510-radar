@@ -1,0 +1,92 @@
+{
+  "provenance": "Imported aggregate research evidence SCR-192; full captures are not bundled reruns. All groups have prior research use. Outcome hypotheses frozen before scoring; removal clue selected on development data in SCR-191.",
+  "status": "supported bounded next-record allocation-removal association; score-independent effect unestablished",
+  "condition": {
+    "current_state_0_2": 2,
+    "previous_score_16_8_max": 40,
+    "current_bit107": 0,
+    "score_decrement": 20,
+    "both_ages": [
+      60,
+      126
+    ],
+    "same_slot": true,
+    "gap_seconds": [
+      0.03,
+      0.09
+    ],
+    "counter_increment": 1
+  },
+  "outcome": {
+    "next_record_gap_seconds": [
+      0.03,
+      0.09
+    ],
+    "next_counter_increment": 1,
+    "removal": "explicit age zero or exact idle inferred from complete-record atlas contract"
+  },
+  "groups": [
+    {
+      "group": "development",
+      "eligible_state2_edges": 3676,
+      "pattern_occurrences": 63,
+      "covered_pattern_occurrences": 63,
+      "next_removals": 54,
+      "inferred_idle": 38,
+      "explicit_age_zero": 16,
+      "all_eligible_removals": 643,
+      "precision": 0.8571428571428571,
+      "removal_recall": 0.08398133748055987,
+      "supported_exact_score_strata": 0,
+      "continuing_state2_to_state1": 1041,
+      "score_increases": 792,
+      "score_decreases": 249,
+      "score_equals": 0
+    },
+    {
+      "group": "confirmation",
+      "eligible_state2_edges": 1907,
+      "pattern_occurrences": 35,
+      "covered_pattern_occurrences": 35,
+      "next_removals": 30,
+      "inferred_idle": 28,
+      "explicit_age_zero": 2,
+      "all_eligible_removals": 317,
+      "precision": 0.8571428571428571,
+      "removal_recall": 0.0946372239747634,
+      "supported_exact_score_strata": 0,
+      "continuing_state2_to_state1": 454,
+      "score_increases": 343,
+      "score_decreases": 111,
+      "score_equals": 0
+    },
+    {
+      "group": "further drives",
+      "eligible_state2_edges": 747,
+      "pattern_occurrences": 17,
+      "covered_pattern_occurrences": 17,
+      "next_removals": 14,
+      "inferred_idle": 9,
+      "explicit_age_zero": 5,
+      "all_eligible_removals": 156,
+      "precision": 0.8235294117647058,
+      "removal_recall": 0.08974358974358974,
+      "supported_exact_score_strata": 0,
+      "continuing_state2_to_state1": 216,
+      "score_increases": 177,
+      "score_decreases": 39,
+      "score_equals": 0
+    }
+  ],
+  "total_pattern_occurrences": 115,
+  "total_removals": 98,
+  "total_survivors": 17,
+  "limits": [
+    "Recall only 8.4\u20139.5 percent among eligible state2 removals",
+    "One small further-drive group has zero removals in two occurrences",
+    "No supported exact-score comparison strata; score/lifecycle confounding remains",
+    "State2 to state1 does not guarantee score restoration",
+    "Not physical disappearance, calibrated probability, measurement absence, scan identity or excursion guard",
+    "No parser, filtering or control changes"
+  ]
+}
