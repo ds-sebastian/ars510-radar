@@ -401,7 +401,44 @@ nonzero components and every exception remain in the research evidence. The
 pattern is compatible with quantized weights, but does not establish a unique
 quantizer or justify dividing by 15 or 16 to publish calibrated probabilities.
 
-**Physical outcomes remain unknown.** The zero triplet's meaning is also unknown.
+**Follow-up: lateral-position associations (2026-09-28).** A fixed mapping chosen
+on development data transfers to confirmation and further drives:
+
+| raw component | supported association |
+|---|---|
+| `148\|4` | right |
+| `152\|4` | left |
+| `156\|4` | central |
+
+The test includes mature slots (age at least 60), range 5–120 m, and a unique
+dominant component of at least 12. Reference categories use native lateral
+position: at most −2.5 m, within ±1.5 m, or at least +2.5 m. Intermediate bands
+are excluded. The mapping and thresholds were frozen before transfer scoring.
+
+| group | eligible rows | mean recall across three classes | agreement |
+|---|---:|---:|---:|
+| Development | 78,807 | 98.26% | 98.66% |
+| Confirmation | 31,948 | 98.42% | 98.50% |
+| Further drives | 20,197 | 98.14% | 99.17% |
+
+All per-class precision/recall and support gates pass. This is not exact:
+1,701 eligible rows disagree. Of 384,328 mature, range-eligible rows, 249,429
+have zero triplets and are not assigned a category. The corresponding fixed
+interpretation as instantaneous lateral-motion directions fails all three groups.
+
+A camera-bearing check agrees on 22,399 of 22,665 eligible observations across
+drives A, B and C; nine inspected examples show boxed vehicles in the corresponding
+right, left or ego lanes. **This witness is only partially independent:** its
+metric conversion uses radar range, and its existing object pairing selects by
+azimuth agreement. It corroborates lateral placement but does not independently
+establish radar target identity or metric accuracy.
+
+**Exact lane semantics remain unresolved.** The test does not distinguish
+radar-frame lateral bands from road-relative lane membership on curves, validate
+soft weights as probabilities, or explain the zero triplet. Do not use this
+candidate as a lane gate. Curved-road and lane-change cases where coordinate
+systems disagree are the next necessary witnesses.
+
 These are not decoded SNR, false-detection probabilities, scan-source weights,
 merge indicators or measurement validity. All possible raw triplets are preserved,
 including values outside the observed sum pattern; no normalization or rejection
@@ -417,3 +454,6 @@ physical onset. Earlier research used all these drive groups.
 [Machine-readable summary](../data/analysis/summaries/midband_weight_triplet.json)
 contains provenance-labelled imports from workspace SCR-177, not bundled full-route
 reruns. Public tests check raw preservation and independence from neighboring fields.
+The [lateral-role summary](../data/analysis/summaries/weight_lateral_roles.json)
+contains provenance-labelled SCR-178 aggregates; private camera frames and full
+route inputs are not bundled. No decoder values or control behavior changed.

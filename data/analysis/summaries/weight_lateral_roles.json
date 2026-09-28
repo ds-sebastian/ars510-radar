@@ -1,0 +1,147 @@
+{
+  "status": "supported_lateral_association_exact_lane_semantics_unresolved",
+  "provenance": "Imported aggregate research results, SCR-178; full-route reruns and private camera frames are not bundled.",
+  "fields": {
+    "148|4": "right-associated",
+    "152|4": "left-associated",
+    "156|4": "central-associated"
+  },
+  "native_selection": "age>=60, x in [5,120]m, unique max weight>=12; y<=-2.5, abs(y)<=1.5, or y>=2.5m",
+  "native": [
+    {
+      "group": "development",
+      "rows": 78807,
+      "correct": 77753,
+      "macro_recall": 0.982580344289802,
+      "accuracy": 0.9866255535675765,
+      "passes": true,
+      "base_rows": 233586,
+      "zero_triplets": 152287,
+      "weak_active": 999,
+      "reference_gap": 1493
+    },
+    {
+      "group": "confirmation",
+      "rows": 31948,
+      "correct": 31468,
+      "macro_recall": 0.9841794465155053,
+      "accuracy": 0.984975585326155,
+      "passes": true,
+      "base_rows": 99761,
+      "zero_triplets": 66825,
+      "weak_active": 562,
+      "reference_gap": 426
+    },
+    {
+      "group": "further_drives",
+      "rows": 20197,
+      "correct": 20030,
+      "macro_recall": 0.981387555375703,
+      "accuracy": 0.9917314452641481,
+      "passes": true,
+      "base_rows": 50981,
+      "zero_triplets": 30317,
+      "weak_active": 180,
+      "reference_gap": 287
+    }
+  ],
+  "camera": [
+    {
+      "group": "A",
+      "reference": "right",
+      "rows": 1274,
+      "correct": 1254,
+      "tracks": 13,
+      "recall": 0.9843014128728416,
+      "precision": 0.972093023255814,
+      "passes": true
+    },
+    {
+      "group": "A",
+      "reference": "central",
+      "rows": 4224,
+      "correct": 4188,
+      "tracks": 25,
+      "recall": 0.9914772727272728,
+      "precision": 0.9905392620624408,
+      "passes": true
+    },
+    {
+      "group": "A",
+      "reference": "left",
+      "rows": 1150,
+      "correct": 1130,
+      "tracks": 8,
+      "recall": 0.982608695652174,
+      "precision": 1.0,
+      "passes": true
+    },
+    {
+      "group": "C",
+      "reference": "right",
+      "rows": 1161,
+      "correct": 1142,
+      "tracks": 19,
+      "recall": 0.983634797588286,
+      "precision": 0.976068376068376,
+      "passes": true
+    },
+    {
+      "group": "C",
+      "reference": "central",
+      "rows": 7150,
+      "correct": 7106,
+      "tracks": 41,
+      "recall": 0.9938461538461538,
+      "precision": 0.9934293303509018,
+      "passes": true
+    },
+    {
+      "group": "C",
+      "reference": "left",
+      "rows": 1371,
+      "correct": 1343,
+      "tracks": 17,
+      "recall": 0.9795769511305616,
+      "precision": 0.9882266372332598,
+      "passes": true
+    },
+    {
+      "group": "B",
+      "reference": "right",
+      "rows": 1079,
+      "correct": 1054,
+      "tracks": 26,
+      "recall": 0.9768303985171456,
+      "precision": 0.975925925925926,
+      "passes": true
+    },
+    {
+      "group": "B",
+      "reference": "central",
+      "rows": 4704,
+      "correct": 4659,
+      "tracks": 45,
+      "recall": 0.9904336734693876,
+      "precision": 0.9898024219247928,
+      "passes": true
+    },
+    {
+      "group": "B",
+      "reference": "left",
+      "rows": 552,
+      "correct": 523,
+      "tracks": 25,
+      "recall": 0.947463768115942,
+      "precision": 0.9543795620437956,
+      "passes": true
+    }
+  ],
+  "reviewed_examples": 9,
+  "limitations": [
+    "Camera bearing uses radar range and an azimuth-gated identity join; not independent metric ground truth.",
+    "Position bands do not establish lane-relative coordinates, exact lane identity or curved-road behavior.",
+    "All-zero meaning, quantizer and probability calibration remain unresolved.",
+    "No early excursion discriminator or control policy is introduced; all drive groups have prior research use."
+  ]
+}

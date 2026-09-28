@@ -53,7 +53,9 @@ Source ECU and physical validity remain unresolved.
 
 The object decoder also exposes a [three-component candidate weight group](docs/14_stationary_objects_and_field_roles.md#three-component-weight-candidates-2026-09-27)
 at `148/152/156|4`. Its nearly normalized sums and count transfers are supported across
-drives; the physical outcomes and probability calibration remain unknown.
+drives. Fixed tests now support right / left / central position associations,
+with camera corroboration under an existing association gate. Exact lane roles,
+the all-zero state and probability calibration remain unresolved.
 It adds diagnostic metadata, not a velocity-excursion guard.
 
 ## Recommended setup (current best, 2026-09-24)
