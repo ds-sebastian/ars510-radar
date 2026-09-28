@@ -63,3 +63,8 @@ The automatic carry-chain split of the 0x80 slot (288 bits), the 0x80 record hea
 - the candidate fields with their strongest correlation.
 
 `tools/build_cabana_route.py` reads it to put the candidate fields into the virtual-bus DBC.
+
+`analysis/summaries/camera_identity_correction.json` contains imported SCR-216
+old/new native identity and geometric shadow aggregates. It excludes the original
+route/video inputs and does not establish physical same-object continuity.
+Historical source-method differences and pending relink validation are explicit.

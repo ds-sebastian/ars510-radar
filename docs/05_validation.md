@@ -4,8 +4,9 @@ The central worry is circularity: teacher agreement alone cannot establish that 
 
 **2026-09-28 correction:** several simplified camera-association scripts used
 the wrong calibration-yaw sign. The box-growth MSE table and conditional-variance
-estimates below have now been rescored with corrected pairing; other affected statistics still await their
-own reruns. Historical pass labels are not renewed validation. Full-matrix
+estimates below have now been rescored with corrected pairing. Native identity
+and shadow heuristics are also corrected; relink and other affected statistics
+still await their own reruns. Historical pass labels are not renewed validation. Full-matrix
 projection and model-only comparisons are distinct.
 See [the correction and its scope](13_evidence_review.md#camera-association-correction-2026-09-28).
 
@@ -45,7 +46,7 @@ This is an **exploratory consumer-tolerance scorecard written after results were
 | **dRel** | median error ≤ max(1 m, 10%) out to 100 m; radard accepts the radar lead ≥ 85% | vs modelV2 (conservative): 0.47 / 1.69 / 3.36 / 5.65 m at 0–15 / 15–30 / 30–60 / 60–100 m, and 8.5 m at 100–150 m. radard acceptance 96 / 94 / 95 / 89% (84% at 100–150 m). Camera ground contact 5–25 m: slope 0.99, zero within 0.2 m (0.7 m on hilly B) | **pass** |
 | **yRel** | ≥ 98% correct side for \|y\| > 1 m; median lateral error ≤ 0.5 m | 99.3% vs modelV2 (n = 4910); 97.9–98.3% vs camera, which has its own error; median \|dy\| 0.23 m | **pass** (camera borderline) |
 | **vRel** | beats zero and range differencing in every band to 100 m; conditional SD proposal ≤ 1.0 / 1.5 / 2.0 m/s at 3–30 / 30–60 / 60–100 m; camera-contradicted braking ≤ 1 per 10 engaged hours | Two-second all-paired baselines beaten. Corrected conditional centred SD (three-cornered hat, not RMSE): A 0.35 / 1.02 / 1.60, C 0.56 / 1.14 / 1.73, B 0.56 / 1.44 / **2.90**. Historical contradicted braking ≈ **10 per forced highway hour**, still awaiting event-label correction | **fail**; absolute accuracy not established |
-| **trackId** | purity ≥ 0.95 over ≥ 300 cycles for ≥ 80% of camera-checked long tracks; no duplicate IDs; no verified wrong re-link within 60 m | no duplicates; chain purity: A 90%, C 93%, B 80% within 60 m; visual review found no radar identity error within 60 m | **pass within 60 m**; beyond 60 m camera identity is too unreliable to verify |
+| **trackId** | purity ≥ 0.95 over ≥ 300 cycles for ≥ 80% of camera-checked long tracks; no duplicate IDs; no verified wrong re-link within 60 m | Corrected common chain heuristic at ≤60 m: A 21/21, B 28/36, C 28/30; no duplicate native IDs in the shadow audit | **physical identity unverified**; chain repair uses radar continuity, and relink requires a separate corrected audit |
 
 ## Detail per field
 
@@ -111,13 +112,26 @@ The selected targets have median over-ground speed +0.08 to +0.23 m/s. This supp
 
 ### trackId
 
-- Long tracks (≥ 300 cycles ≈ 18 s): median camera purity 0.98 (B) and 1.00 (C).
-- Camera-chain repair uses radar continuity and apparent size, so repaired purity is not independent physical-identity truth. Segment-local track counts and lifetimes are censored at file boundaries.
-- Occlusion (camera confirms the car is still there after being hidden behind another):
-  - the native ID survives 61% of the time;
-  - with the re-link option, 77% (B) and 69% (C, after the gap was raised to 3.5 s).
-- Why occlusions still fail (9 held-out cases): 7 are the radar itself dropping the object, never re-acquiring it within 4 s, or re-acquiring it too briefly. The ID logic is not the main limit.
-- Re-link precision: 4 of 4 new re-links on highway were camera-verified as the same vehicle. The city "different vehicle" verdicts are all at 60–120 m, where camera identity is unreliable.
+SCR-216 corrects narrow-camera pairing and exposes an additional historical
+chain-method inconsistency. A finite reconstruction reproduces old outputs, but
+does not recover their original source versions. With one common current chain
+rule and corrected yaw, the ≤60 m counts meeting chain purity ≥0.95 are A 21/21,
+B 28/36 and C 28/30. These are heuristic results: chain repair uses radar
+continuity and apparent size, and lifetimes are censored at segment boundaries.
+They do not establish independent physical identity.
+
+The native shadow test finds 6 / 20 / 18 post-shadow geometric camera candidates
+on A / B / C. Native IDs survive more than one second afterward in 3 / 12 / 11.
+The post-shadow test does not require the pre-shadow camera ID; 14 of the 44
+candidates have no accepted detection with that ID. Camera retracking is possible,
+but calling these all camera-confirmed same-object occlusions was unsupported.
+These rates are geometric-candidate statistics, not measured physical occlusion
+or identity-loss rates. Historical extra wide-camera rows are outside this audit.
+
+Historical relink survival figures (77% B, 69% C), the nine-case failure analysis
+and four-case highway same-vehicle review have not been rerun with corrected
+associations. They remain historical observations, not renewed validation.
+[Imported old/new results and limits](../data/analysis/summaries/camera_identity_correction.json).
 
 ## Brake events on drive A (before the pre-registration)
 

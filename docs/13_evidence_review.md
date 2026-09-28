@@ -92,6 +92,33 @@ so these values are not measured RMSE or uncertainty-code calibration.
 [Provenance-labelled old/new results and verification scope](../data/analysis/summaries/camera_semantic_correction.json).
 Legacy public parquet data remains unchanged; no decoder output changes.
 
+### Native identity and shadow correction (SCR-216)
+
+The corrected audit covers 89 previously researched segments with native raw
+tracks, without relinking. Old association and purity counts reproduce, but the
+current chain evaluator fails to reproduce seven historical track summaries.
+Testing four combinations of two existing heuristic branches finds no shared
+setting that reproduces all three drives. Per-drive compatible reconstructions
+restore the old outputs; this does not recover or prove historical source versions.
+
+Under one common current rule and corrected yaw, chain purity ≥0.95 within
+60 m occurs in 21/21 checked tracks on A, 28/36 on B and 28/30 on C. The chain
+uses radar continuity and range-scaled image size, so these are not independent
+physical-identity passes.
+
+Corrected native shadow survival is 3/6, 12/20 and 11/18 post-shadow geometric
+camera candidates. The historical post-shadow rule never required the same
+camera ID. Fourteen of 44 corrected candidates lack an accepted post-detection
+with the pre-camera ID; camera retracking remains an alternative to a different
+vehicle. Physical occlusion and same-object continuity cannot be inferred from
+this automatic label alone. The earlier physical-occlusion rate is retracted.
+
+Independent checks cover 122,655 associations, 500 chain summaries and 248
+paired shadow rows. [Imported old/new aggregates and limits](../data/analysis/summaries/camera_identity_correction.json).
+Native identity/shadow recomputation is complete; relink-specific evaluation,
+far-range calibration and event-level brake labels still need separate audits.
+No decoder behavior or runtime track IDs changed.
+
 ## Reproduce the strongest corrections locally
 
 ```bash

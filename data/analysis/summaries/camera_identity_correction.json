@@ -1,0 +1,293 @@
+{
+  "experiment": "SCR-216",
+  "date": "2026-09-28",
+  "provenance": "Imported research-workspace rerun; full route and video inputs are not bundled in the public repository.",
+  "scope": "89 previously researched segments, native raw decoder without relink; narrow camera only. Additional historical wide-camera rows excluded from reported shadow counts.",
+  "interpretation": "Heuristic camera-chain scores and geometric shadow candidates, not independently verified physical identity or occlusion.",
+  "legacy_compatibility": {
+    "claim": "Finite branch reconstruction reproduces saved outputs; this is not recovery or proof of historical source versions.",
+    "A": {
+      "remove_short_sandwiched_runs": false,
+      "scaled_link": true
+    },
+    "B": {
+      "remove_short_sandwiched_runs": true,
+      "scaled_link": true
+    },
+    "C": {
+      "remove_short_sandwiched_runs": false,
+      "scaled_link": true
+    },
+    "uniform_method": {
+      "remove_short_sandwiched_runs": true,
+      "scaled_link": true
+    },
+    "tested_combinations": [
+      {
+        "remove_blips": false,
+        "scaled_link": false,
+        "tracks": 125,
+        "matching": 117,
+        "all_match": false
+      },
+      {
+        "remove_blips": false,
+        "scaled_link": true,
+        "tracks": 125,
+        "matching": 121,
+        "all_match": false
+      },
+      {
+        "remove_blips": true,
+        "scaled_link": false,
+        "tracks": 125,
+        "matching": 115,
+        "all_match": false
+      },
+      {
+        "remove_blips": true,
+        "scaled_link": true,
+        "tracks": 125,
+        "matching": 118,
+        "all_match": false
+      }
+    ]
+  },
+  "verification": {
+    "status": "passed",
+    "association_rows_checked": 122655,
+    "chain_summaries_checked": 500,
+    "paired_shadow_rows_checked": 248
+  },
+  "drives": {
+    "A": {
+      "legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 32,
+          "camera_checked": 30,
+          "purity_median": 0.999,
+          "chain_purity_ge_0p95": 27,
+          "chain_purity_ge_0p95_share": 0.9,
+          "chain_purity_ge_0p95_within_60m": [
+            19,
+            21
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 19,
+          "post_shadow_geometric_candidate": 5,
+          "native_survived": 2,
+          "survival_share": 0.4,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 5
+        }
+      },
+      "corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 32,
+          "camera_checked": 30,
+          "purity_median": 0.998,
+          "chain_purity_ge_0p95": 28,
+          "chain_purity_ge_0p95_share": 0.933,
+          "chain_purity_ge_0p95_within_60m": [
+            20,
+            21
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 24,
+          "post_shadow_geometric_candidate": 6,
+          "native_survived": 3,
+          "survival_share": 0.5,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 5
+        }
+      },
+      "uniform_corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 32,
+          "camera_checked": 30,
+          "purity_median": 0.998,
+          "chain_purity_ge_0p95": 29,
+          "chain_purity_ge_0p95_share": 0.967,
+          "chain_purity_ge_0p95_within_60m": [
+            21,
+            21
+          ]
+        }
+      },
+      "uniform_legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 32,
+          "camera_checked": 30,
+          "purity_median": 0.999,
+          "chain_purity_ge_0p95": 30,
+          "chain_purity_ge_0p95_share": 1.0,
+          "chain_purity_ge_0p95_within_60m": [
+            21,
+            21
+          ]
+        }
+      }
+    },
+    "B": {
+      "legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 66,
+          "camera_checked": 54,
+          "purity_median": 0.977,
+          "chain_purity_ge_0p95": 40,
+          "chain_purity_ge_0p95_share": 0.741,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            35
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 51,
+          "post_shadow_geometric_candidate": 18,
+          "native_survived": 11,
+          "survival_share": 0.611,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 12
+        }
+      },
+      "corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 66,
+          "camera_checked": 55,
+          "purity_median": 0.974,
+          "chain_purity_ge_0p95": 40,
+          "chain_purity_ge_0p95_share": 0.727,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            36
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 59,
+          "post_shadow_geometric_candidate": 20,
+          "native_survived": 12,
+          "survival_share": 0.6,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 12
+        }
+      },
+      "uniform_corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 66,
+          "camera_checked": 55,
+          "purity_median": 0.974,
+          "chain_purity_ge_0p95": 40,
+          "chain_purity_ge_0p95_share": 0.727,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            36
+          ]
+        }
+      },
+      "uniform_legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 66,
+          "camera_checked": 54,
+          "purity_median": 0.977,
+          "chain_purity_ge_0p95": 40,
+          "chain_purity_ge_0p95_share": 0.741,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            35
+          ]
+        }
+      }
+    },
+    "C": {
+      "legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 41,
+          "camera_checked": 41,
+          "purity_median": 1.0,
+          "chain_purity_ge_0p95": 38,
+          "chain_purity_ge_0p95_share": 0.927,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            31
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 49,
+          "post_shadow_geometric_candidate": 18,
+          "native_survived": 11,
+          "survival_share": 0.611,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 14
+        }
+      },
+      "corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 41,
+          "camera_checked": 40,
+          "purity_median": 1.0,
+          "chain_purity_ge_0p95": 38,
+          "chain_purity_ge_0p95_share": 0.95,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            30
+          ]
+        },
+        "shadow": {
+          "paired_episodes": 46,
+          "post_shadow_geometric_candidate": 18,
+          "native_survived": 11,
+          "survival_share": 0.611,
+          "duplicate_ids": 0,
+          "post_same_camera_id": 13
+        }
+      },
+      "uniform_corrected": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 41,
+          "camera_checked": 40,
+          "purity_median": 1.0,
+          "chain_purity_ge_0p95": 38,
+          "chain_purity_ge_0p95_share": 0.95,
+          "chain_purity_ge_0p95_within_60m": [
+            28,
+            30
+          ]
+        }
+      },
+      "uniform_legacy": {
+        "identity": {
+          "min_cycles": 300,
+          "long_tracks": 41,
+          "camera_checked": 41,
+          "purity_median": 1.0,
+          "chain_purity_ge_0p95": 39,
+          "chain_purity_ge_0p95_share": 0.951,
+          "chain_purity_ge_0p95_within_60m": [
+            29,
+            31
+          ]
+        }
+      }
+    }
+  },
+  "limits": [
+    "Camera chains use radar continuity and range-scaled apparent size.",
+    "Post-shadow matching does not require the same camera ID; ID changes may also be camera retracking.",
+    "Native lifetimes are censored by segment boundaries.",
+    "No runtime change, physical merge/split flag, or early excursion discriminator.",
+    "Relink, far-range calibration and brake-event labels require separate audits."
+  ]
+}
