@@ -68,3 +68,8 @@ The automatic carry-chain split of the 0x80 slot (288 bits), the 0x80 record hea
 old/new native identity and geometric shadow aggregates. It excludes the original
 route/video inputs and does not establish physical same-object continuity.
 Historical source-method differences and pending relink validation are explicit.
+
+`analysis/summaries/far_range_camera_correction.json` contains imported SCR-219
+far-range pairing/calibration and agreement-selected consensus results. Its full
+source inputs are not bundled. Camera metric scale uses radar calibration;
+these aggregates do not establish independent physical range accuracy.

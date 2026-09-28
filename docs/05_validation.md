@@ -5,7 +5,8 @@ The central worry is circularity: teacher agreement alone cannot establish that 
 **2026-09-28 correction:** several simplified camera-association scripts used
 the wrong calibration-yaw sign. The box-growth MSE table and conditional-variance
 estimates below have now been rescored with corrected pairing. Native identity
-and shadow heuristics are also corrected; relink and other affected statistics
+and shadow heuristics and the historical far-range calibration are also corrected;
+relink and other affected statistics
 still await their own reruns. Historical pass labels are not renewed validation. Full-matrix
 projection and model-only comparisons are distinct.
 See [the correction and its scope](13_evidence_review.md#camera-association-correction-2026-09-28).
@@ -65,7 +66,7 @@ physical accuracy. [Old/new sample counts, variances, biases and scope](../data/
   | B | 30 | 0.992 (0.933–1.038) | +0.72 m (pitch/grade) |
   | C | 11 | 0.993 (0.952–1.042) | +0.22 m |
 
-- **Far range (drive A, development, not held-out):** the narrow-camera box scale, averaged with modelV2 where they agree, puts the radar within 3.9 m median at 60–100 m (ratio 1.017, 8 vehicles) and 5.1 m at 100–150 m (only 2 vehicles). Beyond 100 m radard accepted the radar lead on 81% of frames, and the radar read about 9% shorter than modelV2. Neither reference pins far-range scale better than a few percent.
+- **Far range (drive A, development, not held-out), corrected SCR-219:** the agreement-selected mean of narrow-camera box scale and modelV2 gives median absolute residuals of 3.723 m at 60–100 m (ratio 1.0173; 1,609 rows, 9 native track-segments) and 5.143 m at 100–150 m (ratio 0.9787; 155 rows, 2 native track-segments). Camera-height-only residuals are larger: 4.721 and 6.899 m. The camera's scale is calibrated using radar range at 20–45 m; consensus additionally selects camera/model agreement. These are conditional comparisons, not independent absolute accuracy or a basis for adjusting radar scale. Model-only acceptance is unchanged. [Imported old/new counts and reference limits](../data/analysis/summaries/far_range_camera_correction.json).
 - **Short-term consistency:** see range walks in [06](06_known_limitations.md). Over 1.5 s, range change disagrees with the scale-free camera size ratio 2–4× more than integrated vRel does.
 
 ### yRel

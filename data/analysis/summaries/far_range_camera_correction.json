@@ -1,0 +1,366 @@
+{
+  "experiment": "SCR-219",
+  "date": "2026-09-28",
+  "provenance": "Imported research-workspace rerun of 22 previously used development-drive A segments; full logs and detections are not bundled.",
+  "method": "Original detection and pairing gates, retrospective centered box-size smoothing, and per-pair radar-range calibration at 20-45 m. Only inverse camera yaw changed after historical reproduction.",
+  "limits": [
+    "Camera metric scale is calibrated using native range, not an independent range measurement.",
+    "Camera/model consensus selects agreement and inherits model and association errors.",
+    "Vehicle counts in historical keys denote camera/native pair groups or native track-segments, not independently verified physical vehicles.",
+    "Rows and pair groups are correlated; medians do not establish tail accuracy or held-out generalization.",
+    "Model lead matching and radar outputs are unchanged; no runtime or scale correction."
+  ],
+  "membership": {
+    "all": {
+      "old_rows": 2985,
+      "new_rows": 3027,
+      "retained_rows": 2975,
+      "removed_rows": 10,
+      "added_rows": 52,
+      "old_pair_groups": 15,
+      "new_pair_groups": 16
+    },
+    "converged": {
+      "old_rows": 2758,
+      "new_rows": 2779,
+      "retained_rows": 2752,
+      "removed_rows": 6,
+      "added_rows": 27,
+      "old_pair_groups": 13,
+      "new_pair_groups": 13
+    }
+  },
+  "verification": {
+    "status": "passed",
+    "input_hashes": 116,
+    "far_rows_checked": 11549,
+    "calibration_pairs": 57,
+    "band_summaries_checked": 28
+  },
+  "results": {
+    "legacy": {
+      "center_az_deg": 5.0,
+      "converged_min_age": 60,
+      "method": "per-vehicle constant (radar_range+radar_to_camera)*bbox_size fixed at 20-45 m; azimuth-only pairing within 0.5 deg; |az|<5 deg; bbox size 9-frame centered rolling median; radar per-frame raw",
+      "primary_bbox_height": [
+        {
+          "band": "60-100",
+          "n": 2768,
+          "vehicles": 15,
+          "median_abs_err_m": 4.799,
+          "signed_median_err_m": 3.55,
+          "median_ratio_radar_over_camera": 1.0533,
+          "per_frame_within_max_2p5m_10pct": 0.677
+        },
+        {
+          "band": "100-150",
+          "n": 217,
+          "vehicles": 6,
+          "median_abs_err_m": 6.533,
+          "signed_median_err_m": 4.902,
+          "median_ratio_radar_over_camera": 1.0481,
+          "per_frame_within_max_2p5m_10pct": 0.687
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "secondary_bbox_width": [
+        {
+          "band": "60-100",
+          "n": 2768,
+          "vehicles": 15,
+          "median_abs_err_m": 5.055,
+          "signed_median_err_m": 2.261,
+          "median_ratio_radar_over_camera": 1.034,
+          "per_frame_within_max_2p5m_10pct": 0.647
+        },
+        {
+          "band": "100-150",
+          "n": 217,
+          "vehicles": 6,
+          "median_abs_err_m": 7.219,
+          "signed_median_err_m": 0.805,
+          "median_ratio_radar_over_camera": 1.0074,
+          "per_frame_within_max_2p5m_10pct": 0.654
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "converged_primary_bbox_height": [
+        {
+          "band": "60-100",
+          "n": 2587,
+          "vehicles": 13,
+          "median_abs_err_m": 4.816,
+          "signed_median_err_m": 3.516,
+          "median_ratio_radar_over_camera": 1.0526,
+          "per_frame_within_max_2p5m_10pct": 0.673
+        },
+        {
+          "band": "100-150",
+          "n": 171,
+          "vehicles": 3,
+          "median_abs_err_m": 5.102,
+          "signed_median_err_m": 2.235,
+          "median_ratio_radar_over_camera": 1.0212,
+          "per_frame_within_max_2p5m_10pct": 0.865
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "converged_secondary_bbox_width": [
+        {
+          "band": "60-100",
+          "n": 2587,
+          "vehicles": 13,
+          "median_abs_err_m": 5.036,
+          "signed_median_err_m": 2.168,
+          "median_ratio_radar_over_camera": 1.0329,
+          "per_frame_within_max_2p5m_10pct": 0.653
+        },
+        {
+          "band": "100-150",
+          "n": 171,
+          "vehicles": 3,
+          "median_abs_err_m": 4.745,
+          "signed_median_err_m": -2.65,
+          "median_ratio_radar_over_camera": 0.9758,
+          "per_frame_within_max_2p5m_10pct": 0.83
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "radard_acceptance_of_modelv2_lead": [
+        {
+          "band": "0-15",
+          "modelv2_lead_frames": 1988,
+          "radard_acceptance": 0.996,
+          "accepted_median_abs_radar_minus_modelv2_m": 0.433,
+          "accepted_median_ratio_radar_over_modelv2": 1.0543
+        },
+        {
+          "band": "15-30",
+          "modelv2_lead_frames": 2588,
+          "radard_acceptance": 0.959,
+          "accepted_median_abs_radar_minus_modelv2_m": 1.739,
+          "accepted_median_ratio_radar_over_modelv2": 1.0495
+        },
+        {
+          "band": "30-60",
+          "modelv2_lead_frames": 5225,
+          "radard_acceptance": 0.961,
+          "accepted_median_abs_radar_minus_modelv2_m": 2.614,
+          "accepted_median_ratio_radar_over_modelv2": 0.9905
+        },
+        {
+          "band": "60-100",
+          "modelv2_lead_frames": 4805,
+          "radard_acceptance": 0.955,
+          "accepted_median_abs_radar_minus_modelv2_m": 5.418,
+          "accepted_median_ratio_radar_over_modelv2": 0.9368
+        },
+        {
+          "band": "100-150",
+          "modelv2_lead_frames": 1275,
+          "radard_acceptance": 0.808,
+          "accepted_median_abs_radar_minus_modelv2_m": 10.668,
+          "accepted_median_ratio_radar_over_modelv2": 0.9102
+        }
+      ],
+      "far_consensus_accepted_lead": [
+        {
+          "band": "60-100",
+          "accepted_lead_rows": 1672,
+          "consensus_rows": 1609,
+          "vehicles": 8,
+          "median_abs_err_m": 3.858,
+          "threshold_m": 6.5,
+          "signed_median_err_m": 1.154,
+          "median_ratio_radar_over_consensus": 1.0172,
+          "per_frame_within_max_2p5m_10pct": 0.743
+        },
+        {
+          "band": "100-150",
+          "accepted_lead_rows": 158,
+          "consensus_rows": 158,
+          "vehicles": 2,
+          "median_abs_err_m": 5.061,
+          "threshold_m": 11.11,
+          "signed_median_err_m": -3.44,
+          "median_ratio_radar_over_consensus": 0.9689,
+          "per_frame_within_max_2p5m_10pct": 0.918
+        }
+      ]
+    },
+    "corrected": {
+      "center_az_deg": 5.0,
+      "converged_min_age": 60,
+      "method": "per-vehicle constant (radar_range+radar_to_camera)*bbox_size fixed at 20-45 m; azimuth-only pairing within 0.5 deg; |az|<5 deg; bbox size 9-frame centered rolling median; radar per-frame raw",
+      "primary_bbox_height": [
+        {
+          "band": "60-100",
+          "n": 2806,
+          "vehicles": 16,
+          "median_abs_err_m": 4.721,
+          "signed_median_err_m": 3.555,
+          "median_ratio_radar_over_camera": 1.0526,
+          "per_frame_within_max_2p5m_10pct": 0.69
+        },
+        {
+          "band": "100-150",
+          "n": 221,
+          "vehicles": 6,
+          "median_abs_err_m": 6.899,
+          "signed_median_err_m": 6.36,
+          "median_ratio_radar_over_camera": 1.0639,
+          "per_frame_within_max_2p5m_10pct": 0.624
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "secondary_bbox_width": [
+        {
+          "band": "60-100",
+          "n": 2806,
+          "vehicles": 16,
+          "median_abs_err_m": 5.012,
+          "signed_median_err_m": 2.179,
+          "median_ratio_radar_over_camera": 1.0323,
+          "per_frame_within_max_2p5m_10pct": 0.649
+        },
+        {
+          "band": "100-150",
+          "n": 221,
+          "vehicles": 6,
+          "median_abs_err_m": 7.242,
+          "signed_median_err_m": 1.962,
+          "median_ratio_radar_over_camera": 1.0183,
+          "per_frame_within_max_2p5m_10pct": 0.67
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "converged_primary_bbox_height": [
+        {
+          "band": "60-100",
+          "n": 2608,
+          "vehicles": 13,
+          "median_abs_err_m": 4.72,
+          "signed_median_err_m": 3.536,
+          "median_ratio_radar_over_camera": 1.0525,
+          "per_frame_within_max_2p5m_10pct": 0.691
+        },
+        {
+          "band": "100-150",
+          "n": 171,
+          "vehicles": 3,
+          "median_abs_err_m": 5.56,
+          "signed_median_err_m": 3.525,
+          "median_ratio_radar_over_camera": 1.0355,
+          "per_frame_within_max_2p5m_10pct": 0.795
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "converged_secondary_bbox_width": [
+        {
+          "band": "60-100",
+          "n": 2608,
+          "vehicles": 13,
+          "median_abs_err_m": 4.951,
+          "signed_median_err_m": 1.964,
+          "median_ratio_radar_over_camera": 1.0304,
+          "per_frame_within_max_2p5m_10pct": 0.66
+        },
+        {
+          "band": "100-150",
+          "n": 171,
+          "vehicles": 3,
+          "median_abs_err_m": 4.895,
+          "signed_median_err_m": -1.226,
+          "median_ratio_radar_over_camera": 0.9888,
+          "per_frame_within_max_2p5m_10pct": 0.865
+        },
+        {
+          "band": "150-260",
+          "n": 0
+        }
+      ],
+      "radard_acceptance_of_modelv2_lead": [
+        {
+          "band": "0-15",
+          "modelv2_lead_frames": 1988,
+          "radard_acceptance": 0.996,
+          "accepted_median_abs_radar_minus_modelv2_m": 0.433,
+          "accepted_median_ratio_radar_over_modelv2": 1.0543
+        },
+        {
+          "band": "15-30",
+          "modelv2_lead_frames": 2588,
+          "radard_acceptance": 0.959,
+          "accepted_median_abs_radar_minus_modelv2_m": 1.739,
+          "accepted_median_ratio_radar_over_modelv2": 1.0495
+        },
+        {
+          "band": "30-60",
+          "modelv2_lead_frames": 5225,
+          "radard_acceptance": 0.961,
+          "accepted_median_abs_radar_minus_modelv2_m": 2.614,
+          "accepted_median_ratio_radar_over_modelv2": 0.9905
+        },
+        {
+          "band": "60-100",
+          "modelv2_lead_frames": 4805,
+          "radard_acceptance": 0.955,
+          "accepted_median_abs_radar_minus_modelv2_m": 5.418,
+          "accepted_median_ratio_radar_over_modelv2": 0.9368
+        },
+        {
+          "band": "100-150",
+          "modelv2_lead_frames": 1275,
+          "radard_acceptance": 0.808,
+          "accepted_median_abs_radar_minus_modelv2_m": 10.668,
+          "accepted_median_ratio_radar_over_modelv2": 0.9102
+        }
+      ],
+      "far_consensus_accepted_lead": [
+        {
+          "band": "60-100",
+          "accepted_lead_rows": 1672,
+          "consensus_rows": 1609,
+          "vehicles": 9,
+          "median_abs_err_m": 3.723,
+          "threshold_m": 6.5,
+          "signed_median_err_m": 1.174,
+          "median_ratio_radar_over_consensus": 1.0173,
+          "per_frame_within_max_2p5m_10pct": 0.755
+        },
+        {
+          "band": "100-150",
+          "accepted_lead_rows": 158,
+          "consensus_rows": 155,
+          "vehicles": 2,
+          "median_abs_err_m": 5.143,
+          "threshold_m": 11.01,
+          "signed_median_err_m": -2.291,
+          "median_ratio_radar_over_consensus": 0.9787,
+          "per_frame_within_max_2p5m_10pct": 0.935
+        }
+      ]
+    }
+  }
+}

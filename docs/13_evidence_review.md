@@ -17,8 +17,8 @@ Logged sensor metadata supports the focal length used in the reviewed examples.
 This affects sample selection as well as drawn overlays. The historical
 far-range, box-growth velocity, track-identity, occlusion and brake-event
 association scripts contain the error. Camera-paired caches also feed several
-quality, class/size and conditional error-variance studies. **Their affected
-statistics remain historical results pending corrected association and rescoring.**
+quality, class/size and conditional error-variance studies. **Corrections below identify the rescored statistics; other affected results
+remain historical pending their own audit.**
 Do not use those statistics as verified physical accuracy or quality-field truth.
 This qualification applies to imported camera-pair data and associated summaries,
 including the camera-dependent parts of [05](05_validation.md),
@@ -64,9 +64,9 @@ raw-bit audits. Independent rank checks cover both variants.
 
 These are provenance-labelled research-workspace reruns; the public legacy
 camera tables remain unchanged. [Machine-readable corrected results and limits](../data/analysis/summaries/camera_pair_correction.json).
-Track-identity/occlusion, far-range calibration and event-level brake labels
-still need their own corrected reruns. Class/size and conditional-variance
-corrections are described below. The broader historical-evidence qualification remains in force
+Native identity/shadow, far-range calibration, class/size and conditional-variance
+corrections are described below. Relink-specific and forced-event labels still
+need their own corrected audits. The broader historical-evidence qualification remains in force
 outside the explicitly rescored results.
 
 ### Class, size-proxy and conditional-variance correction
@@ -115,9 +115,30 @@ this automatic label alone. The earlier physical-occlusion rate is retracted.
 
 Independent checks cover 122,655 associations, 500 chain summaries and 248
 paired shadow rows. [Imported old/new aggregates and limits](../data/analysis/summaries/camera_identity_correction.json).
-Native identity/shadow recomputation is complete; relink-specific evaluation,
-far-range calibration and event-level brake labels still need separate audits.
+Native identity/shadow recomputation is complete. The far-range correction follows
+below; relink-specific evaluation and forced-event brake labels remain pending.
 No decoder behavior or runtime track IDs changed.
+
+### Far-range camera calibration correction (SCR-219)
+
+The original far-range pipeline reproduces all saved rows and summaries on
+22 development-drive A segments before correcting inverse yaw. All detection,
+calibration and pairing rules remain fixed. Far rows increase from 2,985 to
+3,027, with 10 removed and 52 added; camera/native pair groups increase from
+15 to 16. These are associations, not independently verified physical vehicles.
+
+Camera-height median absolute residuals change from 4.799 to 4.721 m at
+60–100 m and from 6.533 to 6.899 m at 100–150 m. On the subset where camera
+and model range agree, residuals to their mean change from 3.858 to 3.723 m
+and from 5.061 to 5.143 m. The latter subset has 1,609 and 155 rows, covering
+9 and 2 native track-segments. Model-only acceptance statistics are unchanged.
+
+Camera scale is fixed using radar distance at 20–45 m; the consensus additionally
+selects reference agreement. Neither establishes independent absolute range
+accuracy or warrants changing decoder scale. Independent scalar association,
+calibration and consensus checks cover 11,549 rows and 28 band summaries.
+[Imported old/new results and scope](../data/analysis/summaries/far_range_camera_correction.json).
+The public legacy dataset remains unchanged. No runtime behavior changes.
 
 ## Reproduce the strongest corrections locally
 
