@@ -48,6 +48,11 @@ AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")
 # Use movement_code for the full raw motion classification (docs/14). Neither is a validity gate.
 MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "legacy_coarse_view")
 MOVEMENT_CODE = NativeField("movement_code", 109, 3, 0.0, 1.0, "code", "structure_provisional_semantics")
+# Separate raw views of the historical 8|6 window. Low five bits have an exact
+# initialization decay; bit 13 also changes independently. Physical meanings
+# remain unknown, especially outside startup. Neither is a validity gate.
+RAW8_LOW5 = NativeField("raw8_low5", 8, 5, 0.0, 1.0, "code", "structure_semantics_unresolved")
+RAW13_BIT = NativeField("raw13_bit", 13, 1, 0.0, 1.0, "bit", "structure_semantics_unresolved")
 # Oncoming flag (passed a pre-registered test): 1 = oncoming now or earlier in the track's life (it persists after
 # an oncoming object slows or stops).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
@@ -64,7 +69,7 @@ AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, ONCOMING_FLAG, VEL_UNC_240)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -107,6 +112,8 @@ class NativeObject:
     geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
     lateral_valid: bool  # lateral code is not the sentinel
     movement_code: int | None = None  # full 109|3; None for legacy manually constructed objects
+    raw8_low5: int | None = None  # startup decay code; mature semantics unknown
+    raw13_bit: int | None = None  # separately changing raw bit; meaning unknown
 
 
 def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
@@ -124,6 +131,8 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         accel_like_code=int(field_code(slot, ACCEL_LIKE) - ACCEL_LIKE.zero_code),
         move_state=int(field_code(slot, MOVE_STATE)),
         movement_code=int(field_code(slot, MOVEMENT_CODE)),
+        raw8_low5=int(field_code(slot, RAW8_LOW5)),
+        raw13_bit=int(field_code(slot, RAW13_BIT)),
         oncoming_flag=bool(field_code(slot, ONCOMING_FLAG)),
         vel_unc_code=int(field_code(slot, VEL_UNC_240)),
         geometry_valid=age >= 1,

@@ -324,3 +324,52 @@ changes with this metadata addition.
 Aggregate values are provenance-labelled imports from workspace SCR-158, not
 bundled reruns; see [summary](../data/analysis/summaries/full_movement_code.json).
 The helper preserves all eight raw values, including the currently unseen 6.
+
+
+## Startup decay and the historical six-bit window (2026-09-27)
+
+The historical `8|6` window should not be described simply as a quantity that
+ramps upward with age. Its lower five bits follow an exact startup sequence,
+while bit 13 sometimes changes separately. The native decoder now exposes
+`raw8_low5` and `raw13_bit`; both remain raw values with unknown physical meaning.
+The Cabana `UNK_8_6` view is retained: `low5 = value & 31`, `bit13 = value >> 5`.
+No control policy, geometry, velocity, publication or validity rule changes.
+
+For a continuous allocation observed from age 1, **only until the first full
+movement code `109|3` other than 5**, the lower code is:
+
+```text
+q(age) = min(30, floor(31 * (2/3)^max(age - 4, 0)))
+```
+
+Thus ages 1..4 yield 30, followed by 20, 13, 9, 6, 4, 2, 1, 1, 0. This is consistent with
+fractional decay before output quantization; a lookup table or another equivalent
+implementation cannot be distinguished from these observations. Rounding the
+previous transmitted code as though it were the complete internal state misses
+the repeated 1. Do not infer a calibrated probability or an ECU implementation.
+
+The frozen formula matches **134,217/134,217 startup samples** across 24 routes
+and 16,526 contiguous allocations: 76,022 development, 37,692 confirmation and
+20,503 further-drive samples. Of these, 73,024 are after age 4, so this is not merely
+an initialization-constant match. Every observed route passes. The formula was
+selected on development evidence; other partitions had been used in earlier
+research and are not globally pristine. Missing birth observations, re-entry to
+code 5, other movement codes and mature semantics are outside this exact claim.
+
+Across 762,474 positive-age samples, low code 31 is unobserved and bit 13 is clear
+on 226 samples. There are 182 continuous transitions toggling bit 13, 147 of them
+changing the historical six-bit value by exactly 32 without changing its low
+code. No 31/32 carry was observed. All 14 startup exceptions to the whole-six-bit
+formula `32 + q(age)` are explained by bit 13 being clear. This supports exposing
+the two raw parts separately; it does not identify the bit's function or prove
+that code 31 is reserved in every possible radar mode.
+
+The bit is not the missing excursion warning in the tested cohort: it stays set
+from 3 s before through 1 s after all 34 labelled excursions and 29 real closings.
+Labels and target identity remain imperfect. Startup structure does not prove
+measured-this-cycle status, SNR, false-detection probability or raw Doppler.
+
+Provenance-labelled aggregate evidence is in
+[`startup_low5_decay.json`](../data/analysis/summaries/startup_low5_decay.json).
+These full-route research results are imported summaries, not bundled reruns;
+public tests check raw extraction and neighboring-field independence.

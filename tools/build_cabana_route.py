@@ -62,7 +62,7 @@ NAMED_COMMENTS = {
 }
 CANDIDATE_NOTES = {
     "UNK_208_6": "Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.",
-    "UNK_8_6": " Ramps up with age and saturates at 62; tracks range and scenario, not measured error.",
+    "UNK_8_6": "Legacy combined raw view: low five bits follow an exact startup decay while full movement code109|3 remains5 from birth; bit13 can change separately. Extract low5=value&31 and bit13=value>>5. Mature meaning, units and probability interpretation unresolved; not a validity or excursion gate. See docs/14.",
     "UNK_20_3": " Missed-detection countdown candidate: 6 on 88-92% of settled rows, counts down about 5 -> 3 -> 2 -> 1 before deletion. Does not predict whether identity survives an occlusion (docs/14).",
     "UNK_107_1": " Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).",
     "UNK_56_7": " Size / class candidate: per-track median follows camera vehicle height (partial rho 0.48-0.61 at fixed range) and truck/bus class (docs/14).",

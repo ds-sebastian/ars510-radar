@@ -119,6 +119,7 @@ The object list arrives on **bus 1, 0x80** as a 742-byte record split over 106 C
 | vRel | — | `v_over_ground - v_ego` | see limitations |
 | lateral v | `74\|10` | `(code - 510.5)`, left + | sign confirmed; scale **not pinned** (radar-only estimates 0.097-0.147 m/s per code; 0.15 kept as a placeholder) |
 | movement code | `109\|3` | full raw states distinguish lateral-motion-like, initialization-like and stopped-like outputs | new full-width evidence; legacy `move_state` keeps the lossy low two bits ([docs/14](docs/14_stationary_objects_and_field_roles.md#full-movement-code-2026-09-27)) |
+| startup raw subfields | `8\|5`, `13\|1` | lower code follows an exact decay during the initial movement code 5 phase; high bit changes separately | raw metadata only; physical meaning unknown ([docs/14](docs/14_stationary_objects_and_field_roles.md#startup-decay-and-the-historical-six-bit-window-2026-09-27)) |
 | oncoming flag | `14\|1` | 1 = oncoming now or earlier | passed a pre-registered test on unseen segments |
 | accel-like | `84\|10` | zero 511, lags velocity by ~1 s | unnamed |
 | trackId | slot + age | new ID when a slot's age restarts | no radar identity error found within 60 m |

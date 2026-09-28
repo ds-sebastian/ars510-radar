@@ -1,0 +1,57 @@
+{
+  "provenance": "Imported aggregate evidence from research workspace SCR-163; full captures are not bundled reruns. Formula selected on development; other partitions previously studied for other hypotheses.",
+  "status": "exact startup law in tested scope; physical meanings unresolved",
+  "scope": "born at age1; uninterrupted movement code5 prefix only",
+  "formula": "min(30, floor(31*(2/3)**max(age-4,0)))",
+  "groups": [
+    {
+      "rows": 76022,
+      "lives": 9381,
+      "low_exact": 1.0,
+      "whole_exact": 0.9999079213911762,
+      "changed_phase_rows": 41293,
+      "changed_phase_exact": 1.0,
+      "bit13_clear": 7,
+      "group": "development",
+      "routes": 13
+    },
+    {
+      "rows": 37692,
+      "lives": 4495,
+      "low_exact": 1.0,
+      "whole_exact": 0.9999469383423538,
+      "changed_phase_rows": 21029,
+      "changed_phase_exact": 1.0,
+      "bit13_clear": 2,
+      "group": "confirmation",
+      "routes": 7
+    },
+    {
+      "rows": 20503,
+      "lives": 2650,
+      "low_exact": 1.0,
+      "whole_exact": 0.9997561332487929,
+      "changed_phase_rows": 10702,
+      "changed_phase_exact": 1.0,
+      "bit13_clear": 5,
+      "group": "further_drives",
+      "routes": 4
+    }
+  ],
+  "positive_rows": 762474,
+  "low31_rows": 0,
+  "bit13_clear_rows": 226,
+  "bit13_flips": 182,
+  "exact32_flips": 147,
+  "carry31_32": 0,
+  "excursion_check": {
+    "window_seconds": [
+      -3,
+      1
+    ],
+    "labelled_excursions": 34,
+    "real_closings": 29,
+    "bit13_clear_alerts": 0,
+    "limitations": "Small previously studied vision-labelled cohort; not independent physical truth."
+  }
+}
