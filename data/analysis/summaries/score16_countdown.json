@@ -1,0 +1,60 @@
+{
+  "provenance": "Imported aggregate research evidence SCR-189; full captures are not bundled reruns. All groups have prior research use. Step-set rule frozen after discovery and before transfer.",
+  "status": "supported bounded arithmetic relation; branch selector unresolved",
+  "raw_view": {
+    "start": 16,
+    "width": 8
+  },
+  "condition": {
+    "current_state_0_2": 2,
+    "age_min": 60,
+    "age_max": 126,
+    "same_slot": true,
+    "record_counter_increment": 1,
+    "gap_seconds": [
+      0.03,
+      0.09
+    ]
+  },
+  "allowed_decrements": [
+    1,
+    20
+  ],
+  "groups": [
+    {
+      "group": "development",
+      "rows": 3676,
+      "decrement1": 902,
+      "decrement20": 2774,
+      "exceptions": 0
+    },
+    {
+      "group": "confirmation",
+      "rows": 1907,
+      "decrement1": 534,
+      "decrement20": 1373,
+      "exceptions": 0
+    },
+    {
+      "group": "further drives",
+      "rows": 747,
+      "decrement1": 49,
+      "decrement20": 698,
+      "exceptions": 0
+    }
+  ],
+  "total_rows": 6330,
+  "exceptions": 0,
+  "rejected_selector": {
+    "rule": "decrement20 if current107 is set or previous byte exceeds40; otherwise decrement1",
+    "development_rows": 3676,
+    "development_exceptions": 64,
+    "transferred": false
+  },
+  "limits": [
+    "Not a probability calibration or measurement-validity flag",
+    "Startup and retirement outside scope",
+    "Not an early excursion guard",
+    "No parser or control changes"
+  ]
+}

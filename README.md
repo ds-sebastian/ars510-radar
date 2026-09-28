@@ -61,6 +61,10 @@ The related [raw state at `128|3`](docs/14_stationary_objects_and_field_roles.md
 exactly distinguishes populated and zero weight tuples in the tested positive-age
 corpus. Its physical validity and zero-state meanings remain unresolved.
 
+The [raw byte at `16|8`](docs/14_stationary_objects_and_field_roles.md#state-2-score-countdown-2026-09-28)
+decreases by exactly 1 or 20 during tested mature state-2 updates; the decrement
+selector and probability meaning remain unresolved.
+
 ## Recommended setup (current best, 2026-09-24)
 
 | piece | use | confidence |

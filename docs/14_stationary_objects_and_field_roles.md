@@ -74,7 +74,7 @@ is coarse (40-79 tracks per drive, 3-8 trucks or buses).
 
 | bits | behaviour on all three drives | candidate role |
 |---|---|---|
-| `20\|3` | 6 on 88-92% of settled rows; counts down about 5 -> 3 -> 2 -> 1 over the last records before deletion | missed-detection countdown |
+| `20\|3` | 6 on 88-92% of settled rows; counts down about 5 -> 3 -> 2 -> 1 over the last records before deletion | upper bits of the byte-16 countdown; missed-detection meaning unproved (see below) |
 | `107\|1` | about 0.02 in settled life, 0.5-0.66 just before deletion | coasting / not-measured flag |
 | `224\|7`, `240\|7`, `248\|7` | scale with range or \|yRel\|; fall with age at fixed range (rho -0.29 to -0.75); larger when range steps are noisier; rise before deletion. `240\|7` also tracks vRel error against the camera (stratified AUC 0.62) | range / velocity uncertainty (`240\|7`: velocity) |
 | `232\|7` | scales with \|yRel\|; falls with age at fixed range (rho -0.50 to -0.59) | lateral uncertainty |
@@ -494,3 +494,33 @@ have not supplied a transferable early excursion guard.
 The [machine-readable summary](../data/analysis/summaries/weight_state128.json)
 contains provenance-labelled aggregate imports from workspace SCR-181/182,
 not bundled full-route reruns. All drive groups had prior research use.
+
+## State-2 score countdown (2026-09-28)
+
+The full raw byte `16|8` has a transferable arithmetic structure: on consecutive
+mature updates whose current `0|2` state is 2, it decreases by **exactly 1 or 20**.
+
+| group | state-2 updates | decrement 1 | decrement 20 | exceptions |
+|---|---:|---:|---:|---:|
+| development | 3,676 | 902 | 2,774 | 0 |
+| confirmation | 1,907 | 534 | 1,373 | 0 |
+| further drives | 747 | 49 | 698 | 0 |
+
+The scope is same-slot updates with both ages 60–126, 30–90 ms apart, and a
+one-step native record-counter increment. Startup and retirement are outside
+this claim. The familiar `20|3` sequence 6→5→3→2→1 is the upper portion of the
+byte sequence 100→80→60→40→20; it is not established as a separate missed-scan
+counter.
+
+**The choice of decrement remains unresolved.** A proposed rule using bit 107
+and a threshold of 40 fails on 64 development updates. Only the narrower
+one-or-twenty relation passed the frozen transfer gates. State 1 can also show
+these decrements, so the relation cannot be reversed into a state classifier.
+
+This is metadata arithmetic, not a calibrated probability, proof of measurement
+absence, or an early velocity-excursion warning. Preserve the received values;
+no decoder, validity or control behavior changes follow.
+
+The [aggregate summary](../data/analysis/summaries/score16_countdown.json) imports
+workspace SCR-189 evidence with provenance labels. Full-route captures are not
+bundled reruns, and all groups had prior research use.
