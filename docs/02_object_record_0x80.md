@@ -149,7 +149,7 @@ The automatic split (`slot_bit_map.json`) finds several small fields in each slo
 
 The older candidate roles are from three-drive replication with an ARS408-style template as the hypothesis source; [14](14_stationary_objects_and_field_roles.md) also records expanded raw-window corrections and later kinematic evidence. In particular, the current raw views at 256 and 264 span six and five bits, with remaining upper bits exposed separately; full semantic boundaries remain unresolved.
 
-The 17-byte prefix has a 15-bit field at bit 17 that correlates with ego speed (r = −0.74) and a few mux-like nibbles. No tested field has established a transferable excursion guard. Correlation is not proof of a speed field or of absent quality information. Later conditional-quality tests and their limits are in [13](13_evidence_review.md).
+The 17-byte prefix contains a clock-like code and record counter with exact cross-stream relationships ([03](03_shell_record_0x85.md#raw-prefix-alignment)). The older bit-17 speed correlation overlaps that clock and does not establish ego speed. No tested header field has established a transferable excursion guard; conditional-quality tests and their limits are in [13](13_evidence_review.md).
 
 ## Worked example
 
