@@ -1,0 +1,46 @@
+{
+  "status": "bounded reconstructed-record allocation invariant",
+  "provenance": "Recomputed from both bundled CAN samples; not an imported whole-corpus result.",
+  "raw_view": {
+    "record_start_bit": 115,
+    "width": 5,
+    "expression": "record[14] >> 3"
+  },
+  "reference": "count of all 20 slots with (slot[0] >> 2) equal to array position",
+  "samples": [
+    {
+      "sample": "highway_following_30s.csv.gz",
+      "sha256": "9b80466e5684aeaa81f063be729214383e5dfe8277ffd49ceebb656e7e06d389",
+      "id80_records": 497,
+      "id80_crc_failures": 0,
+      "slots": 9940,
+      "slot_index_exceptions": 0,
+      "allocation_count_exceptions": 0,
+      "id85_records": 497,
+      "id85_crc_failures": 0,
+      "id85_cells": 4970
+    },
+    {
+      "sample": "highway_vrel_excursion_25s.csv.gz",
+      "sha256": "3d6122f340afb681078ae6487fa7196ff0f892d0d922e273381226d5ebbffbd9",
+      "id80_records": 414,
+      "id80_crc_failures": 0,
+      "slots": 8280,
+      "slot_index_exceptions": 0,
+      "allocation_count_exceptions": 0,
+      "id85_records": 414,
+      "id85_crc_failures": 0,
+      "id85_cells": 4140
+    }
+  ],
+  "total_records": 911,
+  "exceptions": 0,
+  "reproduce": "python tools/check_structure.py",
+  "limits": [
+    "Not physical object count or measurement validity",
+    "Not the number of nondefault payloads",
+    "Does not imply that the first N slots are allocated",
+    "Full OEM field width and count-20 behavior unestablished",
+    "No runtime parser, selection, or control change"
+  ]
+}

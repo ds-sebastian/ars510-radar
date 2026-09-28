@@ -201,6 +201,7 @@ def test_bundled_crc_and_slot_index_invariants(name: str, records: int) -> None:
     assert result["slots"] == records * 20
     assert result["id85_cells"] == records * 10
     assert result["slot_index_exceptions"] == result["id80_crc_failures"] == result["id85_crc_failures"] == 0
+    assert result["allocation_count_exceptions"] == 0
 
 
 def test_generated_dbc_matches_checked_in_layout() -> None:

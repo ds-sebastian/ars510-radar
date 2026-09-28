@@ -19,6 +19,7 @@ from ars510.transport import Id80RecordAssembler, Id85RecordAssembler
 def audit_sample(path: Path) -> dict[str, int]:
     assemblers = {0x80: Id80RecordAssembler(), 0x85: Id85RecordAssembler()}
     counts = dict(id80_records=0, id80_crc_failures=0, slots=0, slot_index_exceptions=0,
+                  allocation_count_exceptions=0,
                   id85_records=0, id85_crc_failures=0, id85_cells=0)
     with gzip.open(path, "rt") as stream:
         for row in csv.DictReader(stream):
@@ -38,6 +39,8 @@ def audit_sample(path: Path) -> dict[str, int]:
                     code = payload[17 + 36 * slot] >> 2
                     counts["slots"] += 1
                     counts["slot_index_exceptions"] += int(code not in (slot, 63))
+                allocated = sum(payload[17 + 36 * slot] >> 2 == slot for slot in range(20))
+                counts["allocation_count_exceptions"] += int(payload[14] >> 3 != allocated)
             else:
                 counts["id85_records"] += 1
                 if not id85_crc_ok(payload):
@@ -56,6 +59,7 @@ def main() -> int:
     results = {p.name: audit_sample(p) for p in paths}
     print(json.dumps(results, indent=2))
     return int(any(r["id80_crc_failures"] or r["id85_crc_failures"] or r["slot_index_exceptions"]
+                   or r["allocation_count_exceptions"]
                    or not r["id80_records"] or not r["id85_records"] for r in results.values()))
 
 

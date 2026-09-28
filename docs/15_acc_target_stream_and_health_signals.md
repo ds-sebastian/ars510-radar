@@ -179,8 +179,15 @@ See [machine-readable scope](../data/analysis/summaries/acc_clip_timing_scope.js
 
 ## Other confirmed signals
 
-- **Object count in the record header.** 0x80 record header bits 115..118 hold the number of occupied slots (99.2%
-  exact). This is a cheap integrity cross-check.
+- **Allocation count in the record header.** The record-relative `115|5` raw view
+  (`record[14] >> 3`) matches the number of slots whose encoded slot index equals
+  their physical array position. This is a structural cross-check, not physical
+  object count or measurement validity. Always inspect all 20 slots: the allocated
+  slots need not be the first N, and other slots can retain nondefault payloads.
+  The available values do not establish the full OEM field width or behavior at
+  a count of 20. The old four-bit, 99.2%-occupied wording mixed these definitions.
+  Bundled verification is in [the count summary](../data/analysis/summaries/header_allocation_count.json)
+  and `tools/check_structure.py`.
 - **Readiness.** 0x101 reads 0x1D and 0x197 bit 8 is 0 during power-up. They switch to 0x11 and 1 before objects are
   listed, and stay there (100% on the confirmation drives). This matches the existing DBC notes. It is a direct "radar
   running" signal.
