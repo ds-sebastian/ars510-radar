@@ -1,0 +1,176 @@
+{
+  "provenance": "Imported aggregate research evidence SCR-181/182; full captures are not bundled reruns. All groups have prior research use.",
+  "status": "supported raw availability relation and bounded category association",
+  "raw_view": {
+    "start": 128,
+    "width": 3
+  },
+  "positive_age_rows": 762474,
+  "nonzero_triplets": 191153,
+  "observed_nonzero_codes": [
+    2,
+    3,
+    4
+  ],
+  "observed_zero_codes": [
+    1,
+    5,
+    7
+  ],
+  "unseen_positive_age_codes": [
+    0,
+    6
+  ],
+  "availability_exceptions": 0,
+  "code_counts": {
+    "1": 1179,
+    "2": 38706,
+    "3": 104285,
+    "4": 48162,
+    "5": 6626,
+    "7": 563516
+  },
+  "groups": [
+    {
+      "positive": 451970,
+      "active": 110778,
+      "primary": 189207,
+      "multi_records": 42399,
+      "mixed_records": 10488,
+      "zero_records": 18063,
+      "active_records": 13848,
+      "paired_records": 41228,
+      "no_change": 38915,
+      "single_flip": 2067,
+      "partial_multiflip": 96,
+      "all_flip": 150,
+      "all_same_direction": 138,
+      "mixed_routes": 12,
+      "single_flip_routes": 12,
+      "widespread_object_specific": true,
+      "group": "development"
+    },
+    {
+      "positive": 201646,
+      "active": 49783,
+      "primary": 79269,
+      "multi_records": 15553,
+      "mixed_records": 4343,
+      "zero_records": 6535,
+      "active_records": 4675,
+      "paired_records": 15048,
+      "no_change": 14126,
+      "single_flip": 805,
+      "partial_multiflip": 46,
+      "all_flip": 71,
+      "all_same_direction": 63,
+      "mixed_routes": 7,
+      "single_flip_routes": 7,
+      "widespread_object_specific": true,
+      "group": "confirmation"
+    },
+    {
+      "positive": 108858,
+      "active": 30592,
+      "primary": 44284,
+      "multi_records": 10716,
+      "mixed_records": 2754,
+      "zero_records": 3856,
+      "active_records": 4106,
+      "paired_records": 10486,
+      "no_change": 9858,
+      "single_flip": 562,
+      "partial_multiflip": 26,
+      "all_flip": 40,
+      "all_same_direction": 40,
+      "mixed_routes": 4,
+      "single_flip_routes": 4,
+      "widespread_object_specific": true,
+      "group": "further_drives"
+    }
+  ],
+  "dominant_component_scores": [
+    {
+      "group": "development",
+      "code": 2,
+      "component": 148,
+      "rows": 22086,
+      "correct": 21974,
+      "agreement": 0.9949289142443176
+    },
+    {
+      "group": "development",
+      "code": 3,
+      "component": 156,
+      "rows": 59692,
+      "correct": 59425,
+      "agreement": 0.995527038799169
+    },
+    {
+      "group": "development",
+      "code": 4,
+      "component": 152,
+      "rows": 28983,
+      "correct": 28937,
+      "agreement": 0.9984128627126246
+    },
+    {
+      "group": "confirmation",
+      "code": 2,
+      "component": 148,
+      "rows": 6863,
+      "correct": 6841,
+      "agreement": 0.9967944047792512
+    },
+    {
+      "group": "confirmation",
+      "code": 3,
+      "component": 156,
+      "rows": 28190,
+      "correct": 28100,
+      "agreement": 0.9968073785030152
+    },
+    {
+      "group": "confirmation",
+      "code": 4,
+      "component": 152,
+      "rows": 14722,
+      "correct": 14685,
+      "agreement": 0.9974867545170492
+    },
+    {
+      "group": "further_drives",
+      "code": 2,
+      "component": 148,
+      "rows": 9746,
+      "correct": 9694,
+      "agreement": 0.9946644777344552
+    },
+    {
+      "group": "further_drives",
+      "code": 3,
+      "component": 156,
+      "rows": 16387,
+      "correct": 16323,
+      "agreement": 0.996094465124794
+    },
+    {
+      "group": "further_drives",
+      "code": 4,
+      "component": 152,
+      "rows": 4453,
+      "correct": 4435,
+      "agreement": 0.9959577812710532
+    }
+  ],
+  "unique_dominant_rows": 191122,
+  "dominant_agreements": 190414,
+  "dominant_disagreements": 708,
+  "limits": [
+    "This is a three-bit raw view; additional neighboring semantics are not excluded.",
+    "Codes 2/3/4 correspond to right/central/left-associated weights, with exceptions; exact lane semantics remain unproven.",
+    "Codes 1/5/7 have zero weights but their physical meanings are unresolved.",
+    "Availability and state/weight conflicts are not validated measurement-quality or excursion gates.",
+    "Preserve all wire codes and weight combinations; no filtering or normalization."
+  ]
+}

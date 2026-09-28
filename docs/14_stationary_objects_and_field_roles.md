@@ -457,3 +457,40 @@ reruns. Public tests check raw preservation and independence from neighboring fi
 The [lateral-role summary](../data/analysis/summaries/weight_lateral_roles.json)
 contains provenance-labelled SCR-178 aggregates; private camera frames and full
 route inputs are not bundled. No decoder values or control behavior changed.
+
+## Raw weight-state view (2026-09-28)
+
+`NativeObject.raw_weight_state128` exposes the three-bit raw view `128|3`.
+It combines Cabana's existing `UNK_128_2 | (UNK_130_1 << 2)` without changing
+the DBC's non-overlapping layout. A discovery-selected code mapping transfers
+with **zero exceptions across 762,474 positive-age slot observations**:
+
+| observed code | weight tuple | dominant-component association |
+|---|---|---|
+| 2 | nonzero | usually 148, right-associated |
+| 3 | nonzero | usually 156, central-associated |
+| 4 | nonzero | usually 152, left-associated |
+| 1, 5, 7 | all zero | physical meanings unresolved |
+| 0, 6 | unobserved in this cohort | preserve if encountered |
+
+There are 191,153 nonzero tuples. On the 191,122 with a unique largest component,
+the code/category mapping agrees 190,414 times and disagrees 708 times. Each code
+passes the fixed 99% agreement gate in development, confirmation and further
+groups; ties and strong-weight counterexamples remain. **The raw state is not
+an exact replacement for the weights.** Exact lane roles remain unproved.
+
+Availability is not solely record-wide: 17,585 records contain mature objects
+with both populated and zero tuples within the fixed near-corridor selection.
+In 3,434 continuous record pairs, one eligible object changes availability while
+another remains stable. A shared necessary enable plus object-specific eligibility
+is still possible; the relation does not identify the source ECU.
+
+The decoder preserves all eight codes and every weight combination, including
+unseen or contradictory values. It does not normalize, invalidate or filter
+objects using this metadata. Codes 1/5/7 are not decoded false-detection, lane-
+exclusion or measurement-validity states. State changes and state/weight conflicts
+have not supplied a transferable early excursion guard.
+
+The [machine-readable summary](../data/analysis/summaries/weight_state128.json)
+contains provenance-labelled aggregate imports from workspace SCR-181/182,
+not bundled full-route reruns. All drive groups had prior research use.

@@ -57,6 +57,9 @@ drives. Fixed tests now support right / left / central position associations,
 with camera corroboration under an existing association gate. Exact lane roles,
 the all-zero state and probability calibration remain unresolved.
 It adds diagnostic metadata, not a velocity-excursion guard.
+The related [raw state at `128|3`](docs/14_stationary_objects_and_field_roles.md#raw-weight-state-view-2026-09-28)
+exactly distinguishes populated and zero weight tuples in the tested positive-age
+corpus. Its physical validity and zero-state meanings remain unresolved.
 
 ## Recommended setup (current best, 2026-09-24)
 
