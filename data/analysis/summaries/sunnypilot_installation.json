@@ -12,5 +12,13 @@
   "stock_toyota_parser_initializes": true,
   "radard_unchanged": true,
   "card_unchanged": true,
-  "provenance": "Imported installation validation from research workspace; device runtime and saved CarParams are not bundled."
+  "provenance": "Imported installation validation from research workspace; device runtime and saved CarParams are not bundled.",
+  "activation_requires": "Full device reboot or manager restart; ignition alone can reuse preimported modules",
+  "subsequent_drive_audit": {
+    "scope": "all available qlogs from two subsequent drives; imported research-workspace evidence, not bundled reruns",
+    "ars510_selected": false,
+    "radar_unavailable": true,
+    "radar_backed_leads_observed": false,
+    "post_manager_restart_live_validation": "pending"
+  }
 }

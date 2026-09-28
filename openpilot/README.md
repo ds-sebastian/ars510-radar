@@ -150,7 +150,10 @@ Installed offroad and checked on the device's runtime on 2026-09-28: synthetic i
 radar firmware selects ARS510, the conventional Toyota parser still initializes, and CarParams/CarParamsSP match
 baseline except for the intended selection flag and radar availability across alpha-long and smartDSU combinations.
 This verifies installation/API compatibility, not onroad behavior. The owner reports that the native stream survives
-their longitudinal configuration. A new onroad process start loads the files; fork updates may require reinstalling.
+their longitudinal configuration. **Reboot the device after installation** (or fully restart the sunnypilot manager),
+then cycle ignition. The manager preimports Python processes, so an ignition cycle alone can fork cached, unpatched
+modules. Verify the ARS510 flag, `radarUnavailable=False` and radar-backed leads in the new logs. Fork updates may
+require reinstalling.
 
 ### Current openpilot
 

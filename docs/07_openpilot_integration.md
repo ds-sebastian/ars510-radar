@@ -223,3 +223,15 @@ benefit or resolved velocity excursions. The owner reports that the native strea
 
 See [installation instructions](../openpilot/README.md#sunnypilot-v2026002002) and the
 [provenance-labelled verification summary](../data/analysis/summaries/sunnypilot_installation.json).
+
+
+### Activation correction
+
+Installing the files while sunnypilot is running does not guarantee activation on the next ignition cycle.
+The manager preimports Python processes and forks them, so cached Toyota modules can survive across drives.
+Reboot the device or fully restart the manager before testing; verify the new logged CarParams and lead source.
+
+The first two subsequent test drives still recorded the ARS510 flag unset and `radarUnavailable=True`.
+Neither lead was radar-backed in their available qlogs. These drives therefore do not validate radar behavior,
+even though the files were installed and offline initialization passed. A fresh interpreter selects ARS510;
+live use after the manager restart remains to be checked. The earlier ignition-only activation advice was incorrect.
