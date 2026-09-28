@@ -24,6 +24,8 @@ The finer 0x237 distance code is now exposed for diagnostics: OEM-only consisten
 >
 > **New (2026-09-26): StarPilot support.** `python openpilot/install.py <opendbc_repo> --flavor starpilot --profile steady` installs the radar tracks into StarPilot without changing its radard. Tested on a PC against StarPilot's own Toyota code; not yet in a car ([openpilot/README](openpilot/README.md#starpilot)).
 
+> **New (2026-09-28): sunnypilot installation support.** `--flavor sunnypilot` targets v2026.002.002 `release-tizi`, with the default parser profile and unchanged `radard`. Verified offroad on the device runtime; onroad behavior remains unverified ([installation details](openpilot/README.md#sunnypilot-v2026002002)).
+
 > **New (2026-09-25): [the jitter problem, with real-drive evidence](docs/16_the_jitter_problem.md).** The extra jitter of radar+vision is the radar's velocity drifting for 1-10 s while its range does not follow (mostly false closings beyond 40 m), not flicker or lead switching. Interface-only fixes trade timing for smoothness; `range_fusion_gain=0.1` + `vrel_smooth_far_tau_s=1.0` is the recommended opt-in (about half the extra roughness for ~0.05 s). The rest needs radard.
 
 The optional ACC clip now invalidates absent-target caches. Its timing guards still fail, but event inspection shows the large first-crossing differences compare separate braking episodes, not measured sensor latency. One suppressed request remains physically unresolved; clipping stays disabled ([details](docs/15_acc_target_stream_and_health_signals.md#timing-interpretation-correction)).

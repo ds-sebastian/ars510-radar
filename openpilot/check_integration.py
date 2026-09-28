@@ -27,6 +27,7 @@ from pathlib import Path
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("--opendbc", type=Path, default=None, help="opendbc checkout to import (default: whatever is importable)")
+  ap.add_argument("--flavor", choices=("openpilot", "starpilot", "sunnypilot"), default="openpilot")
   args = ap.parse_args()
   if args.opendbc is not None:
     sys.path.insert(0, str(args.opendbc.resolve()))
@@ -68,7 +69,8 @@ def main() -> int:
 
   # ---- RadarInterface on synthetic records ----
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
-  RI = interfaces[CP.carFingerprint].RadarInterface(CP)
+  ri_args = (CP, structs.CarParamsSP()) if args.flavor == "sunnypilot" else (CP,)
+  RI = interfaces[CP.carFingerprint].RadarInterface(*ri_args)
   check(isinstance(getattr(RI, "ars510", None), Ars510RadarInterface), "Toyota RadarInterface hands over to Ars510RadarInterface")
 
   def record(age: int) -> bytes:
@@ -122,6 +124,10 @@ def main() -> int:
   pts = [o.points[0] for o in outs if len(o.points)]
   check(len(pts) == 95, f"settled track published on every later record (got {len(pts)})")
   p = pts[-1]
+  if args.flavor == "sunnypilot":
+    import math
+    check(p.measured and math.isnan(p.aRel) and math.isnan(p.yvRel),
+          "legacy RadarPoint fields preserve decoder output (measured is an interface convention)")
   # The synthetic object keeps a fixed range while its vRel is non-zero; the steady profile's velocity-aided range
   # (range_fusion_gain) then settles a little away from the raw range, so only the default profile is exact.
   d_tol = 1e-3 if PROFILE.range_fusion_gain == 0 else 2.5

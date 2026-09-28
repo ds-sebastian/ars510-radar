@@ -10,6 +10,8 @@ Flavors (which Toyota files the hook patch is made for):
   openpilot   opendbc_toyota_ars510.patch, current openpilot (opendbc 4134c0d / openpilot 10b9e73)
   starpilot   starpilot/opendbc_toyota_ars510_starpilot.patch, StarPilot's opendbc (September 2026); uses flag bit
               16384 because StarPilot already uses 4096 (AUTO_BRAKE_HOLD)
+  sunnypilot  sunnypilot/opendbc_toyota_ars510_sunnypilot.patch, v2026.002.002 release-tizi (6a17f75);
+              passes CP_SP and preserves legacy RadarPoint fields; flag bit 4096
 Profiles (decoder settings in the installed ars510_radar_interface.py):
   default     OPENPILOT_CONFIG
   steady      STEADY_CONFIG, the K4 opt-in of docs/16 (smoother, ~0.05 s of radar's head start)
@@ -33,7 +35,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 PATCHES = {"openpilot": HERE / "opendbc_toyota_ars510.patch",
-           "starpilot": HERE / "starpilot" / "opendbc_toyota_ars510_starpilot.patch"}
+           "starpilot": HERE / "starpilot" / "opendbc_toyota_ars510_starpilot.patch",
+           "sunnypilot": HERE / "sunnypilot" / "opendbc_toyota_ars510_sunnypilot.patch"}
 PATCH = PATCHES["openpilot"]
 PROFILE_LINE = 'PROFILE = PROFILES["default"]'
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")
@@ -118,6 +121,13 @@ def main() -> int:
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
+  if args.flavor == "sunnypilot":
+    # v2026.002.002 passes CP_SP and still exposes the legacy RadarPoint fields.
+    src = src.replace("def __init__(self, CP):", "def __init__(self, CP, CP_SP):")
+    src = src.replace("super().__init__(CP)", "super().__init__(CP, CP_SP)")
+    src = src.replace('      pt.vRel = p["vRel"]', '      pt.vRel = p["vRel"]\n'
+                      '      pt.aRel = p["aRel"]\n      pt.yvRel = p["yvRel"]\n'
+                      '      pt.measured = p["measured"]')
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
   for dbc in DBCS:
     shutil.copy2(REPO / "dbc" / dbc, t[dbc])

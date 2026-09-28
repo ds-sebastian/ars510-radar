@@ -1,0 +1,16 @@
+{
+  "integration": "sunnypilot",
+  "version": "v2026.002.002",
+  "branch": "release-tizi",
+  "base_commit": "6a17f75c6bcb67c85f252a1acc342d94d5b8a4d2",
+  "profile": "default",
+  "flag_bit": 4096,
+  "validation_scope": "offroad installed device runtime, synthetic CAN and saved radar firmware; no onroad validation",
+  "synthetic_checks_passed": 22,
+  "carparams_combinations_checked": 4,
+  "unintended_carparams_differences": 0,
+  "stock_toyota_parser_initializes": true,
+  "radard_unchanged": true,
+  "card_unchanged": true,
+  "provenance": "Imported installation validation from research workspace; device runtime and saved CarParams are not bundled."
+}

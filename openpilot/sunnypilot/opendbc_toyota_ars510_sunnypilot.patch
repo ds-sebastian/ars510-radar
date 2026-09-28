@@ -1,0 +1,70 @@
+--- a/opendbc/car/toyota/values.py
++++ b/opendbc/car/toyota/values.py
+@@ -58,10 +58,15 @@
+   SECOC = (8 << 8)
+ 
+ 
++# Confirmed ARS510 firmware; native object records start after fingerprinting on cold boot.
++ARS510_FW_VERSIONS = {b'\x018821F0R03100\x00\x00\x00\x00'}
++
++
+ class ToyotaFlags(IntFlag):
+   # Detected flags
+   HYBRID = 1
+   DISABLE_RADAR = 4
++  ARS510_RADAR = 4096  # native 0x80 object list on bus 1
+ 
+   # Static flags
+   TSS2 = 8
+--- a/opendbc/car/toyota/interface.py
++++ b/opendbc/car/toyota/interface.py
+@@ -4,7 +4,7 @@
+ from opendbc.car.toyota.radar_interface import RadarInterface
+ from opendbc.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
+                                                   MIN_ACC_SPEED, EPS_SCALE, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR, \
+-                                                  ToyotaSafetyFlags, UNSUPPORTED_DSU_CAR
++                                                  ToyotaSafetyFlags, UNSUPPORTED_DSU_CAR, ARS510_FW_VERSIONS
+ from opendbc.car.disable_ecu import disable_ecu
+ from opendbc.car.interfaces import CarInterfaceBase
+ from opendbc.sunnypilot.car.toyota.values import ToyotaFlagsSP, ToyotaSafetyFlagsSP
+@@ -89,6 +89,12 @@
+     # No radar dbc for cars without DSU which are not TSS 2.0
+     # TODO: make an adas dbc file for dsu-less models
+     ret.radarUnavailable = Bus.radar not in DBC[candidate] or candidate in (NO_DSU_CAR - TSS2_CAR)
++
++    # Firmware detection also works before the native object stream starts on a cold boot.
++    ars510_fw = any(fw.ecu == "fwdRadar" and fw.fwVersion in ARS510_FW_VERSIONS for fw in car_fw)
++    if candidate in RADAR_ACC_CAR and (ars510_fw or {0x80, 0x85} <= fingerprint.get(1, {}).keys()):
++      ret.flags |= ToyotaFlags.ARS510_RADAR.value
++      ret.radarUnavailable = False
+ 
+     # since we don't yet parse radar on TSS2/TSS-P radar-based ACC cars, gate longitudinal behind experimental toggle
+     if candidate in (RADAR_ACC_CAR | NO_DSU_CAR):
+--- a/opendbc/car/toyota/radar_interface.py
++++ b/opendbc/car/toyota/radar_interface.py
+@@ -2,7 +2,8 @@
+ from opendbc.can import CANParser
+ from opendbc.car import Bus
+ from opendbc.car.structs import RadarData
+-from opendbc.car.toyota.values import DBC, TSS2_CAR
++from opendbc.car.toyota.values import DBC, TSS2_CAR, ToyotaFlags
++from opendbc.car.toyota.ars510_radar_interface import Ars510RadarInterface
+ from opendbc.car.interfaces import RadarInterfaceBase
+ 
+ 
+@@ -35,11 +36,14 @@
+ 
+     self.valid_cnt = {key: 0 for key in self.RADAR_A_MSGS}
+ 
+-    self.rcp = None if CP.radarUnavailable else _create_radar_can_parser(CP.carFingerprint)
++    self.ars510 = Ars510RadarInterface(CP, CP_SP) if CP.flags & ToyotaFlags.ARS510_RADAR else None
++    self.rcp = None if CP.radarUnavailable or self.ars510 is not None else _create_radar_can_parser(CP.carFingerprint)
+     self.trigger_msg = self.RADAR_B_MSGS[-1]
+     self.updated_messages = set()
+ 
+   def update(self, can_strings):
++    if self.ars510 is not None:
++      return self.ars510.update(can_strings)
+     if self.rcp is None:
+       return super().update(None)
+ 

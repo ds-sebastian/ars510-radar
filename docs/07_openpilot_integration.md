@@ -206,3 +206,20 @@ Limits:
 2. Replay every drive through radard and the planner. Track FCW ticks and native-only braking episodes per hour as regression metrics. `tools/decode_log.py` gives you the points; the replay harness used here patched radard at runtime and is described in [09](09_testing_a_new_drive.md).
 3. Before any control use, add a consumer-side defence against vRel excursions that keeps confirmed closings ([06](06_known_limitations.md)), plus a lateral gate.
 4. Use it as a *second opinion*: for example, raise caution when radar shows strong closing that vision under-reads, rather than letting radar override vision outright.
+
+
+## sunnypilot interface-only port (2026-09-28)
+
+The installer now has a `sunnypilot` flavor for v2026.002.002 `release-tizi` (`6a17f75`).
+It adds the decoder and wrapper and changes only Toyota detection, radar availability and dispatch.
+The wrapper accepts `CP_SP` and supplies the older RadarPoint fields. Its default profile, card, radard,
+longitudinal setup and safety parameters retain their existing behavior except for making radar tracks available.
+
+The offroad device installation passed all 22 synthetic integration checks. With its saved radar firmware,
+four alpha-long/smartDSU combinations produced identical CarParams and CarParamsSP after excluding the intended
+ARS510 flag and radar-availability differences. A conventional Toyota still initializes the stock parser.
+Hash checks confirm card and radard were unchanged. These are installation/API checks, not evidence of onroad
+benefit or resolved velocity excursions. The owner reports that the native stream survives their configuration.
+
+See [installation instructions](../openpilot/README.md#sunnypilot-v2026002002) and the
+[provenance-labelled verification summary](../data/analysis/summaries/sunnypilot_installation.json).

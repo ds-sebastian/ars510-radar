@@ -130,6 +130,30 @@ Differences from the openpilot flavor:
 
 ## Putting it on a comma device
 
+### sunnypilot v2026.002.002
+
+The `sunnypilot` flavor targets **release-tizi `6a17f75`**. It changes only the three Toyota hook files and adds
+the decoder/wrapper (the installer also copies the optional Cabana DBCs). Neither `card` nor `radard` is changed.
+
+```bash
+python openpilot/install.py /data/openpilot/opendbc_repo --flavor sunnypilot
+PYTHONPATH=/data/openpilot /usr/local/venv/bin/python openpilot/check_integration.py \
+  --opendbc /data/openpilot/opendbc_repo --flavor sunnypilot
+```
+
+This port passes `CP_SP` into the wrapper/base constructor and copies `aRel`, `yvRel` and `measured` from the
+decoder into the older RadarPoint schema. The first two remain NaN; `measured=True` is the decoder's interface
+convention, not a decoded sensor-validity bit. Detection uses firmware or bus-1 fingerprints, with flag bit 4096.
+The default profile adds no K4 smoothing. Longitudinal setup and radar-disable logic are unchanged.
+
+Installed offroad and checked on the device's runtime on 2026-09-28: synthetic integration checks pass, the saved
+radar firmware selects ARS510, the conventional Toyota parser still initializes, and CarParams/CarParamsSP match
+baseline except for the intended selection flag and radar availability across alpha-long and smartDSU combinations.
+This verifies installation/API compatibility, not onroad behavior. The owner reports that the native stream survives
+their longitudinal configuration. A new onroad process start loads the files; fork updates may require reinstalling.
+
+### Current openpilot
+
 This patch is for current openpilot. Install it into the device's `opendbc_repo` (or into your own openpilot fork
 and install that branch), then reboot.
 
