@@ -138,7 +138,7 @@ The automatic split (`slot_bit_map.json`) finds several small fields in each slo
 | `0\|2` | raw state (observed 0/1/2); measured/predicted meaning unproved |
 | `2\|6` | physical slot index or 63 for unallocated-form headers, **not object class or reference point**. Verified again on all 18,220 slots in the bundled samples; lane correlations are allocation confounding |
 | `16\|8` | score-like byte, observed 10–100 on allocated slots in the structural audit; not calibrated confidence. State-2 score decay is real, but state 1 / score 100 can coexist with large geometry jumps |
-| `8\|6` | ramps with age and saturates at 62 |
+| historical `8\|6` | combines lower `8\|5` startup decay and separately changing bit 13; mature physical meaning is unknown. See [startup evidence](14_stationary_objects_and_field_roles.md#startup-decay-and-the-historical-six-bit-window-2026-09-27) |
 | `224\|7`, `240\|7` | scale with range (r ≈ 0.8); `240\|7` is weakly uncertainty-like (ρ 0.15–0.2 with velocity error after range control) but does not single out excursions |
 | `232\|7`, `248\|7` | scale with \|yRel\| (lateral-uncertainty-like) |
 | historical low-bit views `256\|5` / `264\|5` (expanded raw windows below) | rise / fall with track age at fixed range (rho +0.86-0.90 / -0.61 to -0.68 on three drives); existence-like / uncertainty-like; `264\|5` rises and `256\|5` drops before deletion |
