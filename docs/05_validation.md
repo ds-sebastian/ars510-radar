@@ -3,8 +3,8 @@
 The central worry is circularity: teacher agreement alone cannot establish that radar is an independent second opinion. The tests below use several references with different dependencies, including camera geometry, ego motion, radar range history and modelV2 comparisons. See [13](13_evidence_review.md) for corrections and newer evidence; the historical results below are not a drive-readiness certificate.
 
 **2026-09-28 correction:** several simplified camera-association scripts used
-the wrong calibration-yaw sign. The box-growth MSE table below has now been
-rescored with corrected pairing; other affected statistics still await their
+the wrong calibration-yaw sign. The box-growth MSE table and conditional-variance
+estimates below have now been rescored with corrected pairing; other affected statistics still await their
 own reruns. Historical pass labels are not renewed validation. Full-matrix
 projection and model-only comparisons are distinct.
 See [the correction and its scope](13_evidence_review.md#camera-association-correction-2026-09-28).
@@ -44,10 +44,15 @@ This is an **exploratory consumer-tolerance scorecard written after results were
 |---|---|---|---|
 | **dRel** | median error ≤ max(1 m, 10%) out to 100 m; radard accepts the radar lead ≥ 85% | vs modelV2 (conservative): 0.47 / 1.69 / 3.36 / 5.65 m at 0–15 / 15–30 / 30–60 / 60–100 m, and 8.5 m at 100–150 m. radard acceptance 96 / 94 / 95 / 89% (84% at 100–150 m). Camera ground contact 5–25 m: slope 0.99, zero within 0.2 m (0.7 m on hilly B) | **pass** |
 | **yRel** | ≥ 98% correct side for \|y\| > 1 m; median lateral error ≤ 0.5 m | 99.3% vs modelV2 (n = 4910); 97.9–98.3% vs camera, which has its own error; median \|dy\| 0.23 m | **pass** (camera borderline) |
-| **vRel** | beats zero and range differencing in every band to 100 m; conditional SD proposal ≤ 1.0 / 1.5 / 2.0 m/s at 3–30 / 30–60 / 60–100 m; camera-contradicted braking ≤ 1 per 10 engaged hours | baselines beaten. Conditional centred SD (three-cornered hat, not RMSE): A 0.35 / 1.02 / 1.58, C 0.55 / 1.11 / 1.76, B 0.54 / 1.26 / **2.73**. Contradicted braking ≈ **10 per forced highway hour** | **fail**; absolute accuracy not established |
+| **vRel** | beats zero and range differencing in every band to 100 m; conditional SD proposal ≤ 1.0 / 1.5 / 2.0 m/s at 3–30 / 30–60 / 60–100 m; camera-contradicted braking ≤ 1 per 10 engaged hours | Two-second all-paired baselines beaten. Corrected conditional centred SD (three-cornered hat, not RMSE): A 0.35 / 1.02 / 1.60, C 0.56 / 1.14 / 1.73, B 0.56 / 1.44 / **2.90**. Historical contradicted braking ≈ **10 per forced highway hour**, still awaiting event-label correction | **fail**; absolute accuracy not established |
 | **trackId** | purity ≥ 0.95 over ≥ 300 cycles for ≥ 80% of camera-checked long tracks; no duplicate IDs; no verified wrong re-link within 60 m | no duplicates; chain purity: A 90%, C 93%, B 80% within 60 m; visual review found no radar identity error within 60 m | **pass within 60 m**; beyond 60 m camera identity is too unreliable to verify |
 
 ## Detail per field
+
+The corrected conditional-variance values above are imported SCR-215 reruns,
+with the original summary reproduced before changing camera pairs. They assume
+unproved error independence and exclude bias; the correction does not establish
+physical accuracy. [Old/new sample counts, variances, biases and scope](../data/analysis/summaries/camera_semantic_correction.json).
 
 ### dRel
 

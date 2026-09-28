@@ -1,0 +1,615 @@
+{
+  "study": "SCR-215",
+  "date": "2026-09-28",
+  "provenance": "Imported research-workspace correction audit using previously researched camera pairs; original full logs and videos not bundled",
+  "class_confidence": {
+    "legacy_rows": 56296,
+    "corrected_rows": 56656,
+    "retained_row_pairs": 54163,
+    "removed_row_pairs": 2133,
+    "added_row_pairs": 2493,
+    "manual_witnesses": 28,
+    "manual_pairs_retained": 28,
+    "gates": {
+      "car": {
+        "support": true,
+        "retention": true,
+        "accuracy": true
+      },
+      "heavy": {
+        "support": true,
+        "retention": true,
+        "accuracy": false
+      }
+    },
+    "primary_passes": false,
+    "physical_semantics_promoted": false,
+    "pooled_scores": [
+      {
+        "condition": "all",
+        "camera_group": "car",
+        "tracks": 159,
+        "original_tracks": 159,
+        "correct": 152,
+        "accuracy": 0.9559748427672956,
+        "retained_fraction": 1.0,
+        "variant": "legacy"
+      },
+      {
+        "condition": "all",
+        "camera_group": "heavy",
+        "tracks": 15,
+        "original_tracks": 15,
+        "correct": 7,
+        "accuracy": 0.4666666666666667,
+        "retained_fraction": 1.0,
+        "variant": "legacy"
+      },
+      {
+        "condition": "q131_max_control",
+        "camera_group": "car",
+        "tracks": 155,
+        "original_tracks": 159,
+        "correct": 148,
+        "accuracy": 0.9548387096774194,
+        "retained_fraction": 0.9748427672955976,
+        "variant": "legacy"
+      },
+      {
+        "condition": "q131_max_control",
+        "camera_group": "heavy",
+        "tracks": 15,
+        "original_tracks": 15,
+        "correct": 7,
+        "accuracy": 0.4666666666666667,
+        "retained_fraction": 1.0,
+        "variant": "legacy"
+      },
+      {
+        "condition": "q136_max",
+        "camera_group": "car",
+        "tracks": 121,
+        "original_tracks": 159,
+        "correct": 118,
+        "accuracy": 0.975206611570248,
+        "retained_fraction": 0.7610062893081762,
+        "variant": "legacy"
+      },
+      {
+        "condition": "q136_max",
+        "camera_group": "heavy",
+        "tracks": 8,
+        "original_tracks": 15,
+        "correct": 5,
+        "accuracy": 0.625,
+        "retained_fraction": 0.5333333333333333,
+        "variant": "legacy"
+      },
+      {
+        "condition": "all",
+        "camera_group": "car",
+        "tracks": 161,
+        "original_tracks": 161,
+        "correct": 153,
+        "accuracy": 0.9503105590062112,
+        "retained_fraction": 1.0,
+        "variant": "corrected"
+      },
+      {
+        "condition": "all",
+        "camera_group": "heavy",
+        "tracks": 15,
+        "original_tracks": 15,
+        "correct": 7,
+        "accuracy": 0.4666666666666667,
+        "retained_fraction": 1.0,
+        "variant": "corrected"
+      },
+      {
+        "condition": "q131_max_control",
+        "camera_group": "car",
+        "tracks": 157,
+        "original_tracks": 161,
+        "correct": 149,
+        "accuracy": 0.9490445859872612,
+        "retained_fraction": 0.9751552795031057,
+        "variant": "corrected"
+      },
+      {
+        "condition": "q131_max_control",
+        "camera_group": "heavy",
+        "tracks": 15,
+        "original_tracks": 15,
+        "correct": 7,
+        "accuracy": 0.4666666666666667,
+        "retained_fraction": 1.0,
+        "variant": "corrected"
+      },
+      {
+        "condition": "q136_max",
+        "camera_group": "car",
+        "tracks": 121,
+        "original_tracks": 161,
+        "correct": 118,
+        "accuracy": 0.975206611570248,
+        "retained_fraction": 0.7515527950310559,
+        "variant": "corrected"
+      },
+      {
+        "condition": "q136_max",
+        "camera_group": "heavy",
+        "tracks": 8,
+        "original_tracks": 15,
+        "correct": 5,
+        "accuracy": 0.625,
+        "retained_fraction": 0.5333333333333333,
+        "variant": "corrected"
+      }
+    ]
+  },
+  "conditional_variance": [
+    {
+      "group": "A",
+      "variant": "legacy",
+      "band": "3-30",
+      "n": 2367,
+      "native_sd": 0.35,
+      "camera_sd": 0.31,
+      "range_slope_sd": 0.97,
+      "native_raw_variance": 0.121,
+      "camera_raw_variance": 0.098,
+      "range_raw_variance": 0.932,
+      "native_mean_minus_camera": 0.16,
+      "native_rms_vs_camera": 0.5
+    },
+    {
+      "group": "A",
+      "variant": "legacy",
+      "band": "30-60",
+      "n": 6753,
+      "native_sd": 1.02,
+      "camera_sd": 0.47,
+      "range_slope_sd": 1.41,
+      "native_raw_variance": 1.039,
+      "camera_raw_variance": 0.225,
+      "range_raw_variance": 1.979,
+      "native_mean_minus_camera": 0.12,
+      "native_rms_vs_camera": 1.13
+    },
+    {
+      "group": "A",
+      "variant": "legacy",
+      "band": "60-100",
+      "n": 6659,
+      "native_sd": 1.58,
+      "camera_sd": 1.11,
+      "range_slope_sd": 2.08,
+      "native_raw_variance": 2.485,
+      "camera_raw_variance": 1.237,
+      "range_raw_variance": 4.338,
+      "native_mean_minus_camera": 0.18,
+      "native_rms_vs_camera": 1.94
+    },
+    {
+      "group": "A",
+      "variant": "corrected",
+      "band": "3-30",
+      "n": 2473,
+      "native_sd": 0.35,
+      "camera_sd": 0.3,
+      "range_slope_sd": 0.95,
+      "native_raw_variance": 0.121,
+      "camera_raw_variance": 0.092,
+      "range_raw_variance": 0.894,
+      "native_mean_minus_camera": 0.15,
+      "native_rms_vs_camera": 0.48
+    },
+    {
+      "group": "A",
+      "variant": "corrected",
+      "band": "30-60",
+      "n": 6466,
+      "native_sd": 1.02,
+      "camera_sd": 0.5,
+      "range_slope_sd": 1.34,
+      "native_raw_variance": 1.036,
+      "camera_raw_variance": 0.248,
+      "range_raw_variance": 1.784,
+      "native_mean_minus_camera": 0.14,
+      "native_rms_vs_camera": 1.14
+    },
+    {
+      "group": "A",
+      "variant": "corrected",
+      "band": "60-100",
+      "n": 6632,
+      "native_sd": 1.6,
+      "camera_sd": 1.09,
+      "range_slope_sd": 2.29,
+      "native_raw_variance": 2.572,
+      "camera_raw_variance": 1.192,
+      "range_raw_variance": 5.224,
+      "native_mean_minus_camera": 0.19,
+      "native_rms_vs_camera": 1.95
+    },
+    {
+      "group": "B",
+      "variant": "legacy",
+      "band": "3-30",
+      "n": 3491,
+      "native_sd": 0.54,
+      "camera_sd": 0.6,
+      "range_slope_sd": 0.61,
+      "native_raw_variance": 0.293,
+      "camera_raw_variance": 0.36,
+      "range_raw_variance": 0.366,
+      "native_mean_minus_camera": -0.13,
+      "native_rms_vs_camera": 0.82
+    },
+    {
+      "group": "B",
+      "variant": "legacy",
+      "band": "30-60",
+      "n": 9350,
+      "native_sd": 1.26,
+      "camera_sd": 1.34,
+      "range_slope_sd": 1.16,
+      "native_raw_variance": 1.576,
+      "camera_raw_variance": 1.808,
+      "range_raw_variance": 1.35,
+      "native_mean_minus_camera": -0.18,
+      "native_rms_vs_camera": 1.85
+    },
+    {
+      "group": "B",
+      "variant": "legacy",
+      "band": "60-100",
+      "n": 5867,
+      "native_sd": 2.73,
+      "camera_sd": 3.8,
+      "range_slope_sd": 1.95,
+      "native_raw_variance": 7.477,
+      "camera_raw_variance": 14.464,
+      "range_raw_variance": 3.812,
+      "native_mean_minus_camera": -0.69,
+      "native_rms_vs_camera": 4.74
+    },
+    {
+      "group": "B",
+      "variant": "corrected",
+      "band": "3-30",
+      "n": 3690,
+      "native_sd": 0.56,
+      "camera_sd": 0.57,
+      "range_slope_sd": 0.76,
+      "native_raw_variance": 0.318,
+      "camera_raw_variance": 0.322,
+      "range_raw_variance": 0.577,
+      "native_mean_minus_camera": -0.13,
+      "native_rms_vs_camera": 0.81
+    },
+    {
+      "group": "B",
+      "variant": "corrected",
+      "band": "30-60",
+      "n": 9412,
+      "native_sd": 1.44,
+      "camera_sd": 1.31,
+      "range_slope_sd": 1.42,
+      "native_raw_variance": 2.073,
+      "camera_raw_variance": 1.713,
+      "range_raw_variance": 2.009,
+      "native_mean_minus_camera": -0.19,
+      "native_rms_vs_camera": 1.95
+    },
+    {
+      "group": "B",
+      "variant": "corrected",
+      "band": "60-100",
+      "n": 6418,
+      "native_sd": 2.9,
+      "camera_sd": 3.77,
+      "range_slope_sd": 2.13,
+      "native_raw_variance": 8.387,
+      "camera_raw_variance": 14.244,
+      "range_raw_variance": 4.529,
+      "native_mean_minus_camera": -0.75,
+      "native_rms_vs_camera": 4.82
+    },
+    {
+      "group": "C",
+      "variant": "legacy",
+      "band": "3-30",
+      "n": 2866,
+      "native_sd": 0.55,
+      "camera_sd": 0.18,
+      "range_slope_sd": 1.43,
+      "native_raw_variance": 0.302,
+      "camera_raw_variance": 0.034,
+      "range_raw_variance": 2.05,
+      "native_mean_minus_camera": 0.11,
+      "native_rms_vs_camera": 0.59
+    },
+    {
+      "group": "C",
+      "variant": "legacy",
+      "band": "30-60",
+      "n": 13666,
+      "native_sd": 1.11,
+      "camera_sd": 0.59,
+      "range_slope_sd": 1.58,
+      "native_raw_variance": 1.225,
+      "camera_raw_variance": 0.343,
+      "range_raw_variance": 2.504,
+      "native_mean_minus_camera": -0.1,
+      "native_rms_vs_camera": 1.26
+    },
+    {
+      "group": "C",
+      "variant": "legacy",
+      "band": "60-100",
+      "n": 6817,
+      "native_sd": 1.76,
+      "camera_sd": 1.5,
+      "range_slope_sd": 2.31,
+      "native_raw_variance": 3.082,
+      "camera_raw_variance": 2.25,
+      "range_raw_variance": 5.341,
+      "native_mean_minus_camera": -0.2,
+      "native_rms_vs_camera": 2.32
+    },
+    {
+      "group": "C",
+      "variant": "corrected",
+      "band": "3-30",
+      "n": 2782,
+      "native_sd": 0.56,
+      "camera_sd": 0.2,
+      "range_slope_sd": 1.44,
+      "native_raw_variance": 0.312,
+      "camera_raw_variance": 0.038,
+      "range_raw_variance": 2.071,
+      "native_mean_minus_camera": 0.12,
+      "native_rms_vs_camera": 0.6
+    },
+    {
+      "group": "C",
+      "variant": "corrected",
+      "band": "30-60",
+      "n": 13387,
+      "native_sd": 1.14,
+      "camera_sd": 0.56,
+      "range_slope_sd": 1.58,
+      "native_raw_variance": 1.296,
+      "camera_raw_variance": 0.318,
+      "range_raw_variance": 2.497,
+      "native_mean_minus_camera": -0.07,
+      "native_rms_vs_camera": 1.27
+    },
+    {
+      "group": "C",
+      "variant": "corrected",
+      "band": "60-100",
+      "n": 6793,
+      "native_sd": 1.73,
+      "camera_sd": 1.52,
+      "range_slope_sd": 2.28,
+      "native_raw_variance": 2.982,
+      "camera_raw_variance": 2.326,
+      "range_raw_variance": 5.212,
+      "native_mean_minus_camera": -0.21,
+      "native_rms_vs_camera": 2.31
+    }
+  ],
+  "size_proxy_replication_changes": {
+    "width": {
+      "removed": [],
+      "added": []
+    },
+    "height": {
+      "removed": [
+        "UNK_115_8"
+      ],
+      "added": []
+    },
+    "heavy": {
+      "removed": [],
+      "added": []
+    }
+  },
+  "corrected_size_proxy_correlations": [
+    {
+      "group": "A",
+      "field": "UNK_56_7",
+      "target": "width",
+      "rho": 0.678
+    },
+    {
+      "group": "A",
+      "field": "UNK_56_7",
+      "target": "height",
+      "rho": 0.647
+    },
+    {
+      "group": "A",
+      "field": "UNK_56_7",
+      "target": "heavy",
+      "rho": 0.304
+    },
+    {
+      "group": "A",
+      "field": "UNK_216_6",
+      "target": "width",
+      "rho": 0.827
+    },
+    {
+      "group": "A",
+      "field": "UNK_216_6",
+      "target": "height",
+      "rho": 0.681
+    },
+    {
+      "group": "A",
+      "field": "UNK_216_6",
+      "target": "heavy",
+      "rho": 0.343
+    },
+    {
+      "group": "A",
+      "field": "UNK_272_5",
+      "target": "width",
+      "rho": 0.682
+    },
+    {
+      "group": "A",
+      "field": "UNK_272_5",
+      "target": "height",
+      "rho": 0.522
+    },
+    {
+      "group": "A",
+      "field": "UNK_272_5",
+      "target": "heavy",
+      "rho": 0.225
+    },
+    {
+      "group": "B",
+      "field": "UNK_56_7",
+      "target": "width",
+      "rho": 0.3
+    },
+    {
+      "group": "B",
+      "field": "UNK_56_7",
+      "target": "height",
+      "rho": 0.491
+    },
+    {
+      "group": "B",
+      "field": "UNK_56_7",
+      "target": "heavy",
+      "rho": 0.373
+    },
+    {
+      "group": "B",
+      "field": "UNK_216_6",
+      "target": "width",
+      "rho": 0.254
+    },
+    {
+      "group": "B",
+      "field": "UNK_216_6",
+      "target": "height",
+      "rho": 0.471
+    },
+    {
+      "group": "B",
+      "field": "UNK_216_6",
+      "target": "heavy",
+      "rho": 0.443
+    },
+    {
+      "group": "B",
+      "field": "UNK_272_5",
+      "target": "width",
+      "rho": 0.414
+    },
+    {
+      "group": "B",
+      "field": "UNK_272_5",
+      "target": "height",
+      "rho": 0.539
+    },
+    {
+      "group": "B",
+      "field": "UNK_272_5",
+      "target": "heavy",
+      "rho": 0.328
+    },
+    {
+      "group": "C",
+      "field": "UNK_56_7",
+      "target": "width",
+      "rho": 0.555
+    },
+    {
+      "group": "C",
+      "field": "UNK_56_7",
+      "target": "height",
+      "rho": 0.6
+    },
+    {
+      "group": "C",
+      "field": "UNK_56_7",
+      "target": "heavy",
+      "rho": 0.394
+    },
+    {
+      "group": "C",
+      "field": "UNK_216_6",
+      "target": "width",
+      "rho": 0.646
+    },
+    {
+      "group": "C",
+      "field": "UNK_216_6",
+      "target": "height",
+      "rho": 0.599
+    },
+    {
+      "group": "C",
+      "field": "UNK_216_6",
+      "target": "heavy",
+      "rho": 0.402
+    },
+    {
+      "group": "C",
+      "field": "UNK_272_5",
+      "target": "width",
+      "rho": 0.656
+    },
+    {
+      "group": "C",
+      "field": "UNK_272_5",
+      "target": "height",
+      "rho": 0.649
+    },
+    {
+      "group": "C",
+      "field": "UNK_272_5",
+      "target": "heavy",
+      "rho": 0.394
+    }
+  ],
+  "verification": {
+    "class_verification": {
+      "status": "passed",
+      "raw_rows": 112952,
+      "variant_rows": {
+        "legacy": 56296,
+        "corrected": 56656
+      },
+      "track_summaries": 950,
+      "tied_modal_summaries": 0,
+      "score_rows": 48
+    },
+    "variance_verification": {
+      "status": "passed",
+      "legacy_summary_exact": true,
+      "independent_slope_rows": 173691,
+      "independent_moment_bands": 18
+    },
+    "size_verification": {
+      "status": "passed",
+      "legacy_T1_exact": true,
+      "independent_partial_rank_values": 381
+    }
+  },
+  "limits": [
+    "Class and confidence mapping remains unvalidated; no new physical signal is promoted",
+    "Conditional variance assumes unproved independent errors, excludes bias and is not RMSE",
+    "Image size proxies share radar range; historical heavy indicator means non-car detector class, not independent vehicle truth",
+    "Historical narrower field cuts are retained for reproduction, not promoted as semantic boundaries",
+    "Identity, far-range calibration, occlusion and event-level braking classifications still need separate corrected reruns"
+  ]
+}

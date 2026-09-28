@@ -64,10 +64,33 @@ raw-bit audits. Independent rank checks cover both variants.
 
 These are provenance-labelled research-workspace reruns; the public legacy
 camera tables remain unchanged. [Machine-readable corrected results and limits](../data/analysis/summaries/camera_pair_correction.json).
-Track-identity/occlusion, far-range calibration, event-level brake labels,
-class/size and conditional-variance studies still need their own corrected
-reruns. The broader historical-evidence qualification above remains in force
+Track-identity/occlusion, far-range calibration and event-level brake labels
+still need their own corrected reruns. Class/size and conditional-variance
+corrections are described below. The broader historical-evidence qualification remains in force
 outside the explicitly rescored results.
+
+### Class, size-proxy and conditional-variance correction
+
+SCR-215 reproduces the original categorical/confidence results before changing
+associations. The corrected cohort has 56,656 rows versus 56,296 previously;
+all 28 saved manual witness pairings remain eligible. Maximum `136|4` still
+does not validate the proposed car/heavy mapping: agreement remains 118/121
+for car track-segments and 5/8 for heavy ones. Neither physical class names nor
+confidence units are established.
+
+The original size-proxy screen also reproduces first. `56|7`, `216|6` and
+`272|5` retain the descriptive cross-drive associations, while the old `115|8`
+height association no longer meets its threshold. The image extents share radar
+range; the historical non-car detector indicator is not verified heavy-vehicle
+truth. These results do not identify physical dimensions, RCS or SNR.
+
+Conditional centred native SD at 3–30 / 30–60 / 60–100 m becomes A
+0.35 / 1.02 / 1.60, B 0.56 / 1.44 / 2.90, and C 0.56 / 1.14 / 1.73 m/s.
+The original conditional-variance summary reproduces exactly; independent slope
+and moment checks verify the correction. Error independence remains unproved,
+so these values are not measured RMSE or uncertainty-code calibration.
+[Provenance-labelled old/new results and verification scope](../data/analysis/summaries/camera_semantic_correction.json).
+Legacy public parquet data remains unchanged; no decoder output changes.
 
 ## Reproduce the strongest corrections locally
 

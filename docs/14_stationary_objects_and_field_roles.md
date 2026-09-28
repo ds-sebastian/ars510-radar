@@ -1,8 +1,9 @@
 # 14. Stationary objects, and likely roles for unnamed slot fields (2026-09-24)
 
-**Camera-association correction (2026-09-28):** camera-derived class/size and
-quality associations imported from the old simplified bearing pipeline await
-corrected pairing and rescoring. Native record counts and later raw bitfield
+**Camera-association correction (2026-09-28):** the original class/size-proxy
+and quality screens have now been rescored with corrected pairing, as documented
+in the evidence review. This does not validate their physical meanings; other
+camera-dependent studies remain pending. Native record counts and later raw bitfield
 corrections are separate evidence. [Details](13_evidence_review.md#camera-association-correction-2026-09-28).
 
 Findings from the research workspace after [13](13_evidence_review.md). Figures come from 122 one-minute segments:
@@ -85,7 +86,7 @@ is coarse (40-79 tracks per drive, 3-8 trucks or buses).
 | `232\|7` | scales with \|yRel\|; falls with age at fixed range (rho -0.50 to -0.59) | lateral uncertainty |
 | `264\|5` | falls with age at fixed range (rho -0.61 to -0.68); rises before deletion | uncertainty |
 | `256\|5` | rises with age at fixed range (rho +0.86 to +0.90); drops about 1.5 codes before deletion | existence / confidence |
-| `56\|7`, `216\|6`, `272\|5` | per-track medians follow camera vehicle height (partial rho 0.41-0.71 at fixed range) and are higher for trucks and buses (0.24-0.42); width follows on A and C | size, class or radar cross-section |
+| `56\|7`, `216\|6`, `272\|5` | corrected per-track associations with the camera height proxy: partial rho 0.47-0.68 at fixed range; with the historical non-car detector indicator: 0.23-0.44; width-proxy associations persist | size, class or radar cross-section candidates; no physical unit established |
 
 **What they do and do not buy:**
 

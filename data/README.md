@@ -26,6 +26,8 @@ and [bounded impact summary](analysis/summaries/camera_yaw_correction.json).
 An additive [corrected box-growth pairing and quality summary](analysis/summaries/camera_pair_correction.json)
 now records the research rerun. It does not replace the legacy parquet tables
 or silently update the other imported summaries.
+The [class/size-proxy and conditional-variance correction](analysis/summaries/camera_semantic_correction.json)
+likewise adds corrected aggregates without replacing the historical data tables.
 
 This is the data behind every chart in `docs/11_visual_tour.md` and the numbers in `docs/12_statistics.md`.
 - **Drives:** A (development, 26 min, mixed), B (held-out city, 43 min), C (held-out highway, 24 min).
