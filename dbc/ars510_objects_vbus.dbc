@@ -1760,7 +1760,7 @@ CM_ SG_ 1792 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1792 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1792 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1792 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1792 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1792 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1792 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1792 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1792 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1823,7 +1823,7 @@ CM_ SG_ 1793 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1793 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1793 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1793 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1793 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1793 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1793 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1793 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1793 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1886,7 +1886,7 @@ CM_ SG_ 1794 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1794 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1794 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1794 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1794 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1794 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1794 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1794 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1794 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -1949,7 +1949,7 @@ CM_ SG_ 1795 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1795 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1795 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1795 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1795 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1795 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1795 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1795 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1795 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2012,7 +2012,7 @@ CM_ SG_ 1796 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1796 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1796 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1796 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1796 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1796 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1796 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1796 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1796 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2075,7 +2075,7 @@ CM_ SG_ 1797 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1797 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1797 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1797 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1797 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1797 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1797 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1797 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1797 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2138,7 +2138,7 @@ CM_ SG_ 1798 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1798 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1798 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1798 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1798 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1798 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1798 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1798 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1798 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2201,7 +2201,7 @@ CM_ SG_ 1799 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1799 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1799 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1799 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1799 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1799 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1799 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1799 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1799 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2264,7 +2264,7 @@ CM_ SG_ 1800 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1800 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1800 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1800 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1800 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1800 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1800 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1800 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1800 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2327,7 +2327,7 @@ CM_ SG_ 1801 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1801 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1801 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1801 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1801 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1801 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1801 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1801 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1801 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2390,7 +2390,7 @@ CM_ SG_ 1802 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1802 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1802 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1802 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1802 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1802 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1802 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1802 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1802 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2453,7 +2453,7 @@ CM_ SG_ 1803 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1803 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1803 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1803 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1803 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1803 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1803 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1803 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1803 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2516,7 +2516,7 @@ CM_ SG_ 1804 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1804 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1804 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1804 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1804 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1804 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1804 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1804 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1804 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2579,7 +2579,7 @@ CM_ SG_ 1805 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1805 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1805 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1805 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1805 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1805 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1805 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1805 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1805 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2642,7 +2642,7 @@ CM_ SG_ 1806 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1806 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1806 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1806 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1806 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1806 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1806 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1806 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1806 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2705,7 +2705,7 @@ CM_ SG_ 1807 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1807 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1807 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1807 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1807 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1807 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1807 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1807 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1807 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2768,7 +2768,7 @@ CM_ SG_ 1808 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1808 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1808 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1808 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1808 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1808 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1808 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1808 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1808 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2831,7 +2831,7 @@ CM_ SG_ 1809 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1809 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1809 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1809 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1809 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1809 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1809 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1809 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1809 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2894,7 +2894,7 @@ CM_ SG_ 1810 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1810 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1810 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1810 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1810 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1810 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1810 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1810 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1810 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
@@ -2957,7 +2957,7 @@ CM_ SG_ 1811 UNK_96 "Lateral ground-acceleration-like candidate: (raw-511)*0.05 
 CM_ SG_ 1811 UNK_106_1 "Candidate from the carry-chain split, unverified: LSB flips 0.003 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.14.";
 CM_ SG_ 1811 UNK_107_1 "Candidate from the carry-chain split, unverified: LSB flips 0.013 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=-0.24. Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).";
 CM_ SG_ 1811 CONST_108_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1811 MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";
+CM_ SG_ 1811 MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";
 CM_ SG_ 1811 UNK_111_4 "Candidate from the carry-chain split, unverified: LSB flips 0.008 per cycle, 10 distinct values 0..9. Strongest correlation: dRel r=-0.53.";
 CM_ SG_ 1811 UNK_115_8 "Candidate from the carry-chain split, unverified: LSB flips 0.052 per cycle, 26 distinct values 0..178. Strongest correlation: age r=+0.27.";
 CM_ SG_ 1811 CONST_123_5 "Constant 31 (0x1F) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";

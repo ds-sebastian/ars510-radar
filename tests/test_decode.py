@@ -253,3 +253,20 @@ def test_header_object_count_matches_live_slots_on_real_samples() -> None:
             assert live_object_count(rec.payload) == live
             n += 1
         assert n > 300
+
+
+def test_full_movement_code_preserves_distinctions_and_unknown_values():
+    from ars510.objects import decode_native_slot, encode_slot
+    for code in range(8):
+        raw = encode_slot(age_cycles=80, movement_code=code)
+        obj = decode_native_slot(0, raw)
+        assert obj.movement_code == code
+        assert obj.move_state == code % 4
+        assert obj.geometry_valid
+    # Full 3 and 7 previously both looked like legacy state 3.
+    assert decode_native_slot(0, encode_slot(movement_code=3)).movement_code != \
+        decode_native_slot(0, encode_slot(movement_code=7)).movement_code
+    import pytest
+    with pytest.raises(ValueError, match="low two bits"):
+        encode_slot(move_state=1, movement_code=7)
+    assert decode_native_slot(0, encode_slot(move_state=3, movement_code=7)).movement_code == 7

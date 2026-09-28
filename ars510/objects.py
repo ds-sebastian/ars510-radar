@@ -44,9 +44,10 @@ LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "scale_
 ACCEL_LIKE = NativeField("accel_like_84", 84, 10, 511.0, 1.0, "code", "unnamed")
 # Track age in radar cycles (~60 ms): 1 at birth, saturates at 126, 0 = slot being retired.
 AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")
-# Movement state (passed a pre-registered test on unseen data, docs/14): 0 = moving away / same direction,
-# 2 = moving toward (oncoming), 1 and 3 = not clearly moving (the difference between 1 and 3 is unresolved).
-MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "tested_semantics")
+# Historical two-bit projection retained for compatibility; it conflates distinct full codes.
+# Use movement_code for the full raw motion classification (docs/14). Neither is a validity gate.
+MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "legacy_coarse_view")
+MOVEMENT_CODE = NativeField("movement_code", 109, 3, 0.0, 1.0, "code", "structure_provisional_semantics")
 # Oncoming flag (passed a pre-registered test): 1 = oncoming now or earlier in the track's life (it persists after
 # an oncoming object slows or stops).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
@@ -56,13 +57,14 @@ ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_se
 # about 0.62 on drives A-C). Unit and meaning are unpinned: use it only as a relative confidence signal (docs/14).
 VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
 
+# Historical labels only; full code 3 is rightward-like while full code 7 is stopped-like.
 MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward", 3: "not_clearly_moving_3"}
 
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, ONCOMING_FLAG, VEL_UNC_240)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, ONCOMING_FLAG, VEL_UNC_240)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -79,6 +81,9 @@ def field_value(slot: bytes, field: NativeField) -> float:
 
 def encode_slot(**codes: int) -> bytes:
     """Build a synthetic slot from raw codes, e.g. encode_slot(long_dist=640, age=40). Unset bits are 0."""
+    if "move_state" in codes and "movement_code" in codes:
+        if (int(codes["move_state"]) & 3) != (int(codes["movement_code"]) & 3):
+            raise ValueError("move_state must equal the low two bits of movement_code")
     by_name = {f.name: f for f in NAMED_FIELDS}
     value = 0
     for name, code in codes.items():
@@ -96,11 +101,12 @@ class NativeObject:
     v_long_ground: float  # m/s over ground (NOT relative)
     v_lat_ground: float  # m/s, provisional
     accel_like_code: int  # centred code, unscaled
-    move_state: int  # 0 moving away, 2 moving toward, 1/3 not clearly moving (MOVE_STATE_NAMES)
+    move_state: int  # legacy low two bits; see movement_code for distinct full states
     oncoming_flag: bool  # oncoming now or earlier in the track's life
     vel_unc_code: int  # candidate velocity-uncertainty code (240|7), relative confidence only
     geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
     lateral_valid: bool  # lateral code is not the sentinel
+    movement_code: int | None = None  # full 109|3; None for legacy manually constructed objects
 
 
 def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
@@ -117,6 +123,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         v_lat_ground=field_value(slot, LAT_VEL),
         accel_like_code=int(field_code(slot, ACCEL_LIKE) - ACCEL_LIKE.zero_code),
         move_state=int(field_code(slot, MOVE_STATE)),
+        movement_code=int(field_code(slot, MOVEMENT_CODE)),
         oncoming_flag=bool(field_code(slot, ONCOMING_FLAG)),
         vel_unc_code=int(field_code(slot, VEL_UNC_240)),
         geometry_valid=age >= 1,

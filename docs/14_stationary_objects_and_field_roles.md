@@ -287,3 +287,40 @@ final quadrant interpretation followed those checks and is explicitly
 exploratory. It has no pristine holdout. The raw `UNK_208_6` decoder is retained,
 with no runtime use or control change. Imported research aggregates, not a
 bundled rerun: [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
+
+
+## Full movement code (2026-09-27)
+
+**Correction:** the historical `109|2` view is too narrow to distinguish the
+observed motion classifications. The full raw `109|3` code takes values
+0, 1, 2, 3, 4, 5 and 7 on 762,474 allocated samples; 6 was not observed.
+The decoder exposes `NativeObject.movement_code`. Its existing `move_state`
+attribute and Cabana `MOVE_STATE` remain the legacy low-two-bit projection.
+To inspect the full code in the current Cabana layout, combine
+`MOVE_STATE | ((UNK_111_4 & 1) << 2)`; remaining bits of that raw window are
+separate unknowns. Old labels and statistics describe the coarse projection.
+
+| full code | supported behavior | interpretation limit |
+|---|---|---|
+| 0 | predominantly positive longitudinal ground velocity | forward-motion-like; legacy 0 also includes full 4 |
+| 1 | predominantly slow | stationary-like; low-bit 1 also includes full 5 |
+| 2 | predominantly negative longitudinal ground velocity | oncoming-like; unseen full 6 must remain representable |
+| 3 | nominal lateral velocity below −0.15 m/s on all 393 mature samples | rightward-motion-like; one clear crossing vehicle in video, but other events have uncertain association |
+| 4 | nominal lateral velocity above +0.15 m/s on 600/602 mature samples | leftward-motion-like; turning ego coordinates and classification lag matter |
+| 5 | all 48,044 observed age-1 through age-3 samples; also some mature objects | initialization/unsettled-like, not simply a birth flag or a decoded invalid state |
+| 7 | all 81 slow endpoints following the earlier study's mature-motion antecedent | stopped-after-motion-like; does not prove the converse or instantaneous zero speed |
+
+Full 3 and 7 previously both appeared as coarse 3; full 4 aliased forward 0;
+full 5 aliased slow 1. This explains why naming the low-bit states was incomplete.
+The broader discovery was exploratory and used previously studied datasets,
+not a new pre-registered semantic validation. Native velocities are internal
+witnesses, not ground truth. A separate position-plus-ego-yaw direction check
+agrees on 91/103 selected allocation/state windows, with counterexamples retained.
+Video includes a clear rightward crossing, plus curved-road, night and ambiguous
+cases. These are descriptions of the radar's classifier, not guaranteed physical
+motion, scan source or an early excursion warning. No velocity or control policy
+changes with this metadata addition.
+
+Aggregate values are provenance-labelled imports from workspace SCR-158, not
+bundled reruns; see [summary](../data/analysis/summaries/full_movement_code.json).
+The helper preserves all eight raw values, including the currently unseen 6.

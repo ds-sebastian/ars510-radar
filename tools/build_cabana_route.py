@@ -147,7 +147,7 @@ def dbc_text() -> str:
                 continue
             if f["start"] == 109 and f["len"] == 2:
                 out.append(_sig("MOVE_STATE", 109, 2, 1, 0, 0, 3, ""))
-                comments.append(f'CM_ SG_ {m} MOVE_STATE "Movement state. 0 = moving away / same direction, 2 = moving toward (oncoming), 1 and 3 = not clearly moving (1 vs 3 unresolved). Pre-registered test on unseen segments: value 0 had over-ground speed > 0.5 m/s on 99.65% of rows, value 2 < -0.5 m/s on 99.88%, values 1/3 |v| < 2 m/s on 89.5% (docs/14).";')
+                comments.append(f'CM_ SG_ {m} MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";')
                 vals.append(f'VAL_ {m} MOVE_STATE 0 "moving away" 1 "not clearly moving" 2 "moving toward" 3 "not clearly moving (3)" ;')
                 continue
             if f["start"] == 14 and f["len"] == 1:
