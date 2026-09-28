@@ -41,6 +41,13 @@ supports a filtered lateral ground-acceleration-like signal, approximately
 `(code - 511) * 0.05` m/s². Its calibration and latency remain provisional;
 the interface does not use it.
 
+The [0x85 follow-up](docs/03_shell_record_0x85.md#lane-lateral-offset-candidates-2026-09-27)
+finds lane-boundary lateral-position candidates in four cells, using a fixed
+0.01m/code scale. Ten of twelve drive-group tests pass; large right-side errors
+and boundary reassignment remain. This corrects the assumption that those cells
+necessarily describe radar objects. Source ECU and validity are unresolved;
+the decoder continues to expose raw cells.
+
 ## Recommended setup (current best, 2026-09-24)
 
 | piece | use | confidence |

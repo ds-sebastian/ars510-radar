@@ -61,4 +61,59 @@ object decoding and publication are unchanged.
 - Bounded correlation tests did not produce a usable confidence/correction decoder. They do not prove no such signal exists.
 - The native ID80 object path does not require ID85 gating. This is not proof that ID85 lacks useful metadata.
 
-Next useful tests are lifecycle-linked, CRC-clean and object-associated. A repeating motif alone does not establish a field's units, object count, freshness or validity.
+The lane-boundary finding below changes the next step: investigate road-boundary
+lifecycle and remaining cell parameters before assuming object association. A
+repeating motif alone does not establish units, freshness or validity.
+
+## Lane-lateral-offset candidates (2026-09-27)
+
+At least part of the body strongly resembles **road-boundary geometry**, rather
+than a list of radar objects or reflections. For zero-based cells 2/3/8/9 in the
+working `[21:141]` projection, a fixed diagnostic formula is:
+
+```python
+raw = (int.from_bytes(cell.payload, "little") >> 32) & 0xfff
+y_left_m = (raw - 2000) * 0.01
+```
+
+Cells 2/8 usually follow the left ego-lane boundary, and 3/9 the right. This formula,
+sign and assignment were frozen before comparing with camera lane-model values.
+It was tested on 24,878 CRC-valid records from 25 predetermined segments in three
+drive groups. All groups had prior research use for other questions. Selection
+required nondefault-looking cells, speed at least 5 m/s, model lane probability at
+least .8 and model/ego messages within 150 ms. Cells matching the default motif
+`payload[6:10] == b"\x84\x03\xf4\x01"` are excluded; they can otherwise produce a misleading 0 m value.
+That exclusion is **not a decoded validity flag**.
+
+| drive group | cell 2 median error | cell 3 | cell 8 | cell 9 | fixed tests passed |
+|---|---:|---:|---:|---:|---:|
+| A (development) | .036 m | .096 m | .036 m | .095 m | 4/4 |
+| B (transfer) | .033 m | .070 m | .030 m | .067 m | 4/4 |
+| C (transfer) | .031 m | .065 m | .030 m | .063 m | 2/4 |
+
+These numbers measure agreement with camera-model lane geometry, **not surveyed
+physical accuracy**. Constant-position and 5 s time-shift controls give larger mean
+errors in all 12 comparisons. The two right-side tests in group C nevertheless
+fail the fixed within-segment correlation gate: .348 and .411 versus required .8.
+All scores, coverage and gates are in the [machine-readable summary](../data/analysis/summaries/id85_lane_lateral_candidates.json).
+These are provenance-labelled imports from research-workspace SCR-165, not reruns
+from the bundled samples; repeated frames are not independent validation trials.
+
+Review of 21 synchronized private road frames supports the boundary interpretation
+on straight and curved roads and preserves counterexamples. During one lane
+change, the right cells stay near the old boundary while the model changes its
+ego-right assignment. Other large transients occur **without an obvious lane
+change**. The largest model discrepancy is 3.744 m. A fixed cell is therefore not
+an unconditional ego-lane boundary, and nondefault cells can still be wrong.
+
+The transmitting ECU remains unknown: bus placement and prefix agreement with
+ID80 do not prove these are radar-generated lane measurements. Camera/ADAS data
+received or forwarded on this bus is another possibility. The complete record
+is not proven lane-only, the duplicate-cell roles and remaining parameters are
+unresolved, and no scan source or acquisition time follows from this finding.
+
+This changes an earlier search assumption: activity when the ID80 object list is
+empty need not represent otherwise-hidden reflections. Keep searching for Doppler
+and quality metadata without treating all ten cells as object measurements.
+The parser continues to expose raw cells; no lane-control output or object
+publication policy changes.
