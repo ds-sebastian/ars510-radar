@@ -43,7 +43,36 @@ It is too lagged to serve as vRel. It might be useful as a sanity check ("the ra
 
 ## 0x240 / 0x241 / 0x244 / 0x245 / 0x248
 
-These are mirror frames. Byte 0 carries a 3-bit mux phase, bytes 1–6 are two identical BE24 words, and the four addresses are byte-identical whenever they are seen together. 0x248 carries startup and event context, including a rare isolated pulse of unknown meaning.
+**Correction (2026-09-28): the mirror description applied only to the default
+payloads on the initial two drives.** In the expanded 399-segment, 24-drive
+research corpus, `0x240` and `0x244` each carry 37,094 non-default bodies across
+three drives, including one confirmation drive. Their two historical BE24
+containers differ and byte 7 is nonzero on every such frame. `0x241` and
+`0x245` retain the zero/default bodies in this scope. Of 321,840 exact-time
+complete quartets, 31,940 differ across addresses. Counts are imported research
+results, not a bundled rerun ([summary](../data/analysis/summaries/context_24x.json)).
+
+Byte-0 bits `5|3` cycle through 1–7. This establishes a rolling phase, **not seven
+objects or scan channels**. Changing bodies are more similar on adjacent cycles
+than seven cycles apart in all six drive/address comparisons; that descriptive
+result does not exclude every multiplexing scheme. Bit `3` of `0x240` separates
+the default/zero and other bodies in this corpus, but is not decoded as object
+validity. `0x248` also has previously unreported live bits at byte 0 bits 0–1,
+byte 2 bit 1 and byte 6 bit 0; their meanings remain unresolved.
+
+Historical openpilot [camera-emulation definitions](https://github.com/commaai/openpilot/blob/v0.5.13/selfdrive/car/toyota/values.py)
+use the same four addresses and default bodies; its
+[controller](https://github.com/commaai/openpilot/blob/v0.5.13/selfdrive/car/toyota/carcontroller.py)
+generates the same seven-state prefix. This is a source-family clue, **not proof
+of the transmitting ECU or software injection on these captures**. No selected
+family frames appeared in `sendcan` in the two original-log spot checks.
+Bus-1 presence alone cannot establish radar origin.
+
+DBC labels now preserve these regions as raw unknowns rather than asserting
+mirrored words or reserved zeros. The BE24 grouping is a historical display
+container, not a demonstrated active-field boundary. Physical units, source,
+and any Doppler/strength/quality meaning are unresolved; runtime decoding is
+unchanged.
 
 ## 0x100–0x103, 0x197, 0x24F: startup
 

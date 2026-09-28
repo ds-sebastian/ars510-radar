@@ -45,7 +45,7 @@ Share of new objects that survive the age-5 decision, by the object's median \|o
   - 0x19x hold their no-target sentinels;
   - 0x235 / 0x237 / 0x23b carry only a 4-bit counter (16 distinct payloads, against 340-656 while objects are listed);
   - 0x190 / 0x239 vary the same way with and without objects (ego-speed-like);
-  - 0x202, 0x24x and 0x680 are counters or status.
+  - 0x202 has a counter; 0x680 remains status/mux context. The blanket 0x24x status/mirror reading is too narrow: changing 0x240/0x244 payloads remain unresolved ([correction](04_support_messages.md#0x240--0x241--0x244--0x245--0x248)).
 - The car bus (bus 0) was not searched.
 
 Working rule: an object classed as stationary (over-ground speed below about 0.2-0.4 m/s) is deleted at about age

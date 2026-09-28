@@ -27,7 +27,7 @@ openpilot currently gives these RAV4 platforms no radar DBC, so it sets `radarUn
 | 0x202 | 5 | 16.7 Hz | Counter in byte 1 high nibble; byte 0 a check byte fully determined by the counter | framing |
 | 0x210 | 7 | 5 Hz | Copy of Toyota road-sign-assist data (speed-sign value, presence, TSR switch) | not radar data |
 | 0x235 / 0x237 / 0x239 / 0x23B / 0x23D | 8/8/8/3/8 | 50 Hz | Companion/debug family with mux + rolling counter in byte 1; byte 0 an affine parity check. 0x237 bytes 1–2 correlate with lead distance (r ≈ 0.9) | debug |
-| 0x240 / 0x241 / 0x244 / 0x245 | 8 | 16.7 Hz | Mirror frames: byte 0 mux phase, two identical BE24 words | debug |
+| 0x240 / 0x241 / 0x244 / 0x245 | 8 | 16.7 Hz | Rolling phase; 0x240/0x244 have changing payloads on further drives. Default bodies mirror; active fields and source unresolved ([04](04_support_messages.md)) | raw context |
 | 0x248 | 8 | 16.7 Hz | Startup / event context | context |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | Constant / startup flag | constant |
 | 0x500 / 0x501 / 0x502 | 6 / 7 / 8 | 2 / 2 / 0.33 Hz | Constants plus two slowly drifting codes in 0x502 (temperature-like?). **0x500 and 0x502 carry what may be unit-specific constants (serial or calibration?). They are redacted in the shared DBC; compare yours** | unknown |

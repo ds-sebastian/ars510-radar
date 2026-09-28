@@ -1,0 +1,181 @@
+{
+  "experiment": "SCR-235",
+  "provenance": "Imported from private research workspace; aggregate results only, not bundled reruns",
+  "scope": {
+    "segments": 399,
+    "drives": 24,
+    "family_frames": 1935750,
+    "dynamic_drives": 3,
+    "discovery_dynamic_drives": 2,
+    "confirmation_dynamic_drives": 1
+  },
+  "addresses": {
+    "0x240": {
+      "frames": 387150,
+      "default_bodies": 350046,
+      "zero_bodies": 10,
+      "other_bodies": 37094,
+      "equal_be24_containers": 350056,
+      "zero_byte7": 350056
+    },
+    "0x241": {
+      "frames": 387150,
+      "default_bodies": 387140,
+      "zero_bodies": 10,
+      "other_bodies": 0,
+      "equal_be24_containers": 387150,
+      "zero_byte7": 387150
+    },
+    "0x244": {
+      "frames": 387150,
+      "default_bodies": 350046,
+      "zero_bodies": 10,
+      "other_bodies": 37094,
+      "equal_be24_containers": 350056,
+      "zero_byte7": 350056
+    },
+    "0x245": {
+      "frames": 387150,
+      "default_bodies": 387140,
+      "zero_bodies": 10,
+      "other_bodies": 0,
+      "equal_be24_containers": 387150,
+      "zero_byte7": 387150
+    },
+    "0x248": {
+      "frames": 387150,
+      "default_bodies": 0,
+      "zero_bodies": 22101,
+      "other_bodies": 365049,
+      "equal_be24_containers": 22101,
+      "zero_byte7": 387150
+    }
+  },
+  "quartets": {
+    "groups": 452543,
+    "complete": 321840,
+    "equal": 289900,
+    "different": 31940
+  },
+  "low5_patterns": [
+    {
+      "addr": "0x240",
+      "low5": 0,
+      "kind": "default",
+      "rows": 350046
+    },
+    {
+      "addr": "0x240",
+      "low5": 0,
+      "kind": "zero",
+      "rows": 10
+    },
+    {
+      "addr": "0x240",
+      "low5": 8,
+      "kind": "other",
+      "rows": 37094
+    },
+    {
+      "addr": "0x241",
+      "low5": 0,
+      "kind": "default",
+      "rows": 387140
+    },
+    {
+      "addr": "0x241",
+      "low5": 0,
+      "kind": "zero",
+      "rows": 10
+    },
+    {
+      "addr": "0x244",
+      "low5": 0,
+      "kind": "default",
+      "rows": 350046
+    },
+    {
+      "addr": "0x244",
+      "low5": 0,
+      "kind": "other",
+      "rows": 37094
+    },
+    {
+      "addr": "0x244",
+      "low5": 0,
+      "kind": "zero",
+      "rows": 10
+    },
+    {
+      "addr": "0x245",
+      "low5": 0,
+      "kind": "default",
+      "rows": 387140
+    },
+    {
+      "addr": "0x245",
+      "low5": 0,
+      "kind": "zero",
+      "rows": 10
+    },
+    {
+      "addr": "0x248",
+      "low5": 0,
+      "kind": "zero",
+      "rows": 10
+    },
+    {
+      "addr": "0x248",
+      "low5": 12,
+      "kind": "other",
+      "rows": 365046
+    },
+    {
+      "addr": "0x248",
+      "low5": 12,
+      "kind": "zero",
+      "rows": 20252
+    },
+    {
+      "addr": "0x248",
+      "low5": 13,
+      "kind": "zero",
+      "rows": 1597
+    },
+    {
+      "addr": "0x248",
+      "low5": 14,
+      "kind": "other",
+      "rows": 3
+    },
+    {
+      "addr": "0x248",
+      "low5": 14,
+      "kind": "zero",
+      "rows": 242
+    }
+  ],
+  "raw_log_spot_checks": {
+    "segments": 2,
+    "bus1_family_frames": 10100,
+    "exact_matches": 10100,
+    "sendcan_family_frames": 0
+  },
+  "limits": [
+    "Local source ECU remains unproved",
+    "No Doppler, SNR, physical unit or object validity decode",
+    "Rolling phase does not establish payload multiplexing",
+    "BE24 groupings are historical raw containers",
+    "No runtime change"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/commaai/openpilot/blob/v0.5.13/selfdrive/car/toyota/values.py",
+      "sha256": "45a445e5d7768fca64aaa0c9c87f1c0693436512dd6d2f1ee042425bda8d1590"
+    },
+    {
+      "url": "https://github.com/commaai/openpilot/blob/v0.5.13/selfdrive/car/toyota/carcontroller.py",
+      "sha256": "a23d0ab85d79c7b4f55ad55d5d7dfdfba2f41046d630948770033d33dc08c387"
+    }
+  ]
+}
