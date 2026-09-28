@@ -42,6 +42,33 @@ yaw convention; their separate physical limitations still apply. The corrected
 yaw-only model does not solve unknown lateral mounting, roll/pitch effects or
 reflection identity. No hidden physical signal is promoted by this correction.
 
+### Historical pair and quality rescore
+
+SCR-214 reruns the original box-growth pairing over 89 source segments, including
+four that originally produced no pairs. The unchanged function reproduces all
+89,178 historical rows before the single inverse-yaw correction. Corrected
+selection removes 3,338 pairs and adds 4,233, giving 90,073 rows. Independent
+rotation/time/uniqueness checks verify every corrected pair and all three
+derivative windows. The corrected two-second comparisons through 100 m still
+favor native velocity over zero and one-second range differencing on all three
+drives; two other distance/window/subset verdicts change. The updated table is
+in [05](05_validation.md#vrel).
+
+The original quality screen also reproduces its historical counts and split
+correlations before correction. Sixteen of 738 field/error/band threshold
+decisions change. `240|7` retains positive correlations with absolute camera
+velocity residual in all tested split halves, but these associations do not
+calibrate its units or establish an early excursion flag. The screen retains
+its old field cuts only for reproduction, including cuts superseded by later
+raw-bit audits. Independent rank checks cover both variants.
+
+These are provenance-labelled research-workspace reruns; the public legacy
+camera tables remain unchanged. [Machine-readable corrected results and limits](../data/analysis/summaries/camera_pair_correction.json).
+Track-identity/occlusion, far-range calibration, event-level brake labels,
+class/size and conditional-variance studies still need their own corrected
+reruns. The broader historical-evidence qualification above remains in force
+outside the explicitly rescored results.
+
 ## Reproduce the strongest corrections locally
 
 ```bash

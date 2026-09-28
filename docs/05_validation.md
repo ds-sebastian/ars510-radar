@@ -3,9 +3,10 @@
 The central worry is circularity: teacher agreement alone cannot establish that radar is an independent second opinion. The tests below use several references with different dependencies, including camera geometry, ego motion, radar range history and modelV2 comparisons. See [13](13_evidence_review.md) for corrections and newer evidence; the historical results below are not a drive-readiness certificate.
 
 **2026-09-28 correction:** several simplified camera-association scripts used
-the wrong calibration-yaw sign. Their camera-paired statistics below await
-corrected association and rescoring; historical pass labels are not renewed
-validation. Full-matrix projection and model-only comparisons are distinct.
+the wrong calibration-yaw sign. The box-growth MSE table below has now been
+rescored with corrected pairing; other affected statistics still await their
+own reruns. Historical pass labels are not renewed validation. Full-matrix
+projection and model-only comparisons are distinct.
 See [the correction and its scope](13_evidence_review.md#camera-association-correction-2026-09-28).
 
 ## Drives
@@ -70,13 +71,24 @@ This is an **exploratory consumer-tolerance scorecard written after results were
 
 ### vRel
 
-Camera box-growth MSE, (m/s)², all camera-paired rows:
+Camera box-growth MSE, (m/s)², two-second reference, all eligible camera-paired
+rows. **Corrected on 2026-09-28 (SCR-214)** with the original detection and
+selection rules and corrected inverse yaw. The original pipeline first
+reproduced its historical results. These are imported research-workspace reruns;
+the public legacy camera-pair dataset is unchanged. [Scope, sample counts and
+other window results](../data/analysis/summaries/camera_pair_correction.json).
 
 | drive | band | native | zero | 1 s range derivative |
 |---|---|---|---|---|
-| A | 3–30 / 30–60 / 60–100 m | **0.24** / **1.35** / **4.55** | 2.85 / 4.81 / 10.3 | 5.85 / 16.5 / 41.4 |
-| B | same | **0.68** / **3.51** / **23.7** | 5.65 / 9.73 / 34.5 | 4.27 / 17.8 / 88.5 |
-| C | same | **0.37** / **1.59** / **7.13** | 4.59 / 2.72 / 13.3 | 10.5 / 22.2 / 71.9 |
+| A | 3–30 / 30–60 / 60–100 m | **0.23** / **1.38** / **4.65** | 2.35 / 4.40 / 10.6 | 5.60 / 16.5 / 42.6 |
+| B | same | **0.67** / **3.91** / **24.3** | 5.79 / 10.2 / 34.2 | 4.57 / 18.2 / 85.7 |
+| C | same | **0.39** / **1.63** / **7.13** | 5.09 / 2.51 / 12.0 | 10.5 / 22.1 / 72.9 |
+
+This result does not extend to every distance/window: at 100–150 m on drive C,
+native velocity still loses to zero on the two-second comparison. Two original
+zero-baseline verdicts change after correction: drive B accepted leads at
+100–150 m over two seconds now beat zero, while drive C all-paired rows at
+60–100 m over six seconds now lose to zero.
 
 Native velocity beats these baselines on the scored camera-paired samples. This supports useful information, not exact field semantics or complete object coverage. Parameter provenance must be attached to each test; later profile changes are not covered by earlier replay exports.
 
