@@ -119,6 +119,14 @@ Native identity/shadow recomputation is complete. The far-range correction follo
 below; relink-specific evaluation and forced-event brake labels remain pending.
 No decoder behavior or runtime track IDs changed.
 
+SCR-223 adds fixed visual counterexamples to using geometric shadow labels
+as physical supervision. Four selected episodes yield no supported visibility
+transition in 20 sampled frames; raw camera clocks and projections are checked.
+No occlusion-field values were inspected or scored. The remaining legacy
+physical-identity wording in [02](02_object_record_0x80.md) is corrected to the same limits as [05](05_validation.md#trackid).
+The images do not establish continuous RF visibility or a population error rate.
+[Imported aggregate](../data/analysis/summaries/occlusion_witness_gate.json).
+
 ### Far-range camera calibration correction (SCR-219)
 
 The original far-range pipeline reproduces all saved rows and summaries on

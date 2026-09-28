@@ -111,13 +111,17 @@ An object keeps its slot while tracked: 98.3–98.9% of consecutive same-slot cy
 
 Slot allocation: the radar fills the **lowest free slot** first. Over 88 minutes across three drives it never occupied more than 10 of the 20 slots, and 94–99% of samples sit in slots 0–4 ([12](12_statistics.md)).
 
-Measured on held-out drives:
-- zero duplicate IDs;
-- long tracks (≥ 300 cycles, ~18 s) stay on one camera-tracked vehicle with median purity 0.98 (city) and 1.00 (highway);
-- on visual review, every remaining city "impurity" within 60 m was a camera-side tracker switch, not a radar identity error;
-- about 10 tracks per drive run a full minute.
+The corrected native identity audit found no duplicate IDs, but camera-chain
+purity does not establish physical identity. Its chain repair uses radar
+continuity and apparent size; historical visual verdicts and relink performance
+have not been revalidated under corrected associations. See the current
+[identity evidence and limits](05_validation.md#trackid).
 
-The radar does sometimes drop an object and **re-initialise** it under a new slot or age run, typically after an occlusion. The interface's optional re-link ([07](07_openpilot_integration.md)) restores the old ID when the new track starts where the lost one predicts.
+Tracks can end and restart under a new slot or age run. Their association with
+physical occlusion remains unverified: sampled geometric shadow candidates can
+show the vehicle visibly separate from traffic in another lane. The optional
+re-link ([07](07_openpilot_integration.md)) can reuse an ID for a new track near
+the lost track's prediction; that proximity does not prove the same object.
 
 ## Young tracks are unconverged
 

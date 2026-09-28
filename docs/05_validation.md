@@ -129,6 +129,15 @@ but calling these all camera-confirmed same-object occlusions was unsupported.
 These rates are geometric-candidate statistics, not measured physical occlusion
 or identity-loss rates. Historical extra wide-camera rows are outside this audit.
 
+A subsequent fixed visual witness check (SCR-223) selected four episodes from
+three drive groups after requiring mature native survival and the pre-camera ID
+among post candidates. None of the four supplied a visibility transition in its
+five sampled frames: the putative target remained visibly separate from nearby
+traffic. This does not rule out brief between-frame hiding or RF obstruction.
+The small selected panel is not a population false-label rate. It fails the
+physical-witness gate, so no candidate occlusion field was scored.
+[Imported witness scope and verification](../data/analysis/summaries/occlusion_witness_gate.json).
+
 Historical relink survival figures (77% B, 69% C), the nine-case failure analysis
 and four-case highway same-vehicle review have not been rerun with corrected
 associations. They remain historical observations, not renewed validation.

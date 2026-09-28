@@ -155,7 +155,7 @@ The object list arrives on **bus 1, 0x80** as a 742-byte record split over 106 C
 | startup raw subfields | `8\|5`, `13\|1` | lower code follows an exact decay during the initial movement code 5 phase; high bit changes separately | raw metadata only; physical meaning unknown ([docs/14](docs/14_stationary_objects_and_field_roles.md#startup-decay-and-the-historical-six-bit-window-2026-09-27)) |
 | oncoming flag | `14\|1` | 1 = oncoming now or earlier | passed a pre-registered test on unseen segments |
 | accel-like | `84\|10` | zero 511, lags velocity by ~1 s | unnamed |
-| trackId | slot + age | new ID when a slot's age restarts | physical identity unverified; corrected camera-chain scores are heuristic ([05](docs/05_validation.md#trackid)) |
+| trackId | slot + age | new ID when a slot's age restarts | physical identity unverified; camera-chain and geometric-shadow labels do not establish physical continuity or occlusion ([05](docs/05_validation.md#trackid)) |
 | unnamed fields | e.g. `20\|3`, `107\|1`, `224\|7`-`264\|5`, `56\|7`, `216\|6`, `272\|5` | raw | candidate lifecycle, uncertainty, existence and size roles, replicated on 3 drives but not pre-registered; see [docs/14](docs/14_stationary_objects_and_field_roles.md) |
 
 The field is **over-ground** velocity, not relative velocity. Use ego speed from Toyota `0xB4` (bus 0) or `carState.vEgo`. [docs/02](docs/02_object_record_0x80.md) has the details and the evidence.
