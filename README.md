@@ -37,6 +37,8 @@ The optional ACC clip now invalidates absent-target caches. Its timing guards st
 The [expanded-corpus field audit](docs/14_stationary_objects_and_field_roles.md#expanded-corpus-raw-field-corrections-2026-09-27)
 also corrects two undersized raw windows and several constant labels in the Cabana
 DBC. These are encoding corrections; the quantities' meanings remain unresolved.
+A [further retained-drive audit](docs/14_stationary_objects_and_field_roles.md#rare-tail-and-header-states-2026-09-28)
+also replaces constant labels on slot bit 277 and header bit 111 with raw unknown views.
 
 The [`96|10` follow-up](docs/14_stationary_objects_and_field_roles.md#rotating-frame-kinematics-and-lateral-acceleration-2026-09-27)
 supports a filtered lateral ground-acceleration-like signal, approximately

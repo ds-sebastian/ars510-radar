@@ -70,7 +70,7 @@ BO_ 1792 ARS510_OBJ_00: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -134,7 +134,7 @@ BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -198,7 +198,7 @@ BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -262,7 +262,7 @@ BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -326,7 +326,7 @@ BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -390,7 +390,7 @@ BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -454,7 +454,7 @@ BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -518,7 +518,7 @@ BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -582,7 +582,7 @@ BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -646,7 +646,7 @@ BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -710,7 +710,7 @@ BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -774,7 +774,7 @@ BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -838,7 +838,7 @@ BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -902,7 +902,7 @@ BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -966,7 +966,7 @@ BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -1030,7 +1030,7 @@ BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -1094,7 +1094,7 @@ BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -1158,7 +1158,7 @@ BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -1222,7 +1222,7 @@ BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ STATE_CODE : 0|2@1+ (1,0) [0|3] "raw" XXX
@@ -1286,7 +1286,7 @@ BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
- SG_ CONST_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
+ SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
 BO_ 1824 ARS510_OBJ_00_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1562,8 +1562,8 @@ BO_ 1856 ARS510_REC_HEADER: 20 RADAR
  SG_ CONST_HDR72_32 : 72|32@1+ (1,0) [0|4294967295] "raw" XXX
  SG_ UNK_HDR104_3 : 104|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_HDR107_4 : 107|4@1+ (1,0) [0|15] "raw" XXX
- SG_ CONST_HDR111_4 : 111|4@1+ (1,0) [0|15] "raw" XXX
- SG_ OBJECT_COUNT : 115|5@1+ (1,0) [0|20] "objects" XXX
+ SG_ UNK_HDR111_4 : 111|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ OBJECT_COUNT : 115|5@1+ (1,0) [0|20] "slots" XXX
  SG_ CONST_HDR120_16 : 120|16@1+ (1,0) [0|65535] "raw" XXX
 
 BO_ 1857 ARS510_REC_TRAILER: 8 RADAR
@@ -1811,7 +1811,7 @@ CM_ SG_ 1792 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1792 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1792 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1792 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1792 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1792 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1793 "Reassembled 0x80 object slot 1 (record bytes 53-88), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1793 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1793 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -1874,7 +1874,7 @@ CM_ SG_ 1793 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1793 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1793 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1793 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1793 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1793 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1794 "Reassembled 0x80 object slot 2 (record bytes 89-124), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1794 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1794 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -1937,7 +1937,7 @@ CM_ SG_ 1794 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1794 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1794 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1794 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1794 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1794 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1795 "Reassembled 0x80 object slot 3 (record bytes 125-160), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1795 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1795 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2000,7 +2000,7 @@ CM_ SG_ 1795 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1795 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1795 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1795 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1795 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1795 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1796 "Reassembled 0x80 object slot 4 (record bytes 161-196), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1796 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1796 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2063,7 +2063,7 @@ CM_ SG_ 1796 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1796 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1796 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1796 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1796 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1796 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1797 "Reassembled 0x80 object slot 5 (record bytes 197-232), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1797 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1797 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2126,7 +2126,7 @@ CM_ SG_ 1797 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1797 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1797 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1797 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1797 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1797 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1798 "Reassembled 0x80 object slot 6 (record bytes 233-268), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1798 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1798 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2189,7 +2189,7 @@ CM_ SG_ 1798 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1798 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1798 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1798 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1798 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1798 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1799 "Reassembled 0x80 object slot 7 (record bytes 269-304), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1799 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1799 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2252,7 +2252,7 @@ CM_ SG_ 1799 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1799 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1799 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1799 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1799 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1799 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1800 "Reassembled 0x80 object slot 8 (record bytes 305-340), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1800 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1800 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2315,7 +2315,7 @@ CM_ SG_ 1800 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1800 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1800 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1800 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1800 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1800 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1801 "Reassembled 0x80 object slot 9 (record bytes 341-376), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1801 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1801 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2378,7 +2378,7 @@ CM_ SG_ 1801 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1801 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1801 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1801 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1801 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1801 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1802 "Reassembled 0x80 object slot 10 (record bytes 377-412), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1802 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1802 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2441,7 +2441,7 @@ CM_ SG_ 1802 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1802 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1802 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1802 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1802 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1802 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1803 "Reassembled 0x80 object slot 11 (record bytes 413-448), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1803 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1803 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2504,7 +2504,7 @@ CM_ SG_ 1803 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1803 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1803 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1803 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1803 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1803 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1804 "Reassembled 0x80 object slot 12 (record bytes 449-484), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1804 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1804 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2567,7 +2567,7 @@ CM_ SG_ 1804 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1804 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1804 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1804 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1804 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1804 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1805 "Reassembled 0x80 object slot 13 (record bytes 485-520), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1805 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1805 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2630,7 +2630,7 @@ CM_ SG_ 1805 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1805 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1805 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1805 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1805 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1805 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1806 "Reassembled 0x80 object slot 14 (record bytes 521-556), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1806 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1806 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2693,7 +2693,7 @@ CM_ SG_ 1806 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1806 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1806 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1806 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1806 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1806 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1807 "Reassembled 0x80 object slot 15 (record bytes 557-592), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1807 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1807 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2756,7 +2756,7 @@ CM_ SG_ 1807 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1807 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1807 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1807 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1807 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1807 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1808 "Reassembled 0x80 object slot 16 (record bytes 593-628), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1808 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1808 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2819,7 +2819,7 @@ CM_ SG_ 1808 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1808 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1808 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1808 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1808 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1808 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1809 "Reassembled 0x80 object slot 17 (record bytes 629-664), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1809 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1809 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2882,7 +2882,7 @@ CM_ SG_ 1809 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1809 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1809 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1809 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1809 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1809 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1810 "Reassembled 0x80 object slot 18 (record bytes 665-700), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1810 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1810 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -2945,7 +2945,7 @@ CM_ SG_ 1810 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1810 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1810 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1810 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1810 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1810 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1811 "Reassembled 0x80 object slot 19 (record bytes 701-736), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
 CM_ SG_ 1811 STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";
 CM_ SG_ 1811 SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";
@@ -3008,7 +3008,7 @@ CM_ SG_ 1811 UNK_262_2 "Expanded-corpus correction: Remaining upper bits are not
 CM_ SG_ 1811 UNK_264_5 "Expanded-corpus correction: Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits. See docs/14.";
 CM_ SG_ 1811 UNK_269_3 "Expanded-corpus correction: Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved. See docs/14.";
 CM_ SG_ 1811 UNK_272_5 "Candidate from the carry-chain split, unverified: LSB flips 0.095 per cycle, 17 distinct values 2..18. Strongest correlation: age r=+0.30. Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).";
-CM_ SG_ 1811 CONST_277_11 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
+CM_ SG_ 1811 UNK_277_11 "Expanded-corpus correction: Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved. See docs/14.";
 CM_ BO_ 1824 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 0, for plotting next to the raw fields.";
 CM_ SG_ 1824 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1824 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
@@ -3163,8 +3163,8 @@ CM_ SG_ 1856 UNK_HDR68_4 "Candidate from the carry-chain split, unverified: LSB 
 CM_ SG_ 1856 CONST_HDR72_32 "Constant 16777215 (0xFFFFFF) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1856 UNK_HDR104_3 "Candidate from the carry-chain split, unverified: LSB flips 0.315 per cycle, 8 distinct values 0..7. Strongest correlation: v_ego r=-0.04.";
 CM_ SG_ 1856 UNK_HDR107_4 "Candidate from the carry-chain split, unverified: LSB flips 0.253 per cycle, 9 distinct values 0..11. Strongest correlation: v_ego r=-0.39.";
-CM_ SG_ 1856 CONST_HDR111_4 "Constant 3 (0x3) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1856 OBJECT_COUNT "Number of live objects (slots with age >= 1) in this record. Exact on 384,144 records over 6.4 h (docs/15).";
+CM_ SG_ 1856 UNK_HDR111_4 "Historical constant label corrected: raw code2 occurs in two records before a fine-clock rollover, versus usual3. Preserve bit111; adjacent timing-field boundaries and acquisition-time meaning remain unresolved (docs/14).";
+CM_ SG_ 1856 OBJECT_COUNT "Legacy name: allocation count, slots whose raw2|6 index equals their physical array index. Includes allocated age-zero rows and does not imply that the first N slots are allocated or that each is a distinct physical object (docs/15).";
 CM_ SG_ 1856 CONST_HDR120_16 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1857 RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";
 CM_ BO_ 1888 "0x85 bytes 0-20, proposed prefix only. Byte 0 is length-low 0x90. Cell alignment and semantics remain provisional.";

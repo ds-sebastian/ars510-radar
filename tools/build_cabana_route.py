@@ -67,7 +67,7 @@ CANDIDATE_NOTES = {
     "UNK_156_4": "Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).",
     "UNK_208_6": "Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.",
     "UNK_8_6": "Legacy combined raw view: low five bits follow an exact startup decay while full movement code109|3 remains5 from birth; bit13 can change separately. Extract low5=value&31 and bit13=value>>5. Mature meaning, units and probability interpretation unresolved; not a validity or excursion gate. See docs/14.",
-    "UNK_20_3": " Missed-detection countdown candidate: 6 on 88-92% of settled rows, counts down about 5 -> 3 -> 2 -> 1 before deletion. Does not predict whether identity survives an occlusion (docs/14).",
+    "UNK_20_3": " Upper slice of SCORE_CODE, not a separately decoded missed-detection count. The full byte has a bounded state-2 countdown; branch selection and probability semantics remain unresolved (docs/14).",
     "UNK_107_1": " Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).",
     "UNK_56_7": " Size / class candidate: per-track median follows camera vehicle height (partial rho 0.48-0.61 at fixed range) and truck/bus class (docs/14).",
     "UNK_216_6": " Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).",
@@ -94,6 +94,7 @@ RAW_FIELD_CORRECTIONS = {
     264: [(264, 5, "Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits."),
           (269, 3, "Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved.")],
     268: [],
+    277: [(277, 11, "Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved.")],
 }
 
 
@@ -199,9 +200,13 @@ def dbc_text() -> str:
     out.append(f"BO_ {HEADER_ADDR} ARS510_REC_HEADER: {HEADER_DLC} RADAR")
     comments.append(f'CM_ BO_ {HEADER_ADDR} "0x80 record bytes 0-16, before the 20 object slots. Byte 0 is 0xE4 (transport length low byte).";')
     for f in bm["id80_header_fields"]:
+        if f["start"] == 111 and f["len"] == 4:
+            out.append(_sig("UNK_HDR111_4", 111, 4, 1, 0, 0, 15, "raw"))
+            comments.append(f'CM_ SG_ {HEADER_ADDR} UNK_HDR111_4 "Historical constant label corrected: raw code2 occurs in two records before a fine-clock rollover, versus usual3. Preserve bit111; adjacent timing-field boundaries and acquisition-time meaning remain unresolved (docs/14).";')
+            continue
         if f["name"] == "OBJECT_COUNT":
-            out.append(_sig("OBJECT_COUNT", f["start"], f["len"], 1, 0, 0, 20, "objects"))
-            comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "Number of live objects (slots with age >= 1) in this record. Exact on 384,144 records over 6.4 h (docs/15).";')
+            out.append(_sig("OBJECT_COUNT", f["start"], f["len"], 1, 0, 0, 20, "slots"))
+            comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "Legacy name: allocation count, slots whose raw2|6 index equals their physical array index. Includes allocated age-zero rows and does not imply that the first N slots are allocated or that each is a distinct physical object (docs/15).";')
             continue
         line, nm, text = _heuristic(f)
         out.append(line)

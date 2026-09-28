@@ -216,6 +216,8 @@ def test_generated_dbc_matches_checked_in_layout() -> None:
     assert "ARS510_SHELL85_CELL_09" in text
     assert "ARS510_SHELL85_CELL_10" not in text
     assert "BO_ 1899 ARS510_SHELL85_CRC: 8" in text
+    assert "SG_ UNK_HDR111_4 : 111|4@1+" in text
+    assert "CONST_HDR111_4" not in text
 
 
 def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
@@ -236,7 +238,7 @@ def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
             start, width = fields[name]
             mask = (1 << width) - 1
             assert (((after << start) >> start) & mask) - (((before << start) >> start) & mask) == 1
-        for start, width in [(15, 1), (63, 1), (165, 3), (182, 1), (190, 10), (239, 1)]:
+        for start, width in [(15, 1), (63, 1), (165, 3), (182, 1), (190, 10), (239, 1), (277, 11)]:
             assert fields[f"UNK_{start}_{width}"] == (start, width)
 
 

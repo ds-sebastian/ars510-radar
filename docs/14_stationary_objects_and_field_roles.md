@@ -154,6 +154,36 @@ imported research results, not results reproduced by the two bundled samples.
 The historical reference bit map is preserved; the DBC generator applies explicit
 corrections. No runtime kinematics, publication rules or control behavior changed.
 
+## Rare tail and header states (2026-09-28)
+
+A further retained drive contradicts two more historical constant labels. Its
+186 source files add 184,492 complete object records and 392,005 nondefault slot
+rows to the raw inventory. They are one previously researched drive, not 186
+independent drives or a new holdout. All native records were independently
+reassembled with their CRCs checked; byte histograms and saved witnesses were
+also independently verified.
+
+- **Slot bit 277:** set in four positive-age samples from three early track
+  sequences, at ages 1 or 2. The complete slot byte at bits 272–279 reads 33,
+  35, 35 and 37. All four have lateral sentinel code zero; their geometry is
+  not a physical reference. `CONST_277_11` becomes `UNK_277_11` in the Cabana
+  DBC. The evidence does not decide whether bit 277 extends the neighboring
+  `272|5` quantity or is separate metadata. It is not a decoded size, SNR,
+  elevation, merge or validity flag.
+- **Header bit 111:** clear in two consecutive records before one observed
+  fine-clock rollover. The historical `111|4` window reads 2 instead of its
+  usual 3. `CONST_HDR111_4` becomes `UNK_HDR111_4`. This observation does not
+  establish a timing unit, measurement age or a usable clock correction.
+
+Both bit states were absent from the preceding 512-segment inventory. The
+historical reference bit map remains frozen; generator corrections preserve
+every raw bit without assigning a new physical meaning. Runtime kinematics and
+publication rules are unchanged. The header's legacy `OBJECT_COUNT` comment
+also now reflects the already documented allocation-count interpretation.
+
+The aggregate counts in [`rare_raw_states.json`](../data/analysis/summaries/rare_raw_states.json)
+are imported research evidence; the expanded captures are not bundled here.
+
 ## Rotating-frame kinematics and lateral acceleration (2026-09-27)
 
 The previously unexplained `96|10` field now has a supported **lateral
