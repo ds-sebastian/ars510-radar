@@ -61,6 +61,8 @@ NAMED_COMMENTS = {
     "UNK_96": "Lateral ground-acceleration-like candidate: (raw-511)*0.05 m/s^2, calibration provisional. Rotation-corrected kinematics and a discovery-selected +0.5 s lag transfer to further drives (r about 0.90). Raw code retained; no accuracy gate or runtime use. See docs/14 for route exceptions and reference limitations.",
 }
 CANDIDATE_NOTES = {
+    "UNK_148_8": "Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Physical outcomes and probability calibration remain unresolved (docs/14).",
+    "UNK_156_4": "Third component of the candidate weight triplet148/152/156|4. All-zero meaning and physical outcomes unknown; not an excursion or validity gate (docs/14).",
     "UNK_208_6": "Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.",
     "UNK_8_6": "Legacy combined raw view: low five bits follow an exact startup decay while full movement code109|3 remains5 from birth; bit13 can change separately. Extract low5=value&31 and bit13=value>>5. Mature meaning, units and probability interpretation unresolved; not a validity or excursion gate. See docs/14.",
     "UNK_20_3": " Missed-detection countdown candidate: 6 on 88-92% of settled rows, counts down about 5 -> 3 -> 2 -> 1 before deletion. Does not predict whether identity survives an occlusion (docs/14).",

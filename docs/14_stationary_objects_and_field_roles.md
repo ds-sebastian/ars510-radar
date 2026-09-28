@@ -373,3 +373,47 @@ Provenance-labelled aggregate evidence is in
 [`startup_low5_decay.json`](../data/analysis/summaries/startup_low5_decay.json).
 These full-route research results are imported summaries, not bundled reruns;
 public tests check raw extraction and neighboring-field independence.
+
+## Three-component weight candidates (2026-09-27)
+
+The adjacent nibbles `148|4`, `152|4`, `156|4` form a nearly normalized triplet.
+The decoder exposes the raw tuple as `NativeObject.raw_weights148`. Cabana keeps
+its existing non-overlapping raw layout: extract the first two components from
+`UNK_148_8` as `value & 15` and `value >> 4`; the third is `UNK_156_4`.
+Updated comments explain why the combined `148|8` integer is not one component.
+
+A fixed structural test passed on development, confirmation and further drives:
+
+| group | positive-age slots | nonzero triplets | mixed triplets | one-count transfers | sum outside 15/16 |
+|---|---:|---:|---:|---:|---:|
+| Development | 451,970 | 110,778 | 3,546 | 1,137 | 0 |
+| Confirmation | 201,646 | 49,783 | 1,570 | 542 | 2 |
+| Further drives | 108,858 | 30,592 | 826 | 320 | 0 |
+
+Mixed triplets contain a component between 1 and 14. A transfer moves one count
+between two components while preserving the sum and the third component, within
+a continuous slot lifetime. These occur on all 24 routes with positive-age
+objects, supporting more than a collection of one-hot flags.
+
+Of 191,153 nonzero triplets, 191,151 sum to 15 or 16. The two exceptions are
+`(7, 1, 6)` and `(10, 1, 3)`, both summing to 14. All nine observations with three
+nonzero components and every exception remain in the research evidence. The
+pattern is compatible with quantized weights, but does not establish a unique
+quantizer or justify dividing by 15 or 16 to publish calibrated probabilities.
+
+**Physical outcomes remain unknown.** The zero triplet's meaning is also unknown.
+These are not decoded SNR, false-detection probabilities, scan-source weights,
+merge indicators or measurement validity. All possible raw triplets are preserved,
+including values outside the observed sum pattern; no normalization or rejection
+is performed. The interface's radar points and control policy do not use them.
+
+They are not a demonstrated early excursion discriminator. Any nonzero triplet
+appears in 18/20 development excursions but also 10/16 real closings; transfer
+results are similarly nonspecific. Mixed triplets appear in only 2/9 confirmation
+excursions and 1/5 further-drive excursions. The label windows cover three seconds
+before through one second after a disagreement trigger, not independently proven
+physical onset. Earlier research used all these drive groups.
+
+[Machine-readable summary](../data/analysis/summaries/midband_weight_triplet.json)
+contains provenance-labelled imports from workspace SCR-177, not bundled full-route
+reruns. Public tests check raw preservation and independence from neighboring fields.
