@@ -216,6 +216,8 @@ def dbc_text() -> str:
         out.append(f"BO_ {m} ARS510_SHELL85_CELL_{k:02d}: {SHELL_DLC} RADAR")
         for b in range(CELL_LEN):
             out.append(_sig(f"RAW_BYTE_{b:02d}", b * 8, 8, 1, 0, 0, 255, "raw"))
+        out.append(_sig("PARAMETERS_PRESENT", 30, 1, 1, 0, 0, 1, ""))
+        comments.append(f'CM_ SG_ {m} PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
         comments.append(f'CM_ BO_ {m} "Provisional 0x85 analysis cell {k}, bytes {o}-{o + 11}; raw bytes, not a proven object. Excludes CRC and trailer.";')

@@ -1,0 +1,388 @@
+{
+  "provenance": {
+    "source": "research-workspace SCR-167 and SCR-168",
+    "scope": "Imported aggregate evidence, not bundled reruns; all routes previously studied for other questions.",
+    "presence_summary_sha256": "856a669bfe48a539f78834e14a2ba17d1c6cb670fed069ad91ad17cb7671bba7",
+    "further_scores_sha256": "c7660fccef9c73517922baf4076193508c0459eae6b5cf21e1866a2debbf87e5"
+  },
+  "parameters_present": {
+    "start_bit": 30,
+    "width_bits": 1,
+    "bit_order": "little endian lsb0",
+    "equivalent": "cell bytes6:10 differ from 8403f401",
+    "cell_projection_start": 21,
+    "cell_bytes": 12,
+    "cell_count": 10,
+    "records": 446685,
+    "cell_samples": 4466850,
+    "routes": 28,
+    "segments": 464,
+    "set_cells": 1762570,
+    "mismatches": 0,
+    "populated_zero_lateral_code": 297,
+    "by_partition": [
+      {
+        "part": "confirmation",
+        "set": 469105,
+        "nondefault": 469105,
+        "mismatch": 0,
+        "unset_non1023": 0,
+        "unset_non2000": 0,
+        "set_1023": 0,
+        "set_2000": 235,
+        "records85": 137098,
+        "cell_samples": 1370980
+      },
+      {
+        "part": "discovery",
+        "set": 1046196,
+        "nondefault": 1046196,
+        "mismatch": 0,
+        "unset_non1023": 0,
+        "unset_non2000": 0,
+        "set_1023": 0,
+        "set_2000": 49,
+        "records85": 247223,
+        "cell_samples": 2472230
+      },
+      {
+        "part": "further_drives",
+        "set": 247269,
+        "nondefault": 247269,
+        "mismatch": 0,
+        "unset_non1023": 0,
+        "unset_non2000": 0,
+        "set_1023": 0,
+        "set_2000": 13,
+        "records85": 62364,
+        "cell_samples": 623640
+      }
+    ],
+    "transitions": [
+      {
+        "part": "confirmation",
+        "to": 0,
+        "count": 6122
+      },
+      {
+        "part": "confirmation",
+        "to": 1,
+        "count": 6124
+      },
+      {
+        "part": "discovery",
+        "to": 0,
+        "count": 15150
+      },
+      {
+        "part": "discovery",
+        "to": 1,
+        "count": 15152
+      },
+      {
+        "part": "further_drives",
+        "to": 0,
+        "count": 3557
+      },
+      {
+        "part": "further_drives",
+        "to": 1,
+        "count": 3556
+      }
+    ]
+  },
+  "further_lateral_validation": {
+    "formula": "(LE32|12 - 2000) * 0.01 m, left positive",
+    "assignment": {
+      "2": "ego-left",
+      "3": "ego-right",
+      "8": "ego-left",
+      "9": "ego-right"
+    },
+    "selection": {
+      "nondefault_parameters": true,
+      "minimum_ego_mps": 5,
+      "minimum_model_probability": 0.8,
+      "nearest_model_and_ego_tolerance_s": 0.15
+    },
+    "gates": {
+      "minimum_rows": 500,
+      "minimum_segments": 3,
+      "minimum_centered_r": 0.8,
+      "maximum_median_error_m": 0.3,
+      "maximum_p90_error_m": 0.75,
+      "maximum_MAE_ratio_to_development_cell_median": 0.8
+    },
+    "segments": 16,
+    "eligible_cell_samples": 15626,
+    "passed": 5,
+    "total": 16,
+    "maximum_model_discrepancy_m": 4.0419921875,
+    "private_frames_reviewed": 12,
+    "scores": [
+      {
+        "cell": 2,
+        "target": "c0",
+        "rows": 386,
+        "segments": 2,
+        "mae": 0.1716810030764247,
+        "median_error": 0.045078124999998,
+        "p90_error": 0.5857617187499997,
+        "centered_r": 0.3564955360372515,
+        "constant_mae": 0.2333351886334196,
+        "shift_mae": 0.4328837379476584,
+        "passes": false,
+        "drive": "D"
+      },
+      {
+        "cell": 3,
+        "target": "c0",
+        "rows": 106,
+        "segments": 2,
+        "mae": 0.0599572523584905,
+        "median_error": 0.0498046875,
+        "p90_error": 0.1234765625000005,
+        "centered_r": 0.7763599831685021,
+        "constant_mae": 0.1238944575471698,
+        "shift_mae": 0.1220718544407893,
+        "passes": false,
+        "drive": "D"
+      },
+      {
+        "cell": 8,
+        "target": "c0",
+        "rows": 346,
+        "segments": 2,
+        "mae": 0.0643029714595374,
+        "median_error": 0.0383007812499993,
+        "p90_error": 0.1448046874999988,
+        "centered_r": 0.9402239217767056,
+        "constant_mae": 0.2520208634393063,
+        "shift_mae": 0.3386809537461773,
+        "passes": false,
+        "drive": "D"
+      },
+      {
+        "cell": 9,
+        "target": "c0",
+        "rows": 105,
+        "segments": 2,
+        "mae": 0.0688173363095236,
+        "median_error": 0.0645312499999981,
+        "p90_error": 0.1293671875000001,
+        "centered_r": 0.7507468620099078,
+        "constant_mae": 0.1214471726190476,
+        "shift_mae": 0.1169833333333335,
+        "passes": false,
+        "drive": "D"
+      },
+      {
+        "cell": 2,
+        "target": "c0",
+        "rows": 603,
+        "segments": 2,
+        "mae": 0.3046279021558876,
+        "median_error": 0.2242968750000002,
+        "p90_error": 0.6550781250000004,
+        "centered_r": -0.2458435647826337,
+        "constant_mae": 0.167855384535655,
+        "shift_mae": 0.3189801837446355,
+        "passes": false,
+        "drive": "E"
+      },
+      {
+        "cell": 3,
+        "target": "c0",
+        "rows": 567,
+        "segments": 2,
+        "mae": 0.1315540950176363,
+        "median_error": 0.0525390624999992,
+        "p90_error": 0.1605703125000005,
+        "centered_r": 0.3184031934633695,
+        "constant_mae": 0.5493499917328042,
+        "shift_mae": 0.3467977609536081,
+        "passes": false,
+        "drive": "E"
+      },
+      {
+        "cell": 8,
+        "target": "c0",
+        "rows": 567,
+        "segments": 2,
+        "mae": 0.3482449432319227,
+        "median_error": 0.224375000000002,
+        "p90_error": 0.9222656249999994,
+        "centered_r": -0.1764562187652671,
+        "constant_mae": 0.1675157765652557,
+        "shift_mae": 0.3820078305844909,
+        "passes": false,
+        "drive": "E"
+      },
+      {
+        "cell": 9,
+        "target": "c0",
+        "rows": 515,
+        "segments": 2,
+        "mae": 0.0784664745145627,
+        "median_error": 0.0506250000000001,
+        "p90_error": 0.1335937499999979,
+        "centered_r": 0.4322678208347515,
+        "constant_mae": 0.5466569326456311,
+        "shift_mae": 0.296689948156682,
+        "passes": false,
+        "drive": "E"
+      },
+      {
+        "cell": 2,
+        "target": "c0",
+        "rows": 1564,
+        "segments": 4,
+        "mae": 0.1032129905290921,
+        "median_error": 0.0253515624999991,
+        "p90_error": 0.1250390625000008,
+        "centered_r": 0.4059183869087535,
+        "constant_mae": 0.1970639436141304,
+        "shift_mae": 0.2436177755376344,
+        "passes": false,
+        "drive": "F"
+      },
+      {
+        "cell": 3,
+        "target": "c0",
+        "rows": 2087,
+        "segments": 4,
+        "mae": 0.0904350499371103,
+        "median_error": 0.0800390624999991,
+        "p90_error": 0.1506093749999998,
+        "centered_r": 0.8844738746025109,
+        "constant_mae": 0.18017578125,
+        "shift_mae": 0.1918625760957792,
+        "passes": true,
+        "drive": "F"
+      },
+      {
+        "cell": 8,
+        "target": "c0",
+        "rows": 1411,
+        "segments": 4,
+        "mae": 0.0858015148830617,
+        "median_error": 0.0232421874999992,
+        "p90_error": 0.0735156249999988,
+        "centered_r": 0.4433843882218866,
+        "constant_mae": 0.189404677533664,
+        "shift_mae": 0.2176377566425121,
+        "passes": false,
+        "drive": "F"
+      },
+      {
+        "cell": 9,
+        "target": "c0",
+        "rows": 2005,
+        "segments": 4,
+        "mae": 0.094659747116583,
+        "median_error": 0.0818359374999992,
+        "p90_error": 0.1507265625000002,
+        "centered_r": 0.845353010110613,
+        "constant_mae": 0.177354708930798,
+        "shift_mae": 0.1892814767871675,
+        "passes": true,
+        "drive": "F"
+      },
+      {
+        "cell": 2,
+        "target": "c0",
+        "rows": 1323,
+        "segments": 3,
+        "mae": 0.0640790934429329,
+        "median_error": 0.0297265624999987,
+        "p90_error": 0.1019296875000001,
+        "centered_r": 0.97537493575497,
+        "constant_mae": 0.2261889999055177,
+        "shift_mae": 0.3236792307614665,
+        "passes": true,
+        "drive": "G"
+      },
+      {
+        "cell": 3,
+        "target": "c0",
+        "rows": 1409,
+        "segments": 3,
+        "mae": 0.1078561299569727,
+        "median_error": 0.073476562499998,
+        "p90_error": 0.1524687499999999,
+        "centered_r": 0.74709749384077,
+        "constant_mae": 0.1878952340423172,
+        "shift_mae": 0.2852111160535283,
+        "passes": false,
+        "drive": "G"
+      },
+      {
+        "cell": 8,
+        "target": "c0",
+        "rows": 1315,
+        "segments": 3,
+        "mae": 0.0594707699619772,
+        "median_error": 0.0296874999999978,
+        "p90_error": 0.0945859375000019,
+        "centered_r": 0.9770999647096646,
+        "constant_mae": 0.2254708293726235,
+        "shift_mae": 0.3175106930629337,
+        "passes": true,
+        "drive": "G"
+      },
+      {
+        "cell": 9,
+        "target": "c0",
+        "rows": 1317,
+        "segments": 3,
+        "mae": 0.1019013605139519,
+        "median_error": 0.0734375000000007,
+        "p90_error": 0.1488749999999982,
+        "centered_r": 0.8272932048301839,
+        "constant_mae": 0.1931912386697988,
+        "shift_mae": 0.2926785643288802,
+        "passes": true,
+        "drive": "G"
+      }
+    ]
+  },
+  "error_neighborhoods": [
+    {
+      "study": "SCR165",
+      "subset": "all",
+      "rows": 48206,
+      "within_1s_transition": 2249,
+      "farther_than_1s": 45957
+    },
+    {
+      "study": "SCR165",
+      "subset": "error_above_1m",
+      "rows": 137,
+      "within_1s_transition": 58,
+      "farther_than_1s": 79
+    },
+    {
+      "study": "SCR167",
+      "subset": "all",
+      "rows": 15626,
+      "within_1s_transition": 1243,
+      "farther_than_1s": 14383
+    },
+    {
+      "study": "SCR167",
+      "subset": "error_above_1m",
+      "rows": 229,
+      "within_1s_transition": 50,
+      "farther_than_1s": 179
+    }
+  ],
+  "limits": [
+    "Availability is not accuracy, freshness or physical validity.",
+    "Fixed left and right ego-boundary assignments can fail.",
+    "Camera-model agreement is not surveyed metric truth.",
+    "The entire record is not proven lane-only.",
+    "Source ECU, raw reflection, Doppler, elevation and scan-source meanings remain unknown.",
+    "Repeated samples are not independent physical observations.",
+    "Transition proximity uses past and future transitions, not a causal warning."
+  ]
+}

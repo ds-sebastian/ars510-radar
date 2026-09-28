@@ -1606,6 +1606,7 @@ BO_ 1889 ARS510_SHELL85_CELL_00: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1890 ARS510_SHELL85_CELL_01: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1620,6 +1621,7 @@ BO_ 1890 ARS510_SHELL85_CELL_01: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1891 ARS510_SHELL85_CELL_02: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1634,6 +1636,7 @@ BO_ 1891 ARS510_SHELL85_CELL_02: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1892 ARS510_SHELL85_CELL_03: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1648,6 +1651,7 @@ BO_ 1892 ARS510_SHELL85_CELL_03: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1893 ARS510_SHELL85_CELL_04: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1662,6 +1666,7 @@ BO_ 1893 ARS510_SHELL85_CELL_04: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1894 ARS510_SHELL85_CELL_05: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1676,6 +1681,7 @@ BO_ 1894 ARS510_SHELL85_CELL_05: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1895 ARS510_SHELL85_CELL_06: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1690,6 +1696,7 @@ BO_ 1895 ARS510_SHELL85_CELL_06: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1896 ARS510_SHELL85_CELL_07: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1704,6 +1711,7 @@ BO_ 1896 ARS510_SHELL85_CELL_07: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1897 ARS510_SHELL85_CELL_08: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1718,6 +1726,7 @@ BO_ 1897 ARS510_SHELL85_CELL_08: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1898 ARS510_SHELL85_CELL_09: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1732,6 +1741,7 @@ BO_ 1898 ARS510_SHELL85_CELL_09: 12 RADAR
  SG_ RAW_BYTE_09 : 72|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
 
 BO_ 1899 ARS510_SHELL85_CRC: 8 RADAR
  SG_ RECORD_CRC32 : 0|32@1+ (1,0) [0|4294967295] "raw" XXX
@@ -3158,15 +3168,25 @@ CM_ SG_ 1856 OBJECT_COUNT "Number of live objects (slots with age >= 1) in this 
 CM_ SG_ 1856 CONST_HDR120_16 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1857 RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";
 CM_ BO_ 1888 "0x85 bytes 0-20, proposed prefix only. Byte 0 is length-low 0x90. Cell alignment and semantics remain provisional.";
+CM_ SG_ 1889 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1889 "Provisional 0x85 analysis cell 0, bytes 21-32; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1890 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1890 "Provisional 0x85 analysis cell 1, bytes 33-44; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1891 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1891 "Provisional 0x85 analysis cell 2, bytes 45-56; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1892 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1892 "Provisional 0x85 analysis cell 3, bytes 57-68; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1893 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1893 "Provisional 0x85 analysis cell 4, bytes 69-80; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1894 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1894 "Provisional 0x85 analysis cell 5, bytes 81-92; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1895 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1895 "Provisional 0x85 analysis cell 6, bytes 93-104; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1896 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1896 "Provisional 0x85 analysis cell 7, bytes 105-116; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1897 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1897 "Provisional 0x85 analysis cell 8, bytes 117-128; raw bytes, not a proven object. Excludes CRC and trailer.";
+CM_ SG_ 1898 PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";
 CM_ BO_ 1898 "Provisional 0x85 analysis cell 9, bytes 129-140; raw bytes, not a proven object. Excludes CRC and trailer.";
 CM_ BO_ 1899 "CRC at record[141:145] over record[1:141], followed by trailer[145:147]. Failing records are not exported.";
 VAL_ 1792 ONCOMING_FLAG 0 "not oncoming" 1 "oncoming (now or earlier)" ;

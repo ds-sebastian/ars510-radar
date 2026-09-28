@@ -44,9 +44,12 @@ the interface does not use it.
 The [0x85 follow-up](docs/03_shell_record_0x85.md#lane-lateral-offset-candidates-2026-09-27)
 finds lane-boundary lateral-position candidates in four cells, using a fixed
 0.01m/code scale. Ten of twelve drive-group tests pass; large right-side errors
-and boundary reassignment remain. This corrects the assumption that those cells
-necessarily describe radar objects. Source ECU and validity are unresolved;
-the decoder continues to expose raw cells.
+and boundary reassignment remain. A further test passes only 5 of 16 comparisons,
+including left-side failures. This corrects the assumption that those cells
+necessarily describe radar objects. The decoder now exposes a structural
+`parameters_present` marker (cell bit 30, matching default-block presence in
+4.47 million tested cells); it does not guarantee accurate or current geometry.
+Source ECU and physical validity remain unresolved.
 
 ## Recommended setup (current best, 2026-09-24)
 

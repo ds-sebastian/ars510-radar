@@ -21,6 +21,18 @@ class ShellCell:
     index: int
     payload: bytes
 
+    @property
+    def parameters_present(self) -> bool:
+        """Observed nondefault-parameter marker (bit30), NOT physical validity.
+
+        It does not guarantee fresh/accurate geometry, a fixed ego-lane role,
+        a radar reflection, or a particular originating ECU.
+        """
+        if len(self.payload) != CELL_LEN:
+            raise ValueError(f"0x85 cell must be {CELL_LEN} bytes")
+        return bool(self.payload[3] & 0x40)
+
+
 def id85_crc_ok(record: bytes) -> bool:
     if len(record) != ID85_RECORD_LEN:
         return False

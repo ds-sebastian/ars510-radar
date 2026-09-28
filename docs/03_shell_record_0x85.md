@@ -115,5 +115,50 @@ unresolved, and no scan source or acquisition time follows from this finding.
 This changes an earlier search assumption: activity when the ID80 object list is
 empty need not represent otherwise-hidden reflections. Keep searching for Doppler
 and quality metadata without treating all ten cells as object measurements.
-The parser continues to expose raw cells; no lane-control output or object
-publication policy changes.
+The parser exposes raw cells and the structural marker below; no lane-control
+output or object publication policy changes.
+
+### Further-drive limits
+
+The unchanged lateral formula and fixed cell assignments were tested on 16
+additional predetermined segments from four further drives. Only **5 of 16**
+drive/cell comparisons pass all the same gates. Eight comparisons fail coverage
+(only two eligible segments per cell); several also fail numeric gates. The other
+failures include left-side centered correlations of .406/.443 and a right-side
+correlation of .747. Median errors are 2.3–22.4 cm, but the maximum is 4.042 m.
+Thus the earlier left-side transfer success does not establish a universally
+reliable left ego-boundary assignment.
+
+Review of 12 additional private frames preserves a straight-road left-cell spike
+without a lane change, turn-pocket boundary reassignment, and a night lane change.
+Both sides can describe a different boundary or suffer a transient error.
+The four further drives had prior use for other research, but their lane values
+did not tune this test. These imported SCR-167 results and all 16 scores are
+included in the [follow-up summary](../data/analysis/summaries/id85_parameter_presence.json).
+
+## Nondefault parameter marker
+
+Cell bit 30 is a supported structural availability code:
+
+```python
+parameters_present = bool(cell.payload[3] & 0x40)
+# Also exposed as cell.parameters_present by ars510.shell85.
+```
+
+It equals `payload[6:10] != b"\x84\x03\xf4\x01"` in **4,466,850 / 4,466,850**
+tested cells: all ten cell positions in 446,685 CRC-checked records across 28
+drives. Counts are provenance-labelled imports from workspace SCR-168, not that
+many independent physical detections. Both bundled samples reproduce the relation
+in the test suite. Cabana exposes it as `PARAMETERS_PRESENT` alongside raw bytes.
+
+When clear, `10|10` is always 1023 and `32|12` is always 2000 in this corpus.
+However, 297 populated cells also have `32|12 == 2000`: a numerical lateral zero
+is not an absence test. There are 24,829 clear and 24,832 set transitions within
+continuous segment-local pairs; this is not a permanently fixed cell attribute.
+
+**Presence is not accuracy or physical validity.** Of 229 further-drive samples
+with lane-model disagreement above 1 m, 179 are more than one second from either
+direction of an availability transition. A transition guard cannot explain all
+large errors. The bit does not identify a fresh measurement, an ego-lane boundary,
+a radar reflection, scan source, or originating ECU. Exact agreement with a default
+block establishes a redundant encoding relationship, not independent correctness.

@@ -141,6 +141,24 @@ class TestShellAndSupport:
 
 
 @pytest.mark.parametrize("name", ["highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz"])
+def test_real_shell_parameter_presence_matches_default_blocks(name: str) -> None:
+    asm = Id85RecordAssembler()
+    counts = {False: 0, True: 0}
+    for t, bus, address, payload in sample_frames(name):
+        if bus != 1 or address != 0x85:
+            continue
+        record = asm.push(t, payload)
+        if record is None:
+            continue
+        _, cells = parse_shell(record.payload)
+        for cell in cells:
+            expected = cell.payload[6:10] != bytes.fromhex("8403f401")
+            assert cell.parameters_present == expected
+            counts[expected] += 1
+    assert counts[False] > 0 and counts[True] > 0
+
+
+@pytest.mark.parametrize("name", ["highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz"])
 def test_real_samples_decode_cleanly(name: str) -> None:
     for cfg in (RAW_CONFIG, OPENPILOT_CONFIG):
         iface = Ars510NativeRadarInterface(cfg)
