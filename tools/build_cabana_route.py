@@ -84,7 +84,11 @@ CANDIDATE_NOTES = {
 RAW_FIELD_CORRECTIONS = {
     15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions; not a validity gate.")],
     63: [(63, 1, "Rare changing bit; only two rows in the expanded corpus.")],
-    165: [(165, 3, "Changes within some tracks; observed codes 0 and 1.")],
+    136: [(136, 4, "Independent low nibble beside categorical140|3; units and confidence meaning unresolved."),
+          (140, 3, "Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs.")],
+    142: [],
+    163: [(163, 3, "Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels.")],
+    165: [(166, 2, "Remaining upper raw bits after full163|3; no assigned semantics.")],
     182: [(182, 1, "Rare changing bit; observed in one short track episode.")],
     190: [(190, 10, "Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate.")],
     239: [(239, 1, "Changes within tracks; often active near birth. The former PER_TRACK label was too strong.")],

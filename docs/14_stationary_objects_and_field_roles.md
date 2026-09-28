@@ -584,3 +584,47 @@ false-detection probability, scan-source or excursion-warning interpretation.
 No filtering or decoder behavior changes. The [outcome summary](../data/analysis/summaries/score16_outcomes.json)
 imports anonymized SCR-192 aggregates; full captures are not bundled reruns,
 and all groups had prior research use.
+
+## Categorical recoding and the low nibble at 136 (2026-09-28)
+
+Two disjoint three-bit views carry the same observed category through a fixed
+recoding. The adjacent `136|4` changes independently:
+
+| `163|3` | `140|3` |
+|---|---|
+| 1 | 0 |
+| 2 | 5 |
+| 3 | 7 |
+| 4 | 1 |
+| 5 | 3 |
+| 6 | 4 |
+
+The dictionary was found on development captures, then frozen. It has **zero
+exceptions across 1,253,081 non-idle slot rows in 698 segments**, including
+retiring age-zero payloads. All five provenance groups reproduce it; two groups
+contain only five of the six categories. Codes 0/7 at163 and2/6 at140 were not
+observed, so they have no inferred mapping or prohibition.
+
+On exact same-slot native edges, the lower nibble changes alone 75,524 times in
+development and 114,075 in pooled transfer; the upper category changes alone
+3,302 and 4,215 times respectively. No unit carry crosses the nibble boundary.
+This supports separate raw views rather than interpreting the old `136|6` plus
+bit142 as a calibrated scalar. It does not establish the lower nibble's units.
+
+Independent byte decoding checks the complete atlas and its input hashes.
+Native sequence/CRC checks verify 28 category witnesses and 334,800 raw slots
+(including idle slots) from 16,740 valid records. One malformed sequence and
+eight incomplete records are excluded from that native check. A separate test
+checks the dictionary on all18,220slots in the bundled samples.
+
+**Physical class labels remain unresolved.** Earlier car/heavy naming had real
+counterexamples; recoding the same information does not repair that classifier.
+Likewise, the lower nibble is not yet calibrated confidence, detection probability
+or scan history. No Doppler, SNR, elevation or excursion discriminator follows.
+
+Cabana now exposes `UNK_136_4`, `UNK_140_3`, full `UNK_163_3` and remaining
+`UNK_166_2`, preserving every raw bit. Both categorical values remain independently
+visible; nothing synthesizes one from the other or rejects future disagreements.
+Decoder kinematics, interface behavior and control gates are unchanged.
+The [machine-readable summary](../data/analysis/summaries/attribute_recoding.json)
+labels imported workspace evidence separately from the bundled fixture check.

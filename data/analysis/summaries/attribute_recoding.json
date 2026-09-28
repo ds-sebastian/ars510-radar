@@ -1,0 +1,269 @@
+{
+  "status": "supported raw recoding; physical semantics unresolved",
+  "provenance": "Imported research-workspace SCR-205 aggregates. Full captures are not bundled reruns. All groups had prior research use. Discovery selected the dictionary; other groups tested it unchanged.",
+  "mapping_163_to_140": {
+    "1": 0,
+    "2": 5,
+    "3": 7,
+    "4": 1,
+    "5": 3,
+    "6": 4
+  },
+  "unobserved_codes": {
+    "163": [
+      0,
+      7
+    ],
+    "140": [
+      2,
+      6
+    ]
+  },
+  "groups": {
+    "confirmation": {
+      "rows": 202741,
+      "mismatches": 0,
+      "edges": 196935,
+      "low_only": 35621,
+      "high_only": 1539,
+      "both": 441,
+      "unit_crossings": 0,
+      "segments": 143
+    },
+    "discovery": {
+      "rows": 454212,
+      "mismatches": 0,
+      "edges": 442207,
+      "low_only": 75524,
+      "high_only": 3302,
+      "both": 802,
+      "unit_crossings": 0,
+      "segments": 256
+    },
+    "further": {
+      "rows": 109577,
+      "mismatches": 0,
+      "edges": 106132,
+      "low_only": 18137,
+      "high_only": 836,
+      "both": 198,
+      "unit_crossings": 0,
+      "segments": 65
+    },
+    "later": {
+      "rows": 94546,
+      "mismatches": 0,
+      "edges": 92152,
+      "low_only": 16762,
+      "high_only": 697,
+      "both": 140,
+      "unit_crossings": 0,
+      "segments": 48
+    },
+    "retained": {
+      "rows": 392005,
+      "mismatches": 0,
+      "edges": 386405,
+      "low_only": 43555,
+      "high_only": 1143,
+      "both": 152,
+      "unit_crossings": 0,
+      "segments": 186
+    }
+  },
+  "code_counts": [
+    {
+      "part": "confirmation",
+      "q163": 1,
+      "q140": 0,
+      "count": 31595
+    },
+    {
+      "part": "confirmation",
+      "q163": 2,
+      "q140": 5,
+      "count": 147955
+    },
+    {
+      "part": "confirmation",
+      "q163": 3,
+      "q140": 7,
+      "count": 21366
+    },
+    {
+      "part": "confirmation",
+      "q163": 4,
+      "q140": 1,
+      "count": 1756
+    },
+    {
+      "part": "confirmation",
+      "q163": 5,
+      "q140": 3,
+      "count": 26
+    },
+    {
+      "part": "confirmation",
+      "q163": 6,
+      "q140": 4,
+      "count": 43
+    },
+    {
+      "part": "discovery",
+      "q163": 1,
+      "q140": 0,
+      "count": 67311
+    },
+    {
+      "part": "discovery",
+      "q163": 2,
+      "q140": 5,
+      "count": 341647
+    },
+    {
+      "part": "discovery",
+      "q163": 3,
+      "q140": 7,
+      "count": 39454
+    },
+    {
+      "part": "discovery",
+      "q163": 4,
+      "q140": 1,
+      "count": 5460
+    },
+    {
+      "part": "discovery",
+      "q163": 5,
+      "q140": 3,
+      "count": 170
+    },
+    {
+      "part": "discovery",
+      "q163": 6,
+      "q140": 4,
+      "count": 170
+    },
+    {
+      "part": "further",
+      "q163": 1,
+      "q140": 0,
+      "count": 19650
+    },
+    {
+      "part": "further",
+      "q163": 2,
+      "q140": 5,
+      "count": 84397
+    },
+    {
+      "part": "further",
+      "q163": 3,
+      "q140": 7,
+      "count": 4200
+    },
+    {
+      "part": "further",
+      "q163": 4,
+      "q140": 1,
+      "count": 904
+    },
+    {
+      "part": "further",
+      "q163": 5,
+      "q140": 3,
+      "count": 417
+    },
+    {
+      "part": "further",
+      "q163": 6,
+      "q140": 4,
+      "count": 9
+    },
+    {
+      "part": "later",
+      "q163": 1,
+      "q140": 0,
+      "count": 19378
+    },
+    {
+      "part": "later",
+      "q163": 2,
+      "q140": 5,
+      "count": 61656
+    },
+    {
+      "part": "later",
+      "q163": 3,
+      "q140": 7,
+      "count": 12629
+    },
+    {
+      "part": "later",
+      "q163": 4,
+      "q140": 1,
+      "count": 804
+    },
+    {
+      "part": "later",
+      "q163": 5,
+      "q140": 3,
+      "count": 79
+    },
+    {
+      "part": "retained",
+      "q163": 1,
+      "q140": 0,
+      "count": 27896
+    },
+    {
+      "part": "retained",
+      "q163": 2,
+      "q140": 5,
+      "count": 307874
+    },
+    {
+      "part": "retained",
+      "q163": 3,
+      "q140": 7,
+      "count": 45048
+    },
+    {
+      "part": "retained",
+      "q163": 4,
+      "q140": 1,
+      "count": 10911
+    },
+    {
+      "part": "retained",
+      "q163": 5,
+      "q140": 3,
+      "count": 276
+    }
+  ],
+  "verification": {
+    "status": "pass",
+    "input_hashes": 1401,
+    "atlas_segments": 698,
+    "atlas_slots": 1253081,
+    "atlas_edges": 1223831,
+    "mapping_pass": true,
+    "boundary_pass": true,
+    "categories_by_group": {
+      "confirmation": 6,
+      "discovery": 6,
+      "further": 6,
+      "later": 5,
+      "retained": 5
+    },
+    "native_segments": 17,
+    "native_crc_records": 16740,
+    "native_raw_slots": 334800,
+    "native_witnesses": 28,
+    "excluded_bad_sequence": 1,
+    "excluded_bad_crc": 0,
+    "excluded_partial": 8,
+    "limits": "Exact observed raw recoding, not physical classes or low-nibble confidence units. Native full default slots checked separately from atlas counts."
+  },
+  "runtime_use": "none; Cabana raw views only; preserve both raw values and any future disagreement"
+}

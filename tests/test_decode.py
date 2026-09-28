@@ -238,7 +238,7 @@ def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
             start, width = fields[name]
             mask = (1 << width) - 1
             assert (((after << start) >> start) & mask) - (((before << start) >> start) & mask) == 1
-        for start, width in [(15, 1), (63, 1), (165, 3), (182, 1), (190, 10), (239, 1), (277, 11)]:
+        for start, width in [(15, 1), (63, 1), (136, 4), (140, 3), (163, 3), (166, 2), (182, 1), (190, 10), (239, 1), (277, 11)]:
             assert fields[f"UNK_{start}_{width}"] == (start, width)
 
 
@@ -291,3 +291,23 @@ def test_full_movement_code_preserves_distinctions_and_unknown_values():
     with pytest.raises(ValueError, match="low two bits"):
         encode_slot(move_state=1, movement_code=7)
     assert decode_native_slot(0, encode_slot(move_state=3, movement_code=7)).movement_code == 7
+
+
+def test_categorical_recoding_on_bundled_real_slots():
+    # An observed fixture invariant, never a runtime validity rule or enum repair.
+    mapping = {1: 0, 2: 5, 3: 7, 4: 1, 5: 3, 6: 4}
+    checked = 0
+    for path in sorted(SAMPLES.glob("*.csv.gz")):
+        assembler = Id80RecordAssembler()
+        for t, bus, address, data in sample_frames(path.name):
+            if bus != 1 or address != 0x80:
+                continue
+            record = assembler.push(t, data)
+            if record is None:
+                continue
+            assert id80_crc_ok(record.payload)
+            for slot in range(20):
+                raw = record.payload[17 + 36 * slot:53 + 36 * slot]
+                assert mapping[(raw[20] >> 3) & 7] == (raw[17] >> 4) & 7
+                checked += 1
+    assert checked == 18220

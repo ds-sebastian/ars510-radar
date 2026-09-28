@@ -37,14 +37,14 @@ BO_ 1792 ARS510_OBJ_00: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -101,14 +101,14 @@ BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -165,14 +165,14 @@ BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -229,14 +229,14 @@ BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -293,14 +293,14 @@ BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -357,14 +357,14 @@ BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -421,14 +421,14 @@ BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -485,14 +485,14 @@ BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -549,14 +549,14 @@ BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -613,14 +613,14 @@ BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -677,14 +677,14 @@ BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -741,14 +741,14 @@ BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -805,14 +805,14 @@ BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -869,14 +869,14 @@ BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -933,14 +933,14 @@ BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -997,14 +997,14 @@ BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -1061,14 +1061,14 @@ BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -1125,14 +1125,14 @@ BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -1189,14 +1189,14 @@ BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -1253,14 +1253,14 @@ BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ UNK_130_1 : 130|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_131_4 : 131|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_135_1 : 135|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_136_6 : 136|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_142_1 : 142|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_136_4 : 136|4@1+ (1,0) [0|15] "raw" XXX
+ SG_ UNK_140_3 : 140|3@1+ (1,0) [0|7] "raw" XXX
  SG_ CONST_143_5 : 143|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_148_8 : 148|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_156_4 : 156|4@1+ (1,0) [0|15] "raw" XXX
  SG_ CONST_160_3 : 160|3@1+ (1,0) [0|7] "raw" XXX
- SG_ UNK_163_2 : 163|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_165_3 : 165|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_163_3 : 163|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_166_2 : 166|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_168_10 : 168|10@1+ (1,0) [0|1023] "raw" XXX
  SG_ CONST_178_3 : 178|3@1+ (1,0) [0|7] "raw" XXX
  SG_ UNK_181_1 : 181|1@1+ (1,0) [0|1] "raw" XXX
@@ -1778,14 +1778,14 @@ CM_ SG_ 1792 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1792 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1792 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1792 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1792 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1792 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1792 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1792 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1792 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1792 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1792 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1792 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1792 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1792 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1792 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1792 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1792 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1792 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1792 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -1841,14 +1841,14 @@ CM_ SG_ 1793 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1793 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1793 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1793 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1793 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1793 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1793 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1793 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1793 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1793 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1793 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1793 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1793 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1793 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1793 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1793 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1793 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1793 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1793 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -1904,14 +1904,14 @@ CM_ SG_ 1794 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1794 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1794 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1794 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1794 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1794 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1794 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1794 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1794 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1794 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1794 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1794 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1794 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1794 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1794 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1794 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1794 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1794 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1794 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -1967,14 +1967,14 @@ CM_ SG_ 1795 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1795 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1795 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1795 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1795 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1795 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1795 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1795 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1795 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1795 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1795 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1795 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1795 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1795 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1795 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1795 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1795 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1795 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1795 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2030,14 +2030,14 @@ CM_ SG_ 1796 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1796 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1796 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1796 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1796 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1796 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1796 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1796 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1796 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1796 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1796 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1796 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1796 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1796 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1796 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1796 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1796 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1796 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1796 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2093,14 +2093,14 @@ CM_ SG_ 1797 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1797 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1797 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1797 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1797 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1797 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1797 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1797 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1797 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1797 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1797 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1797 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1797 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1797 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1797 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1797 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1797 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1797 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1797 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2156,14 +2156,14 @@ CM_ SG_ 1798 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1798 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1798 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1798 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1798 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1798 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1798 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1798 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1798 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1798 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1798 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1798 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1798 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1798 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1798 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1798 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1798 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1798 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1798 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2219,14 +2219,14 @@ CM_ SG_ 1799 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1799 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1799 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1799 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1799 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1799 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1799 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1799 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1799 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1799 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1799 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1799 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1799 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1799 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1799 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1799 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1799 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1799 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1799 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2282,14 +2282,14 @@ CM_ SG_ 1800 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1800 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1800 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1800 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1800 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1800 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1800 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1800 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1800 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1800 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1800 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1800 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1800 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1800 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1800 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1800 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1800 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1800 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1800 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2345,14 +2345,14 @@ CM_ SG_ 1801 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1801 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1801 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1801 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1801 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1801 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1801 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1801 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1801 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1801 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1801 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1801 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1801 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1801 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1801 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1801 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1801 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1801 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1801 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2408,14 +2408,14 @@ CM_ SG_ 1802 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1802 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1802 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1802 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1802 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1802 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1802 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1802 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1802 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1802 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1802 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1802 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1802 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1802 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1802 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1802 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1802 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1802 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1802 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2471,14 +2471,14 @@ CM_ SG_ 1803 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1803 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1803 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1803 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1803 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1803 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1803 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1803 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1803 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1803 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1803 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1803 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1803 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1803 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1803 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1803 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1803 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1803 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1803 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2534,14 +2534,14 @@ CM_ SG_ 1804 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1804 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1804 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1804 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1804 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1804 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1804 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1804 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1804 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1804 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1804 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1804 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1804 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1804 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1804 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1804 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1804 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1804 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1804 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2597,14 +2597,14 @@ CM_ SG_ 1805 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1805 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1805 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1805 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1805 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1805 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1805 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1805 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1805 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1805 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1805 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1805 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1805 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1805 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1805 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1805 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1805 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1805 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1805 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2660,14 +2660,14 @@ CM_ SG_ 1806 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1806 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1806 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1806 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1806 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1806 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1806 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1806 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1806 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1806 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1806 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1806 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1806 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1806 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1806 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1806 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1806 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1806 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1806 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2723,14 +2723,14 @@ CM_ SG_ 1807 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1807 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1807 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1807 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1807 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1807 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1807 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1807 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1807 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1807 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1807 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1807 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1807 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1807 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1807 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1807 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1807 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1807 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1807 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2786,14 +2786,14 @@ CM_ SG_ 1808 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1808 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1808 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1808 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1808 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1808 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1808 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1808 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1808 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1808 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1808 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1808 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1808 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1808 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1808 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1808 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1808 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1808 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1808 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2849,14 +2849,14 @@ CM_ SG_ 1809 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1809 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1809 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1809 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1809 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1809 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1809 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1809 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1809 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1809 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1809 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1809 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1809 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1809 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1809 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1809 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1809 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1809 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1809 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2912,14 +2912,14 @@ CM_ SG_ 1810 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1810 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1810 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1810 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1810 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1810 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1810 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1810 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1810 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1810 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1810 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1810 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1810 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1810 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1810 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1810 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1810 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1810 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1810 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
@@ -2975,14 +2975,14 @@ CM_ SG_ 1811 UNK_128_2 "Candidate from the carry-chain split, unverified: LSB fl
 CM_ SG_ 1811 UNK_130_1 "Candidate from the carry-chain split, unverified: LSB flips 0.019 per cycle, 2 distinct values 0..1. Strongest correlation: abs_yRel r=+0.34.Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).";
 CM_ SG_ 1811 UNK_131_4 "Candidate from the carry-chain split, unverified: LSB flips 0.102 per cycle, 9 distinct values 7..15. Strongest correlation: abs_yRel r=+0.09.";
 CM_ SG_ 1811 CONST_135_1 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1811 UNK_136_6 "Candidate from the carry-chain split, unverified: LSB flips 0.093 per cycle, 39 distinct values 3..63. Strongest correlation: age r=+0.20.";
-CM_ SG_ 1811 UNK_142_1 "Candidate from the carry-chain split, unverified: LSB flips 0.007 per cycle, 2 distinct values 0..1. Strongest correlation: age r=+0.47.";
+CM_ SG_ 1811 UNK_136_4 "Expanded-corpus correction: Independent low nibble beside categorical140|3; units and confidence meaning unresolved. See docs/14.";
+CM_ SG_ 1811 UNK_140_3 "Expanded-corpus correction: Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs. See docs/14.";
 CM_ SG_ 1811 CONST_143_5 "Constant 30 (0x1E) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1811 UNK_148_8 "Candidate from the carry-chain split, unverified: LSB flips 0.009 per cycle, 27 distinct values 0..240. Strongest correlation: dRel r=-0.12.Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).";
 CM_ SG_ 1811 UNK_156_4 "Candidate from the carry-chain split, unverified: LSB flips 0.016 per cycle, 16 distinct values 0..15. Strongest correlation: abs_yRel r=-0.42.Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).";
 CM_ SG_ 1811 CONST_160_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
-CM_ SG_ 1811 UNK_163_2 "Candidate from the carry-chain split, unverified: LSB flips 0.006 per cycle, 3 distinct values 1..3. Strongest correlation: age r=+0.30.";
-CM_ SG_ 1811 UNK_165_3 "Expanded-corpus correction: Changes within some tracks; observed codes 0 and 1. See docs/14.";
+CM_ SG_ 1811 UNK_163_3 "Expanded-corpus correction: Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels. See docs/14.";
+CM_ SG_ 1811 UNK_166_2 "Expanded-corpus correction: Remaining upper raw bits after full163|3; no assigned semantics. See docs/14.";
 CM_ SG_ 1811 UNK_168_10 "Candidate from the carry-chain split, unverified: LSB flips 0.066 per cycle, 3 distinct values 0..1023. Strongest correlation: abs_yRel r=+0.14.";
 CM_ SG_ 1811 CONST_178_3 "Constant 0 (0x0) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy.";
 CM_ SG_ 1811 UNK_181_1 "Candidate from the carry-chain split, unverified: LSB flips 0.071 per cycle, 2 distinct values 0..1. Strongest correlation: v_over_ground r=+0.34.";
