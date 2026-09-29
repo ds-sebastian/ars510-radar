@@ -21,11 +21,13 @@ Run it once with a stock opendbc and once with a patched copy, then compare:
 - card fingerprints as on the car: FW versions come from the logged CarParams (the cached-FW path), then CAN
   fingerprinting runs on the logged frames. ARS510 detection therefore sees the radar FW, and bus 1 as it was at
   the start of the first segment.
-- One logged field is changed: CarParams.openpilotLongitudinalControl is cleared. Otherwise process_replay turns
+- CarParams.openpilotLongitudinalControl is cleared. Otherwise process_replay turns
   alpha long on, and on a RADAR_ACC Toyota card's startup then runs the UDS radar-disable routine. In
   process_replay card stalls after that routine (stock opendbc too): 80 carState messages per segment instead of
   6000. radard and the planner do not depend on the toggle. Whether the radar keeps sending 0x80 after a real
   disable request can only be checked on the car (docs/08).
+- When logged carFw is present, fingerprintSource is set to "fw" so process_replay can reuse it, including logs
+  from forks that manually select the car. Without logged firmware the original fingerprint source is kept.
 
 Open-loop: ego motion stays as recorded. It shows what openpilot would have requested, not what the car would have
 done. Outputs:
@@ -95,6 +97,23 @@ def bench_radar_interface(msgs: list, CP) -> dict:
           "cpu_fraction_at_100hz": round(sum(dts) / max(n, 1) * 100, 5), "class": type(getattr(RI, "ars510", None) or RI).__name__}
 
 
+def prepare_car_params_for_replay(msgs: list) -> None:
+  """Preserve logged firmware for fingerprinting and avoid replay's UDS disable path."""
+  for i, m in enumerate(msgs):
+    if m.which() != "carParams":
+      continue
+    cp_log = m.carParams
+    # process_replay only caches logged FW when fingerprintSource is "fw". Forks can select the car manually
+    # while still logging queried FW; retain that detection evidence in replay.
+    reuse_fw = len(cp_log.carFw) > 0 and str(cp_log.fingerprintSource) != "fw"
+    if cp_log.openpilotLongitudinalControl or reuse_fw:
+      ev = m.as_builder()
+      ev.carParams.openpilotLongitudinalControl = False
+      if reuse_fw:
+        ev.carParams.fingerprintSource = "fw"
+      msgs[i] = ev.as_reader()
+
+
 def run(args) -> int:
   setup_paths(args.openpilot, args.opendbc, args.mpc_shadow)
   import opendbc
@@ -109,11 +128,7 @@ def run(args) -> int:
     bounds.append((Path(p), t0, len(msgs), len(msgs) + len(seg)))
     msgs.extend(seg)
   logged_long = any(m.carParams.openpilotLongitudinalControl for m in msgs if m.which() == "carParams")
-  for i, m in enumerate(msgs):
-    if m.which() == "carParams" and m.carParams.openpilotLongitudinalControl:
-      ev = m.as_builder()
-      ev.carParams.openpilotLongitudinalControl = False
-      msgs[i] = ev.as_reader()
+  prepare_car_params_for_replay(msgs)
   t0 = time.time()
   out = replay_process_with_name(["card", "radard", "plannerd"], msgs, disable_progress=True)
   wall = time.time() - t0
