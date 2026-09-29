@@ -21,7 +21,7 @@ Written for openpilot developers (2026-09-25). This page puts together the repla
   - About 20 interface-only candidates have been tested.
   - The best practical option is an opt-in: `range_fusion_gain=0.1` plus `vrel_smooth_far_tau_s=1.0`.
   - It closes about half of the extra roughness (on held-out routes and on fresh drives) for about 0.05 s of timing.
-- **Removing the excursions needs a check on the radar's velocity that only radard has:** vision's speed, or the track's own range history. Ideas are at the end.
+- **No tested radar-internal discriminator reliably removes the excursions while preserving real closings.** Vision velocity and range history are useful comparison signals; this does not establish that every radar-only approach must fail. Ideas are at the end.
 
 ## 1. What it looks like on real drives
 

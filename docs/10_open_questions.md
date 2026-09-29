@@ -50,6 +50,22 @@ Ordered by how much each would move openpilot integration forward.
 - No usable confidence/finalised-speed/correction decoder has been established. Bounded negative searches do not prove absence.
 - Tested filters did not pass the false-braking/real-closing trade-off. This is not a proof against every possible radar-only method.
 
+**Nonlinear-search limits.** Earlier research also tested categorical mappings and
+temporal neural networks for excursion prediction. The tested raw slot/header
+inputs did not improve the reported mean predictive scores over a baseline that
+already included candidate fields. This does not establish that unknown bits
+lack information or useful metadata. The networks did not consume the shell or
+auxiliary messages, and their finite history and noisy targets limit the result.
+A later audit also verified that candidate channels were normalized separately
+in each dataset partition; training-only preprocessing needs to be evaluated
+before stronger conclusions. No corrected training result is claimed.
+See the [provenance-labelled scope correction](../data/analysis/summaries/nonlinear_search_scope.json).
+
+Nonlinear dependency discovery remains a possible way to identify redundant or
+conditionally packed fields. A learned association needs an explicit rule and
+cross-drive counterexample checks before it becomes a decode; assigning physical
+names and units requires independent semantic evidence.
+
 ## Added 2026-09-24
 
 - **A wider ACC-target clip.** For example 0x235 ± 3 m/s, acting only on gross disagreements, where 0x235 is right
