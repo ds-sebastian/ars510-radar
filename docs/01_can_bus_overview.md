@@ -29,7 +29,7 @@ openpilot currently gives these RAV4 platforms no radar DBC, so it sets `radarUn
 | 0x235 / 0x237 / 0x239 / 0x23B / 0x23D | 8/8/8/3/8 | 50 Hz | Companion/debug family with mux + rolling counter in byte 1; byte 0 an affine parity check. 0x237 bytes 1–2 correlate with lead distance (r ≈ 0.9) | debug |
 | 0x240 / 0x241 / 0x244 / 0x245 | 8 | 16.7 Hz | Rolling phase; 0x240/0x244 have changing payloads on further drives. Default bodies mirror; active fields and source unresolved ([04](04_support_messages.md)) | raw context |
 | 0x248 | 8 | 16.7 Hz | Startup / event context | context |
-| 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | Constant / startup flag | constant |
+| 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | Rare unresolved state / startup flag | raw context |
 | 0x500 / 0x501 / 0x502 | 6 / 7 / 8 | 2 / 2 / 0.33 Hz | Constants plus two slowly drifting codes in 0x502 (temperature-like?). **0x500 and 0x502 carry what may be unit-specific constants (serial or calibration?). They are redacted in the shared DBC; compare yours** | unknown |
 | 0x680 | 8 | 2 Hz | Status/mux context. The older Toyota Continental `CLUSTER_F` object layout does **not** apply (dead end D-037) | unknown |
 

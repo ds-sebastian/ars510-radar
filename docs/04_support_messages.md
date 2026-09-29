@@ -18,6 +18,12 @@ The radar publishes two target summaries, each as a companion pair: 0x191 with 0
 - bits `34|6`, `49|7`, `56|8`: an identity-stable descriptor tuple with a few discrete values (e.g. 18/22/25, 15/23, 20/45/120). Class or size? Unresolved.
 - bits `43|5`: a dynamic code, 9–30.
 
+The adjacent byte-5 low-three-bit view is not a universal zero guard. An expanded
+census found one non-sentinel `0x191` frame with value four, followed by sentinel
+pair output one cycle later. This sets LE bit42, but a single example does not
+establish a retirement flag, numeric boundary or intentional state. The legacy
+DBC name remains for compatibility; preserve the raw value.
+
 **0x192 / 0x194 (4 bytes).** Sentinel `00FF00FF`.
 - bytes 0–1: big-endian 13-bit **distance-like candidate**, about **3/64 m per code** (≈ 0.047 m). Earlier fits split between 0.04 and 0.05; 3/64 fits best in the tested matching. Metric scale and association remain provisional.
 - byte 2: **lateral-bin candidate**. Observed associations: 7/8 own lane, 6 and 9 adjacent lanes, 10–13 far left, 2–5 the oncoming side. Not an established OEM lane codebook.
@@ -154,3 +160,23 @@ raw view; it does not prove full physical field width, signedness or units.
 Idle is 510. **Doppler, velocity, quality and scan meanings are not established.**
 The DBC retains its lossless historical cuts; the formula above assembles them
 without adding overlapping signals or changing runtime track values.
+
+## Auxiliary payload coverage correction (2026-09-28)
+
+A census of 700 previously researched segments rechecked 26,025,385 bus-1
+auxiliary frames. The frame-local DBC covers 34 observed address/length groups;
+47 additional groups, totaling 778 frames, are undeclared. Seven of those groups
+contain varying bits. This is raw coverage, not proof that the radar originated
+the traffic; segmented 0x80/0x85 contents are audited separately.
+
+`0x24D` is not universally constant: 40,854 payloads are `00000000000056`, and
+105 are `00000000020058`, in three segments of one further drive. This reconciles
+the earlier two-drive constant observation with the rare state already mentioned
+in [15](15_acc_target_stream_and_health_signals.md). Its meaning remains unknown.
+The two patterns alone do not establish a checksum algorithm or status meaning.
+
+The byte-5 exception described above is the only low-three-bit value four among
+682,618 `0x191` frames. Verification reread 2,182 original CAN frames in four
+source segments, including every nonbaseline `0x24D` frame and that exception.
+No DBC layout, value or runtime behavior changes. Counts are imported research
+workspace evidence, not a bundled rerun; see the [summary](../data/analysis/summaries/auxiliary_bit_coverage.json).
