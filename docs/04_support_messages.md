@@ -132,3 +132,25 @@ Six representative payloads were checked against four original logs. The counts
 are imported research results from previously exposed captures, not a bundled
 rerun ([summary](../data/analysis/summaries/event_pair_structure.json)).
 No control behavior or object decoder changes follow from this correction.
+
+### Carry-supported composite raw code
+
+A fixed follow-up test supports combining 0x195 MSB-first bits `18..27` into
+a ten-bit raw value:
+
+```python
+q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)
+```
+
+The old seven-bit view jumps `127 → 0` while the preceding prefix changes
+`3 → 4`; the combined code changes `511 → 512`. All 25 discovery crossings
+(seven drives) and 17 confirmation crossings (five drives) follow the expected
+carry/borrow rule. Every crossing was checked in the original logs: 77 distinct
+endpoint frames across 16 logs. This is a fixed partition check on previously
+exposed captures ([provenance and counts](../data/analysis/summaries/event_pair_carries.json)).
+
+Only the prefix `3/4` boundary is excited. The result supports this composite
+raw view; it does not prove full physical field width, signedness or units.
+Idle is 510. **Doppler, velocity, quality and scan meanings are not established.**
+The DBC retains its lossless historical cuts; the formula above assembles them
+without adding overlapping signals or changing runtime track values.

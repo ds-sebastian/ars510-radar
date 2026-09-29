@@ -1,0 +1,40 @@
+{
+  "status": "Supported adjacent raw-code concatenation; physical meaning and full width unresolved",
+  "provenance": "Imported research-workspace SCR-245; fixed pre-registered tests on previously exposed discovery/confirmation partitions, not a bundled rerun.",
+  "address": "0x195",
+  "msb_first_start": 18,
+  "width": 10,
+  "dbc_motorola_start": 21,
+  "formula": "((payload[2] & 0x3f) << 4) | (payload[3] >> 4)",
+  "raw_idle_code": 510,
+  "discovery": {
+    "edges": 739,
+    "wraps": 25,
+    "routes": 7,
+    "carry_mismatches": 0,
+    "wrap_down": 12,
+    "wrap_up": 13,
+    "observed_other_min": 417,
+    "observed_other_max": 519
+  },
+  "confirmation": {
+    "edges": 647,
+    "wraps": 17,
+    "routes": 5,
+    "carry_mismatches": 0,
+    "wrap_down": 9,
+    "wrap_up": 8,
+    "observed_other_min": 409,
+    "observed_other_max": 517
+  },
+  "native_verification": {
+    "logs": 16,
+    "witness_frames": 77,
+    "can_frames_scanned": 5359972
+  },
+  "limits": [
+    "Only prefix states 3 and 4 have carry excitation; wider field not excluded.",
+    "No physical unit, signedness, offset, association or validity promoted.",
+    "No vRel-excursion flag or control change."
+  ]
+}
