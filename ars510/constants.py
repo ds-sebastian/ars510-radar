@@ -1,7 +1,7 @@
 """Bus-level constants for the Toyota / Continental ARS510 front radar.
 
 Everything here was observed on the radar CAN bus (comma harness bus 1, `src == 1` in openpilot logs).
-See docs/01_can_bus_overview.md and docs/02_object_record_0x80.md.
+See docs/01_radar_bus.md and docs/02_object_list.md.
 """
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ RECORD_MARKER_PAYLOAD = bytes.fromhex("3000000000000000")
 TOYOTA_SPEED_ADDR = 0xB4
 
 # The radar's own ACC target stream (radar bus, 50 Hz). 0x235 carries its closing speed, 0x237 its position. See
-# ars510/support.py and docs/15.
+# ars510/support.py and docs/05.
 ACC_TARGET_VREL_ADDR = 0x235
 ACC_TARGET_POS_ADDR = 0x237
 

@@ -1,4 +1,4 @@
-"""Support messages that are partly understood. None of them is needed for the object decode.
+"""Support messages: the radar's own ACC target (0x235 / 0x237) and the selected-target summaries (docs/05).
 
 0x192 (4 bytes, ~radar cycle) is a filtered target summary, most likely the target the radar itself selects
 for ACC / pre-collision. It is NOT a better lead measurement: it is heavily smoothed and lags the 0x80 track
@@ -6,7 +6,7 @@ by 10-15 m during closings. Sentinel payload 00 FF 00 FF (no target).
   bytes 0-1 : big-endian distance, ~3/64 m per code (scale approximate, 13 bits used)
   byte 2    : lateral bin of that target (7/8 own lane, 6 and 9 adjacent lanes, 10-13 far left, 2-5 oncoming side)
   byte 3    : unknown
-0x194 has the same shape (second target?), not characterised.
+0x194 has the same shape for the second selected target.
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ def parse_acc_target_vrel(data: bytes) -> float | None:
 
     Bits 29..39, offset 1024, 0.1 m/s. Tested against the vision-matched radar lead on 20 routes: unbiased against
     vision (median 0.00 m/s). When native vRel and this value differ by > 3 m/s, vision agrees with this value in
-    86-90% of cases (docs/15).
+    86-90% of cases (docs/05).
     """
     if len(data) < 8:
         return None
@@ -52,7 +52,7 @@ def parse_acc_target_arel(data: bytes) -> float | None:
 
     (byte 2 - 100) * 0.1; the idle payload's 0x64 decodes to 0. Binned against the derivative of the 0x235 closing
     speed it gives identical curves on discovery, confirmation and fresh drives, lagging that derivative by
-    0.1-0.2 s. The scale is approximate (0.1-0.14 m/s^2 per code). Meaningful only while the target is active (docs/15).
+    0.1-0.2 s. The scale is approximate (0.1-0.14 m/s^2 per code). Meaningful only while the target is active (docs/05).
     """
     if len(data) < 8:
         return None

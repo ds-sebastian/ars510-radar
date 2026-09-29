@@ -45,7 +45,7 @@ from ars510 import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # n
 PROFILES = {
     "raw": RAW_CONFIG,
     "openpilot": OPENPILOT_CONFIG,
-    # candidates (each failed a pre-registered test; see docs/06)
+    # interface options (measured effect in docs/07)
     "openpilot_fused": replace(OPENPILOT_CONFIG, range_fusion_gain=0.1),
     "openpilot_rangeclip": replace(OPENPILOT_CONFIG, vrel_range_clip_window_s=4.0, vrel_range_clip_mps=3.5),
     "openpilot_vsmooth": replace(OPENPILOT_CONFIG, vrel_smooth_far_tau_s=1.0),

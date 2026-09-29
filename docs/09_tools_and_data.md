@@ -1,0 +1,109 @@
+# 09. Tools, data, and testing on your own car
+
+## Tools
+
+| tool | what it does |
+|---|---|
+| [`tools/decode_log.py`](../tools/decode_log.py) | rlog / qlog / CAN CSV → one CSV row per published radar point |
+| [`tools/build_cabana_route.py`](../tools/build_cabana_route.py) | appends reassembled objects to your rlogs on a virtual bus, for Cabana; `--dbc-only` regenerates `dbc/ars510_objects_vbus.dbc` |
+| [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
+| [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several interface profiles side by side |
+| [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
+| [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild every chart in `docs/` |
+| [`tools/compute_stats.py`](../tools/compute_stats.py) | descriptive statistics of the dataset → `data/analysis/stats.json` |
+
+### Decode a log
+
+```bash
+python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
+python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
+python tools/decode_log.py rlog.zst --profile raw            # every track, no age gate; reports CRC failures
+```
+
+### Cabana
+
+The object list is a multi-frame record, so Cabana cannot decode it from 0x80 directly. `build_cabana_route.py`
+copies your log and appends each record's occupied slots as ordinary CAN messages on **virtual bus 10**, byte for
+byte, so the DBC bit positions are the real slot bit positions.
+
+```bash
+OP=/path/to/openpilot
+PYTHONPATH=$OP:$OP/opendbc_repo $OP/.venv/bin/python tools/build_cabana_route.py /path/to/<route>--12 /path/to/<route>--13 --out cabana_out
+$OP/tools/cabana/cabana --data_dir cabana_out/route "<route>" --dbc dbc/ars510_objects_vbus.dbc
+```
+
+| bus-10 address | message | content |
+|---|---|---|
+| 0x700-0x713 | `ARS510_OBJ_00..19` | raw slot bytes with every field of [03](03_slot_fields.md) |
+| 0x720-0x733 | `ARS510_OBJ_xx_DERIVED` | values the interface computes: VREL, V_EGO_0xB4, TRACK_ID_RAW, TRACK_ID_OP, PUBLISHED_OP, SETTLED, DREL_FUSED, VREL_SMOOTHED |
+| 0x740 / 0x741 | `ARS510_REC_HEADER` / `TRAILER` | record header; CRC32 |
+| 0x760-0x76B | `ARS510_SHELL85_*` | 0x85 prefix, ten cells (with `PARAMETERS_PRESENT`), CRC |
+
+For the raw radar bus use `dbc/ars510_radar_bus.dbc` on bus 1. Some Cabana builds only list DBCs from
+`opendbc/dbc/`; copy the file there locally.
+
+Good first plots: DREL and VREL of one slot next to the video; SCORE_CODE and STATE_CODE as a track ends;
+UNK_148_8 / UNK_156_4 (lane weights) during a lane change; VLONG_OVER_GROUND of a lead you follow (≈ your speed).
+
+### Replay your drives through openpilot
+
+```bash
+OP=/path/to/openpilot
+cp -r $OP/opendbc_repo /tmp/opendbc_ars510 && python openpilot/install.py /tmp/opendbc_ars510
+PY=$OP/.venv/bin/python
+PYTHONPATH=$OP $PY tools/openpilot_replay/build_long_mpc_shadow.py --openpilot $OP --out op_shadow   # once, if not built with scons
+$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc $OP/opendbc_repo --mpc-shadow op_shadow \
+    --label stock  --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_ars510 --mpc-shadow op_shadow \
+    --label ars510 --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr stock ars510
+```
+
+The comparison lists detection, radarTracks rate and gaps, radar-matched leads, FCW and braking episodes that only one
+run has. To **watch** an episode, render openpilot's UI over the road video from the saved logs:
+
+```bash
+PYTHONPATH=$OP $PY $OP/openpilot/tools/clip/run.py "a510a510a510a510/<route>/<start>/<end>" -d pr/logs/ars510 --big -o ars510.mp4
+```
+
+To **plot**, open a saved `rlog.zst` in PlotJuggler: `longitudinalPlan.aTarget`, `radarState.leadOne.dRel` / `.vRel`,
+`radarTracks`. Replay is open loop: ego motion is as recorded, and "braking" means the planner's requested
+acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on `PATH`
+if clip rendering fails on `-vsync`.
+
+## Data in this repo
+
+[`data/README.md`](../data/README.md) describes every file. In short:
+
+- **`data/sample/`**: two 25-30 s real CAN captures (radar frames plus wheel speed, times rebased to 0), used by the
+  tests: steady highway following, and the velocity excursion of [07](07_velocity_excursions.md).
+- **`data/analysis/`**: an anonymised dataset from three drives (A, B, C; 88 minutes): every decoded object sample
+  with all raw fields, 90k radar-camera pairs, ground-contact and lateral camera pairs, brake-event windows, fault
+  injection results, and summary JSONs behind the numbers in these docs.
+- **`data/reference/slot_bit_map.json`**: per-bit statistics of the 0x80 slot, header and 0x85 record.
+
+The evidence comes from one owner's RAV4 (TSS2, 2022), logged with openpilot. Drives are named by role (A development,
+B city, C highway, D1-D4 closed-loop drives); route IDs, dongle IDs, GPS and full video are not included. A few
+camera stills are, with licence plates and place names blurred.
+
+## Testing on your own car
+
+1. **Same radar?** The forward radar at 0x750 / 0x0f answers `8821F0R03100` (in your route's `carParams.carFw`). Bus 1
+   carries 0x80 at ~1,760 frames/s and 0x85 at ~350 frames/s; `decode_log.py --profile raw` should report zero CRC
+   failures.
+2. **Sanity checks:** stopped behind a car, dRel matches the gap and vRel ≈ 0; approaching a stopped car,
+   `v_long_ground` ≈ 0; a car passing on your left has positive yRel and left-lane weight.
+3. **Replay** a few drives as above and look at the braking episodes only one run has.
+4. **Install** with [`openpilot/install.py`](../openpilot/README.md) and follow the on-car check list in
+   [08](08_openpilot_integration.md#checking-a-new-install-on-the-car).
+
+### What to send back
+
+- Your radar FW version, and whether 0x80 / 0x85 look the same.
+- Whether 0x500 and 0x502 bytes 4-7 differ from other units (they may be unit identifiers: share with care).
+- Replay braking-episode counts per hour, with your classification against the video (real closing / overstated /
+  lead steady or opening).
+- Short CAN excerpts of interesting events (radar addresses plus bus-0 0xB4, times rebased to 0, like `data/sample/`):
+  a clear velocity excursion, a stopped-car approach, a lane change.
+
+Please don't post route IDs, dongle IDs, GPS or video unless you mean to.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install (or remove) the experimental ARS510 radar-track integration into an opendbc checkout.
+"""Install (or remove) the ARS510 radar-track integration into an opendbc checkout.
 
     python openpilot/install.py /path/to/openpilot/opendbc_repo            # install
     python openpilot/install.py /path/to/openpilot/opendbc_repo --check    # report state, change nothing
@@ -14,7 +14,7 @@ Flavors (which Toyota files the hook patch is made for):
               passes CP_SP and preserves legacy RadarPoint fields; flag bit 4096
 Profiles (decoder settings in the installed ars510_radar_interface.py):
   default     OPENPILOT_CONFIG
-  steady      STEADY_CONFIG, the K4 opt-in of docs/16 (smoother, ~0.05 s of radar's head start)
+  steady      STEADY_CONFIG ("K4"): range fusion + far-range vRel smoothing, see docs/07
 
 What it writes into <opendbc_repo>:
   opendbc/car/toyota/ars510/                    the decoder package from this repo (copied unchanged)

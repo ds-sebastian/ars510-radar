@@ -6,7 +6,7 @@ and so on. `start|length` below uses that numbering (it is also DBC `@1+` Intel 
 Field boundaries come from carry chains between consecutive cycles of the same slot (a higher bit almost
 never flips unless the bit below it flips). Scales and zero points come from vehicle physics (wheel speed,
 standstill, stationary objects) and were then checked against model-free camera geometry on held-out drives.
-See docs/02_object_record_0x80.md for the evidence and its limits.
+docs/03_slot_fields.md describes every field; docs/06_accuracy.md the measured accuracy.
 
 Output convention matches openpilot's RadarPoint: dRel forward (m), yRel LEFT positive (m).
 """
@@ -35,30 +35,26 @@ LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, 1.0 / 64.0, "m", "valida
 # Longitudinal velocity OVER GROUND (not relative). 10-bit, 0.15 m/s per code, zero 510.5.
 # vRel = this - ego speed.
 LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s", "validated_with_caveats")
-# Lateral velocity over ground, left positive (sign confirmed). Scale NOT pinned: radar-only estimates (own lateral
-# position change in straight driving) range 0.097-0.147 m/s per code across data sets, and the pre-registered test
-# was unverified (docs/14). 0.15 is kept as a placeholder; openpilot does not use this field (yvRel stays NaN).
+# Lateral velocity over ground, left positive. With the rotating-frame correction (vy = dy/dt + yaw_rate * x) it fits
+# 0.142-0.145 m/s per code; 0.15 is used here (docs/03). openpilot does not use it (yvRel stays NaN).
 LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "scale_not_pinned")
-# Acceleration-like, zero code 511 at standstill; follows the velocity change with a ~0.5 s lag. Radar-only scale about
-# 0.04 m/s^2 per code on most data, but drive-dependent (0.03-0.11), so it stays in centred codes (docs/14).
+# Longitudinal acceleration over ground, filtered: zero code 511, about 0.04 m/s^2 per code, follows the velocity by
+# 0.5-1 s. Kept in centred codes (docs/03).
 ACCEL_LIKE = NativeField("accel_like_84", 84, 10, 511.0, 1.0, "code", "unnamed")
 # Track age in radar cycles (~60 ms): 1 at birth, saturates at 126, 0 = slot being retired.
 AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")
-# Historical two-bit projection retained for compatibility; it conflates distinct full codes.
-# Use movement_code for the full raw motion classification (docs/14). Neither is a validity gate.
+# Motion code 109|3: 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing,
+# 7 stopped after moving (docs/03). move_state is the historical two-bit view, kept for compatibility.
 MOVE_STATE = NativeField("move_state", 109, 2, 0.0, 1.0, "enum", "legacy_coarse_view")
 MOVEMENT_CODE = NativeField("movement_code", 109, 3, 0.0, 1.0, "code", "structure_provisional_semantics")
-# Separate raw views of the historical 8|6 window. Low five bits have an exact
-# initialization decay; bit 13 also changes independently. Physical meanings
-# remain unknown, especially outside startup. Neither is a validity gate.
+# Startup code 8|5: min(30, floor(31 * (2/3)**max(age - 4, 0))) while the motion code is 5 (initializing).
+# Bit 13 is a separate raw flag (docs/03).
 RAW8_LOW5 = NativeField("raw8_low5", 8, 5, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW13_BIT = NativeField("raw13_bit", 13, 1, 0.0, 1.0, "bit", "structure_semantics_unresolved")
-# Raw three-bit view associated with weight availability. Observed positive-age
-# codes 2/3/4 have nonzero triplets; 1/5/7 have zero triplets. Preserve unseen or
-# contradictory wire values, and do not treat this as object/measurement validity.
+# Lane state 128|3: 3 ego lane, 2 right lane, 4 left lane; 1 / 5 / 7 = no lane weights (docs/03).
 RAW_WEIGHT_STATE128 = NativeField("raw_weight_state128", 128, 3, 0.0, 1.0, "code", "structure_provisional_semantics")
-# Nearly normalized three-component raw group. Preserve all wire values rather
-# than normalizing or assigning physical outcome/probability names (docs/14).
+# Lane weights in 1/15 steps: 148|4 right lane, 152|4 left lane, 156|4 ego lane; nonzero triplets sum to 15 or 16
+# (docs/03). Raw wire values are kept as they are.
 RAW_WEIGHT_148 = NativeField("raw_weight148", 148, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW_WEIGHT_152 = NativeField("raw_weight152", 152, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
@@ -66,9 +62,8 @@ RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structu
 # an oncoming object slows or stops).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
-# Candidate velocity-uncertainty code (unnamed; behaves like an rms field). Among settled tracks it is higher when the
-# native velocity disagrees with the camera's by > 2 m/s, also within 5 m range bands at fixed age (stratified AUC
-# about 0.62 on drives A-C). Unit and meaning are unpinned: use it only as a relative confidence signal (docs/14).
+# Velocity standard deviation (sigma vx) candidate: grows with range and during velocity excursions, higher when the
+# velocity disagrees with the camera by > 2 m/s. Relative confidence; unit not pinned (docs/03).
 VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
 
 # Historical labels only; full code 3 is rightward-like while full code 7 is stopped-like.

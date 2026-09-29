@@ -25,7 +25,7 @@ Run it once with a stock opendbc and once with a patched copy, then compare:
   alpha long on, and on a RADAR_ACC Toyota card's startup then runs the UDS radar-disable routine. In
   process_replay card stalls after that routine (stock opendbc too): 80 carState messages per segment instead of
   6000. radard and the planner do not depend on the toggle. Whether the radar keeps sending 0x80 after a real
-  disable request can only be checked on the car (docs/07).
+  disable request can only be checked on the car (docs/08).
 
 Open-loop: ego motion stays as recorded. It shows what openpilot would have requested, not what the car would have
 done. Outputs:

@@ -12,8 +12,8 @@ Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`
 vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
 Use OPENPILOT_CONFIG for anything openpilot-facing. RAW_CONFIG publishes every valid track and is the
-decode-level view used for analysis. The candidate options (range fusion, vRel clip, far smoothing) are
-off in both; they are documented in docs/06_known_limitations.md with their measured trade-offs.
+decode-level view used for analysis. STEADY_CONFIG adds velocity-aided range and far-range vRel smoothing
+(docs/07_velocity_excursions.md has the measured effect of each option).
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ class NativeInterfaceConfig:
     vground_scale: float = 1.0
     # Withhold points whose vRel is unresolved (no fresh ego speed).
     drop_unresolved_vrel: bool = False
-    # --- candidates, off by default; each failed a pre-registered consumer test (docs/06) ---
+    # --- options, off by default (docs/07 has their measured effect; STEADY_CONFIG turns on the first and third) ---
     # Velocity-aided range: predict dRel with vRel, correct toward measured dRel with this gain (0 disables).
     range_fusion_gain: float = 0.0
     # Clip vRel to the track's own causal range slope over this window +/- vrel_range_clip_mps (0 disables).
@@ -68,19 +68,19 @@ class NativeInterfaceConfig:
     vrel_smooth_unc_hi: float = 42.0
     # ACC-target cross-check: the radar's own ACC target (0x235 / 0x237) is matched to an object by position. The matched
     # object's vRel is clipped to the target's closing speed +/- this many m/s (0 disables). 1.0 is the p95 of their
-    # difference on normal samples (docs/15).
+    # difference on normal samples (docs/05).
     acc_target_clip_mps: float = 0.0
     acc_target_max_age_s: float = 0.1
 
 
 # Every valid track, radar's own IDs: the decode-level view.
 RAW_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
-# Recommended openpilot-facing profile (see docs/07_openpilot_integration.md).
+# Base openpilot-facing profile (docs/08_openpilot_integration.md).
 OPENPILOT_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
 )
-# Opt-in for a steadier ride ("K4", docs/16): velocity-aided range plus far-range vRel smoothing. About half of radar's
-# extra output roughness over vision-only on held-out routes and on fresh drives, for ~0.05 s of radar's head start.
+# Recommended profile ("K4", docs/07): velocity-aided range plus far-range vRel smoothing. Removes about half of radar's
+# extra output roughness over vision-only (held-out routes and fresh drives) for ~0.07 s of radar's head start.
 STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"

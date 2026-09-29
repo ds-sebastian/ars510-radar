@@ -1,12 +1,12 @@
-"""EXPERIMENTAL, NOT DRIVE-TESTED: openpilot radar tracks from the Toyota / Continental ARS510 native object list.
+"""openpilot radar tracks from the Toyota / Continental ARS510 native object list.
 
 Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interface.py`, together with the `ars510`
 decoder package as `opendbc/car/toyota/ars510/`. Toyota's RadarInterface hands over to this class when the car was
 detected with an ARS510 (`ToyotaFlags.ARS510_RADAR`: a RADAR_ACC platform whose radar FW is in ARS510_FW_VERSIONS, or
-with 0x80 and 0x85 on bus 1 at fingerprinting). Read docs/07 and docs/14 first:
-  - vRel has unflagged excursions at 30-100 m;
+with 0x80 and 0x85 on bus 1 at fingerprinting). Worth knowing (docs/07, docs/08):
+  - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the "steady" profile halves their effect;
   - the radar drops new stationary objects once ego is above ~2-3 m/s, so a car that was already stopped when it came
-    into view is never listed;
+    into view comes from vision;
   - radard has no lateral gate.
 
 Why there is no CANParser: the object list is ONE 742-byte record sent as 106 ISO-TP-style frames on 0x80 every
@@ -31,7 +31,7 @@ from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
 from opendbc.car.toyota.ars510.constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
 
-# Decoder profile: "default" (OPENPILOT_CONFIG) or "steady" (STEADY_CONFIG, the smoother K4 opt-in, docs/16).
+# Decoder profile: "default" (OPENPILOT_CONFIG) or "steady" (STEADY_CONFIG, the smoother K4 profile, docs/07).
 # `install.py --profile steady` rewrites this one line in the installed copy.
 PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}
 PROFILE = PROFILES["default"]

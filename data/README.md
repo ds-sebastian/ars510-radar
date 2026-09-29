@@ -1,75 +1,57 @@
 # Data
 
-## `sample/`
+## `sample/`: real CAN captures
 
-Two short CAN captures from the development drive (drive A), highway:
+Two short captures from drive A (highway), used by the tests and figures:
 
 | file | length | content |
 |---|---|---|
 | `highway_following_30s.csv.gz` | 30 s | following a lead that closes from ~88 m to ~45 m; an adjacent-lane car at ~75 m |
-| `highway_vrel_excursion_25s.csv.gz` | 25 s | a settled lead at 41–57 m whose over-ground speed dips ~8 m/s for ~1 s while its range opens. This is the event that produced a false FCW in replay (docs/06) |
+| `highway_vrel_excursion_25s.csv.gz` | 25 s | a settled lead at 41-57 m whose over-ground speed dips ~8 m/s for ~1 s while its range opens ([docs/07](../docs/07_velocity_excursions.md)) |
 
-Format: `t_s,bus,address,data_hex`.
-- Times are rebased to 0 at the start of each file.
-- Only these frames are included: bus 1 0x80 / 0x81 / 0x85 / 0x86 / 0x192 (radar) and bus 0 0xB4 (wheel speed, for vRel).
-- There is no GPS, video, route or device identifier.
+Format `t_s,bus,address,data_hex`, times rebased to 0. Only bus 1 0x80 / 0x81 / 0x85 / 0x86 / 0x192 and bus 0 0xB4
+are included; no GPS, video, route or device identifier.
 
-## `analysis/`: anonymized analysis dataset
+## `analysis/`: anonymised analysis dataset
 
-**Historical camera-pair provenance:** a calibration-yaw sign error was found
-in several source association scripts on2026-09-28. Camera-pair tables and
-dependent statistical summaries retain their original values for provenance;
-they have not yet been regenerated with corrected pairing. They must not be
-treated as corrected physical ground truth. See
-[the correction scope](../docs/13_evidence_review.md#camera-association-correction-2026-09-28)
-and [bounded impact summary](analysis/summaries/camera_yaw_correction.json).
-An additive [corrected box-growth pairing and quality summary](analysis/summaries/camera_pair_correction.json)
-now records the research rerun. It does not replace the legacy parquet tables
-or silently update the other imported summaries.
-The [class/size-proxy and conditional-variance correction](analysis/summaries/camera_semantic_correction.json)
-likewise adds corrected aggregates without replacing the historical data tables.
-
-This is the data behind every chart in `docs/11_visual_tour.md` and the numbers in `docs/12_statistics.md`.
-- **Drives:** A (development, 26 min, mixed), B (held-out city, 43 min), C (held-out highway, 24 min).
-- **Segment labels:** `A00`…`C23`, in order within a drive.
-- **Times:** `t*` columns are seconds since that segment's first decoded record.
-- **Not included:** route or dongle IDs, dates, GPS positions. Speeds are kept.
+Three drives: **A** (development, 26 min, mixed), **B** (city, 43 min), **C** (highway, 24 min). Segment labels
+`A00` … `C23` are one-minute files in order; `t*` columns are seconds from each segment's first record. No route or
+dongle IDs, dates or GPS.
 
 | file | rows | content |
 |---|---|---|
-| `slots.parquet` | 174k | Every occupied 0x80 slot with age >= 1 (RAW_CONFIG). Decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, and **every raw field**: named codes `DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, … and all `UNK_<start>_<len>` candidates |
-| `camera_pairs.parquet` | 89k | Radar tracks paired by azimuth with narrow-camera YOLO boxes. `h` = box height (px); `x1..y2` = box; `vcam2/4/6` = box-growth closing speed over 2/4/6 s windows; `deriv1s` = causal 1 s range derivative; `slope10` = 10 s range slope; `v_b4 / v_cs / v_gps` = ego speed from 0xB4 / carState / GPS; `lead` = radard-style lead flag |
-| `ground_contact.parquet` | 50k | Camera ground-contact distance (`cam_ground_x`, flat-road projection) against radar `x`, with the calibration used |
-| `lateral_pairs.parquet` | 22k | Camera lateral estimates (`cam_Y_left`, `cam_Y_outer_center`) against raw `lat_code` |
-| `standstill_codes.parquet` | 15k | 64\|10 codes of stopped objects while ego is stopped |
-| `braking_episodes.csv` | 43 | Native-only braking episodes from replay through radard + planner, with camera classification (B, C) |
-| `fault_injection.csv` | 81 | Fault / ghost injection scenarios through radard + planner |
-| `brake_events/E*_*.csv` | | Drive-A brake-event windows (replay ticks, radar lead track, camera pair), time relative to brake onset |
-| `summaries/*.json` | | Per-audit numeric summaries (three-cornered hat, stationary truth, radar-only scales, lane peaks, camera-rate margins, constant ledger, …) |
-| `stats.json` | | Output of `tools/compute_stats.py` |
+| `slots.parquet` | 174k | every occupied 0x80 slot with age ≥ 1: decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, and every raw field (`DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, …, `UNK_<start>_<len>`) |
+| `camera_pairs.parquet` | 90k | radar tracks paired by bearing with narrow-camera YOLO boxes: box (`x1..y2`, `h`), box-growth closing speed over 2 / 4 / 6 s (`vcam2/4/6`), 1 s range derivative (`deriv1s`), 10 s range slope, ego speed from 0xB4 / carState / GPS, lead flag |
+| `ground_contact.parquet` | 50k | camera ground-contact distance (`cam_ground_x`, flat-road projection) against radar `x` |
+| `lateral_pairs.parquet` | 22k | camera lateral estimates against the raw lateral code |
+| `standstill_codes.parquet` | 15k | `64\|10` codes of stopped objects while ego is stopped |
+| `brake_events/E*_*.csv` | | drive-A brake-event windows: replay ticks, radar lead track, camera pair |
+| `fault_injection.csv` | 81 | ghost / fault scenarios through radard and the planner |
+| `stats.json`, `STATS.md` | | descriptive statistics from `tools/compute_stats.py` |
 
-The radar-only files (`slots.parquet` and the samples) are independent of the camera. The camera files are *references*, with their own failure modes: tracker swaps at range, hood clipping below ~8 m, and a flat-road assumption.
+`slots.parquet` is radar-only. The camera files are references with their own limits: tracker swaps at range, hood
+clipping below ~8 m, a flat-road assumption, and metric camera velocity that takes its scale from radar range.
 
-## Review caveats
+## `analysis/summaries/`: numbers behind the docs
 
-`summaries/review_followup.json` is a provenance-labelled aggregate extract of the newer video/odometry stationary-target test. Its full window inputs are not part of this snapshot; it is not generated by the original chart scripts. See [the evidence review](../docs/13_evidence_review.md).
+Aggregates from the full research dataset (399 one-minute segments from 24 drives, 20 held-out replay routes and
+closed-loop drives), which is not bundled.
 
-Historical exports are preserved, not silently relabelled as new measurements. In particular, `three_cornered_hat.json`'s `rms_error` key contains conditional centred SD, not bias-inclusive RMSE. Old `radar_bus_adjustments.json` results used a CRC-contaminated ID85 partition and cannot establish eleven objects or absence of confidence. `CONST_2_6` in the raw field tables is the physical slot index, not class. Segment-local track IDs/lifetimes are censored at file boundaries; key tracks by drive, segment and ID. Metric camera velocity uses radar range, so its errors need not be independent of radar.
+| doc | summaries |
+|---|---|
+| [02 Object list](../docs/02_object_list.md) | `stationary_listing_rule`, `header_allocation_count`, `prefix_alignment` |
+| [03 Slot fields](../docs/03_slot_fields.md) | `midband_weight_triplet`, `weight_lateral_roles`, `weight_state128`, `attribute_recoding`, `full_movement_code`, `startup_low5_decay`, `score16_countdown`, `score16_outcomes`, `velocity_heading`, `rotating_kinematics`, `template_field_tests`, `camera_semantic_correction` (size and class associations) |
+| [04 Metadata record](../docs/04_metadata_record_0x85.md) | `id85_lane_lateral_candidates`, `id85_parameter_presence`, `prefix_alignment` |
+| [05 ACC target](../docs/05_acc_target_and_support.md) | `signal_atlas_and_acc_crosscheck`, `acc_target_arel`, `acc_distance_increment_closure`, `event_pair_carries`, `context_24x` |
+| [06 Accuracy](../docs/06_accuracy.md) | `figure_numbers` (velocity MSE, range walks), `camera_semantic_correction` (three-cornered hat), `far_range_camera_correction`, `camera_identity_correction`, `review_followup` (stopped targets), `radar_only_scales`, `lane_peaks`, `state_space` |
+| [07 Velocity excursions](../docs/07_velocity_excursions.md) | `jitter_problem_figures`, `jitter_source_and_interface_limit`, `interface_filters_preregistered`, `radard_vision_fusion`, `jitter_event_scope_audit` |
+| [08 openpilot integration](../docs/08_openpilot_integration.md) | `driver_agreement_preregistered`, `openpilot_integration_replay`, `sunnypilot_installation` |
+
+`figure_numbers.json` is written by `tools/make_analysis_figures.py` from the bundled tables; the others are imported
+from the research workspace.
 
 ## `reference/slot_bit_map.json`
 
-The automatic carry-chain split of the 0x80 slot (288 bits), the 0x80 record header and the 0x85 record, measured on 13 one-minute segments of drive A. It includes:
-- per-bit flip rates and one-rates;
-- the candidate fields with their strongest correlation.
-
-`tools/build_cabana_route.py` reads it to put the candidate fields into the virtual-bus DBC.
-
-`analysis/summaries/camera_identity_correction.json` contains imported SCR-216
-old/new native identity and geometric shadow aggregates. It excludes the original
-route/video inputs and does not establish physical same-object continuity.
-Historical source-method differences and pending relink validation are explicit.
-
-`analysis/summaries/far_range_camera_correction.json` contains imported SCR-219
-far-range pairing/calibration and agreement-selected consensus results. Its full
-source inputs are not bundled. Camera metric scale uses radar calibration;
-these aggregates do not establish independent physical range accuracy.
+Per-bit statistics of the 0x80 slot (288 bits), the 0x80 header and the 0x85 record from 13 one-minute segments of
+drive A: flip rates, one-rates and the automatic carry-chain field split. `tools/build_cabana_route.py` builds the
+Cabana DBC's slot layout from it.
