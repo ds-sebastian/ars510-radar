@@ -181,7 +181,7 @@ def test_sample_record_rate_is_the_radar_cycle() -> None:
 
 
 def test_excursion_sample_shows_the_known_false_closing() -> None:
-    """The settled lead's over-ground speed dips ~8 m/s for ~1 s while its range keeps opening (docs/06)."""
+    """The settled lead's over-ground speed dips ~8 m/s for ~1 s while its range keeps opening (docs/07)."""
     iface = Ars510NativeRadarInterface(RAW_CONFIG)
     lead = [(p["time_s"], pt) for p in iface.update_many(sample_frames("highway_vrel_excursion_25s.csv.gz"))
             for pt in p["radarData"]["points"] if pt["age"] >= 60 and abs(pt["yRel"]) < 1.8 and pt["dRel"] < 80]
@@ -254,7 +254,7 @@ def test_move_state_and_oncoming_flag_decode_from_their_bits():
 def test_objects_dbc_names_the_tested_movement_fields():
     text = (Path(__file__).resolve().parents[1] / "dbc" / "ars510_objects_vbus.dbc").read_text()
     assert "SG_ MOVE_STATE : 109|2@1+" in text and "SG_ ONCOMING_FLAG : 14|1@1+" in text
-    assert 'MOVE_STATE 0 "moving away"' in text and 'ONCOMING_FLAG 0 "not oncoming"' in text
+    assert 'MOVE_STATE 0 "moving forward' in text and 'ONCOMING_FLAG 0 "not oncoming"' in text
     assert "UNK_109_2" not in text and "UNK_14_1" not in text
 
 

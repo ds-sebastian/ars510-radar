@@ -7,18 +7,18 @@ per occupied object slot with the slot's own 36 bytes, so the bit positions in t
 positions. The original log is copied unchanged; Cabana sorts events by time.
 
 Virtual bus messages (dbc/ars510_objects_vbus.dbc):
-  0x700+slot  ARS510_OBJ_xx          raw slot bytes (36, padded to 48), native fields + unverified candidates
+  0x700+slot  ARS510_OBJ_xx          raw slot bytes (36, padded to 48), decoded fields and raw fields
   0x720+slot  ARS510_OBJ_xx_DERIVED  NOT radar bytes: values the interface computes (vRel, trackIds, flags)
   0x740       ARS510_REC_HEADER      0x80 record bytes 0-16
   0x741       ARS510_REC_TRAILER     CRC32 + byte 741
   0x760       ARS510_SHELL85_HDR     0x85 proposed prefix bytes 0-20
-  0x761+k     ARS510_SHELL85_CELL_k  ten provisional raw cells, no object semantics
+  0x761+k     ARS510_SHELL85_CELL_k  ten 12-byte cells
   0x76B       ARS510_SHELL85_CRC     verified CRC32 + two trailer bytes
 
 Usage:
   python tools/build_cabana_route.py --dbc-only                       # regenerate dbc/ars510_objects_vbus.dbc
   python tools/build_cabana_route.py SEG_DIR [SEG_DIR ...] --out OUT  # SEG_DIR holds rlog(.zst|.bz2) (+ cameras)
-Then: cabana --data_dir OUT/route "<route name>" --dbc dbc/ars510_objects_vbus.dbc  (see docs/cabana.md)
+Then: cabana --data_dir OUT/route "<route name>" --dbc dbc/ars510_objects_vbus.dbc  (see docs/09_tools_and_data.md)
 
 Reading and writing logs needs openpilot's cereal (run from an openpilot venv / PYTHONPATH). --dbc-only does not.
 """
@@ -51,36 +51,76 @@ SETTLED_AGE = 60
 BIT_MAP = REPO / "data" / "reference" / "slot_bit_map.json"
 DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"
 
-NAMED_COMMENTS = {
-    "AGE": "Track age in radar cycles (~60 ms): 1 at birth, saturates at 126; 0 = slot being retired (geometry is the previous occupant's). A restart is a new track. Tracks younger than ~60 carry unconverged range and velocity.",
-    "DREL": "Longitudinal distance forward of the radar, m. 1/16 m, zero code 160 (exactly -10 m). Camera ground contact at 5-25 m: slope 0.99-1.00 on three drives, zero within 0.2 m (0.7 m on a hilly drive). Settled tracks walk by metres record to record at 40 m+; young tracks can be far off.",
-    "YREL_LEFT": f"Lateral offset, LEFT positive (openpilot yRel), m. 1/64 m, offset binary around 2048. Cartesian (constant across range), not an angle. Correct side 97.9-99.3% on held-out drives; scale bounded to about +/-10%. |code-2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
-    "VLONG_OVER_GROUND": "Longitudinal velocity OVER GROUND, m/s. 0.15 m/s/code, zero 510.5. vRel = this - ego speed. Radar-only scale check (own range slope vs GPS ego) gives 0.150/0.149/0.153 on three drives. Beats zero and range differencing against a camera reference, but has unflagged ~1 s excursions at range. Unsettled for age < ~60.",
-    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, LEFT positive (sign confirmed). Scale NOT pinned: the factor shown (0.15) is a placeholder. Radar-only estimates from its own lateral position change range 0.097-0.147 m/s per code across data sets, and the pre-registered test was unverified. See docs/14.",
-    "ALONG_LIKE_84": "Acceleration-like, zero code 511 at standstill. Follows the VLONG change with a ~0.5 s lag, so it cannot flag or lead a velocity excursion. Radar-only scale about 0.04 m/s^2 per code on most data but drive-dependent (0.03-0.11); centred codes (docs/14).",
-    "UNK_96": "Lateral ground-acceleration-like candidate: (raw-511)*0.05 m/s^2, calibration provisional. Rotation-corrected kinematics and a discovery-selected +0.5 s lag transfer to further drives (r about 0.90). Raw code retained; no accuracy gate or runtime use. See docs/14 for route exceptions and reference limitations.",
-}
-CANDIDATE_NOTES = {
-    "UNK_128_2": "Lower two bits of raw weight-state view128|3. Combine with UNK_130_1<<2. On observed positive-age slots, codes2/3/4 exactly accompany nonzero148/152/156triplets;1/5/7 accompany zeros. Codes2/3/4 usually match right/central/left-associated dominant weights, with exceptions. No object validity or lane gate (docs/14).",
-    "UNK_130_1": "Upper bit of raw weight-state view128|3: code=UNK_128_2+(this<<2). Keep the full code to distinguish observed availability states; physical zero-state meanings remain unresolved (docs/14).",
-    "UNK_148_8": "Legacy combined view of two candidate weight nibbles148|4 and152|4: first=value&15, second=value>>4. Together with156|4, nonzero triplets nearly always sum to15 or16, with two observed sum14 exceptions. Right/left/central position associations are supported; exact lane roles and probability calibration remain unresolved (docs/14).",
-    "UNK_156_4": "Third, central-associated component of the candidate weight triplet148/152/156|4. All-zero meaning and exact lane roles unknown; not an excursion or validity gate (docs/14).",
-    "UNK_208_6": "Coarse nonnegative velocity-heading-like candidate, about pi/64 rad/code. Negative headings almost always map to zero. Raw code retained; not a complete signed orientation, independent Doppler or control gate. See docs/14.",
-    "UNK_8_6": "Legacy combined raw view: low five bits follow an exact startup decay while full movement code109|3 remains5 from birth; bit13 can change separately. Extract low5=value&31 and bit13=value>>5. Mature meaning, units and probability interpretation unresolved; not a validity or excursion gate. See docs/14.",
-    "UNK_20_3": " Upper slice of SCORE_CODE, not a separately decoded missed-detection count. The full byte has a bounded state-2 countdown; branch selection and probability semantics remain unresolved (docs/14).",
-    "UNK_107_1": " Coasting-flag candidate: about 0.02 in settled life, 0.5-0.66 just before deletion (docs/14).",
-    "UNK_56_7": " Size / class candidate: per-track median follows camera vehicle height (partial rho 0.48-0.61 at fixed range) and truck/bus class (docs/14).",
-    "UNK_216_6": " Size / class candidate: camera vehicle height partial rho 0.44-0.63, truck/bus 0.35-0.42; width on A/C. Compare ARS4-B Length / dZ (6 bits) (docs/14).",
-    "UNK_272_5": " Size / class candidate: camera vehicle height partial rho 0.41-0.71, width 0.36-0.69, truck/bus 0.24-0.39 (docs/14).",
-    "UNK_224_7": " Uncertainty candidate: scales with range (r~0.8), falls with age at fixed range (rho -0.29 to -0.36), larger when range steps are noisier, rises before deletion. Weak near-range error indicator; does not single out excursions.",
-    "UNK_240_7": " Velocity-uncertainty candidate (like ARS408 VrelLong_rms): scales with range, falls with age, rises before deletion. Flags velocity glitches: stratified AUC 0.65 / 0.85 (discovery / confirmation) against clean labels where native vRel disagrees with both the radar ACC target (0x235) and vision (docs/15). Decoded as vel_unc_code.",
-    "UNK_232_7": " Lateral-uncertainty candidate: scales with |yRel| (r~0.6), falls with age at fixed range (rho -0.50 to -0.59).",
-    "UNK_248_7": " Uncertainty candidate: scales with |yRel| (r~0.56), falls with age at fixed range (rho -0.70 to -0.75).",
-    "CONST_2_6": " Physical slot index or 63 when unallocated; not an object category. Lane correlations reflect allocation.",
+# One line per signal: the current reading of each field (docs/03_slot_fields.md has the evidence).
+SIGNAL_COMMENTS = {
+    # slot: kinematics
+    "DREL": "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m for openpilot's camera-referenced distance (radard does).",
+    "YREL_LEFT": f"Lateral offset, m, left positive: (code - 2048) / 64. |code - 2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
+    "VLONG_OVER_GROUND": "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.",
+    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.145 (0.15 used).",
+    "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.",
+    "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
+    "UNK_208_6": "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.",
+    # slot: lifecycle and confidence
+    "STATE_CODE": "Track state: 1 = measured this cycle, 2 = predicted (coasting); 0 rare. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
+    "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",
+    "UNK_8_6": "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.",
+    "ONCOMING_FLAG": "1 = the object is oncoming now or was earlier in its track life.",
+    "SCORE_CODE": "Existence-like score, 0-100: rises while measured, drops by exactly 20 (or 1) per cycle while predicted; the slot is freed at about 20.",
+    "AGE": "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.",
+    "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
+    "UNK_111_4": "Bit 111 = bit 2 of the motion code (see MOVE_STATE); bits 112-114 raw.",
+    "UNK_107_1": "Coasting-flag candidate: rarely set in settled life, often set just before deletion.",
+    # slot: lane assignment
+    "UNK_128_2": "Lane-assignment state, low bits (full = UNK_128_2 | UNK_130_1 << 2): 3 ego lane, 2 right lane, 4 left lane; 1, 5, 7 = no lane weights.",
+    "UNK_130_1": "Lane-assignment state, bit 2 (see UNK_128_2).",
+    "UNK_148_8": "Lane weights in 1/15 steps: low nibble (148|4) right lane, high nibble (152|4) left lane. With UNK_156_4 (ego lane) they sum to 15 or 16.",
+    "UNK_156_4": "Ego-lane weight in 1/15 steps (see UNK_148_8).",
+    # slot: class and size
+    "UNK_163_3": "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 rare (post-like), 6 two-wheeler.",
+    "UNK_140_3": "Object class, second encoding of UNK_163_3: 0, 5, 7, 1, 3, 4 = class 1, 2, 3, 4, 5, 6.",
+    "UNK_136_4": "Class-confidence candidate, 0-15; 15 on nearly all pedestrians and two-wheelers.",
+    "UNK_56_7": "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.",
+    "UNK_216_6": "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.",
+    "UNK_272_5": "Height-like size code (candidate); larger for large vehicles.",
+    # slot: uncertainty and quality
+    "UNK_224_7": "Range standard deviation (candidate sigma dRel): grows with range, shrinks with track age.",
+    "UNK_232_7": "Lateral standard deviation (candidate sigma yRel): grows with |yRel|.",
+    "UNK_240_7": "Longitudinal velocity standard deviation (candidate sigma vx): grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
+    "UNK_248_7": "Lateral velocity standard deviation (candidate sigma vy).",
+    "UNK_200_7": "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.",
+    "UNK_256_6": "Existence-like quantity: rises with track age, drops before deletion.",
+    "UNK_262_2": "Upper bits of the existence-like quantity at 256.",
+    "UNK_264_5": "Measurement-state-like quantity: settled values depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m); near/far-scan candidate.",
+    "UNK_269_3": "Upper bits of the measurement-state-like quantity at 264.",
+    "UNK_183_7": "Bit 183 raw; bits 184-189 are the low bits of a secondary score byte 184|8 (59-100).",
+    "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.",
+    "UNK_168_10": "Flag word: only codes 0, 768, 832 and 1023 occur.",
+    "UNK_15_1": "Raw; mostly set on newborn zero-range rows.",
+    "UNK_239_1": "Raw; often set near track birth.",
+    "UNK_277_11": "Raw; bit 277 rarely set on newborn tracks.",
+    # record header
+    "UNK_HDR8_5": "Part of the clock code in record bytes 1-4 (little-endian), which equals the 0x85 fine clock // 100.",
+    "UNK_HDR13_4": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
+    "UNK_HDR17_15": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
+    "UNK_HDR33_1": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
+    "UNK_HDR41_15": "Record counter: record bytes 5-6 (little-endian) >> 1; equals the 0x85 counter of the same cycle.",
+    "UNK_HDR104_3": "Timing-offset candidate (104|11 region): its change tracks the record's arrival-time offset at about 1 ms per count.",
+    "UNK_HDR107_4": "Timing-offset candidate (see UNK_HDR104_3).",
+    "UNK_HDR111_4": "Raw; usually 3.",
+    "OBJECT_COUNT": "Number of allocated slots (slots whose index field equals their position, including retiring slots). Allocated slots need not be the first N.",
 }
 
-# Corrections from further CRC-valid captures (docs/14). The historical bit map
-# remains a frozen small-corpus artifact. These are raw views, not new semantics.
+
+def signal_comment(name: str) -> str:
+    if name in SIGNAL_COMMENTS:
+        return SIGNAL_COMMENTS[name]
+    if name.startswith("CONST_"):
+        return "Constant in the captured data."
+    return "Raw, unnamed."
+
+
+# Raw windows from the expanded captures that replace the historical bit-map split (data/reference/slot_bit_map.json).
 RAW_FIELD_CORRECTIONS = {
     15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions; not a validity gate.")],
     63: [(63, 1, "Rare changing bit; only two rows in the expanded corpus.")],
@@ -148,38 +188,38 @@ def dbc_text() -> str:
                 for start, width, note in RAW_FIELD_CORRECTIONS[f["start"]]:
                     name = f"UNK_{start}_{width}"
                     out.append(_sig(name, start, width, 1, 0, 0, (1 << width) - 1, "raw"))
-                    comments.append(f'CM_ SG_ {m} {name} "Expanded-corpus correction: {note} See docs/14.";')
+                    comments.append(f'CM_ SG_ {m} {name} "{signal_comment(name)}";')
                 continue
             if f["start"] == 0 and f["len"] == 2:
                 out.append(_sig("STATE_CODE", 0, 2, 1, 0, 0, 3, "raw"))
-                comments.append(f'CM_ SG_ {m} STATE_CODE "Raw lifecycle state. Measured/predicted semantics not proved; not an accuracy gate.";')
+                comments.append(f'CM_ SG_ {m} STATE_CODE "{signal_comment("STATE_CODE")}";')
                 continue
             if f["start"] == 109 and f["len"] == 2:
                 out.append(_sig("MOVE_STATE", 109, 2, 1, 0, 0, 3, ""))
-                comments.append(f'CM_ SG_ {m} MOVE_STATE "Legacy low-two-bit motion projection. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2). Full 3 is rightward-like, 4 leftward-like, 5 initialization/unsettled-like, 7 stopped-like; meanings provisional. Old labels conflate these states. See docs/14.";')
-                vals.append(f'VAL_ {m} MOVE_STATE 0 "moving away" 1 "not clearly moving" 2 "moving toward" 3 "not clearly moving (3)" ;')
+                comments.append(f'CM_ SG_ {m} MOVE_STATE "{signal_comment("MOVE_STATE")}";')
+                vals.append(f'VAL_ {m} MOVE_STATE 0 "moving forward (or left, with bit 111)" 1 "slow / standing (or initializing)" 2 "oncoming" 3 "moving right (or stopped after moving)" ;')
                 continue
             if f["start"] == 14 and f["len"] == 1:
                 out.append(_sig("ONCOMING_FLAG", 14, 1, 1, 0, 0, 1, ""))
-                comments.append(f'CM_ SG_ {m} ONCOMING_FLAG "1 = oncoming now or earlier in the track life (persists after an oncoming object slows). Pre-registered test on unseen segments: over-ground speed < 0 on 100% of flagged rows, 88.5% of objects approaching faster than 2 m/s flagged (docs/14).";')
+                comments.append(f'CM_ SG_ {m} ONCOMING_FLAG "{signal_comment("ONCOMING_FLAG")}";')
                 vals.append(f'VAL_ {m} ONCOMING_FLAG 0 "not oncoming" 1 "oncoming (now or earlier)" ;')
                 continue
             if f["start"] == 2 and f["len"] == 6:
                 out.append(_sig("SLOT_INDEX_CODE", 2, 6, 1, 0, 0, 63, "raw"))
-                comments.append(f'CM_ SG_ {m} SLOT_INDEX_CODE "Physical slot index or 63 in unallocated-form headers; verified against slot positions. Not class or reference point.";')
+                comments.append(f'CM_ SG_ {m} SLOT_INDEX_CODE "{signal_comment("SLOT_INDEX_CODE")}";')
                 continue
             if 16 <= f["start"] < 24:
                 if f["start"] == 16:
                     out.append(_sig("SCORE_CODE", 16, 8, 1, 0, 0, 255, "raw"))
-                    comments.append(f'CM_ SG_ {m} SCORE_CODE "Bounded score-like byte, not calibrated confidence or percent. Value 100 does not guarantee accurate geometry or velocity.";')
+                    comments.append(f'CM_ SG_ {m} SCORE_CODE "{signal_comment("SCORE_CODE")}";')
                 continue
             if f["kind"] == "named":
                 out.append(_named_sig(f["name"]))
-                comments.append(f'CM_ SG_ {m} {f["name"]} "{NAMED_COMMENTS[f["name"]]}";')
+                comments.append(f'CM_ SG_ {m} {f["name"]} "{signal_comment(f["name"])}";')
             else:
                 line, nm, text = _heuristic(f)
                 out.append(line)
-                comments.append(f'CM_ SG_ {m} {nm} "{text}{CANDIDATE_NOTES.get(f["name"], "")}";')
+                comments.append(f'CM_ SG_ {m} {nm} "{signal_comment(nm)}";')
         out.append("")
     for s in range(ID80_OBJECT_COUNT):
         m = DERIVED_BASE + s
@@ -196,8 +236,8 @@ def dbc_text() -> str:
             f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
             f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";',
-            f'CM_ SG_ {m} DREL_FUSED "Candidate, not in OPENPILOT_CONFIG: velocity-aided range (gain {FUSED_CONFIG.range_fusion_gain:g}); halves short-term range walks vs the camera.";',
-            f'CM_ SG_ {m} VREL_SMOOTHED "Candidate, not in OPENPILOT_CONFIG: causal EMA on VREL, tau 0 s below 30 m rising to {SMOOTH_CONFIG.vrel_smooth_far_tau_s:g} s from 60 m; ~0.5 s later true braking.";',
+            f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of STEADY_CONFIG); halves short-term range walks.";',
+            f'CM_ SG_ {m} VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to {SMOOTH_CONFIG.vrel_smooth_far_tau_s:g} s from 60 m.";',
         ]
         vals += [f'VAL_ {m} PUBLISHED_OP 0 "held back or absent" 1 "published" ;', f'VAL_ {m} SETTLED 0 "settling (age<60)" 1 "settled" ;']
 
@@ -206,15 +246,15 @@ def dbc_text() -> str:
     for f in bm["id80_header_fields"]:
         if f["start"] == 111 and f["len"] == 4:
             out.append(_sig("UNK_HDR111_4", 111, 4, 1, 0, 0, 15, "raw"))
-            comments.append(f'CM_ SG_ {HEADER_ADDR} UNK_HDR111_4 "Historical constant label corrected: raw code2 occurs in two records before a fine-clock rollover, versus usual3. Preserve bit111; adjacent timing-field boundaries and acquisition-time meaning remain unresolved (docs/14).";')
+            comments.append(f'CM_ SG_ {HEADER_ADDR} UNK_HDR111_4 "{signal_comment("UNK_HDR111_4")}";')
             continue
         if f["name"] == "OBJECT_COUNT":
             out.append(_sig("OBJECT_COUNT", f["start"], f["len"], 1, 0, 0, 20, "slots"))
-            comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "Legacy name: allocation count, slots whose raw2|6 index equals their physical array index. Includes allocated age-zero rows and does not imply that the first N slots are allocated or that each is a distinct physical object (docs/15).";')
+            comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "{signal_comment("OBJECT_COUNT")}";')
             continue
         line, nm, text = _heuristic(f)
         out.append(line)
-        comments.append(f'CM_ SG_ {HEADER_ADDR} {nm} "{text}";')
+        comments.append(f'CM_ SG_ {HEADER_ADDR} {nm} "{signal_comment(nm)}";')
     out += ["", f"BO_ {TRAILER_ADDR} ARS510_REC_TRAILER: {TRAILER_DLC} RADAR", _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, ""),
             _sig("RECORD_B741", 32, 8, 1, 0, 0, 255, "raw"), ""]
     comments.append(f'CM_ SG_ {TRAILER_ADDR} RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";')
@@ -223,17 +263,17 @@ def dbc_text() -> str:
     for b in range(HEADER_LEN):
         out.append(_sig(f"PREFIX_BYTE_{b:02d}", 8 * b, 8, 1, 0, 0, 255, "raw"))
     out.append("")
-    comments.append(f'CM_ BO_ {SHELL_HDR} "0x85 bytes 0-20, proposed prefix only. Byte 0 is length-low 0x90. Cell alignment and semantics remain provisional.";')
+    comments.append(f'CM_ BO_ {SHELL_HDR} "0x85 record bytes 0-20 (prefix). Byte 0 is the length-low byte 0x90; bytes 1-4 fine clock, 5-6 counter.";')
     for k in range(CELL_COUNT):
         m = SHELL_BASE + k
         out.append(f"BO_ {m} ARS510_SHELL85_CELL_{k:02d}: {SHELL_DLC} RADAR")
         for b in range(CELL_LEN):
             out.append(_sig(f"RAW_BYTE_{b:02d}", b * 8, 8, 1, 0, 0, 255, "raw"))
         out.append(_sig("PARAMETERS_PRESENT", 30, 1, 1, 0, 0, 1, ""))
-        comments.append(f'CM_ SG_ {m} PARAMETERS_PRESENT "Observed nondefault parameter marker. Not accuracy, freshness, physical validity, fixed ego-lane identity, reflection presence or ECU origin.";')
+        comments.append(f'CM_ SG_ {m} PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
-        comments.append(f'CM_ BO_ {m} "Provisional 0x85 analysis cell {k}, bytes {o}-{o + 11}; raw bytes, not a proven object. Excludes CRC and trailer.";')
+        comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";')
     out += [f"BO_ {SHELL_CRC} ARS510_SHELL85_CRC: 8 RADAR",
             _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, "raw"),
             _sig("TRAILER_BYTES", 32, 16, 1, 0, 0, 65535, "raw"), ""]
