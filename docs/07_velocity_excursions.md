@@ -71,14 +71,20 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 
 | option | where | extra roughness removed | head start given up | radar-only brakes the driver overrode with gas |
 |---|---|---|---|---|
-| default `OPENPILOT_CONFIG` | interface | — | — | 0.88 / h |
-| **`STEADY_CONFIG` (K4)**: `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0` | interface | **about half** (−0.0053 [−0.0099, −0.0022] m/s²; fresh drives −0.0081 [−0.0155, −0.0015]) | 0.07 s | **0.44 / h** |
+| default `OPENPILOT_CONFIG` (with saturation guard) | interface | — | — | 0.66 / h |
+| K4: `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0` | interface | **about half** (−0.0053 [−0.0099, −0.0022] m/s²; fresh drives −0.0081 [−0.0155, −0.0015]) | 0.07 s | 0.44 / h |
+| **`STEADY_CONFIG`** = K4 + saturation guard + 8 m/s velocity-jump guard | interface | about half, as K4 | 0.07 s | **0.22 / h** |
 | far-range smoothing only (`vrel_smooth_far_tau_s=1.0`) | interface | about 29% | 0.06 s | 0.66 / h |
 | ACC target's speed (0x235) as the object's vRel | interface | little; driver-agreement error −40% | 0.10-0.16 s | — |
 | vision speed fused into the matched track | radard patch | driver-agreement error −0.0043 [−0.0068, −0.0018] (twice K4's −0.0021) | 0.085 s | 0.88 / h |
 
-- **K4 is the recommended profile** (`install.py --profile steady`). It keeps most of radar's 0.15 s head start and
-  halves the gas-overridden radar-only brakes.
+- **`STEADY_CONFIG` is the recommended profile** (`install.py --profile steady`). K4's range fusion and far-range
+  smoothing keep most of radar's 0.15 s head start and halve the jitter. The two guards withhold invalid readings: the
+  saturated velocity code 1023, and a mature track's velocity jumping more than 8 m/s from one record to the next (a
+  new level that lasts 1 s is accepted under a new track ID). Together they cut hard radar-only braking requests
+  (≤ −2 m/s² while vision-only asks for no more than −0.5) from 85 to 69 ticks on the held-out routes, including a
+  −3.5 m/s² request from a saturated reading, and halve the gas-overridden radar-only brakes again. Lag, early
+  reaction, lead switches and driver agreement are unchanged; 17 of 20 routes are identical to K4.
 - **The radard patch** ([`openpilot/radard_vision_fusion.patch`](../openpilot/radard_vision_fusion.patch)) rewrites
   radard's track filter in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed
   into the matched track with standard deviation `2 × vStd`. It helped most on the held-out routes; on the fresh

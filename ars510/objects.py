@@ -120,6 +120,7 @@ class NativeObject:
     raw13_bit: int | None = None  # separately changing raw bit; meaning unknown
     raw_weights148: tuple[int, int, int] | None = None  # 148/152/156|4; outcomes and units unknown
     raw_weight_state128: int | None = None  # 128|3; availability/category association, not validity
+    vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
 
 
 def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
@@ -145,6 +146,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         vel_unc_code=int(field_code(slot, VEL_UNC_240)),
         geometry_valid=age >= 1,
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
+        vel_code=int(field_code(slot, LONG_VEL_GROUND)),
     )
 
 

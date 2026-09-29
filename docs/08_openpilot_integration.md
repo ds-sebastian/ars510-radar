@@ -48,11 +48,13 @@ Install instructions for each fork are in [`openpilot/README.md`](../openpilot/R
 
 | profile | config | use |
 |---|---|---|
-| `default` | `OPENPILOT_CONFIG`: `min_publish_age=60`, `relink_max_gap_s=3.5`, `vground_scale=0.149/0.15`, `drop_unresolved_vrel=True` | every fork |
-| `steady` (K4) | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0` | **recommended**: halves extra roughness for 0.07 s of head start ([07](07_velocity_excursions.md#options)) |
+| `default` | `OPENPILOT_CONFIG`: `min_publish_age=60`, `relink_max_gap_s=3.5`, `vground_scale=0.149/0.15`, `drop_unresolved_vrel=True`, `drop_saturated_codes=True` | every fork |
+| `steady` | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0`, `vjump_thresh_mps=8` | **recommended**: halves extra roughness for 0.07 s of head start and withholds implausible velocity jumps ([07](07_velocity_excursions.md#options)) |
 
 `range_fusion_gain` predicts dRel with vRel and corrects toward the measurement, halving 1.5 s range walks.
 `vrel_smooth_far_tau_s` smooths vRel with a time constant that rises from 0 s below 30 m to 1 s beyond 60 m.
+`drop_saturated_codes` and `vjump_thresh_mps` withhold a mature track's invalid readings (velocity code 1023, or a jump
+of more than 8 m/s between records) and continue the track under a new ID, so radard's filter restarts cleanly.
 
 ## What radard does with radar points
 

@@ -10,11 +10,12 @@ from ars510 import OPENPILOT_CONFIG, STEADY_CONFIG
 REPO = Path(__file__).resolve().parents[1]
 
 
-def test_steady_is_openpilot_plus_k4_only():
+def test_steady_is_openpilot_plus_k4_and_jump_guard_only():
   diff = {f.name for f in dataclasses.fields(OPENPILOT_CONFIG)
           if getattr(OPENPILOT_CONFIG, f.name) != getattr(STEADY_CONFIG, f.name)}
-  assert diff == {"range_fusion_gain", "vrel_smooth_far_tau_s"}
+  assert diff == {"range_fusion_gain", "vrel_smooth_far_tau_s", "vjump_thresh_mps"}
   assert STEADY_CONFIG.range_fusion_gain == 0.1 and STEADY_CONFIG.vrel_smooth_far_tau_s == 1.0
+  assert STEADY_CONFIG.vjump_thresh_mps == 8.0 and OPENPILOT_CONFIG.drop_saturated_codes
 
 
 def test_wrapper_has_one_switchable_profile_line():

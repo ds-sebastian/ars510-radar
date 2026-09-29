@@ -144,8 +144,11 @@ class 4 on people at crossings and fuel pumps and class 6 on motorcycles; class 
 | `184\|8` | secondary score | 59-100 on allocated slots | ○ |
 
 `240|7` is exposed as `NativeObject.vel_unc_code`. A saturated velocity (`64|10` = 1023, about +77 m/s over ground)
-always comes with `240|7` = 127. It occurs about once per hour of driving on mature tracks (6 episodes in 6.7 h) and
-is best treated as an invalid reading.
+always comes with `240|7` = 127 and is an invalid reading: it appears in short runs on mature tracks at 34-97 m (about
+once per hour of driving) and often decays through 1022, 1014, 1006 … over the next records. Record-to-record jumps
+of more than 5 m/s on a mature track (≈ 83 m/s² in 60 ms) belong to the same family and are about 20 times more
+common. Both profiles withhold the saturated reading; `STEADY_CONFIG` also withholds jumps above 8 m/s
+([07](07_velocity_excursions.md#options)).
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 

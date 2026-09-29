@@ -28,6 +28,7 @@ from .support import parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
+GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30
 RELINK_MIN_PUBLISH_AGE = 6
 
@@ -71,6 +72,17 @@ class NativeInterfaceConfig:
     # difference on normal samples (docs/05).
     acc_target_clip_mps: float = 0.0
     acc_target_max_age_s: float = 0.1
+    # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
+    # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
+    # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07).
+    drop_saturated_codes: bool = False
+    sat_recover_mps: float = 5.0
+    # Velocity-jump guard: a record whose over-ground velocity differs from the track's last accepted one by more than
+    # this (m/s, 0 = off) is withheld the same way. A new level that persists for guard_hold_s is accepted as a real
+    # step under a new trackId.
+    vjump_thresh_mps: float = 0.0
+    guard_hold_s: float = 1.0
+    guard_min_age: int = 60  # younger tracks legitimately converge and are not guarded
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -78,10 +90,12 @@ RAW_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
 # Base openpilot-facing profile (docs/08_openpilot_integration.md).
 OPENPILOT_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
+    drop_saturated_codes=True,
 )
-# Recommended profile ("K4", docs/07): velocity-aided range plus far-range vRel smoothing. Removes about half of radar's
-# extra output roughness over vision-only (held-out routes and fresh drives) for ~0.07 s of radar's head start.
-STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0)
+# Recommended profile ("K4" + guards, docs/07): velocity-aided range, far-range vRel smoothing and the 8 m/s velocity-jump
+# guard. Removes about half of radar's extra output roughness over vision-only for ~0.07 s of radar's head start, and
+# about a fifth of the hard radar-only braking requests.
+STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0, vjump_thresh_mps=8.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -117,6 +131,9 @@ class Ars510NativeRadarInterface:
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
+        self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
+        self._guard_gen: dict[int, int] = {}
+        self.guard_rejected = 0
 
     # ---- inputs -----------------------------------------------------------------------------------
     def set_ego_speed(self, v_ego_mps: float, time_s: float) -> None:
@@ -265,6 +282,44 @@ class Ars510NativeRadarInterface:
         return d
 
     # ---- output -----------------------------------------------------------------------------------
+    def _guard(self, tid: int, time_s: float, v: float, code: int, age: int) -> bool:
+        """True when this record of the track is rejected by the saturation / velocity-jump guard."""
+        cfg = self.config
+        sat = cfg.drop_saturated_codes and (code >= 1023 or code == 0)
+        st = self._guard_state.get(tid)
+        if st is not None and time_s - st[0] > 0.5:
+            st = None  # the track was silent: restart the reference
+        if st is None:
+            if age < cfg.guard_min_age:
+                self._guard_state.pop(tid, None)
+                return False
+            self._guard_state[tid] = [time_s, nan, time_s, True] if sat else [time_s, v, None, False]
+            self.guard_rejected += sat
+            return sat
+        st[0] = time_s
+        ref = st[1]
+        bad = sat
+        if not sat and isfinite(ref):
+            dv = abs(v - ref)
+            bad = (cfg.vjump_thresh_mps > 0 and dv > cfg.vjump_thresh_mps) or (
+                cfg.drop_saturated_codes and st[3] and dv > cfg.sat_recover_mps)
+        if not bad:
+            if st[2] is not None:  # episode over: continue under a new trackId
+                self._guard_gen[tid] = self._guard_gen.get(tid, 0) + 1
+                st[2], st[3] = None, False
+            st[1] = v
+            return False
+        if st[2] is None:
+            st[2] = time_s
+        if sat:
+            st[3] = True
+        elif time_s - st[2] > cfg.guard_hold_s:  # a persistent new level is a real step
+            self._guard_gen[tid] = self._guard_gen.get(tid, 0) + 1
+            st[1], st[2], st[3] = v, None, False
+            return False
+        self.guard_rejected += 1
+        return True
+
     def _payload(self, time_s: float, record: bytes) -> dict:
         cfg = self.config
         v_ego = self._fresh_ego_speed(time_s)
@@ -278,6 +333,9 @@ class Ars510NativeRadarInterface:
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
+                continue
+            if (cfg.drop_saturated_codes or cfg.vjump_thresh_mps > 0) and \
+                    self._guard(tid, time_s, obj.v_long_ground, obj.vel_code, obj.age):
                 continue
             v_ground = obj.v_long_ground * cfg.vground_scale
             vrel = float(v_ground - v_ego) if v_ego is not None else nan
@@ -305,7 +363,7 @@ class Ars510NativeRadarInterface:
             if tid not in self._out_id:
                 self._out_id[tid] = self._relink(tid, time_s, seen)
             point = {
-                "trackId": int(self._out_id[tid]),
+                "trackId": int(self._out_id[tid]) + GUARD_ID_STRIDE * self._guard_gen.get(tid, 0),
                 "dRel": float(d_rel),
                 "yRel": float(obj.y_rel),
                 "vRel": vrel,
@@ -328,7 +386,7 @@ class Ars510NativeRadarInterface:
             for k in [k for k, v in self._last.items() if v[0] < horizon]:
                 self._last.pop(k, None)
                 self._first.pop(k, None)
-        for store in (self._range_est, self._vrel_smooth):
+        for store in (self._range_est, self._vrel_smooth, self._guard_state):
             if len(store) > 400:
                 for k in [k for k, v in store.items() if v[0] < time_s - 5.0]:
                     store.pop(k, None)

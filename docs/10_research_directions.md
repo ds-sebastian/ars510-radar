@@ -4,19 +4,15 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **Drop saturated readings.** Withhold a point (and restart its track ID) while `64|10` = 1023 or `240|7` = 127.
-   These readings (about +77 m/s over ground) occur about once per hour; one produced a −31 m/s² lead acceleration and
-   a −3.5 m/s² request in replay. A one-line interface guard.
-2. **A lateral gate from the radar's lane weights.** The ego-lane weight `156|4` ([03](03_slot_fields.md#lane-assignment))
-   is exactly the in-path signal radard lacks. Interface variant: withhold points the radar assigns to an adjacent
-   lane with ≥ 12/15 when they would otherwise shadow the in-lane lead. radard variant: multiply the match likelihood by
-   the ego-lane weight.
-3. **Score and σ as per-point noise.** Use the existence score `16|8` and σ vx `240|7` to set each point's
+1. **Lane weights inside radard's matching.** The ego-lane weight `156|4` ([03](03_slot_fields.md#lane-assignment))
+   is the radar's own in-path estimate. Multiplying radard's match likelihood by it (where the weights are present,
+   about 40% of lead ticks) gives radard the lateral preference it lacks.
+2. **Score and σ as per-point noise.** Use the existence score `16|8` and σ vx `240|7` to set each point's
    measurement noise in a dt-aware track filter, instead of radard's fixed 20 Hz gains.
-4. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
-5. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
+3. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
+4. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
-6. **A wider ACC-target clip.** Clip the ACC-target object's vRel to 0x235 ± 3 m/s only on gross disagreement,
+5. **A wider ACC-target clip.** Clip the ACC-target object's vRel to 0x235 ± 3 m/s only on gross disagreement,
    where the ACC target is right 86-90% of the time.
 
 ## For the drift discriminator

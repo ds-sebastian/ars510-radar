@@ -320,3 +320,35 @@ def test_other_bus_idle_does_not_clear_acc():
 def test_acc_clip_remains_disabled_by_default():
     assert NativeInterfaceConfig().acc_target_clip_mps == 0.0
     assert OPENPILOT_CONFIG.acc_target_clip_mps == RAW_CONFIG.acc_target_clip_mps == 0.0
+
+
+def _guard_run(vel_codes: list[int], cfg) -> list:
+    """One mature track (age 70+) at 40 m with the given 64|10 codes, one record every 60 ms; returns its points."""
+    from ars510.objects import encode_slot
+    iface = Ars510NativeRadarInterface(cfg)
+    out = []
+    for k, vel in enumerate(vel_codes):
+        t = 0.06 * k
+        slot = encode_slot(long_dist=160 + 16 * 40, lat_dist_left=2048, long_vel_over_ground=vel, age_cycles=70 + k)
+        out.append(iface.update_many([speed_frame(t, 20.0)] + frames(record({2: slot}), t + 0.001))[0]["radarData"]["points"])
+    return out
+
+
+def test_saturation_guard_withholds_the_sentinel_and_restarts_the_track_id() -> None:
+    base = round(510.5 + 20.0 / 0.15)
+    codes = [base] * 5 + [1023] * 3 + [1014, base] + [base] * 3
+    guarded = _guard_run(codes, NativeInterfaceConfig(drop_saturated_codes=True))
+    assert [len(p) for p in guarded] == [1] * 5 + [0] * 4 + [1] * 4  # sentinel and its decaying tail withheld
+    assert guarded[9][0]["trackId"] != guarded[4][0]["trackId"]  # radard restarts the track's filter
+    plain = _guard_run(codes, NativeInterfaceConfig())
+    assert all(len(p) == 1 for p in plain) and plain[5][0]["vRel"] > 50  # without the guard the reading is published
+
+
+def test_jump_guard_withholds_a_glitch_and_accepts_a_persistent_step() -> None:
+    base = round(510.5 + 20.0 / 0.15)
+    cfg = NativeInterfaceConfig(vjump_thresh_mps=8.0)
+    glitch = _guard_run([base] * 5 + [base - 70] * 2 + [base] * 3, cfg)  # 10.5 m/s drop for two records
+    assert [len(p) for p in glitch] == [1] * 5 + [0, 0] + [1] * 3
+    step = _guard_run([base] * 5 + [base - 70] * 25, cfg)  # a level that persists longer than guard_hold_s (1 s)
+    assert sum(len(p) == 0 for p in step) <= 18 and len(step[-1]) == 1
+    assert step[-1][0]["trackId"] != step[4][0]["trackId"]
