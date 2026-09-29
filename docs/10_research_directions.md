@@ -38,7 +38,8 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **0x85 cells 0, 1, 4-7:** road-edge and further lane parameters ([04](04_metadata_record_0x85.md)).
 - **Lateral scale and range zero:** a surveyed lateral offset and a tape-measured gap, parked (the radar lists
   never-moving objects while ego is stopped), pin the last ±10% and ±0.7 m.
-- **0x191 descriptor tuple and 0x195 event codes.**
+- **0x191 descriptor tuple and 0x195 event codes:** independently associate the usually stable but occasionally
+  changing descriptor codes with physical classes/dimensions; identify a physical state for the event payloads.
 
 ## For the integration
 

@@ -17,6 +17,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | **dRel, yRel, velocity over ground** | ● decoded and checked on held-out drives ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class, width / length, heading, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded, names and scales being pinned ([03](docs/03_slot_fields.md)) |
 | **The radar's own ACC target** (0x235 / 0x237, 50 Hz) | ● decoded ([05](docs/05_acc_target_and_support.md)) |
+| **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **openpilot integration**: current openpilot, StarPilot, sunnypilot | installable; replayed end to end; driven by the owner on FrogPilot and StarPilot ports ([08](docs/08_openpilot_integration.md)) |
 | **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `steady` profile halves extra jitter, guards large jumps and delays far-track pickups; gradual ramps and recovery tails can still produce braking ([07](docs/07_velocity_excursions.md)) |
 

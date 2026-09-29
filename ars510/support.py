@@ -1,33 +1,30 @@
 """Support messages: the radar's own ACC target (0x235 / 0x237) and the selected-target summaries (docs/05).
 
-0x192 (4 bytes, ~radar cycle) is a filtered target summary, most likely the target the radar itself selects
-for ACC / pre-collision. It is NOT a better lead measurement: it is heavily smoothed and lags the 0x80 track
-by 10-15 m during closings. Sentinel payload 00 FF 00 FF (no target).
-  bytes 0-1 : big-endian distance, ~3/64 m per code (scale approximate, 13 bits used)
-  byte 2    : lateral bin of that target (7/8 own lane, 6 and 9 adjacent lanes, 10-13 far left, 2-5 oncoming side)
-  byte 3    : unknown
-0x194 has the same shape for the second selected target.
+0x192 / 0x194 (4 bytes, ~radar cycle) each carry two raw 13-bit summaries.
+Word 0 is range-like; physical scale and origin require independent calibration.
+Preserve all of word 1, including bit 12, before physical interpretation.
+The whole-frame sentinel is 00 FF 00 FF. Parsing a non-sentinel does not certify
+target availability or association. The driving interface does not use this helper.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 A192_SENTINEL = bytes.fromhex("00FF00FF")
-A192_DIST_SCALE_M = 3.0 / 64.0  # approximate
 
 
 @dataclass(frozen=True)
 class Target192:
-    distance_m: float
-    lateral_bin: int
-    byte3: int
+    range_code13: int
+    field1_code13: int
 
 
 def parse_0x192(data: bytes) -> Target192 | None:
+    """Decode raw summary words without assuming metric units or lane categories."""
     if len(data) < 4 or bytes(data[:4]) == A192_SENTINEL:
         return None
-    code = int.from_bytes(data[0:2], "big") & 0x1FFF
-    return Target192(code * A192_DIST_SCALE_M, data[2], data[3])
+    return Target192(int.from_bytes(data[0:2], "big") & 0x1FFF,
+                     int.from_bytes(data[2:4], "big") & 0x1FFF)
 
 
 def _be_field(data: bytes, start: int, length: int) -> int:

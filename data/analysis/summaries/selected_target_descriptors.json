@@ -1,0 +1,67 @@
+{
+  "scope": {
+    "segments": 700,
+    "route_groups": 34,
+    "prior_use": true,
+    "description": "Passive structural census; continuity of code and age does not certify physical target identity."
+  },
+  "metadata": {
+    "frames": 1365237,
+    "active": 608186,
+    "sentinel": 757051,
+    "other": 0,
+    "active_predicate": "Exact non-sentinel, age 1..126 and score code 1..126",
+    "young_age_below_60": 50406,
+    "mature_age_at_least_60": 557780,
+    "active_pair_code": {"minimum": 0, "maximum": 63, "distinct": 64},
+    "active_fields": {
+      "34|6": {"minimum": 18, "maximum": 30, "distinct": 8},
+      "49|7": {"values": [15, 23]},
+      "56|8": {"minimum": 20, "maximum": 120, "distinct": 28},
+      "43|5": {"minimum": 8, "maximum": 30, "code8_rows": 1}
+    }
+  },
+  "descriptor_lifecycle": {
+    "strict_continuity": "Adjacent unfiltered pair stream, both active, same code, 30..90 ms, age +1 or 126/126",
+    "strict_edges": 594013,
+    "coded_runs": 14173,
+    "changed_edges": 35,
+    "changed_runs": 5,
+    "changed_route_groups": 4,
+    "changes_in_pair_0x191": 35,
+    "changes_in_pair_0x193": 0,
+    "field34_changes": 7,
+    "field49_changes": 0,
+    "field56_changes": 35,
+    "changes_at_age126": 30,
+    "changes_at_ages91_to_97": 5,
+    "distinct_tuples": 30,
+    "dominant_tuples": [
+      {"codes": [18, 15, 45], "frames": 581836},
+      {"codes": [22, 23, 120], "frames": 26163}
+    ],
+    "further_tuples": {"distinct": 28, "frames": 187},
+    "interpretation": "Usually stable raw descriptors with rare changes through coherent code/age; physical class and dimensions require independent association and calibration."
+  },
+  "summary_words": {
+    "word0": "Range-like raw 13-bit code; independent metric scale/zero and target association required.",
+    "word1": "Preserve the entire raw 13-bit code before physical interpretation.",
+    "original_byte_verified_crossings": [
+      {"before": 4091, "after": 4109, "full_delta": 18, "low12_delta": -4078},
+      {"before": 4083, "after": 4098, "full_delta": 15, "low12_delta": -4081}
+    ],
+    "limit": "Continuity does not exclude every correlated mode transition or alternative packing; no metric or categorical lane output is established."
+  },
+  "verification": {
+    "input_hashes": 2103,
+    "metadata_byte_and_continuity_checks": 1365237,
+    "original_metadata_anchors": 158,
+    "original_sources": 83,
+    "original_crc_records": 81917,
+    "original_native_context_checks": 154,
+    "dynamic_code8_separate_original_check": true,
+    "summary_word_crossings_separate_original_check": true,
+    "diagnostic_helper_returns_raw_codes": true,
+    "driving_interface_changes": false
+  }
+}

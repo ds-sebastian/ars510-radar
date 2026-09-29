@@ -45,8 +45,8 @@ excursions concentrate. The interface offers it as an option (`acc_target_clip_m
 
 ## 0x191-0x194: selected-target summaries
 
-Two target summaries, each a pair: 0x191 with 0x192, and 0x193 with 0x194. They describe targets the radar selects
-itself (ACC / pre-collision).
+Two target-summary pairs: 0x191 with 0x192, and 0x193 with 0x194. Their age and code fields describe a pair-local
+lifecycle; association with a physical target or a published 0x80 object requires an independent witness.
 
 **0x191 / 0x193** (8 bytes, sentinel `FE FE FE FC FC FF FE FF`):
 
@@ -54,21 +54,30 @@ itself (ACC / pre-collision).
 |---|---|
 | `1\|7` | score: 91-100 active, 127 none |
 | `9\|7` | target age in cycles, saturates at 126 |
-| `26\|6` | target track code; a code can move between the two pairs |
-| `34\|6`, `49\|7`, `56\|8` | descriptor tuple, constant per target (e.g. 18/22/25, 15/23, 20/45/120) |
-| `43\|5` | dynamic code 9-30, grows with target age |
+| `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames |
+| `34\|6`, `49\|7`, `56\|8` | descriptor tuple, usually stable; active bounds 18-30, {15,23}, 20-120 |
+| `43\|5` | dynamic code 8-30, generally grows with target age |
+
+Across 700 segments, the descriptor tuple changes on 35 consecutive-cycle transitions in five coded runs, while
+code and age remain coherent. Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining
+187 frames contain 28 further tuples. These raw descriptors need independent class and dimension calibration;
+code continuity alone does not establish physical target identity.
+[Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json).
 
 **0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`):
 
 | bytes | field |
 |---|---|
-| 0-1 | big-endian 13-bit distance, about **3/64 m per code** |
-| 2 | **lateral lane bin**: 7/8 own lane, 6 and 9 adjacent lanes, 10-13 far left, 2-5 oncoming side |
-| 3 | raw |
+| 0-1 | big-endian 13-bit range-like raw summary; metric calibration required |
+| 2-3 | full big-endian 13-bit raw summary; preserve bit 12 |
 
-The 0x192 distance is heavily smoothed: record-to-record jitter 0.06-0.2 m (0x80 range: 0.7-1.0 m), and it lags the
-0x80 track by 10-15 m during closings. Its derivative follows native vRel at r = 0.94 with slope 0.65-0.9. It is a good
-"the radar's ACC also has a target in my lane at about this distance" signal.
+The second word crosses 4096 continuously in retained captures: 4091→4109 and 4083→4098. Preserving all 13 bits
+keeps changes of +18 and +15; a 12-bit fold would introduce artificial jumps of −4078 and −4081. These summary
+codes provide diagnostics; physical calibration and reliable target association are required before metric output.
+[Raw boundary evidence](../data/analysis/summaries/selected_target_descriptors.json).
+
+`parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers. It returns `None`
+for a short payload or the exact whole-frame sentinel. The driving interface does not consume these summaries.
 
 ## 0x190: cycle header
 

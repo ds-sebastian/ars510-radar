@@ -136,8 +136,18 @@ class TestShellAndSupport:
 
     def test_0x192(self) -> None:
         assert parse_0x192(bytes.fromhex("00FF00FF")) is None
+        assert parse_0x192(bytes.fromhex("0320")) is None
         t = parse_0x192((640).to_bytes(2, "big") + bytes([7, 0]))
-        assert t.distance_m == pytest.approx(30.0) and t.lateral_bin == 7
+        assert t.range_code13 == 640 and t.field1_code13 == 1792
+
+    @pytest.mark.parametrize("before,after,values", [
+        ("03C50FFB", "03CD100D", (4091, 4109)),
+        ("0A8F0FF3", "0A961002", (4083, 4098)),
+    ])
+    def test_0x192_retains_recorded_word1_crossings(self, before, after, values) -> None:
+        first, second = (parse_0x192(bytes.fromhex(v)) for v in [before, after])
+        assert (first.field1_code13, second.field1_code13) == values
+        assert second.field1_code13 - first.field1_code13 == values[1] - values[0]
 
 
 @pytest.mark.parametrize("name", ["highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz"])
