@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Regenerate docs/img/*.png from data in this repo (needs matplotlib)."""
+"""Regenerate docs/img/vrel_excursion_sample.png from the bundled CAN sample (needs matplotlib)."""
 from __future__ import annotations
 
 import csv
 import gzip
-import json
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -19,27 +18,6 @@ sys.path.insert(0, str(REPO))
 from ars510 import RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
 IMG = REPO / "docs" / "img"
-
-
-def flip_rate_figure() -> None:
-    bm = json.loads((REPO / "data/reference/slot_bit_map.json").read_text())
-    rate = bm["slot_bit_flip_rate"]
-    fig, ax = plt.subplots(figsize=(13, 3.6))
-    ax.bar(range(len(rate)), rate, width=1.0, color="#555")
-    colors = {"AGE": "#e377c2", "DREL": "#1f77b4", "YREL_LEFT": "#2ca02c", "VLONG_OVER_GROUND": "#d62728",
-              "VLAT_OVER_GROUND_PROV": "#ff7f0e", "ALONG_LIKE_84": "#9467bd", "UNK_96": "#8c564b"}
-    for f in bm["slot_fields"]:
-        if f["name"] in colors:
-            ax.axvspan(f["start"] - 0.5, f["start"] + f["len"] - 0.5, color=colors[f["name"]], alpha=0.25, lw=0)
-            short = {"VLONG_OVER_GROUND": "VLONG", "VLAT_OVER_GROUND_PROV": "VLAT", "ALONG_LIKE_84": "ACCEL?", "YREL_LEFT": "YREL"}.get(f["name"], f["name"])
-            ax.text(f["start"] + f["len"] / 2, max(rate) * 1.02, f"{short}\n{f['start']}|{f['len']}", ha="center", va="bottom", fontsize=8)
-    ax.set_xlim(-1, 150)
-    ax.set_ylim(0, max(rate) * 1.35)
-    ax.set_xlabel("slot bit (little-endian: bit 0 = LSB of slot byte 0)")
-    ax.set_ylabel("flip rate per cycle")
-    ax.set_title("0x80 object slot: per-bit flip rate between consecutive cycles of the same track (first 150 of 288 bits)")
-    fig.tight_layout()
-    fig.savefig(IMG / "slot_bit_flip_rate.png", dpi=130)
 
 
 def excursion_figure() -> None:
@@ -79,6 +57,5 @@ def excursion_figure() -> None:
 
 if __name__ == "__main__":
     IMG.mkdir(parents=True, exist_ok=True)
-    flip_rate_figure()
     excursion_figure()
     print("wrote", sorted(p.name for p in IMG.glob("*.png")))

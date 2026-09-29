@@ -72,39 +72,39 @@
     ]
    },
    "camera_pairs": {
-    "rows": 22684,
-    "settled_rows_with_camera_rate": 17379,
-    "camera_vehicles": 157,
+    "rows": 22643,
+    "settled_rows_with_camera_rate": 17182,
+    "camera_vehicles": 159,
     "vrel_minus_camera_by_band": {
      "3-30": {
-      "pairs": 2405,
-      "median_abs_diff": 0.24,
-      "p90_abs_diff": 0.79,
-      "share_abs_diff_gt2": 0.005,
+      "pairs": 2516,
+      "median_abs_diff": 0.22,
+      "p90_abs_diff": 0.78,
+      "share_abs_diff_gt2": 0.006,
       "share_abs_diff_gt4": 0.0,
       "disagreement_runs_ge_0.5s": 0,
       "paired_track_hours": 0.06,
       "runs_per_paired_track_hour": 0.0
      },
      "30-60": {
-      "pairs": 6866,
+      "pairs": 6577,
       "median_abs_diff": 0.57,
-      "p90_abs_diff": 1.64,
-      "share_abs_diff_gt2": 0.059,
+      "p90_abs_diff": 1.63,
+      "share_abs_diff_gt2": 0.061,
       "share_abs_diff_gt4": 0.01,
       "disagreement_runs_ge_0.5s": 2,
-      "paired_track_hours": 0.15,
-      "runs_per_paired_track_hour": 13.4
+      "paired_track_hours": 0.14,
+      "runs_per_paired_track_hour": 13.9
      },
      "60-100": {
-      "pairs": 6794,
+      "pairs": 6777,
       "median_abs_diff": 0.86,
-      "p90_abs_diff": 3.08,
-      "share_abs_diff_gt2": 0.212,
-      "share_abs_diff_gt4": 0.056,
-      "disagreement_runs_ge_0.5s": 20,
+      "p90_abs_diff": 3.14,
+      "share_abs_diff_gt2": 0.215,
+      "share_abs_diff_gt4": 0.057,
+      "disagreement_runs_ge_0.5s": 21,
       "paired_track_hours": 0.15,
-      "runs_per_paired_track_hour": 136.3
+      "runs_per_paired_track_hour": 142.5
      }
     }
    }
@@ -181,39 +181,39 @@
     ]
    },
    "camera_pairs": {
-    "rows": 31428,
-    "settled_rows_with_camera_rate": 19565,
+    "rows": 32449,
+    "settled_rows_with_camera_rate": 20435,
     "camera_vehicles": 479,
     "vrel_minus_camera_by_band": {
      "3-30": {
-      "pairs": 3524,
+      "pairs": 3731,
       "median_abs_diff": 0.31,
-      "p90_abs_diff": 1.16,
-      "share_abs_diff_gt2": 0.039,
-      "share_abs_diff_gt4": 0.006,
+      "p90_abs_diff": 1.15,
+      "share_abs_diff_gt2": 0.037,
+      "share_abs_diff_gt4": 0.005,
       "disagreement_runs_ge_0.5s": 1,
       "paired_track_hours": 0.08,
-      "runs_per_paired_track_hour": 12.8
+      "runs_per_paired_track_hour": 12.2
      },
      "30-60": {
-      "pairs": 9482,
-      "median_abs_diff": 0.77,
-      "p90_abs_diff": 2.85,
-      "share_abs_diff_gt2": 0.184,
-      "share_abs_diff_gt4": 0.05,
-      "disagreement_runs_ge_0.5s": 25,
+      "pairs": 9562,
+      "median_abs_diff": 0.79,
+      "p90_abs_diff": 2.88,
+      "share_abs_diff_gt2": 0.189,
+      "share_abs_diff_gt4": 0.051,
+      "disagreement_runs_ge_0.5s": 26,
       "paired_track_hours": 0.19,
-      "runs_per_paired_track_hour": 130.6
+      "runs_per_paired_track_hour": 134.2
      },
      "60-100": {
-      "pairs": 5932,
-      "median_abs_diff": 2.45,
-      "p90_abs_diff": 7.78,
-      "share_abs_diff_gt2": 0.572,
-      "share_abs_diff_gt4": 0.288,
-      "disagreement_runs_ge_0.5s": 73,
+      "pairs": 6494,
+      "median_abs_diff": 2.41,
+      "p90_abs_diff": 7.85,
+      "share_abs_diff_gt2": 0.567,
+      "share_abs_diff_gt4": 0.284,
+      "disagreement_runs_ge_0.5s": 79,
       "paired_track_hours": 0.16,
-      "runs_per_paired_track_hour": 470.0
+      "runs_per_paired_track_hour": 480.5
      }
     }
    }
@@ -290,36 +290,36 @@
     ]
    },
    "camera_pairs": {
-    "rows": 35066,
-    "settled_rows_with_camera_rate": 26143,
-    "camera_vehicles": 245,
+    "rows": 34981,
+    "settled_rows_with_camera_rate": 25802,
+    "camera_vehicles": 251,
     "vrel_minus_camera_by_band": {
      "3-30": {
-      "pairs": 2932,
-      "median_abs_diff": 0.25,
-      "p90_abs_diff": 1.02,
-      "share_abs_diff_gt2": 0.009,
+      "pairs": 2855,
+      "median_abs_diff": 0.27,
+      "p90_abs_diff": 1.03,
+      "share_abs_diff_gt2": 0.01,
       "share_abs_diff_gt4": 0.001,
       "disagreement_runs_ge_0.5s": 0,
       "paired_track_hours": 0.09,
       "runs_per_paired_track_hour": 0.0
      },
      "30-60": {
-      "pairs": 13893,
-      "median_abs_diff": 0.59,
+      "pairs": 13616,
+      "median_abs_diff": 0.6,
       "p90_abs_diff": 1.84,
-      "share_abs_diff_gt2": 0.08,
+      "share_abs_diff_gt2": 0.079,
       "share_abs_diff_gt4": 0.009,
       "disagreement_runs_ge_0.5s": 9,
-      "paired_track_hours": 0.27,
-      "runs_per_paired_track_hour": 33.3
+      "paired_track_hours": 0.28,
+      "runs_per_paired_track_hour": 32.0
      },
      "60-100": {
-      "pairs": 6977,
+      "pairs": 6959,
       "median_abs_diff": 1.17,
-      "p90_abs_diff": 3.61,
-      "share_abs_diff_gt2": 0.285,
-      "share_abs_diff_gt4": 0.077,
+      "p90_abs_diff": 3.6,
+      "share_abs_diff_gt2": 0.286,
+      "share_abs_diff_gt4": 0.076,
       "disagreement_runs_ge_0.5s": 26,
       "paired_track_hours": 0.17,
       "runs_per_paired_track_hour": 156.1

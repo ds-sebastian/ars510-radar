@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the figures of docs/16_the_jitter_problem.md from data/analysis/summaries/jitter_problem_figures.json.
+"""Regenerate the velocity-excursion figures of docs/07_velocity_excursions.md from data/analysis/summaries/jitter_problem_figures.json.
 
     python tools/make_jitter_figures.py
 
@@ -95,29 +95,6 @@ def roughness_by_state() -> None:
          "roughness energy; steady radar following adds only +0.005 m/s².")
 
 
-def switching_symptom() -> None:
-    c = DATA["candidates_heldout"]
-    base, hyst = c["ars510"], c["H"]
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(8.2, 3.6))
-    labels = ["radard as is", "radard + hysteresis\n(diagnostic)"]
-    a1.bar([0, 1], [base["lead_switches_per_h"], hyst["lead_switches_per_h"]], 0.55, color=[RADAR, S3])
-    a1.set_xticks([0, 1], labels)
-    a1.set_title("lead switches per hour", loc="left")
-    a2.bar([0, 1], [base["roughness_excess_vs_vision"], hyst["roughness_excess_vs_vision"]], 0.55, color=[RADAR, S3])
-    a2.set_xticks([0, 1], labels)
-    a2.set_title("extra roughness over vision-only (m/s²)", loc="left")
-    for ax, vals, fmt in ((a1, [base["lead_switches_per_h"], hyst["lead_switches_per_h"]], "{:.0f}"),
-                          (a2, [base["roughness_excess_vs_vision"], hyst["roughness_excess_vs_vision"]], "{:.4f}")):
-        for i, val in enumerate(vals):
-            ax.text(i, val, fmt.format(val), ha="center", va="bottom", fontsize=8.5, color=INK)
-    fig.suptitle("Switching is a symptom: removing 80% of the switches leaves the jitter", x=0.01, y=1.06, ha="left",
-                 fontsize=11, color=INK)
-    save(fig, "jitter_switching_is_a_symptom",
-         "Diagnostic only (not a proposal): a copy of radard that keeps the previous radar track while it stays within "
-         "max(40% d, 8 m) of vision. On the moments that were switch windows before, it is still as rough "
-         "(0.137 vs 0.141 m/s² rms; vision 0.109). The roughness belongs to the radar values at those moments.")
-
-
 def tradeoff() -> None:
     c = {k: v for k, v in DATA["candidates_heldout"].items() if k not in ("H",)}
     base = c["ars510"]
@@ -162,23 +139,6 @@ def tradeoff() -> None:
     names = "; ".join(f"{k} {v['name']}" for k, v in c.items() if k != "ars510")
     save(fig, "jitter_tradeoff", f"Held-out routes, one scorer for all rows. At baseline radar starts braking ~0.22 s before "
          f"vision-only around the driver's brake presses. {names}.")
-
-
-def coverage() -> None:
-    cv = DATA["acc_target_coverage_by_range"]
-    fig, ax = plt.subplots(figsize=(6.4, 3.4))
-    x = np.arange(len(cv["bands_m"]))
-    ax.bar(x, [100 * s for s in cv["share"]], 0.6, color=RADAR)
-    for i, s in enumerate(cv["share"]):
-        ax.text(i, 100 * s, f"{s:.0%}", ha="center", va="bottom", fontsize=8.5, color=INK)
-    ax.set_xticks(x, cv["bands_m"])
-    ax.set_xlabel("radar lead distance (m)")
-    ax.set_ylabel("% of radar-lead ticks")
-    ax.set_ylim(0, 100)
-    ax.set_title("The radar's own ACC target (0x235) rarely describes far leads", loc="left")
-    save(fig, "jitter_acc_target_coverage",
-         "Share of radard's radar-lead ticks whose object is matched to the ACC target (0x237 position), fresh drives. "
-         "Far range is where velocity excursions concentrate (20-30x more often at 60-80 m than at 20-40 m).")
 
 
 def real_gallery() -> None:
@@ -258,5 +218,5 @@ def real_census() -> None:
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    for f in (event, roughness_by_state, switching_symptom, tradeoff, coverage, real_gallery, real_census):
+    for f in (event, roughness_by_state, tradeoff, real_gallery, real_census):
         f()
