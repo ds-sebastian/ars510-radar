@@ -68,6 +68,10 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
   never publishes one). A new track ID resets it, which is why IDs are re-linked.
 - **Matching needs a vision lead.** radard matches a radar track to the vision lead while the lead probability is
   above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check.
+  Matching is evaluated each tick without previous-lead hysteresis; if the camera still selects the departing
+  vehicle, both radar fusion and vision-only can remain on it. Delay measured after the camera changes its lead
+  is a different quantity from delay after a physical lane departure. A radar/vision source-switch count also
+  differs from physical vehicle handover.
 - **No lateral gate.** If the true lead is missing from the radar list, an adjacent-lane object at the right distance
   and speed becomes the lead 34-78% of the time, even at 6 m offset. The radar's own lane weights
   ([03](03_slot_fields.md#lane-assignment)) could supply one.

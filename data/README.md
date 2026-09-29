@@ -44,7 +44,7 @@ closed-loop drives), which is not bundled.
 | [04 Metadata record](../docs/04_metadata_record_0x85.md) | `id85_lane_lateral_candidates`, `id85_parameter_presence`, `prefix_alignment` |
 | [05 ACC target](../docs/05_acc_target_and_support.md) | `signal_atlas_and_acc_crosscheck`, `acc_target_arel`, `acc_distance_increment_closure`, `event_pair_carries`, `context_24x` |
 | [06 Accuracy](../docs/06_accuracy.md) | `figure_numbers` (velocity MSE, range walks), `camera_semantic_correction` (three-cornered hat), `far_range_camera_correction`, `camera_identity_correction`, `review_followup` (stopped targets), `radar_only_scales`, `lane_peaks`, `state_space` |
-| [07 Velocity excursions](../docs/07_velocity_excursions.md) | `jitter_problem_figures`, `jitter_source_and_interface_limit`, `interface_filters_preregistered`, `radard_vision_fusion`, `jitter_event_scope_audit`, `velocity_guards`, `far_settling` (selected option, replay aggregates and relative-time example) |
+| [07 Velocity excursions](../docs/07_velocity_excursions.md) | `jitter_problem_figures`, `jitter_source_and_interface_limit`, `interface_filters_preregistered`, `radard_vision_fusion`, `jitter_event_scope_audit`, `velocity_guards`, `far_settling` (selected option, replay aggregates and relative-time example), `owner_driver_review` (guard recovery limits and driver/override aggregates) |
 | [08 openpilot integration](../docs/08_openpilot_integration.md) | `driver_agreement_preregistered`, `openpilot_integration_replay`, `sunnypilot_installation`, `velocity_guards`, `far_settling` |
 
 `figure_numbers.json` is written by `tools/make_analysis_figures.py` from the bundled tables; the others are imported

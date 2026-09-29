@@ -1,0 +1,100 @@
+{
+  "scope": {
+    "recorded_drives": 3,
+    "original_log_segments": 72,
+    "replay_controls": "openpilot 10b9e73",
+    "original_controls": "sunnypilot",
+    "prior_used": true,
+    "closed_loop_counterfactual": false
+  },
+  "guard_event": {
+    "native_input_max_gap_s": 0.07032726200122852,
+    "native_age": 126,
+    "rejected_records": 17,
+    "withheld_duration_s": 1.0301962100020319,
+    "reference_resets": 0,
+    "persistent_step_accepts": 0,
+    "recoveries_to_reference": 1,
+    "previous_reference_mps": 28.275,
+    "release_v_ground_mps": 33.525,
+    "original_command_min_mps2": -2.0730671882629395,
+    "old_default_replay_min_mps2": -2.1126,
+    "steady_replay_min_mps2": -1.3703
+  },
+  "heldout_driver": {
+    "ars510": {
+      "human_hours": 4.564427099775277,
+      "brake_events": 167,
+      "anticipation": 0.4431137724550898,
+      "radar_only_episodes": 9,
+      "gas_overridden": 4,
+      "override_events": 38,
+      "e6_closer": 7,
+      "e6_further": 2,
+      "paired_E4_delta": 0.0022406199790197642,
+      "paired_E4_ci": [
+        0.000852344862887111,
+        0.004041861096865369
+      ]
+    },
+    "SAT_K4J8": {
+      "human_hours": 4.564427099775277,
+      "brake_events": 167,
+      "anticipation": 0.4431137724550898,
+      "radar_only_episodes": 6,
+      "gas_overridden": 1,
+      "override_events": 38,
+      "e6_closer": 8,
+      "e6_further": 2,
+      "paired_E4_delta": 0.0,
+      "paired_E4_ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "FS_a100r70": {
+      "human_hours": 4.564427099775277,
+      "brake_events": 167,
+      "anticipation": 0.4431137724550898,
+      "radar_only_episodes": 6,
+      "gas_overridden": 1,
+      "override_events": 38,
+      "e6_closer": 8,
+      "e6_further": 2,
+      "paired_E4_delta": -2.654662789308385e-05,
+      "paired_E4_ci": [
+        -8.42137878617604e-05,
+        3.666376391574297e-05
+      ]
+    }
+  },
+  "owner_driver": {
+    "old_default": {
+      "human_hours": 0.7119459546366638,
+      "brake_events": 9,
+      "override_events": 28,
+      "e6_closer": 0,
+      "e6_further": 3
+    },
+    "new_steady": {
+      "human_hours": 0.7119459546366638,
+      "brake_events": 9,
+      "override_events": 28,
+      "e6_closer": 0,
+      "e6_further": 2
+    },
+    "FS_a100r70": {
+      "human_hours": 0.7119459546366638,
+      "brake_events": 9,
+      "override_events": 28,
+      "e6_closer": 0,
+      "e6_further": 2
+    }
+  },
+  "interpretation": {
+    "physical_motion_truth": false,
+    "physical_lane_handover_clock": false,
+    "measured_additional_override_gain_from_age_gate": false,
+    "disengagement_prevention_demonstrated": false
+  }
+}

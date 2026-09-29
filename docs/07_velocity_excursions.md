@@ -85,6 +85,13 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   (≤ −2 m/s² while vision-only asks for no more than −0.5) from 85 to 69 ticks on the held-out routes, including a
   −3.5 m/s² request from a saturated reading, and halve the gas-overridden radar-only brakes again. Lag, early
   reaction, lead switches and driver agreement are unchanged for the two guards alone; 17 of 20 routes are identical to K4.
+  Gradual ramps can still move the accepted reference. In a curve braking event, native records remain continuous
+  (largest gap 0.070 s, age 126). The guard withholds 17 records for 1.030 s, then recovers at 33.525 m/s over ground,
+  within 8 m/s of its already elevated 28.275 m/s reference. The output gap comes from withholding; release uses
+  reference recovery rather than a silence reset or persistent-step timeout. The released velocity's decay still
+  produces braking: the original drive commands −2.07 m/s², and the recommended-profile replay requests −1.37.
+  These are interface recovery limits, not a physical target-speed determination
+  ([summary](../data/analysis/summaries/owner_driver_review.json)).
 - **Far-track settling** holds a track's first publication above 70 m until age 100 (about 6 s after birth, versus
   the default age 60). Once published, it remains eligible even if its range grows; a lifecycle restart is gated anew.
   In 20 replay chains, versus K4 + guards, hard ticks stay at 69, human-controlled radar-only episodes stay at 6,
@@ -93,7 +100,11 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   Paired roughness changes by +0.000077 [−0.000032, +0.000206] m/s²: the gain is one avoided pickup episode.
   Individual responses can be later (one measured delay is 0.253 s; another response falls outside the 2 s scoring
   window). These drives have prior use, the owner route motivated the option, and older-track excursions and the
-  separate downhill glitch remain. Numbers: [`far_settling.json`](../data/analysis/summaries/far_settling.json).
+  separate curve/grade event remain. The age extension leaves the scored pedal-override outcomes unchanged
+  both on the 20 held-out chains and on the three recorded sunnypilot drives. Its evidence is a bounded pickup
+  mitigation, not a demonstrated improvement in disengagements. Numbers:
+  [`far_settling.json`](../data/analysis/summaries/far_settling.json),
+  [`owner_driver_review.json`](../data/analysis/summaries/owner_driver_review.json).
 
 ![far-track settling example](img/analysis/far_settling.png)
 
