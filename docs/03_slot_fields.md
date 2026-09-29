@@ -108,7 +108,7 @@ as `raw_weight_state128`.
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `163\|3` | **class** | 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 rare (post-like), 6 two-wheeler | ◐ |
+| `163\|3` | **class** | 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 bicycle candidate, 6 two-wheeler | ◐; 5 ○ |
 | `140\|3` | class, second encoding | 0, 5, 7, 1, 3, 4 ↔ class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows) | ● |
 | `136\|4` | class confidence | 0-15; 15 on nearly all pedestrians and two-wheelers | ○ |
 | `216\|6` | **width** | `(code + 1) × 0.1` m | ◐ |
@@ -126,7 +126,15 @@ The class code and the two size fields describe one consistent object box (matur
 | 6 two-wheeler | rare | 9.4 m/s | 0.7 m | 1.7 m |
 
 Width also matches camera-measured vehicle width to about 0.05-0.07 m in the per-track median. Video review shows
-class 4 on people at crossings and fuel pumps and class 6 on motorcycles; class 5 appeared on traffic posts.
+class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
+
+**Class 5 is a bicycle candidate.** Four reviewed lifecycles across three drives align with visible cyclists,
+including two that reach mature age. The available-video review covers 13 episodes across ten drives from a
+45-episode inventory. Young class-5 returns also occur in ambiguous parked-vehicle and traffic-furniture scenes,
+so the code alone does not establish physical object identity. All 968 class-5 samples read 15 in `136|4`;
+that maximum is a raw confidence-like code, without a calibrated classification guarantee. The height-like
+`272|5` code spans 4–11 on these samples and remains unscaled. Counts and witness limits are in
+[`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json).
 
 ![object size](img/analysis/object_size.png)
 

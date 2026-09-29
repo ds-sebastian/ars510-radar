@@ -40,7 +40,7 @@ closed-loop drives), which is not bundled.
 | doc | summaries |
 |---|---|
 | [02 Object list](../docs/02_object_list.md) | `stationary_listing_rule`, `header_allocation_count`, `prefix_alignment` |
-| [03 Slot fields](../docs/03_slot_fields.md) | `midband_weight_triplet`, `weight_lateral_roles`, `weight_state128`, `attribute_recoding`, `full_movement_code`, `startup_low5_decay`, `score16_countdown`, `score16_outcomes`, `velocity_heading`, `rotating_kinematics`, `template_field_tests`, `camera_semantic_correction` (size and class associations) |
+| [03 Slot fields](../docs/03_slot_fields.md) | `midband_weight_triplet`, `weight_lateral_roles`, `weight_state128`, `attribute_recoding`, `full_movement_code`, `startup_low5_decay`, `score16_countdown`, `score16_outcomes`, `velocity_heading`, `rotating_kinematics`, `template_field_tests`, `camera_semantic_correction` (size and class associations), `class5_video_review` (candidate cyclist associations from a 700-segment inventory) |
 | [04 Metadata record](../docs/04_metadata_record_0x85.md) | `id85_lane_lateral_candidates`, `id85_parameter_presence`, `prefix_alignment` |
 | [05 ACC target](../docs/05_acc_target_and_support.md) | `signal_atlas_and_acc_crosscheck`, `acc_target_arel`, `acc_distance_increment_closure`, `event_pair_carries`, `context_24x` |
 | [06 Accuracy](../docs/06_accuracy.md) | `figure_numbers` (velocity MSE, range walks), `camera_semantic_correction` (three-cornered hat), `far_range_camera_correction`, `camera_identity_correction`, `review_followup` (stopped targets), `radar_only_scales`, `lane_peaks`, `state_space` |

@@ -85,7 +85,7 @@ and a CRC32. Each slot is one little-endian bit field:
 | velocity over ground | `64\|10` | `(code − 510.5) × 0.15` m/s; vRel = this − ego speed |
 | age | `24\|7` | radar cycles; a restart is a new track |
 | lane weights (right / left / ego) | `148\|4`, `152\|4`, `156\|4` | 0-15, summing to 15 or 16 |
-| class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 6 two-wheeler |
+| class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 bicycle candidate (○), 6 two-wheeler |
 
 The full field list is in [docs/03](docs/03_slot_fields.md).
 

@@ -1,0 +1,45 @@
+{
+  "status": "candidate bicycle reading; physical enum, calibrated confidence and metric height remain provisional",
+  "provenance": {
+    "scope": "700 previously exposed one-minute atlas segments; existing rare-class inventory; available full/low resolution video",
+    "prior_use": true,
+    "manual_association": "provisional; nominal bearing aid, not certified physical radar identity",
+    "generic_name_support_gate_met": false
+  },
+  "inventory": {
+    "episodes": 45,
+    "rows": 968,
+    "eligible_subruns": 14,
+    "selected_episodes": 13,
+    "selected_drives": 10,
+    "selected_native_rows": 438,
+    "selected_mature_rows": 211,
+    "episodes_without_catalogued_imagery": 17,
+    "episodes_short_or_outside_geometry": 15
+  },
+  "review": {
+    "candidate_bicycle_lives": 4,
+    "candidate_bicycle_drives": 3,
+    "mature_candidate_bicycle_lives": 2,
+    "mature_candidate_bicycle_drives": 2,
+    "fixed_camera_queries": 122,
+    "rendered_images": 121,
+    "clock_skips": 1,
+    "largest_rendered_sof_offset_s": 0.024737878000451
+  },
+  "raw_attributes": {
+    "class5_confidence15_rows": 968,
+    "class5_tail5_min": 4,
+    "class5_tail5_max": 11,
+    "class5_bit277_set_rows": 0,
+    "full_width_limit": "Other early-class samples set bit277; this class-specific cohort does not establish a five-bit boundary."
+  },
+  "verification": {
+    "status": "pass",
+    "input_hashes": 30,
+    "native_crc_records": 12930,
+    "camera_clocks": 15600,
+    "decoded_images_verified": 121
+  },
+  "consumer_limit": "Class and maximum confidence code do not certify physical target identity; no runtime behavior change."
+}
