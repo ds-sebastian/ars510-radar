@@ -103,3 +103,32 @@ Each was tested against:
 A field had to pass on two or more drives. No linear candidate passed the chosen gates. A later categorical/conditional follow-up found scene/range/speed associations and a few weak variance candidates, but no validated excursion guard ([13](13_evidence_review.md)). Constants cannot be identified from within-unit correlation alone.
 
 Toyota's older TSS2 interface uses a paired `TRACK_B.SCORE` alongside validity/history; do not transfer that mapping here. This stream already has a per-slot score-like byte at `16|8`, as well as selected-target score-like codes in 0x191/0x193. Whether they represent existence, measurement quality or something else remains open. A score of 100 is not a demonstrated accuracy guarantee.
+
+## 0x195 / 0x196: rare coupled payloads; corrected constant labels
+
+An expanded 399-segment census contains 387,226 frames per address and 123
+same-segment event groups. Of 387,189 uniquely matched pairs within 20ms,
+387,179 exclude the documented all-FF initialization payload in 0x196.
+Five previously constant-labelled regions vary in that subset:
+
+| Address | MSB-first start, width | Violating pairs |
+|---|---|---:|
+| 0x195 | 16, 3 | 95 |
+| 0x195 | 19, 2 | 95 |
+| 0x195 | 28, 5 | 10 |
+| 0x196 | 40, 3 | 298 |
+| 0x196 | 56, 2 | 70 |
+
+The DBC now calls these regions `UNKNOWN`. Their historical bit cuts remain
+available as lossless raw views, **not confirmed numeric field boundaries**.
+The 0x195 28,5 exceptions occur on one discovery drive; the other four regions
+vary in both discovery and confirmation captures. No unit or physical meaning
+is established. The old failed geometry screen also did not prove diagnostic
+or vehicle-state semantics. These bits might extend adjacent numeric fields;
+that requires separate carry/borrow and physical evidence.
+
+All 2,511 distinct observed payloads round-trip through the corrected schema.
+Six representative payloads were checked against four original logs. The counts
+are imported research results from previously exposed captures, not a bundled
+rerun ([summary](../data/analysis/summaries/event_pair_structure.json)).
+No control behavior or object decoder changes follow from this correction.

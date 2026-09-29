@@ -1,0 +1,65 @@
+{
+  "status": "supported structural correction; physical semantics unresolved",
+  "provenance": "Imported research-workspace SCR-244; aggregate counts, not a bundled capture rerun. Previously exposed discovery and confirmation captures.",
+  "segments": 399,
+  "drives": 24,
+  "frames_per_address": 387226,
+  "total_frames": 774452,
+  "unique_pairs_20ms": 387189,
+  "unpaired_anchors": 37,
+  "paired_initialization": 10,
+  "paired_no_initialization": 387179,
+  "paired_other_bodies": 1510,
+  "events_with_other": 123,
+  "exact_time_pairs": 370790,
+  "independent_native_logs": 4,
+  "native_examples": 6,
+  "distinct_payloads_roundtripped": 2511,
+  "guards": [
+    {
+      "address": "0x195",
+      "historical_name": "B2_RESERVED_ONE2",
+      "msb_first_start": 19,
+      "width": 2,
+      "mismatches": 95,
+      "discovery_mismatches": 63,
+      "confirmation_mismatches": 32
+    },
+    {
+      "address": "0x195",
+      "historical_name": "B2_RESERVED_ZERO3",
+      "msb_first_start": 16,
+      "width": 3,
+      "mismatches": 95,
+      "discovery_mismatches": 63,
+      "confirmation_mismatches": 32
+    },
+    {
+      "address": "0x195",
+      "historical_name": "B3_B4_RESERVED_ZERO5",
+      "msb_first_start": 28,
+      "width": 5,
+      "mismatches": 10,
+      "discovery_mismatches": 10,
+      "confirmation_mismatches": 0
+    },
+    {
+      "address": "0x196",
+      "historical_name": "B5_RESERVED_ZERO3",
+      "msb_first_start": 40,
+      "width": 3,
+      "mismatches": 298,
+      "discovery_mismatches": 131,
+      "confirmation_mismatches": 167
+    },
+    {
+      "address": "0x196",
+      "historical_name": "B7_RESERVED_ZERO2",
+      "msb_first_start": 56,
+      "width": 2,
+      "mismatches": 70,
+      "discovery_mismatches": 38,
+      "confirmation_mismatches": 32
+    }
+  ]
+}
