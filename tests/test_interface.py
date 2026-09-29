@@ -1,6 +1,7 @@
 """Interface tests on synthetic 0x80 records."""
 from __future__ import annotations
 
+from dataclasses import replace
 import math
 import zlib
 
@@ -48,6 +49,32 @@ def frames(rec: bytes, t0: float):
 def speed_frame(t: float, v_mps: float):
     code = round(v_mps * 3.6 / 0.01)
     return (t, 0, 0xB4, bytes(5) + code.to_bytes(2, "big") + b"\x00")
+
+
+@pytest.mark.parametrize("age_threshold", [100, 126])
+def test_far_settling_first_publication_and_lifecycle_restart(age_threshold):
+    cfg = NativeInterfaceConfig(min_publish_age=60, far_min_publish_age=age_threshold)
+    iface = Ars510NativeRadarInterface(cfg)
+
+    def points(t, age, distance):
+        rec = record({2: slot_bytes(r_code=160+16*distance, lat_code=2048, vel_code=640, age=age)})
+        return iface.update_many([speed_frame(t, 20)] + frames(rec, t+.001))[0]["radarData"]["points"]
+
+    assert not points(0, age_threshold-1, 90)
+    published = points(.06, age_threshold, 90)
+    assert len(published) == 1
+    assert not points(.12, 0, 90)
+    assert not points(.18, 60, 90)
+    assert points(.24, 61, 70)  # only distances strictly above 70 m are delayed
+    returned = points(.30, 62, 90)  # first publication is remembered
+    assert returned and returned[0]["trackId"] != published[0]["trackId"]
+
+
+def test_disabled_far_settling_preserves_default_publication():
+    cfg = replace(OPENPILOT_CONFIG, include_metadata=False)
+    iface = Ars510NativeRadarInterface(cfg)
+    rec = record({2: slot_bytes(r_code=160+16*90, lat_code=2048, vel_code=640, age=60)})
+    assert iface.update_many([speed_frame(0, 20)] + frames(rec, .001))[0]["radarData"]["points"]
 
 
 class TestNativeInterface:

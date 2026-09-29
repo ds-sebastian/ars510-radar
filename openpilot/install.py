@@ -14,7 +14,7 @@ Flavors (which Toyota files the hook patch is made for):
               passes CP_SP and preserves legacy RadarPoint fields; flag bit 4096
 Profiles (decoder settings in the installed ars510_radar_interface.py):
   default     OPENPILOT_CONFIG
-  steady      STEADY_CONFIG: K4 range fusion + far-range vRel smoothing + velocity-jump guard, see docs/07
+  steady      STEADY_CONFIG: K4 range fusion + far-range vRel smoothing + velocity-jump guard + far settling, see docs/07
 
 What it writes into <opendbc_repo>:
   opendbc/car/toyota/ars510/                    the decoder package from this repo (copied unchanged)

@@ -644,10 +644,31 @@ def heading_field():
     save(fig, "heading_field", "Settled tracks moving faster than 5 m/s. Oncoming traffic sits near code 63 (angle near π).")
 
 
+def far_settling():
+    info = json.loads((DATA / "summaries" / "far_settling.json").read_text())
+    g = pd.DataFrame(info["event_example"]["samples"])
+    fig, axes = plt.subplots(3, 1, figsize=(10, 7), sharex=True)
+    for prefix, color, label in (("baseline", S2, "K4 + guards"), ("selected", S1, "+ far settling age 100")):
+        present = g[prefix + "_present"] == 1
+        axes[0].plot(g.time_s, g[prefix + "_d"].where(present), color=color, label=label)
+        axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color)
+        axes[2].plot(g.time_s, g[prefix + "_a"], color=color)
+    axes[2].plot(g.time_s, g.vision_a, color=INK2, ls="--", label="vision only")
+    axes[0].legend(loc="upper left", fontsize=9)
+    axes[2].legend(loc="lower left", fontsize=9)
+    axes[0].set_ylabel("lead range (m)")
+    axes[1].set_ylabel("lead vRel (m/s)")
+    axes[2].set_ylabel("request (m/s²)")
+    axes[2].set_xlabel("time within the example (s)")
+    axes[0].set_title("Delay the first far-track pickup while velocity settles")
+    save(fig, "far_settling", "Drive D1, targeted open-loop example. Age 100 delays first publication above 70 m; "
+         "it removes this brake episode. Older-track excursions and the separate downhill glitch remain.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
-                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection)}
+                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling)}
 
 
 if __name__ == "__main__":

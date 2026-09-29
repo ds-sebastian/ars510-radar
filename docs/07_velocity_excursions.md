@@ -73,7 +73,7 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 |---|---|---|---|---|
 | default `OPENPILOT_CONFIG` (with saturation guard) | interface | — | — | 0.66 / h |
 | K4: `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0` | interface | **about half** (−0.0053 [−0.0099, −0.0022] m/s²; fresh drives −0.0081 [−0.0155, −0.0015]) | 0.07 s | 0.44 / h |
-| **`STEADY_CONFIG`** = K4 + saturation guard + 8 m/s velocity-jump guard | interface | about half, as K4 | 0.07 s | **0.22 / h** |
+| **`STEADY_CONFIG`** = K4 + saturation guard + 8 m/s velocity-jump guard + far-track settling | interface | about half, as K4 | about 0.07 s | **0.22 / h** |
 | far-range smoothing only (`vrel_smooth_far_tau_s=1.0`) | interface | about 29% | 0.06 s | 0.66 / h |
 | ACC target's speed (0x235) as the object's vRel | interface | little; driver-agreement error −40% | 0.10-0.16 s | — |
 | vision speed fused into the matched track | radard patch | driver-agreement error −0.0043 [−0.0068, −0.0018] (twice K4's −0.0021) | 0.085 s | 0.88 / h |
@@ -84,7 +84,19 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   new level that lasts 1 s is accepted under a new track ID). Together they cut hard radar-only braking requests
   (≤ −2 m/s² while vision-only asks for no more than −0.5) from 85 to 69 ticks on the held-out routes, including a
   −3.5 m/s² request from a saturated reading, and halve the gas-overridden radar-only brakes again. Lag, early
-  reaction, lead switches and driver agreement are unchanged; 17 of 20 routes are identical to K4.
+  reaction, lead switches and driver agreement are unchanged for the two guards alone; 17 of 20 routes are identical to K4.
+- **Far-track settling** holds a track's first publication above 70 m until age 100 (about 6 s after birth, versus
+  the default age 60). Once published, it remains eligible even if its range grows; a lifecycle restart is gated anew.
+  In 20 replay chains, versus K4 + guards, hard ticks stay at 69, human-controlled radar-only episodes stay at 6,
+  mean reaction lag increases 0.003 s and brake anticipation is unchanged. Four further drives have 10 → 3 hard
+  ticks. On the owner-route targeted check, far braking episodes fall 2 → 1 and hard ticks 14 → 8.
+  Paired roughness changes by +0.000077 [−0.000032, +0.000206] m/s²: the gain is one avoided pickup episode.
+  Individual responses can be later (one measured delay is 0.253 s; another response falls outside the 2 s scoring
+  window). These drives have prior use, the owner route motivated the option, and older-track excursions and the
+  separate downhill glitch remain. Numbers: [`far_settling.json`](../data/analysis/summaries/far_settling.json).
+
+![far-track settling example](img/analysis/far_settling.png)
+
 - **The radard patch** ([`openpilot/radard_vision_fusion.patch`](../openpilot/radard_vision_fusion.patch)) rewrites
   radard's track filter in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed
   into the matched track with standard deviation `2 × vStd`. It helped most on the held-out routes; on the fresh

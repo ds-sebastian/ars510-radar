@@ -12,7 +12,8 @@ Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`
 vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
 Use OPENPILOT_CONFIG for anything openpilot-facing. RAW_CONFIG publishes every valid track and is the
-decode-level view used for analysis. STEADY_CONFIG adds velocity-aided range and far-range vRel smoothing
+decode-level view used for analysis. STEADY_CONFIG adds velocity-aided range, far-range vRel smoothing,
+the velocity-jump guard and delayed first publication for far tracks
 (docs/07_velocity_excursions.md has the measured effect of each option).
 """
 from __future__ import annotations
@@ -83,6 +84,9 @@ class NativeInterfaceConfig:
     vjump_thresh_mps: float = 0.0
     guard_hold_s: float = 1.0
     guard_min_age: int = 60  # younger tracks legitimately converge and are not guarded
+    # Delay the first publication of a far track while its velocity settles. Once published, it stays eligible.
+    far_min_publish_age: int = 0
+    far_publish_range_m: float = 70.0
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -94,8 +98,9 @@ OPENPILOT_CONFIG = NativeInterfaceConfig(
 )
 # Recommended profile ("K4" + guards, docs/07): velocity-aided range, far-range vRel smoothing and the 8 m/s velocity-jump
 # guard. Removes about half of radar's extra output roughness over vision-only for ~0.07 s of radar's head start, and
-# about a fifth of the hard radar-only braking requests.
-STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0, vjump_thresh_mps=8.0)
+# about a fifth of the hard radar-only braking requests. Far tracks first publish at age 100 to reduce settling pickups.
+STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0, vjump_thresh_mps=8.0,
+                       far_min_publish_age=100, far_publish_range_m=70.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -355,6 +360,9 @@ class Ars510NativeRadarInterface:
                 self.startup_suppressed += 1
                 continue
             if obj.age < cfg.min_publish_age:
+                self.settling_suppressed += 1
+                continue
+            if tid not in self._out_id and obj.age < cfg.far_min_publish_age and obj.d_rel > cfg.far_publish_range_m:
                 self.settling_suppressed += 1
                 continue
             if cfg.drop_unresolved_vrel and not isfinite(vrel):
