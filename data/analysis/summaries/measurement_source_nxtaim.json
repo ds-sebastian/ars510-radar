@@ -1,0 +1,39 @@
+{
+  "status": "primary-source capability evidence; Toyota CAN mapping unresolved",
+  "poster_url": "https://nxtaim.de/wp-content/uploads/1.2_02_nxtAIM_Poster_ConditionalRadar.pdf",
+  "landing_url": "https://nxtaim.de/en/e-booklet-open-project-day-en/",
+  "title": "Image-Conditioned Radar Generation",
+  "authors": [
+    "Jonas Neuhöfer",
+    "Jörg Reichardt",
+    "Hanno Gottschalk"
+  ],
+  "affiliations": [
+    "Aumovio SE",
+    "TU Berlin"
+  ],
+  "project_day": "2026-02-25",
+  "evidence": [
+    {
+      "kind": "source_statement",
+      "claim": "The described ARS510 dataset includes Doppler velocity, reflected signal strength and an alternative angle hypothesis."
+    },
+    {
+      "kind": "source_statement",
+      "claim": "The dataset contains planar scans; its model representation accounts for Doppler-range ambiguity."
+    },
+    {
+      "kind": "visual_source_observation",
+      "claim": "Figure 1 labels one example channel RadarCrossSection; calibration and wire encoding are unspecified."
+    }
+  ],
+  "limits": [
+    "The poster does not specify Toyota firmware, transport, message addresses, bit layout or units.",
+    "A learned 64x64x7 representation is not a CAN payload layout.",
+    "Reflected strength/RCS is not a calibrated SNR or false-detection probability.",
+    "Planarity of this dataset does not prove absence of elevation in every ARS510 variant.",
+    "No merge flag, scan-source flag or exact acquisition timing definition is provided."
+  ],
+  "provenance": "Primary-source reading and visual inspection; no Toyota capture result.",
+  "poster_sha256": "c62e40d5c120fc6ee9e32581862a9559adb36768a7cbdd1ede833fc11d6ecbaf"
+}

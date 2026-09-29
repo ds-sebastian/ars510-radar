@@ -1,5 +1,21 @@
 # 10. Open questions and next experiments
 
+## Measurement information worth pursuing
+
+An [Aumovio/TU Berlin poster](https://nxtaim.de/wp-content/uploads/1.2_02_nxtAIM_Poster_ConditionalRadar.pdf) explicitly describes ARS510 data containing
+Doppler velocity, reflected signal strength and an alternative angle hypothesis.
+Its Figure 1 labels the strength channel RadarCrossSection. These are concrete
+research targets, but **the poster supplies no Toyota CAN mapping or units**.
+Strength/RCS does not establish calibrated SNR or false-detection probability.
+
+The dataset is planar and the representation accounts for Doppler-range ambiguity.
+Neither proves a universal absence of elevation or a particular wrapped encoding
+in our captures. The neural grid is not a sensor message layout. Seek a matching
+export schema or independent physical evidence before assigning unknown bits.
+[Source provenance and limits](../data/analysis/summaries/measurement_source_nxtaim.json).
+
+## Integration questions and earlier proposals
+
 Ordered by how much each would move openpilot integration forward.
 
 1. **Resolve velocity interpretation, timing and quality before adding consumer defences.** Independently identified stationary approaches, ego-acceleration response and same-object companion-message checks can distinguish reference-frame/latency mistakes from tracker behaviour. The newer stationary test is less favourable, and a first visual review split its 30–60 m failures between a creeping queue (video label wrong) and a radar range walk ([13](13_evidence_review.md)). A better stationarity label is needed before that band says anything about the radar. Radar-only filters and simple vision blends failed in the tested families ([06](06_known_limitations.md)). Later consumer ideas, not the current next experiment:
@@ -14,10 +30,10 @@ Ordered by how much each would move openpilot integration forward.
    - Driving past parked cars does not work.
 5. **Range zero on a flat road with a measured gap.** Stop behind a car on level ground and measure the bumper gap with a tape. That separates the +0.7 m hilly-road reading from camera pitch.
 6. **trackId beyond 60 m.** The camera identity reference fails there, so re-link precision at 60–120 m is unverified. It needs a better far identity reference (narrow camera with a better tracker, or two-car truth).
-7. **What 0x85 encodes.** It stays active, with about 4 changing cells, while the object list is empty along a street of parked cars ([14](14_stationary_objects_and_field_roles.md)). So it may be the detection / cluster or stationary-object list that ARS408-style radars send beside objects. Next: decode the cells as detections, with per-cell association across records.
+7. **Remaining 0x85 content.** Some cells have bounded lane-boundary evidence; they are not established reflections. Investigate the remaining parameters and lifecycle using raw-prefix record alignment. Changing data while the object list is empty does not establish a detection list. See [03](03_shell_record_0x85.md).
 8. **State `0|2`, score-like `16|8`, and the 0x191 descriptor tuple.** Test state transitions and future error variance after matching identity, age, range and ego motion. `2|6` is the physical slot index, not an object category; its apparent position bias was allocation confounding.
 9. **0x192 as a sanity signal.** It is the radar's own smoothed target distance with a lane bin. It can't be a vRel source, but "radar ACC also has a target in my lane near this distance" might gate false leads.
-10. **Is there a stationary-target list anywhere else?** Nothing on the radar bus carries the stationary objects missing from the list ([14](14_stationary_objects_and_field_roles.md)). The car bus (bus 0) has not been searched for radar-originated pre-collision or stationary-target messages.
+10. **Is there a stationary-target list anywhere else?** No usable list explaining those missing objects has been decoded in the tested radar-bus messages ([14](14_stationary_objects_and_field_roles.md)). This is a bounded search result, not proof of absence; a wider source/transport search needs explicit coverage records.
 11. **Uncertainty candidates for consumer weighting.** `224|7`, `232|7`, `240|7`, `248|7` and `264|5` behave like uncertainty estimates. A pre-registered weighting test could say whether they help radard without delaying real closings.
 12. **Other cars and firmware.** Does every ARS510 car use the same layout? Are 0x500 / 0x502 unit-specific?
 
