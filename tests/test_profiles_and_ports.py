@@ -65,3 +65,14 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
 def test_legacy_patches_are_kept_for_upgrades():
   names = {p.name for p in (REPO / "openpilot" / "legacy").glob("*.patch")}
   assert names == {f"opendbc_toyota_ars510_{f}.patch" for f in ("openpilot", "starpilot", "sunnypilot")}
+
+
+def test_installer_uses_opendbc_repo_behind_the_openpilot_symlink(tmp_path):
+  # real openpilot checkouts have a top-level `opendbc` symlink into opendbc_repo
+  toyota, original = _fake_opendbc(tmp_path)
+  (tmp_path / "opendbc").symlink_to("opendbc_repo/opendbc")
+  r = _install(tmp_path, "--check")
+  assert r.returncode == 0 and f"opendbc: {(tmp_path / 'opendbc_repo').resolve()}" in r.stdout
+  assert "older patch-based install: none" in r.stdout
+  assert _install(tmp_path).returncode == 0
+  assert (toyota / "interface.py").read_text().count("hook_car_interface(CarInterface)") == 1
