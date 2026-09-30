@@ -387,3 +387,23 @@ def test_age_one_initialization_template_is_withheld() -> None:
     template = slot_bytes(r_code=160, lat_code=2047, vel_code=700, age=1, width=0, length=0)
     out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(frames(record({0: template}), 0.0))
     assert out and out[-1]["radarData"]["points"] == []
+
+
+def test_ramp_limiter_limits_moves_away_and_passes_returns() -> None:
+    cfg = replace(RAW_CONFIG, guard_min_age=1, ramp_up_mps2=4.0, ramp_down_mps2=10.0, ramp_ref_tau_s=3.0,
+                  include_metadata=True)
+    iface = Ars510NativeRadarInterface(cfg)
+    iface.set_ego_speed(20.0, 0.0)
+    # 1 s steady at code 644 (~20 m/s), then a 0.3 s ramp of +3 m/s per cycle, then straight back
+    codes = [644] * 17 + [664, 684, 704, 724, 744] + [644] * 5
+    out = []
+    for k, code in enumerate(codes):
+        t = 0.06 * k
+        iface.set_ego_speed(20.0, t)
+        rec = record({2: slot_bytes(r_code=160 + 16 * 60, lat_code=2048, vel_code=code, age=70 + k)})
+        r = iface.update_many(frames(rec, t))
+        out.append(r[-1]["radarData"]["points"][0]["v_long_ground"])
+    base = out[16]
+    ramp = out[17:22]
+    assert max(ramp) - base <= 4.0 * 0.06 * 5 + 1e-6  # the +15 m/s ramp is limited to +4 m/s^2
+    assert out[22] == pytest.approx(base, abs=1e-6)  # the return passes unlimited

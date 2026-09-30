@@ -49,7 +49,7 @@ Install instructions for each fork are in [`openpilot/README.md`](../openpilot/R
 | profile | config | use |
 |---|---|---|
 | `default` | `OPENPILOT_CONFIG`: `min_publish_age=60`, `relink_max_gap_s=3.5`, `vground_scale=0.149/0.15`, `drop_unresolved_vrel=True`, `drop_saturated_codes=True` | every fork |
-| `steady` | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0`, `vjump_thresh_mps=8`, `far_min_publish_age=100` above 70 m | **recommended**: halves extra roughness for about 0.07 s of head start, withholds implausible velocity jumps and delays far-track pickups ([07](07_velocity_excursions.md#options)) |
+| `steady` | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0`, `vjump_thresh_mps=8`, `far_min_publish_age=100` above 70 m, `ramp_up_mps2=4`, `ramp_down_mps2=6` | **recommended**: halves extra roughness for about 0.07 s of head start, withholds implausible velocity jumps, delays far-track pickups and limits physically implausible velocity ramps ([07](07_velocity_excursions.md#options)) |
 
 `range_fusion_gain` predicts dRel with vRel and corrects toward the measurement, halving 1.5 s range walks.
 `vrel_smooth_far_tau_s` smooths vRel with a time constant that rises from 0 s below 30 m to 1 s beyond 60 m.

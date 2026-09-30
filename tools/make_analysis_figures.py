@@ -662,7 +662,32 @@ def far_settling():
     axes[2].set_xlabel("time within the example (s)")
     axes[0].set_title("Delay the first far-track pickup while velocity settles")
     save(fig, "far_settling", "Drive D1, targeted open-loop example. Age 100 delays first publication above 70 m; "
-         "it removes this brake episode. Older-track excursions and the separate downhill glitch remain.")
+         "it removes this brake episode. Older-track excursions remain.")
+
+
+def ramp_limiter():
+    info = json.loads((DATA / "summaries" / "ramp_limiter.json").read_text())
+    ex = info["event_example"]
+    g = pd.DataFrame(ex["samples"])
+    fig, axes = plt.subplots(3, 1, figsize=(10, 7), sharex=True)
+    for prefix, color, label in (("baseline", S2, "steady without ramp limiter"), ("selected", S1, "+ ramp limiter")):
+        n = pd.DataFrame(ex["native_v_ground"][prefix])
+        gap = n.time_s.diff() > 0.2  # records withheld by the jump guard: leave the gap visible
+        axes[0].plot(n.time_s.where(~gap), n.vg.where(~gap), color=color, label=label)
+        present = g[prefix + "_present"] == 1
+        axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color)
+        axes[2].plot(g.time_s, g[prefix + "_a"], color=color)
+    axes[2].plot(g.time_s, g.vision_a, color=INK2, ls="--", label="vision only")
+    axes[0].legend(loc="upper left", fontsize=9)
+    axes[2].legend(loc="lower left", fontsize=9)
+    axes[0].set_ylabel("published lead\nv over ground (m/s)")
+    axes[1].set_ylabel("radard lead vRel (m/s)")
+    axes[2].set_ylabel("request (m/s²)")
+    axes[2].set_xlabel("time within the example (s)")
+    axes[0].set_title("Limit physically implausible velocity ramps")
+    save(fig, "ramp_limiter", "Drive D2, targeted open-loop example. The lead's over-ground velocity ramps at ~23 m/s², "
+         "spikes (withheld by the jump guard, gap) and decays. The limiter keeps the ramp and most of its tail out of radard: "
+         "the request falls from -1.37 to about -0.45 m/s², no longer a radar-only brake episode.")
 
 
 def event_code_context():
@@ -724,7 +749,7 @@ def initial_attribute_zeros():
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
-                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling,
+                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling, ramp_limiter,
                                    event_code_context, initial_attribute_zeros)}
 
 

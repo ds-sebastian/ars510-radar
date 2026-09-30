@@ -20,7 +20,7 @@ sudo reboot
 
 | profile | config |
 |---|---|
-| `steady` | `STEADY_CONFIG`: default + velocity-aided range + far-range vRel smoothing + velocity-jump guard. **Recommended.** |
+| `steady` | `STEADY_CONFIG`: default + velocity-aided range + far-range vRel smoothing + velocity-jump guard + far-track settling + ramp limiter. **Recommended.** |
 | `default` | `OPENPILOT_CONFIG` (withholds saturated velocity readings) |
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone can keep

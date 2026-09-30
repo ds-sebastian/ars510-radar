@@ -20,7 +20,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads and carry-linked 10-bit view; physical meaning and field validity require validation ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **openpilot integration**: current openpilot, StarPilot, sunnypilot | installable; replayed end to end; driven by the owner on FrogPilot and StarPilot ports ([08](docs/08_openpilot_integration.md)) |
-| **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `steady` profile halves extra jitter, guards large jumps and delays far-track pickups; gradual ramps and recovery tails can still produce braking ([07](docs/07_velocity_excursions.md)) |
+| **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `steady` profile halves extra jitter, guards large jumps, delays far-track pickups and limits implausible velocity ramps ([07](docs/07_velocity_excursions.md)) |
 
 ● confirmed · ◐ likely · ○ candidate
 

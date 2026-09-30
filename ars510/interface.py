@@ -19,7 +19,7 @@ the velocity-jump guard and delayed first publication for far tracks
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from math import isfinite, nan
+from math import inf, isfinite, nan
 from collections.abc import Iterable
 
 from .constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
@@ -29,6 +29,7 @@ from .support import parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
+RAMP_RESET_GAP_S = 3.5  # a longer silence restarts the ramp limiter's state
 GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30
 RELINK_MIN_PUBLISH_AGE = 6
@@ -88,6 +89,12 @@ class NativeInterfaceConfig:
     # Delay the first publication of a far track while its velocity settles. Once published, it stays eligible.
     far_min_publish_age: int = 0
     far_publish_range_m: float = 70.0
+    # Ramp limiter: a mature track's over-ground velocity may move AWAY from its slow reference (EMA, ramp_ref_tau_s)
+    # by at most ramp_up_mps2 / ramp_down_mps2; moves back toward the reference pass unchanged. Real vehicles do not
+    # change speed at 20+ m/s^2, while excursion ramps do (docs/07). 0 = off.
+    ramp_up_mps2: float = 0.0
+    ramp_down_mps2: float = 0.0
+    ramp_ref_tau_s: float = 3.0
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -100,8 +107,10 @@ OPENPILOT_CONFIG = NativeInterfaceConfig(
 # Recommended profile ("K4" + guards, docs/07): velocity-aided range, far-range vRel smoothing and the 8 m/s velocity-jump
 # guard. Removes about half of radar's extra output roughness over vision-only for ~0.07 s of radar's head start, and
 # about a fifth of the hard radar-only braking requests. Far tracks first publish at age 100 to reduce settling pickups.
+# The ramp limiter (+4 / -6 m/s^2 away from a 3 s reference) removes gradual-ramp excursions and a further ~23% of the
+# hard radar-only requests.
 STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0, vjump_thresh_mps=8.0,
-                       far_min_publish_age=100, far_publish_range_m=70.0)
+                       far_min_publish_age=100, far_publish_range_m=70.0, ramp_up_mps2=4.0, ramp_down_mps2=6.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -134,6 +143,7 @@ class Ars510NativeRadarInterface:
         self._range_est: dict[int, tuple[float, float, float]] = {}
         self._range_hist: dict[int, list[tuple[float, float]]] = {}
         self._vrel_smooth: dict[int, tuple[float, float]] = {}
+        self._ramp: dict[int, tuple[float, float, float]] = {}  # tid -> (t, limited v, reference)
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
@@ -326,6 +336,24 @@ class Ars510NativeRadarInterface:
         self.guard_rejected += 1
         return True
 
+    def _ramp_limited(self, tid: int, time_s: float, v: float, age: int) -> float:
+        cfg = self.config
+        st = self._ramp.get(tid)
+        # guard-withheld records do not update this state, so allow gaps as long as a guard episode
+        if st is None or age < cfg.guard_min_age or time_s - st[0] > RAMP_RESET_GAP_S:
+            self._ramp[tid] = (time_s, v, v)
+            return v
+        t0, prev, ref = st
+        dt = time_s - t0
+        if abs(v - ref) <= abs(prev - ref):
+            new = v  # back toward the reference
+        else:
+            up = cfg.ramp_up_mps2 * dt if cfg.ramp_up_mps2 > 0 else inf
+            down = cfg.ramp_down_mps2 * dt if cfg.ramp_down_mps2 > 0 else inf
+            new = prev + min(max(v - prev, -down), up)
+        self._ramp[tid] = (time_s, new, ref + min(dt / cfg.ramp_ref_tau_s, 1.0) * (new - ref))
+        return new
+
     def _payload(self, time_s: float, record: bytes) -> dict:
         cfg = self.config
         v_ego = self._fresh_ego_speed(time_s)
@@ -343,7 +371,10 @@ class Ars510NativeRadarInterface:
             if (cfg.drop_saturated_codes or cfg.vjump_thresh_mps > 0) and \
                     self._guard(tid, time_s, obj.v_long_ground, obj.vel_code, obj.age):
                 continue
-            v_ground = obj.v_long_ground * cfg.vground_scale
+            v_long = obj.v_long_ground
+            if cfg.ramp_up_mps2 > 0 or cfg.ramp_down_mps2 > 0:
+                v_long = self._ramp_limited(tid, time_s, v_long, obj.age)
+            v_ground = v_long * cfg.vground_scale
             vrel = float(v_ground - v_ego) if v_ego is not None else nan
             if tid == acc_tid and isfinite(vrel):
                 clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
@@ -395,7 +426,7 @@ class Ars510NativeRadarInterface:
             for k in [k for k, v in self._last.items() if v[0] < horizon]:
                 self._last.pop(k, None)
                 self._first.pop(k, None)
-        for store in (self._range_est, self._vrel_smooth, self._guard_state):
+        for store in (self._range_est, self._vrel_smooth, self._guard_state, self._ramp):
             if len(store) > 400:
                 for k in [k for k, v in store.items() if v[0] < time_s - 5.0]:
                     store.pop(k, None)

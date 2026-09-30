@@ -4,11 +4,9 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **Gradual-ramp and recovery-tail guard.** The `steady` jump guard catches sudden velocity steps. A slow ramp
-   moves its accepted reference along with it, and the decaying tail is then accepted as a recovery, so far leads
-   can still produce a false brake ([07](07_velocity_excursions.md)). Two extensions of the same guard target that
-   pattern: rate-limit the accepted reference to plausible lead acceleration, and accept a recovery only when the
-   track's range change over the episode agrees with the reference. Gate them on reaction time to real closings.
+1. **The steady profile on sunnypilot's planner and fresh drives.** The ramp limiter and far-track settling are
+   scored in open-loop replay through openpilot's planner. Replaying the owner's drives through sunnypilot's own
+   longitudinal planner, and closed-loop drives with the profile installed, measure the braking the driver feels.
 2. **Score and σ as per-point noise.** Use the existence score `16|8` and σ vx `240|7` to set each point's
    measurement noise in a dt-aware track filter, instead of radard's fixed 20 Hz gains.
 3. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.

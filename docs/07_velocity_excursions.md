@@ -73,7 +73,7 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 |---|---|---|---|---|
 | default `OPENPILOT_CONFIG` (with saturation guard) | interface | — | — | 0.66 / h |
 | K4: `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0` | interface | **about half** (−0.0053 [−0.0099, −0.0022] m/s²; fresh drives −0.0081 [−0.0155, −0.0015]) | 0.07 s | 0.44 / h |
-| **`STEADY_CONFIG`** = K4 + saturation guard + 8 m/s velocity-jump guard + far-track settling | interface | about half, as K4 | about 0.07 s | **0.22 / h** |
+| **`STEADY_CONFIG`** = K4 + saturation guard + 8 m/s velocity-jump guard + far-track settling + ramp limiter | interface | about half, as K4 | about 0.07 s | **0.22 / h** |
 | far-range smoothing only (`vrel_smooth_far_tau_s=1.0`) | interface | about 29% | 0.06 s | 0.66 / h |
 | ACC target's speed (0x235) as the object's vRel | interface | little; driver-agreement error −40% | 0.10-0.16 s | — |
 | vision speed fused into the matched track | radard patch | driver-agreement error −0.0043 [−0.0068, −0.0018] (twice K4's −0.0021) | 0.085 s | 0.88 / h |
@@ -84,14 +84,22 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   new level that lasts 1 s is accepted under a new track ID). Together they cut hard radar-only braking requests
   (≤ −2 m/s² while vision-only asks for no more than −0.5) from 85 to 69 ticks on the held-out routes, including a
   −3.5 m/s² request from a saturated reading, and halve the gas-overridden radar-only brakes again. Lag, early
-  reaction, lead switches and driver agreement are unchanged for the two guards alone; 17 of 20 routes are identical to K4.
-  Gradual ramps can still move the accepted reference. In a curve braking event, native records remain continuous
-  (largest gap 0.070 s, age 126). The guard withholds 17 records for 1.030 s, then recovers at 33.525 m/s over ground,
-  within 8 m/s of its already elevated 28.275 m/s reference. The output gap comes from withholding; release uses
-  reference recovery rather than a silence reset or persistent-step timeout. The released velocity's decay still
-  produces braking: the original drive commands −2.07 m/s², and the recommended-profile replay requests −1.37.
-  These are interface recovery limits, not a physical target-speed determination
-  ([summary](../data/analysis/summaries/owner_driver_review.json)).
+  reaction, lead switches and driver agreement are unchanged for the two guards alone; 17 of 20 routes are identical
+  to K4 ([summary](../data/analysis/summaries/velocity_guards.json)).
+- **Ramp limiter.** Some excursions build up gradually: the over-ground velocity ramps at about +23 m/s² in steps
+  below the jump threshold, spikes, and the decaying tail then reads to radard as a braking lead. No vehicle changes
+  its speed over ground that fast, while real closings change *relative* speed through ego speed. The limiter lets a
+  mature track's over-ground velocity move **away** from its own slow reference (a 3 s average) by at most +4 m/s²
+  up and −6 m/s² down; moves **back toward** the reference pass unchanged, so a false dip recovers at once. On the
+  20 held-out routes it cuts hard radar-only requests from 69 to 53 ticks (−23%). Radar-only episodes (6),
+  gas-overridden brakes (0.22 / h), early reaction and lead switches are unchanged, and mean reaction lag moves by
+  +0.002 s. Across 182 driver brake events (52 hard), none loses its early reaction or its radar response. Two mild
+  ones respond 0.10-0.12 s later, still ahead of the driver. On further drives hard ticks go 3 → 1. On the owner
+  drives the curve braking request falls from −1.37 to about −0.45 m/s² (no longer a radar-only episode), a far
+  excursion softens from −1.95 to −1.12 m/s², and radar-only episodes go 7 → 6. Numbers: [`ramp_limiter.json`](../data/analysis/summaries/ramp_limiter.json).
+
+![ramp limiter example](img/analysis/ramp_limiter.png)
+
 - **Far-track settling** holds a track's first publication above 70 m until age 100 (about 6 s after birth, versus
   the default age 60). Once published, it remains eligible even if its range grows; a lifecycle restart is gated anew.
   In 20 replay chains, versus K4 + guards, hard ticks stay at 69, human-controlled radar-only episodes stay at 6,
