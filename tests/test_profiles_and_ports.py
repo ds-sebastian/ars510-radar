@@ -35,6 +35,7 @@ def _fake_opendbc(tmp_path):
   toyota = tmp_path / "opendbc_repo" / "opendbc" / "car" / "toyota"
   toyota.mkdir(parents=True)
   (tmp_path / "opendbc_repo" / "opendbc" / "dbc").mkdir()
+  (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").write_text("old install")
   original = "class CarInterface:\n  pass\n"
   (toyota / "interface.py").write_text(original)
   return toyota, original
@@ -52,6 +53,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   text = (toyota / "interface.py").read_text()
   assert text.startswith(original) and text.count("hook_car_interface(CarInterface)") == 1
   assert (toyota / "ars510" / "interface.py").exists()
+  assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["steady"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert _install(tmp_path, "--profile", "default").returncode == 0
   assert 'PROFILE = PROFILES["default"]' in (toyota / "ars510_radar_interface.py").read_text()

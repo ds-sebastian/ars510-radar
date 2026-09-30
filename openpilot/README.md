@@ -40,7 +40,9 @@ while testing).
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged |
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
 | 4-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)` |
-| `../dbc/*.dbc` | `opendbc/dbc/` | for Cabana; parsing does not use them |
+
+The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC. Parsing does not use them (a DBC
+cannot describe the 106-frame record), so they are not installed on the device.
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 - **detection** in `_get_params`: a radar-ACC Toyota whose radar firmware is `8821F0R03100`, or whose fingerprint saw

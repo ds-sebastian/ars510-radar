@@ -12,7 +12,6 @@ StarPilot and other forks: no fork file is patched in place. The installer
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
-  - copies two DBCs for cabana to        opendbc/dbc/ (not used for parsing)
 An install made with an older, patch-based version of this installer is removed first.
 
 Profiles:
@@ -31,7 +30,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["steady"]'
-DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")
+DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
 HOOK = f"""
@@ -51,8 +50,12 @@ def find_opendbc(path: Path) -> Path | None:
 
 def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
-  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
-          **{dbc: root / "opendbc" / "dbc" / dbc for dbc in DBCS}}
+  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py"}
+
+
+def old_dbcs(root: Path) -> list[Path]:
+  """Cabana DBCs that older versions of this installer copied into the fork; parsing never used them."""
+  return [p for p in (root / "opendbc" / "dbc" / dbc for dbc in DBCS) if p.exists()]
 
 
 def git_apply(root: Path, patch: Path, *args: str) -> bool:
@@ -111,12 +114,16 @@ def main() -> int:
       print(f"profile: {prof}")
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'missing'} ({p})")
+    for p in old_dbcs(root):
+      print(f"leftover from an older install (removed on the next install): {p}")
     return 0
 
   if legacy is not None and not git_apply(root, legacy, "--reverse"):
     print(f"could not remove the older install ({legacy.name}); nothing changed", file=sys.stderr)
     return 1
   text = remove_hook(interface_py.read_text())
+  for p in old_dbcs(root):
+    p.unlink()
 
   if args.uninstall:
     interface_py.write_text(text)
@@ -138,8 +145,6 @@ def main() -> int:
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
   interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
-  for dbc in DBCS:
-    shutil.copy2(REPO / "dbc" / dbc, t[dbc])
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
   return 0
