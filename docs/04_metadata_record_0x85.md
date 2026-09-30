@@ -71,5 +71,19 @@ can keep describing the old or a different boundary for a while, and single-cycl
 Treat a cell as "a nearby boundary", not "the ego lane's left edge".
 
 The other cells (0, 1, 4-7) hold further road-geometry parameters. Cells 6 and 7 are candidates for road-edge offsets
-(they follow openpilot's road-edge estimate within a drive). Their exact quantities are the next thing to pin down
-([10](10_research_directions.md)).
+(they follow openpilot's road-edge estimate within a drive).
+
+### Road direction: bits 64-79
+
+Every cell carries a second geometry quantity in **signed bits 64-79** (`64|16`, two's complement). The reference is
+the road the car actually drives: its own path over the next 60 m (gyro and wheel speed), expressed in the current
+radar frame, gives the road heading θ and curvature κ ahead, independent of the camera.
+
+| | cell 2 | cell 3 | cell 8 | cell 9 |
+|---|---|---|---|---|
+| Spearman ρ with κ (three drive partitions) | 0.64 / 0.54 / 0.66 | 0.61 / 0.55 / 0.63 | 0.59 / 0.51 / 0.60 | 0.55 / 0.49 / 0.57 |
+
+A joint fit gives about 18,000 codes per radian of road heading (≈ 5.5 × 10⁻⁵ rad per code) in all four boundary
+cells, plus a curvature term equivalent to reading the direction ~15 m ahead, or the lateral offset ~30 m ahead. The
+same relation holds with similar coefficients in cells 0, 1 and 4-7. So each cell reads as a boundary with an offset
+(`32|12`) and a direction (`64|16`). Numbers: [`decode_references.json`](../data/analysis/summaries/decode_references.json).

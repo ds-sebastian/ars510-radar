@@ -30,15 +30,19 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## For the decode
 
-- **Class 5, `136|4` and `272|5`:** resolve the candidate cyclist/person associations with target association at
-  scale; a measured target height or road-contact reference pins the `272` scale.
-- **Heading `208|6`:** compare with independently measured target direction on turning or crossing traffic.
-- **0x85 cells 0, 1, 4-7:** road-edge and further lane parameters, against measured lane geometry on roads with
-  unequal lane widths ([04](04_metadata_record_0x85.md)).
-- **Lateral scale and range zero:** a surveyed lateral offset and a tape-measured gap, parked (the radar lists
-  never-moving objects while ego is stopped), pin the last ±10% and ±0.7 m.
-- **0x191 descriptor tuple and 0x195 event codes:** associate the descriptor codes and event payloads with
-  physical targets and states.
+- **Lateral scale and range zero from slow circles.** A stationary object moves sideways at yaw rate × (range +
+  3.6 m) while the car turns. A few minutes of slow circles in an empty lot with parked cars or poles pins the
+  lateral scale and the range zero from the gyro alone, no tape measure needed.
+- **`272|5` under a known overhead object.** Driving under a bridge or gantry of known clearance, and past parked
+  vehicles of known height, relates the code to height. Its ranking of pedestrians below cars points to a size- or
+  reflectivity-like quantity.
+- **0x85 `64|16`: heading ahead or offset ahead.** Both readings fit the driven path. A road with a known curvature
+  change (a curve entry) separates them by where the response appears.
+- **Class 5:** a few recorded passes of a cyclist and of a pedestrian confirm the bicycle reading of its size and
+  speed.
+- **0x195 `q10` with brake pressure:** the logged brake pressure or the brake-assist state next to the event code
+  names the deceleration quantity. The 0x191 descriptor tuples follow speed regime; a drive through the ACC
+  following-distance settings shows whether they encode a mode.
 
 ## For the integration
 

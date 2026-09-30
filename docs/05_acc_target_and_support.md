@@ -100,10 +100,21 @@ in the high prefix. One larger step goes **436 → 510** within the same prefix.
 bits together while keeping abrupt steps and state changes distinct from ordinary carries. The matched non-idle
 codes span 391–558; the full semantic width and physical quantity require independent validation.
 
-Code **510 also occurs in 1,202 of 2,215 non-idle, uniquely paired, non-initialization samples**. Use the whole
-payload to distinguish exact idle bodies; the code alone does not establish validity or physical zero. Pairing
-uses CAN log timestamps, which do not establish a common sender or acquisition time. The DBC retains the
-remaining sub-fields as raw codes. Counts and relative-time example: `data/analysis/summaries/event_pair_carries.json`.
+Code **510 also occurs in 1,202 of 2,215 non-idle, uniquely paired, non-initialization samples**; use the whole
+payload to recognise idle bodies. The DBC retains the remaining sub-fields as raw codes.
+
+**The event pair is a short-time-to-collision state.** Across 700 segments, compared with matched moving moments:
+
+| | non-idle 0x195 frames | matched moving moments |
+|---|---|---|
+| closing in-path lead with time-to-collision < 4 s | **41%** | 0.8% |
+| in-path lead distance, median | 18 m | 36 m |
+| brake pedal pressed | 67% | 18% |
+| accelerator pressed | 12% | 51% |
+
+85% of event frames occur with both the stock cruise and openpilot longitudinal control off. `q10` leads the car's
+own deceleration by 0.5-1 s (r = 0.39-0.56 on three drive partitions, about 0.004-0.008 m/s² per code). The reading:
+a pre-collision / brake-assist deceleration quantity (◐). Counts and relative-time example: `data/analysis/summaries/event_pair_carries.json`.
 
 ![event raw code and exact idle payload](img/analysis/event_code_context.png)
 

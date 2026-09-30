@@ -26,10 +26,10 @@ from this radar's own data.
 | `32\|12` | **dRel**, forward distance from the radar | `(code − 160) / 16` m | ● field/scale; ◐ physical zero |
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) / 64` m; \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale (±10%) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
-| `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.145` m/s | ◐ |
+| `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.147` m/s | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by 0.5-1 s | ◐ |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
-| `208\|6` | **heading-like angle output** | empirical clipped velocity-angle relationship, approximately π/64 rad per code | ◐ |
+| `208\|6` | **heading over ground**, left positive, clipped at 0 | `floor(max(atan2(vy, vx), 0) × 64 / π)`: π/64 rad per code | ● meaning, ◐ exact scale |
 
 - **The velocity is over ground**, not relative: traffic sits on the ego-speed diagonal, parked objects on 0 and
   oncoming traffic on −v_ego.
@@ -38,19 +38,18 @@ from this radar's own data.
 
 - **Lateral motion and acceleration live in the radar's rotating frame.** With yaw rate ω (left positive):
   `vy = dy/dt + ω·x` and `ay = dvy/dt + ω·vx`. With that correction, `74|10` fits 0.142-0.145 m/s per code on
-  three drive groups, and `96|10` tracks lateral acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
+  three drive groups, and 0.147 (±3%) against the gyro in turns on all 700 segments. `96|10` tracks lateral
+  acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
   further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration.
-- **Heading-like angle** matches `floor(max(atan2(vy, vx), 0) × 64 / π)` exactly on 98.2% of the original
-  settled moving samples (99.6% within one code). Negative angles generally read 0 and oncoming motion reads near
-  63. This is an empirical relationship; angle outputs can change while both published velocity codes remain
-  unchanged. Three original-CAN-verified mature examples have angle changes 0→4, 62→28 and 0→14 with component
-  codes held constant. A 700-segment census retains discrepancies under ±1-code input allowances, independent
-  component units of .14–.16 m/s/code and an angle interval covering round/floor interpretations. Confirmation
-  has 268 incompatible mature-moving rows among 60,029; further drives have 196 among 35,778. These declared
-  allowances are not factory calibration bounds. Input precision/calibration, initialization, timing and
-  filtering remain possible sources of the difference; the field does not independently certify physical
-  direction or a fixed delay. Clipped 0/near63 changes need not represent a physical half-turn.
-  Counts and definitions: [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json).
+- **Heading over ground** is the direction of the object's over-ground velocity, computed in the same cycle from the
+  published components: it matches `floor(max(atan2(vy, vx), 0) × 64 / π)` on 98.2% of settled moving samples
+  (99.6% within one code), with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads
+  near 63. Against an independent physical reference, the road direction that the car itself drives through a few
+  seconds later at the lead's position, it correlates at r = 0.89-0.93 on three drive partitions, with a slope of
+  1.0 ± 0.1 per π/64 rad and 99.9% of rightward headings at 0. Where it differs from the component formula, the
+  component formula is at least as close to the road direction. Counts:
+  [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json),
+  [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
   The neighbouring `200|7` code helps distinguish output states: raw63 pairs with angle0 on all 393,268
   observed rows. Raw127 usually pairs with zero too, but has 14 nonzero-angle exceptions among 35,871 rows,
@@ -166,8 +165,11 @@ class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
 with visible cyclists, including two that reach mature age. Two runs on another drive nominally follow visible
 walkers, including one with 31 mature rows. The camera review covers 21 episodes across 11 drives from a
 45-episode inventory, with ambiguous parked-vehicle, road and traffic-furniture scenes also represented.
-All 968 class-5 samples read 15 in `136|4`, and their height-like `272|5` code spans 4-11. Counts are in
-[`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json).
+The radar's own kinematics point the same way: class-5 objects measure 1.2 × 0.7 m (between pedestrians at
+0.5 × 0.6 m and two-wheelers at 1.6 × 0.7 m) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
+a bicycle at walking-to-cycling speed. All 968 class-5 samples read 15 in `136|4`, and their height-like `272|5`
+code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
+[`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
 ![object size](img/analysis/object_size.png)
 

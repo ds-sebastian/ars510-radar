@@ -1,0 +1,904 @@
+{
+ "description": "Camera-free physical references for decode fields: the car's own motion (livePose gyro, wheel speed) and its driven path. Partitions: development / confirmation / further drives (700 one-minute segments).",
+ "heading_208": {
+  "reference": "road direction the car drives through at the lead's position a few seconds later",
+  "partitions": {
+   "confirmation": {
+    "samples": 21119,
+    "samples_theta_gt_2deg": 2873,
+    "corr": 0.894,
+    "corr_component_formula": 0.96,
+    "slope_per_pi_over_64": 0.93,
+    "slope_ci95": [
+     0.813,
+     1.144
+    ],
+    "rightward_reads_zero": 1.0,
+    "disagreements": 314,
+    "disagreement_share_208_closer": 0.475
+   },
+   "discovery": {
+    "samples": 51827,
+    "samples_theta_gt_2deg": 5972,
+    "corr": 0.93,
+    "corr_component_formula": 0.944,
+    "slope_per_pi_over_64": 1.061,
+    "slope_ci95": [
+     1.002,
+     1.105
+    ],
+    "rightward_reads_zero": 0.9994,
+    "disagreements": 537,
+    "disagreement_share_208_closer": 0.527
+   },
+   "other": {
+    "samples": 70637,
+    "samples_theta_gt_2deg": 4474,
+    "corr": 0.91,
+    "corr_component_formula": 0.941,
+    "slope_per_pi_over_64": 1.088,
+    "slope_ci95": [
+     1.019,
+     1.159
+    ],
+    "rightward_reads_zero": 1.0,
+    "disagreements": 403,
+    "disagreement_share_208_closer": 0.442
+   }
+  },
+  "agreement_with_component_formula_by_lag_records": {
+   "-4": 0.9757,
+   "-3": 0.9792,
+   "-2": 0.9835,
+   "-1": 0.9881,
+   "0": 0.9915,
+   "1": 0.9891,
+   "2": 0.9848,
+   "3": 0.9805,
+   "4": 0.9768,
+   "5": 0.9737
+  }
+ },
+ "lateral_velocity_74": {
+  "reference": "livePose gyro yaw rate x range in turns",
+  "scale_vs_nominal_0_15": {
+   "discovery": {
+    "s": 0.9787,
+    "ci95": [
+     0.9347,
+     1.0101
+    ],
+    "windows": 2859
+   },
+   "confirmation": {
+    "s": 0.9767,
+    "ci95": [
+     0.9048,
+     1.0523
+    ],
+    "windows": 1256
+   },
+   "other": {
+    "s": 1.0301,
+    "ci95": [
+     0.9454,
+     1.0833
+    ],
+    "windows": 3516
+   }
+  }
+ },
+ "class_kinematics": {
+  "2": {
+   "allocations": 5807,
+   "speed_p10_50_90": [
+    0.68,
+    11.36,
+    31.43
+   ],
+   "length": [
+    3.6,
+    4.7,
+    5.6
+   ],
+   "width": [
+    1.5,
+    1.8,
+    1.9
+   ],
+   "h272": [
+    7.0,
+    9.0,
+    10.0
+   ]
+  },
+  "3": {
+   "allocations": 698,
+   "speed_p10_50_90": [
+    0.41,
+    7.76,
+    31.58
+   ],
+   "length": [
+    4.5,
+    5.7,
+    7.4
+   ],
+   "width": [
+    1.6,
+    1.9,
+    2.3
+   ],
+   "h272": [
+    8.0,
+    10.0,
+    13.0
+   ]
+  },
+  "4": {
+   "allocations": 201,
+   "speed_p10_50_90": [
+    0.11,
+    0.83,
+    2.18
+   ],
+   "length": [
+    0.4,
+    0.5,
+    0.6
+   ],
+   "width": [
+    0.5,
+    0.6,
+    0.7
+   ],
+   "h272": [
+    7.0,
+    8.0,
+    10.0
+   ]
+  },
+  "5": {
+   "allocations": 10,
+   "speed_p10_50_90": [
+    0.62,
+    2.02,
+    6.19
+   ],
+   "length": [
+    0.9,
+    1.2,
+    1.82
+   ],
+   "width": [
+    0.59,
+    0.7,
+    1.01
+   ],
+   "h272": [
+    5.9,
+    7.5,
+    9.0
+   ]
+  },
+  "6": {
+   "allocations": 3,
+   "speed_p10_50_90": [
+    8.34,
+    9.45,
+    12.99
+   ],
+   "length": [
+    0.72,
+    1.6,
+    1.76
+   ],
+   "width": [
+    0.62,
+    0.7,
+    0.78
+   ],
+   "h272": [
+    7.2,
+    8.0,
+    8.8
+   ]
+  }
+ },
+ "event_pair_0x195": {
+  "context": {
+   "control": {
+    "n": 6561,
+    "gas_pressed": 0.513,
+    "brake_pressed": 0.181,
+    "cruise_on": 0.247,
+    "lead_inpath": 0.492,
+    "lead_x_median": 35.8,
+    "closing_share": 0.242,
+    "ttc_lt_4s": 0.008,
+    "speed_median": 12.2
+   },
+   "event": {
+    "n": 2216,
+    "gas_pressed": 0.124,
+    "brake_pressed": 0.668,
+    "cruise_on": 0.156,
+    "lead_inpath": 0.662,
+    "lead_x_median": 18.0,
+    "closing_share": 0.652,
+    "ttc_lt_4s": 0.408,
+    "speed_median": 6.6
+   }
+  },
+  "state_share": {
+   "cruise": 0.155,
+   "long_active": 0.136,
+   "engaged": 0.349
+  },
+  "q10_lead_corr_by_lag_s": {
+   "confirmation": {
+    "L-1.00": 0.147,
+    "L-0.75": 0.214,
+    "L-0.50": 0.27,
+    "L-0.25": 0.323,
+    "L+0.00": 0.393,
+    "L+0.25": 0.449,
+    "L+0.50": 0.483,
+    "L+0.75": 0.506,
+    "L+1.00": 0.527,
+    "L+1.25": 0.525,
+    "L+1.50": 0.509,
+    "L+1.75": 0.42,
+    "L+2.00": 0.364
+   },
+   "discovery": {
+    "L-1.00": 0.471,
+    "L-0.75": 0.488,
+    "L-0.50": 0.512,
+    "L-0.25": 0.527,
+    "L+0.00": 0.542,
+    "L+0.25": 0.55,
+    "L+0.50": 0.562,
+    "L+0.75": 0.548,
+    "L+1.00": 0.509,
+    "L+1.25": 0.438,
+    "L+1.50": 0.373,
+    "L+1.75": 0.304,
+    "L+2.00": 0.247
+   },
+   "other": {
+    "L-1.00": 0.285,
+    "L-0.75": 0.317,
+    "L-0.50": 0.327,
+    "L-0.25": 0.33,
+    "L+0.00": 0.343,
+    "L+0.25": 0.371,
+    "L+0.50": 0.392,
+    "L+0.75": 0.384,
+    "L+1.00": 0.343,
+    "L+1.25": 0.303,
+    "L+1.50": 0.275,
+    "L+1.75": 0.245,
+    "L+2.00": 0.203
+   }
+  },
+  "q10_scale": {
+   "confirmation": {
+    "best_lag": "L+1.00",
+    "mps2_per_code": 0.0036,
+    "offset": -1.477,
+    "n": 279,
+    "routes": 7
+   },
+   "discovery": {
+    "best_lag": "L+0.50",
+    "mps2_per_code": 0.004,
+    "offset": -1.463,
+    "n": 266,
+    "routes": 11
+   },
+   "other": {
+    "best_lag": "L+0.50",
+    "mps2_per_code": 0.0083,
+    "offset": -1.769,
+    "n": 484,
+    "routes": 7
+   }
+  }
+ },
+ "cells_0x85_64_16": {
+  "reference": "own future path over 60 m in the current radar frame: road heading theta and curvature kappa",
+  "curvature_screen": {
+   "0": {
+    "theta": {
+     "start": 11,
+     "width": 8,
+     "signed": true,
+     "rho_discovery": -0.327,
+     "rho_confirmation": -0.396,
+     "n_confirmation": 1792,
+     "rho_other": -0.234,
+     "n_other": 5583,
+     "pass": false
+    },
+    "kappa": {
+     "start": 69,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.356,
+     "rho_confirmation": 0.362,
+     "n_confirmation": 1792,
+     "rho_other": 0.374,
+     "n_other": 5583,
+     "pass": false
+    }
+   },
+   "1": {
+    "theta": {
+     "start": 70,
+     "width": 8,
+     "signed": true,
+     "rho_discovery": 0.273,
+     "rho_confirmation": 0.265,
+     "n_confirmation": 1509,
+     "rho_other": 0.255,
+     "n_other": 8921,
+     "pass": false
+    },
+    "kappa": {
+     "start": 65,
+     "width": 12,
+     "signed": true,
+     "rho_discovery": 0.424,
+     "rho_confirmation": 0.278,
+     "n_confirmation": 1509,
+     "rho_other": 0.415,
+     "n_other": 8921,
+     "pass": false
+    }
+   },
+   "2": {
+    "theta": {
+     "start": 72,
+     "width": 6,
+     "signed": true,
+     "rho_discovery": 0.376,
+     "rho_confirmation": 0.42,
+     "n_confirmation": 4825,
+     "rho_other": 0.404,
+     "n_other": 21728,
+     "pass": false
+    },
+    "kappa": {
+     "start": 67,
+     "width": 12,
+     "signed": false,
+     "rho_discovery": 0.638,
+     "rho_confirmation": 0.542,
+     "n_confirmation": 4825,
+     "rho_other": 0.657,
+     "n_other": 21728,
+     "pass": true
+    }
+   },
+   "3": {
+    "theta": {
+     "start": 72,
+     "width": 6,
+     "signed": true,
+     "rho_discovery": 0.373,
+     "rho_confirmation": 0.402,
+     "n_confirmation": 4959,
+     "rho_other": 0.394,
+     "n_other": 21979,
+     "pass": false
+    },
+    "kappa": {
+     "start": 72,
+     "width": 6,
+     "signed": true,
+     "rho_discovery": 0.612,
+     "rho_confirmation": 0.551,
+     "n_confirmation": 4959,
+     "rho_other": 0.631,
+     "n_other": 21979,
+     "pass": true
+    }
+   },
+   "4": {
+    "theta": {
+     "start": 69,
+     "width": 10,
+     "signed": false,
+     "rho_discovery": 0.207,
+     "rho_confirmation": 0.229,
+     "n_confirmation": 739,
+     "rho_other": 0.233,
+     "n_other": 8595,
+     "pass": false
+    },
+    "kappa": {
+     "start": 72,
+     "width": 8,
+     "signed": true,
+     "rho_discovery": 0.31,
+     "rho_confirmation": 0.271,
+     "n_confirmation": 739,
+     "rho_other": 0.345,
+     "n_other": 8595,
+     "pass": false
+    }
+   },
+   "5": {
+    "theta": {
+     "start": 11,
+     "width": 8,
+     "signed": true,
+     "rho_discovery": -0.401,
+     "rho_confirmation": -0.406,
+     "n_confirmation": 2853,
+     "rho_other": -0.252,
+     "n_other": 6970,
+     "pass": false
+    },
+    "kappa": {
+     "start": 69,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.432,
+     "rho_confirmation": 0.456,
+     "n_confirmation": 2853,
+     "rho_other": 0.364,
+     "n_other": 6970,
+     "pass": false
+    }
+   },
+   "6": {
+    "theta": {
+     "start": 73,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.266,
+     "rho_confirmation": 0.271,
+     "n_confirmation": 4345,
+     "rho_other": 0.203,
+     "n_other": 11225,
+     "pass": false
+    },
+    "kappa": {
+     "start": 70,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.311,
+     "rho_confirmation": 0.288,
+     "n_confirmation": 4345,
+     "rho_other": 0.279,
+     "n_other": 11225,
+     "pass": false
+    }
+   },
+   "7": {
+    "theta": {
+     "start": 74,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.259,
+     "rho_confirmation": 0.227,
+     "n_confirmation": 3664,
+     "rho_other": 0.207,
+     "n_other": 9206,
+     "pass": false
+    },
+    "kappa": {
+     "start": 67,
+     "width": 16,
+     "signed": true,
+     "rho_discovery": 0.301,
+     "rho_confirmation": 0.303,
+     "n_confirmation": 3664,
+     "rho_other": 0.268,
+     "n_other": 9206,
+     "pass": false
+    }
+   },
+   "8": {
+    "theta": {
+     "start": 72,
+     "width": 6,
+     "signed": true,
+     "rho_discovery": 0.352,
+     "rho_confirmation": 0.387,
+     "n_confirmation": 4448,
+     "rho_other": 0.355,
+     "n_other": 21303,
+     "pass": false
+    },
+    "kappa": {
+     "start": 69,
+     "width": 10,
+     "signed": false,
+     "rho_discovery": 0.586,
+     "rho_confirmation": 0.509,
+     "n_confirmation": 4448,
+     "rho_other": 0.601,
+     "n_other": 21303,
+     "pass": true
+    }
+   },
+   "9": {
+    "theta": {
+     "start": 72,
+     "width": 6,
+     "signed": true,
+     "rho_discovery": 0.357,
+     "rho_confirmation": 0.386,
+     "n_confirmation": 4454,
+     "rho_other": 0.346,
+     "n_other": 20933,
+     "pass": false
+    },
+    "kappa": {
+     "start": 64,
+     "width": 14,
+     "signed": true,
+     "rho_discovery": 0.554,
+     "rho_confirmation": 0.494,
+     "n_confirmation": 4454,
+     "rho_other": 0.565,
+     "n_other": 20933,
+     "pass": false
+    }
+   }
+  },
+  "field_followup": {
+   "2": {
+    "field": "67|11s",
+    "rho": {
+     "discovery": 0.638,
+     "confirmation": 0.542,
+     "other": 0.657
+    },
+    "kappa_per_code": {
+     "discovery": 1.255104251830881e-05,
+     "confirmation": 1.2607905608328646e-05,
+     "other": 1.2374709610903477e-05
+    },
+    "heading_given_kappa": {
+     "field": "72|6s",
+     "partial_rho": {
+      "discovery": 0.455,
+      "confirmation": 0.516,
+      "other": 0.357
+     }
+    }
+   },
+   "3": {
+    "field": "70|8s",
+    "rho": {
+     "discovery": 0.611,
+     "confirmation": 0.545,
+     "other": 0.639
+    },
+    "kappa_per_code": {
+     "discovery": 9.252607274636322e-05,
+     "confirmation": 9.961757762302567e-05,
+     "other": 0.00010385298111653614
+    },
+    "heading_given_kappa": {
+     "field": "72|6s",
+     "partial_rho": {
+      "discovery": 0.467,
+      "confirmation": 0.501,
+      "other": 0.357
+     }
+    }
+   },
+   "8": {
+    "field": "69|9s",
+    "rho": {
+     "discovery": 0.586,
+     "confirmation": 0.509,
+     "other": 0.601
+    },
+    "kappa_per_code": {
+     "discovery": 4.370347266570997e-05,
+     "confirmation": 4.398437477329289e-05,
+     "other": 4.2543686214120224e-05
+    },
+    "heading_given_kappa": {
+     "field": "72|6s",
+     "partial_rho": {
+      "discovery": 0.397,
+      "confirmation": 0.459,
+      "other": 0.287
+     }
+    }
+   },
+   "9": {
+    "field": "64|14s",
+    "rho": {
+     "discovery": 0.554,
+     "confirmation": 0.494,
+     "other": 0.565
+    },
+    "kappa_per_code": {
+     "discovery": 1.226232854134676e-06,
+     "confirmation": 1.3248815259907382e-06,
+     "other": 1.3919244783314489e-06
+    },
+    "heading_given_kappa": {
+     "field": "72|6s",
+     "partial_rho": {
+      "discovery": 0.409,
+      "confirmation": 0.449,
+      "other": 0.281
+     }
+    }
+   }
+  },
+  "joint_fit_boundary_cells": {
+   "2": {
+    "discovery": {
+     "n": 11749,
+     "a_theta": 18310.4,
+     "a_kappa": 328525.1,
+     "lookahead_d_m": 35.88,
+     "control_offset_theta_m_per_rad": -1.54,
+     "control_offset_kappa": -12.1
+    },
+    "confirmation": {
+     "n": 4708,
+     "a_theta": 18357.6,
+     "a_kappa": 306429.9,
+     "lookahead_d_m": 33.38,
+     "control_offset_theta_m_per_rad": -0.91,
+     "control_offset_kappa": -9.8
+    },
+    "other": {
+     "n": 21600,
+     "a_theta": 16811.6,
+     "a_kappa": 333689.3,
+     "lookahead_d_m": 39.7,
+     "control_offset_theta_m_per_rad": -2.19,
+     "control_offset_kappa": -68.9
+    }
+   },
+   "3": {
+    "discovery": {
+     "n": 11910,
+     "a_theta": 19928.0,
+     "a_kappa": 291648.2,
+     "lookahead_d_m": 29.27,
+     "control_offset_theta_m_per_rad": -2.61,
+     "control_offset_kappa": -26.0
+    },
+    "confirmation": {
+     "n": 4829,
+     "a_theta": 18661.7,
+     "a_kappa": 273379.1,
+     "lookahead_d_m": 29.3,
+     "control_offset_theta_m_per_rad": -1.89,
+     "control_offset_kappa": -16.6
+    },
+    "other": {
+     "n": 21821,
+     "a_theta": 18137.2,
+     "a_kappa": 315768.1,
+     "lookahead_d_m": 34.82,
+     "control_offset_theta_m_per_rad": -2.22,
+     "control_offset_kappa": -56.6
+    }
+   },
+   "8": {
+    "discovery": {
+     "n": 11149,
+     "a_theta": 22250.0,
+     "a_kappa": 372478.5,
+     "lookahead_d_m": 33.48,
+     "control_offset_theta_m_per_rad": -1.18,
+     "control_offset_kappa": -13.6
+    },
+    "confirmation": {
+     "n": 4332,
+     "a_theta": 20134.7,
+     "a_kappa": 127298.3,
+     "lookahead_d_m": 12.64,
+     "control_offset_theta_m_per_rad": -1.35,
+     "control_offset_kappa": -10.9
+    },
+    "other": {
+     "n": 21188,
+     "a_theta": 30540.7,
+     "a_kappa": 428984.6,
+     "lookahead_d_m": 28.09,
+     "control_offset_theta_m_per_rad": -1.95,
+     "control_offset_kappa": -72.5
+    }
+   },
+   "9": {
+    "discovery": {
+     "n": 11081,
+     "a_theta": 20055.6,
+     "a_kappa": 210694.5,
+     "lookahead_d_m": 21.01,
+     "control_offset_theta_m_per_rad": -2.47,
+     "control_offset_kappa": -26.1
+    },
+    "confirmation": {
+     "n": 4350,
+     "a_theta": 18476.4,
+     "a_kappa": 156821.8,
+     "lookahead_d_m": 16.98,
+     "control_offset_theta_m_per_rad": -1.55,
+     "control_offset_kappa": -11.4
+    },
+    "other": {
+     "n": 20812,
+     "a_theta": 16673.7,
+     "a_kappa": 228165.4,
+     "lookahead_d_m": 27.37,
+     "control_offset_theta_m_per_rad": -1.71,
+     "control_offset_kappa": -51.7
+    }
+   }
+  },
+  "joint_fit_other_cells": {
+   "0": {
+    "discovery": {
+     "n": 3976,
+     "a_theta": 16437.7,
+     "a_kappa": 286886.2,
+     "lookahead_d_m": 34.91,
+     "control_offset_theta_m_per_rad": 0.4,
+     "control_offset_kappa": 5.1
+    },
+    "confirmation": {
+     "n": 1725,
+     "a_theta": 18482.8,
+     "a_kappa": 281562.6,
+     "lookahead_d_m": 30.47,
+     "control_offset_theta_m_per_rad": 1.92,
+     "control_offset_kappa": 55.7
+    },
+    "other": {
+     "n": 5525,
+     "a_theta": 17744.7,
+     "a_kappa": 280974.3,
+     "lookahead_d_m": 31.67,
+     "control_offset_theta_m_per_rad": -1.25,
+     "control_offset_kappa": 30.2
+    }
+   },
+   "1": {
+    "discovery": {
+     "n": 3368,
+     "a_theta": 13835.3,
+     "a_kappa": 268370.4,
+     "lookahead_d_m": 38.8,
+     "control_offset_theta_m_per_rad": -0.93,
+     "control_offset_kappa": -31.1
+    },
+    "confirmation": {
+     "n": 1476,
+     "a_theta": 18291.1,
+     "a_kappa": 283507.3,
+     "lookahead_d_m": 31.0,
+     "control_offset_theta_m_per_rad": 0.66,
+     "control_offset_kappa": 9.0
+    },
+    "other": {
+     "n": 8879,
+     "a_theta": 15816.2,
+     "a_kappa": 304837.2,
+     "lookahead_d_m": 38.55,
+     "control_offset_theta_m_per_rad": 1.48,
+     "control_offset_kappa": -27.9
+    }
+   },
+   "4": {
+    "discovery": {
+     "n": 2521,
+     "a_theta": 10034.5,
+     "a_kappa": 222921.2,
+     "lookahead_d_m": 44.43,
+     "control_offset_theta_m_per_rad": 5.31,
+     "control_offset_kappa": 19.3
+    },
+    "confirmation": {
+     "n": 708,
+     "a_theta": 11112.8,
+     "a_kappa": 151837.3,
+     "lookahead_d_m": 27.33,
+     "control_offset_theta_m_per_rad": -1.38,
+     "control_offset_kappa": 57.0
+    },
+    "other": {
+     "n": 8570,
+     "a_theta": 9741.7,
+     "a_kappa": 267459.6,
+     "lookahead_d_m": 54.91,
+     "control_offset_theta_m_per_rad": -4.04,
+     "control_offset_kappa": -55.7
+    }
+   },
+   "5": {
+    "discovery": {
+     "n": 4837,
+     "a_theta": 18063.5,
+     "a_kappa": 275283.0,
+     "lookahead_d_m": 30.48,
+     "control_offset_theta_m_per_rad": -0.98,
+     "control_offset_kappa": -20.0
+    },
+    "confirmation": {
+     "n": 2674,
+     "a_theta": 18618.9,
+     "a_kappa": 291834.0,
+     "lookahead_d_m": 31.35,
+     "control_offset_theta_m_per_rad": -2.27,
+     "control_offset_kappa": -15.9
+    },
+    "other": {
+     "n": 6812,
+     "a_theta": 21958.3,
+     "a_kappa": 326879.4,
+     "lookahead_d_m": 29.77,
+     "control_offset_theta_m_per_rad": -1.48,
+     "control_offset_kappa": -2.7
+    }
+   },
+   "6": {
+    "discovery": {
+     "n": 8726,
+     "a_theta": 14614.3,
+     "a_kappa": 252124.5,
+     "lookahead_d_m": 34.5,
+     "control_offset_theta_m_per_rad": -2.76,
+     "control_offset_kappa": -19.6
+    },
+    "confirmation": {
+     "n": 4027,
+     "a_theta": 14341.8,
+     "a_kappa": 231208.5,
+     "lookahead_d_m": 32.24,
+     "control_offset_theta_m_per_rad": -0.77,
+     "control_offset_kappa": -92.0
+    },
+    "other": {
+     "n": 10855,
+     "a_theta": 14002.8,
+     "a_kappa": 239884.0,
+     "lookahead_d_m": 34.26,
+     "control_offset_theta_m_per_rad": 2.5,
+     "control_offset_kappa": 24.7
+    }
+   },
+   "7": {
+    "discovery": {
+     "n": 8246,
+     "a_theta": 15266.8,
+     "a_kappa": 246330.2,
+     "lookahead_d_m": 32.27,
+     "control_offset_theta_m_per_rad": 1.34,
+     "control_offset_kappa": 46.1
+    },
+    "confirmation": {
+     "n": 3446,
+     "a_theta": 12915.6,
+     "a_kappa": 234033.7,
+     "lookahead_d_m": 36.24,
+     "control_offset_theta_m_per_rad": -5.81,
+     "control_offset_kappa": -53.5
+    },
+    "other": {
+     "n": 8933,
+     "a_theta": 14402.1,
+     "a_kappa": 229035.3,
+     "lookahead_d_m": 31.81,
+     "control_offset_theta_m_per_rad": -3.55,
+     "control_offset_kappa": -217.7
+    }
+   }
+  }
+ }
+}
