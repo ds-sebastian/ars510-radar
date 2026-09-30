@@ -1794,7 +1794,7 @@ CM_ SG_ 1792 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1792 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1792 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1792 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1792 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1792 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1792 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1792 CONST_222_2 "Constant in the captured data.";
@@ -1857,7 +1857,7 @@ CM_ SG_ 1793 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1793 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1793 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1793 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1793 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1793 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1793 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1793 CONST_222_2 "Constant in the captured data.";
@@ -1920,7 +1920,7 @@ CM_ SG_ 1794 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1794 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1794 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1794 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1794 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1794 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1794 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1794 CONST_222_2 "Constant in the captured data.";
@@ -1983,7 +1983,7 @@ CM_ SG_ 1795 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1795 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1795 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1795 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1795 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1795 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1795 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1795 CONST_222_2 "Constant in the captured data.";
@@ -2046,7 +2046,7 @@ CM_ SG_ 1796 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1796 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1796 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1796 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1796 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1796 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1796 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1796 CONST_222_2 "Constant in the captured data.";
@@ -2109,7 +2109,7 @@ CM_ SG_ 1797 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1797 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1797 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1797 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1797 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1797 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1797 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1797 CONST_222_2 "Constant in the captured data.";
@@ -2172,7 +2172,7 @@ CM_ SG_ 1798 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1798 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1798 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1798 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1798 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1798 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1798 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1798 CONST_222_2 "Constant in the captured data.";
@@ -2235,7 +2235,7 @@ CM_ SG_ 1799 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1799 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1799 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1799 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1799 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1799 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1799 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1799 CONST_222_2 "Constant in the captured data.";
@@ -2298,7 +2298,7 @@ CM_ SG_ 1800 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1800 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1800 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1800 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1800 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1800 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1800 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1800 CONST_222_2 "Constant in the captured data.";
@@ -2361,7 +2361,7 @@ CM_ SG_ 1801 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1801 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1801 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1801 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1801 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1801 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1801 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1801 CONST_222_2 "Constant in the captured data.";
@@ -2424,7 +2424,7 @@ CM_ SG_ 1802 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1802 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1802 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1802 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1802 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1802 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1802 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1802 CONST_222_2 "Constant in the captured data.";
@@ -2487,7 +2487,7 @@ CM_ SG_ 1803 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1803 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1803 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1803 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1803 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1803 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1803 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1803 CONST_222_2 "Constant in the captured data.";
@@ -2550,7 +2550,7 @@ CM_ SG_ 1804 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1804 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1804 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1804 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1804 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1804 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1804 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1804 CONST_222_2 "Constant in the captured data.";
@@ -2613,7 +2613,7 @@ CM_ SG_ 1805 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1805 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1805 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1805 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1805 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1805 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1805 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1805 CONST_222_2 "Constant in the captured data.";
@@ -2676,7 +2676,7 @@ CM_ SG_ 1806 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1806 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1806 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1806 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1806 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1806 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1806 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1806 CONST_222_2 "Constant in the captured data.";
@@ -2739,7 +2739,7 @@ CM_ SG_ 1807 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1807 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1807 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1807 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1807 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1807 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1807 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1807 CONST_222_2 "Constant in the captured data.";
@@ -2802,7 +2802,7 @@ CM_ SG_ 1808 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1808 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1808 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1808 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1808 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1808 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1808 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1808 CONST_222_2 "Constant in the captured data.";
@@ -2865,7 +2865,7 @@ CM_ SG_ 1809 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1809 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1809 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1809 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1809 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1809 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1809 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1809 CONST_222_2 "Constant in the captured data.";
@@ -2928,7 +2928,7 @@ CM_ SG_ 1810 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1810 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1810 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1810 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1810 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1810 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1810 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1810 CONST_222_2 "Constant in the captured data.";
@@ -2991,7 +2991,7 @@ CM_ SG_ 1811 UNK_183_7 "Bit 183 raw; bits 184-189 are the low bits of a secondar
 CM_ SG_ 1811 UNK_190_10 "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 raw.";
 CM_ SG_ 1811 UNK_200_7 "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.";
 CM_ SG_ 1811 CONST_207_1 "Constant in the captured data.";
-CM_ SG_ 1811 UNK_208_6 "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.";
+CM_ SG_ 1811 UNK_208_6 "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.";
 CM_ SG_ 1811 CONST_214_2 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.";
 CM_ SG_ 1811 CONST_222_2 "Constant in the captured data.";

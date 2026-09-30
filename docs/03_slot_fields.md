@@ -29,7 +29,7 @@ from this radar's own data.
 | `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.145` m/s | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by 0.5-1 s | ◐ |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
-| `208\|6` | **heading** of motion over ground | `floor(max(atan2(vy, vx), 0) × 64 / π)`, π/64 rad per code | ◐ |
+| `208\|6` | **heading-like angle output** | empirical clipped velocity-angle relationship, approximately π/64 rad per code | ◐ |
 
 - **The velocity is over ground**, not relative: traffic sits on the ego-speed diagonal, parked objects on 0 and
   oncoming traffic on −v_ego.
@@ -40,11 +40,21 @@ from this radar's own data.
   `vy = dy/dt + ω·x` and `ay = dvy/dt + ω·vx`. With that correction, `74|10` fits 0.142-0.145 m/s per code on
   three drive groups, and `96|10` tracks lateral acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
   further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration.
-- **Heading** matches the formula exactly on 98.2% of settled moving samples (99.6% within one code). Headings to
-  the right (negative angles) read 0, and oncoming traffic reads near 63. On young and slow tracks the code differs
-  more often from the instantaneous velocity angle, which points to a separately filtered heading state.
+- **Heading-like angle** matches `floor(max(atan2(vy, vx), 0) × 64 / π)` exactly on 98.2% of the original
+  settled moving samples (99.6% within one code). Negative angles generally read 0 and oncoming motion reads near
+  63. This is an empirical relationship; angle outputs can change while both published velocity codes remain
+  unchanged. Three original-CAN-verified mature examples have angle changes 0→4, 62→28 and 0→14 with component
+  codes held constant. A 700-segment census retains discrepancies under ±1-code input allowances, independent
+  component units of .14–.16 m/s/code and an angle interval covering round/floor interpretations. Confirmation
+  has 268 incompatible mature-moving rows among 60,029; further drives have 196 among 35,778. These declared
+  allowances are not factory calibration bounds. Input precision/calibration, initialization, timing and
+  filtering remain possible sources of the difference; the field does not independently certify physical
+  direction or a fixed delay. Clipped 0/near63 changes need not represent a physical half-turn.
+  Counts and definitions: [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json).
 
   ![heading](img/analysis/heading_field.png)
+
+  ![angle and published component updates](img/analysis/heading_component_updates.png)
 
 Scales and accuracy are in [06](06_accuracy.md).
 

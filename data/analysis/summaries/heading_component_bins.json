@@ -1,0 +1,350 @@
+{
+  "scope": "700 previously researched segments; 1,253,081 occupied rows; no independent physical-motion supervision",
+  "primary_rows": 1223999,
+  "eligibility": "Age 2..126, positive forward range, non-sentinel lateral position; origin-containing bins have undefined direction",
+  "cohorts": "Young ages 2..59; mature age >=60, split at nominal component norm 5 m/s; not independently measured target motion",
+  "model": "Current velocity-bin angle, clipped below zero, with +/-1 code input bounds, independent .14-.16 m/s units, output interval [q-.5,q+1] pi/64",
+  "component_code_zero": 510.5,
+  "output_clipping": "Feasible zero and near-pi intervals remain separate; no convex hull across the discontinuity",
+  "bounds_are_factory_calibration": false,
+  "cohort_scores": [
+    {
+      "part": "confirmation",
+      "cohort": "mature_moving",
+      "routes": 7,
+      "rows": 60029,
+      "origin": 0,
+      "nominal_incompatible": 371,
+      "wide_incompatible": 268,
+      "unchanged_uv_heading_ge4": 1,
+      "unchanged_uv_bad_ge4": 0
+    },
+    {
+      "part": "confirmation",
+      "cohort": "mature_slow",
+      "routes": 7,
+      "rows": 48916,
+      "origin": 22194,
+      "nominal_incompatible": 5669,
+      "wide_incompatible": 5557,
+      "unchanged_uv_heading_ge4": 12,
+      "unchanged_uv_bad_ge4": 6
+    },
+    {
+      "part": "confirmation",
+      "cohort": "young",
+      "routes": 7,
+      "rows": 87996,
+      "origin": 5154,
+      "nominal_incompatible": 19506,
+      "wide_incompatible": 18989,
+      "unchanged_uv_heading_ge4": 61,
+      "unchanged_uv_bad_ge4": 38
+    },
+    {
+      "part": "discovery",
+      "cohort": "mature_moving",
+      "routes": 13,
+      "rows": 149234,
+      "origin": 0,
+      "nominal_incompatible": 1026,
+      "wide_incompatible": 850,
+      "unchanged_uv_heading_ge4": 11,
+      "unchanged_uv_bad_ge4": 5
+    },
+    {
+      "part": "discovery",
+      "cohort": "mature_slow",
+      "routes": 13,
+      "rows": 109748,
+      "origin": 48040,
+      "nominal_incompatible": 11432,
+      "wide_incompatible": 11210,
+      "unchanged_uv_heading_ge4": 18,
+      "unchanged_uv_bad_ge4": 14
+    },
+    {
+      "part": "discovery",
+      "cohort": "young",
+      "routes": 13,
+      "rows": 183165,
+      "origin": 12210,
+      "nominal_incompatible": 36456,
+      "wide_incompatible": 35425,
+      "unchanged_uv_heading_ge4": 105,
+      "unchanged_uv_bad_ge4": 66
+    },
+    {
+      "part": "further",
+      "cohort": "mature_moving",
+      "routes": 4,
+      "rows": 35778,
+      "origin": 0,
+      "nominal_incompatible": 235,
+      "wide_incompatible": 196,
+      "unchanged_uv_heading_ge4": 3,
+      "unchanged_uv_bad_ge4": 2
+    },
+    {
+      "part": "further",
+      "cohort": "mature_slow",
+      "routes": 4,
+      "rows": 21740,
+      "origin": 10830,
+      "nominal_incompatible": 1599,
+      "wide_incompatible": 1576,
+      "unchanged_uv_heading_ge4": 3,
+      "unchanged_uv_bad_ge4": 3
+    },
+    {
+      "part": "further",
+      "cohort": "young",
+      "routes": 4,
+      "rows": 48577,
+      "origin": 2848,
+      "nominal_incompatible": 11187,
+      "wide_incompatible": 10799,
+      "unchanged_uv_heading_ge4": 29,
+      "unchanged_uv_bad_ge4": 22
+    },
+    {
+      "part": "later",
+      "cohort": "mature_moving",
+      "routes": 2,
+      "rows": 38029,
+      "origin": 0,
+      "nominal_incompatible": 122,
+      "wide_incompatible": 96,
+      "unchanged_uv_heading_ge4": 2,
+      "unchanged_uv_bad_ge4": 2
+    },
+    {
+      "part": "later",
+      "cohort": "mature_slow",
+      "routes": 3,
+      "rows": 18541,
+      "origin": 10972,
+      "nominal_incompatible": 1553,
+      "wide_incompatible": 1514,
+      "unchanged_uv_heading_ge4": 3,
+      "unchanged_uv_bad_ge4": 2
+    },
+    {
+      "part": "later",
+      "cohort": "young",
+      "routes": 3,
+      "rows": 35472,
+      "origin": 3013,
+      "nominal_incompatible": 6714,
+      "wide_incompatible": 6523,
+      "unchanged_uv_heading_ge4": 20,
+      "unchanged_uv_bad_ge4": 10
+    },
+    {
+      "part": "retained",
+      "cohort": "mature_moving",
+      "routes": 1,
+      "rows": 300795,
+      "origin": 0,
+      "nominal_incompatible": 110,
+      "wide_incompatible": 82,
+      "unchanged_uv_heading_ge4": 0,
+      "unchanged_uv_bad_ge4": 0
+    },
+    {
+      "part": "retained",
+      "cohort": "mature_slow",
+      "routes": 1,
+      "rows": 14491,
+      "origin": 5807,
+      "nominal_incompatible": 1426,
+      "wide_incompatible": 1404,
+      "unchanged_uv_heading_ge4": 22,
+      "unchanged_uv_bad_ge4": 18
+    },
+    {
+      "part": "retained",
+      "cohort": "young",
+      "routes": 1,
+      "rows": 71488,
+      "origin": 7142,
+      "nominal_incompatible": 6504,
+      "wide_incompatible": 6349,
+      "unchanged_uv_heading_ge4": 11,
+      "unchanged_uv_bad_ge4": 8
+    }
+  ],
+  "verified_transfer_examples": [
+    {
+      "part": "confirmation",
+      "original_verified_counterexamples": 56,
+      "native_lives": 54,
+      "routes": 7,
+      "passes": true
+    },
+    {
+      "part": "further",
+      "original_verified_counterexamples": 34,
+      "native_lives": 33,
+      "routes": 4,
+      "passes": true
+    }
+  ],
+  "examples": [
+    {
+      "example": 1,
+      "cohort": "mature moving under nominal component scale",
+      "rows": [
+        {
+          "relative_s": -0.12973711700033164,
+          "long_code": 549,
+          "lat_code": 520,
+          "heading_code": 0,
+          "nominal_angle_code": 4,
+          "age": 70,
+          "wide_gap_codes": 2.7914447856152007
+        },
+        {
+          "relative_s": -0.05958337300035055,
+          "long_code": 546,
+          "lat_code": 519,
+          "heading_code": 0,
+          "nominal_angle_code": 4,
+          "age": 71,
+          "wide_gap_codes": 2.6240247770627194
+        },
+        {
+          "relative_s": 0.0,
+          "long_code": 546,
+          "lat_code": 519,
+          "heading_code": 4,
+          "nominal_angle_code": 4,
+          "age": 72,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.06041778899998462,
+          "long_code": 546,
+          "lat_code": 519,
+          "heading_code": 4,
+          "nominal_angle_code": 4,
+          "age": 73,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.12004110899943043,
+          "long_code": 547,
+          "lat_code": 520,
+          "heading_code": 4,
+          "nominal_angle_code": 5,
+          "age": 74,
+          "wide_gap_codes": 0.0
+        }
+      ]
+    },
+    {
+      "example": 2,
+      "cohort": "mature moving under nominal component scale",
+      "rows": [
+        {
+          "relative_s": -0.12355323599695112,
+          "long_code": 449,
+          "lat_code": 515,
+          "heading_code": 62,
+          "nominal_angle_code": 62,
+          "age": 73,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": -0.05373211099868058,
+          "long_code": 514,
+          "lat_code": 545,
+          "heading_code": 62,
+          "nominal_angle_code": 29,
+          "age": 74,
+          "wide_gap_codes": 30.753721407801418
+        },
+        {
+          "relative_s": 0.0,
+          "long_code": 514,
+          "lat_code": 545,
+          "heading_code": 28,
+          "nominal_angle_code": 29,
+          "age": 75,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.06686039000123856,
+          "long_code": 514,
+          "lat_code": 545,
+          "heading_code": 28,
+          "nominal_angle_code": 29,
+          "age": 76,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.12648787500074832,
+          "long_code": 514,
+          "lat_code": 545,
+          "heading_code": 0,
+          "nominal_angle_code": 29,
+          "age": 77,
+          "wide_gap_codes": 27.896781804881492
+        }
+      ]
+    },
+    {
+      "example": 3,
+      "cohort": "mature moving under nominal component scale",
+      "rows": [
+        {
+          "relative_s": -0.11076282399994852,
+          "long_code": 563,
+          "lat_code": 553,
+          "heading_code": 0,
+          "nominal_angle_code": 13,
+          "age": 126,
+          "wide_gap_codes": 11.147996915687898
+        },
+        {
+          "relative_s": -0.05032509699981347,
+          "long_code": 564,
+          "lat_code": 555,
+          "heading_code": 0,
+          "nominal_angle_code": 14,
+          "age": 126,
+          "wide_gap_codes": 11.41963956656111
+        },
+        {
+          "relative_s": 0.0,
+          "long_code": 564,
+          "lat_code": 555,
+          "heading_code": 14,
+          "nominal_angle_code": 14,
+          "age": 126,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.07000673400011692,
+          "long_code": 565,
+          "lat_code": 554,
+          "heading_code": 13,
+          "nominal_angle_code": 13,
+          "age": 126,
+          "wide_gap_codes": 0.0
+        },
+        {
+          "relative_s": 0.13325279800005774,
+          "long_code": 565,
+          "lat_code": 553,
+          "heading_code": 13,
+          "nominal_angle_code": 13,
+          "age": 126,
+          "wide_gap_codes": 0.0
+        }
+      ]
+    }
+  ],
+  "interpretation": "Current-bin quantization alone is insufficient within the stated bounds. Values update separately from transmitted component codes; source/filter/physical heading and fixed delay remain unassigned.",
+  "runtime_changed": false
+}

@@ -60,7 +60,7 @@ SIGNAL_COMMENTS = {
     "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.145 (0.15 used).",
     "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.",
     "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
-    "UNK_208_6": "Direction of motion over ground, pi/64 rad per code: floor(max(atan2(vy, vx), 0) * 64 / pi). Rightward headings read 0; oncoming traffic reads near 63.",
+    "UNK_208_6": "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.",
     # slot: lifecycle and confidence
     "STATE_CODE": "Track state: 1 = measured this cycle, 2 = predicted (coasting); 0 rare. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
     "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",

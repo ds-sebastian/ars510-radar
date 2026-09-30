@@ -15,7 +15,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **dRel, yRel, velocity over ground** | ● field layout and motion interpretation; ◐ exact physical zero/scales ([06](docs/06_accuracy.md)) |
-| **Object attributes**: lane assignment, class, width / length, heading, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded, names and scales being pinned ([03](docs/03_slot_fields.md)) |
+| **Object attributes**: lane assignment, class, width / length, angle output, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded; names, scales and independent physical heading remain provisional ([03](docs/03_slot_fields.md)) |
 | **The radar's own ACC target** (0x235 / 0x237, 50 Hz) | ● decoded ([05](docs/05_acc_target_and_support.md)) |
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads and carry-linked 10-bit view; physical meaning and field validity require validation ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
