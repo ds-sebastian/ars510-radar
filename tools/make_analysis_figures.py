@@ -665,10 +665,37 @@ def far_settling():
          "it removes this brake episode. Older-track excursions and the separate downhill glitch remain.")
 
 
+def event_code_context():
+    info = summary("event_pair_carries")
+    g = pd.DataFrame(info["exception"]["context"]["samples"])
+    fig, axes = plt.subplots(2, 1, figsize=(9.5, 5.7), sharex=True,
+                             gridspec_kw={"height_ratios": [3, 1]})
+    axes[0].step(g.time_s, g.q10, where="post", color=S1)
+    axes[0].scatter(g.time_s, g.q10, color=S1, s=13, zorder=3)
+    axes[0].axhline(info["raw_idle_code"], color=INK2, ls="--", lw=1,
+                   label="code in the exact idle payload")
+    axes[0].axvline(0, color=S2, lw=1)
+    axes[0].annotate("436 → 510\nsame high prefix", xy=(0, 510), xytext=(0.13, 463),
+                     arrowprops={"arrowstyle": "->", "color": S2}, color=S2)
+    axes[0].set_ylabel("0x195 10-bit raw code")
+    axes[0].set_title("The raw code can reach 510 while the whole event payload remains non-idle")
+    axes[0].legend(loc="lower left")
+    axes[1].step(g.time_s, g.exact_idle_payload.astype(int), where="post", color=S3)
+    axes[1].set_yticks([0, 1], ["other", "exact idle"])
+    axes[1].set_ylim(-.15, 1.15)
+    axes[1].axvline(0, color=S2, lw=1)
+    axes[1].set_xlabel("CAN log time relative to the code jump (s)")
+    axes[1].set_ylabel("whole payload")
+    fig.tight_layout()
+    save(fig, "event_code_context", "Original CAN verifies the complete window. Both jump endpoints have non-idle "
+         "0x195 / 0x196 payloads; physical units, target identity and acquisition timing remain uncalibrated.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
-                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling)}
+                                   age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling,
+                                   event_code_context)}
 
 
 if __name__ == "__main__":

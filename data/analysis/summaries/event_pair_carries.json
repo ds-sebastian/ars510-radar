@@ -1,40 +1,238 @@
 {
-  "status": "Supported adjacent raw-code concatenation; physical meaning and full width unresolved",
-  "provenance": "Imported research-workspace SCR-245; fixed pre-registered tests on previously exposed discovery/confirmation partitions, not a bundled rerun.",
+  "status": "Contiguous 10-bit raw view with carry evidence and a large-step exception; physical meaning uncalibrated",
+  "provenance": "Imported research-workspace SCR-284, full 700-segment census of previously used recordings; original 399-segment subset exactly reproduced. Original captures are not bundled.",
   "address": "0x195",
   "msb_first_start": 18,
   "width": 10,
   "dbc_motorola_start": 21,
   "formula": "((payload[2] & 0x3f) << 4) | (payload[3] >> 4)",
   "raw_idle_code": 510,
-  "discovery": {
-    "edges": 739,
-    "wraps": 25,
-    "routes": 7,
-    "carry_mismatches": 0,
-    "wrap_down": 12,
-    "wrap_up": 13,
-    "observed_other_min": 417,
-    "observed_other_max": 519
+  "census": {
+    "segments": 700,
+    "route_groups": 34,
+    "frames": 1365236,
+    "frames_per_address": 682618,
+    "idle_frames": 1360774,
+    "idle_frame_fraction": 0.9967317005997498,
+    "other_195_frames": 2231,
+    "other_196_frames": 2216,
+    "initialization_196_frames": 15,
+    "same_segment_unique_pairs": 682570,
+    "unmatched_195_anchors": 48,
+    "ambiguous_195_anchors": 0,
+    "exact_timestamp_unique_pairs": 653152,
+    "matched_no_init_other_pairs": 2215,
+    "mixed_idle_no_init_pairs": 0,
+    "segment_local_event_groups_including_initialization": 169,
+    "segments_without_event_frames": 2
   },
-  "confirmation": {
-    "edges": 647,
-    "wraps": 17,
-    "routes": 5,
-    "carry_mismatches": 0,
-    "wrap_down": 9,
-    "wrap_up": 8,
-    "observed_other_min": 409,
-    "observed_other_max": 517
+  "carry_evidence": {
+    "eligible_edges": 2046,
+    "large_low7_changes": 60,
+    "opposite_unit_prefix_changes": 59,
+    "large_change_exceptions": 1,
+    "nonwrap_prefix_changes": 0,
+    "prefix_states_at_matching_crossings": [
+      3,
+      4
+    ],
+    "matched_other_code_min": 391,
+    "matched_other_code_max": 558,
+    "matched_other_idle_code_rows": 1202
   },
-  "native_verification": {
-    "logs": 16,
-    "witness_frames": 77,
-    "can_frames_scanned": 5359972
+  "exception": {
+    "combined_before": 436,
+    "combined_after": 510,
+    "low7_before": 52,
+    "low7_after": 126,
+    "prefix_before": 3,
+    "prefix_after": 3,
+    "can_log_gap_s": 0.060176109000167344,
+    "both_endpoints_other_other": true,
+    "context": {
+      "reference": "Seconds relative to the code jump in CAN log time; no acquisition-time or target identity claim.",
+      "samples": [
+        {
+          "time_s": -0.956266842000332,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": -0.8958835810008168,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": -0.8355128200000763,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": -0.775721883001097,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.7132132970000384,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.662360089001595,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.5933039560004545,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.5335286970002926,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.47310725700117473,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.4132625150014064,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.35293805900073494,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.29279449800014845,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.23970080400067673,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": -0.18032749300073192,
+          "q10": 429,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": -0.12057187100072042,
+          "q10": 430,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": -0.060176109000167344,
+          "q10": 436,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.0,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.060463832998721045,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.1196405649989174,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.18032737899920903,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.24372871699961252,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.30308837599841354,
+          "q10": 510,
+          "exact_idle_payload": false
+        },
+        {
+          "time_s": 0.36411557299834385,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.4234775229997467,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.4839757859990641,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.5435680609989504,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.603668124998876,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.6631037769984687,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.7231993609984784,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.7771138769985555,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.8364386899993406,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.8969006999996054,
+          "q10": 510,
+          "exact_idle_payload": true
+        },
+        {
+          "time_s": 0.9565769879991421,
+          "q10": 510,
+          "exact_idle_payload": true
+        }
+      ]
+    }
+  },
+  "verification": {
+    "source_table_hashes": 700,
+    "full_scalar_census_checked": true,
+    "original_new_anchor_frames": 437,
+    "original_logs": 29,
+    "original_context_frames": 66,
+    "unknown_union_events_in_anchor_logs": 10801
   },
   "limits": [
-    "Only prefix states 3 and 4 have carry excitation; wider field not excluded.",
-    "No physical unit, signedness, offset, association or validity promoted.",
-    "No vRel-excursion flag or control change."
+    "Only prefix states 3 and 4 have matching carry excitation; the full semantic width remains unproven.",
+    "Large code changes can be genuine steps, resets or state/target changes; the raw exception does not establish which.",
+    "Code 510 also occurs in non-idle pairs and cannot alone define message validity or physical zero.",
+    "No physical unit, signedness, offset, target association, ECU source or velocity-excursion rule is established.",
+    "Pairing uses CAN log timestamps and does not establish shared acquisition time."
   ]
 }

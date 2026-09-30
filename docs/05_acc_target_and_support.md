@@ -87,15 +87,25 @@ for a short payload or the exact whole-frame sentinel. The driving interface doe
 
 ## 0x195 / 0x196: event pair
 
-Idle 99.97% of the time and active during rare events (123 event groups in 399 minutes). 0x195 bits 18-27
-(MSB-first) form one 10-bit code:
+Exact idle payloads account for **99.67% of recorded frames** in a 700-segment census: 1,365,236 frames across
+34 route groups, with 169 segment-local groups of non-idle paired frames, including initialization. 0x195
+bits 18-27 (MSB-first) provide a contiguous 10-bit raw view:
 
 ```python
 q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 ```
 
-All 42 observed carry/borrow crossings between the two historical sub-fields follow this rule. The DBC lists the
-remaining sub-fields of both frames as raw codes.
+Of 60 changes where the historical seven-bit part moves by more than 64 codes, 59 have the opposite unit change
+in the high prefix. One larger step goes **436 → 510** within the same prefix. This supports using the adjacent
+bits together while keeping abrupt steps and state changes distinct from ordinary carries. The matched non-idle
+codes span 391–558; the full semantic width and physical quantity require independent validation.
+
+Code **510 also occurs in 1,202 of 2,215 non-idle, uniquely paired, non-initialization samples**. Use the whole
+payload to distinguish exact idle bodies; the code alone does not establish validity or physical zero. Pairing
+uses CAN log timestamps, which do not establish a common sender or acquisition time. The DBC retains the
+remaining sub-fields as raw codes. Counts and relative-time example: `data/analysis/summaries/event_pair_carries.json`.
+
+![event raw code and exact idle payload](img/analysis/event_code_context.png)
 
 ## 0x240-0x248: context frames
 
