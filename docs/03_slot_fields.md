@@ -141,6 +141,23 @@ as `raw_weight_state128`.
 | `56\|7` | **length** | `code × 0.1` m | ◐ |
 | `272\|5` | height-like size code | larger for large vehicles | ○ |
 
+**Some first outputs use a joint initialization template.** On 5,774 of 22,501
+observed age-1 rows, the confidence-like `136|4`, length `56|7`, width `216|6`
+and full byte `272|8` are all zero. Their zero predicates agree exactly across
+1,253,081 occupied rows from 700 previously studied segments. Every such row
+has motion code5, class code1, class alias0 and state1. Range code160 and lateral
+code2047 are fixed while the velocity codes vary. These are initial output codes;
+the size formulas do not make them a calibrated object box, and the position
+codes do not provide a measured zero-point reference.
+
+The 5,516 observed strict exits have all four attributes nonzero at age2. The
+remaining 258 cases lack a strict next-allocation exit; this does not establish
+physical target loss. Full byte272 is a structural view, without a promoted
+height unit or semantic width. Counts, definitions and the anonymized example
+are in [`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
+
+![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
+
 The class code and the two size fields describe one consistent object box (mature tracks, 399 one-minute segments):
 
 | class | share of rows | median speed | width | length |

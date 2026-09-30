@@ -691,11 +691,41 @@ def event_code_context():
          "0x195 / 0x196 payloads; physical units, target identity and acquisition timing remain uncalibrated.")
 
 
+def initial_attribute_zeros():
+    info = summary("initial_attribute_zeros")
+    g = pd.DataFrame(info["example"]["samples"])
+    fig, axes = plt.subplots(2, 3, figsize=(10.2, 5.4), sharex=True)
+    fields = [("confidence_like", "Confidence-like 136|4", S1),
+              ("length_code", "Length 56|7", S2),
+              ("width_code", "Width 216|6", S3),
+              ("height_full_code", "Full height-like byte 272|8", S4),
+              ("range_code", "Forward position 32|12", S1),
+              ("lateral_code", "Lateral position 44|12", S2)]
+    for ax, (field, title, color) in zip(axes.flat, fields):
+        ax.axvspan(.8, 1.2, color=GRID, alpha=.8)
+        ax.step(g.age, g[field], where="post", color=color)
+        ax.scatter(g.age, g[field], color=color, s=26, zorder=3)
+        for age, value in zip(g.age, g[field]):
+            ax.annotate(str(int(value)), (age, value), xytext=(0, 7), textcoords="offset points",
+                        ha="center", fontsize=8, color=INK2)
+        ax.set_title(title)
+        ax.set_ylabel("raw code")
+        ax.set_xticks(g.age)
+        ax.margins(x=.14, y=.22)
+    for ax in axes[1]:
+        ax.set_xlabel("native age code")
+    fig.suptitle("A joint initial output precedes populated attributes and position", fontsize=12)
+    fig.tight_layout()
+    save(fig, "initial_attribute_zeros", "Example A, original-CAN checked. The initial tuple occurs on 5,774 "
+         "of 22,501 age-1 rows; it is not a measured object box or a physical zero calibration. "
+         "Full byte272 is a structural view, not a calibrated height measurement.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling,
-                                   event_code_context)}
+                                   event_code_context, initial_attribute_zeros)}
 
 
 if __name__ == "__main__":

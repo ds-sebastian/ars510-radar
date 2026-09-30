@@ -1,0 +1,156 @@
+{
+  "scope": {
+    "segments": 700,
+    "occupied_rows": 1253081,
+    "strict_allocation_edges": 1223987,
+    "capture_prior_use": true,
+    "age1_rows": 22501
+  },
+  "zero_predicates": [
+    {
+      "start": 136,
+      "width": 4
+    },
+    {
+      "start": 56,
+      "width": 7
+    },
+    {
+      "start": 216,
+      "width": 6
+    },
+    {
+      "start": 272,
+      "width": 8
+    }
+  ],
+  "exact_joint_zero": {
+    "rows": 5774,
+    "partial_zero_masks": 0,
+    "zero_mask_counts": {
+      "0": 1247307,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 5774
+    },
+    "tuple": {
+      "age": 1,
+      "state": 1,
+      "motion_code": 5,
+      "class_code": 1,
+      "class_alias": 0,
+      "adjacent131": 0,
+      "range_code": 160,
+      "lateral_code": 2047
+    },
+    "score_codes": [
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      60,
+      100
+    ],
+    "longitudinal_velocity_distinct_codes": 717,
+    "lateral_velocity_distinct_codes": 197
+  },
+  "observed_followup": {
+    "strict_exits": 5516,
+    "exit_age": 2,
+    "no_strict_exit_observed": 258,
+    "nonzero_to_zero_strict_edges": 0,
+    "zero_to_zero_strict_edges": 0,
+    "note": "No strict exit is a continuity/support limit, not a physical target-loss label."
+  },
+  "partition_counts": [
+    {
+      "group": "G1",
+      "age1_rows": 4495,
+      "joint_zero_rows": 1049
+    },
+    {
+      "group": "G2",
+      "age1_rows": 9381,
+      "joint_zero_rows": 2348
+    },
+    {
+      "group": "G3",
+      "age1_rows": 2650,
+      "joint_zero_rows": 734
+    },
+    {
+      "group": "G4",
+      "age1_rows": 1876,
+      "joint_zero_rows": 489
+    },
+    {
+      "group": "G5",
+      "age1_rows": 4099,
+      "joint_zero_rows": 1154
+    }
+  ],
+  "native_integrity": {
+    "logs": 5,
+    "selected_unique_slots": 20,
+    "valid_crc_records": 4804,
+    "bad_crc": 0,
+    "bad_sequence_groups_excluded": 1,
+    "partial_groups_excluded": 3
+  },
+  "interpretation": "Observed joint initial-output template, with varying velocity codes and fixed initial position codes.",
+  "limits": [
+    "The four zero predicates are exact on this previously used capture set.",
+    "Full byte272 is a structural view; it does not establish semantic width or height units.",
+    "Code0 at this initial state is not a measured physical object box.",
+    "Confidence probability, physical identity and field measurement timing are not calibrated.",
+    "The prefix result follows from age1 and strict age progression, not an independent delay test."
+  ],
+  "example": {
+    "label": "Example A",
+    "x_axis": "native age code",
+    "samples": [
+      {
+        "age": 1,
+        "confidence_like": 0,
+        "length_code": 0,
+        "width_code": 0,
+        "height_full_code": 0,
+        "range_code": 160,
+        "lateral_code": 2047
+      },
+      {
+        "age": 2,
+        "confidence_like": 15,
+        "length_code": 64,
+        "width_code": 20,
+        "height_full_code": 12,
+        "range_code": 1842,
+        "lateral_code": 2001
+      },
+      {
+        "age": 3,
+        "confidence_like": 15,
+        "length_code": 62,
+        "width_code": 19,
+        "height_full_code": 11,
+        "range_code": 1848,
+        "lateral_code": 2003
+      }
+    ]
+  }
+}
