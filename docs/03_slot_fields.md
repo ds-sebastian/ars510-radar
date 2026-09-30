@@ -102,11 +102,9 @@ of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2
 | 5 | every age-1 to age-3 sample | initializing |
 | 7 | slow after sustained motion | stopped after moving |
 
-The oncoming-like bit14 is an internal motion-state flag, rather than a latched allocation history. It clears
-on 119 primary same-allocation edges with both published velocity component codes unchanged. It can clear
-alongside an angle default-state transition or another angle update. Allocation continuity does not prove
-physical identity, and a clear flag does not certify that a target was never oncoming. Counts are in
-[`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json).
+Bit 14 is an **oncoming-like motion state**. It stays set after an oncoming object slows, and it can also clear
+while the same allocation continues (6,618 updates, 119 of them with both velocity codes unchanged), often together
+with an angle-state change. Counts are in [`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json).
 
 ## Lane assignment
 
@@ -141,20 +139,13 @@ as `raw_weight_state128`.
 | `56\|7` | **length** | `code × 0.1` m | ◐ |
 | `272\|5` | height-like size code | larger for large vehicles | ○ |
 
-**Some first outputs use a joint initialization template.** On 5,774 of 22,501
-observed age-1 rows, the confidence-like `136|4`, length `56|7`, width `216|6`
-and full byte `272|8` are all zero. Their zero predicates agree exactly across
-1,253,081 occupied rows from 700 previously studied segments. Every such row
-has motion code5, class code1, class alias0 and state1. Range code160 and lateral
-code2047 are fixed while the velocity codes vary. These are initial output codes;
-the size formulas do not make them a calibrated object box, and the position
-codes do not provide a measured zero-point reference.
-
-The 5,516 observed strict exits have all four attributes nonzero at age2. The
-remaining 258 cases lack a strict next-allocation exit; this does not establish
-physical target loss. Full byte272 is a structural view, without a promoted
-height unit or semantic width. Counts, definitions and the anonymized example
-are in [`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
+**About a quarter of new objects start with an initialization template.** On 5,774 of 22,501 age-1 outputs,
+the confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and they are zero together
+on every one of 1,253,081 occupied rows (700 segments). These rows always have motion code 5, class 1, state 1,
+range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
+All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so no
+interface profile publishes a phantom object at 0 m. Counts are in
+[`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
 
 ![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
 
@@ -175,10 +166,7 @@ class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
 with visible cyclists, including two that reach mature age. Two runs on another drive nominally follow visible
 walkers, including one with 31 mature rows. The camera review covers 21 episodes across 11 drives from a
 45-episode inventory, with ambiguous parked-vehicle, road and traffic-furniture scenes also represented.
-Association remains provisional under geometry sensitivity; the code alone does not certify physical identity.
-All 968 class-5 samples read 15 in `136|4`;
-that maximum is a raw confidence-like code, without a calibrated classification guarantee. The height-like
-`272|5` code spans 4–11 on these samples and remains unscaled. Counts and witness limits are in
+All 968 class-5 samples read 15 in `136|4`, and their height-like `272|5` code spans 4-11. Counts are in
 [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json).
 
 ![object size](img/analysis/object_size.png)

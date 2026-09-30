@@ -183,6 +183,13 @@ def test_real_samples_decode_cleanly(name: str) -> None:
                     assert math.isfinite(pt["vRel"]) and pt["age"] >= 60
 
 
+def test_initialization_template_is_not_published() -> None:
+    # The excursion sample holds two age-1 template outputs (zero size codes, placeholder range 0 m).
+    out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(sample_frames("highway_vrel_excursion_25s.csv.gz"))
+    points = [pt for p in out for pt in p["radarData"]["points"]]
+    assert points and all(abs(pt["dRel"]) > 0.01 for pt in points)
+
+
 def test_sample_record_rate_is_the_radar_cycle() -> None:
     iface = Ars510NativeRadarInterface(RAW_CONFIG)
     t = [p["time_s"] for p in iface.update_many(sample_frames("highway_following_30s.csv.gz"))]

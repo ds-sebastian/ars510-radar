@@ -18,14 +18,16 @@ from ars510.interface import (
     NativeInterfaceConfig,
     parse_toyota_speed_mps,
 )
-from ars510.objects import AGE, LAT_DIST, LONG_DIST, LONG_VEL_GROUND
+from ars510.objects import AGE, LAT_DIST, LENGTH, LONG_DIST, LONG_VEL_GROUND, WIDTH
 
 IDLE = ID80_IDLE_SLOT
 
 
-def slot_bytes(*, r_code, lat_code, vel_code, age) -> bytes:
+def slot_bytes(*, r_code, lat_code, vel_code, age, width=17, length=49) -> bytes:
     value = 0
-    for field, code in [(LONG_DIST, r_code), (LAT_DIST, lat_code), (LONG_VEL_GROUND, vel_code), (AGE, age)]:
+    fields = [(LONG_DIST, r_code), (LAT_DIST, lat_code), (LONG_VEL_GROUND, vel_code), (AGE, age), (WIDTH, width),
+              (LENGTH, length)]
+    for field, code in fields:
         value |= (code & ((1 << field.bit_len) - 1)) << field.bit_start
     return value.to_bytes(36, "little")
 
@@ -379,3 +381,9 @@ def test_jump_guard_withholds_a_glitch_and_accepts_a_persistent_step() -> None:
     step = _guard_run([base] * 5 + [base - 70] * 25, cfg)  # a level that persists longer than guard_hold_s (1 s)
     assert sum(len(p) == 0 for p in step) <= 18 and len(step[-1]) == 1
     assert step[-1][0]["trackId"] != step[4][0]["trackId"]
+
+
+def test_age_one_initialization_template_is_withheld() -> None:
+    template = slot_bytes(r_code=160, lat_code=2047, vel_code=700, age=1, width=0, length=0)
+    out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(frames(record({0: template}), 0.0))
+    assert out and out[-1]["radarData"]["points"] == []

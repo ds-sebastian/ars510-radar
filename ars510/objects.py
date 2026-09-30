@@ -71,6 +71,11 @@ VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code",
 # Historical labels only; full code 3 is rightward-like while full code 7 is stopped-like.
 MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward", 3: "not_clearly_moving_3"}
 
+# Object length and width (docs/03). Both read 0 only in the age-1 initialization template, whose position
+# codes are placeholders (range code 160 = 0 m, lateral code 2047).
+LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
+WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
+
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
@@ -115,7 +120,7 @@ class NativeObject:
     move_state: int  # legacy low two bits; see movement_code for distinct full states
     oncoming_flag: bool  # raw oncoming-like state; can reset within the allocation
     vel_unc_code: int  # candidate velocity-uncertainty code (240|7), relative confidence only
-    geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
+    geometry_valid: bool  # age >= 1 (age 0 carries stale geometry) and not the age-1 initialization template
     lateral_valid: bool  # lateral code is not the sentinel
     movement_code: int | None = None  # full 109|3; None for legacy manually constructed objects
     raw8_low5: int | None = None  # startup decay code; mature semantics unknown
@@ -123,6 +128,11 @@ class NativeObject:
     raw_weights148: tuple[int, int, int] | None = None  # 148/152/156|4; outcomes and units unknown
     raw_weight_state128: int | None = None  # 128|3; availability/category association, not validity
     vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
+
+
+def is_init_template(age: int, slot: bytes) -> bool:
+    """Age-1 first output with zero size codes: its range / lateral codes are placeholders, not a position."""
+    return age == 1 and field_code(slot, LENGTH) == 0 and field_code(slot, WIDTH) == 0
 
 
 def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
@@ -146,7 +156,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         raw_weight_state128=int(field_code(slot, RAW_WEIGHT_STATE128)),
         oncoming_flag=bool(field_code(slot, ONCOMING_FLAG)),
         vel_unc_code=int(field_code(slot, VEL_UNC_240)),
-        geometry_valid=age >= 1,
+        geometry_valid=age >= 1 and not is_init_template(age, slot),
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
         vel_code=int(field_code(slot, LONG_VEL_GROUND)),
     )

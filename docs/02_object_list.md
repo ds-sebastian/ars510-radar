@@ -132,7 +132,8 @@ when it came into view (a stalled car, the tail of a queue that stopped out of r
 
 Tracks younger than about 50-60 cycles carry unconverged range and velocity:
 - median |vRel − camera| by age: 2.6 / 2.2 / 1.3 / 1.0 / 0.8 m/s for ages 1-10 / 11-25 / 26-50 / 51-80 / 81-125;
-- about 31% of age-1 samples are placeholders at exactly 0 m;
+- about a quarter of age-1 samples (26% over 700 segments) are an initialization template with a placeholder
+  position at 0 m; the decoder withholds them ([03](03_slot_fields.md#class-and-size));
 - a newborn track can start tens of metres off (one read 38 m for a car at about 100 m and walked out over 3 s).
 
 ![young track](img/shots/young_track_convergence.jpg)
