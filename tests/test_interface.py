@@ -18,15 +18,15 @@ from ars510.interface import (
     NativeInterfaceConfig,
     parse_toyota_speed_mps,
 )
-from ars510.objects import AGE, LAT_DIST, LENGTH, LONG_DIST, LONG_VEL_GROUND, WIDTH
+from ars510.objects import ACCEL_LIKE, AGE, LAT_DIST, LAT_VEL, LENGTH, LONG_DIST, LONG_VEL_GROUND, WIDTH
 
 IDLE = ID80_IDLE_SLOT
 
 
-def slot_bytes(*, r_code, lat_code, vel_code, age, width=17, length=49) -> bytes:
+def slot_bytes(*, r_code, lat_code, vel_code, age, width=17, length=49, vy_code=0, ax_code=0) -> bytes:
     value = 0
     fields = [(LONG_DIST, r_code), (LAT_DIST, lat_code), (LONG_VEL_GROUND, vel_code), (AGE, age), (WIDTH, width),
-              (LENGTH, length)]
+              (LENGTH, length), (LAT_VEL, vy_code), (ACCEL_LIKE, ax_code)]
     for field, code in fields:
         value |= (code & ((1 << field.bit_len) - 1)) << field.bit_start
     return value.to_bytes(36, "little")
@@ -407,3 +407,30 @@ def test_ramp_limiter_limits_moves_away_and_passes_returns() -> None:
     ramp = out[17:22]
     assert max(ramp) - base <= 4.0 * 0.06 * 5 + 1e-6  # the +15 m/s ramp is limited to +4 m/s^2
     assert out[22] == pytest.approx(base, abs=1e-6)  # the return passes unlimited
+
+
+def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
+    iface = Ars510NativeRadarInterface(replace(RAW_CONFIG, include_metadata=True))
+    # yaw rate 0.1 rad/s left: raw = (5.7296 deg/s + 125) / 0.244 = 535.8 -> 536
+    yaw_raw = 536
+    yaw = (yaw_raw * 0.244 - 125) * math.pi / 180
+    out = None
+    for k in range(10):
+        t = 0.06 * k
+        iface.update_frame(t, 0, 0x24, bytes([(yaw_raw >> 8) & 3, yaw_raw & 0xFF, 0, 0, 0, 0, 0, 0]))
+        v = 20.0 + 1.0 * t  # ego accelerating at 1 m/s^2
+        iface.update_frame(t, 0, 0xB4, bytes(5) + int(round(v * 3.6 * 100)).to_bytes(2, "big") + bytes(1))
+        rec = record({2: slot_bytes(r_code=160 + 16 * 40, lat_code=2048, vel_code=644, age=70 + k,
+                                    vy_code=531, ax_code=536)})
+        out = iface.update_many(frames(rec, t + 0.001))
+    pt = out[-1]["radarData"]["points"][0]
+    assert pt["yvRel"] == pytest.approx((531 - 510.5) * 0.15 - yaw * 40.0, abs=1e-6)
+    assert pt["aRel"] == pytest.approx((536 - 511) * 0.04 - 1.0, abs=0.1)
+
+
+def test_yvrel_is_nan_without_yaw_rate() -> None:
+    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface.set_ego_speed(20.0, 0.0)
+    rec = record({2: slot_bytes(r_code=160 + 16 * 40, lat_code=2048, vel_code=644, age=70, vy_code=531, ax_code=536)})
+    pt = iface.update_many(frames(rec, 0.001))[-1]["radarData"]["points"][0]
+    assert math.isnan(pt["yvRel"]) and math.isnan(pt["aRel"])

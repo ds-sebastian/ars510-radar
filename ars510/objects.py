@@ -128,6 +128,7 @@ class NativeObject:
     raw_weights148: tuple[int, int, int] | None = None  # 148/152/156|4; outcomes and units unknown
     raw_weight_state128: int | None = None  # 128|3; availability/category association, not validity
     vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
+    v_lat_code: int = -1  # raw 74|10 code; 0 and 1023 are sentinels
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
@@ -159,6 +160,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         geometry_valid=age >= 1 and not is_init_template(age, slot),
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
         vel_code=int(field_code(slot, LONG_VEL_GROUND)),
+        v_lat_code=int(field_code(slot, LAT_VEL)),
     )
 
 

@@ -35,7 +35,15 @@ Install instructions for each fork are in [`openpilot/README.md`](../openpilot/R
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 9 µs per call on a desktop CPU.
 4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles, with track IDs re-linked across
-   short losses and no point published without a fresh ego speed (vRel is never NaN).
+   short losses and no point published without a fresh ego speed (vRel is never NaN). Forks whose RadarPoint still
+   has the legacy fields (sunnypilot) also get:
+   - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24
+     (matches the phone gyro at 1.02×). It follows d(yRel)/dt at r = 0.88 with slope 0.86, since the radar filters
+     it.
+   - `aRel`: the radar's filtered over-ground acceleration minus ego acceleration (from 0xB4). It is smoothed and
+     lags vRel by 0.5-1 s.
+
+   Both are NaN without fresh yaw rate or ego speed. openpilot's radard does not read either field.
 
 | situation | RadarData | effect in openpilot |
 |---|---|---|

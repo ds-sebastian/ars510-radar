@@ -19,16 +19,19 @@ the velocity-jump guard and delayed first publication for far tracks
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from math import inf, isfinite, nan
+from math import exp, inf, isfinite, nan, pi
 from collections.abc import Iterable
 
-from .constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
-from .objects import decode_native_slot
+from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_KINEMATICS_ADDR,
+                        TOYOTA_SPEED_ADDR)
+from .objects import NativeObject, decode_native_slot
 from .record import id80_crc_ok, occupied_slots
 from .support import parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
+EGO_ACCEL_TAU_S = 0.3  # smoothing of the ego-speed derivative used for aRel
+ACCEL_SCALE = 0.04  # m/s^2 per code of the filtered over-ground acceleration 84|10 (docs/03)
 RAMP_RESET_GAP_S = 3.5  # a longer silence restarts the ramp limiter's state
 GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30
@@ -116,6 +119,14 @@ NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
 
 
+def parse_toyota_yaw_rate(data: bytes) -> float | None:
+    """Toyota KINEMATICS (0x24) YAW_RATE, big-endian 1|10 at 0.244 deg/s, offset -125: rad/s, left positive."""
+    if len(data) < 2:
+        return None
+    raw = ((data[0] & 0x03) << 8) | data[1]
+    return (raw * 0.244 - 125.0) * pi / 180.0
+
+
 def parse_toyota_speed_mps(data: bytes) -> float | None:
     """Toyota SPEED (0xB4): bytes 5-6 big-endian, 0.01 km/h."""
     if len(data) < 7:
@@ -130,6 +141,8 @@ class Ars510NativeRadarInterface:
         self._tracks = NativeTrackIdAssigner()
         self._v_ego: float | None = None
         self._v_ego_time_s: float | None = None
+        self._a_ego: float | None = None  # smoothed derivative of ego speed
+        self._yaw: tuple[float, float] | None = None  # (time, yaw rate rad/s, left positive)
         self.crc_failures = 0
         self.records = 0
         self.startup_suppressed = 0
@@ -154,6 +167,13 @@ class Ars510NativeRadarInterface:
     # ---- inputs -----------------------------------------------------------------------------------
     def set_ego_speed(self, v_ego_mps: float, time_s: float) -> None:
         if isfinite(v_ego_mps) and isfinite(time_s):
+            if self._v_ego is not None and self._v_ego_time_s is not None and 0.0 < time_s - self._v_ego_time_s < 0.5:
+                dt = time_s - self._v_ego_time_s
+                a = (v_ego_mps - self._v_ego) / dt
+                k = 1.0 - exp(-dt / EGO_ACCEL_TAU_S)
+                self._a_ego = a if self._a_ego is None else self._a_ego + k * (a - self._a_ego)
+            else:
+                self._a_ego = None
             self._v_ego, self._v_ego_time_s = float(v_ego_mps), float(time_s)
 
     def _fresh_ego_speed(self, time_s: float) -> float | None:
@@ -163,7 +183,17 @@ class Ars510NativeRadarInterface:
             return None
         return self._v_ego
 
+    def _fresh_yaw_rate(self, time_s: float) -> float | None:
+        if self._yaw is None or abs(time_s - self._yaw[0]) > self.config.max_ego_speed_age_s:
+            return None
+        return self._yaw[1]
+
     def update_frame(self, time_s: float, bus: int, addr: int, data: bytes) -> dict | None:
+        if bus == self.config.ego_speed_bus and addr == TOYOTA_KINEMATICS_ADDR:
+            w = parse_toyota_yaw_rate(bytes(data))
+            if w is not None:
+                self._yaw = (float(time_s), w)
+            return None
         if bus == self.config.ego_speed_bus and addr == TOYOTA_SPEED_ADDR:
             v = parse_toyota_speed_mps(bytes(data))
             if v is not None:
@@ -354,6 +384,19 @@ class Ars510NativeRadarInterface:
         self._ramp[tid] = (time_s, new, ref + min(dt / cfg.ramp_ref_tau_s, 1.0) * (new - ref))
         return new
 
+    def _yv_rel(self, obj: NativeObject, time_s: float) -> float:
+        """Lateral velocity in the ego frame: the radar's over-ground vy minus the rotation term yaw rate x range."""
+        w = self._fresh_yaw_rate(time_s)
+        if w is None or obj.v_lat_code in (0, 1023):
+            return nan
+        return float(obj.v_lat_ground - w * obj.d_rel)
+
+    def _a_rel(self, obj: NativeObject, v_ego: float | None) -> float:
+        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by 0.5-1 s)."""
+        if v_ego is None or self._a_ego is None or obj.accel_like_code in (-511, 512):
+            return nan
+        return float(obj.accel_like_code * ACCEL_SCALE - self._a_ego)
+
     def _payload(self, time_s: float, record: bytes) -> dict:
         cfg = self.config
         v_ego = self._fresh_ego_speed(time_s)
@@ -407,8 +450,8 @@ class Ars510NativeRadarInterface:
                 "dRel": float(d_rel),
                 "yRel": float(obj.y_rel),
                 "vRel": vrel,
-                "aRel": nan,
-                "yvRel": nan,
+                "aRel": self._a_rel(obj, v_ego),
+                "yvRel": self._yv_rel(obj, time_s),
                 "measured": True,
             }
             if cfg.include_metadata:

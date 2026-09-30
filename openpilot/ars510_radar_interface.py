@@ -29,7 +29,8 @@ from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
-from opendbc.car.toyota.ars510.constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
+from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS,
+                                                 TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
 # Decoder profile: "default" (OPENPILOT_CONFIG) or "steady" (STEADY_CONFIG, the smoother K4 profile, docs/07).
 # `install.py --profile steady` rewrites this one line in the installed copy.
@@ -39,7 +40,9 @@ PROFILE = PROFILES["default"]
 STALE_S = 0.5  # radard has no staleness check of its own on track content
 NO_RECORD_WARN_S = 15.0
 EMPTY_PERIOD = 5  # without records, report every 5th update (card calls update at 100 Hz -> 20 Hz)
-WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (RADAR_BUS, ACC_TARGET_VREL_ADDR), (RADAR_BUS, ACC_TARGET_POS_ADDR)}
+# 0x24 (yaw rate) feeds yvRel, which forks with the legacy RadarPoint fields (sunnypilot) publish
+WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (CAR_BUS, TOYOTA_KINEMATICS_ADDR), (RADAR_BUS, ACC_TARGET_VREL_ADDR),
+          (RADAR_BUS, ACC_TARGET_POS_ADDR)}
 
 
 class Ars510RadarInterface(RadarInterfaceBase):

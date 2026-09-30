@@ -34,6 +34,7 @@ RECORD_MARKER_PAYLOAD = bytes.fromhex("3000000000000000")
 
 # Car bus: Toyota SPEED message, big-endian 16 bit at bytes 5-6, 0.01 km/h.
 TOYOTA_SPEED_ADDR = 0xB4
+TOYOTA_KINEMATICS_ADDR = 0x24  # YAW_RATE, left positive (matches the gyro at 1.02x)
 
 # The radar's own ACC target stream (radar bus, 50 Hz). 0x235 carries its closing speed, 0x237 its position. See
 # ars510/support.py and docs/05.
