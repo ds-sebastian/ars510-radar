@@ -53,7 +53,7 @@ def scan(paths: list[Path]) -> list[str]:
         m = pat.search(line)
         if m:
           rel = path.relative_to(REPO) if path.is_relative_to(REPO) else path
-          hits.append(f"{rel}:{n}: {name}: {m.group(0)[:40]}")
+          hits.append(f"{rel}:{n}: {name}")
   return hits
 
 
