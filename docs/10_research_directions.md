@@ -31,7 +31,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## For the decode
 
-- **Class 5, `136|4` and `272|5`:** validate the candidate bicycle reading with independent target association at scale, the class-confidence reading and
+- **Class 5, `136|4` and `272|5`:** resolve the candidate cyclist/person associations with independent target association at scale, the class-confidence reading and
   the height-like scale.
 - **Heading `208|6` as its own state:** it differs from the instantaneous velocity angle on young and slow tracks;
   compare it with the position-track heading.

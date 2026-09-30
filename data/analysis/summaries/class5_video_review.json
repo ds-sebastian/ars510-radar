@@ -1,7 +1,7 @@
 {
-  "status": "candidate bicycle reading; physical enum, calibrated confidence and metric height remain provisional",
+  "status": "provisional class with cyclist/person associations; physical enum, calibrated confidence and metric height remain provisional",
   "provenance": {
-    "scope": "700 previously exposed one-minute atlas segments; existing rare-class inventory; available full/low resolution video",
+    "scope": "700 previously exposed one-minute atlas segments; existing rare-class inventory; captured full/low resolution video and retained long-route wide MP4",
     "prior_use": true,
     "manual_association": "provisional; nominal bearing aid, not certified physical radar identity",
     "generic_name_support_gate_met": false
@@ -9,21 +9,25 @@
   "inventory": {
     "episodes": 45,
     "rows": 968,
-    "eligible_subruns": 14,
-    "selected_episodes": 13,
-    "selected_drives": 10,
-    "selected_native_rows": 438,
-    "selected_mature_rows": 211,
-    "episodes_without_catalogued_imagery": 17,
-    "episodes_short_or_outside_geometry": 15
+    "eligible_subruns": 22,
+    "selected_episodes": 21,
+    "selected_drives": 11,
+    "selected_native_rows": 644,
+    "selected_mature_rows": 242,
+    "episodes_without_catalogued_imagery": 2,
+    "episodes_short_or_outside_geometry": 22
   },
   "review": {
     "candidate_bicycle_lives": 4,
     "candidate_bicycle_drives": 3,
     "mature_candidate_bicycle_lives": 2,
     "mature_candidate_bicycle_drives": 2,
-    "fixed_camera_queries": 122,
-    "rendered_images": 121,
+    "candidate_walker_coded_runs": 2,
+    "candidate_walker_drives": 1,
+    "mature_candidate_walker_coded_runs": 1,
+    "mature_candidate_walker_rows": 31,
+    "fixed_camera_queries": 192,
+    "rendered_images": 191,
     "clock_skips": 1,
     "largest_rendered_sof_offset_s": 0.024737878000451
   },
@@ -36,10 +40,25 @@
   },
   "verification": {
     "status": "pass",
-    "input_hashes": 30,
-    "native_crc_records": 12930,
-    "camera_clocks": 15600,
-    "decoded_images_verified": 121
+    "captured_video": {
+      "input_hashes": 30,
+      "native_crc_records": 12930,
+      "camera_clocks": 15600,
+      "decoded_images_verified": 121
+    },
+    "long_route_video": {
+      "render_input_hashes": 18,
+      "original_source_logs": 13,
+      "native_crc_records": 12414,
+      "native_inventory_rows": 276,
+      "native_anchors": 70,
+      "matched_encoder_packet_sizes": 15071,
+      "rendered_images": 70,
+      "independently_decoded_images": 16,
+      "largest_rendered_sof_offset_s": 0.022020795000571525,
+      "independent_projection_max_error_px": 4.18367562815547e-10,
+      "packet_limit": "Packet-size sequence, not compressed-payload hash equality."
+    }
   },
   "consumer_limit": "Class and maximum confidence code do not certify physical target identity; no runtime behavior change."
 }
