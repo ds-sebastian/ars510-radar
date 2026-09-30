@@ -21,6 +21,7 @@ Profiles:
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -42,9 +43,12 @@ CarInterface = _ars510_hook_car_interface(CarInterface)
 
 
 def find_opendbc(path: Path) -> Path | None:
-  for root in (path, path / "opendbc_repo", path / "opendbc"):
-    if (root / "opendbc" / "car" / "toyota" / "interface.py").exists():
-      return root.resolve()
+  """The opendbc checkout: the directory holding the real opendbc/ package. openpilot checkouts have a top-level
+  `opendbc` symlink into opendbc_repo; resolve it, so git sees the files where they are tracked."""
+  for root in (path / "opendbc_repo", path, path / "opendbc"):
+    pkg = root / "opendbc"
+    if (pkg / "car" / "toyota" / "interface.py").exists():
+      return pkg.resolve().parent
   return None
 
 
@@ -59,16 +63,12 @@ def old_dbcs(root: Path) -> list[Path]:
 
 
 def git_apply(root: Path, patch: Path, *args: str) -> bool:
-  # Inside a larger git work tree (opendbc_repo vendored in openpilot), git apply resolves paths from the top of that
-  # tree: prefix them with opendbc_repo's location.
-  top = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=root, capture_output=True, text=True)
-  prefix = []
-  if top.returncode == 0:
-    rel = root.resolve().relative_to(Path(top.stdout.strip()).resolve())
-    if str(rel) != ".":
-      prefix = [f"--directory={rel.as_posix()}"]
-  r = subprocess.run(["git", "apply", *prefix, *args, str(patch)], cwd=root, capture_output=True, text=True)
-  return r.returncode == 0
+  """git apply with paths relative to the opendbc checkout. When opendbc_repo sits inside a larger work tree
+  (openpilot vendors it), git would resolve paths from that tree's top and skip files it considers elsewhere while
+  still exiting 0. GIT_CEILING_DIRECTORIES stops the search above opendbc_repo, and any skipped file counts as failure."""
+  env = {**os.environ, "GIT_CEILING_DIRECTORIES": str(root.resolve().parent)}
+  r = subprocess.run(["git", "apply", "-v", *args, str(patch)], cwd=root, env=env, capture_output=True, text=True)
+  return r.returncode == 0 and "Skipped patch" not in r.stdout + r.stderr
 
 
 def legacy_patch(root: Path) -> Path | None:
