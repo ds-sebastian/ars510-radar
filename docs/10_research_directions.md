@@ -12,8 +12,11 @@ The most promising next steps, ordered by how directly they would improve the ra
 3. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
 4. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
-5. **A wider ACC-target clip.** Clip the ACC-target object's vRel to 0x235 ± 3 m/s only on gross disagreement,
-   where the ACC target is right 86-90% of the time.
+5. **ACC-target clip on top of `steady`.** `acc_target_clip_mps=3` clips the ACC-target object's vRel to
+   0x235 ± 3 m/s. In replay on top of the steady profile it cuts radar-only episodes 6 → 5 and paired roughness by
+   0.0004 m/s² (95% interval below zero) for 0.001 s of lag, and the owner drives' hard radar-only requests go
+   16 → 0 ([`ramp_limiter.json`](../data/analysis/summaries/ramp_limiter.json), `acc_clip_followup`). Fresh drives
+   decide whether it joins `steady`.
 
 ## For the drift discriminator
 

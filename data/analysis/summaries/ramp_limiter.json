@@ -3458,5 +3458,45 @@
     }
    ]
   }
+ },
+ "acc_clip_followup": {
+  "option": {
+   "acc_target_clip_mps": 3.0
+  },
+  "baseline": "published steady (with ramp limiter)",
+  "selection": "exploratory; chosen after single-option replay results, not yet confirmed on fresh drives",
+  "heldout": {
+   "baseline": {
+    "hard_ticks": 53,
+    "radar_only_episodes": 6,
+    "ro_on_gas_h": 0.21908554527012458,
+    "lag_r": -0.884819841850278,
+    "ant10_r": 0.4431137724550898,
+    "switches_h": 390.19135612609193,
+    "E4": 0.009199509354791635
+   },
+   "with_clip": {
+    "hard_ticks": 52,
+    "radar_only_episodes": 5,
+    "ro_on_gas_h": 0.21908554527012458,
+    "lag_r": -0.8842328635269229,
+    "ant10_r": 0.437125748502994,
+    "switches_h": 389.75318503555167,
+    "E4": 0.008676713274641812
+   },
+   "paired_roughness_delta": -0.0003778673964574403,
+   "paired_roughness_ci95": [
+    -0.0011338766705327834,
+    -3.4143179914597145e-05
+   ]
+  },
+  "owner_targeted_hard_ticks": {
+   "baseline": 16,
+   "with_clip": 0
+  },
+  "owner_targeted_episodes": {
+   "baseline": 6,
+   "with_clip": 5
+  }
  }
 }
