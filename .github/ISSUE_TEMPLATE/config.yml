@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Install guide
+    url: https://github.com/ds-sebastian/ars510-radar/blob/main/openpilot/README.md
+    about: Installing on openpilot or a fork, the self-check, and uninstalling

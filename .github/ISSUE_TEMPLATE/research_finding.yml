@@ -1,0 +1,21 @@
+name: Research finding or idea
+description: A decode, calibration or behaviour result, or an idea to test.
+labels: [research]
+body:
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim or question
+      placeholder: 0x85 cells 2/3 bits 64-79 follow road curvature ahead
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Drives used (anonymous), what counted as a pass before you looked, results including negatives, and how to reproduce.
+  - type: dropdown
+    id: confidence
+    attributes:
+      label: Confidence
+      options: [idea / untested, candidate (○), likely (◐), confirmed (●)]

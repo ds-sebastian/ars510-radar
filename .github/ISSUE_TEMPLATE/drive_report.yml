@@ -1,0 +1,62 @@
+name: Drive report
+description: You drove with the ARS510 integration installed. Tell us how it behaved.
+labels: [drive-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing. Please do **not** post route IDs, dongle IDs, VINs, GPS positions or identifying video.
+        If a log would help, say so below and we will arrange a private transfer.
+  - type: input
+    id: car
+    attributes:
+      label: Car and model year
+      placeholder: RAV4 2023 hybrid
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Radar firmware (carParams.carFw, fwdRadar at 0x750/0x0f)
+      placeholder: 8821F0R03100
+  - type: input
+    id: fork
+    attributes:
+      label: Fork and version
+      placeholder: sunnypilot v2026.002.002
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: Output of `install.py <openpilot> --check`
+      render: text
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile
+      options: [steady (default), default]
+  - type: input
+    id: driving
+    attributes:
+      label: Driving (duration, road types, conditions)
+      placeholder: 1.5 h, highway and city, dry, night
+  - type: textarea
+    id: moments
+    attributes:
+      label: Flagged moments
+      description: For each moment, the time into the drive (mm:ss) and what happened, e.g. unexpected braking, a stuck or wrong lead, late braking.
+      placeholder: |
+        12:40 braked hard behind a car far ahead going downhill, no reason
+        31:05 lead stayed on a car in the next lane on a curve
+  - type: dropdown
+    id: overall
+    attributes:
+      label: Overall, compared with vision-only on similar roads
+      options: [better, about the same, worse, not sure]
+  - type: checkboxes
+    id: log
+    attributes:
+      label: Logs
+      options:
+        - label: I can share logs of the flagged moments privately

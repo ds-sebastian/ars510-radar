@@ -56,6 +56,12 @@ python /data/ars510-radar/openpilot/install.py /data/openpilot     # openpilot, 
 Then reboot the device. The same command works on any fork: it adds the decoder and appends one hook block to Toyota's
 `interface.py`, with the recommended `steady` profile. Details, the self-check and uninstall: [`openpilot/README.md`](openpilot/README.md).
 
+## Help test it
+
+Drive with it and open a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml):
+flagged moments, fork and version. Reports from other cars, radar firmware and forks matter most. Code, docs and
+research go through pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md) (and [AGENTS.md](AGENTS.md) for AI agents).
+
 ## Decode in Python
 
 ```bash
