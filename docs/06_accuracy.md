@@ -20,7 +20,7 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera, 99.3% against the vision model |
 | **yRel** scale | 1/64 m per code, ±10% (lane peaks 62.8-67.3 codes/m, camera 69-73) |
-| **velocity** zero and scale | zero at code 510.5; 0.150 / 0.149 / 0.153 m/s per code from the radar's own range slope with GPS ego speed |
+| **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed; exact calibration remains bounded |
 | **vRel** vs camera | far better than zero or range differencing at every range (table below) |
 | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |
 | **trackId** | no ID ever in two slots; 77 of 87 camera-checked tracks within 60 m keep one camera identity ≥ 95% of their life |
@@ -31,8 +31,10 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 
 - **Scale 1/16 m.** Closing rate over relative speed gives 15.93 / 16.01 codes per metre on two calibration routes;
   camera ground contact gives slope 0.99-1.00 on all three drives.
-- **Zero at code 160 (−10 m).** Camera ground contact puts it within 0.2 m on A and C; hilly drive B reads +0.7 m,
-  which a 0.25° camera-pitch error explains. The radar's origin matches openpilot's `RADAR_TO_CAMERA = 1.52 m`.
+- **Nominal zero at code 160.** The formula is `code / 16 − 10 m`: code 160 decodes to zero. The offset was
+  originally fitted against a vision reference. Camera ground contact is consistent within 0.2 m on A and C;
+  hilly drive B reads +0.7 m, consistent with a 0.25° camera-pitch error. That comparison assumes openpilot's
+  `RADAR_TO_CAMERA = 1.52 m`; a tape-measured gap is needed to pin the physical zero and origin.
 - **Far range** (drive A, camera box scale averaged with the vision model where they agree): median absolute residual
   3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at 100-150 m (ratio 0.979).
 
@@ -50,16 +52,32 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 ## Velocity
 
 - **Over ground.** See [03](03_slot_fields.md#kinematics).
-- **Zero 510.5.** With ego and target stopped, codes pile on 510 and 511 (weighted means 510.49 / 510.40 / 510.20).
+- **Nominal zero 510.5.** While ego is stopped, the dominant object-code peak is at 510 and 511. Weighted means
+  of the four most frequent codes are 510.486 / 510.400 / 510.198. The collection selects host speed below
+  0.05 m/s and object age at least 10; it includes moving targets and does not independently select stationary
+  reflectors. The peak supports a zero near 510–511. Exact factory zero, bin centring and rounding remain
+  provisional; an integer-zero/floor encoding is one possible explanation for the half-code.
 
   ![standstill codes](img/analysis/standstill_codes.png)
 
-- **Scale 0.15 m/s per code.** Regressing the code on the radar's own 8 s range slope plus GPS ego speed gives
-  0.1504 / 0.1487 / 0.1530 (every 90% CI contains 0.15). Against the ACC target's speed (0x235) the slope is
-  0.99 / 1.02 at 40-80 m.
-- **Ego reference.** Toyota 0xB4 reads about 1.5% below GPS and wheel speed. With 0xB4 as ego speed, steady following
-  fits 0.149, so `OPENPILOT_CONFIG` uses `vground_scale = 0.149 / 0.15`. The best alignment between radar velocity and
-  ego speed is +0.05-0.1 s.
+- **Nominal scale 0.15 m/s per code.** Fitting velocity against native 8 s forward-range slope plus GPS ego speed,
+  with a free intercept and a track bootstrap, gives:
+
+  | drive | scale, m/s per code | 90% interval |
+  |---|---:|---|
+  | A | .15037 | [.1484, .1518] |
+  | B | .14869 | [.1463, .1514] |
+  | C | .15304 | [.1508, .1550] |
+
+  The first two intervals contain .15; C's does not. These are consistency fits at the retained 1/16 m range
+  scale, not an independent factory-unit calibration. A range-scale error or ego-reference mismatch also moves
+  the fitted velocity scale. Against the ACC target's speed (0x235) the slope is 0.99 / 1.02 at 40-80 m.
+- **Ego reference.** Toyota 0xB4 reads about 1.5% below GPS and wheel speed in the measured comparisons. Steady
+  following against 0xB4 fits .149 m/s per code. The integration profiles use `vground_scale = .149 / .15`, a
+  **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed. This empirical alignment is
+  separate from the nominal wire scale and does not exactly invert the measured ego-speed discrepancy.
+  The best alignment between radar velocity and ego speed is +0.05-0.1 s.
+
 - **Against the camera** (closing speed from box growth over 2 s, all camera-paired samples):
 
   | drive | band | native vRel | constant 0 | 1 s range derivative |
@@ -81,6 +99,29 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 - **Stopped targets.** Against targets that video and odometry show stopped at 5-30 m, settled tracks read vRel with
   RMS 0.54 m/s (B and C).
 - **Timing.** On decelerating leads the radar's speed leads the camera's by 0.2-0.4 s.
+
+### Encoding constants and motion geometry
+
+`16 = 2⁴` and `64 = 2⁶` give nominal wire steps of 0.0625 m and 0.015625 m; `2048 = 2¹¹` centres the unsigned
+12-bit lateral code. This is consistent with fixed-point/offset encoding. The 160-code forward bias gives a
+mathematical span of −10 to 245.9375 m; negative headroom is a plausible design reason, not a measured factory
+intent. The velocity step .15 m/s is .54 km/h; it has no established derivation from the radar's waveform.
+Wire quantization is separate from physical measurement resolution and accuracy.
+
+The object velocity is ground-referenced in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)).
+It is a processed object output, not an exposed raw radial Doppler measurement. Its exact upstream sensor inputs
+and filtering are unassigned. The affine decoder uses fixed constants; the integration subtracts host 0xB4
+speed and uses no GPS-grade, pitch or yaw correction to those constants. Turning and slope can change geometry
+and the upstream estimate without changing the wire units. The supported lateral relation is `vy = dy/dt + ω·x`;
+in an ideal planar frame with host forward speed, `vx = dx/dt + v_ego − ω·y`. Neither relation establishes the
+radar's exact internal algorithm or its elevation handling.
+
+Changing the nominal zero from 510.5 to 512 shifts every ground-speed result by −.225 m/s; changing .15 to .149
+changes a nominal 30 m/s result by −.2 m/s. These fixed changes alone cannot produce the observed multi-m/s
+excursions. As an illustration, pure horizontal projection of 30 m/s on a constant 3.4% slope differs by about
+.017 m/s; that calculation does not bound crest/dip association, multipath or tracking errors. Independent
+target/terrain geometry is needed to attribute those errors. Arithmetic and source checks are in
+[`encoding_calibration.json`](../data/analysis/summaries/encoding_calibration.json).
 
 ## Range walks
 

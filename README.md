@@ -14,7 +14,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | | state |
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
-| **dRel, yRel, velocity over ground** | ● decoded and checked on held-out drives ([06](docs/06_accuracy.md)) |
+| **dRel, yRel, velocity over ground** | ● field layout and motion interpretation; ◐ exact physical zero/scales ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class, width / length, heading, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded, names and scales being pinned ([03](docs/03_slot_fields.md)) |
 | **The radar's own ACC target** (0x235 / 0x237, 50 Hz) | ● decoded ([05](docs/05_acc_target_and_support.md)) |
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
@@ -88,6 +88,10 @@ and a CRC32. Each slot is one little-endian bit field:
 | age | `24\|7` | radar cycles; a restart is a new track |
 | lane weights (right / left / ego) | `148\|4`, `152\|4`, `156\|4` | 0-15, summing to 15 or 16 |
 | class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist/person associations; ○), 6 two-wheeler |
+
+These are nominal affine decodes, with calibration limits in [06](docs/06_accuracy.md#encoding-constants-and-motion-geometry).
+The velocity zero near 510–511 does not establish the factory rounding rule. The driving profiles apply an
+additional `.149 / .15` ground-speed alignment before subtracting Toyota 0xB4 ego speed.
 
 The full field list is in [docs/03](docs/03_slot_fields.md).
 

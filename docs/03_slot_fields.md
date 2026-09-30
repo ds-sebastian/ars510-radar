@@ -23,9 +23,9 @@ from this radar's own data.
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `32\|12` | **dRel**, forward distance from the radar | `(code − 160) / 16` m | ● |
+| `32\|12` | **dRel**, forward distance from the radar | `(code − 160) / 16` m | ● field/scale; ◐ physical zero |
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) / 64` m; \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale (±10%) |
-| `64\|10` | **vx over ground** | `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● |
+| `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.145` m/s | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by 0.5-1 s | ◐ |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |

@@ -4,8 +4,8 @@ Each slot is read as ONE little-endian bit field: bit 0 is the LSB of slot byte 
 and so on. `start|length` below uses that numbering (it is also DBC `@1+` Intel numbering on the slot bytes).
 
 Field boundaries come from carry chains between consecutive cycles of the same slot (a higher bit almost
-never flips unless the bit below it flips). Scales and zero points come from vehicle physics (wheel speed,
-standstill, stationary objects) and were then checked against model-free camera geometry on held-out drives.
+never flips unless the bit below it flips). Nominal scales and zero points use vehicle-motion consistency,
+host-standstill object-code peaks and camera/vision references; exact physical calibration remains bounded.
 docs/03_slot_fields.md describes every field; docs/06_accuracy.md the measured accuracy.
 
 Output convention matches openpilot's RadarPoint: dRel forward (m), yRel LEFT positive (m).
@@ -28,11 +28,13 @@ class NativeField:
     status: str  # how well the field is established; see docs
 
 
-# Longitudinal distance, forward. 12-bit unsigned, 1/16 m, zero code 160 (= -10.000 m exactly).
+# Longitudinal distance, forward. Nominal code/16 - 10 m; code 160 decodes to zero.
+# Scale supported; physical zero originally vision-fitted, awaiting measured-gap calibration.
 LONG_DIST = NativeField("long_dist", 32, 12, 160.0, 1.0 / 16.0, "m", "validated")
 # Lateral distance, LEFT positive. 12-bit offset binary around 2048, 1/64 m (scale bounded to about +/-10%).
 LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, 1.0 / 64.0, "m", "validated_sign_scale_pm10pct")
-# Longitudinal velocity OVER GROUND (not relative). 10-bit, 0.15 m/s per code, zero 510.5.
+# Longitudinal velocity OVER GROUND (not relative). Nominal 0.15 m/s/code and zero 510.5.
+# Exact factory zero, scale and rounding rule remain provisional (docs/06).
 # vRel = this - ego speed.
 LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s", "validated_with_caveats")
 # Lateral velocity over ground, left positive. With the rotating-frame correction (vy = dy/dt + yaw_rate * x) it fits

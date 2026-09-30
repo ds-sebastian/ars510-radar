@@ -24,7 +24,7 @@ dongle IDs, dates or GPS.
 | `camera_pairs.parquet` | 90k | radar tracks paired by bearing with narrow-camera YOLO boxes: box (`x1..y2`, `h`), box-growth closing speed over 2 / 4 / 6 s (`vcam2/4/6`), 1 s range derivative (`deriv1s`), 10 s range slope, ego speed from 0xB4 / carState / GPS, lead flag |
 | `ground_contact.parquet` | 50k | camera ground-contact distance (`cam_ground_x`, flat-road projection) against radar `x` |
 | `lateral_pairs.parquet` | 22k | camera lateral estimates against the raw lateral code |
-| `standstill_codes.parquet` | 15k | `64\|10` codes of stopped objects while ego is stopped |
+| `standstill_codes.parquet` | 15k | `64\|10` codes while ego is stopped; includes moving targets, with a dominant low-speed peak |
 | `brake_events/E*_*.csv` | | drive-A brake-event windows: replay ticks, radar lead track, camera pair |
 | `fault_injection.csv` | 81 | ghost / fault scenarios through radard and the planner |
 | `stats.json`, `STATS.md` | | descriptive statistics from `tools/compute_stats.py` |
@@ -43,7 +43,7 @@ expanded 700-segment inventories, 20 held-out replay routes and closed-loop driv
 | [03 Slot fields](../docs/03_slot_fields.md) | `midband_weight_triplet`, `weight_lateral_roles`, `weight_state128`, `attribute_recoding`, `full_movement_code`, `startup_low5_decay`, `score16_countdown`, `score16_outcomes`, `velocity_heading`, `rotating_kinematics`, `template_field_tests`, `camera_semantic_correction` (size and class associations), `class5_video_review` (candidate cyclist/person associations from a 700-segment inventory) |
 | [04 Metadata record](../docs/04_metadata_record_0x85.md) | `id85_lane_lateral_candidates`, `id85_parameter_presence`, `prefix_alignment` |
 | [05 ACC target](../docs/05_acc_target_and_support.md) | `signal_atlas_and_acc_crosscheck`, `acc_target_arel`, `acc_distance_increment_closure`, `event_pair_carries` (full event census, carry limits and source-verified relative-time example), `context_24x`, `selected_target_descriptors` (full descriptor lifecycle census and raw summary-word limits) |
-| [06 Accuracy](../docs/06_accuracy.md) | `figure_numbers` (velocity MSE, range walks), `camera_semantic_correction` (three-cornered hat), `far_range_camera_correction`, `camera_identity_correction`, `review_followup` (stopped targets), `radar_only_scales`, `lane_peaks`, `state_space` |
+| [06 Accuracy](../docs/06_accuracy.md) | `figure_numbers` (velocity MSE, range walks), `camera_semantic_correction` (three-cornered hat), `far_range_camera_correction`, `camera_identity_correction`, `review_followup` (stopped targets), `radar_only_scales`, `lane_peaks`, `state_space`, `encoding_calibration` (nominal constants, host-standstill selection, interval membership and arithmetic sensitivity) |
 | [07 Velocity excursions](../docs/07_velocity_excursions.md) | `jitter_problem_figures`, `jitter_source_and_interface_limit`, `interface_filters_preregistered`, `radard_vision_fusion`, `jitter_event_scope_audit`, `velocity_guards`, `far_settling` (selected option, replay aggregates and relative-time example), `owner_driver_review` (guard recovery limits and driver/override aggregates) |
 | [08 openpilot integration](../docs/08_openpilot_integration.md) | `driver_agreement_preregistered`, `openpilot_integration_replay`, `sunnypilot_installation`, `velocity_guards`, `far_settling` |
 

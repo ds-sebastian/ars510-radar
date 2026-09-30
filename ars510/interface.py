@@ -50,8 +50,9 @@ class NativeInterfaceConfig:
     # Requires min_publish_age >= RELINK_MIN_PUBLISH_AGE so the lost ID has ended (no duplicate IDs).
     relink_max_gap_s: float = 0.0
     # Multiplies the decoded over-ground velocity. Against Toyota 0xB4, steady following reads 0.149 m/s/code
-    # instead of 0.150 because 0xB4 reads ~1.5% below GPS / wheel speed; 0.149/0.15 compensates for that
-    # reference, it is not a radar constant. Use 1.0 if your ego speed is carState.vEgo or GPS.
+    # instead of nominal 0.150. This empirical 0.667% alignment is separate from the measured
+    # ~1.5% discrepancy between ego references; it is not an exact inverse or an OEM wire constant.
+    # Use 1.0 with a carState.vEgo or GPS ego reference.
     vground_scale: float = 1.0
     # Withhold points whose vRel is unresolved (no fresh ego speed).
     drop_unresolved_vrel: bool = False
