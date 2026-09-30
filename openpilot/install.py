@@ -1,28 +1,23 @@
 #!/usr/bin/env python3
-"""Install (or remove) the ARS510 radar-track integration into an opendbc checkout.
+"""Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
-    python openpilot/install.py /path/to/openpilot/opendbc_repo            # install
-    python openpilot/install.py /path/to/openpilot/opendbc_repo --check    # report state, change nothing
-    python openpilot/install.py /path/to/openpilot/opendbc_repo --uninstall
-    python openpilot/install.py /data/openpilot/opendbc_repo --flavor starpilot --profile steady   # StarPilot, K4
+    python openpilot/install.py /data/openpilot                  # install (steady profile), then reboot
+    python openpilot/install.py /data/openpilot --check          # report state, change nothing
+    python openpilot/install.py /data/openpilot --uninstall      # remove everything this installer added
+    python openpilot/install.py /data/openpilot --profile default   # raw decode without smoothing (research only)
 
-Flavors (which Toyota files the hook patch is made for):
-  openpilot   opendbc_toyota_ars510.patch, current openpilot (opendbc 4134c0d / openpilot 10b9e73)
-  starpilot   starpilot/opendbc_toyota_ars510_starpilot.patch, StarPilot's opendbc (September 2026); uses flag bit
-              16384 because StarPilot already uses 4096 (AUTO_BRAKE_HOLD)
-  sunnypilot  sunnypilot/opendbc_toyota_ars510_sunnypilot.patch, v2026.002.002 release-tizi (6a17f75);
-              passes CP_SP and preserves legacy RadarPoint fields; flag bit 4096
-Profiles (decoder settings in the installed ars510_radar_interface.py):
-  default     OPENPILOT_CONFIG
-  steady      STEADY_CONFIG: K4 range fusion + far-range vRel smoothing + velocity-jump guard + far settling, see docs/07
+The path may be the openpilot checkout or its opendbc_repo. The same install works on openpilot, sunnypilot,
+StarPilot and other forks: no fork file is patched in place. The installer
+  - copies the decoder package to        opendbc/car/toyota/ars510/
+  - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
+  - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
+    CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
+  - copies two DBCs for cabana to        opendbc/dbc/ (not used for parsing)
+An install made with an older, patch-based version of this installer is removed first.
 
-What it writes into <opendbc_repo>:
-  opendbc/car/toyota/ars510/                    the decoder package from this repo (copied unchanged)
-  opendbc/car/toyota/ars510_radar_interface.py  the RadarInterface used when ToyotaFlags.ARS510_RADAR is set
-  opendbc/dbc/ars510_radar_bus.dbc              raw radar-bus frames, for cabana only (not used for parsing)
-  opendbc/dbc/ars510_objects_vbus.dbc           reassembled objects on a virtual bus, for cabana only
-and applies opendbc_toyota_ars510.patch (Toyota values.py / interface.py / radar_interface.py hooks).
-`git apply` refuses a patch that does not fit, and nothing is copied in that case.
+Profiles:
+  steady    STEADY_CONFIG (default, recommended): smoothing and guards against velocity excursions, docs/07
+  default   OPENPILOT_CONFIG: the raw decode, for research
 """
 from __future__ import annotations
 
@@ -34,12 +29,24 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-PATCHES = {"openpilot": HERE / "opendbc_toyota_ars510.patch",
-           "starpilot": HERE / "starpilot" / "opendbc_toyota_ars510_starpilot.patch",
-           "sunnypilot": HERE / "sunnypilot" / "opendbc_toyota_ars510_sunnypilot.patch"}
-PATCH = PATCHES["openpilot"]
-PROFILE_LINE = 'PROFILE = PROFILES["default"]'
+LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
+PROFILE_LINE = 'PROFILE = PROFILES["steady"]'
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")
+BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
+END = "# <<< ars510-radar"
+HOOK = f"""
+{BEGIN}
+from opendbc.car.toyota.ars510_radar_interface import hook_car_interface as _ars510_hook_car_interface  # noqa: E402
+CarInterface = _ars510_hook_car_interface(CarInterface)
+{END}
+"""
+
+
+def find_opendbc(path: Path) -> Path | None:
+  for root in (path, path / "opendbc_repo", path / "opendbc"):
+    if (root / "opendbc" / "car" / "toyota" / "interface.py").exists():
+      return root.resolve()
+  return None
 
 
 def targets(root: Path) -> dict[str, Path]:
@@ -48,90 +55,93 @@ def targets(root: Path) -> dict[str, Path]:
           **{dbc: root / "opendbc" / "dbc" / dbc for dbc in DBCS}}
 
 
-def git_apply(root: Path, *args: str) -> bool:
-  # Inside a git work tree, `git apply` resolves patch paths from the top of that tree and silently skips files
-  # outside the current directory. When opendbc_repo is vendored inside a larger repo (StarPilot's /data/openpilot)
-  # rather than being its own repo or submodule, prefix the paths with opendbc_repo's location in that tree.
+def git_apply(root: Path, patch: Path, *args: str) -> bool:
+  # Inside a larger git work tree (opendbc_repo vendored in openpilot), git apply resolves paths from the top of that
+  # tree: prefix them with opendbc_repo's location.
   top = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=root, capture_output=True, text=True)
   prefix = []
   if top.returncode == 0:
     rel = root.resolve().relative_to(Path(top.stdout.strip()).resolve())
     if str(rel) != ".":
       prefix = [f"--directory={rel.as_posix()}"]
-  r = subprocess.run(["git", "apply", *prefix, *args, str(PATCH)], cwd=root, capture_output=True, text=True)
+  r = subprocess.run(["git", "apply", *prefix, *args, str(patch)], cwd=root, capture_output=True, text=True)
   return r.returncode == 0
 
 
-def patch_state(root: Path) -> str:
-  if git_apply(root, "--check", "--reverse"):
-    return "applied"
-  if git_apply(root, "--check"):
-    return "not applied"
-  return "does not fit this opendbc version"
+def legacy_patch(root: Path) -> Path | None:
+  """The older patch-based install, if one is applied here."""
+  for patch in LEGACY_PATCHES:
+    if git_apply(root, patch, "--check", "--reverse"):
+      return patch
+  return None
+
+
+def remove_hook(text: str) -> str:
+  if BEGIN not in text:
+    return text
+  head, rest = text.split(BEGIN, 1)
+  return head.rstrip("\n") + "\n" + rest.split(END, 1)[1].lstrip("\n")
 
 
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-  ap.add_argument("opendbc_repo", type=Path, help="opendbc checkout (the directory that contains opendbc/car)")
-  ap.add_argument("--flavor", choices=sorted(PATCHES), default="openpilot")
-  ap.add_argument("--profile", choices=("default", "steady"), default="default")
+  ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
+  ap.add_argument("--profile", choices=("steady", "default"), default="steady")
+  ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
   g.add_argument("--uninstall", action="store_true")
   args = ap.parse_args()
-  global PATCH
-  PATCH = PATCHES[args.flavor]
-  root = args.opendbc_repo.resolve()
-  if not (root / "opendbc" / "car" / "toyota" / "radar_interface.py").exists():
-    print(f"{root} does not look like an opendbc checkout", file=sys.stderr)
+  root = find_opendbc(args.openpilot)
+  if root is None:
+    print(f"no opendbc/car/toyota/interface.py under {args.openpilot} (or its opendbc_repo)", file=sys.stderr)
     return 2
   t = targets(root)
-  state = patch_state(root)
+  interface_py = root / "opendbc" / "car" / "toyota" / "interface.py"
+  text = interface_py.read_text()
+  legacy = legacy_patch(root)
 
   if args.check:
-    print(f"patch ({args.flavor}): {state}")
+    print(f"opendbc: {root}")
+    print(f"hook in toyota/interface.py: {'present' if BEGIN in text else 'missing'}")
+    print(f"older patch-based install: {legacy.name if legacy else 'none'}")
     if t["interface"].exists():
       txt = t["interface"].read_text()
-      prof = next((k for k in ("default", "steady") if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
+      prof = next((k for k in ("steady", "default") if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
       print(f"profile: {prof}")
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'missing'} ({p})")
     return 0
 
+  if legacy is not None and not git_apply(root, legacy, "--reverse"):
+    print(f"could not remove the older install ({legacy.name}); nothing changed", file=sys.stderr)
+    return 1
+  text = remove_hook(interface_py.read_text())
+
   if args.uninstall:
-    if state == "applied" and not git_apply(root, "--reverse"):
-      print("failed to reverse the patch", file=sys.stderr)
-      return 1
+    interface_py.write_text(text)
     for p in t.values():
       if p.is_dir():
         shutil.rmtree(p)
       elif p.exists():
         p.unlink()
-    print("removed")
+    print("removed" + (f" (including the older {legacy.name})" if legacy else ""))
     return 0
 
-  if state == "does not fit this opendbc version":
-    print(f"{PATCH.name} does not apply to this checkout (wrong --flavor?); nothing changed", file=sys.stderr)
-    return 1
-  if state == "not applied" and not git_apply(root):
-    print("git apply failed; nothing changed", file=sys.stderr)
+  if "class CarInterface" not in text:
+    print("toyota/interface.py defines no CarInterface; nothing changed", file=sys.stderr)
     return 1
   if t["package"].exists():
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
-  if args.flavor == "sunnypilot":
-    # v2026.002.002 passes CP_SP and still exposes the legacy RadarPoint fields.
-    src = src.replace("def __init__(self, CP):", "def __init__(self, CP, CP_SP):")
-    src = src.replace("super().__init__(CP)", "super().__init__(CP, CP_SP)")
-    src = src.replace('      pt.vRel = p["vRel"]', '      pt.vRel = p["vRel"]\n'
-                      '      pt.aRel = p["aRel"]\n      pt.yvRel = p["yvRel"]\n'
-                      '      pt.measured = p["measured"]')
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
+  interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
   for dbc in DBCS:
     shutil.copy2(REPO / "dbc" / dbc, t[dbc])
-  print(f"installed into {root} ({args.flavor} flavor, {args.profile} profile; patch was {state})")
+  print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
+        "). Reboot the device to activate.")
   return 0
 
 

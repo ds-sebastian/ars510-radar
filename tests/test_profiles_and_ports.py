@@ -1,9 +1,11 @@
-"""Decoder profiles and the openpilot / StarPilot install targets."""
+"""Decoder profiles and the generic openpilot / fork installer."""
 from __future__ import annotations
 
 import dataclasses
 import re
 from pathlib import Path
+import subprocess
+import sys
 
 from ars510 import OPENPILOT_CONFIG, STEADY_CONFIG
 
@@ -22,18 +24,42 @@ def test_steady_is_openpilot_plus_k4_jump_guard_far_settling_and_ramp_limiter():
   assert OPENPILOT_CONFIG.far_min_publish_age == 0
 
 
-def test_wrapper_has_one_switchable_profile_line():
+def test_wrapper_has_one_switchable_profile_line_defaulting_to_steady():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
-  assert src.count('PROFILE = PROFILES["default"]') == 1
+  assert src.count('PROFILE = PROFILES["steady"]') == 1
   assert 'PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}' in src
+  assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
-def test_starpilot_patch_targets_and_flag_bit():
-  patch = (REPO / "openpilot" / "starpilot" / "opendbc_toyota_ars510_starpilot.patch").read_text()
-  files = set(re.findall(r"^\+\+\+ b/(\S+)", patch, re.M))
-  assert files == {f"opendbc/car/toyota/{n}.py" for n in ("interface", "radar_interface", "values")}
-  # StarPilot already uses 4096 (AUTO_BRAKE_HOLD) and 8192 (DSU_BYPASS)
-  assert "+  ARS510_RADAR = 16384" in patch
-  assert "ARS510_RADAR = 4096" not in patch
-  upstream = (REPO / "openpilot" / "opendbc_toyota_ars510.patch").read_text()
-  assert "+  ARS510_RADAR = 4096" in upstream
+def _fake_opendbc(tmp_path):
+  toyota = tmp_path / "opendbc_repo" / "opendbc" / "car" / "toyota"
+  toyota.mkdir(parents=True)
+  (tmp_path / "opendbc_repo" / "opendbc" / "dbc").mkdir()
+  original = "class CarInterface:\n  pass\n"
+  (toyota / "interface.py").write_text(original)
+  return toyota, original
+
+
+def _install(*args):
+  return subprocess.run([sys.executable, str(REPO / "openpilot" / "install.py"), *map(str, args)], capture_output=True, text=True)
+
+
+def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
+  toyota, original = _fake_opendbc(tmp_path)
+  for _ in range(2):  # re-running replaces, never duplicates
+    r = _install(tmp_path)  # the openpilot checkout; opendbc_repo is found inside it
+    assert r.returncode == 0, r.stderr
+  text = (toyota / "interface.py").read_text()
+  assert text.startswith(original) and text.count("hook_car_interface(CarInterface)") == 1
+  assert (toyota / "ars510" / "interface.py").exists()
+  assert 'PROFILE = PROFILES["steady"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert _install(tmp_path, "--profile", "default").returncode == 0
+  assert 'PROFILE = PROFILES["default"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert _install(tmp_path, "--uninstall").returncode == 0
+  assert (toyota / "interface.py").read_text() == original
+  assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
+
+
+def test_legacy_patches_are_kept_for_upgrades():
+  names = {p.name for p in (REPO / "openpilot" / "legacy").glob("*.patch")}
+  assert names == {f"opendbc_toyota_ars510_{f}.patch" for f in ("openpilot", "starpilot", "sunnypilot")}

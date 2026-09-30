@@ -17,20 +17,24 @@ flowchart LR
 
 Install instructions for each fork are in [`openpilot/README.md`](../openpilot/README.md).
 
-| fork | installer flavor | what changes | status |
-|---|---|---|---|
-| current openpilot (opendbc master) | `--flavor openpilot` | 3 Toyota files + decoder; flag 4096 | replayed end to end through card → radard → plannerd |
-| StarPilot | `--flavor starpilot` | same 3 files in StarPilot's opendbc; flag 16384; StarPilot's own radard | driven by the owner (K4 profile) |
-| sunnypilot v2026.002.002 | `--flavor sunnypilot` | same 3 files; flag 4096; `CP_SP` wrapper | installed on a device; activate with a reboot |
-| any fork | `openpilot/radard_vision_fusion.patch` | optional radard change ([07](07_velocity_excursions.md#options)) | replayed |
+One installer serves every fork: it copies the decoder and appends a 4-line hook block to the end of
+`opendbc/car/toyota/interface.py`, with no in-place edits and no new flag bit.
+
+| fork | status |
+|---|---|
+| current openpilot (opendbc master) | self-check passes; replayed end to end through card → radard → plannerd |
+| sunnypilot v2026.002.002 | self-check passes; carries `aRel` / `yvRel`; installed on the owner's device |
+| StarPilot | same hook; driven by the owner with the earlier patch-based install |
+| any fork | optional `openpilot/radard_vision_fusion.patch` ([07](07_velocity_excursions.md#options)) |
 
 ## How it hooks in
 
-1. **Detection** (`toyota/interface.py`). A `RADAR_ACC` Toyota gets `ToyotaFlags.ARS510_RADAR` and
-   `radarUnavailable = False` when its radar firmware is in `ARS510_FW_VERSIONS` (`8821F0R03100`) or 0x80 and 0x85 were
-   seen on bus 1. The firmware rule matters: the object list starts ~5.9 s after power-up, after fingerprinting.
-2. **Hand-over** (`toyota/radar_interface.py`). Toyota's `RadarInterface.update()` delegates to
-   `Ars510RadarInterface` when the flag is set. card needs no change.
+1. **Detection** (hook around Toyota's `CarInterface._get_params`). A `RADAR_ACC` Toyota gets
+   `radarUnavailable = False` when its radar firmware is in `ARS510_FW_VERSIONS` (`8821F0R03100`) or 0x80 and 0x85
+   were seen on bus 1. The firmware rule matters: the object list starts ~5.9 s after power-up, after fingerprinting.
+2. **Hand-over** (hook on `CarInterface.RadarInterface`, which card instantiates). A radar-ACC Toyota with radar
+   available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card needs no
+   change.
 3. **Decoding without a CANParser.** The interface reads the raw `(address, data, src)` tuples card already passes,
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 9 µs per call on a desktop CPU.

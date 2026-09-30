@@ -5,9 +5,9 @@ installed into, using a Python that has pycapnp (for example openpilot's .venv):
     $OP/.venv/bin/python openpilot/check_integration.py --opendbc $OP/opendbc_repo
 
 It checks:
-- detection: RAV4 2022 / 2023 radar-ACC platforms get ToyotaFlags.ARS510_RADAR and radarUnavailable=False when the
-  radar FW is a known ARS510 (a cold start, before 0x80 exists) or 0x80 and 0x85 were seen on bus 1; stock
-  behaviour otherwise;
+- detection: RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False when the radar FW is a known ARS510
+  (a cold start, before 0x80 exists) or 0x80 and 0x85 were seen on bus 1; stock behaviour otherwise, and every other
+  Toyota keeps the fork's own RadarInterface;
 - the RadarInterface path card.py uses: synthetic 0x80 records are fed as card.py's (address, data, src) tuples and
   as CanData, and it checks
   - the RadarData points (units, sign, ego-speed subtraction, age gate);
@@ -27,18 +27,18 @@ from pathlib import Path
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("--opendbc", type=Path, default=None, help="opendbc checkout to import (default: whatever is importable)")
-  ap.add_argument("--flavor", choices=("openpilot", "starpilot", "sunnypilot"), default="openpilot")
+  ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; the fork is detected
   args = ap.parse_args()
   if args.opendbc is not None:
     sys.path.insert(0, str(args.opendbc.resolve()))
 
   from opendbc.car import structs
   from opendbc.car.can_definitions import CanData
-  from opendbc.car.car_helpers import interfaces
-  from opendbc.car.toyota.values import CAR, ToyotaFlags
+  from opendbc.car.toyota.interface import CarInterface  # Toyota only: other brands may need fork-only packages
+  from opendbc.car.toyota.values import CAR
   from opendbc.car.toyota.ars510.constants import ID80_IDLE_SLOT, ID80_RECORD_LEN
   from opendbc.car.toyota.ars510.objects import encode_slot
-  from opendbc.car.toyota.ars510_radar_interface import PROFILE, Ars510RadarInterface
+  from opendbc.car.toyota.ars510_radar_interface import LEGACY_FIELDS, PROFILE, Ars510RadarInterface, is_ars510
 
   failures: list[str] = []
 
@@ -52,26 +52,28 @@ def main() -> int:
     fp[0] = {0xB4: 8}
     fp[1] = dict(bus1)
     car_fw = [] if radar_fw is None else [structs.CarParams.CarFw(ecu="fwdRadar", fwVersion=radar_fw, address=0x750, subAddress=0xf)]
-    return interfaces[car].get_params(car, fp, car_fw, alpha_long=False, is_release=False, docs=False)
+    return CarInterface.get_params(car, fp, car_fw, alpha_long=False, is_release=False, docs=False)
 
   ars_bus1 = {0x80: 8, 0x85: 8, 0x81: 8, 0x86: 8}
   ars_fw = b'\x018821F0R03100\x00\x00\x00\x00'
   cold_bus1 = {0x191: 8, 0x192: 4, 0x180: 5}  # first ~1 s after power-up: target summaries, no 0x80 / 0x85 yet
   for car in (CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023):
     CP = params(car, cold_bus1, ars_fw)
-    check(bool(CP.flags & ToyotaFlags.ARS510_RADAR) and not CP.radarUnavailable, f"{car}: ARS510 detected from radar FW at a cold start")
+    check(is_ars510(CP), f"{car}: ARS510 detected from radar FW at a cold start")
     CP = params(car, ars_bus1)
-    check(bool(CP.flags & ToyotaFlags.ARS510_RADAR) and not CP.radarUnavailable, f"{car}: ARS510 detected from 0x80/0x85 on bus 1")
+    check(is_ars510(CP), f"{car}: ARS510 detected from 0x80/0x85 on bus 1")
     CP = params(car, cold_bus1, b'\x018821F0R99999\x00\x00\x00\x00')
-    check(not CP.flags & ToyotaFlags.ARS510_RADAR and CP.radarUnavailable, f"{car}: other radar FW, no 0x80/0x85 -> stock (radar unavailable)")
+    check(not is_ars510(CP) and CP.radarUnavailable, f"{car}: other radar FW, no 0x80/0x85 -> stock (radar unavailable)")
+  extra = (structs.CarParamsSP(),) if hasattr(structs, "CarParamsSP") else ()  # sunnypilot passes CP_SP
   CP = params(CAR.TOYOTA_RAV4_TSS2, ars_bus1)
-  check(not CP.flags & ToyotaFlags.ARS510_RADAR, "non-RADAR_ACC RAV4 TSS2 ignores 0x80 on bus 1")
+  RI0 = CarInterface.RadarInterface(CP, *extra)
+  check(not is_ars510(CP) and not isinstance(RI0, Ars510RadarInterface),
+        "non-RADAR_ACC RAV4 TSS2 ignores 0x80 on bus 1 and keeps the fork's RadarInterface")
 
   # ---- RadarInterface on synthetic records ----
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
-  ri_args = (CP, structs.CarParamsSP()) if args.flavor == "sunnypilot" else (CP,)
-  RI = interfaces[CP.carFingerprint].RadarInterface(*ri_args)
-  check(isinstance(getattr(RI, "ars510", None), Ars510RadarInterface), "Toyota RadarInterface hands over to Ars510RadarInterface")
+  RI = CarInterface.RadarInterface(CP, *extra)
+  check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
 
   def record(age: int) -> bytes:
     # a car 40.0 m ahead, 1.5 m to the LEFT, moving at 20.0 m/s over ground
@@ -124,10 +126,10 @@ def main() -> int:
   pts = [o.points[0] for o in outs if len(o.points)]
   check(len(pts) == 95, f"settled track published on every later record (got {len(pts)})")
   p = pts[-1]
-  if args.flavor == "sunnypilot":
+  if "aRel" in LEGACY_FIELDS:  # forks that still carry the legacy RadarPoint fields (sunnypilot)
     import math
     check(p.measured and math.isnan(p.aRel) and math.isnan(p.yvRel),
-          "legacy RadarPoint fields preserve decoder output (measured is an interface convention)")
+          "legacy RadarPoint fields carried (NaN aRel / yvRel: the synthetic log has no yaw rate or speed change)")
   # The synthetic object keeps a fixed range while its vRel is non-zero; the steady profile's velocity-aided range
   # (range_fusion_gain) then settles a little away from the raw range, so only the default profile is exact.
   d_tol = 1e-3 if PROFILE.range_fusion_gain == 0 else 2.5

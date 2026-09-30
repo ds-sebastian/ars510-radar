@@ -1,9 +1,14 @@
 """openpilot radar tracks from the Toyota / Continental ARS510 native object list.
 
 Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interface.py`, together with the `ars510`
-decoder package as `opendbc/car/toyota/ars510/`. Toyota's RadarInterface hands over to this class when the car was
-detected with an ARS510 (`ToyotaFlags.ARS510_RADAR`: a RADAR_ACC platform whose radar FW is in ARS510_FW_VERSIONS, or
-with 0x80 and 0x85 on bus 1 at fingerprinting). Worth knowing (docs/07, docs/08):
+decoder package as `opendbc/car/toyota/ars510/`. The installer appends a marked block to the end of
+`opendbc/car/toyota/interface.py` that calls `hook_car_interface(CarInterface)`; nothing else in the fork is edited,
+so the same install works on openpilot and its forks (sunnypilot, StarPilot, FrogPilot-style trees):
+  - detection: a RADAR_ACC Toyota whose radar FW is in ARS510_FW_VERSIONS, or with 0x80 and 0x85 on bus 1 at
+    fingerprinting, gets radarUnavailable = False (stock leaves radar-ACC Toyotas radar-unavailable);
+  - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
+    and the fork's own RadarInterface otherwise. No ToyotaFlags bit is added, so fork flag bits cannot collide.
+Worth knowing (docs/07, docs/08):
   - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the "steady" profile halves their effect;
   - the radar drops new stationary objects once ego is above ~2-3 m/s, so a car that was already stopped when it came
     into view comes from vision;
@@ -32,10 +37,17 @@ from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, STEADY_CONFIG, Ars510Nat
 from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
-# Decoder profile: "default" (OPENPILOT_CONFIG) or "steady" (STEADY_CONFIG, the smoother K4 profile, docs/07).
-# `install.py --profile steady` rewrites this one line in the installed copy.
+# Decoder profile: "steady" (STEADY_CONFIG, recommended: smoothing and guards against velocity excursions, docs/07) or
+# "default" (OPENPILOT_CONFIG, the raw decode). `install.py --profile` rewrites this one line in the installed copy.
 PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}
-PROFILE = PROFILES["default"]
+PROFILE = PROFILES["steady"]
+
+# Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
+# 8821F0R01100 (RAV4 2022 platform) is the same part series but unconfirmed; it is detected by the bus-1 fallback when
+# the radar is already running at fingerprinting.
+ARS510_FW_VERSIONS = {
+  b'\x018821F0R03100\x00\x00\x00\x00',
+}
 
 STALE_S = 0.5  # radard has no staleness check of its own on track content
 NO_RECORD_WARN_S = 15.0
@@ -46,8 +58,8 @@ WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (CAR_BUS, TOYOTA
 
 
 class Ars510RadarInterface(RadarInterfaceBase):
-  def __init__(self, CP):
-    super().__init__(CP)
+  def __init__(self, CP, *args, **kwargs):  # forks add arguments (sunnypilot: CP_SP)
+    super().__init__(CP, *args, **kwargs)
     self.ars = Ars510NativeRadarInterface(replace(PROFILE, include_metadata=False))
     self.start_s: float | None = None
     self.last_record_s: float | None = None
@@ -87,14 +99,72 @@ class Ars510RadarInterface(RadarInterfaceBase):
     self.last_record_s = latest["time_s"]
     ret = structs.RadarData()
     points = []
-    # RadarPoint is trackId / dRel / yRel / vRel (aRel, yvRel, measured are deprecated in current cereal).
-    # Both profiles never publish a NaN vRel, which would poison radard's per-track Kalman filter.
+    # RadarPoint is trackId / dRel / yRel / vRel; forks that still carry the legacy aRel / yvRel / measured fields get
+    # them too. Both profiles never publish a NaN vRel, which would poison radard's per-track Kalman filter.
     for p in latest["radarData"]["points"]:
       pt = structs.RadarData.RadarPoint()
       pt.trackId = p["trackId"]
       pt.dRel = p["dRel"]
       pt.yRel = p["yRel"]
       pt.vRel = p["vRel"]
+      for legacy in LEGACY_FIELDS:
+        setattr(pt, legacy, p[legacy])
       points.append(pt)
     ret.points = points
     return ret
+
+
+def _legacy_fields() -> tuple[str, ...]:
+  pt = structs.RadarData.RadarPoint()
+  return tuple(f for f in ("aRel", "yvRel", "measured") if hasattr(pt, f))
+
+
+LEGACY_FIELDS = _legacy_fields()
+
+
+# ---- generic hook (called from the block install.py appends to opendbc/car/toyota/interface.py) ------------------
+def _radar_acc(flags) -> bool:
+  from opendbc.car.toyota.values import ToyotaFlags
+  return bool(int(flags) & ToyotaFlags.RADAR_ACC)
+
+
+def detect(ret, fingerprint, car_fw) -> bool:
+  """ARS510 on a radar-ACC Toyota: known radar FW (works at a cold start) or its object list already on bus 1."""
+  if not _radar_acc(ret.flags):
+    return False
+  fw = any(f.ecu == "fwdRadar" and f.fwVersion in ARS510_FW_VERSIONS for f in (car_fw or []))
+  return fw or {0x80, 0x85} <= set((fingerprint or {}).get(1, {}).keys())
+
+
+def is_ars510(CP) -> bool:
+  """Stock marks every radar-ACC Toyota radar-unavailable; only the hook clears it, and only for an ARS510."""
+  return _radar_acc(CP.flags) and not CP.radarUnavailable
+
+
+def hook_car_interface(car_interface):
+  """Wrap a fork's Toyota CarInterface in place: detection in _get_params, dispatch in RadarInterface."""
+  if getattr(car_interface, "_ars510_hooked", False):
+    return car_interface
+  import inspect
+  get_params = car_interface.__dict__["_get_params"].__func__
+  sig = inspect.signature(get_params)
+
+  def _get_params(*args, **kwargs):
+    ret = get_params(*args, **kwargs)
+    bound = sig.bind_partial(*args, **kwargs).arguments
+    if detect(ret, bound.get("fingerprint"), bound.get("car_fw")):
+      ret.radarUnavailable = False
+    return ret
+
+  fork_radar_interface = car_interface.RadarInterface
+
+  class RadarInterface(fork_radar_interface):
+    def __new__(cls, CP, *args, **kwargs):
+      if is_ars510(CP):
+        return Ars510RadarInterface(CP, *args, **kwargs)
+      return fork_radar_interface(CP, *args, **kwargs)
+
+  car_interface._get_params = staticmethod(_get_params)
+  car_interface.RadarInterface = RadarInterface
+  car_interface._ars510_hooked = True
+  return car_interface

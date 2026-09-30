@@ -49,12 +49,12 @@ on real slowdowns and reacts to more of them, at the cost of some jitter from ve
 ## Install
 
 ```bash
-python openpilot/install.py /data/openpilot/opendbc_repo --flavor openpilot  --profile steady   # current openpilot
-python openpilot/install.py /data/openpilot/opendbc_repo --flavor starpilot  --profile steady   # StarPilot
-python openpilot/install.py /data/openpilot/opendbc_repo --flavor sunnypilot --profile steady   # sunnypilot v2026.002.002
+cd /data && git clone https://github.com/ds-sebastian/ars510-radar
+python /data/ars510-radar/openpilot/install.py /data/openpilot     # openpilot, sunnypilot, StarPilot, ...
 ```
 
-Then reboot the device. Details, the self-check and uninstall: [`openpilot/README.md`](openpilot/README.md).
+Then reboot the device. The same command works on any fork: it adds the decoder and appends one hook block to Toyota's
+`interface.py`, with the recommended `steady` profile. Details, the self-check and uninstall: [`openpilot/README.md`](openpilot/README.md).
 
 ## Decode in Python
 
