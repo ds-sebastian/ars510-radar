@@ -41,5 +41,8 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 - **Stock openpilot alpha longitudinal:** confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
   radar-disable.
-- **Other cars and firmware:** does every ARS510 car use this layout? Do 0x500 / 0x502 differ per unit?
+- **Other cars and firmware:** openpilot's fingerprints list `8821F0R01100` for the RAV4 2022 platform, the same
+  `8821F0R` series as the documented `8821F0R03100` and the only other one. One capture from such a car confirms the
+  layout and adds it to `ARS510_FW_VERSIONS` (detection otherwise relies on the bus-1 fallback, which runs before
+  the object list starts). A second unit also shows whether 0x500 / 0x502 differ per unit.
 - **More closed-loop driving** with the steady profile, and a second car or driver.
