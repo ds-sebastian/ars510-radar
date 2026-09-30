@@ -65,7 +65,7 @@ SIGNAL_COMMENTS = {
     "STATE_CODE": "Track state: 1 = measured this cycle, 2 = predicted (coasting); 0 rare. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
     "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",
     "UNK_8_6": "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.",
-    "ONCOMING_FLAG": "1 = the object is oncoming now or was earlier in its track life.",
+    "ONCOMING_FLAG": "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends; a clear flag does not certify past target motion.",
     "SCORE_CODE": "Existence-like score, 0-100: rises while measured, drops by exactly 20 (or 1) per cycle while predicted; the slot is freed at about 20.",
     "AGE": "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.",
     "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
@@ -88,7 +88,7 @@ SIGNAL_COMMENTS = {
     "UNK_232_7": "Lateral standard deviation (candidate sigma yRel): grows with |yRel|.",
     "UNK_240_7": "Longitudinal velocity standard deviation (candidate sigma vx): grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
     "UNK_248_7": "Lateral velocity standard deviation (candidate sigma vy).",
-    "UNK_200_7": "Heading standard deviation (candidate): follows the angular uncertainty implied by the velocity sigmas.",
+    "UNK_200_7": "Angular uncertainty-like code (candidate), metric units provisional. Raw63 pairs with zero angle in the recorded corpus; raw127 has nonzero-angle exceptions. Preserve all seven bits; not a universal invalidity flag.",
     "UNK_256_6": "Existence-like quantity: rises with track age, drops before deletion.",
     "UNK_262_2": "Upper bits of the existence-like quantity at 256.",
     "UNK_264_5": "Measurement-state-like quantity: settled values depend on range (4 ~10 m, 3 ~12 m, 1 ~30 m, 2 ~47 m); near/far-scan candidate.",
@@ -202,7 +202,7 @@ def dbc_text() -> str:
             if f["start"] == 14 and f["len"] == 1:
                 out.append(_sig("ONCOMING_FLAG", 14, 1, 1, 0, 0, 1, ""))
                 comments.append(f'CM_ SG_ {m} ONCOMING_FLAG "{signal_comment("ONCOMING_FLAG")}";')
-                vals.append(f'VAL_ {m} ONCOMING_FLAG 0 "not oncoming" 1 "oncoming (now or earlier)" ;')
+                vals.append(f'VAL_ {m} ONCOMING_FLAG 0 "clear" 1 "oncoming-like state" ;')
                 continue
             if f["start"] == 2 and f["len"] == 6:
                 out.append(_sig("SLOT_INDEX_CODE", 2, 6, 1, 0, 0, 63, "raw"))

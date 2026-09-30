@@ -60,8 +60,8 @@ RAW_WEIGHT_STATE128 = NativeField("raw_weight_state128", 128, 3, 0.0, 1.0, "code
 RAW_WEIGHT_148 = NativeField("raw_weight148", 148, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW_WEIGHT_152 = NativeField("raw_weight152", 152, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
-# Oncoming flag (passed a pre-registered test): 1 = oncoming now or earlier in the track's life (it persists after
-# an oncoming object slows or stops).
+# Oncoming-like motion state (passed the original motion test). It can persist after slowing and reset before
+# the native allocation ends; it is not a latched physical-target history (docs/03).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
 # Velocity standard deviation (sigma vx) candidate: grows with range and during velocity excursions, higher when the
@@ -113,7 +113,7 @@ class NativeObject:
     v_lat_ground: float  # m/s, provisional
     accel_like_code: int  # centred code, unscaled
     move_state: int  # legacy low two bits; see movement_code for distinct full states
-    oncoming_flag: bool  # oncoming now or earlier in the track's life
+    oncoming_flag: bool  # raw oncoming-like state; can reset within the allocation
     vel_unc_code: int  # candidate velocity-uncertainty code (240|7), relative confidence only
     geometry_valid: bool  # age >= 1 (age 0 carries the previous occupant's stale geometry)
     lateral_valid: bool  # lateral code is not the sentinel

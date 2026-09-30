@@ -264,7 +264,7 @@ def test_move_state_and_oncoming_flag_decode_from_their_bits():
 def test_objects_dbc_names_the_tested_movement_fields():
     text = (Path(__file__).resolve().parents[1] / "dbc" / "ars510_objects_vbus.dbc").read_text()
     assert "SG_ MOVE_STATE : 109|2@1+" in text and "SG_ ONCOMING_FLAG : 14|1@1+" in text
-    assert 'MOVE_STATE 0 "moving forward' in text and 'ONCOMING_FLAG 0 "not oncoming"' in text
+    assert 'MOVE_STATE 0 "moving forward' in text and 'ONCOMING_FLAG 0 "clear" 1 "oncoming-like state"' in text
     assert "UNK_109_2" not in text and "UNK_14_1" not in text
 
 

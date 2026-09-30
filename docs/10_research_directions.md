@@ -36,6 +36,8 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **Heading `208|6` as its own state:** angle updates can differ beyond the declared current velocity bins;
   distinguish input precision/calibration, initialization, asynchronous state and filtering using independently
   associated target direction and position-track heading ([03](03_slot_fields.md)).
+  Preserve neighbouring raw200 codes:63 pairs with zero angle, while127 has nonzero exceptions. These states
+  do not yet establish physical direction validity or a filter.
 - **0x85 cells 0, 1, 4-7:** road-edge and further lane parameters ([04](04_metadata_record_0x85.md)).
 - **Lateral scale and range zero:** a surveyed lateral offset and a tape-measured gap, parked (the radar lists
   never-moving objects while ego is stopped), pin the last ±10% and ±0.7 m.

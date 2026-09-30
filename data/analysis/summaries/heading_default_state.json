@@ -1,0 +1,360 @@
+{
+  "scope": "700 previously researched segments; 1,253,081 occupied rows; no independent physical direction labels",
+  "partitions": [
+    {
+      "part": "confirmation",
+      "rows": 202741,
+      "raw63_rows": 92860,
+      "raw63_nonzero_angle": 0,
+      "raw127_rows": 4481,
+      "raw127_nonzero_angle": 4
+    },
+    {
+      "part": "discovery",
+      "rows": 454212,
+      "raw63_rows": 192854,
+      "raw63_nonzero_angle": 0,
+      "raw127_rows": 11889,
+      "raw127_nonzero_angle": 7
+    },
+    {
+      "part": "further",
+      "rows": 109577,
+      "raw63_rows": 45970,
+      "raw63_nonzero_angle": 0,
+      "raw127_rows": 3059,
+      "raw127_nonzero_angle": 2
+    },
+    {
+      "part": "later",
+      "rows": 94546,
+      "raw63_rows": 36450,
+      "raw63_nonzero_angle": 0,
+      "raw127_rows": 2028,
+      "raw127_nonzero_angle": 0
+    },
+    {
+      "part": "retained",
+      "rows": 392005,
+      "raw63_rows": 25134,
+      "raw63_nonzero_angle": 0,
+      "raw127_rows": 14414,
+      "raw127_nonzero_angle": 1
+    }
+  ],
+  "primary_counts": [
+    {
+      "part": "confirmation",
+      "cohort": "mature_moving",
+      "rows": 60029,
+      "default63": 565,
+      "default127": 0,
+      "wide_bad": 268,
+      "default_wide_bad": 226,
+      "ordinary_wide_bad": 42
+    },
+    {
+      "part": "confirmation",
+      "cohort": "mature_slow",
+      "rows": 48916,
+      "default63": 42856,
+      "default127": 690,
+      "wide_bad": 5557,
+      "default_wide_bad": 5488,
+      "ordinary_wide_bad": 69
+    },
+    {
+      "part": "confirmation",
+      "cohort": "young",
+      "rows": 87996,
+      "default63": 45508,
+      "default127": 3561,
+      "wide_bad": 18989,
+      "default_wide_bad": 18506,
+      "ordinary_wide_bad": 483
+    },
+    {
+      "part": "discovery",
+      "cohort": "mature_moving",
+      "rows": 149234,
+      "default63": 1902,
+      "default127": 0,
+      "wide_bad": 850,
+      "default_wide_bad": 780,
+      "ordinary_wide_bad": 70
+    },
+    {
+      "part": "discovery",
+      "cohort": "mature_slow",
+      "rows": 109748,
+      "default63": 94206,
+      "default127": 1923,
+      "wide_bad": 11210,
+      "default_wide_bad": 11127,
+      "ordinary_wide_bad": 83
+    },
+    {
+      "part": "discovery",
+      "cohort": "young",
+      "rows": 183165,
+      "default63": 88905,
+      "default127": 9519,
+      "wide_bad": 35425,
+      "default_wide_bad": 34533,
+      "ordinary_wide_bad": 892
+    },
+    {
+      "part": "further",
+      "cohort": "mature_moving",
+      "rows": 35778,
+      "default63": 427,
+      "default127": 2,
+      "wide_bad": 196,
+      "default_wide_bad": 181,
+      "ordinary_wide_bad": 15
+    },
+    {
+      "part": "further",
+      "cohort": "mature_slow",
+      "rows": 21740,
+      "default63": 19203,
+      "default127": 274,
+      "wide_bad": 1576,
+      "default_wide_bad": 1550,
+      "ordinary_wide_bad": 26
+    },
+    {
+      "part": "further",
+      "cohort": "young",
+      "rows": 48577,
+      "default63": 24178,
+      "default127": 2608,
+      "wide_bad": 10799,
+      "default_wide_bad": 10454,
+      "ordinary_wide_bad": 345
+    },
+    {
+      "part": "later",
+      "cohort": "mature_moving",
+      "rows": 38029,
+      "default63": 261,
+      "default127": 0,
+      "wide_bad": 96,
+      "default_wide_bad": 82,
+      "ordinary_wide_bad": 14
+    },
+    {
+      "part": "later",
+      "cohort": "mature_slow",
+      "rows": 18541,
+      "default63": 16781,
+      "default127": 258,
+      "wide_bad": 1514,
+      "default_wide_bad": 1500,
+      "ordinary_wide_bad": 14
+    },
+    {
+      "part": "later",
+      "cohort": "young",
+      "rows": 35472,
+      "default63": 17728,
+      "default127": 1694,
+      "wide_bad": 6523,
+      "default_wide_bad": 6360,
+      "ordinary_wide_bad": 163
+    },
+    {
+      "part": "retained",
+      "cohort": "mature_moving",
+      "rows": 300795,
+      "default63": 273,
+      "default127": 5,
+      "wide_bad": 82,
+      "default_wide_bad": 80,
+      "ordinary_wide_bad": 2
+    },
+    {
+      "part": "retained",
+      "cohort": "mature_slow",
+      "rows": 14491,
+      "default63": 7050,
+      "default127": 5163,
+      "wide_bad": 1404,
+      "default_wide_bad": 1403,
+      "ordinary_wide_bad": 1
+    },
+    {
+      "part": "retained",
+      "cohort": "young",
+      "rows": 71488,
+      "default63": 15019,
+      "default127": 8978,
+      "wide_bad": 6349,
+      "default_wide_bad": 6215,
+      "ordinary_wide_bad": 134
+    }
+  ],
+  "bit14_clear_with_unchanged_components": {
+    "confirmation": 33,
+    "discovery": 49,
+    "further": 9,
+    "later": 5,
+    "retained": 23
+  },
+  "examples": [
+    {
+      "example": 1,
+      "rows": [
+        {
+          "relative_s": -0.12973711700033164,
+          "age": 70,
+          "longitudinal_code": 549,
+          "lateral_code": 520,
+          "angle_code": 0,
+          "raw200": 63,
+          "bit14": 0
+        },
+        {
+          "relative_s": -0.05958337300035055,
+          "age": 71,
+          "longitudinal_code": 546,
+          "lateral_code": 519,
+          "angle_code": 0,
+          "raw200": 63,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.0,
+          "age": 72,
+          "longitudinal_code": 546,
+          "lateral_code": 519,
+          "angle_code": 4,
+          "raw200": 5,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.06041778899998462,
+          "age": 73,
+          "longitudinal_code": 546,
+          "lateral_code": 519,
+          "angle_code": 4,
+          "raw200": 5,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.12004110899943043,
+          "age": 74,
+          "longitudinal_code": 547,
+          "lateral_code": 520,
+          "angle_code": 4,
+          "raw200": 5,
+          "bit14": 0
+        }
+      ]
+    },
+    {
+      "example": 2,
+      "rows": [
+        {
+          "relative_s": -0.1191039999998793,
+          "age": 27,
+          "longitudinal_code": 458,
+          "lateral_code": 519,
+          "angle_code": 60,
+          "raw200": 2,
+          "bit14": 1
+        },
+        {
+          "relative_s": -0.059993192999627354,
+          "age": 28,
+          "longitudinal_code": 518,
+          "lateral_code": 512,
+          "angle_code": 60,
+          "raw200": 2,
+          "bit14": 1
+        },
+        {
+          "relative_s": 0.0,
+          "age": 29,
+          "longitudinal_code": 518,
+          "lateral_code": 511,
+          "angle_code": 17,
+          "raw200": 127,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.06099485000004279,
+          "age": 30,
+          "longitudinal_code": 518,
+          "lateral_code": 512,
+          "angle_code": 0,
+          "raw200": 63,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.12071966100029385,
+          "age": 31,
+          "longitudinal_code": 515,
+          "lateral_code": 511,
+          "angle_code": 0,
+          "raw200": 63,
+          "bit14": 0
+        }
+      ]
+    },
+    {
+      "example": 3,
+      "rows": [
+        {
+          "relative_s": -0.12355323599695112,
+          "age": 73,
+          "longitudinal_code": 449,
+          "lateral_code": 515,
+          "angle_code": 62,
+          "raw200": 0,
+          "bit14": 1
+        },
+        {
+          "relative_s": -0.05373211099868058,
+          "age": 74,
+          "longitudinal_code": 514,
+          "lateral_code": 545,
+          "angle_code": 62,
+          "raw200": 0,
+          "bit14": 1
+        },
+        {
+          "relative_s": 0.0,
+          "age": 75,
+          "longitudinal_code": 514,
+          "lateral_code": 545,
+          "angle_code": 28,
+          "raw200": 30,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.06686039000123856,
+          "age": 76,
+          "longitudinal_code": 514,
+          "lateral_code": 545,
+          "angle_code": 28,
+          "raw200": 30,
+          "bit14": 0
+        },
+        {
+          "relative_s": 0.12648787500074832,
+          "age": 77,
+          "longitudinal_code": 514,
+          "lateral_code": 545,
+          "angle_code": 0,
+          "raw200": 63,
+          "bit14": 0
+        }
+      ]
+    }
+  ],
+  "interpretation": "Raw200=63 always pairs with zero angle in this corpus; raw127 has nonzero exceptions. Both published components can remain unchanged during state/angle updates. This is a conditional structural observation, not a universal invalidity flag, sigma unit or filter decode.",
+  "factory_uncertainty_units_established": false,
+  "direction_validity_established": false,
+  "runtime_changed": false
+}

@@ -52,9 +52,19 @@ from this radar's own data.
   direction or a fixed delay. Clipped 0/near63 changes need not represent a physical half-turn.
   Counts and definitions: [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json).
 
+  The neighbouring `200|7` code helps distinguish output states: raw63 pairs with angle0 on all 393,268
+  observed rows. Raw127 usually pairs with zero too, but has 14 nonzero-angle exceptions among 35,871 rows,
+  including one mature moving sample. Preserve the full seven bits. Among the current-bin discrepancies,
+  98,485 of 100,838 occur at63/127; 2,353 remain at other codes. These are conditional code associations,
+  not a universal invalidity flag, calibrated angular uncertainty or a filter decode. Zero angle can also
+  represent clipped rightward motion. Definitions and examples:
+  [`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json).
+
   ![heading](img/analysis/heading_field.png)
 
   ![angle and published component updates](img/analysis/heading_component_updates.png)
+
+  ![angle and neighbouring code states](img/analysis/heading_default_state.png)
 
 Scales and accuracy are in [06](06_accuracy.md).
 
@@ -66,7 +76,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
-| `14\|1` | **oncoming flag** | 1 = oncoming now or earlier in the track's life | ● |
+| `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
 | `16\|8` | **score** | existence-like, 0-100 | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
 | `107\|1` | coast flag | rarely set in settled life, often set just before deletion | ○ |
@@ -91,6 +101,12 @@ of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2
 | 4 | lateral velocity > +0.15 m/s on 600 / 602 mature samples | moving left (crossing) |
 | 5 | every age-1 to age-3 sample | initializing |
 | 7 | slow after sustained motion | stopped after moving |
+
+The oncoming-like bit14 is an internal motion-state flag, rather than a latched allocation history. It clears
+on 119 primary same-allocation edges with both published velocity component codes unchanged. It can clear
+alongside an angle default-state transition or another angle update. Allocation continuity does not prove
+physical identity, and a clear flag does not certify that a target was never oncoming. Counts are in
+[`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json).
 
 ## Lane assignment
 
@@ -158,7 +174,7 @@ that maximum is a raw confidence-like code, without a calibrated classification 
 | `232\|7` | σ yRel | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | σ vx | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
 | `248\|7` | σ vy | grows with \|yRel\|, shrinks with age | ◐ |
-| `200\|7` | σ heading | follows the angular uncertainty implied by σ vx and σ vy (70% exact, 95% within one code) | ○ |
+| `200\|7` | angular uncertainty-like code | co-varies with velocity uncertainty candidates; raw63 pairs with angle0, raw127 has exceptions; metric units provisional | ○ |
 | `256\|8` | existence-like | rises with age at fixed range (ρ +0.86 to +0.90), drops before deletion | ○ |
 | `264\|8` | measurement state | settled values depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m): a near/far-scan mode | ○ |
 | `184\|8` | secondary score | 59-100 on allocated slots | ○ |
