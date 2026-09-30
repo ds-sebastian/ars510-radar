@@ -87,3 +87,12 @@ A joint fit gives about 18,000 codes per radian of road heading (≈ 5.5 × 10�
 cells, plus a curvature term equivalent to reading the direction ~15 m ahead, or the lateral offset ~30 m ahead. The
 same relation holds with similar coefficients in cells 0, 1 and 4-7. So each cell reads as a boundary with an offset
 (`32|12`) and a direction (`64|16`). Numbers: [`decode_references.json`](../data/analysis/summaries/decode_references.json).
+
+**For in-path decisions, use the yaw-rate path.** To decide whether an object 30-100 m ahead is in the ego lane,
+the car's own curvature, y(x) = (yaw rate / v) · x² / 2 with the yaw rate from Toyota 0x24, is scored against the path
+the car later drove:
+- it classifies 92.6% of objects correctly, against 84.5% for a straight |yRel| window;
+- missed in-lane objects drop from 26% to 11%, and at 60-100 m accuracy rises from 82% to 88%;
+- the direction field carries the same current road direction, so adding it leaves accuracy at 92.5%.
+
+Numbers: `in_path_prediction` in [`decode_references.json`](../data/analysis/summaries/decode_references.json).

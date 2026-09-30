@@ -900,5 +900,162 @@
     }
    }
   }
+ },
+ "in_path_prediction": {
+  "truth": "object in the ego lane if within 1.6 m of the car's own later path at the object's range (30-100 m)",
+  "predictors": {
+   "straight": "y = 0",
+   "yaw_path": "y = (yaw rate / v) * x^2 / 2, yaw rate from Toyota 0x24",
+   "yaw_path_plus_cells": "robust fit on development drives",
+   "yaw_path_plus_cells_residual": "cells correct only the yaw-path residual"
+  },
+  "objects": {
+   "confirmation": {
+    "P0": {
+     "accuracy": 0.845,
+     "false_in_lane": 0.0482,
+     "missed_in_lane": 0.2568,
+     "accuracy_60_100": 0.8188
+    },
+    "P1": {
+     "accuracy": 0.9255,
+     "false_in_lane": 0.0371,
+     "missed_in_lane": 0.1102,
+     "accuracy_60_100": 0.8838
+    },
+    "P2": {
+     "accuracy": 0.8862,
+     "false_in_lane": 0.0374,
+     "missed_in_lane": 0.1867,
+     "accuracy_60_100": 0.8384
+    },
+    "residual": {
+     "P3_accuracy": 0.9252,
+     "P3_false_in_lane": 0.0353,
+     "P3_missed": 0.1126
+    },
+    "n": 5692
+   },
+   "other": {
+    "P0": {
+     "accuracy": 0.9506,
+     "false_in_lane": 0.0236,
+     "missed_in_lane": 0.0867,
+     "accuracy_60_100": 0.9312
+    },
+    "P1": {
+     "accuracy": 0.9877,
+     "false_in_lane": 0.0073,
+     "missed_in_lane": 0.0196,
+     "accuracy_60_100": 0.9844
+    },
+    "P2": {
+     "accuracy": 0.97,
+     "false_in_lane": 0.0151,
+     "missed_in_lane": 0.0516,
+     "accuracy_60_100": 0.9544
+    },
+    "residual": {
+     "P3_accuracy": 0.9876,
+     "P3_false_in_lane": 0.0073,
+     "P3_missed": 0.0196
+    },
+    "n": 32761
+   },
+   "discovery": {
+    "P0": {
+     "accuracy": 0.859,
+     "false_in_lane": 0.0517,
+     "missed_in_lane": 0.2253,
+     "accuracy_60_100": 0.8038
+    },
+    "P1": {
+     "accuracy": 0.9361,
+     "false_in_lane": 0.0316,
+     "missed_in_lane": 0.0944,
+     "accuracy_60_100": 0.8995
+    },
+    "P2": {
+     "accuracy": 0.8981,
+     "false_in_lane": 0.041,
+     "missed_in_lane": 0.1595,
+     "accuracy_60_100": 0.8373
+    },
+    "residual": {
+     "P3_accuracy": 0.9359,
+     "P3_false_in_lane": 0.0315,
+     "P3_missed": 0.0948
+    },
+    "n": 14067
+   }
+  },
+  "lane_error_median_m": {
+   "confirmation": {
+    "20": {
+     "P0_med": 0.133,
+     "P1_med": 0.063,
+     "P2_med": 0.064
+    },
+    "40": {
+     "P0_med": 0.427,
+     "P1_med": 0.245,
+     "P2_med": 0.279
+    },
+    "60": {
+     "P0_med": 0.838,
+     "P1_med": 0.571,
+     "P2_med": 0.622
+    },
+    "80": {
+     "P0_med": 1.361,
+     "P1_med": 1.066,
+     "P2_med": 1.101
+    }
+   },
+   "other": {
+    "20": {
+     "P0_med": 0.033,
+     "P1_med": 0.017,
+     "P2_med": 0.018
+    },
+    "40": {
+     "P0_med": 0.104,
+     "P1_med": 0.057,
+     "P2_med": 0.076
+    },
+    "60": {
+     "P0_med": 0.204,
+     "P1_med": 0.131,
+     "P2_med": 0.17
+    },
+    "80": {
+     "P0_med": 0.322,
+     "P1_med": 0.242,
+     "P2_med": 0.284
+    }
+   },
+   "discovery": {
+    "20": {
+     "P0_med": 0.114,
+     "P1_med": 0.047,
+     "P2_med": 0.049
+    },
+    "40": {
+     "P0_med": 0.365,
+     "P1_med": 0.176,
+     "P2_med": 0.233
+    },
+    "60": {
+     "P0_med": 0.717,
+     "P1_med": 0.413,
+     "P2_med": 0.52
+    },
+    "80": {
+     "P0_med": 1.154,
+     "P1_med": 0.767,
+     "P2_med": 0.909
+    }
+   }
+  }
  }
 }
