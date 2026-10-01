@@ -73,26 +73,39 @@ Treat a cell as "a nearby boundary", not "the ego lane's left edge".
 The other cells (0, 1, 4-7) hold further road-geometry parameters. Cells 6 and 7 are candidates for road-edge offsets
 (they follow openpilot's road-edge estimate within a drive).
 
-### Road direction: bits 64-79
+### Road-direction association: bits 64-79
 
-Every cell carries a second geometry quantity in **signed bits 64-79** (`64|16`, two's complement). The reference is
-the road the car actually drives: its own path over the next 60 m (gyro and wheel speed), expressed in the current
-radar frame, gives the road heading θ and curvature κ ahead, independent of the camera.
+The raw word in **bits 64-79** (`64|16`) has a **◐ road-curvature association** in cells 2 / 3 / 8;
+its physical angle or offset interpretation is **○ candidate**. A little-endian two's-complement view is useful
+for the rank comparison below. It is an analysis view, rather than a decoded numeric format. The reference is the
+car's own path over the next 60 m (gyro and wheel speed), expressed in the current radar frame, independent of the
+camera.
 
 | | cell 2 | cell 3 | cell 8 | cell 9 |
 |---|---|---|---|---|
 | Spearman ρ with κ (three drive partitions) | 0.64 / 0.54 / 0.66 | 0.61 / 0.55 / 0.63 | 0.59 / 0.51 / 0.60 | 0.55 / 0.49 / 0.57 |
 
-A joint fit gives about 18,000 codes per radian of road heading (≈ 5.5 × 10⁻⁵ rad per code) in all four boundary
-cells, plus a curvature term equivalent to reading the direction ~15 m ahead, or the lateral offset ~30 m ahead. The
-same relation holds with similar coefficients in cells 0, 1 and 4-7. So each cell reads as a boundary with an offset
-(`32|12`) and a direction (`64|16`). Numbers: [`decode_references.json`](../data/analysis/summaries/decode_references.json).
+Numbers: [`decode_references.json`](../data/analysis/summaries/decode_references.json).
+
+**Keep this word in raw code units.** In 18,448 adjacent cell pairs around 135 motion-selected curve entries,
+3,997 signed-view steps exceed 20,000 codes, each with a high-bit sign change. The median step is 32,768 codes,
+while the lower 15 bits change by a median 18 codes and the future ego-path heading at 16 m changes by a median
+0.00118 rad. Cells 2 / 3 alone have 279 such steps across 12 drives with lower-bit changes ≤ 128 codes,
+heading changes ≤ 0.005 rad and offset-code changes ≤ 5. The word therefore requires an encoding and boundary
+reference before assigning an angular scale or a lookahead distance. The lower-bit view is structural only;
+the ego path does not certify which boundary the radar selected.
+
+![Raw word and measured future ego path](img/analysis/id85_direction_code_structure.png)
+
+*A cell-2 high-bit transition checked against original CRC-valid records. The lower 15 bits are shown as raw
+structure, not as a decoded angle. Counts, limits and the relative-time example:
+[`id85_direction_code_structure.json`](../data/analysis/summaries/id85_direction_code_structure.json).*
 
 **For in-path decisions, use the yaw-rate path.** To decide whether an object 30-100 m ahead is in the ego lane,
 the car's own curvature, y(x) = (yaw rate / v) · x² / 2 with the yaw rate from Toyota 0x24, is scored against the path
 the car later drove:
 - it classifies 92.6% of objects correctly, against 84.5% for a straight |yRel| window;
 - missed in-lane objects drop from 26% to 11%, and at 60-100 m accuracy rises from 82% to 88%;
-- the direction field carries the same current road direction, so adding it leaves accuracy at 92.5%.
+- adding the raw signed-word view leaves accuracy at 92.5%.
 
 Numbers: `in_path_prediction` in [`decode_references.json`](../data/analysis/summaries/decode_references.json).

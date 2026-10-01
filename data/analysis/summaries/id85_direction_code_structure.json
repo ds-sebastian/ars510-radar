@@ -1,0 +1,196 @@
+{
+  "description": "Road-direction-associated raw word: signed analysis view and high-bit transition structure.",
+  "confidence": {
+    "road_curvature_association": "likely",
+    "raw_word_structure": "confirmed within sampled scope",
+    "physical_angle_or_offset": "candidate"
+  },
+  "source_scope": {
+    "drives": 13,
+    "segments": 288,
+    "motion_selected_curve_entries": 135,
+    "cell_rows": 19037,
+    "cells": [
+      2,
+      3,
+      8,
+      9
+    ],
+    "parameters_present_only": true,
+    "adjacent_dt_s": [
+      0.03,
+      0.09
+    ]
+  },
+  "observed": {
+    "adjacent_cell_pairs": 18448,
+    "large_signed_jumps": 3997,
+    "large_jump_threshold_codes": 20000,
+    "jumps_by_cell": {
+      "2": 186,
+      "3": 186,
+      "8": 1792,
+      "9": 1833
+    },
+    "high_bit_sign_changes": 3997,
+    "absolute_step_quantiles": {
+      "dq": {
+        "0.5": 32768.0,
+        "0.95": 32854.0,
+        "0.99": 33001.28
+      },
+      "d_lower15": {
+        "0.5": 18.0,
+        "0.95": 144.0,
+        "0.99": 369.1199999999999
+      },
+      "d_heading": {
+        "0.5": 0.0011824262316527043,
+        "0.95": 0.0031600323753629006,
+        "0.99": 0.005346531815034598
+      },
+      "d_offset": {
+        "0.5": 0.00118132631170611,
+        "0.95": 0.002845993104091553,
+        "0.99": 0.004024544305715261
+      },
+      "delta_offset_code": {
+        "0.5": 1.0,
+        "0.95": 4.199999999999818,
+        "0.99": 12.0
+      }
+    },
+    "heading_step_below_0_01_rad": 3979,
+    "bounded_primary_jumps": 279,
+    "bounded_primary_drives": 12,
+    "bounded_primary_limits": {
+      "cells": [
+        2,
+        3
+      ],
+      "lower15_step_codes": 128,
+      "future_ego_heading_step_rad": 0.005,
+      "offset_step_codes": 5
+    }
+  },
+  "reference": {
+    "yaw": "Toyota CAN 0x24",
+    "speed": "Toyota CAN 0xB4",
+    "grid_s": 0.05,
+    "maximum_interpolation_gap_s": 0.1,
+    "future_heading_forward_m": 16,
+    "radar_origin_ahead_m": 3.6,
+    "limits": "Nominal origin; ego path does not certify the selected boundary or its identity."
+  },
+  "independent_check": {
+    "motion_and_raw_cell_rows": true,
+    "transition_counts": true,
+    "original_motion_spot_segments": 13,
+    "original_crc_checked_transition_pairs": 13
+  },
+  "parser_use": "Opaque raw code; a physical decode requires an encoding and boundary reference. Lower 15 bits are a structural view, not a decoded angle.",
+  "example": {
+    "label": "A",
+    "cell": 2,
+    "clock": "seconds relative to the high-bit transition",
+    "endpoint_bytes_checked_in_original_CAN": true,
+    "samples": [
+      {
+        "time_s": -0.310443509,
+        "signed_view_code": 15483,
+        "lower15_code": 15483,
+        "raw_cell_hex": "67bcb7506e28b17c7b3c2600",
+        "offset_code": 2158,
+        "future_ego_heading_delta_mrad": 0.0
+      },
+      {
+        "time_s": -0.240479774,
+        "signed_view_code": 15468,
+        "lower15_code": 15468,
+        "raw_cell_hex": "67bcc7506d28907c6c3c2b00",
+        "offset_code": 2157,
+        "future_ego_heading_delta_mrad": -1.2046808263124278
+      },
+      {
+        "time_s": -0.18097891,
+        "signed_view_code": 15448,
+        "lower15_code": 15448,
+        "raw_cell_hex": "67bcb7506c28917c583c2600",
+        "offset_code": 2156,
+        "future_ego_heading_delta_mrad": -2.22626403418805
+      },
+      {
+        "time_s": -0.120378114,
+        "signed_view_code": 15445,
+        "lower15_code": 15445,
+        "raw_cell_hex": "67bcb7506b289d7c553c2600",
+        "offset_code": 2155,
+        "future_ego_heading_delta_mrad": -3.266854279437813
+      },
+      {
+        "time_s": -0.061058966,
+        "signed_view_code": 15440,
+        "lower15_code": 15440,
+        "raw_cell_hex": "67c0c7506a28857c503c2b00",
+        "offset_code": 2154,
+        "future_ego_heading_delta_mrad": -4.186193028117606
+      },
+      {
+        "time_s": 0.0,
+        "signed_view_code": -17372,
+        "lower15_code": 15396,
+        "raw_cell_hex": "67bca7506a28867c24bc2a00",
+        "offset_code": 2154,
+        "future_ego_heading_delta_mrad": -5.001631345108157
+      },
+      {
+        "time_s": 0.069894309,
+        "signed_view_code": -17410,
+        "lower15_code": 15358,
+        "raw_cell_hex": "66bca7506928667cfebb2a00",
+        "offset_code": 2153,
+        "future_ego_heading_delta_mrad": -6.011755275062866
+      },
+      {
+        "time_s": 0.119116362,
+        "signed_view_code": -17424,
+        "lower15_code": 15344,
+        "raw_cell_hex": "61bcb7506828557cf0bb2a00",
+        "offset_code": 2152,
+        "future_ego_heading_delta_mrad": -6.841240881476467
+      },
+      {
+        "time_s": 0.189290875,
+        "signed_view_code": -17427,
+        "lower15_code": 15341,
+        "raw_cell_hex": "5dbca7506828487cedbb2f00",
+        "offset_code": 2152,
+        "future_ego_heading_delta_mrad": -8.154386855969625
+      },
+      {
+        "time_s": 0.239654266,
+        "signed_view_code": -17429,
+        "lower15_code": 15339,
+        "raw_cell_hex": "59c0a7506728377cebbb2f00",
+        "offset_code": 2151,
+        "future_ego_heading_delta_mrad": -9.20970892123094
+      },
+      {
+        "time_s": 0.299334346,
+        "signed_view_code": -17432,
+        "lower15_code": 15336,
+        "raw_cell_hex": "56c0a7506628247ce8bb2f00",
+        "offset_code": 2150,
+        "future_ego_heading_delta_mrad": -10.501997171061348
+      },
+      {
+        "time_s": 0.3498531,
+        "signed_view_code": -17430,
+        "lower15_code": 15338,
+        "raw_cell_hex": "52c0a7506528187ceabb2f00",
+        "offset_code": 2149,
+        "future_ego_heading_delta_mrad": -11.559033605935298
+      }
+    ]
+  }
+}

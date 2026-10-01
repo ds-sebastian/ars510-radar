@@ -746,11 +746,29 @@ def initial_attribute_zeros():
          "Full byte272 is a structural view, not a calibrated height measurement.")
 
 
+def id85_direction_code_structure():
+    info = summary("id85_direction_code_structure")
+    g = pd.DataFrame(info["example"]["samples"])
+    fig, axes = plt.subplots(3, 1, figsize=(8.5, 6.4), sharex=True)
+    fields = [("signed_view_code", "Two's-complement view\n(raw code)", S1),
+              ("lower15_code", "Lower 15 bits\n(raw code)", S2),
+              ("future_ego_heading_delta_mrad", "Future ego-path H(16 m)\nchange (mrad)", S3)]
+    for ax, (field, label, color) in zip(axes, fields):
+        ax.plot(g.time_s, g[field], color=color, marker="o", markersize=3)
+        ax.axvline(0, color=INK2, ls=":", lw=1)
+        ax.set_ylabel(label)
+    axes[0].set_title("Cell 2: a high-bit transition beside a smoothly changing ego path")
+    axes[-1].set_xlabel("CAN log time relative to the transition (s)")
+    fig.tight_layout()
+    save(fig, "id85_direction_code_structure", "Example A; transition endpoints checked in original CRC-valid records. "
+         "Lower bits are structural only; the ego path does not identify the selected boundary.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling, ramp_limiter,
-                                   event_code_context, initial_attribute_zeros)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure)}
 
 
 if __name__ == "__main__":
