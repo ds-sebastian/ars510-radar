@@ -1,80 +1,21 @@
 {
- "description": "Per-second velocity reference from sub-pixel video looming of the lead's rear (road camera) and what it shows about the object-list velocity, the uncertainty code 240|7 and the ACC-target velocity. Drives anonymised; four main drives, 83 one-minute segments.",
+ "description": "Exploratory optical comparison; metric looming uses native range and target association. Four dominant drives, 83 segments. Conditional residuals do not establish physical truth or radar measurement variance.",
  "reference": {
   "method": "ECC affine registration of the lead's rear between frames 0.5 s or 1 s apart; relative velocity = -(radar range + 3.6 m) * d ln(scale)/dt",
-  "noise_per_1s_mps": {
+  "parked_vehicle_windows": 51,
+  "vs_8_12s_range_closure_to_80m_median_diff_mps": [
+   -0.03,
+   0.27
+  ],
+  "limits": "daylight, in-lane leads, straight road; few windows beyond 100 m; the ACC target and the vision model may share the camera; crop, body motion, correspondence, timing, reference error and covariance are not independently bounded; repeatability is not physical accuracy",
+  "reported_repeatability_scale_per_1s_mps": {
    "20m": 0.13,
    "40m": 0.22,
    "60m": 0.46,
    "80m": 0.88,
    "110m": 1.03
   },
-  "parked_vehicles_median_error_mps": 0.01,
-  "parked_vehicle_windows": 51,
-  "vs_8_12s_range_closure_to_80m_median_diff_mps": [
-   -0.03,
-   0.27
-  ],
-  "limits": "daylight, in-lane leads, straight road; few windows beyond 100 m; the ACC target and the vision model may share the camera"
- },
- "object_list_vs_truth_2s_windows": [
-  {
-   "range_m": [
-    10,
-    30
-   ],
-   "windows": 557,
-   "false_closing_pct": 0.2,
-   "false_opening_pct": 0.0,
-   "median_error_mps": -0.05
-  },
-  {
-   "range_m": [
-    30,
-    50
-   ],
-   "windows": 1058,
-   "false_closing_pct": 2.2,
-   "false_opening_pct": 0.2,
-   "median_error_mps": -0.22
-  },
-  {
-   "range_m": [
-    50,
-    70
-   ],
-   "windows": 667,
-   "false_closing_pct": 10.6,
-   "false_opening_pct": 0.6,
-   "median_error_mps": -0.53
-  },
-  {
-   "range_m": [
-    70,
-    90
-   ],
-   "windows": 227,
-   "false_closing_pct": 15.0,
-   "false_opening_pct": 2.2,
-   "median_error_mps": -0.98
-  },
-  {
-   "range_m": [
-    90,
-    130
-   ],
-   "windows": 148,
-   "false_closing_pct": 20.9,
-   "false_opening_pct": 1.4,
-   "median_error_mps": -1.08
-  }
- ],
- "false_closing_runs": {
-  "median_duration_s": [
-   2,
-   3
-  ],
-  "peak_mps": -3.5
+  "selected_parked_median_residual_mps": 0.01
  },
  "scale_check_le_40m": {
   "error_vs_ego_slope": 0.0017,
@@ -82,11 +23,18 @@
    -0.0025,
    0.0081
   ],
-  "relative_velocity_scale_theil_sen": 0.003,
-  "zero_offset_median_mps": 0.159
+  "relative_velocity_scale_deviation_theil_sen": 0.003,
+  "optical_minus_proxy_median_mps": 0.159,
+  "windows": 791,
+  "input_chain": "Nominal .15 ground-velocity window mean minus carState.vEgo window median; not .149/B4",
+  "relative_velocity_scale_deviation_ols": -0.021,
+  "relative_velocity_scale_deviation_ols_90pct": [
+   -0.052,
+   0.02
+  ],
+  "limits": "Marginal regressions mix both scale errors and covariance; neither physical 1% calibration nor factory zero identified"
  },
  "uncertainty_code_240_7": {
-  "rms_error_mps_per_count_40_80m": 0.049,
   "bootstrap_90pct": [
    0.046,
    0.053
@@ -104,25 +52,29 @@
   },
   "rank_corr_with_abs_error_in_range_strata": 0.28,
   "false_closing_auc_range_only": 0.64,
-  "false_closing_auc_range_plus_code": 0.74
+  "false_closing_auc_range_plus_code": 0.74,
+  "native_minus_ecc_rms_slope_mps_per_count_40_80m": 0.049,
+  "quantity": "Through-origin fit of ten decile RMS(native-ECC) summaries against mean code; includes both errors, covariance and squared bias",
+  "verification_scope": "Slope, decile R2 and range-stratified rank correlation recomputed; transfer/bootstrap/AUC outputs retained from exploratory report, outside independent check"
  },
  "acc_target_velocity": {
-  "error_sigma_mps_10_40m": {
+  "error_correlation_with_vision_model_40_70m": 0.5,
+  "coverage_of_40_130m_windows": 0.38,
+  "coverage_beyond_80m": 0.11,
+  "conditional_model_sigma_mps_10_40m": {
    "native": 0.55,
    "acc": 0.31,
    "vision_model": 0.67,
    "looming": 0.57
   },
-  "error_sigma_mps_40_70m": {
+  "conditional_model_sigma_mps_40_70m": {
    "native": 1.07,
    "acc": 0.54,
    "vision_model": 1.33,
    "looming": 0.81
   },
-  "error_correlation_with_vision_model_40_70m": 0.5,
-  "coverage_of_40_130m_windows": 0.38,
-  "coverage_beyond_80m": 0.11,
-  "lead_compensation_tau_s": 0.006
+  "acceleration_regression_coefficient_s": 0.006,
+  "limits": "Four-estimator decomposition depends on reference and error-covariance assumptions; ACC independence not independently verified, regression coefficient not physical latency"
  },
  "motion_state_8_6": {
   "auc_stationary_vs_moving": [
@@ -132,7 +84,8 @@
   "precision_as_flag": [
    0.04,
    0.06
-  ]
+  ],
+  "limits": "Range-kinematics labels; physical stationarity and graded-confidence semantics unverified"
  },
  "replay_comparison_stock_planner": {
   "development_4_chains": {
@@ -177,14 +130,116 @@
   }
  },
  "camera_assisted_veto_offline": {
-  "false_closing_reduction_pct": 31,
-  "mean_onset_lag_s": 0.0096,
-  "conservative_setting": {
-   "false_closing_reduction_pct": 14,
-   "mean_onset_lag_s": 0.0005,
-   "onsets_delayed_over_150ms": "0 of 356"
-  },
-  "weak_beyond_m": 80
+  "false_closing_reduction_pct_simulation": [
+   14,
+   31
+  ],
+  "note": "offline simulations of two designs; the decoder-level numbers below are the reference"
  },
- "verified": "headline numbers recomputed with independent code"
+ "camera_assisted_veto_decoder": {
+  "windows": 2606,
+  "segments": 67,
+  "false_closing_pct": {
+   "base": 6.8,
+   "veto": 6.4,
+   "night_base": 8.6,
+   "night_veto": 8.3
+  },
+  "replay_4_chains": {
+   "steady": {
+    "hard_ticks": 85,
+    "mean_response_s": -0.5733,
+    "anticipation": 0.446
+   },
+   "range_fusion_far_smoothing_veto": {
+    "hard_ticks": 113,
+    "mean_response_s": -0.583,
+    "anticipation": 0.446,
+    "reactions_violating": 0
+   },
+   "steady_plus_veto": {
+    "hard_ticks": 86,
+    "mean_response_s": -0.5743
+   },
+   "veto_only": {
+    "hard_ticks": 179
+   }
+  },
+  "limits": "Prior-used drives, shared tuning/evaluation; window onset delays are velocity-change/deceleration equivalents, separate from actual planner replay response metrics; no physical-label or all-gates acceptance",
+  "labelled_onset_windows": 265,
+  "timing_equivalents_over_150ms": {
+   "clean": 1,
+   "drop30": 1,
+   "drop60": 0,
+   "delay_0.1_0.2_0.4": [
+    0,
+    0,
+    0
+   ],
+   "wrong_vehicle": 7
+  },
+  "window_timing_equivalent_definition": "(variant window velocity minus baseline window velocity) / 1.24 m/s^2 on selected optical/base onset labels; not a measured onset timestamp"
+ },
+ "object_list_vs_optical_2s_windows": [
+  {
+   "range_m": [
+    10,
+    30
+   ],
+   "windows": 557,
+   "closing_disagreement_pct": 0.2,
+   "opening_disagreement_pct": 0.0,
+   "median_residual_mps": -0.05
+  },
+  {
+   "range_m": [
+    30,
+    50
+   ],
+   "windows": 1058,
+   "closing_disagreement_pct": 2.2,
+   "opening_disagreement_pct": 0.2,
+   "median_residual_mps": -0.22
+  },
+  {
+   "range_m": [
+    50,
+    70
+   ],
+   "windows": 667,
+   "closing_disagreement_pct": 10.6,
+   "opening_disagreement_pct": 0.6,
+   "median_residual_mps": -0.53
+  },
+  {
+   "range_m": [
+    70,
+    90
+   ],
+   "windows": 227,
+   "closing_disagreement_pct": 15.0,
+   "opening_disagreement_pct": 2.2,
+   "median_residual_mps": -0.98
+  },
+  {
+   "range_m": [
+    90,
+    130
+   ],
+   "windows": 148,
+   "closing_disagreement_pct": 20.9,
+   "opening_disagreement_pct": 1.4,
+   "median_residual_mps": -1.08
+  }
+ ],
+ "object_list_window_count": 2657,
+ "residual_definition": "native minus ECC; closing below -2.5 m/s, opening above +2.5 m/s; labels are optical disagreement, not independently established false events",
+ "closing_disagreement_runs": {
+  "median_duration_s": [
+   2,
+   3
+  ],
+  "peak_mps": -3.5
+ },
+ "verification_scope": "Independent arithmetic for window counts/rates, code240 pooled slope/R2/range-stratified correlation and near-scale summaries; upstream ECC and ACC independence not independently reproduced; replay outputs reused"
 }

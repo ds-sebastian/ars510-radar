@@ -116,7 +116,13 @@ and the upstream estimate without changing the wire units. The supported lateral
 in an ideal planar frame with host forward speed, `vx = dx/dt + v_ego − ω·y`. Neither relation establishes the
 radar's exact internal algorithm or its elevation handling.
 
-Against the video-looming reference ([07](07_velocity_excursions.md#measured-against-video-truth)) the velocity scale and the 0xB4 ego subtraction hold to about 1% at ranges up to 40 m: the error does not depend on ego speed (slope +0.002, 90% interval −0.25% to +0.8%) and the relative-velocity scale is 1.003 (robust fit); the zero is about +0.16 m/s (one code) too closing (◐). No lateral-motion or ego-acceleration correction improves it (the bearing term is 0.03 m/s).
+The [optical consistency fit](07_velocity_excursions.md#compared-with-an-optical-reference) uses nominal
+0.15 ground velocity and a **carState ego-speed window median**, on 791 near windows. It does not test the
+published `.149/B4` chain. Relative-scale deviation is +0.3% with Theil–Sen versus −2.1% with OLS
+(reported 90% interval −5.2% to +2.0%). Separate residual-versus-ego and residual-versus-relative-speed
+regressions mix scale errors and reference covariance; they do not independently identify both scales.
+The +0.159 m/s median optical-minus-proxy residual is not a factory-zero measurement. Physical calibration
+to 1% is unestablished ([summary](../data/analysis/summaries/video_truth.json)).
 
 Changing the nominal zero from 510.5 to 512 shifts every ground-speed result by −.225 m/s; changing .15 to .149
 changes a nominal 30 m/s result by −.2 m/s. These fixed changes alone cannot produce the observed multi-m/s
