@@ -4,10 +4,10 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **The steady profile on fresh drives and sunnypilot's planner.** The ramp limiter and far-track settling are
-   scored in open-loop replay through openpilot's planner. The owner's recorded drives also replay through
-   sunnypilot's own longitudinal planner, so candidates can be compared on the planner the car runs; closed-loop drives
-   with the profile installed measure the braking the driver feels.
+1. **The steady profile on fresh drives.** Native STEADY, OPENPILOT and ACC-clip points compare through
+   sunnypilot's original RadarD and planner under two fixed prospective schedules, with the clip passing the six
+   owner subgates in both ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)). Closed-loop drives with
+   the profile installed measure the braking the driver feels and test transfer beyond these prior-used drives.
 2. **A drift-mode velocity filter.** A per-track filter with a slow velocity-bias state that range observes
    explains the excursions well. Run all the time, it removes most hard radar-only requests in replay but responds
    later and changes which track radard matches to the vision lead. The promising form publishes the native velocity
@@ -19,7 +19,9 @@ The most promising next steps, ordered by how directly they would improve the ra
    0x235 ± 3 m/s. In replay on top of the steady profile it cuts radar-only episodes 6 → 5 and paired roughness by
    0.0004 m/s² (95% interval below zero) for 0.001 s of lag, and the owner drives' hard radar-only requests go
    16 → 0 ([`ramp_limiter.json`](../data/analysis/summaries/ramp_limiter.json), `acc_clip_followup`). Fresh drives
-   decide whether it joins `steady`.
+   decide whether it joins `steady`. Through sunnypilot's original consumers, D1 episodes go 5 → 4 under both
+   schedules, with D2 unchanged; this is a conditional owner comparison, separate from physical velocity and full
+   real-closing acceptance ([summary](../data/analysis/summaries/sunnypilot_profile_comparison.json)).
 
 ## For the drift discriminator
 

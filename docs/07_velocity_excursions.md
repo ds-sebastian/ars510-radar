@@ -138,6 +138,30 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 - **The ACC target** (0x235) is the strongest velocity witness when present, but it covers 57% of radar-lead moments
   and 5% beyond 80 m.
 
+## Sunnypilot profile comparison
+
+◐ **Fixed owner replay scope.** Native profile points run through sunnypilot's original RadarD and longitudinal
+planner with complete recorded settings. All 72 segments and 84,659 model ticks run under each of two fixed
+publication schedules: current model publication and the captured plan publication naming that model.
+
+| drive | STEADY episodes | OPENPILOT episodes | STEADY + ACC clip episodes |
+|---|---:|---:|---:|
+| D1 | 5 | 8 | 4 |
+| D2 | 0 | 2 | 0 |
+| D3 (recorded radar disabled) | 0 | 0 | 0 |
+
+These episode counts hold under both schedules. An episode means at least 0.3 s of requested acceleration
+≤ −1 m/s² while the same-fork vision-only replay requests ≥ −0.3 m/s², with ego speed > 1 m/s. In D2's fixed window,
+STEADY and the clip request a minimum about −0.99 m/s², versus −2.07 with OPENPILOT. The clip passes all six
+owner subgates per schedule: pooled hard ticks, each drive's episode count and two fixed-window minima within 0.05 m/s² of STEADY. It leaves four D1 episodes and that drive's fixed-window minimum unchanged; it is off by default.
+
+All startup rows, two missing plans and 145 captured map-active ticks remain in the comparison. D3's commands
+stay exactly vision-only. Independent checks cover all 677,272 planner ticks and 24 gate decisions. CAN-event
+receipt approximation, captured radar cadence, latest-track availability and planner publication cutoffs remain
+prospective assumptions; empty unrecorded map memory leaves replay map activity zero. These prior-used drives
+support a conditional option comparison; physical velocity, real-closing response, the full 19 gates and fresh-drive
+validation remain separate. Numbers: [`sunnypilot_profile_comparison.json`](../data/analysis/summaries/sunnypilot_profile_comparison.json).
+
 ## Radar-internal signals that move with an excursion
 
 | signal | behaviour during an excursion |
