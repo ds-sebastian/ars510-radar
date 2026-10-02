@@ -1,0 +1,21 @@
+{
+  "rows": 173691,
+  "init_template_rows": 869,
+  "non_template_rows": 172822,
+  "rule": "age == 1 and UNK_56_7 == 0 and UNK_216_6 == 0",
+  "by_drive": {
+    "A": {
+      "rows": 37223,
+      "init_template_rows": 166
+    },
+    "B": {
+      "rows": 86261,
+      "init_template_rows": 522
+    },
+    "C": {
+      "rows": 50207,
+      "init_template_rows": 181
+    }
+  },
+  "preserves_original_rows_and_columns": true
+}

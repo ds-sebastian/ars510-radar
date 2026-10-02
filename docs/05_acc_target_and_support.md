@@ -60,8 +60,9 @@ lifecycle; association with a physical target or a published 0x80 object require
 
 Across 700 segments, the descriptor tuple changes on 35 consecutive-cycle transitions in five coded runs, while
 code and age remain coherent. Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining
-187 frames contain 28 further tuples. These raw descriptors need independent class and dimension calibration;
-code continuity alone does not establish physical target identity.
+187 frames contain 28 further tuples. Treat these as raw descriptors until independent class and dimension
+measurements establish their meaning. Code continuity describes a coded run; physical target identity needs an
+independent association.
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json).
 
 **0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`):
@@ -98,7 +99,8 @@ q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 Of 60 changes where the historical seven-bit part moves by more than 64 codes, 59 have the opposite unit change
 in the high prefix. One larger step goes **436 → 510** within the same prefix. This supports using the adjacent
 bits together while keeping abrupt steps and state changes distinct from ordinary carries. The matched non-idle
-codes span 391–558; the full semantic width and physical quantity require independent validation.
+codes span 391–558. Use this 10-bit view for raw diagnostics; field boundaries and physical units need independent
+validation.
 
 Code **510 also occurs in 1,202 of 2,215 non-idle, uniquely paired, non-initialization samples**; use the whole
 payload to recognise idle bodies. The DBC retains the remaining sub-fields as raw codes.
