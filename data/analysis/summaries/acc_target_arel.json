@@ -3,7 +3,8 @@
  "field": "0x235 byte 2 (A235_ACC_TARGET_AREL, LE 16|8)",
  "decode": "(code-100)*0.1 m/s^2, d vRel/dt, positive = opening",
  "zero_point": "idle payload byte 2 = 0x64 = 100",
- "reference": "centred 0.2 s derivative of 0.5 s-smoothed A235_ACC_TARGET_VREL, active frames only",
+ "reference": "centred 0.2 s derivative of 0.5 s-smoothed A235_ACC_TARGET_VREL at the assumed 0.1 m/s per code, active frames only",
+ "interpretation": "Relative acceleration-like normalization against the same nominal velocity convention; this derivative comparison does not independently calibrate absolute physical units.",
  "frames": {
   "discovery": 410557,
   "confirmation": 206558,
