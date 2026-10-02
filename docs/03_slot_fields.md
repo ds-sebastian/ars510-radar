@@ -29,7 +29,7 @@ from this radar's own data.
 | `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.147` m/s | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by 0.5-1 s | ◐ |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
-| `208\|6` | **heading over ground**, left positive, clipped at 0 | `floor(max(atan2(vy, vx), 0) × 64 / π)`: π/64 rad per code | ● meaning, ◐ exact scale |
+| `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
 - **The velocity is over ground**, not relative: traffic sits on the ego-speed diagonal, parked objects on 0 and
   oncoming traffic on −v_ego.
@@ -41,14 +41,24 @@ from this radar's own data.
   three drive groups, and 0.147 (±3%) against the gyro in turns on all 700 segments. `96|10` tracks lateral
   acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
   further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration.
-- **Heading over ground** is the direction of the object's over-ground velocity, computed in the same cycle from the
-  published components: it matches `floor(max(atan2(vy, vx), 0) × 64 / π)` on 98.2% of settled moving samples
-  (99.6% within one code), with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads
-  near 63. Against an independent physical reference, the road direction that the car itself drives through a few
-  seconds later at the lead's position, it correlates at r = 0.89-0.93 on three drive partitions, with a slope of
-  1.0 ± 0.1 per π/64 rad and 99.9% of rightward headings at 0. Where it differs from the component formula, the
-  component formula is at least as close to the road direction. Counts:
+- **The heading output closely follows the clipped velocity angle.** It matches
+  `floor(max(atan2(vy, vx), 0) × 64 / π)` on 98.2% of settled moving samples (99.6% within one code),
+  with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads near 63.
+  The output can also change while both transmitted velocity codes stay unchanged, so the formula is an
+  empirical comparison. Its exact inputs, precision, state updates and filtering remain provisional. Counts:
   [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json),
+  [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
+
+  A conditional ego-path comparison supports the approximate angular scale: the output correlates at
+  r = 0.89-0.93 with the road direction where ego later passes the target's reported position. This uses
+  native radar position to select the future path point and assumes the target follows that path; target
+  identity and direction are not independently measured. On rows where the output differs from the
+  component formula, neither comparison establishes a separate or directly derived heading state.
+  Three checked allocation edges keep both component codes fixed while the heading changes, including
+  two with ordinary neighbouring `200|7` codes. These are observed code updates, not three independently
+  verified physical turns. Structural examples and the reference's distinguishing criteria:
+  [`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json).
+  Reference assumptions and results:
   [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
   The neighbouring `200|7` code helps distinguish output states: raw63 pairs with angle0 on all 393,268
