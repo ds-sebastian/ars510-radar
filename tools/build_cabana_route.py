@@ -62,11 +62,11 @@ SIGNAL_COMMENTS = {
     "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
     "UNK_208_6": "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.",
     # slot: lifecycle and confidence
-    "STATE_CODE": "Track state: 1 = measured this cycle, 2 = predicted (coasting); 0 rare. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
+    "STATE_CODE": "Track state: 1 update-like, 2 prediction-like/coasting candidate; 0 rare. State does not certify measurement availability or accuracy. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
     "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",
     "UNK_8_6": "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.",
     "ONCOMING_FLAG": "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends; a clear flag does not certify past target motion.",
-    "SCORE_CODE": "Existence-like score, 0-100: rises while measured, drops by exactly 20 (or 1) per cycle while predicted; the slot is freed at about 20.",
+    "SCORE_CODE": "Existence-like score, 0-100: can decline in either state; drops by exactly 20 (or 1) per cycle in state 2. State 1 return does not guarantee recovery; not a calibrated probability. The slot is freed near 20.",
     "AGE": "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.",
     "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | ((UNK_111_4 & 1) << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
     "UNK_111_4": "Bit 111 = bit 2 of the motion code (see MOVE_STATE); bits 112-114 raw.",
