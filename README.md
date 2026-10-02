@@ -19,6 +19,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | **The radar's own ACC target** (0x235 / 0x237, 50 Hz) | ● decoded ([05](docs/05_acc_target_and_support.md)) |
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state whose 10-bit code leads the car's deceleration ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
+| **Metadata cells** (0x85) | ◐ lane-boundary offsets and raw-word curvature association; ○ physical direction encoding and lookahead ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration**: current openpilot, StarPilot, sunnypilot | installable; replayed end to end; driven by the owner on FrogPilot and StarPilot ports ([08](docs/08_openpilot_integration.md)) |
 | **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `steady` profile halves extra jitter, guards large jumps, delays far-track pickups and limits implausible velocity ramps ([07](docs/07_velocity_excursions.md)) |
 

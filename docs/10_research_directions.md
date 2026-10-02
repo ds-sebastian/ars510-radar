@@ -36,8 +36,9 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **`272|5` under a known overhead object.** Driving under a bridge or gantry of known clearance, and past parked
   vehicles of known height, relates the code to height. Its ranking of pedestrians below cars points to a size- or
   reflectivity-like quantity.
-- **0x85 `64|16`: heading ahead or offset ahead.** Both readings fit the driven path. A road with a known curvature
-  change (a curve entry) separates them by where the response appears.
+- **0x85 `64|16`: encoding and boundary reference.** Anchor the high-bit transitions and the selected boundary to
+  known road geometry before calibrating an angle, offset or lookahead distance. Curvature association supplies
+  a useful starting point ([04](04_metadata_record_0x85.md#road-direction-association-bits-64-79)).
 - **Class 5:** a few recorded passes of a cyclist and of a pedestrian confirm the bicycle reading of its size and
   speed.
 - **0x195 `q10` with brake pressure:** the logged brake pressure or the brake-assist state next to the event code
