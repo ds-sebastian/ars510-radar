@@ -1,7 +1,7 @@
 {
- "description": "Camera-free motion references for decode fields: the car's own motion (livePose gyro, wheel speed) and its driven path. Partitions: development / confirmation / further drives (700 one-minute segments).",
+ "description": "Motion comparisons using ego gyro, wheel speed and driven path. The heading comparison uses native target position and assumes that the target follows the later ego path. Partitions: development / confirmation / further drives (700 one-minute segments).",
  "heading_208": {
-  "reference": "road direction the car drives through at the lead's position a few seconds later",
+  "reference": "Conditional road direction where ego later passes within 1 m of the native-reported target position; same-path target motion assumed.",
   "partitions": {
    "confirmation": {
     "samples": 21119,
@@ -57,7 +57,14 @@
    "3": 0.9805,
    "4": 0.9768,
    "5": 0.9737
-  }
+  },
+  "interpretation": "Approximate clipped heading association and angular scale; component disagreement gates leave separate versus directly derived state unresolved. Zero-lag agreement does not establish the source of the heading output.",
+  "reference_limits": [
+   "Uses native radar x/y to select the future ego-path point, with an assumed 3.6 m radar lever arm.",
+   "No independently measured target direction or physical identity; road-following assumption is unverified per target.",
+   "The distinguishing gate requires at least 60% preference in both transfer partitions; neither direction passes.",
+   "The exact scale gate requires both transfer confidence intervals to contain one; the other partition interval excludes one."
+  ]
  },
  "lateral_velocity_74": {
   "reference": "livePose gyro yaw rate x range in turns",

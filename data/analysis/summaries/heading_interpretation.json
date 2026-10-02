@@ -1,0 +1,167 @@
+{
+  "status": "supported_claim_correction",
+  "new_cached_raw_check": {
+    "rows": 6,
+    "strict_component_held_edges": 3,
+    "ordinary_neighbor_edges": 2,
+    "point_function_inconsistent_edges": 3,
+    "physical_identity_verified": false
+  },
+  "same_fixed_point_rule": {
+    "component_zero": 510.5,
+    "component_unit": 0.15,
+    "heading_step": "pi/64",
+    "positive_angle_floor": true,
+    "default200_mask": false,
+    "cap63_difference_inert_for_integer_component_codes": true
+  },
+  "examples": [
+    {
+      "example": "D1",
+      "same_transmitted_component_codes": true,
+      "strict_allocation_edge": true,
+      "ordinary_200_both": false,
+      "rows": [
+        {
+          "example": "D1",
+          "relative_t": 0.0,
+          "age": 71,
+          "qvx": 546,
+          "qvy": 519,
+          "raw200": 63,
+          "heading": 0,
+          "component_prediction": 4,
+          "wide_gap_imported": 2.6240247770627194,
+          "point_rule_matches": false
+        },
+        {
+          "example": "D1",
+          "relative_t": 0.05958337300035055,
+          "age": 72,
+          "qvx": 546,
+          "qvy": 519,
+          "raw200": 5,
+          "heading": 4,
+          "component_prediction": 4,
+          "wide_gap_imported": 0.0,
+          "point_rule_matches": true
+        }
+      ]
+    },
+    {
+      "example": "D2",
+      "same_transmitted_component_codes": true,
+      "strict_allocation_edge": true,
+      "ordinary_200_both": true,
+      "rows": [
+        {
+          "example": "D2",
+          "relative_t": 0.0,
+          "age": 74,
+          "qvx": 514,
+          "qvy": 545,
+          "raw200": 0,
+          "heading": 62,
+          "component_prediction": 29,
+          "wide_gap_imported": 30.753721407801418,
+          "point_rule_matches": false
+        },
+        {
+          "example": "D2",
+          "relative_t": 0.05373211099868058,
+          "age": 75,
+          "qvx": 514,
+          "qvy": 545,
+          "raw200": 30,
+          "heading": 28,
+          "component_prediction": 29,
+          "wide_gap_imported": 0.0,
+          "point_rule_matches": false
+        }
+      ]
+    },
+    {
+      "example": "D3",
+      "same_transmitted_component_codes": true,
+      "strict_allocation_edge": true,
+      "ordinary_200_both": true,
+      "rows": [
+        {
+          "example": "D3",
+          "relative_t": 0.0,
+          "age": 62,
+          "qvx": 523,
+          "qvy": 511,
+          "raw200": 3,
+          "heading": 62,
+          "component_prediction": 0,
+          "wide_gap_imported": 58.48540374273068,
+          "point_rule_matches": false
+        },
+        {
+          "example": "D3",
+          "relative_t": 0.059855961000039315,
+          "age": 63,
+          "qvx": 523,
+          "qvy": 511,
+          "raw200": 2,
+          "heading": 0,
+          "component_prediction": 0,
+          "wide_gap_imported": 0.0,
+          "point_rule_matches": true
+        }
+      ]
+    }
+  ],
+  "road_reference_imported": {
+    "qualification": "conditional same-lane/path proximity reference uses native x/y and 3.6m lever arm; physical-heading confidence and distinguishing gate separate",
+    "samples": 143583,
+    "disagree": {
+      "confirmation": {
+        "n": 314,
+        "a_closer": 149,
+        "c_closer": 165,
+        "p": 0.3973105177157907,
+        "a_share": 0.4745222929936306
+      },
+      "discovery": {
+        "n": 537,
+        "a_closer": 283,
+        "c_closer": 254,
+        "p": 0.2269030205026462,
+        "a_share": 0.527001862197393
+      },
+      "other": {
+        "n": 403,
+        "a_closer": 178,
+        "c_closer": 225,
+        "p": 0.0218223515087392,
+        "a_share": 0.44168734491315137
+      }
+    },
+    "scale_slope_ci": {
+      "confirmation": [
+        0.813,
+        1.144
+      ],
+      "discovery": [
+        1.002,
+        1.105
+      ],
+      "other": [
+        1.019,
+        1.159
+      ]
+    },
+    "component_agreement_lag0": 0.9915
+  },
+  "default_summary_imported": {
+    "raw200_63_rows": 393268,
+    "nonzero_heading_at63": 0,
+    "raw200_127_rows": 35871,
+    "nonzero_heading_at127": 14,
+    "component_held_edges": 195,
+    "default_state_changes": 187,
+    "other_changes": 8
+  }
+}
