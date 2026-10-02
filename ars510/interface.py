@@ -73,7 +73,7 @@ class NativeInterfaceConfig:
     vrel_smooth_unc_tau_s: float = 0.0
     vrel_smooth_unc_lo: float = 25.0
     vrel_smooth_unc_hi: float = 42.0
-    # ACC-target cross-check: the radar's own ACC target (0x235 / 0x237) is matched to an object by position. The matched
+    # ACC-target cross-check: the OEM ACC target witness (0x235 / 0x237) is matched to an object by position. The matched
     # object's vRel is clipped to the target's closing speed +/- this many m/s (0 disables). 1.0 is the p95 of their
     # difference on normal samples (docs/05).
     acc_target_clip_mps: float = 0.0
@@ -267,7 +267,7 @@ class Ars510NativeRadarInterface:
 
     # ---- ACC-target cross-check ----------------------------------------------------------------------
     def _acc_target_match(self, time_s: float, decoded: list) -> tuple[int | None, float]:
-        """The object the radar's own ACC target describes: best position match, cost < 1 and margin > 1, age >= 60."""
+        """The object the OEM ACC target witness describes: best position match, cost < 1 and margin > 1, age >= 60."""
         cfg = self.config
         if cfg.acc_target_clip_mps <= 0 or self._acc_vrel is None or self._acc_pos is None:
             return None, nan

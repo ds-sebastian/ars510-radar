@@ -1,4 +1,4 @@
-"""Support messages: the radar's own ACC target (0x235 / 0x237) and the selected-target summaries (docs/05).
+"""Support messages: the OEM ACC target witness (0x235 / 0x237) and the selected-target summaries (docs/05).
 
 0x192 / 0x194 (4 bytes, ~radar cycle) each carry two raw 13-bit summaries.
 Word 0 is range-like; physical scale and origin require independent calibration.
@@ -33,7 +33,7 @@ def _be_field(data: bytes, start: int, length: int) -> int:
 
 
 def parse_acc_target_vrel(data: bytes) -> float | None:
-    """0x235: closing speed of the radar's own ACC target, m/s (negative = closing).
+    """0x235: closing speed of the OEM ACC target witness, m/s (negative = closing).
 
     Bits 29..39, offset 1024, 0.1 m/s. Tested against the vision-matched radar lead on 20 routes: unbiased against
     vision (median 0.00 m/s). When native vRel and this value differ by > 3 m/s, vision agrees with this value in
@@ -45,7 +45,7 @@ def parse_acc_target_vrel(data: bytes) -> float | None:
 
 
 def parse_acc_target_arel(data: bytes) -> float | None:
-    """0x235 byte 2: relative acceleration of the radar's ACC target, m/s^2 (d vRel/dt, positive = opening).
+    """0x235 byte 2: relative acceleration of the OEM ACC target witness, m/s^2 (d vRel/dt, positive = opening).
 
     (byte 2 - 100) * 0.1; the idle payload's 0x64 decodes to 0. Binned against the derivative of the 0x235 closing
     speed it gives identical curves on discovery, confirmation and fresh drives, lagging that derivative by
@@ -57,7 +57,7 @@ def parse_acc_target_arel(data: bytes) -> float | None:
 
 
 def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
-    """0x237: (coarse distance m, lateral m left positive) of the radar's ACC target.
+    """0x237: (coarse distance m, lateral m left positive) of the OEM ACC target witness.
 
     Lateral: bits 28..38, 1/60 m per code, offset -16.70 m (Pearson 0.97 against the matched lead). Distance is
     coarse: bits 47..51 at about 5.26 m per code, +9.6 m (about +-5 m).

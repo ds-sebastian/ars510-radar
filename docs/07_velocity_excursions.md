@@ -23,7 +23,7 @@ grow, while its vRel swings from +2.4 to about −6 m/s and back.*
 *A long false closing on a real drive at about 85 km/h: the track's vRel drifts to −12 m/s over about 9 s (implying
 ~50 m of closing) while its range stays at 85-110 m and vision holds steady.*
 
-The shape, from labelled episodes where native vRel disagrees with both the radar's own ACC target and the vision lead:
+The shape, from labelled episodes where native vRel disagrees with both the OEM ACC target witness and the vision lead:
 
 - **Mostly false closings:** 84-88% of episodes.
 - **A smooth drift:** the gap to the ACC target ramps from about −1 to −3.4 m/s over ~1.5 s and decays over ~2 s.
