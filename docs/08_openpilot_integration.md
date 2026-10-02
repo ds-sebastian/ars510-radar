@@ -23,7 +23,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 | fork | status |
 |---|---|
 | current openpilot (opendbc master) | self-check passes; replayed end to end through card → radard → plannerd |
-| sunnypilot v2026.002.002 | self-check passes; carries `aRel` / `yvRel`; installed on the owner's device |
+| sunnypilot v2026.002.002 | self-check passes; native-profile replay through original RadarD / plannerd under two prospective schedules ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)); carries `aRel` / `yvRel`; installed on the owner's device |
 | StarPilot | same hook; driven by the owner with the earlier patch-based install |
 | any fork | optional `openpilot/radard_vision_fusion.patch` ([07](07_velocity_excursions.md#options)) |
 
@@ -71,6 +71,10 @@ reduces far pickup braking 2 → 1, with mean held-out lag +0.003 s and unchange
 ([summary](../data/analysis/summaries/far_settling.json)). Actual device activation still requires a manager restart or reboot.
 `drop_saturated_codes` and `vjump_thresh_mps` withhold a mature track's invalid readings (velocity code 1023, or a jump
 of more than 8 m/s between records) and continue the track under a new ID, so radard's filter restarts cleanly.
+
+`acc_target_clip_mps=3` on top of `steady` passes the six owner subgates under both sunnypilot replay schedules,
+reducing D1 episodes 5 → 4 while D2 is unchanged. It remains off by default pending fresh drives and full
+real-closing validation; settings and delivery assumptions are stated in [07](07_velocity_excursions.md#sunnypilot-profile-comparison).
 
 ## What radard does with radar points
 

@@ -1,0 +1,672 @@
+{
+  "study": "Fixed native-profile comparison through original sunnypilot RadarD and plannerd",
+  "fork_version": "v2026.002.002",
+  "fork_commit": "6a17f75c6bcb67c85f252a1acc342d94d5b8a4d2",
+  "scope": {
+    "drive_labels": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "segments": 72,
+    "model_ticks_per_profile_schedule": 84659,
+    "profiles": [
+      "vision",
+      "steady",
+      "openpilot",
+      "acc_clip"
+    ],
+    "schedules": [
+      "model",
+      "plan"
+    ],
+    "prior_used_owner_drives": true,
+    "startup_retained": true,
+    "missing_captured_plans_retained": 2,
+    "captured_map_active_ticks_retained": 145,
+    "D3_radar_unavailable_preserved": true,
+    "profile_tuned_during_comparison": false
+  },
+  "definitions": {
+    "hard_tick": "aTarget <= -2 m/s^2 while fresh same-fork vision aTarget >= -0.5 m/s^2",
+    "target_episode": "aTarget <= -1 m/s^2 while vision >= -0.3 m/s^2, ego > 1 m/s; adjacent gaps < 0.1 s, duration >= 0.3 s",
+    "owner_subgates": [
+      "pooled hard ticks <= STEADY",
+      "each of D1/D2/D3 target episodes <= STEADY",
+      "D1/D2 fixed-window minimum >= STEADY minus 0.05 m/s^2"
+    ],
+    "fixed_windows_seconds_into_drive": {
+      "D1": [
+        980,
+        1000
+      ],
+      "D2": [
+        605,
+        625
+      ]
+    }
+  },
+  "producer_contract": {
+    "inputs": "Continuous logged CAN through fixed native profiles, then original RadarD",
+    "model_car_state": "Exact original inputs named by captured radar publication timestamps; zero anchors retain defaults",
+    "radar_publication": "Captured publication cadence, latest native tracks no later than publication",
+    "planner_model_schedule": "Latest companions by current model publication",
+    "planner_plan_schedule": "Latest companions by captured plan publication for the same current model; missing-plan carry-forward retained",
+    "settings": "Complete recorded CP/CP_SP and first settings, SIMULATION=0; empty unrecorded map memory",
+    "captured_radar_lead_values_fed": false,
+    "consumer_source_modified": false
+  },
+  "rows": [
+    {
+      "schedule": "model",
+      "profile": "vision",
+      "ticks": 26437,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.027781448312732555,
+      "target_min": -3.1552577018737797,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "steady",
+      "ticks": 26437,
+      "hard_ticks": 1,
+      "target_episodes": 5,
+      "radar_lead_ticks": 15649,
+      "source_switches": 224,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.022127525492214473,
+      "target_min": -3.5,
+      "mean_abs_delta_vision": 0.05968946413427777,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "openpilot",
+      "ticks": 26437,
+      "hard_ticks": 1,
+      "target_episodes": 8,
+      "radar_lead_ticks": 15779,
+      "source_switches": 312,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.010065250400770758,
+      "target_min": -3.485628366470337,
+      "mean_abs_delta_vision": 0.07239316621795937,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "acc_clip",
+      "ticks": 26437,
+      "hard_ticks": 1,
+      "target_episodes": 4,
+      "radar_lead_ticks": 15651,
+      "source_switches": 222,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.024071463709243363,
+      "target_min": -3.5,
+      "mean_abs_delta_vision": 0.057680706906651814,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "vision",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.1199223920461142,
+      "target_min": -2.136639356613159,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "steady",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 3383,
+      "source_switches": 180,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11540581933755184,
+      "target_min": -2.113363981246948,
+      "mean_abs_delta_vision": 0.01577558510086185,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "openpilot",
+      "ticks": 33488,
+      "hard_ticks": 3,
+      "target_episodes": 2,
+      "radar_lead_ticks": 3410,
+      "source_switches": 242,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11415291190559546,
+      "target_min": -2.1158459186553955,
+      "mean_abs_delta_vision": 0.017658013220237762,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "acc_clip",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 3383,
+      "source_switches": 180,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11563670668589507,
+      "target_min": -2.113363981246948,
+      "mean_abs_delta_vision": 0.015526837410544989,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "vision",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.011966342697130164,
+      "target_min": -2.913048505783081,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "model",
+      "profile": "steady",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.011966342697130164,
+      "target_min": -2.913048505783081,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "model",
+      "profile": "openpilot",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.011966342697130164,
+      "target_min": -2.913048505783081,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "model",
+      "profile": "acc_clip",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.011966342697130164,
+      "target_min": -2.913048505783081,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "plan",
+      "profile": "vision",
+      "ticks": 26437,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.02767012810851149,
+      "target_min": -3.203958034515381,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "steady",
+      "ticks": 26437,
+      "hard_ticks": 0,
+      "target_episodes": 5,
+      "radar_lead_ticks": 15644,
+      "source_switches": 216,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.02200924778663437,
+      "target_min": -3.5,
+      "mean_abs_delta_vision": 0.05956902375171359,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "openpilot",
+      "ticks": 26437,
+      "hard_ticks": 0,
+      "target_episodes": 8,
+      "radar_lead_ticks": 15775,
+      "source_switches": 304,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.009827716784666419,
+      "target_min": -3.5,
+      "mean_abs_delta_vision": 0.07219715597270089,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "acc_clip",
+      "ticks": 26437,
+      "hard_ticks": 0,
+      "target_episodes": 4,
+      "radar_lead_ticks": 15646,
+      "source_switches": 214,
+      "valid_ticks": 26419,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 87,
+      "target_mean": 0.023955378711904163,
+      "target_min": -3.5,
+      "mean_abs_delta_vision": 0.05757408721641273,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "vision",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11988191338790147,
+      "target_min": -2.136589765548706,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "steady",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 3382,
+      "source_switches": 180,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11536993290884762,
+      "target_min": -2.112259864807129,
+      "mean_abs_delta_vision": 0.01577127244277349,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "openpilot",
+      "ticks": 33488,
+      "hard_ticks": 3,
+      "target_episodes": 2,
+      "radar_lead_ticks": 3411,
+      "source_switches": 242,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11418661250412475,
+      "target_min": -2.1158034801483154,
+      "mean_abs_delta_vision": 0.01757546451155351,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "acc_clip",
+      "ticks": 33488,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 3382,
+      "source_switches": 180,
+      "valid_ticks": 33473,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 58,
+      "target_mean": 0.11559789604790069,
+      "target_min": -2.112259864807129,
+      "mean_abs_delta_vision": 0.01552625972402071,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "vision",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.01202015669422605,
+      "target_min": -2.916952848434448,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "plan",
+      "profile": "steady",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.01202015669422605,
+      "target_min": -2.916952848434448,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "plan",
+      "profile": "openpilot",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.01202015669422605,
+      "target_min": -2.916952848434448,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    },
+    {
+      "schedule": "plan",
+      "profile": "acc_clip",
+      "ticks": 24734,
+      "hard_ticks": 0,
+      "target_episodes": 0,
+      "radar_lead_ticks": 0,
+      "source_switches": 0,
+      "valid_ticks": 24717,
+      "map_active_ticks": 0,
+      "captured_map_active_ticks": 0,
+      "target_mean": 0.01202015669422605,
+      "target_min": -2.916952848434448,
+      "mean_abs_delta_vision": 0.0,
+      "drive": "D3"
+    }
+  ],
+  "windows": [
+    {
+      "schedule": "model",
+      "profile": "vision",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.2522690296173096,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "steady",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.129267454147339,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "openpilot",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.080904960632324,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "acc_clip",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.129267454147339,
+      "drive": "D1"
+    },
+    {
+      "schedule": "model",
+      "profile": "vision",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.2338081151247024,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "steady",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.9889886975288392,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "openpilot",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -2.0730676651000977,
+      "drive": "D2"
+    },
+    {
+      "schedule": "model",
+      "profile": "acc_clip",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.9889886975288392,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "vision",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.244458675384521,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "steady",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.1215341091156006,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "openpilot",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.0748958587646484,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "acc_clip",
+      "lo": 980,
+      "hi": 1000,
+      "ticks": 400,
+      "min_a": -2.1215341091156006,
+      "drive": "D1"
+    },
+    {
+      "schedule": "plan",
+      "profile": "vision",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.2348475605249405,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "steady",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.9981435537338256,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "openpilot",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -2.0720291137695312,
+      "drive": "D2"
+    },
+    {
+      "schedule": "plan",
+      "profile": "acc_clip",
+      "lo": 605,
+      "hi": 625,
+      "ticks": 400,
+      "min_a": -0.9981435537338256,
+      "drive": "D2"
+    }
+  ],
+  "owner_subgates": {
+    "model": {
+      "openpilot": {
+        "gates": {
+          "owner_hard": false,
+          "D1_target_episodes": false,
+          "D2_target_episodes": false,
+          "D3_target_episodes": true,
+          "D1_window_min": true,
+          "D2_window_min": false
+        },
+        "owner_subgates_pass": false
+      },
+      "acc_clip": {
+        "gates": {
+          "owner_hard": true,
+          "D1_target_episodes": true,
+          "D2_target_episodes": true,
+          "D3_target_episodes": true,
+          "D1_window_min": true,
+          "D2_window_min": true
+        },
+        "owner_subgates_pass": true
+      }
+    },
+    "plan": {
+      "openpilot": {
+        "gates": {
+          "owner_hard": false,
+          "D1_target_episodes": false,
+          "D2_target_episodes": false,
+          "D3_target_episodes": true,
+          "D1_window_min": true,
+          "D2_window_min": false
+        },
+        "owner_subgates_pass": false
+      },
+      "acc_clip": {
+        "gates": {
+          "owner_hard": true,
+          "D1_target_episodes": true,
+          "D2_target_episodes": true,
+          "D3_target_episodes": true,
+          "D1_window_min": true,
+          "D2_window_min": true
+        },
+        "owner_subgates_pass": true
+      }
+    }
+  },
+  "independent_check": {
+    "producer_status": "PASS",
+    "producer_outputs": 338980,
+    "radar_lead_mappings": 113597,
+    "status": "PASS",
+    "totals": {
+      "input_selections": 7449992,
+      "planner_lead_scalars": 3386360,
+      "native_output_groups": 677272,
+      "aggregate_scalars": 264,
+      "scope_scalars": 1320,
+      "window_scalars": 32,
+      "gates": 24
+    },
+    "physical_motion_validated": false,
+    "original_audits_repeated": false,
+    "device_receive_boundary_recovered": false
+  },
+  "limits": [
+    "CAN-event delivery approximates card receipts",
+    "Captured radar cadence/latest native availability and planner cutoffs are prospective boundaries",
+    "Unrecorded map memory leaves replay map activity zero",
+    "D3 tests radar-disabled invariance",
+    "Owner drives motivated earlier guards and are not fresh confirmation",
+    "Physical velocity, real-closing response/head start and full 19-gate acceptance remain open"
+  ],
+  "physical_velocity_validated": false,
+  "full19gates_completed": false,
+  "fresh_drive_confirmed": false,
+  "profile_promoted": false,
+  "default_changed": false
+}
