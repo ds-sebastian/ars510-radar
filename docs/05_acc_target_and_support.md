@@ -49,6 +49,8 @@ disengaged. This supports OEM processing. The shared link and startup timing do 
 or hosts its filter. Factory-camera fusion remains a possible source of agreement with the vision lead; treat the
 stream as an additional filtered witness with conditional target association.
 
+Against the video-looming reference ([07](07_velocity_excursions.md#measured-against-video-truth)) the ACC target's closing speed is the most precise velocity estimate available on the bus: error sigma 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (◐). Its errors look independent of the video looming but are correlated about 0.5 with the vision model's lead speed, so factory-camera involvement is likely but unproved. Its own acceleration (byte 2) adds no lead compensation (fitted lag 0.006 s). Where it is present (38% of 40-130 m windows, 11% beyond 80 m) false closings (more closing than truth by 2.5 m/s) are 1% against 4%, 5% against 14% and 15% against 25% at 30-50 / 50-70 / 70-130 m.
+
 Its availability differs from the current native list. Across 13 discovery drives, **58,553 active 235/237 pairs**
 coincide with a fresh valid native record whose header and all slots report zero objects; **204 reporting spans
 last at least 1 s**. Most are close to the coarse-range floor and at low ego speed. Separate listing or coasting

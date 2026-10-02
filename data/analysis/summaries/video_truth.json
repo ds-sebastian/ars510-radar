@@ -1,0 +1,190 @@
+{
+ "description": "Per-second velocity reference from sub-pixel video looming of the lead's rear (road camera) and what it shows about the object-list velocity, the uncertainty code 240|7 and the ACC-target velocity. Drives anonymised; four main drives, 83 one-minute segments.",
+ "reference": {
+  "method": "ECC affine registration of the lead's rear between frames 0.5 s or 1 s apart; relative velocity = -(radar range + 3.6 m) * d ln(scale)/dt",
+  "noise_per_1s_mps": {
+   "20m": 0.13,
+   "40m": 0.22,
+   "60m": 0.46,
+   "80m": 0.88,
+   "110m": 1.03
+  },
+  "parked_vehicles_median_error_mps": 0.01,
+  "parked_vehicle_windows": 51,
+  "vs_8_12s_range_closure_to_80m_median_diff_mps": [
+   -0.03,
+   0.27
+  ],
+  "limits": "daylight, in-lane leads, straight road; few windows beyond 100 m; the ACC target and the vision model may share the camera"
+ },
+ "object_list_vs_truth_2s_windows": [
+  {
+   "range_m": [
+    10,
+    30
+   ],
+   "windows": 557,
+   "false_closing_pct": 0.2,
+   "false_opening_pct": 0.0,
+   "median_error_mps": -0.05
+  },
+  {
+   "range_m": [
+    30,
+    50
+   ],
+   "windows": 1058,
+   "false_closing_pct": 2.2,
+   "false_opening_pct": 0.2,
+   "median_error_mps": -0.22
+  },
+  {
+   "range_m": [
+    50,
+    70
+   ],
+   "windows": 667,
+   "false_closing_pct": 10.6,
+   "false_opening_pct": 0.6,
+   "median_error_mps": -0.53
+  },
+  {
+   "range_m": [
+    70,
+    90
+   ],
+   "windows": 227,
+   "false_closing_pct": 15.0,
+   "false_opening_pct": 2.2,
+   "median_error_mps": -0.98
+  },
+  {
+   "range_m": [
+    90,
+    130
+   ],
+   "windows": 148,
+   "false_closing_pct": 20.9,
+   "false_opening_pct": 1.4,
+   "median_error_mps": -1.08
+  }
+ ],
+ "false_closing_runs": {
+  "median_duration_s": [
+   2,
+   3
+  ],
+  "peak_mps": -3.5
+ },
+ "scale_check_le_40m": {
+  "error_vs_ego_slope": 0.0017,
+  "error_vs_ego_slope_90pct": [
+   -0.0025,
+   0.0081
+  ],
+  "relative_velocity_scale_theil_sen": 0.003,
+  "zero_offset_median_mps": 0.159
+ },
+ "uncertainty_code_240_7": {
+  "rms_error_mps_per_count_40_80m": 0.049,
+  "bootstrap_90pct": [
+   0.046,
+   0.053
+  ],
+  "fit_on_two_drives": 0.046,
+  "refit_held_out_drives": 0.054,
+  "decile_R2": 0.81,
+  "held_out_R2": 0.66,
+  "false_closing_share_60_80m_by_code_quintile": {
+   "31": 0.05,
+   "34": 0.08,
+   "37": 0.06,
+   "41": 0.18,
+   "51": 0.45
+  },
+  "rank_corr_with_abs_error_in_range_strata": 0.28,
+  "false_closing_auc_range_only": 0.64,
+  "false_closing_auc_range_plus_code": 0.74
+ },
+ "acc_target_velocity": {
+  "error_sigma_mps_10_40m": {
+   "native": 0.55,
+   "acc": 0.31,
+   "vision_model": 0.67,
+   "looming": 0.57
+  },
+  "error_sigma_mps_40_70m": {
+   "native": 1.07,
+   "acc": 0.54,
+   "vision_model": 1.33,
+   "looming": 0.81
+  },
+  "error_correlation_with_vision_model_40_70m": 0.5,
+  "coverage_of_40_130m_windows": 0.38,
+  "coverage_beyond_80m": 0.11,
+  "lead_compensation_tau_s": 0.006
+ },
+ "motion_state_8_6": {
+  "auc_stationary_vs_moving": [
+   0.92,
+   0.9
+  ],
+  "precision_as_flag": [
+   0.04,
+   0.06
+  ]
+ },
+ "replay_comparison_stock_planner": {
+  "development_4_chains": {
+   "steady": {
+    "hard_ticks": 85,
+    "radar_only_episodes": 3,
+    "switches": 710,
+    "mean_response_s": -0.5733
+   },
+   "base_plus_acc_fusion": {
+    "hard_ticks": 78,
+    "radar_only_episodes": 1,
+    "switches": 1019,
+    "mean_response_s": -0.5237
+   },
+   "steady_plus_acc_fusion": {
+    "hard_ticks": 5,
+    "radar_only_episodes": 1,
+    "switches": 714,
+    "mean_response_s": -0.4817
+   }
+  },
+  "held_out_20_chains": {
+   "steady": {
+    "hard_ticks": 53,
+    "radar_only_episodes": 6,
+    "mean_response_s": -0.8848
+   },
+   "steady_plus_acc_fusion": {
+    "hard_ticks": 57,
+    "radar_only_episodes": 4,
+    "mean_response_s": -0.7399
+   }
+  },
+  "owner_3_chains": {
+   "steady": {
+    "hard_ticks": 16
+   },
+   "steady_plus_acc_fusion": {
+    "hard_ticks": 0
+   }
+  }
+ },
+ "camera_assisted_veto_offline": {
+  "false_closing_reduction_pct": 31,
+  "mean_onset_lag_s": 0.0096,
+  "conservative_setting": {
+   "false_closing_reduction_pct": 14,
+   "mean_onset_lag_s": 0.0005,
+   "onsets_delayed_over_150ms": "0 of 356"
+  },
+  "weak_beyond_m": 80
+ },
+ "verified": "headline numbers recomputed with independent code"
+}
