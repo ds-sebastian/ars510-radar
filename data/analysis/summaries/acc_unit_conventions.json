@@ -1,0 +1,46 @@
+{
+  "scope": "Interpretation of retained OEM target conversions; source conventions and internal closure, not a new fit",
+  "confidence": {
+    "raw_field_domains": "confirmed",
+    "engineering_unit_conversions": "nominal, likely from conditional comparisons",
+    "absolute_physical_calibration": "requires an independent metric reference or matching interface definition"
+  },
+  "velocity": {
+    "address": "0x235",
+    "big_endian_integer_lsb": 29,
+    "msb0_start_bit": 24,
+    "length": 11,
+    "dbc_start_bit": 31,
+    "wire_encoding": "unsigned centered code",
+    "center_code": 1024,
+    "retained_nominal_mps_per_code": 0.1
+  },
+  "range_increment": {
+    "address": "0x237",
+    "big_endian_integer_lsb": 39,
+    "msb0_start_bit": 12,
+    "length": 13,
+    "dbc_start_bit": 11,
+    "retained_nominal_m_per_code": 0.02
+  },
+  "acceleration": {
+    "address": "0x235",
+    "byte": 2,
+    "center_code": 100,
+    "retained_nominal_mps2_per_code": 0.1,
+    "reference": "Derivative of velocity using its assumed nominal scale"
+  },
+  "closure_identifiability": {
+    "nominal_velocity_to_range_scale_ratio_per_second": 5.0,
+    "relative_scale_only": true,
+    "common_rescaling_preserves_closure": true,
+    "absolute_range_origin_measured": false
+  },
+  "limits": [
+    "Other Toyota track formats have different addresses and bit domains and do not establish units for this pair.",
+    "The published DBC encodes these retained reverse-engineered conventions; it is not independent manufacturer documentation.",
+    "Conditional agreement with vision or native tracks requires target, timing and reference-quality assumptions."
+  ],
+  "runtime_changed": false,
+  "dbc_conversions_changed": false
+}

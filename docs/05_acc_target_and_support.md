@@ -8,7 +8,12 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 At **50 Hz**, three times the object-list rate, this stream reports a filtered OEM target:
 
-| field | decode | DBC signal / parser |
+The raw field domains and closing/opening direction are retained (●). The conversions below are nominal
+reverse-engineered calibrations (◐), supported by conditional comparisons with native objects and vision and by
+internal consistency. Absolute physical units require an independent metric reference or a matching interface
+definition. See [unit conventions](../data/analysis/summaries/acc_unit_conventions.json).
+
+| field | retained conversion | DBC signal / parser |
 |---|---|---|
 | closing speed | 0x235 bits 29-39: `(code − 1024) × 0.1` m/s, negative = closing | `A235_ACC_TARGET_VREL`, `parse_acc_target_vrel` |
 | relative acceleration | 0x235 byte 2: `(code − 100) × 0.1` m/s², positive = opening | `A235_ACC_TARGET_AREL`, `parse_acc_target_arel` |
@@ -17,15 +22,20 @@ At **50 Hz**, three times the object-list rate, this stream reports a filtered O
 | distance, fine | 0x237 bits 39-51: 0.02 m per code for changes | `A237_ACC_TARGET_DISTANCE_CODE`, `parse_acc_target_range_code` |
 | target present | 0x235 byte-1 low nibble ≠ 1 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) | `A235_STATUS_MUX4` |
 
-How well these hold:
+How these conventions compare:
 - **Closing speed** correlates with the matched object's vRel at r = 0.78 / 0.82 (discovery / confirmation drives)
-  and is unbiased against openpilot's vision lead (median 0.00 m/s).
+  and has median difference 0.00 m/s against openpilot's vision lead under the retained conversion. These are
+  conditional reference comparisons.
 - **Relative acceleration** gives the same binned curve against the derivative of the closing speed on discovery,
   confirmation and further drives (r 0.57 / 0.62 / 0.83; slope ≈ 1 at 0.1 m/s² per code), about 0.1-0.2 s behind it.
-- **Fine distance:** the change of the 13-bit code times 0.0198 m equals the integrated closing speed over 2 s windows
-  (confirmation median 0.0198 m/code, 565 windows). Use it for distance *changes*; its absolute offset is still to be
-  pinned.
+- **Fine distance:** using the assumed velocity scale of 0.1 m/s per code, two-second integral closure gives a
+  confirmation median of 0.0198 m per range code on 565 windows. This establishes the relative range/velocity
+  normalization: multiplying both scales by the same factor preserves closure. The parser retains 0.02 m per code
+  for changes; a physical range origin and absolute scale require independent calibration.
 - **Lateral** correlates with the matched object at r = 0.97.
+
+The acceleration comparison also differentiates velocity under the retained 0.1 conversion. It supports the
+relative normalization and filtered acceleration interpretation; it shares the velocity scale assumption.
 
 ### A second witness for velocity
 

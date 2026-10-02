@@ -12,7 +12,14 @@
   "confirmation_nontrivial_fixed_increment_mae_m": 0.0821,
   "confirmation_nontrivial_coarse_increment_mae_m": 2.0272,
   "window_s": 2,
-  "interpretation": "Internal increment consistency, not independent physical range calibration or a jitter fix",
+  "velocity_reference": {
+    "address": "0x235",
+    "big_endian_integer_lsb": 29,
+    "length": 11,
+    "center_code": 1024,
+    "assumed_mps_per_code": 0.1
+  },
+  "interpretation": "Internal range/velocity normalization conditional on the assumed 0.1 velocity scale; a common rescaling preserves closure. Independent absolute physical scale and range origin require calibration.",
   "default_interface_changed": false,
   "absolute_distance_mapping_promoted": false
 }

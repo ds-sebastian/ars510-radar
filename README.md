@@ -16,7 +16,7 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **dRel, yRel, velocity over ground** | ● field layout and motion interpretation; ◐ exact physical zero/scales ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class, width / length, heading over ground, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded; initial output templates, angle defaults and motion-state resets characterised; physical names/scales and independent heading remain provisional ([03](docs/03_slot_fields.md)) |
-| **OEM ACC target witness** (0x235 / 0x237, 50 Hz) | ● decoded ([05](docs/05_acc_target_and_support.md)); factory-camera dependence requires separate evidence |
+| **OEM ACC target witness** (0x235 / 0x237, 50 Hz) | ● raw fields, ◐ nominal unit conversions ([05](docs/05_acc_target_and_support.md)); source and physical calibration require separate evidence |
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state whose 10-bit code leads the car's deceleration ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ lane-boundary offsets and raw-word curvature association; ○ physical direction encoding and lookahead ([04](docs/04_metadata_record_0x85.md)) |

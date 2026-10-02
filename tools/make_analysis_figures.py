@@ -639,9 +639,10 @@ def heading_field():
     ax.plot([0, 63], [0, 63], color=S2, lw=1, ls="--")
     ax.set_xlabel("floor(max(atan2(vy, vx), 0) x 64 / π) from 64|10 and 74|10")
     ax.set_ylabel("208|6 code")
-    ax.set_title("208|6 is the direction of motion over ground\n(π/64 per code; headings to the right read 0)")
+    ax.set_title("208|6 closely follows the clipped velocity angle\n(empirical comparison; approximately π/64 per code)")
     NUMBERS["heading"] = {"exact": float((pred == code).mean()), "within_one": float((np.abs(pred - code) <= 1).mean()), "n": int(m.sum())}
-    save(fig, "heading_field", "Settled tracks moving faster than 5 m/s. Oncoming traffic sits near code 63 (angle near π).")
+    save(fig, "heading_field", "Settled tracks moving faster than 5 m/s under nominal velocity scaling.\n"
+         "Exact inputs, state updates and angular calibration remain provisional.")
 
 
 def far_settling():
