@@ -1,0 +1,27 @@
+{
+  "scope": "13 prior-used discovery drives",
+  "observations_235_237": 847008,
+  "valid_native_records": 280194,
+  "active_paired_oem_rows": 484061,
+  "active_pairs_with_fresh_valid_native_record": 456588,
+  "active_pairs_with_empty_native_list": 58553,
+  "empty_reporting_spans": 4010,
+  "empty_reporting_spans_at_least_one_second": 204,
+  "longest_empty_reporting_span_seconds": 5.500,
+  "empty_pairs_with_fine_range_code_below_256": 56090,
+  "empty_pairs_with_ego_above_3_mps": 1443,
+  "long_spans_reaching_ego_above_3_mps": 1,
+  "definitions": {
+    "active_pair": "235 active state and non-idle237 tail, latest235 age at most30ms; malformed and duplicate observations excluded",
+    "fresh_native_record": "latest completed sequence/CRC/time-valid record at most60ms old",
+    "empty_native_list": "header object count0 and every slot age0; live count otherwise includes all indices and allocation templates",
+    "span": "split at inactive/stale/missing rows, gap above100ms, fine-range step above256codes or lateral step above64codes"
+  },
+  "interpretation": {
+    "different_availability_or_listing": "supported in tested scope",
+    "sender_ecu_identified": false,
+    "factory_camera_independence_established": false,
+    "new_physical_target_established": false,
+    "independent_motion_truth_established": false
+  }
+}

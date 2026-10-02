@@ -33,8 +33,9 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
    ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)).
 3. **Ego-speed waveform modes.** The data sheet's three ego-speed bandwidths predict steps in the range noise floor
    at fixed ego speeds. Finding them, and the excursion rate in each mode, ties drift risk to a radar setting.
-4. **Fresh drives with the ACC target as witness.** The 50 Hz ACC target (`0x235`) tracks the same lead with its own
-   filter; its disagreement with the object list on new drives labels excursions without a camera.
+4. **Fresh drives with the ACC target as witness.** Associate the filtered 50 Hz OEM target (`0x235`) with the
+   native object by geometry before comparing velocity. Factory-camera dependence and independent motion
+   anchors determine whether this supplies physical supervision; velocity agreement alone cannot establish it.
 
 ## For the decode
 

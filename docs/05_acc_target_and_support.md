@@ -1,13 +1,12 @@
-# 05. The radar's own ACC target and the support messages
+# 05. OEM ACC target witness and support messages
 
-Besides the object list, the radar publishes the target its own ACC follows, target summaries, timing and status.
+Besides the object list, the private radar–camera link carries an OEM ACC target witness, target summaries, timing and status.
 Bit numbers for the big-endian frames below treat the 8-byte frame as one big-endian integer (bit 0 = LSB of byte 7),
 matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.support`.
 
-## The radar's own ACC target (0x235 / 0x237)
+## OEM ACC target witness (0x235 / 0x237)
 
-This radar is also the car's stock ACC controller. At **50 Hz**, three times the object-list rate, it publishes the
-target it follows:
+At **50 Hz**, three times the object-list rate, this stream reports a filtered OEM target:
 
 | field | decode | DBC signal / parser |
 |---|---|---|
@@ -35,9 +34,16 @@ differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of
 confirmation 86%, n = 421, route-bootstrap 79-99%). Through the drive-A false closing ([07](07_velocity_excursions.md)),
 the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
 
-The ACC target comes from the radar's own ACC pipeline: it starts 0.2 s after power-up, long before openpilot
-transmits, it tracks the lead rather than openpilot's commands, and it is published whether or not cruise is
-engaged. Toyota may fuse its factory camera into it.
+The stream starts 0.2 s after power-up, before openpilot transmits, tracks the lead and remains present with cruise
+disengaged. This supports OEM processing. The shared link and startup timing do not identify which ECU sends it
+or hosts its filter. Factory-camera fusion remains a possible source of agreement with the vision lead; treat the
+stream as an additional filtered witness with conditional target association.
+
+Its availability differs from the current native list. Across 13 discovery drives, **58,553 active 235/237 pairs**
+coincide with a fresh valid native record whose header and all slots report zero objects; **204 reporting spans
+last at least 1 s**. Most are close to the coarse-range floor and at low ego speed. Separate listing or coasting
+can explain this; continued reporting alone does not establish a new physical target or camera-independent
+motion. [Availability evidence and definitions](../data/analysis/summaries/acc_target_availability.json).
 
 **Coverage** is the limit: the target is present on 57% of radar-lead moments, and on 5% beyond 80 m, where velocity
 excursions concentrate. The interface offers it as an option (`acc_target_clip_mps`, off by default); see
