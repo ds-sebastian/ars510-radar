@@ -75,11 +75,12 @@ The other cells (0, 1, 4-7) hold further road-geometry parameters. Cells 6 and 7
 
 ### Road-direction association: bits 64-79
 
-The raw word in **bits 64-79** (`64|16`) has a **◐ road-curvature association** in cells 2 / 3 / 8;
-its physical angle or offset interpretation is **○ candidate**. A little-endian two's-complement view is useful
-for the rank comparison below. It is an analysis view, rather than a decoded numeric format. The reference is the
-car's own path over the next 60 m (gyro and wheel speed), expressed in the current radar frame, independent of the
-camera.
+The raw word in **bits 64-79** (`64|16`) contains a **◐ road-curvature-associated subfield** in cells
+2 / 3 / 8; its physical angle or offset interpretation is **○ candidate**. The rank comparison below uses the
+per-cell slices recorded under `curvature_screen` in `decode_references.json`, rather than the full word. A
+little-endian two's-complement view of the full word is used only for the structural transition analysis below;
+it is not a decoded numeric format. The reference is the car's own path over the next 60 m (gyro and wheel
+speed), expressed in the current radar frame, independent of the camera.
 
 | | cell 2 | cell 3 | cell 8 | cell 9 |
 |---|---|---|---|---|
