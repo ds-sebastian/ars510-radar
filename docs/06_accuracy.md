@@ -108,10 +108,10 @@ mathematical span of −10 to 245.9375 m; negative headroom is a plausible desig
 intent. The velocity step .15 m/s is .54 km/h; it has no established derivation from the radar's waveform.
 Wire quantization is separate from physical measurement resolution and accuracy.
 
-The object velocity is ground-referenced in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)).
-It is a processed object output, not an exposed raw radial Doppler measurement. Its exact upstream sensor inputs
-and filtering are unassigned. The affine decoder uses fixed constants; the integration subtracts host 0xB4
-speed and uses no GPS-grade, pitch or yaw correction to those constants. Turning and slope can change geometry
+The radar reports a tracked object's ground velocity in rotating Cartesian axes ([03](03_slot_fields.md#kinematics)).
+Raw radial Doppler and the internal filtering are separate decoding targets. The decoder uses fixed constants;
+the integration subtracts host 0xB4 speed and uses no GPS-grade, pitch or yaw correction to those constants.
+Turning and slope can change geometry
 and the upstream estimate without changing the wire units. The supported lateral relation is `vy = dy/dt + ω·x`;
 in an ideal planar frame with host forward speed, `vx = dx/dt + v_ego − ω·y`. Neither relation establishes the
 radar's exact internal algorithm or its elevation handling.

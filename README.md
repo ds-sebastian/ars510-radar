@@ -96,9 +96,9 @@ and a CRC32. Each slot is one little-endian bit field:
 | lane weights (right / left / ego) | `148\|4`, `152\|4`, `156\|4` | 0-15, summing to 15 or 16 |
 | class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist/person associations; ○), 6 two-wheeler |
 
-These are nominal affine decodes, with calibration limits in [06](docs/06_accuracy.md#encoding-constants-and-motion-geometry).
-The velocity zero near 510–511 does not establish the factory rounding rule. The driving profiles apply an
-additional `.149 / .15` ground-speed alignment before subtracting Toyota 0xB4 ego speed.
+The scales and zero points are nominal; [06](docs/06_accuracy.md#encoding-constants-and-motion-geometry) describes
+their calibration limits. The driving profiles multiply ground speed by `.149 / .15` before subtracting Toyota
+0xB4 ego speed.
 
 The full field list is in [docs/03](docs/03_slot_fields.md).
 

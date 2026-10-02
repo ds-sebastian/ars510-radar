@@ -20,7 +20,7 @@ dongle IDs, dates or GPS.
 
 | file | rows | content |
 |---|---|---|
-| `slots.parquet` | 174k | every occupied 0x80 slot with age ≥ 1: decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, and every raw field (`DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, …, `UNK_<start>_<len>`) |
+| `slots.parquet` | 174k | every occupied 0x80 slot with age ≥ 1: decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, `init_template`, and every raw field (`DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, …, `UNK_<start>_<len>`) |
 | `camera_pairs.parquet` | 90k | radar tracks paired by bearing with narrow-camera YOLO boxes: box (`x1..y2`, `h`), box-growth closing speed over 2 / 4 / 6 s (`vcam2/4/6`), 1 s range derivative (`deriv1s`), 10 s range slope, ego speed from 0xB4 / carState / GPS, lead flag |
 | `ground_contact.parquet` | 50k | camera ground-contact distance (`cam_ground_x`, flat-road projection) against radar `x` |
 | `lateral_pairs.parquet` | 22k | camera lateral estimates against the raw lateral code |
@@ -32,6 +32,12 @@ dongle IDs, dates or GPS.
 `slots.parquet` is radar-only. The camera files are references with their own limits: tracker swaps at range, hood
 clipping below ~8 m, a flat-road assumption, and metric camera velocity that takes its scale from radar range.
 
+`init_template` marks **869 allocation placeholders** among the 173,691 rows: age 1 with zero length and width
+codes. Their `x = 0` is a placeholder, so exclude them from position, velocity and physical-object statistics.
+Keep them for raw allocation/lifecycle analysis. The decoder already withholds these rows from publication.
+`tools/mark_init_templates.py` adds or refreshes this column after a dataset rebuild; the dataset counts are in
+[`init_templates_dataset.json`](analysis/summaries/init_templates_dataset.json).
+
 ## `analysis/summaries/`: numbers behind the docs
 
 Aggregates from the research dataset, including the original 399-segment analysis across 24 route groups,
@@ -39,6 +45,7 @@ expanded 700-segment inventories, 20 held-out replay routes and closed-loop driv
 
 | doc | summaries |
 |---|---|
+| This dataset | `init_templates_dataset` (row counts and allocation-placeholder flags) |
 | [02 Object list](../docs/02_object_list.md) | `stationary_listing_rule`, `header_allocation_count`, `prefix_alignment` |
 | [03 Slot fields](../docs/03_slot_fields.md) | `midband_weight_triplet`, `weight_lateral_roles`, `weight_state128`, `attribute_recoding`, `full_movement_code`, `startup_low5_decay`, `initial_attribute_zeros` (joint age-1 attribute/position template and strict age-2 exits), `score16_countdown`, `score16_outcomes`, `velocity_heading`, `heading_component_bins` (declared bin limits and original-CAN-verified angle/component updates), `heading_default_state` (conditional angular-code states, exceptions and oncoming-like resets), `rotating_kinematics`, `template_field_tests`, `camera_semantic_correction` (size and class associations), `class5_video_review` (candidate cyclist/person associations from a 700-segment inventory), `decode_references` (camera-free physical references: heading, lateral velocity, class kinematics) |
 | [04 Metadata record](../docs/04_metadata_record_0x85.md) | `id85_lane_lateral_candidates`, `id85_parameter_presence`, `prefix_alignment`, `decode_references` (raw-word curvature association in bits 64-79), `id85_direction_code_structure` (high-bit transitions and original-record-checked relative-time example) |
