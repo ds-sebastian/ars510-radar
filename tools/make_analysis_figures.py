@@ -607,10 +607,10 @@ def track_lifecycle():
     axes[0].axvline(t[g.age >= 60].min(), color=INK2, ls=":", lw=1)
     axes[0].text(t[g.age >= 60].min() + 0.2, 100, "age 60: published\n(OPENPILOT_CONFIG)", fontsize=8, color=INK2)
     axes[0].legend(fontsize=8, loc="center right")
-    axes[1].plot(t, score, color=S3, label="score 16|8 (existence-like, %)")
+    axes[1].plot(t, score, color=S3, label="score 16|8 (existence-like raw code)")
     axes[1].set_ylim(0, 105)
     axes[1].legend(fontsize=8, loc="lower left")
-    axes[2].step(t, g.UNK_0_2, where="post", color=INK, label="state 0|2 (1 measured, 2 predicted)")
+    axes[2].step(t, g.UNK_0_2, where="post", color=INK, label="state 0|2 (1 active, 2 coasting-like)")
     axes[2].set_yticks([1, 2])
     axes[2].legend(fontsize=8, loc="upper left")
     axes[3].plot(t, g.x, color=S1, label="dRel (m)")
@@ -623,7 +623,7 @@ def track_lifecycle():
     axes[3].set_xlabel("time since the track was born (s)")
     axes[0].set_title(f"One object's life in the slot: birth, settling, coasting and deletion (drive {g.drive.iat[0]})")
     save(fig, "track_lifecycle", "Motion code 5 = initializing, 0 = moving forward, 1 = slow, 7 = stopped after moving. "
-                                 "While predicted (state 2) the score drops by 20 per cycle until the slot is freed.")
+                                 "In this example, state 2 accompanies score drops of 20 per cycle before retirement.")
 
 
 def heading_field():
