@@ -1,0 +1,32 @@
+{
+  "what": "Evidence scope of native motion-output, lifecycle and lead-switch interpretations",
+  "method": "Review of existing output lead/lag, state-transition, countdown, tracker-inversion and downstream matching-intervention studies; no new fit or replay",
+  "observed_outputs": {
+    "velocity": "64|10",
+    "acceleration_like": "84|10",
+    "state": "0|2",
+    "coupled_drift": true,
+    "continued_state1_during_drift": true
+  },
+  "state_interpretation": {
+    "state1": "update-like candidate",
+    "state2": "prediction-like/coasting candidate",
+    "state2_score_decrement_structure": "score16_countdown.json",
+    "state1_return_without_score_recovery": "score16_outcomes.json",
+    "measurement_absence_proved_in_state2": false,
+    "fresh_or_accurate_measurements_proved_in_state1": false
+  },
+  "causal_limits": {
+    "raw_measurement_input_identified": false,
+    "bias_localized_upstream_of_tracker": false,
+    "physical_target_or_scatterer_continuity_independently_established": false,
+    "candidate_causes": ["measurement bias", "target/scatterer association", "internal tracking", "frame interpretation"]
+  },
+  "downstream_switch_test": {
+    "summary": "jitter_source_and_interface_limit.json",
+    "intervention": "retain previous radar match within a wider vision-distance gate",
+    "scope": "reducing downstream radar/vision selection switches does not remove tested excess roughness",
+    "upstream_physical_association_excluded": false
+  },
+  "decoder_or_profile_changed": false
+}

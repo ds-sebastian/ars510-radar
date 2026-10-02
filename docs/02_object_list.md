@@ -89,12 +89,14 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 1. **Birth.** Age 1, motion code 5 (initializing), class 1 (not yet classified). The startup code `8|5` counts down
    30, 30, 30, 30, 20, 13, 9, 6, 4, 2, 1, 1, 0 while the motion code stays 5.
 2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `OPENPILOT_CONFIG` publishes from age 60.
-3. **Tracked.** Age saturates at 126. State `0|2` is 1 (measured). The score `16|8` sits at 100 and dips while
-   measurements are weak.
-4. **Coasting.** State 2 (predicted): the score drops by exactly 20 (occasionally 1) per cycle.
-5. **Deletion.** If measurements return, the object goes back to state 1 and the score recovers. Otherwise the slot
-   is freed when the score reaches about 20: age goes to 0 for one cycle with the previous geometry, then the slot
-   returns to the idle template.
+3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
+   100 but can decline. These fields do not certify measurement availability or accuracy.
+4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 (occasionally 1) per cycle.
+5. **Deletion.** The allocation can return to state 1, with or without score recovery, or be freed near score 20:
+   age goes to 0 for one cycle with the previous geometry, then the slot returns to the idle template.
+
+These are transmitted lifecycle relationships; they do not establish physical target continuity or which raw
+measurements reached the tracker ([`excursion_mechanism_scope.json`](../data/analysis/summaries/excursion_mechanism_scope.json)).
 
 ![lifetimes](img/analysis/track_lifetimes.png)
 

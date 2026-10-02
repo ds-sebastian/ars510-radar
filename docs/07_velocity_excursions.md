@@ -30,11 +30,17 @@ The shape, from labelled episodes where native vRel disagrees with both the OEM 
   Record-to-record steps stay small (1.7% exceed 2 m/s) and do not reverse (step autocorrelation −0.01).
 - **Strongly range-dependent:** about 0.1 per 1,000 records below 20 m, 4 at 20-40 m and 130 at 60-80 m; incidence
   reaches about 18% of track time at 100 m. Higher above 30 m/s ego speed.
-- **The whole motion state moves together:** the acceleration field `84|10` follows the drift, and the track stays in
-  the measured state (state 1). The bias enters with the measurements, upstream of the object tracker, consistent with
-  Doppler returns from a different scattering point or path on the target.
+- **The reported motion state moves together:** the acceleration-like field `84|10` follows the velocity drift while
+  state 1 persists. State 1 is update-like; it does not certify fresh or accurate measurements. These are object-list
+  outputs, so their coupling leaves the cause open: measurement bias, target/scatterer association, internal tracking
+  and frame interpretation are candidates (○).
 - **The radar's range does not follow**, but range walks by metres over the same seconds, so range alone confirms or
   refutes a drift only after 2-4 s at 60-100 m.
+
+Suppressing downstream radar/vision lead switches leaves excess roughness in the tested replays. Native slot/age
+continuity establishes a transmitted allocation, while physical target or scattering-point continuity requires
+independent correspondence. The observed outputs do not locate the bias upstream of the tracker
+([`excursion_mechanism_scope.json`](../data/analysis/summaries/excursion_mechanism_scope.json)).
 
 ### What the radar's waveform allows
 

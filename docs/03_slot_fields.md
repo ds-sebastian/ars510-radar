@@ -81,7 +81,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 1 measured this cycle, 2 predicted (coasting); 0 rare | ◐ |
+| `0\|2` | **state** | 1 update-like, 2 prediction-like (coasting candidate); 0 rare. Measurement availability and accuracy are unproved | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
@@ -91,10 +91,12 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `107\|1` | coast flag | rarely set in settled life, often set just before deletion | ○ |
 | `109\|3` | **motion code** | see table below | ◐ |
 
-**Score `16|8`.** Sits at 100 on a well-measured object and dips while measurements are weak. In state 2 it steps
+**Score `16|8`.** Commonly sits at 100 on settled tracks and can decline in either state. In state 2 it steps
 down by **exactly 20 or 1 per cycle** (every one of 18,804 mature state-2 updates), and the slot is freed near 20.
 When the score is at most 40, the step is 20 and `107|1` is clear, the allocation is removed on the next record 82-86%
 of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2 → 1 during that countdown.
+Returning to state 1 does not guarantee score restoration. Neither field certifies measurement presence, physical
+accuracy or existence probability ([`excursion_mechanism_scope.json`](../data/analysis/summaries/excursion_mechanism_scope.json)).
 
 **Startup code `8|5`** matches its formula on 134,217 / 134,217 birth samples across 24 drives: ages 1-4 read 30, then
 20, 13, 9, 6, 4, 2, 1, 1, 0. Once the motion code leaves 5 the field takes other, mature values.
