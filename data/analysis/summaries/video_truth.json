@@ -177,14 +177,53 @@
   }
  },
  "camera_assisted_veto_offline": {
-  "false_closing_reduction_pct": 31,
-  "mean_onset_lag_s": 0.0096,
-  "conservative_setting": {
-   "false_closing_reduction_pct": 14,
-   "mean_onset_lag_s": 0.0005,
-   "onsets_delayed_over_150ms": "0 of 356"
-  },
-  "weak_beyond_m": 80
+  "false_closing_reduction_pct_simulation": [
+   14,
+   31
+  ],
+  "note": "offline simulations of two designs; the decoder-level numbers below are the reference"
  },
- "verified": "headline numbers recomputed with independent code"
+ "verified": "headline numbers recomputed with independent code",
+ "camera_assisted_veto_decoder": {
+  "windows": 2606,
+  "segments": 67,
+  "real_onsets": 265,
+  "false_closing_pct": {
+   "base": 6.8,
+   "veto": 6.4,
+   "night_base": 8.6,
+   "night_veto": 8.3
+  },
+  "onsets_delayed_over_150ms": {
+   "clean": 1,
+   "drop30": 1,
+   "drop60": 0,
+   "delay_0.1_0.2_0.4": [
+    0,
+    0,
+    0
+   ],
+   "wrong_vehicle": 7
+  },
+  "replay_4_chains": {
+   "steady": {
+    "hard_ticks": 85,
+    "mean_response_s": -0.5733,
+    "anticipation": 0.446
+   },
+   "range_fusion_far_smoothing_veto": {
+    "hard_ticks": 113,
+    "mean_response_s": -0.583,
+    "anticipation": 0.446,
+    "reactions_violating": 0
+   },
+   "steady_plus_veto": {
+    "hard_ticks": 86,
+    "mean_response_s": -0.5743
+   },
+   "veto_only": {
+    "hard_ticks": 179
+   }
+  }
+ }
 }

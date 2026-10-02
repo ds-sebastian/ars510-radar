@@ -83,9 +83,12 @@ Against it, the object list's vRel on straight road (3,048 two-second windows) r
 10-30 / 30-50 / 50-70 / 70-90 / 90-130 m**, and more opening in under 2.2%: the excursions are one-sided, about ten to one. The median error is −0.1 / −0.2 / −0.5 / −1.0 / −1.1 m/s,
 excursion runs last 2-3 s with peaks near −3.5 m/s, and the pattern repeats on all four drives with enough windows (7-22% at 50-90 m) (◐)
 ([`video_truth.json`](../data/analysis/summaries/video_truth.json)). The error is intermittent, not a stable offset: subtracting the previous window's error does not help.
-At 40-130 m a camera-assisted veto (limit native closing to the video velocity of the same second plus a noise-scaled margin, no action while native is still falling) removes
-about a third of the false closings in offline replay, with a mean onset lag near 0.01 s and 98% of real onsets untouched; a more conservative setting removes 14% with no onset
-delayed more than 0.15 s. It needs a camera process feeding radard and is weak beyond 80 m.
+A camera-assisted veto (limit native closing to the video velocity of the same second plus a noise-scaled margin, only when the 0.5 s and 1 s video windows agree, native is not still
+falling and the video does not jump) was built as an optional decoder term and run on the labelled drives (not in the shipped profiles). Through the decoder it removes 6% of the false
+closings (6.8 → 6.4% of 40-130 m windows; 8.6 → 8.3% on night segments) with 1 of 265 real onsets delayed by more than 0.15 s; it degrades gracefully when 30-60% of the camera rows are missing or the
+video is 0.1-0.4 s late, and a feed from the wrong vehicle delays about 3% of real onsets. In unchanged-planner replay on four chains a profile of range fusion, far smoothing and the veto matches
+`steady`'s braking response and anticipation with no reaction later than 150 ms (113 against 85 hard ticks), and `steady` plus the veto is within one tick of `steady`. More aggressive margins
+removed up to a third of the false closings in offline simulation at about 10 ms mean onset lag. It needs a camera-side process, a detector or ROI refinement beyond 70 m, and an input path to the decoder.
 
 ## What openpilot does with it
 

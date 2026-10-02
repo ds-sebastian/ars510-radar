@@ -26,9 +26,10 @@ The most promising next steps, ordered by how directly they would improve the ra
    on the ACC target) on top of `steady`: the owner drives' hard radar-only requests go 16 → 0 and target episodes 6 → 1, but on 20 held-out chains hard ticks go 53 → 57 and mean
    braking response is 0.145 s later; the ACC target is a smoother, differently timed filter and its coverage is 57% of radar-lead time. Fresh drives decide whether it is worth an
    opt-in profile ([`video_truth.json`](../data/analysis/summaries/video_truth.json)).
-7. **Camera-assisted veto.** The one measured way to remove false closings without moving real onsets is to limit native closing to the camera's own velocity of the same second
-   ([07](07_velocity_excursions.md#measured-against-video-truth)): a third of false closings at about 10 ms mean onset lag in offline replay. It needs a camera-side lead-velocity
-   process and an input path into radard, and must be tested for lost tracks, wrong vehicles, night and rain.
+7. **Camera-assisted veto.** Limiting native closing to the camera's own velocity of the same second leaves real onsets in place
+   ([07](07_velocity_excursions.md#measured-against-video-truth)): 6% of false closings removed through the decoder (up to a third with aggressive margins in offline simulation),
+   `steady`-equivalent response with a smaller profile in replay, and graceful behaviour under dropped or late video. It needs a camera-side lead-velocity process (a detector or ROI
+   refinement beyond 70 m, an association guard against wrong vehicles) and an input path to the decoder; rain, glare and lens obstruction are untested.
 
 ## For the drift discriminator
 
