@@ -36,6 +36,19 @@ The shape, from labelled episodes where native vRel disagrees with both the rada
 - **The radar's range does not follow**, but range walks by metres over the same seconds, so range alone confirms or
   refutes a drift only after 2-4 s at 60-100 m.
 
+### What the radar's waveform allows
+
+The published ARS510 data sheet (Winner and Waldschmidt, *Automotive Radar*, 2026, Table 15.3) gives a chirp-sequence
+waveform of 256 ramps at 104 µs, a **19 m/s single-cycle unambiguous radial-velocity span** resolved over two cycles,
+0.074 m/s resolution and 0.15 m/s separability (the step of `64|10`), and three modulation bandwidths chosen by ego
+speed (range resolution 0.4 / 0.7 / 0.98 m). These are generic product values (○ for this firmware).
+
+Excursion offsets sit well inside that span: median −4.0 m/s against vision, growing with range from about −3.1 m/s
+below 40 m to −4.8 m/s at 80-100 m. Unwrapping the published velocity by ±19 m/s changes 57 of 900 labelled samples
+and leaves the rest unchanged, so an excursion is **not a full-span Doppler wrap of the published velocity** (◐). It
+builds up over 1-2 s rather than jumping, which fits low-SNR measurements at range; wrong-branch measurements that the
+tracker only partly absorbs remain possible ([`waveform_source.json`](../data/analysis/summaries/waveform_source.json)).
+
 ## How often, on real drives
 
 ![census](img/analysis/jitter_real_drive_census.png)
