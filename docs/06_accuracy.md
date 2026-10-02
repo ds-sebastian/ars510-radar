@@ -116,6 +116,8 @@ and the upstream estimate without changing the wire units. The supported lateral
 in an ideal planar frame with host forward speed, `vx = dx/dt + v_ego − ω·y`. Neither relation establishes the
 radar's exact internal algorithm or its elevation handling.
 
+Against the video-looming reference ([07](07_velocity_excursions.md#measured-against-video-truth)) the velocity scale and the 0xB4 ego subtraction hold to about 1% at ranges up to 40 m: the error does not depend on ego speed (slope +0.002, 90% interval −0.25% to +0.8%) and the relative-velocity scale is 1.003 (robust fit); the zero is about +0.16 m/s (one code) too closing (◐). No lateral-motion or ego-acceleration correction improves it (the bearing term is 0.03 m/s).
+
 Changing the nominal zero from 510.5 to 512 shifts every ground-speed result by −.225 m/s; changing .15 to .149
 changes a nominal 30 m/s result by −.2 m/s. These fixed changes alone cannot produce the observed multi-m/s
 excursions. As an illustration, pure horizontal projection of 30 m/s on a constant 3.4% slope differs by about

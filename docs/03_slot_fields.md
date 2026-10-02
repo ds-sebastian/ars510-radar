@@ -198,7 +198,7 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
 | `264\|8` | measurement state | settled values depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m): a near/far-scan mode | ○ |
 | `184\|8` | secondary score | 59-100 on allocated slots | ○ |
 
-`240|7` is exposed as `NativeObject.vel_unc_code`. A saturated velocity (`64|10` = 1023, about +77 m/s over ground)
+`240|7` is exposed as `NativeObject.vel_unc_code`. Against the video-looming reference ([07](07_velocity_excursions.md#measured-against-video-truth)) it is a **velocity-error scale: at 40-80 m the RMS error of the object-list velocity is about 0.049 m/s per count** (90% interval 0.046-0.053; fitted on two drives 0.046, refit on four others 0.054; decile fit R² 0.81, held-out 0.66) (◐). The relation is heavy-tailed above a code of about 40: at 60-80 m the share of windows reading more closing than truth by 2.5 m/s is 5-8% below code 37, 18% at 41 and 45% at 51. It carries information beyond range (false-closing AUC 0.64 for range alone, 0.74 with the code), and a model on range and `240|7` matches a 150-field model; beyond 80 m the relation is not monotone. A saturated velocity (`64|10` = 1023, about +77 m/s over ground)
 always comes with `240|7` = 127 and is an invalid reading: it appears in short runs on mature tracks at 34-97 m (about
 once per hour of driving) and often decays through 1022, 1014, 1006 … over the next records. Record-to-record jumps
 of more than 5 m/s on a mature track (≈ 83 m/s² in 60 ms) belong to the same family and are about 20 times more
@@ -209,6 +209,8 @@ common. Both profiles withhold the saturated reading; `STEADY_CONFIG` also withh
 
 *Night, drive B: track #2 (a car about 61 m ahead in the left lane) jumps to 72 m and +55 to +61 m/s relative
 (76 m/s over ground, code 1023) in its last second before the radar drops it.*
+
+`8|6` is a graded motion-confidence state: 62 for established moving objects, 32-58 (median 52) for stationary ones, with AUC 0.92 / 0.90 (discovery / confirmation) for stationary versus moving by range kinematics (◐). Its precision as a flag is only 4-6% (14-20% of moving samples also read below 60), so it does not identify stationary objects by itself. Stationary objects (true ground speed 0) read +0.4 to +2.5 m/s at 20-80 m, growing with range; no single decoded field explains this (○).
 
 ## Raw and constant bits
 
