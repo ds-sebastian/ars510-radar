@@ -4,11 +4,14 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **The steady profile on sunnypilot's planner and fresh drives.** The ramp limiter and far-track settling are
-   scored in open-loop replay through openpilot's planner. Replaying the owner's drives through sunnypilot's own
-   longitudinal planner, and closed-loop drives with the profile installed, measure the braking the driver feels.
-2. **Score and σ as per-point noise.** Use the existence score `16|8` and σ vx `240|7` to set each point's
-   measurement noise in a dt-aware track filter, instead of radard's fixed 20 Hz gains.
+1. **The steady profile on fresh drives and sunnypilot's planner.** The ramp limiter and far-track settling are
+   scored in open-loop replay through openpilot's planner. The owner's recorded drives also replay through
+   sunnypilot's own longitudinal planner, so candidates can be compared on the planner the car runs; closed-loop drives
+   with the profile installed measure the braking the driver feels.
+2. **A drift-mode velocity filter.** A per-track filter with a slow velocity-bias state that range observes
+   explains the excursions well. Run all the time, it removes most hard radar-only requests in replay but responds
+   later and changes which track radard matches to the vision lead. The promising form publishes the native velocity
+   normally and switches to the bias-corrected velocity only while the range evidence says a drift is under way.
 3. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
 4. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
@@ -22,10 +25,15 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 The goal: tell a velocity excursion from a real closing within about 1 s ([07](07_velocity_excursions.md)).
 
-1. **Road geometry at onset.** Owner drives show more far-lead disagreement on grades. Host pitch and its rate of
-   change (crests and sags, where the radar beam meets the road or passes over the target) are a testable onset
-   feature from logged pose.
-2. **Fresh drives with the ACC target as witness.** The 50 Hz ACC target (`0x235`) tracks the same lead with its own
+1. **A far-range truth drive.** Following a second car that logs GPS speed at 40-120 m gives true far vRel, which
+   camera and range cannot: vision fades beyond 60-80 m and range needs 3-4 s to resolve 2 m/s there. One hour settles
+   the excursion mechanism, calibrates σ vx `240|7` and gives the drift-mode filter a target.
+2. **The first second of an excursion.** Velocity steps of a consistent size and sign at onset would point to
+   wrong-branch Doppler measurements leaking into the tracker; ordinary-sized steps point to low-SNR tracking
+   ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)).
+3. **Ego-speed waveform modes.** The data sheet's three ego-speed bandwidths predict steps in the range noise floor
+   at fixed ego speeds. Finding them, and the excursion rate in each mode, ties drift risk to a radar setting.
+4. **Fresh drives with the ACC target as witness.** The 50 Hz ACC target (`0x235`) tracks the same lead with its own
    filter; its disagreement with the object list on new drives labels excursions without a camera.
 
 ## For the decode
