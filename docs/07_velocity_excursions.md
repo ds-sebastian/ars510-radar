@@ -69,23 +69,31 @@ Four closed-loop drives with the radar feeding openpilot's radard (1.05 h, 0.31 
 
 *Two false closings and two real closings the radar saw first. In the first second they look the same.*
 
-## Measured against video truth
+## Compared with an optical reference
 
-A per-second velocity reference that does not use the radar's Doppler comes from the road camera: the lead's rear is registered between frames 0.5-1 s apart with sub-pixel
-accuracy, and the relative velocity is −range × d ln(scale)/dt (the radar range only sets the scale, so a 3% range error is a 3% velocity-scale error). Its noise is
-0.13 / 0.22 / 0.46 / 0.88 / 1.0 m/s per second at 20 / 40 / 60 / 80 / 110 m, it is unbiased on parked vehicles (median +0.01 m/s, 51 windows within 50 m) and it agrees with 8-12 s
-range closure with median differences of 0.03-0.27 m/s to 80 m. Limits: daylight, in-lane leads and straight road, 83 one-minute segments (four drives dominate), few windows beyond 100 m; the vision
-model and the ACC target may share the camera, so their independence from it is partial.
+ECC affine registration measures the lead rear's image scale change over 0.5–1 s. The exploratory metric
+reference is `−(native range + 3.6 m) × d ln(scale)/dt`. It avoids native velocity but shares native range
+and target association. Image-fit repeatability and selected parked-target residuals do not establish
+physical accuracy: crop, body motion, correspondence, timing and shared camera errors remain relevant.
+The corpus covers 83 segments, dominated by four drives, with few far windows.
 
-![object-list velocity against video truth](img/analysis/video_truth_excursions.png)
+![object-list velocity disagreement with the optical reference](img/analysis/video_truth_excursions.png)
 
-Against it, the object list's vRel on straight road (3,048 two-second windows) reads **more closing than truth by more than 2.5 m/s in 0.2 / 2 / 11 / 15 / 21% of windows at
-10-30 / 30-50 / 50-70 / 70-90 / 90-130 m**, and more opening in under 2.2%: the excursions are one-sided, about ten to one. The median error is −0.1 / −0.2 / −0.5 / −1.0 / −1.1 m/s,
-excursion runs last 2-3 s with peaks near −3.5 m/s, and the pattern repeats on all four drives with enough windows (7-22% at 50-90 m) (◐)
-([`video_truth.json`](../data/analysis/summaries/video_truth.json)). The error is intermittent, not a stable offset: subtracting the previous window's error does not help.
-At 40-130 m a camera-assisted veto (limit native closing to the video velocity of the same second plus a noise-scaled margin, no action while native is still falling) removes
-about a third of the false closings in offline replay, with a mean onset lag near 0.01 s and 98% of real onsets untouched; a more conservative setting removes 14% with no onset
-delayed more than 0.15 s. It needs a camera process feeding radard and is weak beyond 80 m.
+In the five reported 10–130 m bins (**2,657 two-second windows**), native velocity is more closing than ECC
+by over 2.5 m/s in 0.2 / 2.2 / 10.6 / 15.0 / 20.9% of windows. The opposite disagreement occurs in
+0 / 0.2 / 0.6 / 2.2 / 1.4%. These are conditional disagreement labels, not independently verified false
+closings. The bin counts and residual medians are in
+[`video_truth.json`](../data/analysis/summaries/video_truth.json).
+
+A camera-veto prototype uses an offline precomputed optical feed. On 2,606 selected windows it reduces the
+closing-disagreement fraction from 6.8% to 6.4%; 1 of 265 labelled onsets exceeds the 150 ms timing-equivalent
+threshold. Those window metrics use velocity-change/deceleration equivalents, not physical onset timestamps.
+Settings were tuned and evaluated on prior-used drives, so these figures are exploratory. In a separate
+four-chain replay through the unchanged planner, range fusion + far smoothing + veto has mean response
+−0.5830 s versus STEADY's −0.5733 s, equal anticipation and no per-event violations, but hard command-disagreement
+ticks increase from 85 to 113. STEADY plus veto gives 86. These candidates do not satisfy all replay gates.
+The prototype is outside shipped profiles; independent physical labels and prospective validation remain
+necessary before interpreting its optical agreement as a driving improvement.
 
 ## What openpilot does with it
 
@@ -192,7 +200,7 @@ validation remain separate. Numbers: [`sunnypilot_profile_comparison.json`](../d
 
 | signal | behaviour during an excursion |
 |---|---|
-| `240\|7` σ vx | higher; a calibrated error scale (RMS error ≈ 0.05 m/s per count at 40-80 m, [03](03_slot_fields.md#kinematics)); AUC 0.65 / 0.85 on discovery / confirmation labels |
+| `240\|7` velocity-error-related candidate | higher; conditional native-minus-ECC RMS slope ≈ 0.05 m/s/count at 40–80 m, with physical sigma unresolved ([03](03_slot_fields.md#kinematics)); AUC 0.65 / 0.85 on discovery / confirmation labels |
 | `264` measurement state | more near-scan state 1 at ranges where far scan should also see the object; states 4-8 rise 3-6 s later |
 | 0x235 ACC target | disagrees with the object's vRel (when present) |
 | lane state `128\|3` | changes more often, also on real closings |

@@ -8,10 +8,9 @@ The most promising next steps, ordered by how directly they would improve the ra
    sunnypilot's original RadarD and planner under two fixed prospective schedules, with the clip passing the six
    owner subgates in both ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)). Closed-loop drives with
    the profile installed measure the braking the driver feels and test transfer beyond these prior-used drives.
-2. **A calibrated-variance velocity filter.** `240|7` is an error scale of about 0.05 m/s per count ([03](03_slot_fields.md#kinematics)), so a per-track filter with a slow
-   bias state can weight the velocity by its measured uncertainty. With range-rate as the second measurement it removes false closings (1.4 pp overall, 15 → 11% beyond 80 m
-   against the video reference) but moves about a third of real onsets by more than 0.15 s; acting only on a significant bias leaves onsets untouched and removes little.
-   Range fusion plus `240|7`-driven smoothing responds 62 ms earlier than `steady` in replay but leaves more hard radar-only ticks (153 against 85 on the development chains).
+2. **Establish uncertainty units before filter calibration.** `240|7` predicts native-minus-ECC disagreement
+   ([03](03_slot_fields.md#kinematics)); that combined residual includes reference error, covariance and bias.
+   Independent motion and within-target evidence are needed to identify radar measurement variance.
 3. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
 4. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
@@ -22,21 +21,23 @@ The most promising next steps, ordered by how directly they would improve the ra
    decide whether it joins `steady`. Through sunnypilot's original consumers, D1 episodes go 5 → 4 under both
    schedules, with D2 unchanged; this is a conditional owner comparison, separate from physical velocity and full
    real-closing acceptance ([summary](../data/analysis/summaries/sunnypilot_profile_comparison.json)).
-6. **ACC-velocity fusion (not in the shipped profiles).** Combining the matched ACC target's closing speed with the object-list velocity by measured inverse variance (weight 0.76-0.82
-   on the ACC target) on top of `steady`: the owner drives' hard radar-only requests go 16 → 0 and target episodes 6 → 1, but on 20 held-out chains hard ticks go 53 → 57 and mean
-   braking response is 0.145 s later; the ACC target is a smoother, differently timed filter and its coverage is 57% of radar-lead time. Fresh drives decide whether it is worth an
-   opt-in profile ([`video_truth.json`](../data/analysis/summaries/video_truth.json)).
-7. **Camera-assisted veto.** The one measured way to remove false closings without moving real onsets is to limit native closing to the camera's own velocity of the same second
-   ([07](07_velocity_excursions.md#measured-against-video-truth)): a third of false closings at about 10 ms mean onset lag in offline replay. It needs a camera-side lead-velocity
-   process and an input path into radard, and must be tested for lost tracks, wrong vehicles, night and rain.
+6. **ACC-velocity fusion (outside shipped profiles).** The selected optical comparison motivates a candidate,
+   but does not calibrate inverse-variance weights. On 20 prior-used held-out chains, STEADY plus fusion raises
+   hard command-disagreement ticks from 53 to 57 and delays mean response by 0.145 s. The owner-chain improvement
+   (16 to 0 hard ticks) does not meet the full acceptance gates
+   ([summary](../data/analysis/summaries/video_truth.json)).
+7. **Camera-assisted veto.** The prototype improves agreement with the optical labels on prior-used drives,
+   but the smaller range-fusion/smoothing/veto profile increases hard ticks from 85 to 113 despite comparable
+   response timing. Independent labels, association checks and prospective evaluation must establish whether
+   it improves driving ([07](07_velocity_excursions.md#compared-with-an-optical-reference)).
 
 ## For the drift discriminator
 
 The goal: tell a velocity excursion from a real closing within about 1 s ([07](07_velocity_excursions.md)).
 
 1. **A far-range truth drive.** Following a second car that logs its own speed (a second comma device, or a 5-10 Hz GNSS logger) at 40-120 m gives the lead's true velocity.
-   The video-looming reference covers 40-110 m but has few windows beyond 100 m and shares the camera with the vision model and possibly the ACC target; one hour of truth
-   checks it absolutely and replaces the camera as the label source.
+   The video-looming reference covers 40-110 m but has few windows beyond 100 m and shares the camera with the vision model and possibly the ACC target; a synchronized comparison with bounded reference accuracy, vehicle geometry and target identity
+   can test it independently.
 2. **The first second of an excursion.** Velocity steps of a consistent size and sign at onset would point to
    wrong-branch Doppler measurements leaking into the tracker; ordinary-sized steps point to low-SNR tracking
    ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)).

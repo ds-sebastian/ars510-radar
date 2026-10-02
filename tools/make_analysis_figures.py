@@ -765,11 +765,28 @@ def id85_direction_code_structure():
          "Lower bits are structural only; the ego path does not identify the selected boundary.")
 
 
+def video_truth_excursions():
+    rows = summary("video_truth")["object_list_vs_optical_2s_windows"]
+    x = np.arange(len(rows))
+    fig, ax = plt.subplots(figsize=(8.5, 4.0))
+    ax.bar(x - .18, [r["closing_disagreement_pct"] for r in rows], .36,
+           label="Native more closing than ECC by >2.5 m/s", color=S2)
+    ax.bar(x + .18, [r["opening_disagreement_pct"] for r in rows], .36,
+           label="Native more opening than ECC by >2.5 m/s", color=S1)
+    ax.set_xticks(x, [f"{r['range_m'][0]}–{r['range_m'][1]}" for r in rows])
+    ax.set_xlabel("Native range (m)")
+    ax.set_ylabel("Share of two-second windows (%)")
+    ax.set_title("Object-list velocity disagreement with the optical reference")
+    ax.legend(loc="upper left")
+    fig.tight_layout()
+    save(fig, "video_truth_excursions", "2,657 selected windows; ECC metric scale uses native range. Conditional disagreement, not physical error.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling, ramp_limiter,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, video_truth_excursions)}
 
 
 if __name__ == "__main__":
