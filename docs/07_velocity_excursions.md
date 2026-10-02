@@ -153,7 +153,9 @@ publication schedules: current model publication and the captured plan publicati
 These episode counts hold under both schedules. An episode means at least 0.3 s of requested acceleration
 ≤ −1 m/s² while the same-fork vision-only replay requests ≥ −0.3 m/s², with ego speed > 1 m/s. In D2's fixed window,
 STEADY and the clip request a minimum about −0.99 m/s², versus −2.07 with OPENPILOT. The clip passes all six
-owner subgates per schedule: pooled hard ticks, each drive's episode count and two fixed-window minima within 0.05 m/s² of STEADY. It leaves four D1 episodes and that drive's fixed-window minimum unchanged; it is off by default.
+owner subgates per schedule: pooled hard ticks, each drive's episode count and two fixed-window minima each
+at least the corresponding STEADY minimum minus 0.05 m/s². This is a one-sided lower bound. It leaves four D1
+episodes and that drive's fixed-window minimum unchanged; it is off by default.
 
 All startup rows, two missing plans and 145 captured map-active ticks remain in the comparison. D3's commands
 stay exactly vision-only. Independent checks cover all 677,272 planner ticks and 24 gate decisions. CAN-event
