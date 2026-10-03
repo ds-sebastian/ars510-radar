@@ -97,17 +97,17 @@ def crc8_0x1d_bits(bits) -> int:
 
 
 def crc_0x23b(value: int, counter_and_low: int) -> int:
-    """Check byte of 0x23B: CRC-8/0x1D over [counter 4 bits][0000][low nibble of byte 1][byte 0 8 bits], xor 0x59."""
+    """Check byte of 0x23B: CRC-8/0x1D over [counter 4 bits][0000][low nibble of byte 1][value byte 2 8 bits], xor 0x59."""
     bits = [(counter_and_low >> (7 - i)) & 1 for i in range(4)] + [0] * 4 + [(counter_and_low >> (3 - i)) & 1 for i in range(4)] \
         + [(value >> (7 - i)) & 1 for i in range(8)]
     return crc8_0x1d_bits(bits) ^ A23B_CRC_XOROUT
 
 
 def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
-    """0x23B (3 bytes, 50 Hz): (slow 8-bit value, rolling counter 0-15, check byte valid).
+    """0x23B (3 bytes, 50 Hz), in frame order as received: (slow 8-bit value, rolling counter 0-15, check byte valid).
 
-    Bytes: value, counter << 4 | low nibble (0 except 1 / 15 on 74 of 2 M frames), CRC-8. The value is about 171 +- 6 when nonzero and
-    unreferenced (docs/05). The startup frame ff 0f 00 fails the check; every other frame of 2.4 M passes."""
+    Byte 0 = CRC-8, byte 1 = counter << 4 | low nibble (0 except 1 / 15 on 74 of 2 M frames), byte 2 = slow value (about
+    171 +- 6 when nonzero, unreferenced; docs/05). The startup frame 00 0f ff fails the check; every other frame passes."""
     if len(data) != 3:
         return None
-    return data[0], data[1] >> 4, crc_0x23b(data[0], data[1]) == data[2]
+    return data[2], data[1] >> 4, crc_0x23b(data[2], data[1]) == data[0]
