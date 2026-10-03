@@ -209,7 +209,7 @@ remain provisional ([summary](../data/analysis/summaries/video_truth.json)).
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127 and is withheld
 by both profiles. It appears in short runs on mature tracks at 34–97 m and often decays through 1022, 1014,
 1006 over subsequent records. `STEADY_CONFIG` also withholds record-to-record jumps above 8 m/s
-([07](07_velocity_excursions.md#options)).
+([07](07_velocity_excursions.md#how-the-filtering-works-step-by-step)).
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 

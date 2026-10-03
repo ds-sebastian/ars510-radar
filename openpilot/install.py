@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
-    python openpilot/install.py /data/openpilot                  # install (steady profile), then reboot
-    python openpilot/install.py /data/openpilot --check          # report state, change nothing
-    python openpilot/install.py /data/openpilot --uninstall      # remove everything this installer added
-    python openpilot/install.py /data/openpilot --profile anchor    # steady + ACC-target velocity anchor
-    python openpilot/install.py /data/openpilot --profile default   # raw decode without smoothing (research only)
+    python openpilot/install.py /data/openpilot                     # install (anchor profile), then reboot
+    python openpilot/install.py /data/openpilot --profile steady    # choose another profile
+    python openpilot/install.py /data/openpilot --check             # report state, change nothing
+    python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
 
 The path may be the openpilot checkout or its opendbc_repo. The same install works on openpilot, sunnypilot,
 StarPilot and other forks: no fork file is patched in place. The installer
@@ -15,10 +14,12 @@ StarPilot and other forks: no fork file is patched in place. The installer
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
 An install made with an older, patch-based version of this installer is removed first.
 
-Profiles:
-  steady    STEADY_CONFIG (default, recommended): smoothing and guards against velocity excursions, docs/07
-  anchor    ANCHOR_CONFIG: steady + the radar's own ACC target as a velocity anchor (opt-in comfort profile), docs/07
-  default   OPENPILOT_CONFIG: the raw decode, for research
+Profiles (docs/08 has the details and replay numbers):
+  anchor    ANCHOR_CONFIG (default): steady + the radar's own ACC target (0x235) as a velocity anchor
+  steady    STEADY_CONFIG: stock + range fusion, far smoothing, jump/saturation guards, far settling, ramp limiter
+  stock     OPENPILOT_CONFIG: the plain decode with only what radard needs to run. Velocity excursions reach the
+            planner unfiltered (about twice the hard false braking of steady); for research and comparison only
+  default   older name for stock, kept so existing installs and instructions keep working
 """
 from __future__ import annotations
 
@@ -32,7 +33,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
-PROFILE_LINE = 'PROFILE = PROFILES["steady"]'
+PROFILE_LINE = 'PROFILE = PROFILES["anchor"]'
+PROFILE_NAMES = ("anchor", "steady", "stock", "default")
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
@@ -91,7 +93,7 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=("steady", "anchor", "default"), default="steady")
+  ap.add_argument("--profile", choices=PROFILE_NAMES, default="anchor")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -112,7 +114,7 @@ def main() -> int:
     print(f"older patch-based install: {legacy.name if legacy else 'none'}")
     if t["interface"].exists():
       txt = t["interface"].read_text()
-      prof = next((k for k in ("steady", "anchor", "default") if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
+      prof = next((k for k in PROFILE_NAMES if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
       print(f"profile: {prof}")
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'missing'} ({p})")
@@ -149,6 +151,10 @@ def main() -> int:
   interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
+  if args.profile in ("stock", "default"):
+    print("warning: the stock profile publishes the plain decode. Velocity excursions (false closings beyond 40 m)\n"
+          "reach the planner unfiltered and cause about twice the hard false braking of steady. Use it for research\n"
+          "and comparison only; install.py with no --profile installs the recommended anchor profile.")
   return 0
 
 

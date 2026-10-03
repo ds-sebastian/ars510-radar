@@ -1,12 +1,12 @@
 # 05. The radar's ACC target and support messages
 
-Besides the object list, the private radar–camera link carries an OEM ACC target witness, target summaries, timing and status.
+Besides the object list, the radar sends its own ACC target, target summaries, timing and status on the private radar–camera link.
 Bit numbers for the big-endian frames below treat the 8-byte frame as one big-endian integer (bit 0 = LSB of byte 7),
 matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.support`.
 
-## OEM ACC target witness (0x235 / 0x237)
+## The radar's ACC target (0x235 / 0x237)
 
-At **50 Hz**, three times the object-list rate, this stream reports a filtered OEM target:
+At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows:
 
 The raw field domains and closing/opening direction are retained (●). The conversions below are nominal
 reverse-engineered calibrations (◐), supported by conditional comparisons with native objects and vision and by
@@ -37,7 +37,7 @@ How these conventions compare:
 The acceleration comparison also differentiates velocity under the retained 0.1 conversion. It supports the
 relative normalization and filtered acceleration interpretation; it shares the velocity scale assumption.
 
-### A second witness for velocity
+### A second velocity estimate from the radar itself
 
 The ACC target is matched to an object by position. When the object list's vRel and the ACC target's closing speed
 differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
@@ -53,6 +53,10 @@ own 0x191, while camera messages drift about 15 ms per 30 min against it, and th
 frame (the 60 ms radar cycle) ([summary](../data/analysis/summaries/acc_sender_clock.json)). The camera feeds the radar
 lane-like data, so camera input to the radar's target choice is possible; treat the stream as the radar's own
 filtered ACC target with conditional association to an object-list track.
+
+![sender clock](img/analysis/acc_sender_clock.png)
+
+*Phase of each message against the radar's 0x190, per minute of one drive. Logger timestamps come in ~10 ms USB batches, so camera drift appears as 10 ms steps.*
 
 During disagreements this ACC velocity stays smooth and consistent with the track's range while the object-list
 velocity drifts (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s). A Kalman filter of
@@ -75,7 +79,7 @@ motion. [Availability evidence and definitions](../data/analysis/summaries/acc_t
 
 **Coverage** is the limit: the target is present on 57% of radar-lead moments, and on 5% beyond 80 m, where velocity
 excursions concentrate. The interface offers it as an option (`acc_target_clip_mps`, off by default); see
-[07](07_velocity_excursions.md#options) for its measured effect.
+[07](07_velocity_excursions.md#how-the-filtering-works-step-by-step) for its measured effect.
 
 ## 0x191-0x194: selected-target summaries
 

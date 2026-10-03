@@ -13,8 +13,8 @@ python /data/ars510-radar/openpilot/install.py /data/openpilot
 sudo reboot
 ```
 
-That's all: the fork is detected, the recommended `steady` profile is the default, and an install made with an
-older patch-based version of this installer is replaced automatically.
+That's all: the fork is detected, the `anchor` profile is installed, and an install made with an older patch-based
+version of this installer is replaced automatically. Pick another profile with `--profile steady` or `--profile stock`.
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
@@ -30,9 +30,9 @@ while testing).
 
 | profile | config |
 |---|---|
-| `steady` (default) | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, saturation and velocity-jump guards, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#options)). **Recommended**: without it, velocity excursions cause far more false braking. |
-| `anchor` | `ANCHOR_CONFIG`: steady + the radar's own ACC target as a velocity anchor; opt-in comfort profile (`--profile anchor`, [docs/07](../docs/07_velocity_excursions.md#options)) |
-| `default` | `OPENPILOT_CONFIG`: the raw decode with the saturation guard, for research (`--profile default`) |
+| `anchor` (default) | `ANCHOR_CONFIG`: `steady` + the radar's own ACC target (0x235) as a bound on the lead's speed. Fewest false brakes at the same response ([docs/08](../docs/08_openpilot_integration.md#profiles)) |
+| `steady` | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, saturation and velocity-jump guards, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
+| `stock` | `OPENPILOT_CONFIG`: the plain decode with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `default` is its older name |
 
 ## What gets installed
 
@@ -86,4 +86,4 @@ replay your own drives stock vs installed, see
 [`radard_vision_fusion.patch`](radard_vision_fusion.patch) is **not** applied by `install.py`. It rewrites radard's
 track filter in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed into the
 matched radar track. Apply it from an openpilot checkout with `git apply`. Effect and settings:
-[docs/07](../docs/07_velocity_excursions.md#options).
+[docs/07](../docs/07_velocity_excursions.md#other-approaches-tested).

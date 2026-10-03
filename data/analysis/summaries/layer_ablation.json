@@ -1,0 +1,165 @@
+{
+  "provenance": "open-loop openpilot card->radard->planner replays of the public decoder, 20 held-out routes (4.56 h driver context), 4 further drives, 3 owner sunnypilot drives, 6 fresh owner drives; prior-used except the fresh drives",
+  "hard_tick_definition": "planner requests <= -2 m/s2 while the same drive replayed vision-only requests >= -0.5 m/s2",
+  "cumulative_heldout": [
+    {
+      "step": "plain decode (age 60, ego subtraction)",
+      "hard_ticks": 117,
+      "source": "velocity_guards.json heldout.default"
+    },
+    {
+      "step": "+ saturation guard (= stock)",
+      "hard_ticks": 93,
+      "source": "velocity_guards.json heldout.default_plus_saturation_guard; F2 stock run 93"
+    },
+    {
+      "step": "plain + range fusion + far smoothing (K4)",
+      "hard_ticks": 85,
+      "source": "velocity_guards.json heldout.K4",
+      "note": "measured without the saturation guard"
+    },
+    {
+      "step": "K4 + saturation and jump guards",
+      "hard_ticks": 69,
+      "source": "velocity_guards.json heldout.K4_plus_saturation_and_jump_guard_8"
+    },
+    {
+      "step": "+ far-track settling",
+      "hard_ticks": 69,
+      "note": "held-out unchanged; further drives 10 -> 3, owner far pickups 2 -> 1",
+      "source": "far_settling.json"
+    },
+    {
+      "step": "+ ramp limiter (= steady)",
+      "hard_ticks": 53,
+      "source": "ramp_limiter.json; F2 steady run 53"
+    },
+    {
+      "step": "+ ACC anchor (= anchor)",
+      "hard_ticks": 48,
+      "source": "acc_anchor.json"
+    }
+  ],
+  "gas_overridden_radar_only_brakes_per_h": {
+    "plain": 0.88,
+    "stock": 0.66,
+    "K4": 0.44,
+    "steady_layers": 0.22
+  },
+  "removal_from_full_profile_34_drives": {
+    "jump_guard": {
+      "heldout_hard": [
+        53,
+        53
+      ],
+      "further_hard": [
+        1,
+        1
+      ],
+      "owner_hard": [
+        16,
+        16
+      ],
+      "fresh_hard": [
+        7,
+        7
+      ],
+      "note": "no scored change once the ramp limiter and age gate are present; kept for one-record glitches the ramp limiter cannot see (census: 196 jumps > 5 m/s, 9 saturated-code events)"
+    },
+    "jump_guard_and_far_settling": {
+      "heldout_hard": [
+        53,
+        53
+      ],
+      "further_hard": [
+        1,
+        9
+      ],
+      "owner_target_episodes": [
+        6,
+        7
+      ]
+    },
+    "ramp_limiter": {
+      "heldout_hard": [
+        53,
+        69
+      ],
+      "further_hard": [
+        1,
+        3
+      ]
+    },
+    "range_fusion_and_far_smoothing": {
+      "note": "K4 halves extra roughness (-0.0053 m/s2 [-0.0099,-0.0022]; fresh -0.0081) for ~0.07 s head start; gas-overridden brakes 0.66 -> 0.44 /h"
+    }
+  },
+  "stock_vs_steady_heldout": {
+    "hard_ticks": [
+      93,
+      53
+    ],
+    "hard_episodes": [
+      15,
+      12
+    ],
+    "target_episodes": [
+      19,
+      11
+    ],
+    "lead_switches": [
+      2468,
+      1781
+    ],
+    "mean_onset_s": [
+      -1.17,
+      -1.128
+    ],
+    "anticipation": [
+      0.443,
+      0.443
+    ],
+    "further_hard": [
+      7,
+      1
+    ],
+    "owner_hard": [
+      17,
+      16
+    ]
+  },
+  "why_range_dependent_smoothing": {
+    "excursion_incidence_per_1000_records": {
+      "<20 m": 0.1,
+      "20-40 m": 4,
+      "60-80 m": 130
+    },
+    "share_of_track_time_at_100m": 0.18
+  },
+  "why_far_settling": {
+    "young_far_tracks_disagreement_spread_vs_mature": 1.5
+  },
+  "cumulative_note": "steps 2-3 come from one run family where K4 (85) excluded the saturation guard; the two guards together take K4 to 69",
+  "ramp_limit_basis": {
+    "optical_one_second_steps": 3352,
+    "share_above_plus4": 0.0009,
+    "share_below_minus6": 0.0003,
+    "note": "reported optical-reference relative-velocity steps; proxy, not an independent physical bound"
+  },
+  "other_approaches": {
+    "acc_velocity_replacement": {
+      "heldout_hard": [
+        53,
+        57
+      ],
+      "mean_response_s": 0.145
+    },
+    "uncertainty_weighted_smoothing_240": {
+      "dev_hard": [
+        85,
+        153
+      ],
+      "response_ms_earlier": 62
+    }
+  }
+}

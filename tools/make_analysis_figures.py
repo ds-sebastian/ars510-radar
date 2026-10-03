@@ -224,7 +224,7 @@ def lifetimes():
     a1.set_xscale("log")
     a1.set_yscale("log")
     a1.axvline(3.6, color=INK2, lw=0.8, ls=":")
-    a1.text(3.8, 0.5, "age 60 = publish\n(OPENPILOT_CONFIG)", fontsize=8, color=INK2)
+    a1.text(3.8, 0.5, "age 60 = publish\n(all profiles)", fontsize=8, color=INK2)
     a1.set_xlabel("track lifetime (s), capped by 60 s segment files")
     a1.set_ylabel("share of tracks living at least this long")
     a1.set_title("Most tracks are short; a few live the whole minute")
@@ -305,7 +305,7 @@ def brake_events():
         if "v_cam" in Cm and Cm.v_cam.notna().any():
             b.plot(Cm.dt, Cm.v_cam, color=S3, lw=1.4, label="camera box growth")
         c.plot(W.dt, W.vision_aTarget, color=S2, lw=1.4, label="vision-only plan")
-        c.plot(W.dt, W.openpilot_aTarget, color=S1, lw=1.4, label="plan with radar (OPENPILOT_CONFIG)")
+        c.plot(W.dt, W.openpilot_aTarget, color=S1, lw=1.4, label="plan with radar (stock profile)")
         c.plot(W.dt, W.a_ego, color=INK2, lw=0.9, ls=":", label="recorded a_ego")
         c.set_xlabel("s relative to driver brake onset")
         for ax in (a, b, c):
@@ -605,7 +605,7 @@ def track_lifecycle():
     axes[0].plot(t, g.age, color=S1, label="age 24|7 (saturates at 126)")
     axes[0].plot(t, g.UNK_8_6.to_numpy().astype(int) & 31, color=S2, label="startup code 8|5 (decays 30, 20, 13 ... while initializing)")
     axes[0].axvline(t[g.age >= 60].min(), color=INK2, ls=":", lw=1)
-    axes[0].text(t[g.age >= 60].min() + 0.2, 100, "age 60: published\n(OPENPILOT_CONFIG)", fontsize=8, color=INK2)
+    axes[0].text(t[g.age >= 60].min() + 0.2, 100, "age 60: published\n(all profiles)", fontsize=8, color=INK2)
     axes[0].legend(fontsize=8, loc="center right")
     axes[1].plot(t, score, color=S3, label="score 16|8 (existence-like raw code)")
     axes[1].set_ylim(0, 105)

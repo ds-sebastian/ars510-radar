@@ -327,4 +327,4 @@ def test_categorical_recoding_on_bundled_real_slots():
                 raw = record.payload[17 + 36 * slot:53 + 36 * slot]
                 assert mapping[(raw[20] >> 3) & 7] == (raw[17] >> 4) & 7
                 checked += 1
-    assert checked == 18220
+    assert checked == 26180  # three bundled samples (drives A and E)
