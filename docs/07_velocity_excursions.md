@@ -194,8 +194,29 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   drives its effect was small (−0.0005 [−0.0009, +0.0004]). The camera's lead speed is noisier than this radar's
   (median error 1.1-2.0 m/s vs 0.6-1.2 m/s at 20-120 m, judged by 4 s range slopes), so `VISION_V_STD_SCALE` of 3-4
   is the natural next setting.
-- **The ACC target** (0x235) is the strongest velocity witness when present, but it covers 57% of radar-lead moments
-  and 5% beyond 80 m.
+- **ACC anchor (`ANCHOR_CONFIG`, opt-in: `install.py --profile anchor`).** The radar sends its own ACC target
+  (0x235 / 0x237, [05](05_acc_target_and_support.md)); during excursions that target stays smooth and consistent with
+  range while the object list drifts. The anchor matches the target to an object-list track once by position
+  (lateral within 0.5 m weighs most; the target's coarse distance is only good to about ±10 m, so range tolerance is
+  12 m; tracks from age 20), keeps that association while the track and a continuous target persist, and clips the
+  track's vRel to the target's closing speed ± 3 m/s before range fusion. When the radar switches its target (a
+  cut-in), the association re-matches within one cycle if the new car has a track; on the fresh drives the
+  association covers 50% of the time the target is active. The anchor never chooses or removes a lead: every
+  object-list track is still published, and an unmatched target leaves the `steady` behaviour unchanged. Keeping the association matters: excursions often drag the native range
+  along (one fresh-drive lead slid from 46 to 33 m and from −0.6 to −5.8 m/s while the ACC target stayed at 46 m and
+  −0.7 m/s), and a per-cycle position match drops the clip exactly then. Versus `steady`, unchanged openpilot replay:
+
+  | scope | hard radar-only ticks | radar-only episodes | driver-brake responses |
+  |---|---|---|---|
+  | 20 held-out routes (4.6 h) | 53 → 48 | 12 → 11 hard, 11 → 9 target | mean lag +0.6 ms over 167 events; one mild event (driver −0.84 m/s²) now peaks at −0.84 instead of −1.21 m/s² |
+  | owner sunnypilot drives | 16 → 0 | 2 → 0 | — |
+  | fresh owner drives (1.9 h, sunnypilot planner, both schedules) | 7 → 0 | 6 → 4-5 | all 19 events unchanged |
+  | four further drives | 1 → 1 | 5 → 5 | — |
+
+  It strictly reduces nuisance braking without measurable lag. The cost is that one mild driver-brake event drops
+  below the −1 m/s² anticipation threshold. The target covers about 57% of radar-lead time and 5% beyond 80 m, so far
+  excursions without it still rely on the `steady` layers, and the native range can still slide (only vRel is
+  anchored). Numbers: [`acc_anchor.json`](../data/analysis/summaries/acc_anchor.json).
 
 ## Fresh jump-guard simplification comparison
 

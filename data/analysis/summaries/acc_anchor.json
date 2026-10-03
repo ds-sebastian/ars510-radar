@@ -1,0 +1,115 @@
+{
+  "profile": "ANCHOR_CONFIG = STEADY_CONFIG + acc_target_clip_mps=3.0 + acc_target_sticky=True + acc_match_range_m=12 + acc_match_min_age=20",
+  "baseline": "STEADY_CONFIG",
+  "replay": "unchanged openpilot card/radard/planner; fresh drives with unchanged sunnypilot planner (model and captured-plan schedules)",
+  "heldout_20_routes": {
+    "driver_hours": 4.56,
+    "hard_ticks": [
+      53,
+      48
+    ],
+    "hard_episodes": [
+      12,
+      11
+    ],
+    "target_episodes": [
+      11,
+      9
+    ],
+    "switches": [
+      1781,
+      1779
+    ],
+    "driver_brake_events": 167,
+    "mean_lag_s": [
+      -1.1283,
+      -1.1277
+    ],
+    "anticipation_share": [
+      0.443,
+      0.437
+    ],
+    "events_later_than_50ms": 1,
+    "max_later_s": 0.098,
+    "per_event_violation": {
+      "driver_min_accel": -0.843,
+      "steady_min_cmd": -1.205,
+      "anchor_min_cmd": -0.837,
+      "type": "mild event below -1 m/s2 anticipation threshold"
+    }
+  },
+  "owner_sunnypilot_drives": {
+    "hard_ticks": [
+      16,
+      0
+    ],
+    "hard_episodes": [
+      2,
+      0
+    ],
+    "target_episodes": [
+      6,
+      5
+    ]
+  },
+  "further_drives": {
+    "hard_ticks": [
+      1,
+      1
+    ],
+    "target_episodes": [
+      5,
+      5
+    ]
+  },
+  "fresh_owner_drives": {
+    "hours": 1.9,
+    "hard_ticks": [
+      7,
+      0
+    ],
+    "target_episodes": {
+      "model": [
+        6,
+        5
+      ],
+      "plan": [
+        6,
+        4
+      ]
+    },
+    "driver_events": 19,
+    "response_changes": 0,
+    "per_cycle_clip_without_sticky": {
+      "hard_ticks": [
+        7,
+        7
+      ],
+      "target_episodes": [
+        6,
+        5
+      ]
+    }
+  },
+  "frozen_gates_passed": "18 of 19 (per-event fails on the mild event above); strict nuisance improvement passes",
+  "limits": "prior-used routes for the 34-drive scope; ACC target present ~57% of radar-lead time, ~5% beyond 80 m; native range is not anchored",
+  "matcher": {
+    "associated_share_of_acc_active_time": [
+      0.363,
+      0.504
+    ],
+    "rematch_after_acc_switch_median_s": [
+      2.08,
+      0.03
+    ],
+    "lateral_gap_p95_m": [
+      0.42,
+      0.38
+    ],
+    "vrel_gap_p95_mps": [
+      1.54,
+      1.56
+    ],
+    "note": "before/after: range tolerance 6->12 m, min age 60->20; replay results identical on the 34-drive scope, fresh hard ticks 7->0 for both"
+  }
+}
