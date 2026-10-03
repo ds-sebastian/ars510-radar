@@ -4,6 +4,7 @@
     python openpilot/install.py /data/openpilot                  # install (steady profile), then reboot
     python openpilot/install.py /data/openpilot --check          # report state, change nothing
     python openpilot/install.py /data/openpilot --uninstall      # remove everything this installer added
+    python openpilot/install.py /data/openpilot --profile anchor    # steady + ACC-target velocity anchor
     python openpilot/install.py /data/openpilot --profile default   # raw decode without smoothing (research only)
 
 The path may be the openpilot checkout or its opendbc_repo. The same install works on openpilot, sunnypilot,
@@ -16,6 +17,7 @@ An install made with an older, patch-based version of this installer is removed 
 
 Profiles:
   steady    STEADY_CONFIG (default, recommended): smoothing and guards against velocity excursions, docs/07
+  anchor    ANCHOR_CONFIG: steady + the radar's own ACC target as a velocity anchor (opt-in comfort profile), docs/07
   default   OPENPILOT_CONFIG: the raw decode, for research
 """
 from __future__ import annotations
@@ -89,7 +91,7 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=("steady", "default"), default="steady")
+  ap.add_argument("--profile", choices=("steady", "anchor", "default"), default="steady")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -110,7 +112,7 @@ def main() -> int:
     print(f"older patch-based install: {legacy.name if legacy else 'none'}")
     if t["interface"].exists():
       txt = t["interface"].read_text()
-      prof = next((k for k in ("steady", "default") if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
+      prof = next((k for k in ("steady", "anchor", "default") if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
       print(f"profile: {prof}")
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'missing'} ({p})")

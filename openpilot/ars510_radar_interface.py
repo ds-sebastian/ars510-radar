@@ -33,13 +33,14 @@ from dataclasses import replace
 from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
-from opendbc.car.toyota.ars510 import OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
+from opendbc.car.toyota.ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
 from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
-# Decoder profile: "steady" (STEADY_CONFIG, recommended: smoothing and guards against velocity excursions, docs/07) or
+# Decoder profile: "steady" (STEADY_CONFIG, recommended: smoothing and guards against velocity excursions, docs/07),
+# "anchor" (ANCHOR_CONFIG: steady + the radar's own ACC target as a velocity anchor, opt-in, docs/07) or
 # "default" (OPENPILOT_CONFIG, the raw decode). `install.py --profile` rewrites this one line in the installed copy.
-PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}
+PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG, "anchor": ANCHOR_CONFIG}
 PROFILE = PROFILES["steady"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
