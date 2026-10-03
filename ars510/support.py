@@ -82,3 +82,32 @@ def parse_acc_target_range_code(data: bytes) -> int | None:
     if len(data) < 8:
         return None
     return _be_field(data, 39, 13)
+
+
+# ---------------------------------------------------------------- 0x23B: slow value, counter, CRC-8
+A23B_CRC_XOROUT = 0x59
+
+
+def crc8_0x1d_bits(bits) -> int:
+    """CRC-8, polynomial 0x1D (x^8+x^4+x^3+x^2+1), MSB first, init 0, no reflection, over an iterable of bits."""
+    crc = 0
+    for bit in bits:
+        crc = ((crc << 1) & 0xFF) ^ ((((crc >> 7) & 1) ^ bit) * 0x1D)
+    return crc
+
+
+def crc_0x23b(value: int, counter_and_low: int) -> int:
+    """Check byte of 0x23B: CRC-8/0x1D over [counter 4 bits][0000][low nibble of byte 1][byte 0 8 bits], xor 0x59."""
+    bits = [(counter_and_low >> (7 - i)) & 1 for i in range(4)] + [0] * 4 + [(counter_and_low >> (3 - i)) & 1 for i in range(4)] \
+        + [(value >> (7 - i)) & 1 for i in range(8)]
+    return crc8_0x1d_bits(bits) ^ A23B_CRC_XOROUT
+
+
+def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
+    """0x23B (3 bytes, 50 Hz): (slow 8-bit value, rolling counter 0-15, check byte valid).
+
+    Bytes: value, counter << 4 | low nibble (0 except 1 / 15 on 74 of 2 M frames), CRC-8. The value is about 171 +- 6 when nonzero and
+    unreferenced (docs/05). The startup frame ff 0f 00 fails the check; every other frame of 2.4 M passes."""
+    if len(data) != 3:
+        return None
+    return data[0], data[1] >> 4, crc_0x23b(data[0], data[1]) == data[2]

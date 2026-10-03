@@ -38,7 +38,7 @@ target-summary codes requiring independent target association and calibration.
 | 0x202 | 5 | 16.7 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
 | **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar): closing speed, relative acceleration, distance, lateral | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
-| 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | companions of the 0x235 family (0x23D all zero) | |
+| 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | companions of the 0x235 family (0x23D all zero); 0x23B = slow 8-bit value + counter + CRC-8 | [05](05_acc_target_and_support.md#other-frames) |
 | 0x240-0x245, 0x248 | 8 | 16.7 Hz | context frames with a rolling phase 1-7; 0x240/0x244 carry changing payloads on some drives | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
 | 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
