@@ -133,7 +133,9 @@ The full field list is in [docs/03](docs/03_slot_fields.md).
 One owner's 2022 RAV4, logged with openpilot: three reference drives (A development, B city, C highway; 88 minutes)
 with camera and odometry references, 399 one-minute segments from 24 drives for field statistics, 20 held-out routes
 (4.6 h) for replay against the driver, and closed-loop drives on FrogPilot and StarPilot. Route IDs, dongle IDs, GPS
-and full video are not included.
+and full video are not included. A preregistered jump-guard simplification comparison on eight fresh routes
+meets a command/driver non-increase overlay under two unchanged sunnypilot replay schedules; STEADY remains the
+recommended profile ([07](docs/07_velocity_excursions.md#fresh-jump-guard-simplification-comparison)).
 
 ## License
 
