@@ -472,3 +472,16 @@ def test_yvrel_is_nan_without_yaw_rate() -> None:
     rec = record({2: slot_bytes(r_code=160 + 16 * 40, lat_code=2048, vel_code=644, age=70, vy_code=531, ax_code=536)})
     pt = iface.update_many(frames(rec, 0.001))[-1]["radarData"]["points"][0]
     assert math.isnan(pt["yvRel"]) and math.isnan(pt["aRel"])
+
+
+def test_measured_follows_the_predicted_flag_and_existence_is_exposed() -> None:
+    from ars510.objects import encode_slot
+    iface = Ars510NativeRadarInterface(NativeInterfaceConfig())
+    measured = encode_slot(long_dist=160 + 30 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 10.0 / 0.15),
+                           age_cycles=80, existence_pct=100)
+    predicted = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 230, long_vel_over_ground=round(510.5 + 10.0 / 0.15),
+                            age_cycles=80, existence_pct=60, predicted=1)
+    out = iface.update_many([speed_frame(0.0, 10.0)] + frames_(record({0: measured, 1: predicted}), 0.01))
+    pts = {round(p["dRel"]): p for p in out[0]["radarData"]["points"]}
+    assert pts[30]["measured"] is True and pts[30]["existence_pct"] == 100
+    assert pts[40]["measured"] is False and pts[40]["existence_pct"] == 60
