@@ -76,3 +76,75 @@ def test_installer_uses_opendbc_repo_behind_the_openpilot_symlink(tmp_path):
   assert "older patch-based install: none" in r.stdout
   assert _install(tmp_path).returncode == 0
   assert (toyota / "interface.py").read_text().count("hook_car_interface(CarInterface)") == 1
+
+
+def _legacy_patch_preimages(patch):
+  """Rebuild the old hunk lines from the checked-in patch, with filler between hunks."""
+  originals = {}
+  path = None
+  for line in patch.read_text().splitlines(keepends=True):
+    if line.startswith("--- a/"):
+      path = Path(line.removeprefix("--- a/").strip())
+      originals[path] = []
+    elif line.startswith("@@ "):
+      match = re.match(r"@@ -(\d+)(?:,\d+)? ", line)
+      assert match is not None
+      lines = originals[path]
+      while len(lines) < int(match[1]) - 1:
+        lines.append("# Unchanged fixture line between patch hunks.\n")
+    elif path is not None and line.startswith((" ", "-")):
+      originals[path].append(line[1:])
+  # The installer needs the class declaration, which is outside the patch's
+  # actual context lines. These files are patch fixtures, never imported.
+  interface = Path("opendbc/car/toyota/interface.py")
+  originals[interface].append("\nclass CarInterface:\n  pass\n")
+  return {path: "".join(lines) for path, lines in originals.items()}
+
+
+def test_legacy_upgrade_inside_parent_git_worktree_restores_originals(tmp_path):
+  toyota, _ = _fake_opendbc(tmp_path)
+  root = tmp_path / "opendbc_repo"
+  (tmp_path / "opendbc").symlink_to("opendbc_repo/opendbc")
+  patch = REPO / "openpilot" / "legacy" / "opendbc_toyota_ars510_openpilot.patch"
+  originals = _legacy_patch_preimages(patch)
+  assert set(originals) == {Path("opendbc/car/toyota") / name
+                            for name in ("interface.py", "radar_interface.py", "values.py")}
+  for path, text in originals.items():
+    (root / path).write_text(text)
+
+  # opendbc_repo is vendored inside a Git worktree, with no Git root of its own.
+  subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
+  subprocess.run(["git", "add", *[str(Path("opendbc_repo") / path) for path in originals]],
+                 cwd=tmp_path, check=True, capture_output=True)
+  assert not (root / ".git").exists()
+  clean = _install(tmp_path, "--check")
+  assert clean.returncode == 0, clean.stderr
+  assert "older patch-based install: none" in clean.stdout
+
+  # Apply the real legacy fixture from the parent tree with an explicit prefix;
+  # a bare git apply from inside opendbc_repo can silently skip these paths.
+  subprocess.run(["git", "apply", "--directory=opendbc_repo", str(patch)],
+                 cwd=tmp_path, check=True, capture_output=True)
+  assert all((root / path).read_text() != text for path, text in originals.items())
+  legacy = _install(tmp_path, "--check")
+  assert legacy.returncode == 0, legacy.stderr
+  assert f"older patch-based install: {patch.name}" in legacy.stdout
+
+  installed = _install(tmp_path)
+  assert installed.returncode == 0, installed.stderr
+  assert f"replaced the older {patch.name}" in installed.stdout
+  text = (toyota / "interface.py").read_text()
+  assert text.startswith(originals[Path("opendbc/car/toyota/interface.py")])
+  assert text.count("hook_car_interface(CarInterface)") == 1
+  for path, original in originals.items():
+    if path.name != "interface.py":
+      assert (root / path).read_text() == original
+  upgraded = _install(tmp_path, "--check")
+  assert upgraded.returncode == 0, upgraded.stderr
+  assert "older patch-based install: none" in upgraded.stdout
+
+  removed = _install(tmp_path, "--uninstall")
+  assert removed.returncode == 0, removed.stderr
+  assert all((root / path).read_text() == text for path, text in originals.items())
+  assert not (toyota / "ars510").exists()
+  assert not (toyota / "ars510_radar_interface.py").exists()
