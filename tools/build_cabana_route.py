@@ -271,9 +271,17 @@ def dbc_text() -> str:
             out.append(_sig(f"RAW_BYTE_{b:02d}", b * 8, 8, 1, 0, 0, 255, "raw"))
         out.append(_sig("PARAMETERS_PRESENT", 30, 1, 1, 0, 0, 1, ""))
         comments.append(f'CM_ SG_ {m} PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";')
+        out.append(_sig("CURVE_OFFSET_M", 32, 12, 0.01, -20, -20, 20.95, "m"))
+        comments.append(f'CM_ SG_ {m} CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";')
+        out.append(_sig("CURVE_HEADING_RAD", 48, 16, -1.8e-5, 0.5616, -0.62, 0.57, "rad"))
+        comments.append(f'CM_ SG_ {m} CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";')
+        out.append(_sig("CURVE_CURVATURE_PER_M", 64, 15, 2.5e-6, -0.04005, -0.0401, 0.0418, "1/m"))
+        comments.append(f'CM_ SG_ {m} CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";')
+        out.append(_sig("CURVE_FLAG", 79, 1, 1, 0, 0, 1, "raw"))
+        comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
-        comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";')
+        comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";')
     out += [f"BO_ {SHELL_CRC} ARS510_SHELL85_CRC: 8 RADAR",
             _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, "raw"),
             _sig("TRAILER_BYTES", 32, 16, 1, 0, 0, 65535, "raw"), ""]

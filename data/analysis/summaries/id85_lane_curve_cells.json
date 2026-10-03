@@ -1,0 +1,445 @@
+{
+ "description": "0x85 cells as lane / road-curve polynomials: heading 48|16 and curvature 64|15 (+ flag 79|1) against camera lane lines, ego-motion offset rate and the radar's own ego-lane objects; prefix bytes 17-19 as cell-flag copies.",
+ "confidence": {
+  "heading_48_16": "likely (sign, zero, order of magnitude; unit bounded)",
+  "curvature_64_15": "likely (sign, zero; unit bounded)",
+  "flag_79": "candidate (separate bit, meaning unresolved)",
+  "prefix_flag_copies": "confirmed within sampled scope"
+ },
+ "source_scope": {
+  "development_and_held_out_segments": 700,
+  "camera_matched_rows": 48169,
+  "cells_scored": [
+   2,
+   3,
+   8,
+   9
+  ],
+  "fresh_segments": 114,
+  "fresh_original_log_segments_independent_check": 14,
+  "fresh_original_records": 13934
+ },
+ "field_map_cell_bits_le": {
+  "30|1": "parameters present",
+  "32|12": "c0 offset, (code-2000)*0.01 m",
+  "48|16": "c1 heading",
+  "64|15": "c2 curvature",
+  "79|1": "flag",
+  "defaults_when_unpopulated": {
+   "48|16": 900,
+   "64|16": 500
+  }
+ },
+ "nominal_conversion": {
+  "heading_rad_per_code": -1.8e-05,
+  "heading_zero_code": 31200,
+  "curvature_per_m_per_code": 2.5e-06,
+  "curvature_zero_code": 16020,
+  "heading_unit_bounds_rad": [
+   1.6e-05,
+   2.2e-05
+  ],
+  "curvature_unit_bounds": [
+   2e-06,
+   2.7e-06
+  ]
+ },
+ "camera_reference": {
+  "heading": {
+   "cell2": {
+    "n": 12301.0,
+    "corr": -0.634815,
+    "slope_forward": -9.10685e-06,
+    "slope_reverse": -2.25982e-05,
+    "zero": 31228.6
+   },
+   "cell3": {
+    "n": 12179.0,
+    "corr": -0.688872,
+    "slope_forward": -1.08736e-05,
+    "slope_reverse": -2.29137e-05,
+    "zero": 31261.2
+   },
+   "cell8": {
+    "n": 11932.0,
+    "corr": -0.613971,
+    "slope_forward": -8.1706e-06,
+    "slope_reverse": -2.16749e-05,
+    "zero": 31166.8
+   },
+   "cell9": {
+    "n": 11757.0,
+    "corr": -0.678741,
+    "slope_forward": -1.01056e-05,
+    "slope_reverse": -2.19358e-05,
+    "zero": 31322.1
+   }
+  },
+  "curvature": {
+   "cell2_flag0": {
+    "n": 1611.0,
+    "corr": 0.940603,
+    "slope_forward": 2.33125e-06,
+    "slope_reverse": 2.63497e-06,
+    "zero": 16036.1
+   },
+   "cell2_flag1": {
+    "n": 10690.0,
+    "corr": 0.905026,
+    "slope_forward": 2.25133e-06,
+    "slope_reverse": 2.74863e-06,
+    "zero": 16011.9
+   },
+   "cell3_flag0": {
+    "n": 1674.0,
+    "corr": 0.938185,
+    "slope_forward": 2.12761e-06,
+    "slope_reverse": 2.41721e-06,
+    "zero": 16030.8
+   },
+   "cell3_flag1": {
+    "n": 10505.0,
+    "corr": 0.868513,
+    "slope_forward": 1.86848e-06,
+    "slope_reverse": 2.47705e-06,
+    "zero": 16010.8
+   },
+   "cell8_flag0": {
+    "n": 6077.0,
+    "corr": 0.851463,
+    "slope_forward": 2.0021e-06,
+    "slope_reverse": 2.76156e-06,
+    "zero": 16031.4
+   },
+   "cell8_flag1": {
+    "n": 5855.0,
+    "corr": 0.856306,
+    "slope_forward": 1.99447e-06,
+    "slope_reverse": 2.72e-06,
+    "zero": 16036.9
+   },
+   "cell9_flag0": {
+    "n": 6116.0,
+    "corr": 0.800558,
+    "slope_forward": 1.5161e-06,
+    "slope_reverse": 2.36561e-06,
+    "zero": 16008.9
+   },
+   "cell9_flag1": {
+    "n": 5641.0,
+    "corr": 0.869899,
+    "slope_forward": 1.88431e-06,
+    "slope_reverse": 2.49009e-06,
+    "zero": 15987.3
+   }
+  },
+  "method": "quadratic fit y = a + b x + c/2 x^2 of the matched modelV2 lane line at x = 0,5,10,20,40 m, left positive; slope_forward = regression of reference on code, slope_reverse = inverse of code on reference"
+ },
+ "motion_reference": {
+  "cell2": {
+   "rows": 10599,
+   "corr": -0.98489,
+   "slope_forward": -1.77525e-05,
+   "slope_reverse": -1.83014e-05,
+   "zero": 31233.9
+  },
+  "cell3": {
+   "rows": 10341,
+   "corr": -0.991112,
+   "slope_forward": -1.79684e-05,
+   "slope_reverse": -1.82921e-05,
+   "zero": 31286.4
+  },
+  "cell8": {
+   "rows": 10290,
+   "corr": -0.988484,
+   "slope_forward": -1.76626e-05,
+   "slope_reverse": -1.80766e-05,
+   "zero": 31172.7
+  },
+  "cell9": {
+   "rows": 9966,
+   "corr": -0.993089,
+   "slope_forward": -1.6329e-05,
+   "slope_reverse": -1.6557e-05,
+   "zero": 31337.5
+  }
+ },
+ "ego_lane_auc_45_90m": {
+  "rows_45_90m": 124789,
+  "ego_lane_share": 0.5408569665595525,
+  "auc_offset_only": 0.9966743709555854,
+  "auc_by_heading_scale": {
+   "5e-06": 0.9983462086967778,
+   "1e-05": 0.9990349119918455,
+   "1.3e-05": 0.999225431894262,
+   "1.6e-05": 0.9992431973708089,
+   "1.75e-05": 0.9992384929154982,
+   "2e-05": 0.9991962682795286,
+   "2.5e-05": 0.9987461894131787,
+   "3e-05": 0.9975699122839317,
+   "4e-05": 0.9937051282238529
+  },
+  "auc_heading_1.745e-5_plus_curvature": {
+   "5e-07": 0.9991497631516661,
+   "1e-06": 0.9990285709006869,
+   "2e-06": 0.9985907481844911,
+   "2.5e-06": 0.9981160893957322,
+   "4e-06": 0.9963168587284651
+  }
+ },
+ "prefix_flag_copies_700_segments": {
+  "records": 677754,
+  "cells": {
+   "0": {
+    "19.4": 0,
+    "19.5": 0,
+    "19.6": 0,
+    "19.7": 0
+   },
+   "1": {
+    "19.1": 238,
+    "19.2": 238,
+    "19.3": 238
+   },
+   "2": {
+    "18.4": 0,
+    "18.6": 0,
+    "18.7": 0
+   },
+   "3": {
+    "17.2": 0,
+    "17.3": 0
+   },
+   "4": {
+    "17.4": 0,
+    "17.5": 0,
+    "17.7": 0
+   },
+   "5": {
+    "18.1": 0,
+    "18.3": 0
+   }
+  },
+  "uncovered_bits_constant_1": {
+   "17": true,
+   "18": true,
+   "19": true
+  },
+  "bytes_function_of_six_flags": {
+   "17": true,
+   "18": true,
+   "19": false
+  },
+  "cells_6_to_9_have_copy": false
+ },
+ "fresh_confirmation": {
+  "C1_prefix_inverted_populated_agreement": {
+   "cell0": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "cell1": [
+    0.99996,
+    0.99996,
+    0.99996
+   ],
+   "cell2": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "cell3": [
+    1.0,
+    1.0
+   ],
+   "cell4": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "cell5": [
+    1.0,
+    1.0
+   ]
+  },
+  "C2_heading_w48_vs_offset_rate": {
+   "cell2": {
+    "n": 14141,
+    "slope": -1.4806894862169107e-05,
+    "zero": 31155.753108292185,
+    "binned_corr": -0.9733850463197152
+   },
+   "cell3": {
+    "n": 14525,
+    "slope": -1.2464587162667628e-05,
+    "zero": 31132.782539265045,
+    "binned_corr": -0.9322577881388902
+   },
+   "cell8": {
+    "n": 13227,
+    "slope": -1.4449334440748268e-05,
+    "zero": 31055.741559338596,
+    "binned_corr": -0.9913813018237669
+   },
+   "cell9": {
+    "n": 12462,
+    "slope": -1.5148622846101292e-05,
+    "zero": 31331.917564540705,
+    "binned_corr": -0.9918380694629334
+   },
+   "cell0": {
+    "n": 4247,
+    "slope": -1.6494351096748813e-05,
+    "zero": 31264.85446753874,
+    "binned_corr": -0.9712291996308127
+   },
+   "cell1": {
+    "n": 4738,
+    "slope": -1.2968666415355633e-05,
+    "zero": 30989.02672039276,
+    "binned_corr": -0.9751002177001695
+   },
+   "cell5": {
+    "n": 11391,
+    "slope": -1.8500978249379196e-05,
+    "zero": 31103.76939140582,
+    "binned_corr": -0.9924543898030197
+   },
+   "cell6": {
+    "n": 15037,
+    "slope": -1.35177180748453e-05,
+    "zero": 31246.248680357225,
+    "binned_corr": -0.9761508110900253
+   },
+   "cell7": {
+    "n": 12723,
+    "slope": -1.52539961165646e-05,
+    "zero": 31125.602442167685,
+    "binned_corr": -0.9533931884749015
+   }
+  },
+  "C3_curvature_low15_vs_pose_yawrate_over_v": {
+   "cell2": {
+    "n": 14656,
+    "slope": 2.2058502767834275e-06,
+    "zero": 16061.02925519066,
+    "binned_corr": 0.9895770791695965,
+    "rho": 0.6437725377024706
+   },
+   "cell3": {
+    "n": 15268,
+    "slope": 2.279753451211144e-06,
+    "zero": 15977.097701238603,
+    "binned_corr": 0.9774744104956068,
+    "rho": 0.5807100809592475
+   },
+   "cell8": {
+    "n": 13970,
+    "slope": 1.922370808746959e-06,
+    "zero": 16099.460844244315,
+    "binned_corr": 0.9800776676376869,
+    "rho": 0.6111740116582991
+   },
+   "cell9": {
+    "n": 13189,
+    "slope": 2.0375493157629986e-06,
+    "zero": 15908.715161339407,
+    "binned_corr": 0.9763828508896476,
+    "rho": 0.5327818054952
+   },
+   "cell0": {
+    "n": 4750,
+    "slope": 1.2104719282810952e-06,
+    "zero": 16555.641298326438,
+    "binned_corr": 0.9356904069473249,
+    "rho": 0.4052289214826924
+   },
+   "cell1": {
+    "n": 5620,
+    "slope": 9.65871901609649e-07,
+    "zero": 16186.07473134958,
+    "binned_corr": 0.9255327211522615,
+    "rho": 0.48997140363741803
+   },
+   "cell5": {
+    "n": 12864,
+    "slope": 1.6693452794851806e-06,
+    "zero": 15688.352791648762,
+    "binned_corr": 0.9792670892531938,
+    "rho": 0.567206252974506
+   },
+   "cell6": {
+    "n": 18650,
+    "slope": 1.812330146849136e-06,
+    "zero": 15915.246924200517,
+    "binned_corr": 0.9838160304998428,
+    "rho": 0.4876549065336325
+   },
+   "cell7": {
+    "n": 16591,
+    "slope": 1.5879889989117757e-06,
+    "zero": 15836.255865089652,
+    "binned_corr": 0.9693271359722033,
+    "rho": 0.4442341123785329
+   }
+  }
+ },
+ "independent_check_original_logs": {
+  "segments": 14,
+  "records": 13934,
+  "crc_ok": 13934,
+  "prefix_copy_mismatches": 12,
+  "prefix_copy_bits_tested": 236878,
+  "cell1": {
+   "n": 2286,
+   "slope": -1.5911758012118e-05,
+   "zero": 31054.49122450511,
+   "binned_corr": -0.9846414617319671
+  },
+  "cell2": {
+   "n": 7256,
+   "slope": -1.3271720688329637e-05,
+   "zero": 31162.68026342053,
+   "binned_corr": -0.9828076088219054
+  },
+  "cell3": {
+   "n": 6531,
+   "slope": -1.2505245802209874e-05,
+   "zero": 31143.435516983118,
+   "binned_corr": -0.8749514753107226
+  },
+  "cell5": {
+   "n": 4553,
+   "slope": -2.0743401241239267e-05,
+   "zero": 31271.149496114027,
+   "binned_corr": -0.9944739713036017
+  },
+  "cell6": {
+   "n": 5218,
+   "slope": -1.4786770511003347e-05,
+   "zero": 31269.119205262086,
+   "binned_corr": -0.9764951296911443
+  },
+  "cell7": {
+   "n": 4433,
+   "slope": -1.4390755595188966e-05,
+   "zero": 31170.684895358245,
+   "binned_corr": -0.958678632675959
+  },
+  "cell8": {
+   "n": 6723,
+   "slope": -1.3863589152165727e-05,
+   "zero": 31017.84356610367,
+   "binned_corr": -0.9892427075743108
+  },
+  "cell9": {
+   "n": 5592,
+   "slope": -1.3809743801060114e-05,
+   "zero": 31297.483244566014,
+   "binned_corr": -0.9909504713313017
+  }
+ }
+}
