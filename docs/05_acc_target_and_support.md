@@ -45,7 +45,9 @@ confirmation 86%, n = 421, route-bootstrap 79-99%). Through the drive-A false cl
 the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
 
 The stream starts 0.2 s after power-up, before openpilot transmits, tracks the lead and remains present with cruise
-disengaged. **The radar sends it** (◐): every periodic task inherits its ECU's crystal error, and on four drives the
+disengaged. It is not openpilot's: openpilot never transmits on the radar bus (the logs hold no bus-1 transmissions
+at all) and never sends 0x235 / 0x237 on any bus, and the stream runs on the radar's clock, not on the clock of
+openpilot's 100 Hz loop. **The radar sends it** (◐): every periodic task inherits its ECU's crystal error, and on four drives the
 link's messages split into two clocks. The radar clock carries 0x100/0x103, 0x190-0x198, 0x202, 0x24F and 0x680;
 the camera clock, shared with the camera's own car-side messages, carries 0x101/0x102, 0x180, 0x197, 0x210,
 0x240-0x248, 0x24D and 0x500/0x501. 0x235/0x237 keep a fixed phase to the radar's 0x190 exactly like the radar's
