@@ -310,6 +310,44 @@ def test_acc_target_cross_check_clips_the_matched_object_only() -> None:
 frames_ = frames
 
 
+def _sliding_lead_run(sticky: bool) -> list[float]:
+    """Matched lead at 40 m; then its native range slides to 30 m while vRel drops to -6 m/s (a re-association
+    excursion). The ACC target stays at 40 m / 0.0 m/s throughout."""
+    from ars510.objects import encode_slot
+    cfg = NativeInterfaceConfig(acc_target_clip_mps=1.5, acc_target_sticky=sticky)
+    iface = Ars510NativeRadarInterface(cfg)
+    out = []
+    for k in range(12):
+        t = 0.06 * k
+        d = 40.0 if k < 4 else 40.0 - 2.5 * (k - 3)
+        vg = 10.0 if k < 4 else 4.0
+        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048,
+                           long_vel_over_ground=round(510.5 + vg / 0.15), age_cycles=80 + k)
+        fr = [speed_frame(t, 10.0)] + _acc_frames(t + 0.001, 0.0, 40.0, 0.0) + frames_(record({0: lead}), t + 0.002)
+        out += [p["vRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
+    return out
+
+
+def test_sticky_acc_association_keeps_the_cross_check_through_a_range_slide() -> None:
+    loose, sticky = _sliding_lead_run(False), _sliding_lead_run(True)
+    # once the native range has slid > 6 m from the ACC coarse range, the per-cycle match drops the clip
+    assert min(loose[-3:]) < -5.5
+    # the sticky association keeps the matched track clipped to ACC (0.0) - 1.5
+    assert min(sticky) == pytest.approx(-1.5, abs=0.02)
+
+
+def test_sticky_acc_association_rematches_after_an_acc_target_jump() -> None:
+    from ars510.objects import encode_slot
+    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0, acc_target_sticky=True))
+    near = encode_slot(long_dist=160 + 30 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
+    far = encode_slot(long_dist=160 + 60 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
+    fr = [speed_frame(0.0, 10.0)] + _acc_frames(0.001, 0.0, 30.0, 0.0) + frames_(record({0: near, 1: far}), 0.002)
+    fr += [speed_frame(0.06, 10.0)] + _acc_frames(0.061, 0.0, 60.0, 0.0) + frames_(record({0: near, 1: far}), 0.062)
+    last = {round(p["dRel"]): p["vRel"] for p in iface.update_many(fr)[-1]["radarData"]["points"]}
+    assert last[60] == pytest.approx(-1.0, abs=0.02)  # the target jumped to the far car: clip follows it
+    assert last[30] == pytest.approx(-6.0, abs=0.1)  # the near car is no longer the ACC target
+
+
 @pytest.mark.parametrize("address,data", [
     (0x235, bytes.fromhex("000164800B2400FF")),
     (0x237, bytes.fromhex("0000003E80000000")),

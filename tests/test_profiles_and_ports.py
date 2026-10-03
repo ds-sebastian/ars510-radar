@@ -7,7 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from ars510 import OPENPILOT_CONFIG, STEADY_CONFIG
+from ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -24,10 +24,18 @@ def test_steady_is_openpilot_plus_k4_jump_guard_far_settling_and_ramp_limiter():
   assert OPENPILOT_CONFIG.far_min_publish_age == 0
 
 
+def test_anchor_is_steady_plus_sticky_acc_clip_only():
+  from dataclasses import fields
+  diff = {f.name for f in fields(STEADY_CONFIG) if getattr(STEADY_CONFIG, f.name) != getattr(ANCHOR_CONFIG, f.name)}
+  assert diff == {"acc_target_clip_mps", "acc_target_sticky"}
+  assert ANCHOR_CONFIG.acc_target_clip_mps == 3.0 and ANCHOR_CONFIG.acc_target_sticky
+  assert not STEADY_CONFIG.acc_target_sticky and STEADY_CONFIG.acc_target_clip_mps == 0.0
+
+
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_steady():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["steady"]') == 1
-  assert 'PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG}' in src
+  assert 'PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG, "anchor": ANCHOR_CONFIG}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 

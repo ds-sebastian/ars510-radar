@@ -1,0 +1,85 @@
+{
+  "method": "per-stream phase drift against reference periodic tasks (circular phase mod 20 ms, per minute, unwrapped); logger timestamps",
+  "drives": 4,
+  "drift_ms_per_30min_vs_radar_0x190": {
+    "0x235": [
+      0.0,
+      0.0,
+      0.0,
+      -7.3
+    ],
+    "0x237": [
+      0.0,
+      2.1,
+      -1.7,
+      -6.7
+    ],
+    "radar_0x191_control": [
+      0.0,
+      0.0,
+      0.0,
+      -7.2
+    ],
+    "camera_0x180_control": [
+      57.2,
+      -16.3,
+      -33.9,
+      28.6
+    ]
+  },
+  "drift_ms_per_30min_camera_controls_vs_camera_0x240": {
+    "0x180": [
+      -0.3,
+      -3.1,
+      0.0,
+      0.1
+    ],
+    "camera_bus_0x412": [
+      0.0,
+      -0.2,
+      0.1,
+      0.0
+    ]
+  },
+  "clock_offsets_ppm_drive_C": {
+    "radar_cluster": [
+      96.6,
+      97.1
+    ],
+    "camera_cluster": [
+      102.1,
+      104.2
+    ]
+  },
+  "radar_clock": [
+    "0x100",
+    "0x103",
+    "0x190-0x196",
+    "0x198",
+    "0x202",
+    "0x24F",
+    "0x680"
+  ],
+  "camera_clock": [
+    "0x101",
+    "0x102",
+    "0x180",
+    "0x197",
+    "0x210",
+    "0x240-0x248",
+    "0x24D",
+    "0x500",
+    "0x501"
+  ],
+  "content_update_period_ms": 60,
+  "tail_episodes": {
+    "n": 51,
+    "drives": 12,
+    "acc_closer_to_range_slope_share": 0.765,
+    "median_abs_err_vs_range_slope_mps": {
+      "acc": 1.17,
+      "object_list": 3.3
+    }
+  },
+  "limits": "sender, not camera independence; association to object-list tracks is positional"
+}

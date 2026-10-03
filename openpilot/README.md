@@ -31,6 +31,7 @@ while testing).
 | profile | config |
 |---|---|
 | `steady` (default) | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, saturation and velocity-jump guards, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#options)). **Recommended**: without it, velocity excursions cause far more false braking. |
+| `anchor` | `ANCHOR_CONFIG`: steady + the radar's own ACC target as a velocity anchor; opt-in comfort profile (`--profile anchor`, [docs/07](../docs/07_velocity_excursions.md#options)) |
 | `default` | `OPENPILOT_CONFIG`: the raw decode with the saturation guard, for research (`--profile default`) |
 
 ## What gets installed
