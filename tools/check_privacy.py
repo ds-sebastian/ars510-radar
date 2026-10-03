@@ -28,7 +28,7 @@ PATTERNS = {  # privacy-ok
   "GPS coordinate field": re.compile(r"[\"']?(?:latitude|longitude|lat|lon|lng)[\"']?\s*[:=]\s*-?\d+\.\d{3,}", re.I),  # privacy-ok
   "local home path": re.compile(r"(?:/home/|/Users/|[A-Z]:\\Users\\)[A-Za-z0-9_.-]+"),  # privacy-ok
   "device recording path": re.compile(r"/data/media/0/realdata"),  # privacy-ok
-  "private IP address": re.compile(r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b"),  # privacy-ok
+  "private IP address": re.compile(r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b"),  # privacy-ok
 }
 
 
