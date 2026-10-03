@@ -277,6 +277,8 @@ def dbc_text() -> str:
         comments.append(f'CM_ SG_ {m} CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";')
         out.append(_sig("CURVE_CURVATURE_PER_M", 64, 15, 2.5e-6, -0.04005, -0.0401, 0.0418, "1/m"))
         comments.append(f'CM_ SG_ {m} CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";')
+        out.append(_sig("CURVE_RATE_PER_M2", 10, 10, 4e-6, -0.002, -0.0021, 0.0020, "1/m^2"))
+        comments.append(f'CM_ SG_ {m} CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";')
         out.append(_sig("CURVE_FLAG", 79, 1, 1, 0, 0, 1, "raw"))
         comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";')
         out.append("")

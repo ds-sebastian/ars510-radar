@@ -20,8 +20,8 @@ SAMPLES = Path(__file__).resolve().parents[1] / "data" / "sample"
 NAMES = ("highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz", "highway_acc_anchor_24s.csv.gz")
 
 
-def cell_payload(offset=2000, heading=31200, curvature=16020, flag=0, present=True) -> bytes:
-    value = (offset & 0xFFF) << 32 | (heading & 0xFFFF) << 48 | (curvature & 0x7FFF) << 64 | (flag & 1) << 79
+def cell_payload(offset=2000, heading=31200, curvature=16020, flag=0, present=True, rate=500) -> bytes:
+    value = (rate & 0x3FF) << 10 | (offset & 0xFFF) << 32 | (heading & 0xFFFF) << 48 | (curvature & 0x7FFF) << 64 | (flag & 1) << 79
     if present:
         value |= 1 << 30
     return value.to_bytes(CELL_LEN, "little")
@@ -31,6 +31,7 @@ def test_fields_extract_at_documented_bits_and_flag_is_separate_from_curvature()
     cell = ShellCell(2, cell_payload(offset=2173, heading=31061, curvature=16200, flag=1))
     assert cell.parameters_present
     assert (cell.offset_code, cell.heading_code, cell.curvature_code, cell.curve_flag) == (2173, 31061, 16200, 1)
+    assert cell.rate_code == 500 and abs(cell.curvature_rate_per_m2) < 1e-12
     assert abs(cell.lane_offset_m - 1.73) < 1e-9
     assert cell.heading_rad > 0 and cell.curvature_per_m > 0                      # code below / above the zero
     flipped = ShellCell(2, cell_payload(offset=2173, heading=31061, curvature=16200, flag=0))
@@ -43,6 +44,7 @@ def test_default_cell_holds_defaults_and_has_no_conversions():
     default = ShellCell(0, bytes.fromhex("000000000000" + "8403f401" + "0000"))
     assert not default.parameters_present
     assert (default.heading_code, default.curvature_code, default.curve_flag) == (900, 500, 0)
+    assert default.rate_code == 0 or default.curvature_rate_per_m2 is None
     assert default.lane_offset_m is None and default.heading_rad is None and default.curvature_per_m is None
 
 

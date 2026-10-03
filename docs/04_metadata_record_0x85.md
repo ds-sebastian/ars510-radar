@@ -65,14 +65,15 @@ while ego moves, also when the object list is empty.
 
 ![lane curve cell](img/analysis/lane_curve_cells.png)
 
-A populated cell is one boundary curve, `y(x) = c0 + c1·x + c2·x²/2` in the radar frame, left positive. Bit numbers are little endian inside the
-12-byte payload (`ShellCell.offset_code`, `.heading_code`, `.curvature_code`, `.curve_flag`):
+A populated cell is one boundary curve, `y(x) = c0 + c1·x + c2·x²/2 + c3·x³/6` in the radar frame, left positive. Bit numbers are little endian inside the
+12-byte payload (`ShellCell.offset_code`, `.heading_code`, `.curvature_code`, `.rate_code`, `.curve_flag`):
 
 | bits | field | nominal conversion | conf. |
 |---|---|---|---|
 | `32\|12` | **c0 offset** at the radar | `(code − 2000) × 0.01` m | ◐ (scale ±10 %, as for object yRel) |
 | `48\|16` | **c1 heading**, left-positive tangent | `−1.8e-5 × (code − 31200)` rad per code, zero 31.1-31.3 k per cell | ◐ sign, zero; unit bounded 1.6-2.2e-5 |
 | `64\|15` | **c2 curvature**, left positive | `+2.5e-6 × (code − 16020)` 1/m per code | ◐ sign, zero; unit bounded 2.0-2.7e-6 |
+| `10\|10` | **c3 curvature rate** d(κ)/ds, offset binary | `+4e-6 × (code − 500)` 1/m² per code | ◐ sign, zero; unit order of magnitude |
 | `79\|1` | flag; identical in cells 2 and 3 on every row | set on 79-80 % of cells 2/3 and 43-44 % of 8/9, never in 0, 1, 4-7 | ○ |
 | `30\|1` | parameters present | above | ● |
 
@@ -94,8 +95,10 @@ Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.45 for the 
 Replication: 114 further segments (binned heading correlation −0.93…−0.99 in every cell with enough samples, slopes −1.25…−1.85e-5; curvature +0.93…+0.99, slopes +1.9…+2.3e-6 on cells 2/3/8/9) and an independent decode of 14 original logs with this package
 ([`id85_lane_curve_cells.json`](../data/analysis/summaries/id85_lane_curve_cells.json), table [`lane_cells.parquet`](../data/analysis/lane_cells.parquet)).
 
-**Which curve is which.** Cells 2 / 3 carry the ego-lane left / right boundaries (median offsets +1.7 / −1.7 m); cells 8 / 9 hold a second estimate of the same pair
-(offset correlation 0.98 / 0.99 with 2 / 3) and share the fields `20|4`, `24|4`, `28|1` and `44|4` on every row. Cells 0 / 1 sit at about +3.6 / +5.0 m, cells 5 / 4 at −2.9 / −5.3 m, cells 6 / 7 at +0.9 / +1.5 m.
+**Curvature rate.** `10|10` (the field near 500 on straight roads) tracks the rate of change of the cell's own curvature per metre driven: binned correlation +0.97…+0.99 in cells 2, 3, 8 and 9 (+0.92…+0.97 elsewhere), zero 497-501, 3.5-5.6e-6 1/m² per code in the lane cells; replicated on the fresh drives. It is not a heading.
+
+**Which curve is which.** Against the camera's four lane lines (rows where all four have probability above 0.5), cells 0 and 1 follow the **left outer** line (median error 0.17 / 0.14 m), cells 2 and 8 the **left ego** line (0.04 m), cells 3 and 9 the **right ego** line (0.10 m) and cell 4 the **right outer** line (0.41 m); cells 6 and 7 follow the left outer line only 61-76 % of the time. Cells 8 / 9 hold a second estimate of the ego pair
+(offset correlation 0.98 / 0.99 with 2 / 3) and share the fields `20|4`, `24|4`, `28|1` and `44|4` on every row; cells 2 and 3 share bit 79. The camera-quality-like fields (`24|4` low bits = 1 and bit 27 set, `20|4` ≈ 5, `28|1` = 0, `44|4` = 2) go with a camera lane probability ≥ 0.99.
 Against openpilot's lane model the median offset error is 3-10 cm:
 
 | drive group | cell 2 | cell 3 | cell 8 | cell 9 |
@@ -111,7 +114,7 @@ The assignment follows boundaries rather than being fixed to one: during a lane 
 can keep describing the old or a different boundary for a while, and single-cycle spikes of a few metres occur.
 Treat a cell as "a nearby boundary", not "the ego lane's left edge". Cells 6 and 7 are candidates for road-edge curves (they follow openpilot's road-edge estimate within a drive).
 
-The remaining cell fields (`0|9`, `10|10` near 500 on straight roads, `20|4`, `24|4` — correlated with camera lane probability (ρ .40-.45) and ego speed —, `44|4`, `80|6`) are raw; `10|10` is not a heading.
+The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` behaves like a distance (it falls about 4.1-4.4 codes per metre driven in monotone runs of cells 8 and 9); `80|6` is confidence-like (0-50; cells 1 and 4 take only 0, 15 and 50).
 
 **For in-path decisions, use the yaw-rate path.** To decide whether an object 30-100 m ahead is in the ego lane,
 the car's own curvature, y(x) = (yaw rate / v) · x² / 2 with the yaw rate from Toyota 0x24, is scored against the path

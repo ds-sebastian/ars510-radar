@@ -20,6 +20,7 @@ CRC_START, CRC_END = 141, 145
 CURVE_OFFSET_ZERO, CURVE_OFFSET_M = 2000, 0.01
 CURVE_HEADING_ZERO, CURVE_HEADING_RAD = 31200, -1.8e-5      # code up = lane pointing right
 CURVE_CURVATURE_ZERO, CURVE_CURVATURE_PER_M = 16020, 2.5e-6  # code up = lane curving left
+CURVE_RATE_ZERO, CURVE_RATE_PER_M2 = 500, 4e-6               # c3, d(curvature)/ds; unit order of magnitude only
 
 # Bits of prefix bytes 17-19 that copy a cell's "not populated" flag (1 when bit 30 of that cell is 0). Cells 6-9 have no copy.
 PREFIX_UNPOPULATED_COPIES = {
@@ -70,6 +71,11 @@ class ShellCell:
         return self._field(79, 1)
 
     @property
+    def rate_code(self) -> int:
+        """c3: raw `10|10` curvature rate (offset binary, zero about 500; the unpopulated default is 1023)."""
+        return self._field(10, 10)
+
+    @property
     def lane_offset_m(self) -> float | None:
         """Nominal c0 in metres (left positive), None when the cell holds no parameters."""
         return (self.offset_code - CURVE_OFFSET_ZERO) * CURVE_OFFSET_M if self.parameters_present else None
@@ -83,6 +89,11 @@ class ShellCell:
     def curvature_per_m(self) -> float | None:
         """Nominal c2: left-positive d2y/dx2. Unit bounded to about 2.0-2.7e-6 1/m per code; None when unpopulated."""
         return (self.curvature_code - CURVE_CURVATURE_ZERO) * CURVE_CURVATURE_PER_M if self.parameters_present else None
+
+    @property
+    def curvature_rate_per_m2(self) -> float | None:
+        """Nominal c3 in 1/m^2 (about 4e-6 per code, sign and zero replicated, unit not pinned); None when unpopulated."""
+        return (self.rate_code - CURVE_RATE_ZERO) * CURVE_RATE_PER_M2 if self.parameters_present else None
 
 
 def prefix_flags_consistent(prefix_or_record: bytes, cells: list["ShellCell"]) -> bool:

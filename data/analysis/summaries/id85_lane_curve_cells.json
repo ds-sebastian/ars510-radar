@@ -441,5 +441,275 @@
    "zero": 31297.483244566014,
    "binned_corr": -0.9909504713313017
   }
+ },
+ "curve_rate_10_10": {
+  "description": "cell bits 10|10 against d(curvature)/d(distance driven) from the cell's own 64|15 over 12 records; offset binary, zero ~500",
+  "corpus": {
+   "cell0_lag12": {
+    "n": 88750.0,
+    "slope": 1.098e-05,
+    "zero": 498.1,
+    "binned_corr": 0.9343
+   },
+   "cell1_lag12": {
+    "n": 88660.0,
+    "slope": 2.437e-06,
+    "zero": 496.2,
+    "binned_corr": 0.953
+   },
+   "cell2_lag12": {
+    "n": 330900.0,
+    "slope": 3.81e-06,
+    "zero": 498.8,
+    "binned_corr": 0.9835
+   },
+   "cell3_lag12": {
+    "n": 333200.0,
+    "slope": 4.041e-06,
+    "zero": 499.8,
+    "binned_corr": 0.9769
+   },
+   "cell4_lag12": {
+    "n": 84530.0,
+    "slope": 2.128e-06,
+    "zero": 504.7,
+    "binned_corr": 0.9181
+   },
+   "cell5_lag12": {
+    "n": 115600.0,
+    "slope": 7.96e-06,
+    "zero": 500.5,
+    "binned_corr": 0.9239
+   },
+   "cell6_lag12": {
+    "n": 162200.0,
+    "slope": 4.857e-06,
+    "zero": 499.1,
+    "binned_corr": 0.9643
+   },
+   "cell7_lag12": {
+    "n": 132200.0,
+    "slope": 5.159e-06,
+    "zero": 499.2,
+    "binned_corr": 0.9713
+   },
+   "cell8_lag12": {
+    "n": 311700.0,
+    "slope": 3.752e-06,
+    "zero": 497.3,
+    "binned_corr": 0.9604
+   },
+   "cell9_lag12": {
+    "n": 304300.0,
+    "slope": 3.502e-06,
+    "zero": 501.3,
+    "binned_corr": 0.9782
+   }
+  },
+  "fresh": {
+   "cell0_lag12": {
+    "n": 3814.0,
+    "slope": 1.469e-05,
+    "zero": 496.0,
+    "binned_corr": 0.7123
+   },
+   "cell1_lag12": {
+    "n": 3445.0,
+    "slope": 2.762e-06,
+    "zero": 497.2,
+    "binned_corr": 0.708
+   },
+   "cell2_lag12": {
+    "n": 14020.0,
+    "slope": 5.124e-06,
+    "zero": 498.2,
+    "binned_corr": 0.9763
+   },
+   "cell3_lag12": {
+    "n": 14210.0,
+    "slope": 5.652e-06,
+    "zero": 498.9,
+    "binned_corr": 0.968
+   },
+   "cell5_lag12": {
+    "n": 11210.0,
+    "slope": 1.224e-05,
+    "zero": 500.8,
+    "binned_corr": 0.9042
+   },
+   "cell6_lag12": {
+    "n": 15310.0,
+    "slope": 8.084e-06,
+    "zero": 499.3,
+    "binned_corr": 0.9174
+   },
+   "cell7_lag12": {
+    "n": 12980.0,
+    "slope": 6.186e-06,
+    "zero": 499.8,
+    "binned_corr": 0.8349
+   },
+   "cell8_lag12": {
+    "n": 12750.0,
+    "slope": 5.03e-06,
+    "zero": 497.4,
+    "binned_corr": 0.9814
+   },
+   "cell9_lag12": {
+    "n": 11590.0,
+    "slope": 5.518e-06,
+    "zero": 500.2,
+    "binned_corr": 0.9605
+   }
+  }
+ },
+ "cell_roles_against_camera_lines": {
+  "description": "nearest of the camera's four lane lines (0 left outer, 1 left ego, 2 right ego, 3 right outer) to each cell offset, rows with all four line probabilities > 0.5",
+  "cells": {
+   "cell0": {
+    "rows": 244,
+    "nearest_share": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "median_abs_error_m": [
+     0.174,
+     3.073,
+     6.504,
+     9.863
+    ],
+    "median_offset_m": 4.83
+   },
+   "cell1": {
+    "rows": 804,
+    "nearest_share": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "median_abs_error_m": [
+     0.144,
+     3.308,
+     6.709,
+     10.117
+    ],
+    "median_offset_m": 4.96
+   },
+   "cell2": {
+    "rows": 2841,
+    "nearest_share": [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    "median_abs_error_m": [
+     3.328,
+     0.038,
+     3.38,
+     6.777
+    ],
+    "median_offset_m": 1.62
+   },
+   "cell3": {
+    "rows": 2843,
+    "nearest_share": [
+     0.0,
+     0.0,
+     0.999,
+     0.001
+    ],
+    "median_abs_error_m": [
+     6.82,
+     3.516,
+     0.102,
+     3.285
+    ],
+    "median_offset_m": -1.88
+   },
+   "cell4": {
+    "rows": 2246,
+    "nearest_share": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "median_abs_error_m": [
+     10.471,
+     7.202,
+     3.785,
+     0.408
+    ],
+    "median_offset_m": -5.56
+   },
+   "cell6": {
+    "rows": 1535,
+    "nearest_share": [
+     0.612,
+     0.128,
+     0.079,
+     0.181
+    ],
+    "median_abs_error_m": [
+     0.298,
+     3.214,
+     6.246,
+     9.607
+    ],
+    "median_offset_m": 4.49
+   },
+   "cell7": {
+    "rows": 1193,
+    "nearest_share": [
+     0.757,
+     0.047,
+     0.083,
+     0.113
+    ],
+    "median_abs_error_m": [
+     0.18,
+     3.196,
+     6.416,
+     9.781
+    ],
+    "median_offset_m": 4.67
+   },
+   "cell8": {
+    "rows": 2814,
+    "nearest_share": [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    "median_abs_error_m": [
+     3.33,
+     0.038,
+     3.38,
+     6.776
+    ],
+    "median_offset_m": 1.62
+   },
+   "cell9": {
+    "rows": 2830,
+    "nearest_share": [
+     0.0,
+     0.0,
+     0.999,
+     0.001
+    ],
+    "median_abs_error_m": [
+     6.822,
+     3.514,
+     0.101,
+     3.287
+    ],
+    "median_offset_m": -1.88
+   }
+  }
  }
 }
