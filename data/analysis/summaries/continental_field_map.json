@@ -1,0 +1,88 @@
+{
+  "scope": "two fresh drives, 51 one-minute segments, 38,147 slot rows, all tracks; references: each track's centred 1 s linear trend (range, lateral), the radar's ACC target velocity, range slope, over-ground speed derivative",
+  "existence_16_8": {
+    "range_pct": [
+      10,
+      100
+    ],
+    "common_steps": {
+      "0": 19308,
+      "-20": 3650,
+      "+20": 1203,
+      "-1": 1037,
+      "+2": 546
+    },
+    "coded_class_20_3_edges_pct": [
+      25,
+      50,
+      75,
+      90,
+      99
+    ],
+    "age_first_100_median": 21,
+    "age_first_100_p10_p90": [
+      20,
+      30
+    ]
+  },
+  "predicted_107_1": {
+    "share_overall": 0.056,
+    "share_last5_records_of_life": 0.453,
+    "share_elsewhere": 0.026,
+    "range_residual_median_m": {
+      "set": 0.19,
+      "clear": 0.41
+    },
+    "existence_median": {
+      "set": 80,
+      "clear": 100
+    },
+    "excursions_tested": 144,
+    "excursions_with_flag": 0
+  },
+  "uncertainty_spearman_within_range": {
+    "224": {
+      "range_res": 0.253,
+      "lat_res": 0.028,
+      "vel_vs_acc": 0.395,
+      "accel_res": 0.242
+    },
+    "232": {
+      "range_res": 0.068,
+      "lat_res": 0.394,
+      "vel_vs_acc": 0.049,
+      "accel_res": 0.118
+    },
+    "240": {
+      "range_res": 0.251,
+      "lat_res": 0.199,
+      "vel_vs_acc": 0.357,
+      "accel_res": 0.391
+    },
+    "248": {
+      "range_res": 0.129,
+      "lat_res": 0.376,
+      "vel_vs_acc": 0.242,
+      "accel_res": 0.246
+    }
+  },
+  "excursion_auc_by_range": {
+    "0-40m": {
+      "n_exc": 53,
+      "224": 0.968,
+      "240": 0.95
+    },
+    "40-60m": {
+      "n_exc": 21,
+      "224": 0.487,
+      "240": 0.417
+    },
+    "60m+": {
+      "n_exc": 70,
+      "224": 0.589,
+      "240": 0.554,
+      "232": 0.684
+    }
+  },
+  "reference_template": "Tesla Model 3 Continental radar fields in opendbc (tesla_radar_continental): ProbExist, Meas, MovingState, dx/vx/ax/dy sigma"
+}

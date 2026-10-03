@@ -241,6 +241,10 @@ far smoothing together (K4) keep most of the head start.*
   association while the track and a continuous target persist, even if the track's range slides; re-match when the
   target jumps (a cut-in) or disappears. The matched track's vRel is clipped to the target's closing speed ± 3 m/s
   before range fusion. Other tracks are untouched.
+- **Same object, better estimate:** in 653 disagreement cycles on eight drives, no other object-list track was near
+  the radar's ACC target, so the ACC target and the drifting track are the same car; the radar simply keeps a better
+  speed estimate for it than it publishes in the object list
+  ([`acc_target_choice.json`](../data/analysis/summaries/acc_target_choice.json)).
 - **Why sticky:** excursions often drag the track's range along (drive E: 46 → 33 m and −0.6 → −5.8 m/s, while the ACC
   target stayed at 46 m and −0.7 m/s). A per-cycle position match drops the cross-check exactly then; on the fresh
   drives the plain clip changed nothing (7 → 7 hard ticks).

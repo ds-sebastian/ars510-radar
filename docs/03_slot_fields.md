@@ -86,17 +86,25 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
-| `16\|8` | **score** | existence-like, 0-100 | ◐ |
+| `16\|8` | **existence probability** | % (10-100); `20\|3` is its coded class | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
-| `107\|1` | coast flag | rarely set in settled life, often set just before deletion | ○ |
+| `107\|1` | **predicted (not measured)** | set on 45% of a track's last five records vs 2.6% elsewhere; never set during tested velocity excursions | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
 
 **Score `16|8`.** Commonly sits at 100 on settled tracks and can decline in either state. In state 2 it steps
 down by **exactly 20 or 1 per cycle** (every one of 18,804 mature state-2 updates), and the slot is freed near 20.
 When the score is at most 40, the step is 20 and `107|1` is clear, the allocation is removed on the next record 82-86%
 of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2 → 1 during that countdown.
-Returning to state 1 does not guarantee score restoration. Neither field certifies measurement presence, physical
-accuracy or existence probability ([`excursion_mechanism_scope.json`](../data/analysis/summaries/excursion_mechanism_scope.json)).
+Returning to state 1 does not guarantee score restoration. The byte behaves as an **existence probability in percent**:
+`20|3` is a coded class of it with edges at 25, 50, 75, 90 and 99 % (class 6 = above 99 %), the coding Continental
+radars use for their existence probability, and the Tesla Model 3's Continental radar sends the same quantity as
+`ProbExist` ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). It reaches 100 % at
+about age 21 (p90 30), long before range and velocity converge, so it does not replace the age-60 publication gate.
+
+**Predicted records `107|1`.** Set on 45% of the last five records of a track's life against 2.6% elsewhere, with lower
+range noise while set (median 0.19 vs 0.41 m from the track's own trend) and lower existence: the record is a
+prediction, like the Tesla radar's `Meas = 0`. Velocity excursions are **not** predicted records: none of 144 tested
+excursions had it set, so a measured flag alone does not remove them.
 
 **Startup code `8|5`** matches its formula on 134,217 / 134,217 birth samples across 24 drives: ages 1-4 read 30, then
 20, 13, 9, 6, 4, 2, 1, 1, 0. Once the motion code leaves 5 the field takes other, mature values.
@@ -197,6 +205,13 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
 | `256\|8` | existence-like | rises with age at fixed range (ρ +0.86 to +0.90), drops before deletion | ○ |
 | `264\|8` | measurement state | settled values depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m): a near/far-scan mode | ○ |
 | `184\|8` | secondary score | 59-100 on allocated slots | ○ |
+
+Against each track's own errors on two drives (all tracks, within range bins), `224|7` and `240|7` follow longitudinal
+errors (range residual, velocity against the radar's ACC target, acceleration) and `232|7` and `248|7` lateral ones
+(Spearman ≈ 0.4 with the lateral residual against ≤ 0.13 for the longitudinal pair): an alternating
+distance-long, distance-lat, velocity-long, velocity-lat order like Continental's object-quality fields. They flag
+velocity excursions well below 40 m (AUC 0.95-0.97) but not at 40-60 m (0.41-0.49) or beyond (0.55-0.68), where
+excursions matter ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 
 `240|7` is exposed as `NativeObject.vel_unc_code`. On selected 40–80 m windows, a through-origin fit of
 **native-minus-ECC RMS disagreement** against mean code gives 0.049 m/s/count and R² 0.81 across ten code deciles

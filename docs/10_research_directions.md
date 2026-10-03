@@ -33,8 +33,9 @@ for a turning lane. Those are probably two different parts of its pipeline, and 
 should copy:
 
 - **Target choice (Toyota's weak point).** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
-  keeps it until the car is clearly out of its predicted path. On the fresh drives openpilot's model moved to a new
-  lead 1.5 s and more than 6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
+  keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures), about
+  when the car reaches the lane line. On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
+  6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
   better lead chooser; the `anchor` profile keeps it in charge and never follows the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
@@ -106,7 +107,7 @@ What other openpilot radar interfaces read from their radars, and what the ARS51
 
 | what radard gets elsewhere | examples | ARS510 today | what would close the gap |
 |---|---|---|---|
-| per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE` new / updated / coasting, Hyundai `STATE` | always `measured=True`; candidates `107\|1` (coasting-like), existence score `16\|8`, `109\|3` | decode which records are fresh measurements and which are coasted predictions |
+| per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE`, Tesla `Meas` | `107\|1` = predicted (◐) and `16\|8` = existence probability (◐) are decoded; the interface still sends `measured=True` | publish them like Tesla does; excursions occur on *measured* records, so this is hygiene, not a fix |
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (● reliable) | none needed |
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | a relative-speed or Doppler field would remove the ego-speed dependency and its scale/timing questions |
 | relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` acceleration-like (○ scale, lags 0.5-1 s) | calibrate `84\|10` against independent motion |
@@ -115,9 +116,14 @@ What other openpilot radar interfaces read from their radars, and what the ARS51
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, no physical units | units would let radard weight radar against vision |
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames: needs a small reassembler | none on the CAN side; the reassembler is ~80 lines with a CRC check |
 
-The two that matter most for driving are the **measured / coasting state** (radard and the planner could ignore
-coasted velocity, which is where excursions are suspected to come from) and a **fault / blockage status** (to report
-a dirty or misaligned radar instead of silently trusting it).
+The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`): an 89-line
+pass-through of distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`, existence
+and obstacle probabilities, class, size, height and four uncertainty sigmas, plus a status message (blocked,
+unavailable, dynamics error). The ARS510 slot follows the same Continental pattern, which is how its existence,
+predicted-record and uncertainty fields were identified ([03](03_slot_fields.md#uncertainty-and-quality)). What it
+still lacks for a Tesla-sized interface is a **fault / blockage status** (to report a dirty or misaligned radar) and an
+explanation of the velocity excursions, which occur on measured records with ordinary uncertainty beyond 40 m: the
+reason the ACC anchor and the `steady` layers are still needed.
 
 ## Towards an upstream (comma) interface
 
