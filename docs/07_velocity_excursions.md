@@ -133,13 +133,22 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 | vision speed fused into the matched track | radard patch | driver-agreement error −0.0043 [−0.0068, −0.0018] (twice K4's −0.0021) | 0.085 s | 0.88 / h |
 
 - **`STEADY_CONFIG` is the recommended profile** (`install.py --profile steady`). K4's range fusion and far-range
-  smoothing keep most of radar's 0.15 s head start and halve the jitter. The two guards withhold invalid readings: the
-  saturated velocity code 1023, and a mature track's velocity jumping more than 8 m/s from one record to the next (a
-  new level that lasts 1 s is accepted under a new track ID). Together they cut hard radar-only braking requests
+  smoothing keep most of radar's 0.15 s head start and halve the jitter. The saturation guard rejects velocity codes
+  0 and 1023 once its maturity condition is met. The jump guard compares native over-ground velocity with its last
+  accepted reference, before ramp limiting, profile scaling and ego subtraction; a difference greater than 8 m/s
+  starts a rejection episode. A nonsaturated record can be accepted after the episode exceeds 1 s, or earlier when
+  it returns inside the enabled thresholds. Either recovery advances the output track ID. These are interface
+  acceptance rules, not physical validation of a new velocity level. Together the guards cut hard radar-only braking requests
   (≤ −2 m/s² while vision-only asks for no more than −0.5) from 85 to 69 ticks on the held-out routes, including a
   −3.5 m/s² request from a saturated reading, and halve the gas-overridden radar-only brakes again. Lag, early
   reaction, lead switches and driver agreement are unchanged for the two guards alone; 17 of 20 routes are identical
   to K4 ([summary](../data/analysis/summaries/velocity_guards.json)).
+- **Guard state contract (● implementation).** A rejected record still updates the native slot/age lifecycle, but
+  skips the downstream ramp, velocity smoother, range fusion and relink-history updates. Recovery can therefore
+  change subsequent `vRel` and `dRel` even when the current raw input agrees with an unguarded interface. The smoother
+  and range fusion restart after a sufficiently long gap, while guard recovery changes the published ID without
+  requiring a new native allocation. Guard effects include filter history and identity, as well as withheld points;
+  matching aggregate replay counts does not establish identical outputs. See [`_guard` and `_payload`](../ars510/interface.py).
 - **Ramp limiter.** Some excursions build up gradually: the over-ground velocity ramps at about +23 m/s² in steps
   below the jump threshold, spikes, and the decaying tail then reads to radard as a braking lead. No vehicle changes
   its speed over ground that fast, while real closings change *relative* speed through ego speed. The limiter lets a
