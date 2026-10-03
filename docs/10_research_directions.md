@@ -26,6 +26,35 @@ The most promising next steps, ordered by how directly they would improve the ra
    [07](07_velocity_excursions.md#fresh-jump-guard-simplification-comparison)). Closed-loop driving would show whether
    it can be removed; it stays for now as the only single-record spike guard.
 
+## Learn from Toyota's own longitudinal control
+
+Toyota's stock ACC on this car brakes and slows well for a lead in its own lane, but holds on to a lead that leaves
+for a turning lane. Those are probably two different parts of its pipeline, and the second is not what openpilot
+should copy:
+
+- **Target choice (Toyota's weak point).** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
+  keeps it until the car is clearly out of its predicted path. On the fresh drives openpilot's model moved to a new
+  lead 1.5 s and more than 6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
+  better lead chooser; the `anchor` profile keeps it in charge and never follows the radar's choice.
+- **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
+  and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
+- **The control law (unknown).** How Toyota turns distance, closing speed and relative acceleration into a braking
+  request is not visible under openpilot longitudinal.
+
+Proposed study:
+
+1. **Record stock ACC.** 20-30 minutes of mixed traffic with Toyota's ACC in control and the comma device logging
+   (openpilot longitudinal off). The camera's `ACC_CONTROL` (0x343) command then appears next to the radar's target.
+2. **Fit Toyota's law.** Model the requested acceleration from the radar's ACC target (distance, closing speed,
+   relative acceleration), ego speed and the following-distance setting; compare it with openpilot's planner on the
+   same moments (replayed with each radar profile).
+3. **Separate signal from tuning.** Replay openpilot's planner fed with the radar's ACC values for the in-lane lead,
+   and Toyota's fitted law fed with openpilot's lead. If the planner with Toyota's signal already behaves like Toyota,
+   the remaining gap is radar handling (this repo); if not, it is planner tuning, which belongs in the fork's
+   longitudinal settings, not the radar interface.
+4. **Within-lane decisions.** Score both on in-lane braking events (onset, peak deceleration, jerk, gap at the end)
+   and on lane-change / turn-lane departures, so a Toyota-like tune does not bring Toyota's sticky lead selection with it.
+
 ## For the drift discriminator
 
 The goal: tell a velocity excursion from a real closing within about 1 s ([07](07_velocity_excursions.md)).
