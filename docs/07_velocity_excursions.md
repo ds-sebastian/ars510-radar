@@ -197,6 +197,26 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
 - **The ACC target** (0x235) is the strongest velocity witness when present, but it covers 57% of radar-lead moments
   and 5% beyond 80 m.
 
+## Fresh jump-guard simplification comparison
+
+S4/A retains every frozen STEADY setting except `vjump_thresh_mps=0`, disabling the 8 m/s jump guard.
+A comparison preregistered before comparative outcomes used eight fresh ordinary-drive routes (114 segments,
+six moving and two parked), continuous native state per route and unchanged sunnypilot RadarD/planner consumers.
+Vision-only, STEADY and S4 produced 48 planner runs under model-publication and captured-plan-publication schedules,
+with 779,076 ticks across all groups. In **each schedule**, hard command-disagreement ticks stay **7 → 7** and
+radar-only episodes **6 → 6**. Response timing and anticipation agree across 19 source-selected driver events
+(three hard); response minima differ by at most 0.223 / 0.271 m/s², within the hard-event 0.3 limit. All 83 frozen
+recorded-command windows retain identical minima. Human-controlled lead switches fall 212 → 211 / 209 → 208.
+These are command/driver witnesses, not independently labelled false braking
+([summary and gates](../data/analysis/summaries/fresh_s4_replay.json)).
+
+Both schedules meet the preregistered non-increase overlay, including every route's count gates; strict count
+improvement is false. This overlay is separate from the historical full 19-gate suite and establishes eligibility
+for further study, not profile promotion. Independent checks cover source selections, complete output groups and
+1,398 scoring calculations. Native outputs differ in 406 batches, so equal aggregate counts do not mean identical
+behavior. Physical scene/velocity labels, the recorded device's historical profile identity, private map memory and
+actual receive times remain unavailable. The recommended profile and runtime defaults remain STEADY.
+
 ## Sunnypilot profile comparison
 
 ◐ **Fixed owner replay scope.** Native profile points run through sunnypilot's original RadarD and longitudinal

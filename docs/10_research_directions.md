@@ -4,10 +4,11 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **The steady profile on fresh drives.** Native STEADY, OPENPILOT and ACC-clip points compare through
-   sunnypilot's original RadarD and planner under two fixed prospective schedules, with the clip passing the six
-   owner subgates in both ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)). Closed-loop drives with
-   the profile installed measure the braking the driver feels and test transfer beyond these prior-used drives.
+1. **Validate the jump-guard simplification in driving.** S4/A differs from STEADY only by disabling the
+   8 m/s jump guard. On eight fresh routes it meets the preregistered command/driver non-increase overlay under
+   both unchanged sunnypilot replay schedules, with hard ticks and episodes equal to STEADY
+   ([07](07_velocity_excursions.md#fresh-jump-guard-simplification-comparison)). Independent physical scene labels,
+   closed-loop response and the remaining full acceptance gates are needed before promotion; STEADY remains recommended.
 2. **Establish uncertainty units before filter calibration.** `240|7` predicts native-minus-ECC disagreement
    ([03](03_slot_fields.md#kinematics)); that combined residual includes reference error, covariance and bias.
    Independent motion and within-target evidence are needed to identify radar measurement variance.
