@@ -26,7 +26,7 @@ target-summary codes requiring independent target association and calibration.
 |---|---|---|---|---|
 | **0x80** | 8 | 106 frames / 60 ms | **object list**: 742-byte record, 20 object slots × 36 bytes + CRC32 | [02](02_object_list.md), [03](03_slot_fields.md) |
 | 0x81 | 8 | 16.7 Hz | record-cycle marker `30 00 …` after each 0x80 record start | |
-| **0x85** | 8 | 21 frames / 60 ms | metadata record: 147 bytes, ten 12-byte cells + CRC32; cells include lane-boundary offsets | [04](04_metadata_record_0x85.md) |
+| **0x85** | 8 | 21 frames / 60 ms | metadata record: 147 bytes, ten 12-byte cells (lane / road-boundary curves: offset, heading, curvature) + CRC32 | [04](04_metadata_record_0x85.md) |
 | 0x86 | 8 | 16.7 Hz | record-cycle marker for 0x85 | |
 | 0x100-0x103 | 7/6/3/2 | 10 Hz | startup state: 0x101 goes 0x1D → 0x11 when the radar is running | [05](05_acc_target_and_support.md#startup-and-readiness) |
 | 0x180 | 5 | 16.7 Hz | constant `CF C0 00 00 00` | |

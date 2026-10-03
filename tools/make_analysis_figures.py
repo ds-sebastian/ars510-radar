@@ -765,6 +765,69 @@ def id85_direction_code_structure():
          "Lower bits are structural only; the ego path does not identify the selected boundary.")
 
 
+def lane_curve_cells():
+    """The 12-byte 0x85 cell as a lane / road-curve polynomial: layout strip plus heading and curvature against references."""
+    L = load("lane_cells")
+    info = summary("id85_lane_curve_cells")
+    fig = plt.figure(figsize=(10.5, 7.6))
+    gs = fig.add_gridspec(2, 3, height_ratios=[0.5, 2.2], hspace=0.42, wspace=0.32)
+    ax = fig.add_subplot(gs[0, :])
+    fields = [(0, 30, "0|9 …(raw, unresolved)", "#d9d8d3"), (30, 1, "30", S3), (32, 12, "32|12  c0 offset", S1), (48, 16, "48|16  c1 heading", S2),
+              (64, 15, "64|15  c2 curvature", S4), (79, 1, "79", S5), (80, 16, "80|6 …", "#d9d8d3")]
+    for start, ln, label, col in fields:
+        ax.barh(0, ln, left=start, color=col, edgecolor=SURFACE, height=0.7)
+        if ln >= 12:
+            ax.text(start + ln / 2, 0, label, ha="center", va="center", fontsize=8.5, color=INK)
+    ax.text(30.5, 0.62, "30: parameters present", ha="center", fontsize=7.5, color=INK2)
+    ax.text(79.5, 0.62, "79: flag", ha="center", fontsize=7.5, color=INK2)
+    ax.set_xlim(0, 96); ax.set_ylim(-0.6, 0.9); ax.set_yticks([]); ax.grid(False)
+    ax.set_xticks(range(0, 97, 8)); ax.set_xlabel("bit within the 12-byte cell payload (little endian)")
+    ax.set_title("A populated 0x85 cell is one lane / road-boundary curve: y(x) = c0 + c1·x + c2·x²/2")
+
+    def binned(x, y, n=24):
+        d = pd.DataFrame({"x": x, "y": y}).dropna()
+        d["b"] = pd.qcut(d.x, n, duplicates="drop")
+        g = d.groupby("b", observed=True).agg(x=("x", "median"), y=("y", "mean"), lo=("y", lambda v: v.quantile(.25)), hi=("y", lambda v: v.quantile(.75)))
+        return g
+
+    cols = {2: S1, 3: S2, 8: S3, 9: S4}
+    ax1 = fig.add_subplot(gs[1, 0])
+    for c, col in cols.items():
+        q = L[L.cell == c]
+        g = binned(q.heading_code, q.cam_slope)
+        ax1.plot(g.x, g.y, color=col, marker="o", markersize=3, label=f"cell {c}")
+    x = np.linspace(30000, 32600, 50)
+    ax1.plot(x, -1.8e-5 * (x - 31200), color=INK, ls="--", lw=1, label="−1.8e-5 · (code − 31200)")
+    ax1.set_xlabel("heading code (48|16)"); ax1.set_ylabel("camera lane slope, left positive (rad)")
+    ax1.set_title("Heading vs camera lane slope"); ax1.legend(fontsize=7.5, loc="upper right")
+
+    ax2 = fig.add_subplot(gs[1, 1])
+    for c, col in cols.items():
+        q = L[(L.cell == c) & (L.motion_slope.abs() < 0.2)]
+        g = binned(q.heading_code, q.motion_slope, 20)
+        ax2.plot(g.x, g.y, color=col, marker="o", markersize=3, label=f"cell {c}")
+    ax2.plot(x, -1.8e-5 * (x - 31230), color=INK, ls="--", lw=1)
+    ax2.set_xlabel("heading code (48|16)"); ax2.set_ylabel("d(offset)/d(distance driven) (m/m)")
+    ax2.set_title("Heading vs the cell's own offset rate")
+
+    ax3 = fig.add_subplot(gs[1, 2])
+    for c, col in cols.items():
+        for fl, mk in ((0, "s"), (1, "o")):
+            q = L[(L.cell == c) & (L.flag79 == fl)]
+            if len(q) < 500:
+                continue
+            g = binned(q.curv_code, q.cam_curv, 16)
+            ax3.plot(g.x, g.y, color=col, marker=mk, markersize=3, lw=1.2, label=f"cell {c}, bit 79 = {fl}")
+    x2 = np.linspace(14400, 17600, 50)
+    ax3.plot(x2, 2.5e-6 * (x2 - 16020), color=INK, ls="--", lw=1, label="+2.5e-6 · (code − 16020)")
+    ax3.set_xlabel("curvature code (64|15)"); ax3.set_ylabel("camera lane curvature, left positive (1/m)")
+    ax3.set_title("Curvature vs camera lane curvature"); ax3.legend(fontsize=6.5, ncol=2, loc="upper left")
+    ch = info["camera_reference"]["heading"]; cc = info["camera_reference"]["curvature"]
+    save(fig, "lane_curve_cells", f"{len(L):,} camera-matched cell rows from three drives. Camera reference: quadratic fit of the matched lane line over 0–40 m. Units are "
+         f"bounded, not pinned (heading 1.6–2.2e-5 rad/code, curvature 2.0–2.7e-6 1/m per code). The camera lane slope has about half the gain of the ego-motion offset rate; dashed lines are the nominal conversions. Correlations with the camera: heading "
+         f"{min(v['corr'] for v in ch.values()):.2f}…{max(v['corr'] for v in ch.values()):.2f}, curvature {min(v['corr'] for v in cc.values()):.2f}…{max(v['corr'] for v in cc.values()):.2f}.")
+
+
 def video_truth_excursions():
     rows = summary("video_truth")["object_list_vs_optical_2s_windows"]
     x = np.arange(len(rows))
@@ -786,7 +849,7 @@ NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling, ramp_limiter,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, video_truth_excursions)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, video_truth_excursions)}
 
 
 if __name__ == "__main__":

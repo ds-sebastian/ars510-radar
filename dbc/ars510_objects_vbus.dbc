@@ -1607,6 +1607,10 @@ BO_ 1889 ARS510_SHELL85_CELL_00: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1890 ARS510_SHELL85_CELL_01: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1622,6 +1626,10 @@ BO_ 1890 ARS510_SHELL85_CELL_01: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1891 ARS510_SHELL85_CELL_02: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1637,6 +1645,10 @@ BO_ 1891 ARS510_SHELL85_CELL_02: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1892 ARS510_SHELL85_CELL_03: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1652,6 +1664,10 @@ BO_ 1892 ARS510_SHELL85_CELL_03: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1893 ARS510_SHELL85_CELL_04: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1667,6 +1683,10 @@ BO_ 1893 ARS510_SHELL85_CELL_04: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1894 ARS510_SHELL85_CELL_05: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1682,6 +1702,10 @@ BO_ 1894 ARS510_SHELL85_CELL_05: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1895 ARS510_SHELL85_CELL_06: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1697,6 +1721,10 @@ BO_ 1895 ARS510_SHELL85_CELL_06: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1896 ARS510_SHELL85_CELL_07: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1712,6 +1740,10 @@ BO_ 1896 ARS510_SHELL85_CELL_07: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1897 ARS510_SHELL85_CELL_08: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1727,6 +1759,10 @@ BO_ 1897 ARS510_SHELL85_CELL_08: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1898 ARS510_SHELL85_CELL_09: 12 RADAR
  SG_ RAW_BYTE_00 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -1742,6 +1778,10 @@ BO_ 1898 ARS510_SHELL85_CELL_09: 12 RADAR
  SG_ RAW_BYTE_10 : 80|8@1+ (1,0) [0|255] "raw" XXX
  SG_ RAW_BYTE_11 : 88|8@1+ (1,0) [0|255] "raw" XXX
  SG_ PARAMETERS_PRESENT : 30|1@1+ (1,0) [0|1] "" XXX
+ SG_ CURVE_OFFSET_M : 32|12@1+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ CURVE_HEADING_RAD : 48|16@1+ (-1.8e-05,0.5616) [-0.62|0.57] "rad" XXX
+ SG_ CURVE_CURVATURE_PER_M : 64|15@1+ (2.5e-06,-0.04005) [-0.0401|0.0418] "1/m" XXX
+ SG_ CURVE_FLAG : 79|1@1+ (1,0) [0|1] "raw" XXX
 
 BO_ 1899 ARS510_SHELL85_CRC: 8 RADAR
  SG_ RECORD_CRC32 : 0|32@1+ (1,0) [0|4294967295] "raw" XXX
@@ -3169,25 +3209,65 @@ CM_ SG_ 1856 CONST_HDR120_16 "Constant in the captured data.";
 CM_ SG_ 1857 RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";
 CM_ BO_ 1888 "0x85 record bytes 0-20 (prefix). Byte 0 is the length-low byte 0x90; bytes 1-4 fine clock, 5-6 counter.";
 CM_ SG_ 1889 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1889 "0x85 cell 0, record bytes 21-32. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1889 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1889 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1889 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1889 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1889 "0x85 cell 0, record bytes 21-32. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1890 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1890 "0x85 cell 1, record bytes 33-44. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1890 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1890 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1890 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1890 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1890 "0x85 cell 1, record bytes 33-44. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1891 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1891 "0x85 cell 2, record bytes 45-56. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1891 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1891 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1891 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1891 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1891 "0x85 cell 2, record bytes 45-56. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1892 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1892 "0x85 cell 3, record bytes 57-68. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1892 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1892 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1892 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1892 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1892 "0x85 cell 3, record bytes 57-68. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1893 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1893 "0x85 cell 4, record bytes 69-80. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1893 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1893 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1893 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1893 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1893 "0x85 cell 4, record bytes 69-80. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1894 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1894 "0x85 cell 5, record bytes 81-92. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1894 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1894 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1894 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1894 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1894 "0x85 cell 5, record bytes 81-92. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1895 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1895 "0x85 cell 6, record bytes 93-104. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1895 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1895 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1895 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1895 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1895 "0x85 cell 6, record bytes 93-104. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1896 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1896 "0x85 cell 7, record bytes 105-116. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1896 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1896 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1896 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1896 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1896 "0x85 cell 7, record bytes 105-116. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1897 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1897 "0x85 cell 8, record bytes 117-128. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1897 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1897 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1897 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1897 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1897 "0x85 cell 8, record bytes 117-128. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1898 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
-CM_ BO_ 1898 "0x85 cell 9, record bytes 129-140. Cells 2/3/8/9 carry lane-boundary lateral offsets: (LE32|12 - 2000) * 0.01 m.";
+CM_ SG_ 1898 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1898 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1898 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1898 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ BO_ 1898 "0x85 cell 9, record bytes 129-140. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ BO_ 1899 "CRC at record[141:145] over record[1:141], followed by trailer[145:147]. Failing records are not exported.";
 VAL_ 1792 ONCOMING_FLAG 0 "clear" 1 "oncoming-like state" ;
 VAL_ 1792 MOVE_STATE 0 "moving forward (or left, with bit 111)" 1 "slow / standing (or initializing)" 2 "oncoming" 3 "moving right (or stopped after moving)" ;
