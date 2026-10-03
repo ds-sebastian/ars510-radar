@@ -32,10 +32,11 @@ def test_anchor_is_steady_plus_sticky_acc_clip_only():
   assert not STEADY_CONFIG.acc_target_sticky and STEADY_CONFIG.acc_target_clip_mps == 0.0
 
 
-def test_wrapper_has_one_switchable_profile_line_defaulting_to_steady():
+def test_wrapper_has_one_switchable_profile_line_defaulting_to_anchor():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
-  assert src.count('PROFILE = PROFILES["steady"]') == 1
-  assert 'PROFILES = {"default": OPENPILOT_CONFIG, "steady": STEADY_CONFIG, "anchor": ANCHOR_CONFIG}' in src
+  assert src.count('PROFILE = PROFILES["anchor"]') == 1
+  assert ('PROFILES = {"anchor": ANCHOR_CONFIG, "steady": STEADY_CONFIG, "stock": OPENPILOT_CONFIG, '
+          '"default": OPENPILOT_CONFIG}') in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -62,9 +63,14 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert text.startswith(original) and text.count("hook_car_interface(CarInterface)") == 1
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
-  assert 'PROFILE = PROFILES["steady"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert _install(tmp_path, "--profile", "default").returncode == 0
-  assert 'PROFILE = PROFILES["default"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert 'PROFILE = PROFILES["anchor"]' in (toyota / "ars510_radar_interface.py").read_text()
+  for name in ("steady", "default"):  # "default" stays accepted as the older name of stock
+    assert _install(tmp_path, "--profile", name).returncode == 0
+    assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
+  r = _install(tmp_path, "--profile", "stock")
+  assert r.returncode == 0 and "warning" in r.stdout
+  assert 'PROFILE = PROFILES["stock"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert "profile: stock" in _install(tmp_path, "--check").stdout
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()

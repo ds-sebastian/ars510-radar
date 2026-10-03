@@ -9,6 +9,7 @@ Inputs:
 Examples:
   python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o tracks.csv
   python tools/decode_log.py /path/to/rlog.zst --profile raw -o tracks.csv
+  python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor -o tracks.csv
 """
 from __future__ import annotations
 
@@ -22,7 +23,10 @@ from typing import Iterator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ars510 import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+
+PROFILES = {"anchor": ANCHOR_CONFIG, "steady": STEADY_CONFIG, "stock": OPENPILOT_CONFIG, "openpilot": OPENPILOT_CONFIG,
+            "raw": RAW_CONFIG}
 
 
 def frames_from_csv(path: Path) -> Iterator[tuple[float, int, int, bytes]]:
@@ -52,12 +56,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("log", type=Path)
     ap.add_argument("-o", "--out", type=Path, default=Path("ars510_points.csv"))
-    ap.add_argument("--profile", choices=("openpilot", "raw"), default="openpilot")
+    ap.add_argument("--profile", choices=tuple(PROFILES), default="stock",
+                    help="install profiles anchor / steady / stock, or raw: every track from age 1 (openpilot = stock)")
     args = ap.parse_args()
 
     name = args.log.name
     frames = frames_from_csv(args.log) if name.endswith((".csv", ".csv.gz")) else frames_from_openpilot_log(args.log)
-    iface = Ars510NativeRadarInterface(OPENPILOT_CONFIG if args.profile == "openpilot" else RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(PROFILES[args.profile])
     cols = ["time_s", "trackId", "native_id", "slot", "age", "dRel", "yRel", "vRel", "v_long_ground"]
     n_rec, n_pts, tracks = 0, 0, Counter()
     with open(args.out, "w", newline="") as fh:

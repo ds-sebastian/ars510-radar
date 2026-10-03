@@ -7,7 +7,7 @@ Ego speed comes from the car bus (bus 0, Toyota `SPEED` 0xB4). The radar runs a 
 flowchart LR
     L["Private radar–camera link<br/>bus 1"] --> O["0x80 object list<br/>742 B record / 60 ms"]
     L --> M["0x85 metadata record<br/>147 B / 60 ms"]
-    L --> A["0x235 / 0x237<br/>OEM ACC target witness, 50 Hz"]
+    L --> A["0x235 / 0x237<br/>radar ACC target, 50 Hz"]
     L --> S["0x190-0x198, 0x24x, 0x5xx<br/>timing, targets, status"]
     C[Car] -- "bus 0" --> E["0xB4 wheel speed"]
     O --> D[ars510 decoder]
@@ -37,7 +37,7 @@ target-summary codes requiring independent target association and calibration.
 | 0x197 / 0x198 | 2 / 1 | 16.7 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
 | 0x202 | 5 | 16.7 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
-| **0x235 / 0x237** | 8 | 50 Hz | **OEM ACC target witness**: closing speed, relative acceleration, distance, lateral | [05](05_acc_target_and_support.md#oem-acc-target-witness-0x235--0x237) |
+| **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar): closing speed, relative acceleration, distance, lateral | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
 | 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | companions of the 0x235 family (0x23D all zero) | |
 | 0x240-0x245, 0x248 | 8 | 16.7 Hz | context frames with a rolling phase 1-7; 0x240/0x244 carry changing payloads on some drives | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |

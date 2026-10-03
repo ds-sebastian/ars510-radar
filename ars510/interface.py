@@ -11,10 +11,11 @@ speed) and trackId (from the radar's own slot / age lifecycle).
 Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`. Without a fresh ego speed
 vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
-Use OPENPILOT_CONFIG for anything openpilot-facing. RAW_CONFIG publishes every valid track and is the
-decode-level view used for analysis. STEADY_CONFIG adds velocity-aided range, far-range vRel smoothing,
-the velocity-jump guard and delayed first publication for far tracks
-(docs/07_velocity_excursions.md has the measured effect of each option).
+Profiles (docs/08 has the replay numbers, docs/07 explains every layer):
+  ANCHOR_CONFIG   default install profile: STEADY + the radar's own ACC target (0x235) as a velocity anchor
+  STEADY_CONFIG   OPENPILOT_CONFIG + range fusion, far smoothing, jump guard, far-track settling, ramp limiter
+  OPENPILOT_CONFIG (= STOCK_CONFIG)  the plain decode with only what radard needs; research and comparison
+  RAW_CONFIG      every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
 """
 from __future__ import annotations
 
@@ -120,6 +121,8 @@ OPENPILOT_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
+# The plain decode with only the validity rules radard needs: the "stock" install profile.
+STOCK_CONFIG = OPENPILOT_CONFIG
 # Recommended profile ("K4" + guards, docs/07): velocity-aided range, far-range vRel smoothing and the 8 m/s velocity-jump
 # guard. Removes about half of radar's extra output roughness over vision-only for ~0.07 s of radar's head start, and
 # about a fifth of the hard radar-only braking requests. Far tracks first publish at age 100 to reduce settling pickups.
@@ -130,7 +133,7 @@ STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far
 
 # STEADY plus the radar's own ACC target as a velocity anchor (docs/07 "ACC anchor"): the object the radar reports as
 # its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
-# excursions that drag the native range along. Opt-in comfort profile; STEADY stays the default.
+# excursions that drag the native range along. The default install profile (docs/08).
 ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
                         acc_match_min_age=20)
 

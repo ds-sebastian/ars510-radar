@@ -9,7 +9,8 @@
 | [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
 | [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several interface profiles side by side |
 | [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
-| [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild every chart in `docs/` |
+| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step); a template for plotting your own idea |
+| [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild the other charts in `docs/` |
 | [`tools/compute_stats.py`](../tools/compute_stats.py) | descriptive statistics of the dataset → `data/analysis/stats.json` |
 
 ### Decode a log
@@ -18,6 +19,7 @@
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
 python tools/decode_log.py rlog.zst --profile raw            # every track, no age gate; reports CRC failures
+python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor   # any install profile
 ```
 
 ### Cabana
@@ -53,10 +55,10 @@ cp -r $OP/opendbc_repo /tmp/opendbc_ars510 && python openpilot/install.py /tmp/o
 PY=$OP/.venv/bin/python
 PYTHONPATH=$OP $PY tools/openpilot_replay/build_long_mpc_shadow.py --openpilot $OP --out op_shadow   # once, if not built with scons
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc $OP/opendbc_repo --mpc-shadow op_shadow \
-    --label stock  --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+    --label vision --out pr --save-logs pr/logs route--0/rlog route--1/rlog
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_ars510 --mpc-shadow op_shadow \
     --label ars510 --out pr --save-logs pr/logs route--0/rlog route--1/rlog
-$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr stock ars510
+$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision ars510
 ```
 
 The comparison lists detection, radarTracks rate and gaps, radar-matched leads, FCW and braking episodes that only one
@@ -70,6 +72,36 @@ To **plot**, open a saved `rlog.zst` in PlotJuggler: `longitudinalPlan.aTarget`,
 `radarTracks`. Replay is open loop: ego motion is as recorded, and "braking" means the planner's requested
 acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on `PATH`
 if clip rendering fails on `-vsync`.
+
+Here `vision` is unmodified openpilot (no radar tracks on this car) and `ars510` the installed integration; install
+another profile into a second opendbc copy (`install.py /tmp/opendbc_steady --profile steady`) to compare profiles.
+
+## Developing and testing a change
+
+A change to how points are published (a new filter, guard or decoded field) goes through these steps; each one is cheap
+until the last.
+
+1. **See it on the samples.** `data/sample/` has three real captures: steady following, a short excursion, and an
+   excursion with the radar's ACC target. Copy a panel of [`tools/make_profile_figures.py`](../tools/make_profile_figures.py)
+   and plot your idea against the current profile; synthetic CAN for events the samples lack is built the same way.
+2. **Add it as an option, off by default.** A field in `NativeInterfaceConfig` ([`ars510/interface.py`](../ars510/interface.py))
+   with a comment saying what it fixes, plus a test in `tests/test_interface.py` built from synthetic slots
+   (`encode_slot`), including a case where it must *not* act.
+3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
+   Do not tune on the drive that motivated it.
+4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the current
+   default profile and with yours, and report the gates used throughout [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step):
+
+   | gate | meaning |
+   |---|---|
+   | hard radar-only ticks | planner ≤ −2 m/s² while the vision-only replay asks ≥ −0.5 m/s²; must not rise |
+   | radar-only episodes | ≥ 0.3 s at ≤ −1 m/s² while vision-only asks ≥ −0.3; must not rise |
+   | braking onset | mean time of the first ≤ −0.5 m/s² request relative to each driver brake; must not get later by more than 0.03 s |
+   | early braking | share of driver brakes where the planner reached ≤ −1 m/s² between 3 s before and 0.5 s after the driver started braking; must not drop |
+   | per event | no single driver brake answered more than 0.15 s later, lost, or weaker when hard |
+
+5. **Open a PR with the numbers**, the figure, and the drives used (anonymised). A change that only looks better on
+   the drive that motivated it is not merged.
 
 ## Data in this repo
 

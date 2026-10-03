@@ -25,7 +25,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 | current openpilot (opendbc master) | self-check passes; replayed end to end through card → radard → plannerd |
 | sunnypilot v2026.002.002 | self-check passes; native-profile replay through original RadarD / plannerd under two prospective schedules ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)); carries `aRel` / `yvRel`; installed on the owner's device |
 | StarPilot | same hook; driven by the owner with the earlier patch-based install |
-| any fork | optional `openpilot/radard_vision_fusion.patch` ([07](07_velocity_excursions.md#options)) |
+| any fork | optional `openpilot/radard_vision_fusion.patch` ([07](07_velocity_excursions.md#other-approaches-tested)) |
 
 ## How it hooks in
 
@@ -58,24 +58,46 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 
 ## Profiles
 
-| profile | config | use |
+`install.py --profile NAME` picks one; with no `--profile` you get `anchor`. Every profile publishes every object-list
+track: profiles only change *how* a track's values are filtered, never which cars exist.
+
+| profile | what it is | when to use |
 |---|---|---|
-| `default` | `OPENPILOT_CONFIG`: `min_publish_age=60`, `relink_max_gap_s=3.5`, `vground_scale=0.149/0.15`, `drop_unresolved_vrel=True`, `drop_saturated_codes=True` | every fork |
-| `steady` | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0`, `vjump_thresh_mps=8`, `far_min_publish_age=100` above 70 m, `ramp_up_mps2=4`, `ramp_down_mps2=6` | **recommended**: halves extra roughness for about 0.07 s of head start, withholds implausible velocity jumps, delays far-track pickups and limits physically implausible velocity ramps ([07](07_velocity_excursions.md#options)) |
-| `anchor` | `ANCHOR_CONFIG` = steady + `acc_target_clip_mps=3`, `acc_target_sticky=True` | opt-in comfort profile: anchors the radar's ACC-target track to the radar's own ACC closing speed; fewer nuisance brakes at unchanged mean response ([07](07_velocity_excursions.md#options)) |
+| **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes | everyday driving: the fewest false brakes at the same response as `steady` |
+| `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, jump and saturation guards, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
+| `stock` | `OPENPILOT_CONFIG`: the plain decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 
-`range_fusion_gain` predicts dRel with vRel and corrects toward the measurement, halving 1.5 s range walks.
-`vrel_smooth_far_tau_s` smooths vRel with a time constant that rises from 0 s below 30 m to 1 s beyond 60 m.
-`far_min_publish_age` delays the first publication above `far_publish_range_m` (70 m) from age 60 to 100;
-already-published tracks stay eligible. The default profile keeps age 60 at every range. The targeted replay
-reduces far pickup braking 2 → 1, with mean held-out lag +0.003 s and unchanged hard ticks and anticipation
-([summary](../data/analysis/summaries/far_settling.json)). Actual device activation still requires a manager restart or reboot.
-`drop_saturated_codes` and `vjump_thresh_mps` withhold a mature track's invalid readings (velocity code 1023, or a jump
-of more than 8 m/s between records) and continue the track under a new ID, so radard's filter restarts cleanly.
+`default`, the older name of `stock`, is still accepted so earlier instructions keep working.
 
-A per-cycle ACC clip (`acc_target_clip_mps=3` without `acc_target_sticky`) is nearly inert on the fresh drives
-(hard ticks 7 → 7): its position match fails while an excursion drags the native range away. The `anchor` profile
-adds the sticky association; its replay results are in [07](07_velocity_excursions.md#options).
+Replay against the driver, unchanged openpilot card → radard → planner
+([summary](../data/analysis/summaries/acc_anchor.json), [profile figures](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
+
+| | `stock` | `steady` | `anchor` |
+|---|---|---|---|
+| hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 53 | **48** |
+| radar-only episodes (hard / target), held-out | 15 / 19 | 12 / 11 | **11 / 9** |
+| hard radar-only braking ticks, owner sunnypilot drives | 17 | 16 | **0** |
+| hard radar-only braking ticks, fresh owner drives (1.9 h) | see [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step) | 7 | **0** |
+| mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.128 s | −1.128 s |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 44.3% | 43.7% |
+
+"Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
+−0.5 m/s²: braking that only the radar wanted. `stock` reacts about 0.04 s earlier on average than the filtered
+profiles but asks for hard braking nearly twice as often, almost always because of a velocity excursion.
+
+What each setting does (examples and plots in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
+
+| setting | profiles | effect |
+|---|---|---|
+| `min_publish_age=60`, `relink_max_gap_s=3.5` | all | a track is published after ~3.6 s, once range and velocity have converged; a lost and re-found track keeps its ID |
+| `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; no point without a fresh ego speed (radard's filter never recovers from NaN) |
+| `drop_saturated_codes` | all | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards |
+| `range_fusion_gain=0.1` | steady, anchor | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
+| `vrel_smooth_far_tau_s=1.0` | steady, anchor | vRel EMA, time constant 0 s below 30 m rising to 1 s beyond 60 m, where excursions live |
+| `vjump_thresh_mps=8` | steady, anchor | withholds a record more than 8 m/s from the last accepted one; a new level that lasts 1 s is accepted |
+| `far_min_publish_age=100` above 70 m | steady, anchor | far new tracks wait ~6 s instead of ~3.6 s: young far tracks are where pickups misread speed |
+| `ramp_up_mps2=4`, `ramp_down_mps2=6` | steady, anchor | over-ground speed may leave its 3 s average by at most +4 / −6 m/s²; returns pass at once |
+| `acc_target_clip_mps=3`, `acc_target_sticky`, `acc_match_range_m=12`, `acc_match_min_age=20` | anchor | the track the radar reports as its ACC target stays within ±3 m/s of the target's closing speed; the association survives the target's range sliding |
 
 ## What radard does with radar points
 
