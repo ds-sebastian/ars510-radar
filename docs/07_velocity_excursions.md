@@ -86,8 +86,9 @@ closings. The bin counts and residual medians are in
 [`video_truth.json`](../data/analysis/summaries/video_truth.json).
 
 A camera-veto prototype uses an offline precomputed optical feed. On 2,606 selected windows it reduces the
-closing-disagreement fraction from 6.8% to 6.4%; 1 of 265 labelled onsets exceeds the 150 ms timing-equivalent
-threshold. Those window metrics use velocity-change/deceleration equivalents, not physical onset timestamps.
+closing-disagreement fraction from 6.8% to 6.4%. With clean optical input, 1 of 265 labelled onsets exceeds
+the 150 ms timing-equivalent threshold; the wrong-vehicle input variant has 7 exceedances. Those window metrics
+use velocity-change/deceleration equivalents, not physical onset timestamps.
 Settings were tuned and evaluated on prior-used drives, so these figures are exploratory. In a separate
 four-chain replay through the unchanged planner, range fusion + far smoothing + veto has mean response
 −0.5830 s versus STEADY's −0.5733 s, equal anticipation and no per-event violations, but hard command-disagreement

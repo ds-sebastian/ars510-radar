@@ -21,16 +21,16 @@
       "medium": 235,
       "low": 408
     },
-    "effective_bandwidth_MHz": [
-      153,
-      214,
-      375
-    ],
-    "range_resolution_m": [
-      0.4,
-      0.7,
-      0.98
-    ],
+    "effective_bandwidth_MHz_by_ego_speed": {
+      "high": 153,
+      "medium": 214,
+      "low": 375
+    },
+    "range_resolution_m_by_ego_speed": {
+      "high": 0.98,
+      "medium": 0.7,
+      "low": 0.4
+    },
     "cycle_ms": 55,
     "radial_velocity": {
       "total_range_mps": [
