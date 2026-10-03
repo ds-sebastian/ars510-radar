@@ -78,6 +78,14 @@ class NativeInterfaceConfig:
     # difference on normal samples (docs/05).
     acc_target_clip_mps: float = 0.0
     acc_target_max_age_s: float = 0.1
+    # Keep the ACC-target association while the matched track and a continuous ACC target persist, even when the native
+    # position slides away from the target's coarse position. Excursions often move the native range as well (a slot
+    # sliding onto another reflector), which is exactly when a per-cycle position match drops the cross-check.
+    # Re-matching happens when the ACC target jumps (coarse range > acc_sticky_jump_m or lateral > 1 m between
+    # updates), the track disappears, or its position cost exceeds acc_sticky_max_cost.
+    acc_target_sticky: bool = False
+    acc_sticky_jump_m: float = 8.0
+    acc_sticky_max_cost: float = 4.0
     # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
     # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
     # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07).
@@ -160,6 +168,7 @@ class Ars510NativeRadarInterface:
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
+        self._acc_assoc: tuple[int, float, float] | None = None  # sticky (tid, last coarse x, last y)
         self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
         self._guard_gen: dict[int, int] = {}
         self.guard_rejected = 0
@@ -270,16 +279,27 @@ class Ars510NativeRadarInterface:
         """The object the OEM ACC target witness describes: best position match, cost < 1 and margin > 1, age >= 60."""
         cfg = self.config
         if cfg.acc_target_clip_mps <= 0 or self._acc_vrel is None or self._acc_pos is None:
+            self._acc_assoc = None
             return None, nan
         if abs(time_s - self._acc_vrel[0]) > cfg.acc_target_max_age_s or abs(time_s - self._acc_pos[0]) > cfg.acc_target_max_age_s:
+            self._acc_assoc = None
             return None, nan
         _, ax, ay = self._acc_pos
         costs = sorted((abs(obj.d_rel - ax) / 6.0 + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
                        for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
+        if cfg.acc_target_sticky and self._acc_assoc is not None:
+            tid0, ax0, ay0 = self._acc_assoc
+            own = next((c for c, tid, _ in costs if tid == tid0), None)
+            if own is not None and own < cfg.acc_sticky_max_cost and abs(ax - ax0) <= cfg.acc_sticky_jump_m \
+                    and abs(ay - ay0) <= 1.0:
+                self._acc_assoc = (tid0, ax, ay)
+                return tid0, self._acc_vrel[1]
+            self._acc_assoc = None
         if not costs or costs[0][0] >= 1.0 or costs[0][2] < 60:
             return None, nan
         if len(costs) > 1 and costs[1][0] - costs[0][0] <= 1.0:
             return None, nan
+        self._acc_assoc = (costs[0][1], ax, ay)
         return costs[0][1], self._acc_vrel[1]
 
     # ---- candidate options --------------------------------------------------------------------------
