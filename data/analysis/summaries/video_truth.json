@@ -1,7 +1,7 @@
 {
  "description": "Exploratory optical comparison; metric looming uses native range and target association. Four dominant drives, 83 segments. Conditional residuals do not establish physical truth or radar measurement variance.",
  "reference": {
-  "method": "ECC affine registration of the lead's rear between frames 0.5 s or 1 s apart; relative velocity = -(radar range + 3.6 m) * d ln(scale)/dt",
+  "method": "ECC affine registration of the lead's rear between frames 0.5 s or 1 s apart; relative velocity = -(window-median radar range + 1.52 m) * d ln(scale)/dt",
   "parked_vehicle_windows": 51,
   "vs_8_12s_range_closure_to_80m_median_diff_mps": [
    -0.03,
@@ -137,6 +137,7 @@
   "note": "offline simulations of two designs; the decoder-level numbers below are the reference"
  },
  "camera_assisted_veto_decoder": {
+  "feed_conversion": "-(endpoint-interpolated radar range + 3.6 m) * d ln(scale)/dt for both spans; comparison labels use window-median range + 1.52 m. Offsets are source assumptions, not independently measured physical mounting offsets.",
   "windows": 2606,
   "segments": 67,
   "closing_disagreement_pct": {
@@ -176,8 +177,9 @@
     0,
     0
    ],
-   "wrong_vehicle": 7
+   "shuffled_velocity_original_metadata": 7
   },
+  "shuffled_velocity_definition": "Circularly shift v05/v1 by max(floor(segment rows/3), 10) rows within each segment; preserve t_end, x, y, cc05 and cc1. Includes future donor rows; fault injection, not observed wrong-target association or its physical error rate.",
   "window_timing_equivalent_definition": "(variant window velocity minus baseline window velocity) / 1.24 m/s^2 on selected optical/base onset labels; not a measured onset timestamp"
  },
  "object_list_vs_optical_2s_windows": [

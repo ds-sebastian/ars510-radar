@@ -72,7 +72,7 @@ Four closed-loop drives with the radar feeding openpilot's radard (1.05 h, 0.31 
 ## Compared with an optical reference
 
 ECC affine registration measures the lead rear's image scale change over 0.5–1 s. The exploratory metric
-reference is `−(native range + 3.6 m) × d ln(scale)/dt`. It avoids native velocity but shares native range
+reference is `−(native range + 1.52 m) × d ln(scale)/dt`. It avoids native velocity but shares native range
 and target association. Image-fit repeatability and selected parked-target residuals do not establish
 physical accuracy: crop, body motion, correspondence, timing and shared camera errors remain relevant.
 The corpus covers 83 segments, dominated by four drives, with few far windows.
@@ -85,10 +85,15 @@ by over 2.5 m/s in 0.2 / 2.2 / 10.6 / 15.0 / 20.9% of windows. The opposite disa
 closings. The bin counts and residual medians are in
 [`video_truth.json`](../data/analysis/summaries/video_truth.json).
 
-A camera-veto prototype uses an offline precomputed optical feed. On 2,606 selected windows it reduces the
+A camera-veto prototype uses an offline precomputed optical feed with a different conversion: endpoint
+range + 3.6 m, whereas the comparison labels use window-median range + 1.52 m. These are source conventions,
+not independently measured mounting offsets; agreement with the labels does not validate the feed equation.
+On 2,606 selected windows it reduces the
 closing-disagreement fraction from 6.8% to 6.4%. With clean optical input, 1 of 265 labelled onsets exceeds
-the 150 ms timing-equivalent threshold; the wrong-vehicle input variant has 7 exceedances. Those window metrics
-use velocity-change/deceleration equivalents, not physical onset timestamps.
+the 150 ms timing-equivalent threshold; a shuffled-velocity input variant has 7 exceedances. That fault injection
+permutes velocity pairs within each segment while preserving timestamps, positions and confidence values. It
+tests corrupted velocities, rather than an observed wrong-target association rate. Those window metrics use
+velocity-change/deceleration equivalents, not physical onset timestamps.
 Settings were tuned and evaluated on prior-used drives, so these figures are exploratory. In a separate
 four-chain replay through the unchanged planner, range fusion + far smoothing + veto has mean response
 −0.5830 s versus STEADY's −0.5733 s, equal anticipation and no per-event violations, but hard command-disagreement
