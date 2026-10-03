@@ -93,8 +93,17 @@ onsets exceeds the 150 ms timing-equivalent threshold. These window outcomes rep
 to their originating route. Pooling all drives by boot-relative timestamp permits cross-drive matches; fixing
 that scope changes individual velocities but none of these closing-disagreement decisions.
 
-The perturbed-feed and four-chain planner results retain pooled-feed scope and do not establish route-isolated
-camera benefit. A shuffled-velocity variant has 7 timing-equivalent exceedances: it permutes velocity pairs
+In a route-scoped comparison across four previously used development chains (93 segments), adding the camera
+veto to R0, a research profile with range fusion, far smoothing and a ramp limiter, changes 2,201 of
+110,332 planner ticks. Hard ticks remain 86; hard-episode counts, lead switches, response lag and anticipation
+remain identical. The small route-level roughness difference has an interval spanning zero. Seven of eight
+frozen gates pass, but the required strict
+nuisance-reduction gate does not. This comparison establishes no driving improvement. Its scope, aggregate
+scores and gates are in [`camera_route_scoped_planner.json`](../data/analysis/summaries/camera_route_scoped_planner.json).
+The 436 corrected queries in a separate interface benchmark are distinct from changed planner ticks.
+
+Perturbed-feed results retain pooled-feed scope. A shuffled-velocity variant has 7 timing-equivalent exceedances:
+it permutes velocity pairs
 within each segment while preserving timestamps, positions and confidence values, rather than measuring a
 physical wrong-target association rate. The 0.1–0.4 s timestamp-shift variants move the measurement endpoint;
 they do not validate delayed delivery with the original endpoint. Measurement and availability times must stay
