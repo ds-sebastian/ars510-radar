@@ -172,15 +172,36 @@
    "clean": 1,
    "drop30": 1,
    "drop60": 0,
-   "delay_0.1_0.2_0.4": [
+   "shuffled_velocity_original_metadata": 7,
+   "measurement_timestamp_shift_0.1_0.2_0.4": [
     0,
     0,
     0
-   ],
-   "shuffled_velocity_original_metadata": 7
+   ]
   },
   "shuffled_velocity_definition": "Circularly shift v05/v1 by max(floor(segment rows/3), 10) rows within each segment; preserve t_end, x, y, cc05 and cc1. Includes future donor rows; fault injection, not observed wrong-target association or its physical error rate.",
-  "window_timing_equivalent_definition": "(variant window velocity minus baseline window velocity) / 1.24 m/s^2 on selected optical/base onset labels; not a measured onset timestamp"
+  "window_timing_equivalent_definition": "(variant window velocity minus baseline window velocity) / 1.24 m/s^2 on selected optical/base onset labels; not a measured onset timestamp",
+  "measurement_timestamp_shift_definition": "Add the stated seconds to t_end before loading the feed. This shifts measurement-window alignment and freshness; it does not preserve the measurement endpoint while delaying delivery. True producer latency requires separate availability time.",
+  "feed_scope": "Perturbed-feed and four-chain planner results used all drive feeds pooled by boot-relative timestamp. These clocks can overlap across drives. The clean window outcomes below were separately reproduced with feeds restricted to the originating route; the planner and perturbation outputs were not rerun under that restriction.",
+  "route_scoped_clean_check": {
+   "source_segments": 83,
+   "native_point_queries": 118382,
+   "pooled_foreign_route_current_matches": 803,
+   "pooled_foreign_route_matches_with_saved_correction": 39,
+   "changed_points_after_route_scoping": 42,
+   "pooled_corrected_points": 454,
+   "route_scoped_corrected_points": 418,
+   "windows": 2606,
+   "excluded_windows": 0,
+   "closing_disagreement_count_pooled": 167,
+   "closing_disagreement_count_route_scoped": 167,
+   "closing_disagreement_decision_changes": 0,
+   "labelled_onsets": 265,
+   "onset_equivalents_over_150ms": 1,
+   "independent_arithmetic_check": "PASS",
+   "planner_replayed": false,
+   "physical_target_identity_established": false
+  }
  },
  "object_list_vs_optical_2s_windows": [
   {

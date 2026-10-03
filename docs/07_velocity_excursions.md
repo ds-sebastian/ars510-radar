@@ -88,16 +88,19 @@ closings. The bin counts and residual medians are in
 A camera-veto prototype uses an offline precomputed optical feed with a different conversion: endpoint
 range + 3.6 m, whereas the comparison labels use window-median range + 1.52 m. These are source conventions,
 not independently measured mounting offsets; agreement with the labels does not validate the feed equation.
-On 2,606 selected windows it reduces the
-closing-disagreement fraction from 6.8% to 6.4%. With clean optical input, 1 of 265 labelled onsets exceeds
-the 150 ms timing-equivalent threshold; a shuffled-velocity input variant has 7 exceedances. That fault injection
-permutes velocity pairs within each segment while preserving timestamps, positions and confidence values. It
-tests corrupted velocities, rather than an observed wrong-target association rate. Those window metrics use
-velocity-change/deceleration equivalents, not physical onset timestamps.
-Settings were tuned and evaluated on prior-used drives, so these figures are exploratory. In a separate
-four-chain replay through the unchanged planner, range fusion + far smoothing + veto has mean response
-−0.5830 s versus STEADY's −0.5733 s, equal anticipation and no per-event violations, but hard command-disagreement
-ticks increase from 85 to 113. STEADY plus veto gives 86. These candidates do not satisfy all replay gates.
+On 2,606 selected windows, the clean feed reduces closing disagreement from 6.8% to 6.4%; 1 of 265 labelled
+onsets exceeds the 150 ms timing-equivalent threshold. These window outcomes reproduce with feeds restricted
+to their originating route. Pooling all drives by boot-relative timestamp permits cross-drive matches; fixing
+that scope changes individual velocities but none of these closing-disagreement decisions.
+
+The perturbed-feed and four-chain planner results retain pooled-feed scope and do not establish route-isolated
+camera benefit. A shuffled-velocity variant has 7 timing-equivalent exceedances: it permutes velocity pairs
+within each segment while preserving timestamps, positions and confidence values, rather than measuring a
+physical wrong-target association rate. The 0.1–0.4 s timestamp-shift variants move the measurement endpoint;
+they do not validate delayed delivery with the original endpoint. Measurement and availability times must stay
+separate for a latency test. All window timing metrics use velocity-change/deceleration equivalents, not
+physical onset timestamps. Settings were tuned and evaluated on prior-used drives, so these results remain
+exploratory. Recorded planner scores and their scope are in the linked summary.
 The prototype is outside shipped profiles; independent physical labels and prospective validation remain
 necessary before interpreting its optical agreement as a driving improvement.
 
