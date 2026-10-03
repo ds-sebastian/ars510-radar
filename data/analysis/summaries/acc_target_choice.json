@@ -1,0 +1,31 @@
+{
+  "scope": "eight fresh/owner drives (156 one-minute segments); ACC target matched to the object-list track by position each cycle",
+  "selection_vs_estimation": {
+    "matched_cycles": 46251,
+    "disagreement_cycles_gt_2p5mps": 653,
+    "episodes_approx": 92,
+    "other_track_near_acc_target_share": {
+      "disagree": 0.0,
+      "agree": 0.001
+    },
+    "other_track_with_acc_speed_share": {
+      "disagree": 0.0,
+      "agree": 0.0
+    },
+    "by_range_disagreement_cycles": {
+      "0-40m": 98,
+      "40-70m": 519,
+      "70m+": 36
+    }
+  },
+  "release_of_departing_cars": {
+    "genuine_switches_track_continues": 30,
+    "departures_within_3s": 22,
+    "abs_y_at_release_median_m": 1.64,
+    "abs_y_at_release_iqr_m": [
+      0.67,
+      2.16
+    ]
+  },
+  "limits": "position matching per cycle; lane weights are empty on most lead cycles; exploratory counts"
+}

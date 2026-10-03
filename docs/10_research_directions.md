@@ -33,8 +33,9 @@ for a turning lane. Those are probably two different parts of its pipeline, and 
 should copy:
 
 - **Target choice (Toyota's weak point).** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
-  keeps it until the car is clearly out of its predicted path. On the fresh drives openpilot's model moved to a new
-  lead 1.5 s and more than 6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
+  keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures), about
+  when the car reaches the lane line. On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
+  6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
   better lead chooser; the `anchor` profile keeps it in charge and never follows the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
