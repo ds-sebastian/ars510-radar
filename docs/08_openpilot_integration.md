@@ -77,7 +77,7 @@ Replay against the driver, unchanged openpilot card → radard → planner
 | hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 53 | **48** |
 | radar-only episodes (hard / target), held-out | 15 / 19 | 12 / 11 | **11 / 9** |
 | hard radar-only braking ticks, owner sunnypilot drives | 17 | 16 | **0** |
-| hard radar-only braking ticks, fresh owner drives (1.9 h) | see [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step) | 7 | **0** |
+| hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | 7 | **0** |
 | mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.128 s | −1.128 s |
 | driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 44.3% | 43.7% |
 

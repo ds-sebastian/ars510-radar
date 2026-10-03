@@ -94,8 +94,13 @@ a dirty or misaligned radar instead of silently trusting it).
 The integration works on every fork without changing openpilot, but upstream openpilot prefers small radar interfaces
 that pass the radar's own values through and leave filtering to radard. Open work before proposing it there:
 
-1. **A minimal profile with evidence.** `stock` plus the ACC anchor (no tuned smoothing layers) uses only signals the
-   radar provides; its replay result decides whether the tuned layers are needed upstream at all.
+1. **Decide how much filtering an upstream version needs.** `stock` plus only the ACC anchor uses nothing but signals
+   the radar provides. In replay it removes most nuisance hard braking (held-out 93 → 46 ticks, owner drives 17 → 2,
+   fresh drives 16 → 2-3) but keeps stock's lead-switch roughness (2,468 vs 1,781 switches for `steady`), answers 5
+   of 167 driver brakes more than 0.15 s later, and leaves 3 vs 1 hard ticks on the further drives
+   ([`acc_anchor.json`](../data/analysis/summaries/acc_anchor.json)). So the anchor is the most valuable single
+   piece, and the remaining work is either keeping a few of the `steady` layers or moving their job into radard
+   (for example the `measured` flag below, so coasted velocity is weighted down).
 2. **Decode `measured` and fault status** (above), so the interface looks like the others.
 3. **Size and style.** Today: decoder ~1,000 lines including research options. An upstream port needs the
    reassembler, slot decode, the chosen profile and tests only, in opendbc's style, with fingerprint-based detection
