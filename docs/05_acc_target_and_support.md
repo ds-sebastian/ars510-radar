@@ -180,7 +180,14 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 
 ## Other frames
 
-- **0x202:** counter in byte 1 high nibble (+1 per frame); byte 0 is a fixed function of the counter (map in the DBC).
+- **0x202:** counter in byte 1 high nibble (+1 per frame); byte 0 is a fixed function of the counter (map in the DBC): a CRC-8 with
+  polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the other bytes are constant, so only the counter
+  dependence is identified).
+- **0x23B (50 Hz, 3 bytes, in received order):** byte 0 = **CRC-8** (polynomial 0x1D, MSB first, init 0, xor 0x59) over the
+  bit stream [counter 4 bits][0000][low nibble][value 8 bits]; byte 1 = rolling counter in the high nibble (low nibble 0; 1 or
+  15 on 74 of 2 M frames); byte 2 = slow 8-bit value (about 171 ± 6 when nonzero; zero on 42 % of frames; meaning
+  unreferenced). 3,615 of 3,616 distinct payloads over 2.05 M frames pass, and 30,056 of 30,058 frames on fresh drives (the
+  exceptions are the startup frame `00 0f ff`); `support.parse_0x23b` implements it.
 - **0x210:** copy of Toyota road-sign-assist data (speed-sign presence, `RSA1.SPDVAL1`, `RSA3.TSRMSW`).
 - **0x500 / 0x502:** unit-specific constants (redacted in the shared DBC; compare yours) and two slowly drifting codes
   in 0x502 (temperature-like behaviour).
