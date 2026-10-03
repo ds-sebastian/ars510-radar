@@ -43,7 +43,7 @@
   "refit_held_out_drives": 0.054,
   "decile_R2": 0.81,
   "held_out_R2": 0.66,
-  "false_closing_share_60_80m_by_code_quintile": {
+  "closing_disagreement_share_60_80m_by_code_quintile": {
    "31": 0.05,
    "34": 0.08,
    "37": 0.06,
@@ -51,8 +51,8 @@
    "51": 0.45
   },
   "rank_corr_with_abs_error_in_range_strata": 0.28,
-  "false_closing_auc_range_only": 0.64,
-  "false_closing_auc_range_plus_code": 0.74,
+  "closing_disagreement_auc_range_only": 0.64,
+  "closing_disagreement_auc_range_plus_code": 0.74,
   "native_minus_ecc_rms_slope_mps_per_count_40_80m": 0.049,
   "quantity": "Through-origin fit of ten decile RMS(native-ECC) summaries against mean code; includes both errors, covariance and squared bias",
   "verification_scope": "Slope, decile R2 and range-stratified rank correlation recomputed; transfer/bootstrap/AUC outputs retained from exploratory report, outside independent check"
@@ -130,7 +130,7 @@
   }
  },
  "camera_assisted_veto_offline": {
-  "false_closing_reduction_pct_simulation": [
+  "closing_disagreement_reduction_pct_simulation": [
    14,
    31
   ],
@@ -139,7 +139,7 @@
  "camera_assisted_veto_decoder": {
   "windows": 2606,
   "segments": 67,
-  "false_closing_pct": {
+  "closing_disagreement_pct": {
    "base": 6.8,
    "veto": 6.4,
    "night_base": 8.6,
