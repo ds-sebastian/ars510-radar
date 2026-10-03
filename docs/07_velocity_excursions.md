@@ -298,7 +298,7 @@ improvement is false. This overlay is separate from the historical full 19-gate 
 for further study, not profile promotion. Independent checks cover source selections, complete output groups and
 1,398 scoring calculations. Native outputs differ in 406 batches, so equal aggregate counts do not mean identical
 behavior. Physical scene/velocity labels, the recorded device's historical profile identity, private map memory and
-actual receive times remain unavailable. The recommended profile and runtime defaults remain STEADY.
+actual receive times remain unavailable. Both shipped profiles that build on `steady` (`steady`, `anchor`) keep the jump guard.
 
 ## Sunnypilot profile comparison
 
