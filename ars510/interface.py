@@ -84,6 +84,11 @@ class NativeInterfaceConfig:
     # Re-matching happens when the ACC target jumps (coarse range > acc_sticky_jump_m or lateral > 1 m between
     # updates), the track disappears, or its position cost exceeds acc_sticky_max_cost.
     acc_target_sticky: bool = False
+    # Initial ACC match: cost = |dRel - coarse x| / acc_match_range_m + |yRel - y| / 0.5 must be < 1 with margin > 1 over
+    # the next track, for tracks of age >= acc_match_min_age. The coarse ACC distance comes in 5.26 m steps with a
+    # range-dependent bias, while its lateral position agrees with the track to ~0.2 m.
+    acc_match_range_m: float = 6.0
+    acc_match_min_age: int = 60
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
     # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
@@ -126,7 +131,8 @@ STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far
 # STEADY plus the radar's own ACC target as a velocity anchor (docs/07 "ACC anchor"): the object the radar reports as
 # its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
 # excursions that drag the native range along. Opt-in comfort profile; STEADY stays the default.
-ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True)
+ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
+                        acc_match_min_age=20)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -290,7 +296,7 @@ class Ars510NativeRadarInterface:
             self._acc_assoc = None
             return None, nan
         _, ax, ay = self._acc_pos
-        costs = sorted((abs(obj.d_rel - ax) / 6.0 + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
+        costs = sorted((abs(obj.d_rel - ax) / cfg.acc_match_range_m + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
                        for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
         if cfg.acc_target_sticky and self._acc_assoc is not None:
             tid0, ax0, ay0 = self._acc_assoc
@@ -300,7 +306,7 @@ class Ars510NativeRadarInterface:
                 self._acc_assoc = (tid0, ax, ay)
                 return tid0, self._acc_vrel[1]
             self._acc_assoc = None
-        if not costs or costs[0][0] >= 1.0 or costs[0][2] < 60:
+        if not costs or costs[0][0] >= 1.0 or costs[0][2] < cfg.acc_match_min_age:
             return None, nan
         if len(costs) > 1 and costs[1][0] - costs[0][0] <= 1.0:
             return None, nan

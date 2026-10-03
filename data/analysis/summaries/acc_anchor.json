@@ -1,5 +1,5 @@
 {
-  "profile": "ANCHOR_CONFIG = STEADY_CONFIG + acc_target_clip_mps=3.0 + acc_target_sticky=True",
+  "profile": "ANCHOR_CONFIG = STEADY_CONFIG + acc_target_clip_mps=3.0 + acc_target_sticky=True + acc_match_range_m=12 + acc_match_min_age=20",
   "baseline": "STEADY_CONFIG",
   "replay": "unchanged openpilot card/radard/planner; fresh drives with unchanged sunnypilot planner (model and captured-plan schedules)",
   "heldout_20_routes": {
@@ -92,5 +92,24 @@
     }
   },
   "frozen_gates_passed": "18 of 19 (per-event fails on the mild event above); strict nuisance improvement passes",
-  "limits": "prior-used routes for the 34-drive scope; ACC target present ~57% of radar-lead time, ~5% beyond 80 m; native range is not anchored"
+  "limits": "prior-used routes for the 34-drive scope; ACC target present ~57% of radar-lead time, ~5% beyond 80 m; native range is not anchored",
+  "matcher": {
+    "associated_share_of_acc_active_time": [
+      0.363,
+      0.504
+    ],
+    "rematch_after_acc_switch_median_s": [
+      2.08,
+      0.03
+    ],
+    "lateral_gap_p95_m": [
+      0.42,
+      0.38
+    ],
+    "vrel_gap_p95_mps": [
+      1.54,
+      1.56
+    ],
+    "note": "before/after: range tolerance 6->12 m, min age 60->20; replay results identical on the 34-drive scope, fresh hard ticks 7->0 for both"
+  }
 }

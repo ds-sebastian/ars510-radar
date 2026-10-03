@@ -27,7 +27,7 @@ def test_steady_is_openpilot_plus_k4_jump_guard_far_settling_and_ramp_limiter():
 def test_anchor_is_steady_plus_sticky_acc_clip_only():
   from dataclasses import fields
   diff = {f.name for f in fields(STEADY_CONFIG) if getattr(STEADY_CONFIG, f.name) != getattr(ANCHOR_CONFIG, f.name)}
-  assert diff == {"acc_target_clip_mps", "acc_target_sticky"}
+  assert diff == {"acc_target_clip_mps", "acc_target_sticky", "acc_match_range_m", "acc_match_min_age"}
   assert ANCHOR_CONFIG.acc_target_clip_mps == 3.0 and ANCHOR_CONFIG.acc_target_sticky
   assert not STEADY_CONFIG.acc_target_sticky and STEADY_CONFIG.acc_target_clip_mps == 0.0
 
