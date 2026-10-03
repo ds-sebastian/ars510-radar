@@ -123,6 +123,11 @@ OPENPILOT_CONFIG = NativeInterfaceConfig(
 STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0, vjump_thresh_mps=8.0,
                        far_min_publish_age=100, far_publish_range_m=70.0, ramp_up_mps2=4.0, ramp_down_mps2=6.0)
 
+# STEADY plus the radar's own ACC target as a velocity anchor (docs/07 "ACC anchor"): the object the radar reports as
+# its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
+# excursions that drag the native range along. Opt-in comfort profile; STEADY stays the default.
+ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True)
+
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
 

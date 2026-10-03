@@ -9,6 +9,7 @@ from .interface import (
     OPENPILOT_CONFIG,
     RAW_CONFIG,
     STEADY_CONFIG,
+    ANCHOR_CONFIG,
     Ars510NativeRadarInterface,
     NativeInterfaceConfig,
     parse_toyota_speed_mps,
@@ -19,7 +20,7 @@ from .transport import Id80RecordAssembler, Id85RecordAssembler
 
 __all__ = [
     "ID80_ADDR", "ID85_ADDR", "RADAR_BUS", "TOYOTA_SPEED_ADDR",
-    "OPENPILOT_CONFIG", "RAW_CONFIG", "STEADY_CONFIG", "Ars510NativeRadarInterface", "NativeInterfaceConfig",
+    "ANCHOR_CONFIG", "OPENPILOT_CONFIG", "RAW_CONFIG", "STEADY_CONFIG", "Ars510NativeRadarInterface", "NativeInterfaceConfig",
     "parse_toyota_speed_mps", "NativeObject", "decode_native_slot", "id80_crc_ok", "occupied_slots",
     "Id80RecordAssembler", "Id85RecordAssembler",
 ]

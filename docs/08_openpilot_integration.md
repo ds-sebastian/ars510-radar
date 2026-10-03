@@ -62,6 +62,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 |---|---|---|
 | `default` | `OPENPILOT_CONFIG`: `min_publish_age=60`, `relink_max_gap_s=3.5`, `vground_scale=0.149/0.15`, `drop_unresolved_vrel=True`, `drop_saturated_codes=True` | every fork |
 | `steady` | `STEADY_CONFIG` = default + `range_fusion_gain=0.1`, `vrel_smooth_far_tau_s=1.0`, `vjump_thresh_mps=8`, `far_min_publish_age=100` above 70 m, `ramp_up_mps2=4`, `ramp_down_mps2=6` | **recommended**: halves extra roughness for about 0.07 s of head start, withholds implausible velocity jumps, delays far-track pickups and limits physically implausible velocity ramps ([07](07_velocity_excursions.md#options)) |
+| `anchor` | `ANCHOR_CONFIG` = steady + `acc_target_clip_mps=3`, `acc_target_sticky=True` | opt-in comfort profile: anchors the radar's ACC-target track to the radar's own ACC closing speed; fewer nuisance brakes at unchanged mean response ([07](07_velocity_excursions.md#options)) |
 
 `range_fusion_gain` predicts dRel with vRel and corrects toward the measurement, halving 1.5 s range walks.
 `vrel_smooth_far_tau_s` smooths vRel with a time constant that rises from 0 s below 30 m to 1 s beyond 60 m.
@@ -72,9 +73,9 @@ reduces far pickup braking 2 → 1, with mean held-out lag +0.003 s and unchange
 `drop_saturated_codes` and `vjump_thresh_mps` withhold a mature track's invalid readings (velocity code 1023, or a jump
 of more than 8 m/s between records) and continue the track under a new ID, so radard's filter restarts cleanly.
 
-`acc_target_clip_mps=3` on top of `steady` passes the six owner subgates under both sunnypilot replay schedules,
-reducing D1 episodes 5 → 4 while D2 is unchanged. It remains off by default pending fresh drives and full
-real-closing validation; settings and delivery assumptions are stated in [07](07_velocity_excursions.md#sunnypilot-profile-comparison).
+A per-cycle ACC clip (`acc_target_clip_mps=3` without `acc_target_sticky`) is nearly inert on the fresh drives
+(hard ticks 7 → 7): its position match fails while an excursion drags the native range away. The `anchor` profile
+adds the sticky association; its replay results are in [07](07_velocity_excursions.md#options).
 
 ## What radard does with radar points
 
