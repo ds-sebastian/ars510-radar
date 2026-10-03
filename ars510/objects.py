@@ -64,6 +64,11 @@ RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structu
 # the native allocation ends; it is not a latched physical-target history (docs/03).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
+# Existence probability in percent (10-100); 20|3 is its coded class (docs/03). Reaches 100 % at about age 21.
+EXISTENCE = NativeField("existence_pct", 16, 8, 0.0, 1.0, "%", "likely")
+# Predicted (not measured) record, the Continental "Meas = 0" state: common in a track's last records (docs/03).
+PREDICTED = NativeField("predicted", 107, 1, 0.0, 1.0, "flag", "likely")
+
 # Velocity standard deviation (sigma vx) candidate: grows with range and during velocity excursions, higher when the
 # velocity disagrees with the camera by > 2 m/s. Relative confidence; unit not pinned (docs/03).
 VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
@@ -80,7 +85,7 @@ AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -129,6 +134,8 @@ class NativeObject:
     raw_weight_state128: int | None = None  # 128|3; availability/category association, not validity
     vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
     v_lat_code: int = -1  # raw 74|10 code; 0 and 1023 are sentinels
+    existence_pct: int | None = None  # 16|8 existence probability, percent
+    predicted: bool = False  # 107|1: the record is a prediction, not a measurement
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
@@ -161,6 +168,8 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         lateral_valid=abs(lat_code) < LAT_INVALID_ABS_CODE,
         vel_code=int(field_code(slot, LONG_VEL_GROUND)),
         v_lat_code=int(field_code(slot, LAT_VEL)),
+        existence_pct=int(field_code(slot, EXISTENCE)),
+        predicted=bool(field_code(slot, PREDICTED)),
     )
 
 

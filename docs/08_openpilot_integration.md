@@ -47,7 +47,10 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    - `aRel`: the radar's filtered over-ground acceleration minus ego acceleration (from 0xB4). It is smoothed and
      lags vRel by 0.5-1 s.
 
-   Both are NaN without fresh yaw rate or ego speed. openpilot's radard does not read either field.
+   - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
+
+   `aRel` and `yvRel` are NaN without fresh yaw rate or ego speed. openpilot's and sunnypilot's radard read none of
+   these three fields for lead selection (radard stores `measured` but does not weight it).
 
 | situation | RadarData | effect in openpilot |
 |---|---|---|

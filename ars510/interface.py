@@ -486,10 +486,10 @@ class Ars510NativeRadarInterface:
                 "vRel": vrel,
                 "aRel": self._a_rel(obj, v_ego),
                 "yvRel": self._yv_rel(obj, time_s),
-                "measured": True,
+                "measured": not obj.predicted,  # 107|1, like Tesla's Meas; radard stores but does not weight it
             }
             if cfg.include_metadata:
-                point.update(slot=slot, age=obj.age, v_long_ground=float(v_ground), native_id=tid,
+                point.update(slot=slot, age=obj.age, v_long_ground=float(v_ground), native_id=tid, existence_pct=obj.existence_pct,
                              move_state=obj.move_state, oncoming_flag=obj.oncoming_flag,
                              vrel_status=NATIVE_VREL_STATUS if v_ego is not None else UNRESOLVED_NAN)
             points.append(point)
