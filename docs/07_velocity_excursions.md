@@ -196,9 +196,13 @@ Measured on 20 held-out routes by replaying openpilot's own card → radard → 
   is the natural next setting.
 - **ACC anchor (`ANCHOR_CONFIG`, opt-in: `install.py --profile anchor`).** The radar sends its own ACC target
   (0x235 / 0x237, [05](05_acc_target_and_support.md)); during excursions that target stays smooth and consistent with
-  range while the object list drifts. The anchor matches the target to an object-list track once by position, keeps
-  that association while the track and a continuous target persist, and clips the track's vRel to the target's
-  closing speed ± 3 m/s before range fusion. Keeping the association matters: excursions often drag the native range
+  range while the object list drifts. The anchor matches the target to an object-list track once by position
+  (lateral within 0.5 m weighs most; the target's coarse distance is only good to about ±10 m, so range tolerance is
+  12 m; tracks from age 20), keeps that association while the track and a continuous target persist, and clips the
+  track's vRel to the target's closing speed ± 3 m/s before range fusion. When the radar switches its target (a
+  cut-in), the association re-matches within one cycle if the new car has a track; on the fresh drives the
+  association covers 50% of the time the target is active. The anchor never chooses or removes a lead: every
+  object-list track is still published, and an unmatched target leaves the `steady` behaviour unchanged. Keeping the association matters: excursions often drag the native range
   along (one fresh-drive lead slid from 46 to 33 m and from −0.6 to −5.8 m/s while the ACC target stayed at 46 m and
   −0.7 m/s), and a per-cycle position match drops the clip exactly then. Versus `steady`, unchanged openpilot replay:
 
