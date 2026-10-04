@@ -27,5 +27,26 @@
       2.16
     ]
   },
-  "limits": "position matching per cycle; lane weights are empty on most lead cycles; exploratory counts"
+  "limits": "position matching per cycle; lane weights are empty on most lead cycles; exploratory counts",
+  "release_vs_radar_lane_boundary": {
+    "departures_with_boundary": 21,
+    "car_centre_minus_boundary_median_m": -0.29,
+    "iqr_m": [
+      -1.26,
+      0.42
+    ],
+    "boundary_abs_median_m": 1.92,
+    "conversions": "0x85 curve cells, nominal docs/04 constants"
+  },
+  "status_bit_baseline": {
+    "segments": 156,
+    "radar_clock_rare_bits_change_only_at_startup": true,
+    "exceptions": [
+      "counters in 0x190",
+      "0x680 slow multi-bit field bits 8-21",
+      "0x680 bit 18 (111 changes, 44 segments)",
+      "0x680 bit 57 (101 changes, 35 segments)"
+    ],
+    "degraded_radar_events": 0
+  }
 }

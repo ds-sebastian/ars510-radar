@@ -33,8 +33,9 @@ for a turning lane. Those are probably two different parts of its pipeline, and 
 should copy:
 
 - **Target choice (Toyota's weak point).** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
-  keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures), about
-  when the car reaches the lane line. On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
+  keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures). Measured
+  against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
+  0.29 m inside that line (21 departures): the rule is "keep the target until its centre reaches my lane line". On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
   6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
   better lead chooser; the `anchor` profile keeps it in charge and never follows the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
@@ -112,7 +113,7 @@ What other openpilot radar interfaces read from their radars, and what the ARS51
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | a relative-speed or Doppler field would remove the ego-speed dependency and its scale/timing questions |
 | relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` acceleration-like (○ scale, lags 0.5-1 s) | calibrate `84\|10` against independent motion |
 | **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.98 against the gyro) | already published as `yvRel` where forks carry it |
-| radar **fault / blockage** status | Honda `RADAR_STATE`, Tesla `sensorBlocked` | not decoded; only "no record for 0.5 s" is reported | find the radar's blocked / misaligned / degraded bits (candidates in the 0x190-0x198 and 0x500-0x502 families) |
+| radar **fault / blockage** status | Honda `RADAR_STATE`, Tesla `sensorBlocked` | not decoded; only "no record for 0.5 s" is reported | on eight drives the radar's own slow messages change rare bits only at start-up, except 0x680 bits 18 and 57; a drive in rain, spray or with a dirty bumper decides whether either is a blockage flag |
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, no physical units | units would let radard weight radar against vision |
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames: needs a small reassembler | none on the CAN side; the reassembler is ~80 lines with a CRC check |
 
