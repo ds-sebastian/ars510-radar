@@ -19,6 +19,8 @@ Profiles (docs/08 has the details and replay numbers):
             the object list, the radar's ACC target and its summaries by their own uncertainty
   raw       BASE_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
+  colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
+            offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
   anchor, steady   earlier tuned profiles, outperformed by fused and removed: they install fused (with a notice)
   stock, default   older names for raw
   openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): the slimmest filter that
@@ -37,7 +39,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("fused", "openpilot", "raw")
+PROFILE_NAMES = ("fused", "openpilot", "raw", "colored")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"

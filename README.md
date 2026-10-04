@@ -78,6 +78,7 @@ usual filter on top.* Model, constants, what each part is worth and the variants
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | the upstream version: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
+| `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 

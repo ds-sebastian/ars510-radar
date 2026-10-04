@@ -15,7 +15,7 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["fused"]') == 1
-  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG}' in src
+  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 

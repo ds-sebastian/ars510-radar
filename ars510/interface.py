@@ -14,6 +14,7 @@ vRel is NaN, and BASE_CONFIG withholds such points (radard's per-track Kalman ne
 Configs (docs/12 explains the filter, docs/11 compares the profiles with vision only):
   FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list, the radar's
                      ACC target and its summaries, each weighted by its own uncertainty
+  COLORED_CONFIG     experimental: fused with a colored-noise (bias) state for the object list
   BASE_CONFIG        the unfiltered radar decode with only what radard needs (the 'raw' install profile)
   ALL_TRACKS_CONFIG  every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
 """
@@ -106,6 +107,21 @@ class NativeInterfaceConfig:
     lead_accel_std_mps2: float = 1.5
     innovation_gate_sigma: float = 3.0
     publish_speed_std_mps: float = 0.75
+    # Colored measurement noise (state augmentation): the object-list speed error persists for ~1.2 s (lag-1
+    # autocorrelation 0.95 per 60 ms record), so the filter also estimates it as a slowly varying bias b
+    # (first-order Gauss-Markov, time constant speed_bias_tau_s, stationary sd speed_bias_sigma_per_code x scale);
+    # the object list measures v + b, the ACC target and summaries measure v. 0 = off (white noise only).
+    # The noise scale of a reading is 240|7 x (1 + speed_sigma_ego_gain x v_ego / 30 m/s)
+    #   x (1 + speed_sigma_accel_gain x |84|10| / 100): errors grow with ego speed and with the radar's acceleration.
+    speed_bias_tau_s: float = 0.0
+    speed_bias_sigma_per_code: float = 0.0
+    speed_sigma_ego_gain: float = 0.0
+    speed_sigma_accel_gain: float = 0.0
+    # Colored filter only: a new track's first reading gets this extra sd per 240|7 count (first readings are often
+    # far off, 240|7 near 160), and a tracker reading (ACC target, summary) beyond the innovation gate means the
+    # speed state has diverged: its variance is widened to the innovation before the update (covariance inflation).
+    speed_init_sigma_per_code: float = 0.0
+    speed_divergence_inflation: bool = False
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -118,6 +134,13 @@ BASE_CONFIG = NativeInterfaceConfig(
 # The default install profile (docs/07, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
 # filter per track that fuses the object list, the radar's ACC target and its summary ranges.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, drop_saturated_codes=False, fused_speed_filter=True)
+
+# Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
+# bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
+# fewer false closings offline and closer to vision on fresh drives, but slow to let go of a far excursion that recovers.
+COLORED_CONFIG = replace(FUSED_CONFIG, speed_sigma_per_code=0.001, speed_bias_tau_s=1.19, speed_bias_sigma_per_code=0.0096,
+                         speed_sigma_ego_gain=0.48, speed_sigma_accel_gain=0.51, young_sigma_scale=1.0,
+                         lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -352,16 +375,23 @@ class Ars510NativeRadarInterface:
         return out
 
     def _fused_speed(self, tid: int, time_s: float, obj: NativeObject,
-                     extra: list[tuple[float, float]]) -> tuple[float, float]:
+                     extra: list[tuple[float, float]], v_ego: float = 0.0) -> tuple[float, float]:
         """Fused over-ground speed and its standard deviation (see fused_speed_filter in the config)."""
         cfg = self.config
-        sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+        young = 1.0
         if obj.age < cfg.young_age:
             w = min(max((cfg.young_age - obj.age) / max(cfg.young_age - 60, 1), 0.0), 1.0)
-            sig *= 1.0 + (cfg.young_sigma_scale - 1.0) * w
+            young = 1.0 + (cfg.young_sigma_scale - 1.0) * w
+        if cfg.speed_bias_tau_s > 0:
+            scale = max(obj.vel_unc_code, 1) * young * (1.0 + cfg.speed_sigma_ego_gain * v_ego / 30.0) \
+                * (1.0 + cfg.speed_sigma_accel_gain * abs(obj.accel_like_code) / 100.0)
+            return self._fused_speed_colored(tid, time_s, obj, extra, scale)
+        sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+        if obj.age < cfg.young_age:
+            sig *= young
         vg = obj.v_long_ground * cfg.vground_scale
         st = self._fused.get(tid)
-        if st is None or not 0.0 < time_s - st[0] <= 0.5:
+        if st is None or len(st) != 3 or not 0.0 < time_s - st[0] <= 0.5:
             self._fused[tid] = (time_s, vg, sig * sig)
             return vg, sig
         t0, v, p = st
@@ -377,6 +407,43 @@ class Ars510NativeRadarInterface:
             p *= 1.0 - k
         self._fused[tid] = (time_s, v, p)
         return v, p ** 0.5
+
+    def _fused_speed_colored(self, tid: int, time_s: float, obj: NativeObject,
+                             extra: list[tuple[float, float]], scale: float) -> tuple[float, float]:
+        """Speed filter with the object-list error as a first-order Gauss-Markov bias state (state [v, b])."""
+        cfg = self.config
+        sw = cfg.speed_sigma_per_code * scale
+        sb = cfg.speed_bias_sigma_per_code * scale
+        vg = obj.v_long_ground * cfg.vground_scale
+        st = self._fused.get(tid)
+        if st is None or len(st) != 6 or not 0.0 < time_s - st[0] <= 0.5:
+            p00 = sw * sw + sb * sb + (cfg.speed_init_sigma_per_code * scale) ** 2
+            self._fused[tid] = (time_s, vg, 0.0, p00, 0.0, sb * sb)
+            return vg, p00 ** 0.5
+        t0, v, b, p00, p01, p11 = st
+        dt = time_s - t0
+        phi = exp(-dt / cfg.speed_bias_tau_s)
+        b *= phi
+        p00 += (cfg.lead_accel_std_mps2 * dt) ** 2
+        p01 *= phi
+        p11 = phi * phi * p11 + sb * sb * (1.0 - phi * phi)
+        for z, r, h1 in [(vg, sw * sw, 1.0)] + [(z, s * s, 0.0) for z, s in extra]:
+            ph0, ph1 = p00 + h1 * p01, p01 + h1 * p11  # P H^T, H = [1, h1]
+            s = ph0 + h1 * ph1 + r
+            innov = z - (v + h1 * b)
+            lim = cfg.innovation_gate_sigma * s ** 0.5
+            if cfg.speed_divergence_inflation and h1 == 0.0 and lim > 0 and abs(innov) > lim:
+                p00 += (abs(innov) / cfg.innovation_gate_sigma) ** 2 - s + r
+                ph0, s = p00, p00 + r
+                lim = cfg.innovation_gate_sigma * s ** 0.5
+            if cfg.innovation_gate_sigma > 0 and abs(innov) > lim:
+                innov = lim if innov > 0 else -lim
+            k0, k1 = ph0 / s, ph1 / s
+            v += k0 * innov
+            b += k1 * innov
+            p00, p01, p11 = p00 - k0 * ph0, p01 - k0 * ph1, p11 - k1 * ph1
+        self._fused[tid] = (time_s, v, b, p00, p01, p11)
+        return v, p00 ** 0.5
 
     def _fused_range(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
         prev = self._range_est.get(tid)
@@ -463,7 +530,7 @@ class Ars510NativeRadarInterface:
                     extra.append((acc_vrel + v_ego, cfg.acc_sigma_mps))
                 if tid in sum_speed and (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
                     extra.append((sum_speed[tid] + v_ego, cfg.summary_sigma_mps))
-                v_ground, speed_std = self._fused_speed(tid, time_s, obj, extra)
+                v_ground, speed_std = self._fused_speed(tid, time_s, obj, extra, v_ego)
                 vrel = float(v_ground - v_ego)
             else:
                 v_ground = obj.v_long_ground * cfg.vground_scale

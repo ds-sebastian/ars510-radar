@@ -131,7 +131,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
 0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
 let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
-`COLORED_CONFIG` is not in the decoder.
+The fork build keeps it as the experimental `colored` profile (`COLORED_CONFIG`) for road tests.
 
 ### Other approaches tested
 

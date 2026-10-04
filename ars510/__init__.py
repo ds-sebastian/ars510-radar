@@ -6,6 +6,7 @@ See README.md.
 """
 from .constants import ID80_ADDR, ID85_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
 from .interface import (
+    COLORED_CONFIG,
     FUSED_CONFIG,
     BASE_CONFIG,
     ALL_TRACKS_CONFIG,
@@ -19,7 +20,7 @@ from .transport import Id80RecordAssembler, Id85RecordAssembler
 
 __all__ = [
     "ID80_ADDR", "ID85_ADDR", "RADAR_BUS", "TOYOTA_SPEED_ADDR",
-    "FUSED_CONFIG", "BASE_CONFIG", "ALL_TRACKS_CONFIG", "Ars510NativeRadarInterface", "NativeInterfaceConfig",
+    "COLORED_CONFIG", "FUSED_CONFIG", "BASE_CONFIG", "ALL_TRACKS_CONFIG", "Ars510NativeRadarInterface", "NativeInterfaceConfig",
     "parse_toyota_speed_mps", "NativeObject", "decode_native_slot", "id80_crc_ok", "occupied_slots",
     "Id80RecordAssembler", "Id85RecordAssembler",
 ]

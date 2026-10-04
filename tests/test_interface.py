@@ -423,3 +423,13 @@ def test_fused_filter_publishes_young_far_tracks_once_their_speed_is_known() -> 
     far = _fused_run(cfg, 90.0, 60, lambda k: 10.0, n=40, age0=55)
     assert near and near[0][0] < 0.06 * 7                     # published at age 60
     assert not far or far[0][0] > near[0][0] + 0.5            # speed std still above 0.75 m/s at age 60
+
+
+def test_colored_filter_follows_the_summary_and_still_tracks_a_lasting_speed_change() -> None:
+    from ars510 import COLORED_CONFIG
+    cfg = replace(COLORED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    excursion = _fused_run(cfg, 70.0, 30, lambda k: 9.0 if k < 25 else 3.0, summary=True)
+    assert all(v > -2.5 for _, v in excursion[-20:])          # the 6 m/s drop is read as object-list bias
+    step = _fused_run(cfg, 40.0, 30, lambda k: 10.0 if k < 20 else 7.0, n=140)
+    assert -3.0 < step[-1][1] < -2.0                         # without trackers a lasting change is followed, but slowly
+    assert COLORED_CONFIG.fused_speed_filter and COLORED_CONFIG.speed_bias_tau_s > 0
