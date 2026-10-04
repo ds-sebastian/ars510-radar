@@ -271,6 +271,8 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 | ramp limiter | held-out hard ticks 53 → 69 |
 | far settling and jump guard | further drives 1 → 9 hard ticks; one owner episode more |
 | jump guard alone | no scored change on 34 drives or the fresh drives: removed from the profiles |
+| far smoothing (from `anchor`) | held-out hard ticks 48 → 45 but further drives 1 → 9, target episodes 9 → 11, four driver brakes answered > 0.15 s later; fresh drives brake harder in two recorded windows: kept |
+| far-track settling (from `anchor`) | held-out unchanged (48), further drives 1 → 9, one more target episode on held-out and owner drives, onset 17 ms later: kept |
 | ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
 
 ### Other approaches tested

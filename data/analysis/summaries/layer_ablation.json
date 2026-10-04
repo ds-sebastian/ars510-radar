@@ -135,6 +135,59 @@
         0
       ],
       "decision": "removed from steady and anchor; option vjump_thresh_mps kept"
+    },
+    "far_smoothing_from_anchor": {
+      "heldout_hard": [
+        48,
+        45
+      ],
+      "hard_episodes": [
+        11,
+        10
+      ],
+      "target_episodes": [
+        9,
+        11
+      ],
+      "further_hard": [
+        1,
+        9
+      ],
+      "owner_hard": [
+        0,
+        0
+      ],
+      "mean_onset_s": [
+        -1.1277,
+        -1.1582
+      ],
+      "events_later_than_150ms": 4,
+      "fresh": "two captured braking windows 0.11-0.15 m/s2 harder (window gate fails)",
+      "decision": "kept"
+    },
+    "far_settling_from_anchor": {
+      "heldout_hard": [
+        48,
+        48
+      ],
+      "target_episodes": [
+        9,
+        10
+      ],
+      "further_hard": [
+        1,
+        9
+      ],
+      "owner_target_episodes": [
+        5,
+        6
+      ],
+      "mean_onset_s": [
+        -1.1277,
+        -1.11
+      ],
+      "fresh": "all gates pass (no far pickups in those drives)",
+      "decision": "kept"
     }
   },
   "stock_vs_steady_heldout": {
