@@ -299,6 +299,17 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 | far-track settling (from `anchor`) | held-out unchanged (48), further drives 1 → 9, one more target episode on held-out and owner drives, onset 17 ms later: kept |
 | ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
 
+### Summary anchor (option, off)
+
+`summary_clip_mps` does for far cars what the ACC anchor does for the ACC target: the radar's selected-target range
+summaries (0x192 / 0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) come from its internal
+tracker, so their range slope avoids the excursions. A summary attaches to an object-list track when range (within
+15 %) and speed (within 1.5 m/s) agree unambiguously, stays attached while both persist, and that track's vRel is
+held within ± `summary_clip_mps` of the summary speed. On the eight fresh/owner drives the ACC anchor covers 55 % of
+in-lane points beyond 60 m and the summaries add 24 % (79 % together). In replay (`summary_clip_mps=3`) it changes 1 %
+of points, mostly beyond 60 m, and leaves every planner score of `anchor` unchanged on the 34 replay drives and the
+fresh drives: physically better far speeds (camera check above) that these drives' planners rarely act on.
+
 ### Range anchor (option, off)
 
 `acc_range_clip_m` clips the ACC-associated track's object-list range to a distance propagated with the radar ACC

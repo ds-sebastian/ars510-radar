@@ -109,7 +109,7 @@ independent association.
 
 | bytes | field |
 |---|---|
-| 0-1 | big-endian 13-bit range-like raw summary; metric calibration required |
+| 0-1 | big-endian 13-bit **range** of a target from the radar's internal tracker (◐ ~0.054 m/code on 0x192, ~0.046 on 0x194, scaled to the ACC speed; offsets −5.1 / −12.5 m) |
 | 2-3 | full big-endian 13-bit raw summary; preserve bit 12 |
 
 The second word crosses 4096 continuously in retained captures: 4091→4109 and 4083→4098. Preserving all 13 bits
@@ -117,8 +117,18 @@ keeps changes of +18 and +15; a 12-bit fold would introduce artificial jumps of 
 codes provide diagnostics; physical calibration and reliable target association are required before metric output.
 [Raw boundary evidence](../data/analysis/summaries/selected_target_descriptors.json).
 
-`parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers. It returns `None`
-for a short payload or the exact whole-frame sentinel. The driving interface does not consume these summaries.
+**They come from the radar's good internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
+ACC speed when both describe the same car (correlation 0.90, median difference 0.16 m/s). During object-list velocity
+excursions it stays with the ACC speed in every tested cycle (397 of 397 for 0x192, 21 of 21 for 0x194), and against
+a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:
+14.9 % → 6.5 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
+far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
+([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry range only (no speed field), so
+speed needs a slope and lags by about half a second.
+
+`parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers (0x194 has the same
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. The option `summary_clip_mps` uses
+them as a velocity anchor ([07](07_velocity_excursions.md#summary-anchor-option-off)).
 
 ## 0x190: cycle header
 

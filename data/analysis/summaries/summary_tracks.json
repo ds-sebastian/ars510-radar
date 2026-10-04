@@ -1,0 +1,123 @@
+{
+  "scope": "eight fresh/owner drives (156 segments) for speed and coverage; optical-looming windows (VID program) for the camera check",
+  "scales_m_per_code": {
+    "0x192": [
+      0.0541,
+      -5.14
+    ],
+    "0x194": [
+      0.0461,
+      -12.45
+    ]
+  },
+  "speed_vs_acc_same_object": {
+    "0x192": {
+      "cycles": 19739,
+      "corr": 0.904,
+      "median_abs_diff": 0.158,
+      "slope": 0.964
+    },
+    "0x194": {
+      "cycles": 3041,
+      "corr": 0.88,
+      "median_abs_diff": 0.406,
+      "slope": 0.824
+    }
+  },
+  "during_object_list_excursions": {
+    "0x192": {
+      "cycles": 397,
+      "closer_to_acc_share": 1.0,
+      "minus_acc_median": -0.012,
+      "minus_object_list_median": 3.1
+    },
+    "0x194": {
+      "cycles": 21,
+      "closer_to_acc_share": 1.0
+    }
+  },
+  "coverage_without_acc": {
+    "0x192": {
+      "cycles": 8058,
+      "range_median_m": 52.8,
+      "share_beyond_60m": 0.463
+    },
+    "0x194": {
+      "cycles": 2338,
+      "share_beyond_60m": 0.453
+    },
+    "acc_target_share_beyond_60m": 0.029
+  },
+  "anchor_coverage_inlane_beyond_60m": {
+    "acc": 0.55,
+    "summary_only": 0.24,
+    "either": 0.79
+  },
+  "optical_check": {
+    "matched_windows": 906,
+    "median_abs_error_object_list_vs_summary": {
+      "40-60m": [
+        0.562,
+        0.349
+      ],
+      "60-80m": [
+        0.985,
+        0.748
+      ],
+      "80m+": [
+        0.977,
+        1.176
+      ]
+    },
+    "false_closing_gt2p5": {
+      "40-60m": [
+        0.047,
+        0.018
+      ],
+      "60-80m": [
+        0.149,
+        0.065
+      ],
+      "80m+": [
+        0.115,
+        0.098
+      ]
+    },
+    "summary_closer_in_object_list_false_closings": 0.973
+  },
+  "replay_34_drives_anchor_vs_anchor_summary": {
+    "heldout_hard": [
+      48,
+      48
+    ],
+    "hard_episodes": [
+      11,
+      11
+    ],
+    "target_episodes": [
+      9,
+      9
+    ],
+    "switches": [
+      1781,
+      1785
+    ],
+    "further_hard": [
+      1,
+      1
+    ],
+    "owner_hard": [
+      0,
+      0
+    ],
+    "mean_onset_s": [
+      -1.1277,
+      -1.1277
+    ]
+  },
+  "fresh": {
+    "points_changed": 938,
+    "share_beyond_60m": 0.857,
+    "gates": "all pass, no event changes"
+  }
+}
