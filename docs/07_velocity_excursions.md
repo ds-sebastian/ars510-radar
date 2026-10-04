@@ -160,8 +160,10 @@ the extra roughness.*
 
 The radar's object list is already a tracker output, so these layers do not "denoise measurements"; each one targets
 a specific, measured failure of the published track before radard sees it. They run per track, in this order, inside
-`Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). The three install profiles
-are cumulative: `raw` (steps 0-1), `steady` (0-3, 5-6) and `anchor` (0-3, 5-7); step 4 is an option that is off.
+`Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). The tuned profiles are
+cumulative: `raw` (steps 0-1), `steady` (0-3, 5-6) and `anchor` (0-3, 5-7); step 4 is an option that is off. The
+default `fused` profile keeps steps 0-2 and replaces steps 3-7 with one Kalman speed filter
+([below](#fused-speed-filter-fused-profile)).
 
 ![each layer added in turn](img/analysis/layer_staircase.png)
 

@@ -14,7 +14,8 @@ sudo reboot
 ```
 
 That's all: the fork is detected, the `fused` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. Pick another profile with `--profile steady` or `--profile raw`.
+version of this installer is replaced automatically. Pick another profile with `--profile anchor`, `--profile steady` or `--profile raw`
+([docs/11](../docs/11_profiles_compared.md) compares them).
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
@@ -81,6 +82,17 @@ $OP/.venv/bin/python openpilot/check_integration.py --opendbc /tmp/opendbc_ars51
 It passes 21-22 checks on current openpilot, the openpilot 10b9e73 used for replays and sunnypilot v2026.002.002. To
 replay your own drives stock vs installed, see
 [docs/09](../docs/09_tools_and_data.md#replay-your-drives-through-openpilot).
+
+## Troubleshooting
+
+| symptom | what to check |
+|---|---|
+| `no opendbc/car/toyota/interface.py under …` | pass the openpilot checkout (`/data/openpilot`) or its `opendbc_repo` directly |
+| leads are still vision-only after installing | reboot (a new ignition cycle is not enough); `--check` must show `hook … present`; the radar's firmware must be `8821F0R03100`, or bus 1 must carry 0x80 and 0x85 (`tools/decode_log.py` on a log from the car) |
+| radar leads disappeared after a fork update | the update reset `/data/openpilot`; run the installer again and reboot |
+| `radarUnavailableTemporary` alerts | the radar stopped sending its object list for more than 0.5 s; check the wiring / harness and whether openpilot longitudinal disabled the radar ([docs/08](../docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)) |
+| the lead chevron sits on the hood when stopped close behind a car | a UI quirk: the chevron is drawn from the radar distance in the camera frame; driving is not affected |
+| braking feels wrong | flag the moment with the bookmark button and open a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml); `--profile anchor` gives earlier reactions, `--uninstall` returns to vision only |
 
 ## Optional radard patch
 

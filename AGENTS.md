@@ -15,7 +15,7 @@ Start with [README.md](README.md), then the doc for your area:
 | field mapping (start bit, length, zero, scale) | `ars510/objects.py` | `docs/03` |
 | 0x85 metadata record, lane cells | `ars510/shell85.py` | `docs/04` |
 | ACC target, support messages | `ars510/support.py` | `docs/05` |
-| openpilot-facing interface, profiles, guards | `ars510/interface.py` | `docs/07`, `docs/08` |
+| openpilot-facing interface, profiles, filters | `ars510/interface.py` | `docs/07`, `docs/08`, `docs/11` |
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
 
@@ -38,8 +38,9 @@ python tools/check_privacy.py       # no route/dongle IDs, VINs, GPS, local path
 - **Privacy.** Never commit or paste route IDs, dongle IDs, VINs, GPS, device IPs, local paths or identifying video.
   Drives are anonymous (A/B/C, D1-D4) with relative times. `tools/check_privacy.py` enforces the patterns.
 - **Decoder semantics** change only with a test and the matching doc row. Keep `ars510/` dependency-free.
-- **Driving behaviour** (anything that changes `STEADY_CONFIG` output) needs an openpilot replay against the current
-  profile with the gates in `docs/07` and numbers in the PR. Do not tune on the drive that motivated the change.
+- **Driving behaviour** (anything that changes a profile's output, above all the default `FUSED_CONFIG`) needs an
+  openpilot replay against the current profile with the gates in `docs/07`, the vision-only comparison in `docs/11`,
+  a review of the moments that change, and numbers in the PR. Do not tune on the drive that motivated the change.
 - **Installer** stays fork-agnostic: append-only hook in `toyota/interface.py`, no in-place fork edits, no new
   `ToyotaFlags` bits. Run `openpilot/check_integration.py` against every fork available.
 - **Docs** state the current state only (● / ◐ / ○), rewritten in place; numbers come from

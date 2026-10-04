@@ -1,6 +1,6 @@
 [project]
 name = "ars510"
-version = "1.0.0"
+version = "1.1.0"
 description = "CAN decode of the Toyota / Continental ARS510 front radar for openpilot experiments"
 readme = "README.md"
 requires-python = ">=3.10"

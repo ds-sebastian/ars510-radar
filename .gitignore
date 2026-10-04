@@ -14,3 +14,4 @@ qlog
 qlog.*
 *.hevc
 *.ts
+uv.lock

@@ -1,14 +1,14 @@
 # 08. openpilot integration
 
 The integration turns the object list into openpilot radar tracks without changing openpilot itself: a decoder plus
-three small hooks in opendbc's Toyota port. radard, the planner and card run unchanged.
+one appended hook block in opendbc's Toyota port (detection and hand-over). radard, the planner and card run unchanged.
 
 ```mermaid
 flowchart LR
     CAN["CAN frames<br/>(bus 0 + bus 1)"] --> card
     subgraph opendbc Toyota port
         card --> RI["toyota RadarInterface.update()"]
-        RI -- "ARS510 flag set" --> A["Ars510RadarInterface<br/>reassemble · CRC · decode · track IDs"]
+        RI -- "ARS510 detected" --> A["Ars510RadarInterface<br/>reassemble · CRC · decode · filter · track IDs"]
     end
     A -- "RadarData ~16.7 Hz" --> T["radarTracks / liveTracks"]
     T --> radard --> RS["radarState leads"] --> P[longitudinal planner]
@@ -38,7 +38,8 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 3. **Decoding without a CANParser.** The interface reads the raw `(address, data, src)` tuples card already passes,
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 9 µs per call on a desktop CPU.
-4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles, with track IDs re-linked across
+4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once their
+   speed is known to ±0.75 m/s), with track IDs re-linked across
    short losses and no point published without a fresh ego speed (vRel is never NaN). Forks whose RadarPoint still
    has the legacy fields (sunnypilot) also get:
    - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24
@@ -166,23 +167,27 @@ vision (E4 with a range walk that radard's distance gate correctly rejects); E2 
 
 ## On the road
 
-The owner has driven the integration on two forks:
+The owner has driven the integration on three forks:
 
 - **FrogPilot 0.9.7 port** (4 drives, 1.05 h): radar-backed following felt good. Seven moments had openpilot braking
   harder than vision-only would: four radar false closings at 33-115 m (at most 0.8 m/s² extra) and three real
   closings the radar saw first. Stops end about 1 m closer to the lead (median gap 4.4 m): the radar measures the gap
   directly, while vision reads it 0.5-1 m short. When stopped close behind a car, the UI's lead chevron can sit on the
   hood, because the UI places it from dRel in the camera frame.
-- **StarPilot with K4** (2 drives, 18 min of openpilot longitudinal): hard brakes were real slowdowns, with radar and
+- **StarPilot with an early version of `steady`'s smoothing** (2 drives, 18 min of openpilot longitudinal): hard brakes were real slowdowns, with radar and
   camera agreeing on closing speed. StarPilot's planner extrapolates lead acceleration unchanged above 35 mph, which
   turns radar's early `aLeadK` into brake-then-accelerate swings; stock openpilot's planner decays it. Radar leads the
   camera by 0.2-0.4 s on decelerating leads. Near a stopping queue, radar held a stopped lead at 3-4 m/s for about
   2 s once (24 of 894 ticks overall with radar > 2 m/s while the camera read stopped).
+- **sunnypilot with `anchor`** (2 drives): far fewer hard brakes than the earlier profiles and usable day to day, with
+  some brake-then-accelerate oscillation while following that vision-only shows less. `fused` is now the default on
+  this car; its drives have not been reviewed yet.
 
 ## Checking a new install on the car
 
-1. **Parked, ignition on:** `carParams.flags` has the ARS510 bit, `radarUnavailable` is false, and `radarTracks`
-   (or `liveTracks`) arrive at ~16.7 Hz with points after ~6 s.
+1. **Parked, ignition on:** `install.py --check` shows the hook as present; in the log, `carParams.radarUnavailable` is
+   false and `radarTracks` (or `liveTracks`) arrive at ~16.7 Hz with points after ~6 s. (The integration adds no
+   `carParams.flags` bit.)
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
 3. **openpilot longitudinal:** on stock openpilot, alpha long sends the radar a UDS "disable transmit" at startup; check
