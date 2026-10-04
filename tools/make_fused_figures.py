@@ -143,10 +143,11 @@ def layers() -> None:
             ("summary: association", "summary_association_and_clip", (0, 0, 1, 1)),
             ("summary: ±3 m/s clip (≤ 80 m)", None, (0, 0, 1, 0)),
             ("Kalman speed filter (σ from the radar)", "fused_speed_filter", (0, 0, 0, 1))]
-    prof = ["raw", "steady", "anchor", "fused"]; colors = [GRAY, S1, ANC, FUS]
-    fig, ax = plt.subplots(figsize=(10.5, 4.6))
+    prof = ["raw", "anchor (earlier)", "fused (default)"]; colors = [GRAY, ANC, FUS]
+    fig, ax = plt.subplots(figsize=(9.5, 4.6))
     for i, (name, key, on) in enumerate(rows):
         y = len(rows) - 1 - i
+        on = (on[0], on[2], on[3])  # rows list the four historical profiles; steady is no longer shown
         for j, flag in enumerate(on):
             ax.add_patch(plt.Rectangle((j + 0.08, y + 0.12), 0.84, 0.76, color=colors[j] if flag else "#efeee9", lw=0))
         lines = S.get(key) if key else None
@@ -154,8 +155,8 @@ def layers() -> None:
             lines = S["relink"] + S["saturation_guard"]
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
         if lines:
-            ax.text(4.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
-    ax.set_xlim(-0.05, 4.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5, 3.5], prof); ax.xaxis.tick_top()
+            ax.text(3.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
+    ax.set_xlim(-0.05, 3.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5], prof); ax.xaxis.tick_top()
     ax.set_yticks([]); ax.grid(False)
     for sp in ax.spines.values(): sp.set_visible(False)
     ax.set_title("What each profile does to a track (shared decode: 288 lines)", pad=26)
@@ -165,10 +166,11 @@ def layers() -> None:
 def vs_vision() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())
     ev, req = S["heldout_events"], S["heldout_one_system_requests_and_overrides"]
-    prof = ["raw", "steady", "anchor", "fused"]; colors = [GRAY, S1, ANC, FUS]
-    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13, 3.8))
+    prof = ["raw", "anchor", "fused_no_trackers", "fused"]; colors = [GRAY, ANC, "#8fd9bb", FUS]
+    names = ["raw", "anchor\n(earlier)", "fused,\nno ACC/summary", "fused\n(default)"]
+    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13.5, 4.0))
     m = [ev[p]["onset_diff_mean_s"] for p in prof]; ci = np.array([ev[p]["onset_diff_ci"] for p in prof]).T
-    a1.bar(prof, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
+    a1.bar(names, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
     a1.axhline(0, color=INK, lw=0.8); a1.set_ylabel("onset vs vision only (s, < 0 = earlier)")
     a1.set_title(f"First braking request at {ev['fused']['events']} driver brakes")
     x = np.arange(len(prof))
@@ -176,13 +178,13 @@ def vs_vision() -> None:
     a2.bar(x + 0.2, [ev[p]["radar_ant10"] * 100 for p in prof], 0.4, color=colors, alpha=0.55, label="≤ −1.0 m/s²")
     a2.axhline(ev["fused"]["vision_ant05"] * 100, color=VIS, ls="--", lw=1.1)
     a2.axhline(ev["fused"]["vision_ant10"] * 100, color=VIS, ls=":", lw=1.1)
-    a2.set_xticks(x, prof); a2.set_ylabel("% of driver brakes"); a2.set_ylim(0, 100)
+    a2.set_xticks(x, names); a2.set_ylabel("% of driver brakes"); a2.set_ylim(0, 100)
     a2.set_title("Already asking within 3 s before (purple: vision only)")
     a2.text(1.5, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
     slowed = [req[p]["radar_only_driver"].get("slowed", 0) for p in prof]
     gas = [req[p]["radar_only_driver"].get("on_gas", 0) for p in prof]
-    a3.bar(prof, slowed, color=colors, label="driver also slowed")
-    a3.bar(prof, gas, bottom=slowed, color=colors, alpha=0.4, hatch="//", label="driver on the gas")
+    a3.bar(names, slowed, color=colors, label="driver also slowed")
+    a3.bar(names, gas, bottom=slowed, color=colors, alpha=0.4, hatch="//", label="driver on the gas")
     a3.set_ylabel("per hour of driving"); a3.set_title("Braking only the radar asked for (vision: 0)")
     a3.legend(loc="upper right")
     fig.tight_layout(); fig.savefig(OUT / "profiles_vs_vision.png", dpi=130); plt.close(fig)

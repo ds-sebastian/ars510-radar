@@ -4,7 +4,8 @@
   "raw": "OPENPILOT_CONFIG (formerly 'stock', the unfiltered radar decode)",
   "steady": "STEADY_CONFIG",
   "anchor": "ANCHOR_CONFIG",
-  "fused": "FUSED_CONFIG"
+  "fused": "FUSED_CONFIG",
+  "fused_no_trackers": "FUSED_CONFIG with the ACC target and summary readings ignored (acc/summary sigma 1e4): the Kalman filter on the object list alone"
  },
  "heldout_events": {
   "anchor": {
@@ -86,6 +87,26 @@
    "hard_slowdowns": 47,
    "hard_missed_vision": 10,
    "hard_missed_radar": 9
+  },
+  "fused_no_trackers": {
+   "events": 167,
+   "vision_ant05": 0.8084,
+   "radar_ant05": 0.8383,
+   "vision_ant10": 0.4012,
+   "radar_ant10": 0.4192,
+   "onset_diff_mean_s": -0.026,
+   "onset_diff_ci": [
+    -0.107,
+    0.041
+   ],
+   "earlier_share": 0.095,
+   "later_share": 0.128,
+   "paired": 148,
+   "median_onset_vision_s": -0.607,
+   "median_onset_radar_s": -0.739,
+   "hard_slowdowns": 47,
+   "hard_missed_vision": 10,
+   "hard_missed_radar": 10
   }
  },
  "further_events": {
@@ -168,6 +189,26 @@
    "hard_slowdowns": 5,
    "hard_missed_vision": 1,
    "hard_missed_radar": 1
+  },
+  "fused_no_trackers": {
+   "events": 15,
+   "vision_ant05": 0.8667,
+   "radar_ant05": 0.9333,
+   "vision_ant10": 0.4667,
+   "radar_ant10": 0.4,
+   "onset_diff_mean_s": -0.023,
+   "onset_diff_ci": [
+    -0.156,
+    0.075
+   ],
+   "earlier_share": 0.071,
+   "later_share": 0.143,
+   "paired": 14,
+   "median_onset_vision_s": -2.024,
+   "median_onset_radar_s": -2.024,
+   "hard_slowdowns": 5,
+   "hard_missed_vision": 1,
+   "hard_missed_radar": 2
   }
  },
  "heldout_one_system_requests_and_overrides": {
@@ -241,6 +282,24 @@
     "mean_err_after_vision": 0.652,
     "mean_err_after_radar": 0.618
    }
+  },
+  "fused_no_trackers": {
+   "hours": 4.56,
+   "vision_only_per_h": 0.0,
+   "vision_only_driver": {},
+   "radar_only_per_h": 0.88,
+   "radar_only_driver": {
+    "slowed": 0.66,
+    "on_gas": 0.22
+   },
+   "overrides": {
+    "n": 38,
+    "radar_closer_to_driver": 6,
+    "radar_further": 1,
+    "same": 31,
+    "mean_err_after_vision": 0.652,
+    "mean_err_after_radar": 0.612
+   }
   }
  },
  "late_vs_vision_note": "of the 17 events fused answers > 0.05 s later than vision, 14 are equally late with every radar profile (the radar lead shows less closing than vision there); 11 events are > 0.05 s earlier than vision (7 hard slowdowns, mean 0.62 s)",
@@ -278,6 +337,13 @@
    "mean_abs_jerk_mps3": 1.001,
    "radar_lead_share_of_lead_time": 0.871,
    "lead_source_switches_per_h": 690.7,
+   "hours": 2.66
+  },
+  "fused_no_trackers": {
+   "request_rmse_vs_driver_mps2": 0.419,
+   "mean_abs_jerk_mps3": 1.007,
+   "radar_lead_share_of_lead_time": 0.868,
+   "lead_source_switches_per_h": 702.7,
    "hours": 2.66
   }
  },
@@ -360,6 +426,34 @@
   "raw": 0,
   "steady": 0,
   "anchor": 0,
-  "fused": 0
+  "fused": 0,
+  "fused_no_trackers": 0
+ },
+ "replay_34_drives_hard": {
+  "raw": {
+   "heldout_hard_ticks": 93,
+   "heldout_target_episodes": 19
+  },
+  "steady": {
+   "heldout_hard_ticks": 53,
+   "heldout_target_episodes": 11
+  },
+  "anchor": {
+   "heldout_hard_ticks": 48,
+   "heldout_target_episodes": 9,
+   "owner_target_episodes": 5
+  },
+  "fused_no_trackers": {
+   "heldout_hard_ticks": 48,
+   "heldout_target_episodes": 8,
+   "owner_target_episodes": 4,
+   "further_hard_ticks": 2
+  },
+  "fused": {
+   "heldout_hard_ticks": 30,
+   "heldout_target_episodes": 4,
+   "owner_target_episodes": 0,
+   "further_hard_ticks": 2
+  }
  }
 }

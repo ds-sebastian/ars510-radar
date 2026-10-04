@@ -17,8 +17,8 @@ An install made with an older, patch-based version of this installer is removed 
 Profiles (docs/08 has the details and replay numbers):
   fused     FUSED_CONFIG (default): raw + range fusion + one Kalman speed filter that weights the object list, the
             ACC target and the summaries by the radar's own uncertainty (replaces the steady layers and anchor clips)
-  anchor    ANCHOR_CONFIG: steady + the radar's own ACC target (0x235) as a velocity anchor
-  steady    STEADY_CONFIG: raw + range fusion, far smoothing, far settling, ramp limiter
+  anchor    ANCHOR_CONFIG: the earlier tuned layers + the radar's own ACC target (0x235) as a velocity anchor (fallback)
+  steady    STEADY_CONFIG: the earlier tuned layers without the ACC target; superseded by fused
   raw       OPENPILOT_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
             needs to run. Velocity excursions reach the planner unfiltered (about twice the hard false braking of steady); for research and comparison only
   stock     older name for raw, kept so existing installs and instructions keep working
