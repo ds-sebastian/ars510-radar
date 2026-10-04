@@ -43,7 +43,7 @@ sys.path.insert(0, str(REPO))
 from ars510 import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
 PROFILES = {
-    "raw": RAW_CONFIG,
+    "all-tracks": RAW_CONFIG,
     "openpilot": OPENPILOT_CONFIG,
     # interface options (measured effect in docs/07)
     "openpilot_fused": replace(OPENPILOT_CONFIG, range_fusion_gain=0.1),
@@ -110,7 +110,7 @@ def main() -> int:
     ap.add_argument("rlogs", nargs="+", type=Path)
     ap.add_argument("--openpilot", type=Path, required=True)
     ap.add_argument("--mpc-shadow", type=Path, default=None, help="dir from build_long_mpc_shadow.py (unbuilt checkouts)")
-    ap.add_argument("--profiles", nargs="+", default=["raw", "openpilot"], choices=list(PROFILES))
+    ap.add_argument("--profiles", nargs="+", default=["all-tracks", "openpilot"], choices=list(PROFILES))
     ap.add_argument("--fingerprint", default="TOYOTA_RAV4_TSS2_2022")
     ap.add_argument("--force-engaged", action="store_true", help="force longControlState=pid so every tick is scored as engaged")
     ap.add_argument("--out", type=Path, default=Path("replay_out"))

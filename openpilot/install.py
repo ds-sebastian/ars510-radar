@@ -16,12 +16,13 @@ An install made with an older, patch-based version of this installer is removed 
 
 Profiles (docs/08 has the details and replay numbers):
   anchor    ANCHOR_CONFIG (default): steady + the radar's own ACC target (0x235) as a velocity anchor
-  fused     FUSED_CONFIG: stock + range fusion + one speed filter that weights the object list, the ACC target and
+  fused     FUSED_CONFIG: raw + range fusion + one speed filter that weights the object list, the ACC target and
             the summaries by the radar's own uncertainty (replaces the steady layers and the anchor clips)
-  steady    STEADY_CONFIG: stock + range fusion, far smoothing, far settling, ramp limiter
-  stock     OPENPILOT_CONFIG: the plain decode with only what radard needs to run. Velocity excursions reach the
+  steady    STEADY_CONFIG: raw + range fusion, far smoothing, far settling, ramp limiter
+  raw       OPENPILOT_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs to run. Velocity excursions reach the
             planner unfiltered (about twice the hard false braking of steady); for research and comparison only
-  default   older name for stock, kept so existing installs and instructions keep working
+  stock     older name for raw, kept so existing installs and instructions keep working
+  default   older name for raw, kept for the same reason
 """
 from __future__ import annotations
 
@@ -36,7 +37,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["anchor"]'
-PROFILE_NAMES = ("anchor", "fused", "steady", "stock", "default")
+PROFILE_NAMES = ("anchor", "fused", "steady", "raw", "stock", "default")
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
@@ -153,8 +154,8 @@ def main() -> int:
   interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
-  if args.profile in ("stock", "default"):
-    print("warning: the stock profile publishes the plain decode. Velocity excursions (false closings beyond 40 m)\n"
+  if args.profile in ("raw", "stock", "default"):
+    print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
           "reach the planner unfiltered and cause about twice the hard false braking of steady. Use it for research\n"
           "and comparison only; install.py with no --profile installs the recommended anchor profile.")
   return 0

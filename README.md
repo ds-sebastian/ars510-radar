@@ -43,9 +43,10 @@ flowchart LR
     A -- "RadarPoints, 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
-In replay against the driver (20 routes, 4.6 h), radar + vision **starts braking 0.15 s earlier** than vision alone
-on real slowdowns and reacts to more of them, at the cost of some jitter from velocity excursions
-([08](docs/08_openpilot_integration.md#radar--vision-against-vision-only-replay)).
+In replay against the driver (20 routes, 4.6 h), the unfiltered radar decode **starts braking 0.15 s earlier** than
+vision alone, partly from an over-closing bias that also causes radar-only braking (1.75 per hour). `anchor` keeps
+about half the head start at 1.1 per hour; `fused` brakes falsely only 0.22 per hour, with vision's timing and the
+smoothest requests ([11](docs/11_profiles_compared.md#against-vision-only)).
 
 ## Install
 
@@ -62,12 +63,13 @@ Then reboot the device. The same command works on any fork: it adds the decoder 
 | **`anchor`** (default) | `install.py /data/openpilot` | `steady` + the radar's own ACC target as a bound on the lead's speed, and its target-range summaries for far cars up to 80 m. Fewest false brakes |
 | `fused` | `--profile fused` | one speed filter that weights the object list, the radar's ACC target and its summaries by the radar's own uncertainty, in place of `steady`'s layers and `anchor`'s clips. Fewer false brakes than `anchor` in replay; opt-in until road-tested |
 | `steady` | `--profile steady` | guards and smoothing against velocity excursions, without the ACC target |
-| `stock` | `--profile stock` | the plain decode, for research and comparison. **Velocity excursions reach the planner unfiltered** |
+| `raw` | `--profile raw` | the unfiltered radar decode (not vision-only, not stock openpilot), for research and comparison. **Velocity excursions reach the planner unfiltered** |
 
 ![profiles on the bundled samples](docs/img/analysis/profile_comparison.png)
 
 *The same two excursions through each profile ([07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)
-explains every layer with examples and replay evidence).*
+explains every layer with examples and replay evidence). [11](docs/11_profiles_compared.md) compares the profiles with
+vision only, the driving experience, assumptions, and the other openpilot radar interfaces.*
 
 ## Start here
 
@@ -135,12 +137,13 @@ The full field list is in [docs/03](docs/03_slot_fields.md).
 | [08 openpilot integration](docs/08_openpilot_integration.md) | how it hooks in, profiles, radard behaviour, replay and road results |
 | [09 Tools and data](docs/09_tools_and_data.md) | decoding, Cabana, replay, the dataset, testing on your car |
 | [10 Research directions](docs/10_research_directions.md) | next steps, the signals that would help most, the path to an upstream interface |
+| [11 Profiles compared](docs/11_profiles_compared.md) | how each profile works, each against vision only, driving pros and cons, assumptions, other openpilot radar interfaces and code size |
 
 ## Repository layout
 
 | path | contents |
 |---|---|
-| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, openpilot-shaped interface (profiles `ANCHOR_CONFIG`, `STEADY_CONFIG`, `STOCK_CONFIG` / `OPENPILOT_CONFIG`) |
+| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, openpilot-shaped interface (profiles `ANCHOR_CONFIG`, `FUSED_CONFIG`, `STEADY_CONFIG`, `OPENPILOT_CONFIG` for `raw`) |
 | [`dbc/`](dbc) | `ars510_radar_bus.dbc` (every radar-bus frame) and `ars510_objects_vbus.dbc` (reassembled objects for Cabana) |
 | [`openpilot/`](openpilot) | installer, per-fork hook patches, self-check, optional radard patch |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |

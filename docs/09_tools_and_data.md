@@ -18,7 +18,7 @@
 ```bash
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
-python tools/decode_log.py rlog.zst --profile raw            # every track, no age gate; reports CRC failures
+python tools/decode_log.py rlog.zst --profile all-tracks     # every track, no age gate; reports CRC failures
 python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor   # any install profile
 ```
 
@@ -121,7 +121,7 @@ camera stills are, with licence plates and place names blurred.
 ## Testing on your own car
 
 1. **Same radar?** The forward radar at 0x750 / 0x0f answers `8821F0R03100` (in your route's `carParams.carFw`). Bus 1
-   carries 0x80 at ~1,760 frames/s and 0x85 at ~350 frames/s; `decode_log.py --profile raw` should report zero CRC
+   carries 0x80 at ~1,760 frames/s and 0x85 at ~350 frames/s; `decode_log.py --profile all-tracks` should report zero CRC
    failures.
 2. **Sanity checks:** stopped behind a car, dRel matches the gap and vRel ≈ 0; approaching a stopped car,
    `v_long_ground` ≈ 0; a car passing on your left has positive yRel and left-lane weight.

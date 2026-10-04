@@ -14,7 +14,7 @@ vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalm
 Profiles (docs/08 has the replay numbers, docs/07 explains every layer):
   ANCHOR_CONFIG   default install profile: STEADY + the radar's own ACC target (0x235) as a velocity anchor
   STEADY_CONFIG   OPENPILOT_CONFIG + range fusion, far smoothing, far-track settling, ramp limiter
-  OPENPILOT_CONFIG (= STOCK_CONFIG)  the plain decode with only what radard needs; research and comparison
+  OPENPILOT_CONFIG (= STOCK_CONFIG)  the unfiltered radar decode with only what radard needs (the 'raw' install profile)
   RAW_CONFIG      every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
 """
 from __future__ import annotations
@@ -158,7 +158,7 @@ OPENPILOT_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
-# The plain decode with only the validity rules radard needs: the "stock" install profile.
+# The unfiltered radar decode with only the validity rules radard needs: the "raw" install profile (formerly "stock").
 STOCK_CONFIG = OPENPILOT_CONFIG
 # Filtered profile (docs/07): velocity-aided range and far-range vRel smoothing (K4) remove about half of radar's extra
 # output roughness over vision-only for ~0.07 s of radar's head start. Far tracks first publish at age 100 to reduce

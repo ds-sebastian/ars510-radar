@@ -35,8 +35,8 @@ def test_anchor_is_steady_plus_acc_and_summary_anchors_only():
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_anchor():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["anchor"]') == 1
-  assert ('PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "stock": OPENPILOT_CONFIG,\n'
-          '            "default": OPENPILOT_CONFIG}') in src
+  assert ('PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,\n'
+          '            "stock": OPENPILOT_CONFIG, "default": OPENPILOT_CONFIG}') in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -64,13 +64,13 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["anchor"]' in (toyota / "ars510_radar_interface.py").read_text()
-  for name in ("fused", "steady", "default"):  # "default" stays accepted as the older name of stock
+  for name in ("fused", "steady", "stock", "default"):  # "stock" and "default" stay accepted as older names of raw
     assert _install(tmp_path, "--profile", name).returncode == 0
     assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
-  r = _install(tmp_path, "--profile", "stock")
+  r = _install(tmp_path, "--profile", "raw")
   assert r.returncode == 0 and "warning" in r.stdout
-  assert 'PROFILE = PROFILES["stock"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert "profile: stock" in _install(tmp_path, "--check").stdout
+  assert 'PROFILE = PROFILES["raw"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert "profile: raw" in _install(tmp_path, "--check").stdout
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
