@@ -57,6 +57,7 @@ These are replay results on one owner's car; road reports from other drivers are
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
+| `upstream` | `--profile upstream` | the same filter as `fused`, from the single file proposed for upstream openpilot | testing the merge candidate itself |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
@@ -168,6 +169,7 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 |---|---|
 | [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `BASE_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
+| [`upstream/`](upstream) | the single-file upstream candidate (`ars510_radar.py`), kept equal to `fused` by a test |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (parsing does not use them) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |
 | [`data/`](data) | three CAN samples, an anonymised analysis dataset (3 drives, 88 min) and the summary JSONs behind every number in the docs |

@@ -132,21 +132,24 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 
 ## Towards an upstream (comma) interface
 
-The integration works on every fork without changing openpilot, but upstream openpilot prefers small radar interfaces
-that pass the radar's own values through and leave filtering to radard. Open work before proposing it there:
+The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 300 lines). It holds the reassembler, the
+slot decode, track IDs, the ACC target / summary association and the same Kalman speed filter as `fused`, in opendbc's
+style. Constants are fixed in the file, there are no profiles, and points carry only `trackId`, `dRel`, `yRel` and
+`vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it equal to `fused` point for point
+(bundled samples, plus two full drives checked once), and `install.py --profile upstream` drives the candidate itself
+on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
-1. **Decide how much filtering an upstream version needs.** The `fused` profile is the candidate: the base decode,
-   range fusion and one speed filter whose weights come from the radar's own uncertainty fields and internal
-   trackers, about 30 lines for the filter itself. In replay it brakes falsely less than the earlier tuned layers
-   (held-out 48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
-   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It is the default; it needs more road miles, and the range/speed
-   scale of the object list ([06](06_accuracy.md)) before range can join the filter. The same weighting could live
-   in radard instead (per-point speed variance), which would leave the interface a pass-through like the others.
-2. **Decode `measured` and fault status** (above), so the interface looks like the others.
-3. **Size and style.** Today: decoder ~1,000 lines including research options. An upstream port needs the
-   reassembler, slot decode, the chosen profile and tests only, in opendbc's style, with fingerprint-based detection
-   (`8821F0R03100`; `8821F0R01100` unconfirmed).
-4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests, and a car test
-   on at least one more vehicle or firmware.
+1. **A clear reason the filter belongs in the interface.** Every upstream radar interface passes the radar's tracks
+   through. The ARS510's object list has slow, correlated speed errors that the radar reports (`240|7`) but does not
+   flag per moment; without the filter it asks for hard braking three times as often as `fused`
+   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). The candidate's test fails without the filter
+   (the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
+   variance), leaving the interface a pass-through.
+2. **Small, separable PRs.** Decode and points first (opendbc, without the filter, tested on recorded frames), the
+   filter second with before/after plots and process-replay diffs.
+3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`; `8821F0R01100` unconfirmed). Drives on
+   other cars, through `--profile upstream`, are what upstream would weigh.
+4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
 5. **Alpha longitudinal compatibility.** Confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
    radar-disable request.

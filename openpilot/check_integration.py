@@ -132,9 +132,10 @@ def main() -> int:
           "legacy RadarPoint fields carried (NaN aRel / yvRel: the synthetic log has no yaw rate or speed change)")
   # The synthetic object keeps a fixed range while its vRel is non-zero; the steady profile's velocity-aided range
   # (range_fusion_gain) then settles a little away from the raw range, so only the default profile is exact.
-  d_tol = 1e-3 if PROFILE.range_fusion_gain == 0 else 2.5
+  gain = 0.1 if PROFILE is None else PROFILE.range_fusion_gain  # None: the upstream candidate (fused's filter)
+  d_tol = 1e-3 if gain == 0 else 2.5
   check(abs(p.dRel - 40.0) < d_tol and abs(p.yRel - 1.5) < 1e-3,
-        f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f}; profile fusion gain {PROFILE.range_fusion_gain})")
+        f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f}; profile fusion gain {gain})")
   # vRel = v_ground * 0.149/0.15 - v_ego (0xB4 reference correction)
   exp = (round(510.5 + 20.0 / 0.15 + 0.5) - 510.5) * 0.15 * 0.149 / 0.15 - 18.0
   check(abs(p.vRel - exp) < 1e-3, f"vRel = over-ground velocity - ego speed (got {p.vRel:.3f}, want {exp:.3f})")

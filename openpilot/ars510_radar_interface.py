@@ -38,9 +38,10 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
 # Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list, the ACC
-# target and the summaries by the radar's own uncertainty, docs/07) or "raw" (BASE_CONFIG: the unfiltered radar
-# decode, research only). `install.py --profile` rewrites this one line in the installed copy.
-PROFILES = {"fused": FUSED_CONFIG, "raw": BASE_CONFIG}
+# target and the summaries by the radar's own uncertainty, docs/07), "raw" (BASE_CONFIG: the unfiltered radar
+# decode, research only) or "upstream" (the single-file upstream candidate, ars510_upstream.py: the same filter as
+# fused). `install.py --profile` rewrites this one line in the installed copy.
+PROFILES = {"fused": FUSED_CONFIG, "raw": BASE_CONFIG, "upstream": None}
 PROFILE = PROFILES["fused"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
@@ -61,7 +62,7 @@ WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (CAR_BUS, TOYOTA
 class Ars510RadarInterface(RadarInterfaceBase):
   def __init__(self, CP, *args, **kwargs):  # forks add arguments (sunnypilot: CP_SP)
     super().__init__(CP, *args, **kwargs)
-    self.ars = Ars510NativeRadarInterface(replace(PROFILE, include_metadata=False))
+    self.ars = UpstreamCandidate() if PROFILE is None else Ars510NativeRadarInterface(replace(PROFILE, include_metadata=False))
     self.start_s: float | None = None
     self.last_record_s: float | None = None
     self.warned = False
@@ -113,6 +114,21 @@ class Ars510RadarInterface(RadarInterfaceBase):
       points.append(pt)
     ret.points = points
     return ret
+
+
+class UpstreamCandidate:
+  """The single-file upstream candidate behind the decoder's update_frame call (no aRel / yvRel: legacy defaults)."""
+  def __init__(self):
+    from opendbc.car.toyota.ars510_upstream import Ars510Radar
+    self.radar = Ars510Radar()
+
+  def update_frame(self, time_s, bus, address, dat):
+    points = self.radar.update(time_s, bus, address, dat)
+    if points is None:
+      return None
+    return {"time_s": self.radar.record_t, "radarData": {"points": [
+      {"trackId": i, "dRel": d, "yRel": y, "vRel": v, "aRel": float("nan"), "yvRel": float("nan"), "measured": True}
+      for i, d, y, v in points]}}
 
 
 def _legacy_fields() -> tuple[str, ...]:

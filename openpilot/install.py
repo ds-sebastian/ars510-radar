@@ -21,6 +21,8 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   anchor, steady   earlier tuned profiles, outperformed by fused and removed: they install fused (with a notice)
   stock, default   older names for raw
+  upstream  the single-file upstream candidate (upstream/ars510_radar.py): the same filter as fused, points carry
+            only trackId / dRel / yRel / vRel, constants fixed in the file. For driving the merge candidate itself
 """
 from __future__ import annotations
 
@@ -35,7 +37,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("fused", "raw")
+PROFILE_NAMES = ("fused", "raw", "upstream")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
@@ -60,7 +62,8 @@ def find_opendbc(path: Path) -> Path | None:
 
 def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
-  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py"}
+  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
+          "upstream": toyota / "ars510_upstream.py"}
 
 
 def old_dbcs(root: Path) -> list[Path]:
@@ -152,6 +155,7 @@ def main() -> int:
   if t["package"].exists():
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+  shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
