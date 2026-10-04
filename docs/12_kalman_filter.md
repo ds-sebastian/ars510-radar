@@ -1,7 +1,8 @@
 # 12. The Kalman speed filter
 
 The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
-([07](07_velocity_excursions.md)). The radar reports their size in `240|7` but does not flag them per moment. The
+([07](07_velocity_excursions.md)). The code `240|7` provides an empirical error scale against the ACC witness; it
+does not flag each excursion. The
 default `fused` profile handles them with **one Kalman filter per track** on the lead's over-ground speed. The filter
 weights every reading by its own uncertainty: the object list, the radar's ACC target and its target-range summaries.
 radard then runs its usual filter on what this one publishes.
@@ -12,22 +13,56 @@ filter in the single-file upstream candidate [`upstream/ars510_radar.py`](../ups
 
 ## The model
 
-One state per track: the lead's speed over ground `v`, with variance `P`. Every radar cycle (`Δt` ≈ 60 ms):
+One state per track: the lead's speed over ground `v`, with modeled variance `P`. Every radar cycle (`Δt` ≈ 60 ms):
 
 ```text
-predict      v⁻ = v                          P⁻ = P + (a · Δt)²            a = 1.5 m/s² (lead acceleration)
-for each reading z with standard deviation σ (object list first, then ACC target, then summary):
-  innovation e = z − v⁻,  S = P⁻ + σ²,  e clamped to ±3·√S             (robust update)
-  gain       K = P⁻ / S
-  update     v = v⁻ + K·e                    P = (1 − K)·P⁻
+predict      v = v                           P = P + (a · Δt)²             a = 1.5 m/s² (process-noise setting)
+for each reading z with model standard deviation σ (object list, then an available matched tracker):
+  innovation e = z − v,  S = P + σ²,  e clamped to ±3·√S               (robust update)
+  gain       K = P / S
+  update     v = v + K·e                     P = (1 − K)·P
 publish      vRel = v − v_ego                 first publication once √P ≤ 0.75 m/s (and age ≥ 60)
 ```
 
 | reading | σ | where the value comes from |
 |---|---|---|
-| object-list speed `64\|10` | 0.045 m/s × `240\|7` (× 1.8 below age 100) | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)) |
+| object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1), with the young-track factor below | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)) |
 | ACC target speed (0x235, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
 | summary speed (0x192 / 0x194 range slope) | 0.5 m/s, up to 80 m | the radar's selected-target ranges, matched by range and speed |
+
+An ACC-associated track is excluded from summary fusion; at most one summary is used on another track. Each track
+therefore receives object-list speed plus at most one tracker estimate. A new filter, or one with invalid `Δt` or a
+gap over 0.5 s, initializes from object speed with `P = σ_object²`; tracker updates start on the next valid cycle.
+
+```mermaid
+flowchart LR
+  O["Object list: speed, uncertainty code, age"] --> K["Scalar speed filter: v, P"]
+  A["ACC target: speed + position"] --> M["Match one tracker to the object"]
+  S["Summary ranges: slope over time"] --> M
+  M --> K
+  E["Fresh ego speed"] --> M
+  E --> V["Subtract ego speed"]
+  K --> V
+  V --> R["Separate range prediction + correction"]
+  D["Native range"] --> R
+  K --> G["Age + initial modeled-std gate"]
+  V --> G
+  R --> G
+  G --> P["RadarPoint to unchanged radard"]
+```
+
+`P` sets the gain and the initial publication gate. Its square root is an operational readiness measure with
+physical units, rather than a calibrated bound on true speed error. The inputs are already-filtered estimates
+from the same radar, with persistent and potentially shared errors; consecutive summary slopes also reuse range
+samples. The clamp changes the mean correction while the code retains the ordinary covariance contraction.
+Consequently, a small `P` can coexist with a persistent speed error. Replay and event comparisons support the
+chosen filter, while independent physical-error calibration remains a separate requirement.
+
+The ordinary Kalman covariance equations assume the specified process/measurement model and its independence
+conditions; see [Särkkä, *Bayesian Filtering and Smoothing*, chapter 4](https://users.aalto.fi/~ssarkka/pub/cup_book_online_20131111.pdf).
+The current `Q = (a Δt)²` corresponds to an acceleration perturbation redrawn each update interval. A continuous
+white-acceleration model would use a spectral intensity and `Q` proportional to `Δt`; its parameter has different
+units. Here `a` is a chosen process-noise scale, not a decoded or measured acceleration standard deviation.
 
 **The gain is not fixed.** radard's filter uses one precomputed gain for every track. Here `K` changes every cycle
 with the radar's own uncertainty code and with which trackers are present. A near car with a small `240|7` is
@@ -61,19 +96,20 @@ stays radard's job; a speed + acceleration state here did worse ([below](#kalman
 | ingredient | value | where it comes from |
 |---|---|---|
 | object-list speed σ | 0.045 m/s × `240\|7` (≈ 0.2 m/s at 15 m, 1.4 at 60 m, 2.7 at 100 m) | calibrated against the radar's ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)) |
-| young-track factor | × 1.8 below age 100 | measured: young tracks err 1.4-2× more than `240\|7` says |
+| young-track factor | × 1.8 through age 60, tapering linearly to × 1 at age 100 | measured: young tracks err 1.4-2× more than `240\|7` says |
 | ACC target speed σ, summary speed σ | 0.5 m/s each (summary up to 80 m) | the radar's own trackers: the ACC target stays with the range trend in 76% of disagreements and is the same car ([`acc_target_choice.json`](../data/analysis/summaries/acc_target_choice.json)); summaries beat the object list against the camera at 40-80 m, not beyond |
-| lead acceleration (process noise) | 1.5 m/s² | physical |
+| acceleration scale (process noise) | 1.5 m/s² | chosen model parameter; tuning/replay comparisons below support retaining it |
 | robust update | innovations clamped at 3σ | standard; stops one-record spikes |
-| first publication | speed std ≤ 0.75 m/s (and age ≥ 60) | replaces far-track settling without a range threshold |
+| first publication | modeled speed std ≤ 0.75 m/s (and age ≥ 60) | operational settling rule supported by ablation, not a physical accuracy guarantee |
 | range | not in the filter; range fusion as before | range rate and speed disagree by 10-20% |
 
 ## What runs before the filter
 
 ### 0. The plain decode (every profile)
 
-- **Rule:** publish from age 60 (~3.6 s); subtract 0xB4 ego speed (× 0.149/0.15); no point without a fresh ego speed;
-  keep a track's ID across losses ≤ 3.5 s.
+- **Rule:** publish from age 60 (~3.6 s); multiply object-list over-ground speed by 0.149/0.15, then subtract
+  unscaled 0xB4 ego speed; no point without a fresh ego speed. The configurable fork also attempts to keep a
+  track's ID across losses ≤ 3.5 s.
 - **Why:** young tracks have unconverged range and speed ([02](02_object_list.md)); one NaN poisons radard's filter.
 
 ### 1. Saturation guard (`raw`)
@@ -123,7 +159,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | variant | bench | openpilot replays |
 |---|---|---|
 | Student-t update instead of the 3σ clamp | same as the clamp | – |
-| speed + acceleration state (as radard), fed the radar's `84\|10` acceleration | worse on held-out and owner drives | – |
+| speed + acceleration state; optional ACC acceleration observation when trackers are enabled | worse on held-out and owner drives with trackers hidden | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
 | object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**, same response to real braking | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: none better on every check |
