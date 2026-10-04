@@ -5,7 +5,8 @@
   "excursions_as_expected_tail": "likely (incidence within a factor 1.3; tails beyond 2.5 sigma heavier than Gaussian)",
   "error_scale_is_fitted_not_decoded": "K is a fitted Gaussian-equivalent: the robust (MAD) core is about 0.027 m/s per count over codes 12-70, the RMS 0.04-0.05 because of heavy tails; the unit of the code itself is not decoded",
   "mean_offset": "not a decode-constant error: it is about -0.08 m/s below 20 m, -0.37 at 40-60 m and -0.62 at 80-110 m, has no ego-speed slope, and differs by drive (std 0.34 m/s)",
-  "offset_follows_tracker_acceleration_state": "likely (out-of-sample R2 0.11; ACC acceleration explains none)"
+  "offset_follows_tracker_acceleration_state": "likely (out-of-sample R2 0.11; ACC acceleration explains none)",
+  "error_predictable_from_object_state": "likely (fresh-drive R2 0.41-0.47 from the radar's own object state; no single field carries it; unvalidated as a correction)"
  },
  "method": {
   "reference": "OEM ACC target 0x235/0x237 (decoded as in docs/05)",
@@ -776,6 +777,437 @@
     ]
    }
   },
-  "no_predictor": "ego speed, acceleration, yaw rate, brake, gas, cruise, livePose, record header bytes and every aux CAN address stay below R2 0.006 for the offset; no candidate exceeds R2 0.016 for the scale"
+  "no_predictor": "ego speed, acceleration, yaw rate, brake, gas, cruise, livePose, record header bytes and every aux CAN address stay below R2 0.006 for the offset; no candidate exceeds R2 0.016 for the scale",
+  "timing": {
+   "ego_or_acc_clock_shift_range_s": [
+    -0.4,
+    0.4
+   ],
+   "rms_change_mps": "< 0.01",
+   "mean_change_mps": "< 0.02",
+   "best_shift_s": 0.0,
+   "residual_vs_ax_correlation": {
+    "lag_0": 0.293,
+    "minus_1s": 0.193,
+    "plus_1s": 0.109
+   },
+   "note": "ax leads the error; native vRel mean-reverts symmetrically around an excursion; the ACC speed change correlates |r| <= 0.06 with the residual"
+  }
+ },
+ "state_model": {
+  "description": "Gradient-boosted regression of the native-minus-ACC velocity error (clipped at 6 m/s) on the object's own decoded slot fields and its 0.5-3 s track history; no ACC input and no velocity level (vrel, vx). Corpus scores are out-of-fold across segments; fresh scores are from a model trained on the corpus only.",
+  "r2_corpus_out_of_fold": {
+   "ax_range_code": 0.1742,
+   "state_no_velocity_level": 0.3399,
+   "state_no_velocity_level_plus_past": 0.5359,
+   "shrinkage_baseline_vrel_ego": 0.5108
+  },
+  "r2_fresh": {
+   "shrink_vrel_ego": 0.3562,
+   "state_no_level": 0.4083,
+   "state_plus_past_no_range_history": 0.4689,
+   "state_plus_past_full": 0.4654,
+   "range_history_only": 0.1161,
+   "ax_range_code": 0.1052
+  },
+  "fresh_segments": 40,
+  "fresh_rows": 7198,
+  "effect_fresh": {
+   "shrink_vrel_ego": {
+    "all_20_110": {
+     "n": 7198,
+     "mean_before": -0.402,
+     "mean_after": 0.006,
+     "rms_before": 1.322,
+     "rms_after": 1.01,
+     "exc_before": 0.0493,
+     "exc_after": 0.0174
+    },
+    "far_40_110": {
+     "n": 4109,
+     "mean_before": -0.523,
+     "mean_after": -0.074,
+     "rms_before": 1.553,
+     "rms_after": 1.154,
+     "exc_before": 0.0691,
+     "exc_after": 0.0226
+    },
+    "steady_lead": {
+     "n": 1858,
+     "mean_before": -0.384,
+     "mean_after": -0.023,
+     "rms_before": 1.222,
+     "rms_after": 0.802,
+     "exc_before": 0.0431,
+     "exc_after": 0.0027
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 854,
+     "mean_before": -0.617,
+     "mean_after": 0.513,
+     "rms_before": 1.17,
+     "rms_after": 1.053,
+     "exc_before": 0.0422,
+     "exc_after": 0.0
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 1077,
+     "mean_before": -0.423,
+     "mean_after": 0.506,
+     "rms_before": 1.008,
+     "rms_after": 1.0,
+     "exc_before": 0.0214,
+     "exc_after": 0.0028
+    },
+    "opening_vacc_gt_1": {
+     "n": 1802,
+     "mean_before": -0.333,
+     "mean_after": -0.527,
+     "rms_before": 1.481,
+     "rms_after": 1.198,
+     "exc_before": 0.081,
+     "exc_after": 0.0372
+    }
+   },
+   "state_no_level": {
+    "all_20_110": {
+     "n": 7198,
+     "mean_before": -0.402,
+     "mean_after": -0.094,
+     "rms_before": 1.322,
+     "rms_after": 0.969,
+     "exc_before": 0.0493,
+     "exc_after": 0.0099
+    },
+    "far_40_110": {
+     "n": 4109,
+     "mean_before": -0.523,
+     "mean_after": -0.144,
+     "rms_before": 1.553,
+     "rms_after": 1.126,
+     "exc_before": 0.0691,
+     "exc_after": 0.0131
+    },
+    "steady_lead": {
+     "n": 1858,
+     "mean_before": -0.384,
+     "mean_after": -0.054,
+     "rms_before": 1.222,
+     "rms_after": 0.868,
+     "exc_before": 0.0431,
+     "exc_after": 0.0043
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 854,
+     "mean_before": -0.617,
+     "mean_after": 0.135,
+     "rms_before": 1.17,
+     "rms_after": 0.81,
+     "exc_before": 0.0422,
+     "exc_after": 0.0
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 1077,
+     "mean_before": -0.423,
+     "mean_after": -0.016,
+     "rms_before": 1.008,
+     "rms_after": 0.765,
+     "exc_before": 0.0214,
+     "exc_after": 0.0009
+    },
+    "opening_vacc_gt_1": {
+     "n": 1802,
+     "mean_before": -0.333,
+     "mean_after": -0.17,
+     "rms_before": 1.481,
+     "rms_after": 1.149,
+     "exc_before": 0.081,
+     "exc_after": 0.0189
+    }
+   },
+   "state_plus_past_no_range_history": {
+    "all_20_110": {
+     "n": 7198,
+     "mean_before": -0.402,
+     "mean_after": -0.028,
+     "rms_before": 1.322,
+     "rms_after": 0.918,
+     "exc_before": 0.0493,
+     "exc_after": 0.0126
+    },
+    "far_40_110": {
+     "n": 4109,
+     "mean_before": -0.523,
+     "mean_after": -0.06,
+     "rms_before": 1.553,
+     "rms_after": 1.059,
+     "exc_before": 0.0691,
+     "exc_after": 0.0212
+    },
+    "steady_lead": {
+     "n": 1858,
+     "mean_before": -0.384,
+     "mean_after": 0.026,
+     "rms_before": 1.222,
+     "rms_after": 0.742,
+     "exc_before": 0.0431,
+     "exc_after": 0.0
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 854,
+     "mean_before": -0.617,
+     "mean_after": 0.187,
+     "rms_before": 1.17,
+     "rms_after": 0.966,
+     "exc_before": 0.0422,
+     "exc_after": 0.007
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 1077,
+     "mean_before": -0.423,
+     "mean_after": 0.136,
+     "rms_before": 1.008,
+     "rms_after": 0.748,
+     "exc_before": 0.0214,
+     "exc_after": 0.0009
+    },
+    "opening_vacc_gt_1": {
+     "n": 1802,
+     "mean_before": -0.333,
+     "mean_after": -0.2,
+     "rms_before": 1.481,
+     "rms_after": 1.162,
+     "exc_before": 0.081,
+     "exc_after": 0.0327
+    }
+   }
+  },
+  "effect_corpus": {
+   "shrinkage_baseline_vrel_only": {
+    "all_20_110": {
+     "n": 177163,
+     "mean_before": -0.341,
+     "mean_after": -0.001,
+     "rms_before": 1.296,
+     "rms_after": 0.946,
+     "excursion_rate_before": 0.0446,
+     "excursion_rate_after": 0.0154
+    },
+    "far_40_110": {
+     "n": 138416,
+     "mean_before": -0.359,
+     "mean_after": -0.02,
+     "rms_before": 1.372,
+     "rms_after": 0.974,
+     "excursion_rate_before": 0.0515,
+     "excursion_rate_after": 0.0178
+    },
+    "steady_lead": {
+     "n": 82039,
+     "mean_before": -0.295,
+     "mean_after": -0.008,
+     "rms_before": 1.235,
+     "rms_after": 0.83,
+     "excursion_rate_before": 0.0388,
+     "excursion_rate_after": 0.0115
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 8597,
+     "mean_before": -0.632,
+     "mean_after": 1.255,
+     "rms_before": 1.713,
+     "rms_after": 1.827,
+     "excursion_rate_before": 0.0869,
+     "excursion_rate_after": 0.0178
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 21710,
+     "mean_before": -0.508,
+     "mean_after": 0.608,
+     "rms_before": 1.481,
+     "rms_after": 1.136,
+     "excursion_rate_before": 0.066,
+     "excursion_rate_after": 0.0146
+    },
+    "opening_vacc_gt_1": {
+     "n": 28990,
+     "mean_before": -0.247,
+     "mean_after": -0.804,
+     "rms_before": 1.407,
+     "rms_after": 1.233,
+     "excursion_rate_before": 0.0522,
+     "excursion_rate_after": 0.0471
+    },
+    "acc_speed_falls_gt1.5_in_2s": {
+     "n": 4070,
+     "mean_before": -0.382,
+     "mean_after": -0.018,
+     "rms_before": 1.577,
+     "rms_after": 1.267,
+     "excursion_rate_before": 0.0742,
+     "excursion_rate_after": 0.0319
+    }
+   },
+   "state_no_velocity_level": {
+    "all_20_110": {
+     "n": 177163,
+     "mean_before": -0.341,
+     "mean_after": 0.001,
+     "rms_before": 1.296,
+     "rms_after": 1.016,
+     "excursion_rate_before": 0.0446,
+     "excursion_rate_after": 0.0164
+    },
+    "far_40_110": {
+     "n": 138416,
+     "mean_before": -0.359,
+     "mean_after": -0.002,
+     "rms_before": 1.372,
+     "rms_after": 1.071,
+     "excursion_rate_before": 0.0515,
+     "excursion_rate_after": 0.0195
+    },
+    "steady_lead": {
+     "n": 82039,
+     "mean_before": -0.295,
+     "mean_after": -0.006,
+     "rms_before": 1.235,
+     "rms_after": 0.979,
+     "excursion_rate_before": 0.0388,
+     "excursion_rate_after": 0.0168
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 8597,
+     "mean_before": -0.632,
+     "mean_after": 0.282,
+     "rms_before": 1.713,
+     "rms_after": 1.505,
+     "excursion_rate_before": 0.0869,
+     "excursion_rate_after": 0.0297
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 21710,
+     "mean_before": -0.508,
+     "mean_after": 0.02,
+     "rms_before": 1.481,
+     "rms_after": 1.121,
+     "excursion_rate_before": 0.066,
+     "excursion_rate_after": 0.0226
+    },
+    "opening_vacc_gt_1": {
+     "n": 28990,
+     "mean_before": -0.247,
+     "mean_after": -0.091,
+     "rms_before": 1.407,
+     "rms_after": 1.105,
+     "excursion_rate_before": 0.0522,
+     "excursion_rate_after": 0.0243
+    },
+    "acc_speed_falls_gt1.5_in_2s": {
+     "n": 4070,
+     "mean_before": -0.382,
+     "mean_after": 0.243,
+     "rms_before": 1.577,
+     "rms_after": 1.386,
+     "excursion_rate_before": 0.0742,
+     "excursion_rate_after": 0.0287
+    }
+   },
+   "state_no_velocity_level_plus_past": {
+    "all_20_110": {
+     "n": 177163,
+     "mean_before": -0.341,
+     "mean_after": 0.002,
+     "rms_before": 1.296,
+     "rms_after": 0.852,
+     "excursion_rate_before": 0.0446,
+     "excursion_rate_after": 0.0077
+    },
+    "far_40_110": {
+     "n": 138416,
+     "mean_before": -0.359,
+     "mean_after": 0.002,
+     "rms_before": 1.372,
+     "rms_after": 0.892,
+     "excursion_rate_before": 0.0515,
+     "excursion_rate_after": 0.0092
+    },
+    "steady_lead": {
+     "n": 82039,
+     "mean_before": -0.295,
+     "mean_after": -0.003,
+     "rms_before": 1.235,
+     "rms_after": 0.786,
+     "excursion_rate_before": 0.0388,
+     "excursion_rate_after": 0.0061
+    },
+    "closing_fast_vacc_lt_-3": {
+     "n": 8597,
+     "mean_before": -0.632,
+     "mean_after": 0.314,
+     "rms_before": 1.713,
+     "rms_after": 1.414,
+     "excursion_rate_before": 0.0869,
+     "excursion_rate_after": 0.023
+    },
+    "closing_vacc_-3_to_-1": {
+     "n": 21710,
+     "mean_before": -0.508,
+     "mean_after": 0.131,
+     "rms_before": 1.481,
+     "rms_after": 1.021,
+     "excursion_rate_before": 0.066,
+     "excursion_rate_after": 0.0134
+    },
+    "opening_vacc_gt_1": {
+     "n": 28990,
+     "mean_before": -0.247,
+     "mean_after": -0.16,
+     "rms_before": 1.407,
+     "rms_after": 0.892,
+     "excursion_rate_before": 0.0522,
+     "excursion_rate_after": 0.0103
+    },
+    "acc_speed_falls_gt1.5_in_2s": {
+     "n": 4070,
+     "mean_before": -0.382,
+     "mean_after": 0.27,
+     "rms_before": 1.577,
+     "rms_after": 1.224,
+     "excursion_rate_before": 0.0742,
+     "excursion_rate_after": 0.0214
+    }
+   }
+  },
+  "group_permutation_importance": {
+   "240|7 (velocity error code)": 0.0811,
+   "224/232/248 error codes": 0.02,
+   "ax 84|10 + ay": 0.7089,
+   "vy": 0.0083,
+   "width/length": 0.0404,
+   "measurement state 264/e256/h272": 0.0482,
+   "lifecycle (state, slotidx, startup8, age, score)": 0.375,
+   "lane/class flags": 0.0549,
+   "geometry rng, y": 0.0403,
+   "ego speed/accel/yaw": 0.5184,
+   "__baseline_r2__": 0.3497
+  },
+  "minimal_feature_sets_r2": {
+   "ax": 0.1407,
+   "ax+ay": 0.1332,
+   "ax+ego_a": 0.1712,
+   "ax_minus_ego_a": 0.1048,
+   "ax+ego": 0.1582,
+   "ax+ego_a+ego": 0.1834,
+   "ax+ego_a+ego+yaw": 0.1834,
+   "ax+ay+ego_a+ego+yaw": 0.1889,
+   "lifecycle only": 0.0249,
+   "ax+ego_a+ego+lifecycle": 0.2408,
+   "ax+ego_a+ego+240": 0.1867,
+   "ax+ego_a+ego+240+m264+width": 0.2389,
+   "ay only": 0.0163,
+   "ego only": -0.021
+  },
+  "caveat": "reference is the radar's own ACC target; shrinkage on vRel alone scores well but biases genuine closings; not compared with the shipped filter profiles"
  }
 }
