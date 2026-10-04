@@ -32,9 +32,9 @@ def test_anchor_is_steady_plus_acc_and_summary_anchors_only():
   assert not STEADY_CONFIG.acc_target_sticky and STEADY_CONFIG.acc_target_clip_mps == 0.0
 
 
-def test_wrapper_has_one_switchable_profile_line_defaulting_to_anchor():
+def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
-  assert src.count('PROFILE = PROFILES["anchor"]') == 1
+  assert src.count('PROFILE = PROFILES["fused"]') == 1
   assert ('PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,\n'
           '            "stock": OPENPILOT_CONFIG, "default": OPENPILOT_CONFIG}') in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
@@ -63,8 +63,8 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert text.startswith(original) and text.count("hook_car_interface(CarInterface)") == 1
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
-  assert 'PROFILE = PROFILES["anchor"]' in (toyota / "ars510_radar_interface.py").read_text()
-  for name in ("fused", "steady", "stock", "default"):  # "stock" and "default" stay accepted as older names of raw
+  assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
+  for name in ("anchor", "steady", "stock", "default"):  # "stock" and "default" stay accepted as older names of raw
     assert _install(tmp_path, "--profile", name).returncode == 0
     assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
   r = _install(tmp_path, "--profile", "raw")

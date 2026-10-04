@@ -37,14 +37,14 @@ from opendbc.car.toyota.ars510 import ANCHOR_CONFIG, FUSED_CONFIG, OPENPILOT_CON
 from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
-# Decoder profile (docs/08): "anchor" (ANCHOR_CONFIG, default: steady + the radar's own ACC target as a velocity
-# anchor), "fused" (FUSED_CONFIG: one uncertainty-weighted speed filter fusing the object list, the ACC target and the
-# summaries, docs/07), "steady" (STEADY_CONFIG: guards and smoothing against velocity excursions, docs/07) or "raw"
+# Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list, the ACC
+# target and the summaries by the radar's own uncertainty, docs/07), "anchor" (ANCHOR_CONFIG: steady + the radar's own
+# ACC target as a velocity anchor), "steady" (STEADY_CONFIG: guards and smoothing against velocity excursions, docs/07) or "raw"
 # (OPENPILOT_CONFIG: the unfiltered radar decode, research only; "stock" and "default" are older names). `install.py --profile` rewrites
 # this one line in the installed copy.
 PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,
             "stock": OPENPILOT_CONFIG, "default": OPENPILOT_CONFIG}
-PROFILE = PROFILES["anchor"]
+PROFILE = PROFILES["fused"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
 # 8821F0R01100 (RAV4 2022 platform) is the same part series but unconfirmed; it is detected by the bus-1 fallback when

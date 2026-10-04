@@ -10,7 +10,7 @@ interfaces in openpilot. Numbers: [`profiles_vs_vision.json`](../data/analysis/s
 
 ## At a glance
 
-| | `raw` | `steady` | `anchor` (default) | `fused` |
+| | `raw` | `steady` | `anchor` | `fused` (default) |
 |---|---|---|---|---|
 | what it adds to the decode | nothing (validity, IDs, ego subtraction) | 4 tuned guards against speed excursions | `steady` + clip to the radar's ACC target and summaries | one Kalman speed filter weighting every reading by the radar's own uncertainty |
 | tuned constants beyond `raw` | — | 8 | 8 + 9 | 3 chosen, 4 measured or physical |
@@ -18,7 +18,7 @@ interfaces in openpilot. Numbers: [`profiles_vs_vision.json`](../data/analysis/s
 | hard radar-only braking ticks, 20 held-out routes | 93 | 53 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 1.31 (0.22) | 1.10 (0.22) | **0.22 (0)** |
 | first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.08 s | −0.08 s | +0.01 s |
-| recommended for | research | cars without the ACC target on the radar bus | everyday driving today | trying the principled filter (opt-in until road-tested) |
+| recommended for | research | cars without the ACC target on the radar bus | earlier reactions, more radar-only braking | everyday driving (default) |
 
 `raw` is the unfiltered radar decode, not vision only and not stock openpilot; `stock` and `default` are its older
 names.
@@ -128,8 +128,8 @@ What the radar adds, by profile:
 | vision only | smooth; no radar-specific false braking | camera distance at range; no radar head start on closings through curves or far away |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes for nothing beyond 40 m |
 | `steady` | about half `raw`'s false braking, keeps most of the head start | still ~1.3 radar-only brakes per hour; four tuned guards with thresholds |
-| `anchor` | fewest false brakes of the tuned profiles (no hard ticks on the owner drives); default and road-tested | still ~1.1 radar-only brakes per hour; reaction partly comes from over-closing; 17 tuned constants in all |
-| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, closing speed unbiased, simplest speed path | braking onset the same as vision on average (no average head start); not yet road-tested; the frozen replay gates for reaction time fail because the reference profile's early reactions included the bias |
+| `anchor` | fewest false brakes of the tuned profiles (no hard ticks on the owner drives); the most road miles | still ~1.1 radar-only brakes per hour; reaction partly comes from over-closing; 17 tuned constants in all |
+| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, closing speed unbiased, simplest speed path | braking onset the same as vision on average (no average head start); the fewest road miles so far; the frozen replay gates for reaction time fail because the reference profile's early reactions included the bias |
 
 ## Assumptions and limits
 

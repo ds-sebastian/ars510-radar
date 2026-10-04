@@ -12,7 +12,8 @@ Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`
 vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
 Profiles (docs/08 has the replay numbers, docs/07 explains every layer):
-  ANCHOR_CONFIG   default install profile: STEADY + the radar's own ACC target (0x235) as a velocity anchor
+  ANCHOR_CONFIG   STEADY + the radar's own ACC target (0x235) as a velocity anchor
+  FUSED_CONFIG    default install profile: one Kalman speed filter fusing the object list, ACC target and summaries
   STEADY_CONFIG   OPENPILOT_CONFIG + range fusion, far smoothing, far-track settling, ramp limiter
   OPENPILOT_CONFIG (= STOCK_CONFIG)  the unfiltered radar decode with only what radard needs (the 'raw' install profile)
   RAW_CONFIG      every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
@@ -170,12 +171,13 @@ STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far
 
 # STEADY plus the radar's own ACC target as a velocity anchor (docs/07 "ACC anchor"): the object the radar reports as
 # its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
-# excursions that drag the native range along. The default install profile (docs/08).
+# excursions that drag the native range along (docs/08).
 ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
                         acc_match_min_age=20, summary_clip_mps=3.0, summary_max_range_m=80.0)
 
 # The fused speed filter (docs/07): the base profile plus range fusion and one uncertainty-weighted filter that fuses
-# the object list, the radar's ACC target and its summary ranges. Same ACC / summary association as ANCHOR.
+# the object list, the radar's ACC target and its summary ranges. Same ACC / summary association as ANCHOR. The default
+# install profile (docs/08, docs/11).
 FUSED_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, acc_target_sticky=True, acc_match_range_m=12.0,
                        acc_match_min_age=20, summary_max_range_m=80.0, fused_speed_filter=True)
 
