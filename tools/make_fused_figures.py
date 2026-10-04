@@ -135,7 +135,9 @@ def layers() -> None:
     import inspect
     from ars510.interface import Ars510NativeRadarInterface as I
     n = lambda *fs: sum(len(inspect.getsource(f).splitlines()) for f in fs)
-    rows = [("validity, track IDs, ego subtraction", n(I._relink, I._fresh_ego_speed), (1, 1)),
+    from ars510.tracks import NativeTrackIdAssigner
+    rows = [("validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (1, 1)),
+            ("track-ID relink across short losses", n(I._relink), (1, 0)),
             ("saturation guard", n(I._guard), (1, 0)),
             ("range fusion (gain 0.1)", n(I._fused_range), (0, 1)),
             ("ACC target: association", n(I._acc_target_match), (0, 1)),
