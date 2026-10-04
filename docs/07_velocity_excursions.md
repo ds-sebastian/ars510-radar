@@ -87,8 +87,14 @@ radar's own ACC tracker follows the same object without these errors, so better 
 `240|7` tells how large far errors can be, not when one happens: within a range band it separates excursion records
 from normal ones only below 40 m (AUC 0.95-0.97), not at 40-60 m (0.41-0.49) or beyond (0.55-0.68)
 ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
-Caveats: the ACC target has its own error (about 0.6 m/s), the tails beyond 2.5σ are heavier than Gaussian
-(kurtosis 1.3-8), and the −0.3 m/s offset and the reason the ACC tracker is better are unexplained
+Caveats: the 0.045 is a fitted Gaussian-equivalent, not a decoded unit: the robust (MAD) core is about 0.027 m/s per count
+over codes 12-70 and heavy tails (kurtosis 1.3-8) lift the RMS to 0.04-0.05. The ACC target has its own error (about 0.6 m/s).
+The −0.3 m/s mean offset is not a zero-point or ego-scale error of the decode: it is about −0.1 m/s below 20 m, −0.4 m/s at
+40-60 m and −0.6 m/s at 80-110 m, has no ego-speed slope and differs between drives (std 0.3 m/s). Of 13.6 k candidate signals (every slot, header and
+0x85 bit window, every aux CAN address, ego and livePose signals), only the object's own state explains it, scored out of sample
+across drives: the filtered acceleration `84|10` (R² 0.11, roughly 3 s × acceleration around zero; the ACC target's own acceleration
+explains nothing), the measurement state `264|8` (mean native-minus-ACC −0.75 m/s in state 1 against −0.24 in state 2) and the
+object width `216|6` (−0.6 m/s at codes 14-16, +0.1 at 20-21). Ego signals, livePose and aux frames stay below R² 0.006, and shifting the ego or ACC clock by ±0.4 s changes the error by < 0.01 m/s. Taken together the object's own state fields (acceleration, lifecycle, `240|7`, measurement state, width, flags) and the track's 3 s history predict about 41 % (47 % with the history) of the velocity error variance on 114 held-out drives (54 % out of fold on the development corpus); no single field carries it. A predictor that only shrinks `vRel` toward typical closing speeds scores almost as well (36 %) but pulls genuine fast closings up by about 0.5 m/s, the state-based one by 0.1-0.3 m/s. This is a reference-relative result against the ACC target, not a tested correction Why the ACC tracker is better is unexplained
 ([summary](../data/analysis/summaries/excursion_sigma_scale.json)).
 
 ![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
