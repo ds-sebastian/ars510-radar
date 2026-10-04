@@ -845,11 +845,37 @@ def kalman_response():
          "Same-radar ACC witness; capped misses and some short follow-up. This is not physical braking ground truth.")
 
 
+def summary_owner_case():
+    """Controlled summary-precision comparison, saved lead/planner traces."""
+    info = summary("summary_owner_case")
+    data = pd.read_csv(DATA / "summary_owner_case.csv")
+    fig, axes = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
+    series = [("summary_suppressed", "Summary suppressed; no relink", S2),
+              ("summary_retained", "Summaries retained; no relink (matches fused locally)", S1),
+              ("vision", "Captured vision reference", INK2)]
+    for key, label, color in series:
+        rows = data[(data.variant == key) & data.case_s.between(-1.1, 1.5)].copy()
+        rows.loc[rows.lead_d <= 0, ["lead_d", "lead_v"]] = np.nan
+        for ax, field in zip(axes, ["a_target", "lead_v", "lead_d"]):
+            ax.plot(rows.case_s, rows[field], label=label, color=color,
+                    ls="--" if key == "vision" else "-")
+    for ax, label in zip(axes, ["Planner request (m/s²)", "Lead vRel (m/s)", "Lead range (m)"]):
+        ax.axvspan(0, info["episode"]["duration_s"], color=S2, alpha=.10)
+        ax.set_ylabel(label)
+    axes[0].axhline(-1, color=INK2, lw=1, ls=":")
+    axes[0].set_title("Summary updates prevent an extra braking episode in this replay")
+    axes[0].legend(loc="lower left", fontsize=8)
+    axes[-1].set_xlabel("Seconds relative to episode onset (owner drive O1)")
+    fig.tight_layout()
+    save(fig, "summary_owner_case", "Same radar lead T1 during the shaded 0.50 s episode. Summary sigma: 0.5 versus 10,000 m/s.\n"
+         "Saved planner/lead output; captured vision is a comparison, not physical ground truth.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case)}
 
 
 if __name__ == "__main__":

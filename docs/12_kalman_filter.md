@@ -159,6 +159,23 @@ over-estimated closing speed (0.54 m/s more closing than vision before those dri
 Dropped variants: adapting the process noise follows far slot slides as if they were braking; without the robust
 clamp a +10 m/s spike passes.
 
+### Why retain summary updates
+
+![Summary updates in an owner-drive replay](img/analysis/summary_owner_case.png)
+
+The summaries provide useful speed support when the ACC target does not cover a track. In this owner-drive
+comparison, retaining summaries keeps the planner request above −0.59 m/s² during a 0.50 s interval; suppressing
+their precision produces an extra target-braking episode reaching −1.11 m/s². Captured vision requests stay
+between −0.15 and −0.12 m/s². Both variants disable relinking; the retained-summary output matches full `fused`
+locally, and both radar variants use the same lead throughout the episode.
+
+This controlled comparison changes summary speed σ from 0.5 to 10,000 m/s, making its update negligible.
+The plot shows saved radard lead and planner outputs, not the originating summary observations; it cannot identify
+which earlier summary update made the difference or establish physical accuracy. The episode counts against the
+frozen owner-drive requirement of zero additional target-braking episodes. See the
+[definitions and measurements](../data/analysis/summaries/summary_owner_case.json) and
+[anonymous trace](../data/analysis/summary_owner_case.csv).
+
 ### Kalman variants tested
 
 The single speed state of `fused` was compared with richer filters on an offline bench: every cycle of 8 drive groups,

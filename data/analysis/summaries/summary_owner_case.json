@@ -1,0 +1,76 @@
+{
+  "status": "supported saved-trace counterexample",
+  "route": "O1",
+  "tick_rows": 26437,
+  "episode": {
+    "duration_s": 0.5000416689981648,
+    "ticks": 11,
+    "start_case_s": 0
+  },
+  "local_control_exact_equal": true,
+  "variants": {
+    "summary_suppressed": {
+      "target_episodes": 1,
+      "hard_ticks": 0,
+      "episode_min_a": -1.1074,
+      "episode_max_a": -1.0176,
+      "onset": {
+        "a_target": -1.0236,
+        "dRel": 103.313,
+        "vRel": -4.006,
+        "lead_a": -2.041,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "summary_retained": {
+      "target_episodes": 0,
+      "hard_ticks": 0,
+      "episode_min_a": -0.5846,
+      "episode_max_a": -0.4291,
+      "onset": {
+        "a_target": -0.4291,
+        "dRel": 103.738,
+        "vRel": -3.195,
+        "lead_a": -1.85,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "fused": {
+      "target_episodes": 0,
+      "hard_ticks": 0,
+      "episode_min_a": -0.5846,
+      "episode_max_a": -0.4291,
+      "onset": {
+        "a_target": -0.4291,
+        "dRel": 103.738,
+        "vRel": -3.195,
+        "lead_a": -1.85,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "vision": {
+      "target_episodes": null,
+      "hard_ticks": null,
+      "episode_min_a": -0.1492,
+      "episode_max_a": -0.1205,
+      "onset": {
+        "a_target": -0.1321,
+        "dRel": 111.891,
+        "vRel": -2.436,
+        "lead_a": -0.109,
+        "source": "vision",
+        "plan_source": "e2e"
+      }
+    }
+  },
+  "comparison": {
+    "controlled_change": "Summary speed sigma 0.5 to 10000 m/s; same parser with relinking disabled in both cases. Suppression is negligible precision, not literal removal.",
+    "local_control": "Retained-summary and full fused saved fields match exactly over 119 ticks around the event.",
+    "target_episode": "Planner acceleration <= -1 m/s^2 while captured vision >= -0.3 m/s^2 and ego speed > 1 m/s; contiguous gaps < 0.1 s, duration >= 0.3 s.",
+    "scope": "Saved radard lead and planner output, not physical ground truth. Source summary observations, filter age and covariance are not present; the causal summary observation time is unresolved.",
+    "trace": "summary_owner_case.csv; relative event time; zero distance denotes absent lead."
+  }
+}
