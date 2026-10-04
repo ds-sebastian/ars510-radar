@@ -582,3 +582,11 @@ class Ars510NativeRadarInterface:
             if len(store) > 400:
                 for k in [k for k, v in store.items() if v[0] < time_s - 5.0]:
                     store.pop(k, None)
+        # Published IDs and guard generations may outlive position updates during a guard.
+        # Keep every native slot lifecycle ID, as well as every retained relink candidate.
+        if max(len(self._out_id), len(self._claimed), len(self._guard_gen)) > 400:
+            retained = set(self._last) | {state[0] for state in self._tracks._state.values()}
+            for store in (self._out_id, self._guard_gen):
+                for k in store.keys() - retained:
+                    store.pop(k)
+            self._claimed.intersection_update(retained)
