@@ -141,7 +141,11 @@ stays radard's job; a speed + acceleration state here did worse ([below](#kalman
   state, invalid speed or gap over 0.5 s starts again at native range. The gain is an empirical setting, justified
   by the ablation below rather than a decoded sensor uncertainty.
 - **Evidence:** halves 1.5 s range walks, which radard's distance and the planner otherwise pass on. Retaining it
-  chiefly improves lead stability; its removal increases radar/vision lead switches without worsening hard-braking counts.
+  chiefly improves lead stability; its removal increases radar/vision lead switches without worsening hard-braking counts. With
+  summaries retained and relinking off, its removal yields 2,467 versus 1,772 held-out switches (+39.2%), six target
+  episodes (limit five) and three radar-added episodes (limit two). Hard ticks improve to 27 / 0 / 0 across held-out,
+  further and owner cohorts, but the frozen stability and episode limits still require retaining range correction
+  ([measurements](../data/analysis/summaries/fused_filter.json), `range_retention_no_relink`).
 
 ## What each part contributes
 
