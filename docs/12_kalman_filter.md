@@ -126,8 +126,8 @@ on the same 34 drives. The rule for "same driving as `fused`" was fixed before t
 ![fewest lines for the same driving](img/analysis/kalman_combinations.png)
 
 - **The track-ID relink is free:** removing it changes nothing.
-- **The summaries matter only at the margin:** without them (and relink), one mild extra slowdown appears on the owner
-  drives (−1.1 m/s² for 0.5 s at 103 m), which fails the rule.
+- **The summaries matter only at the margin:** without them (with or without relink), one mild extra slowdown appears
+  on the owner drives (−1.1 m/s² for 0.5 s at 103 m), which fails the rule.
 - **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39 % more
   often.
 - **The young-track factor and the speed-std gate cost about 5 lines** and still help in the barest version.

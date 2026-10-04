@@ -201,6 +201,28 @@
    "openpilot_file_lines": 197,
    "passes": false
   },
-  "openpilot_file_lines_note": "lines of upstream/ars510_radar.py for each version: measured for fused (296), no_L (264) and no_SL (213); others subtract range fusion (10), young factor (3) and std gate (3)"
+  "openpilot_file_lines_note": "lines of upstream/ars510_radar.py for each version: measured for fused (296), no_L (264) and no_SL (213); others subtract summaries (51), range fusion (10), young factor (3) and std gate (3)",
+  "no_S": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0,
+   "target_episodes": 4,
+   "owner_target_episodes": 1,
+   "switches": 1760,
+   "openpilot_file_lines": 245,
+   "passes": false,
+   "verdict": "the same mild owner episode as no_SL: the summaries are what avoid it"
+  },
+  "no_RL": {
+   "heldout": 27,
+   "further": 0,
+   "owner": 0,
+   "target_episodes": 6,
+   "owner_target_episodes": 0,
+   "switches": 2467,
+   "openpilot_file_lines": 254,
+   "passes": false,
+   "verdict": "as range fusion removed alone"
+  }
  }
 }

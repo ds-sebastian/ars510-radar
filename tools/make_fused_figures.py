@@ -279,10 +279,12 @@ def kalman_ablation() -> None:
 def kalman_combinations() -> None:
     """Each tested version of the filter: lines in the openpilot file, its driving numbers, pass or fail (34 drives)."""
     C = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["combinations_34_drives"]
-    names = {"fused": "fused (all parts)", "no_L": "− track-ID relink", "no_SL": "− summaries − relink",
+    names = {"fused": "fused (all parts)", "no_L": "− track-ID relink", "no_S": "− summaries", "no_RL": "− range fusion − relink",
+             "no_SL": "− summaries − relink",
              "no_SR": "− summaries − range fusion", "no_SRL": "− summaries − relink − range fusion",
              "no_SRLYG": "all five removed (+ young factor, std gate)"}
-    why = {"no_SL": "1 extra target episode on owner drives", "no_SR": "lead switches +39%, target episodes 4 → 6",
+    why = {"no_SL": "1 extra target episode on owner drives", "no_S": "1 extra target episode on owner drives",
+           "no_RL": "lead switches +39%, target episodes 4 → 6", "no_SR": "lead switches +39%, target episodes 4 → 6",
            "no_SRL": "lead switches +39%, target episodes 4 → 6", "no_SRLYG": "lead switches +39%, target episodes 4 → 5"}
     rows = sorted(((names[k], k, C[k]) for k in names if k in C), key=lambda r: -r[2]["openpilot_file_lines"])
     fig, ax = plt.subplots(figsize=(13.5, 0.62 * len(rows) + 1.3))
