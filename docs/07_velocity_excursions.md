@@ -3,8 +3,7 @@
 The radar's velocity is its best channel ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for 1-10 s while the range does not follow**, mostly as a **false closing beyond 40 m**.
 In openpilot that shows up as extra jitter in the plan and, rarely, a braking request vision would not make. The
-profiles exist to handle it; the default `fused` does so with one Kalman filter
-([below](#fused-speed-filter-fused-profile)).
+default `fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)).
 
 **In short**
 
@@ -128,119 +127,11 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 *20 held-out routes: in steady following radar+vision is only +0.005 m/s² RMS rougher than vision; around radar/vision
 disagreements (20% of the time) +0.032, about 70% of the extra roughness.*
 
-## How the filtering works, step by step
+## How it is filtered
 
-`fused` (the default) runs three shared steps and one Kalman filter per track, in
-`Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). `raw` runs steps 0-1 only.
-The earlier tuned approach is summarised [below](#earlier-approach-tuned-layers-removed).
-
-![each layer added in turn](img/analysis/layer_staircase.png)
-
-*Hard radar-only braking requests (planner ≤ −2 m/s² while vision-only asks ≥ −0.5) on 20 held-out routes: the tuned
-layers added one at a time, and `fused` instead of them
-([`layer_ablation.json`](../data/analysis/summaries/layer_ablation.json),
-[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).*
-
-### 0. The plain decode (every profile)
-
-- **Rule:** publish from age 60 (~3.6 s); subtract 0xB4 ego speed (× 0.149/0.15); no point without a fresh ego speed;
-  keep a track's ID across losses ≤ 3.5 s.
-- **Why:** young tracks have unconverged range and speed ([02](02_object_list.md)); one NaN poisons radard's filter.
-
-### 1. Saturation guard (`raw`)
-
-- **Problem:** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
-- **Rule:** withhold the track until the velocity is back within 5 m/s of the last good value (or 1 s); continue under
-  a new ID.
-- **Evidence:** one sentinel otherwise reaches the planner as −3.5 m/s²; held-out hard ticks 117 → 93.
-
-### 2. Range fusion (`fused`)
-
-- **Problem:** range walks by metres at 60-100 m (3% per frame); radard's distance and vision match jitter.
-- **Rule:** predict dRel with vRel, then move 10% toward the measurement each cycle.
-- **Evidence:** halves 1.5 s range walks, which radard's distance and the planner otherwise pass on.
-
-### Fused speed filter (`fused` profile)
-
-One standard Kalman filter per track on the lead's over-ground speed
-([summary](../data/analysis/summaries/fused_filter.json); six real moments and the vision-only comparison in
-[11](11_profiles_compared.md)). Every cycle it predicts the lead keeps its speed (allowing a lead acceleration), then
-folds in each available reading weighted by its own uncertainty:
-
-| ingredient | value | where it comes from |
-|---|---|---|
-| object-list speed σ | 0.045 m/s × `240\|7` (≈ 0.2 m/s at 15 m, 1.4 at 60 m, 2.7 at 100 m) | calibrated against the radar's ACC target ([above](#far-range-excursions-match-the-reported-velocity-error-scale)) |
-| young-track factor | × 1.8 below age 100 | measured: young tracks err 1.4-2× more than `240\|7` says |
-| ACC target speed σ, summary speed σ | 0.5 m/s each (summary up to 80 m) | the radar's own trackers: the ACC target stays with the range trend in 76% of disagreements and is the same car ([`acc_target_choice.json`](../data/analysis/summaries/acc_target_choice.json)); summaries beat the object list against the camera at 40-80 m, not beyond |
-| lead acceleration (process noise) | 1.5 m/s² | physical |
-| robust update | innovations clamped at 3σ | standard; stops one-record spikes |
-| first publication | speed std ≤ 0.75 m/s (and age ≥ 60) | replaces far-track settling without a range threshold |
-| range | not in the filter; range fusion as before | range rate and speed disagree by 10-20% |
-
-![profiles on the bundled samples](img/analysis/profile_comparison.png)
-
-*`raw` and `fused` on the bundled excursions: `fused` (green) follows the radar's ACC target on drive E and keeps drive
-A's lead at the speed its range trend shows.*
-
-**What each part contributes.** Each part removed from `fused` on its own, 34 replay drives (hard radar-only ticks on
-20 held-out routes / 4 further drives / owner drives; [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)):
-
-| `fused` without … | held-out | further | owner | verdict |
-|---|---|---|---|---|
-| (nothing: `fused`) | **30** | **2** | **0** | |
-| the ACC target and summaries (filter on the object list alone) | 48 | 2 | 0 (4 target episodes) | needed |
-| the young-track factor | 30 | 11 | 0 | needed |
-| the speed-std publication gate | 30 | 8 | 0 | needed |
-| the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
-| range fusion | 27 | 0 | 0 | braking neutral (milder radar-added episodes 1 → 3 in 4.6 h); kept for lead stability: radar ↔ vision lead switches +39% without it |
-| the saturation guard | identical | identical | identical | removed: the 3σ update absorbs the sentinel |
-
-Against the earlier tuned profile: held-out hard ticks 48 → 30, target episodes 9 → 4, owner-drive target episodes
-5 → 0. Braking onset is 0.09 s later on average, all from events where the tuned profile braked early on an
-over-estimated closing speed (0.54 m/s more closing than vision before those driver brakes, `fused` 0.02).
-Dropped variants: adapting the process noise follows far slot slides as if they were braking; without the robust
-clamp a +10 m/s spike passes.
-
-### Kalman variants tested
-
-The single speed state of `fused` was compared with richer filters on an offline bench: every cycle of 8 drive groups,
-the radar's ACC target hidden as the reference, tuned on 3 groups and scored on the rest. The best candidates were then
-replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/kalman_variants.json)).
-
-![Kalman variants](img/analysis/kalman_variants.png)
-
-| variant | bench | openpilot replays |
-|---|---|---|
-| Student-t update instead of the 3σ clamp | same as the clamp | – |
-| speed + acceleration state (as radard), fed the radar's `84\|10` acceleration | worse on held-out and owner drives | – |
-| noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
-| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**, same response to real braking | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
-| retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: none better on every check |
-
-The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
-0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
-let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
-`COLORED_CONFIG` is not in the decoder.
-
-### Other approaches tested
-
-None is in a profile.
-
-| approach | result |
-|---|---|
-| vision speed fused into the matched track ([radard patch](../openpilot/radard_vision_fusion.patch)) | better driver agreement, small on fresh drives; needs a radard change |
-| the ACC target's speed *replacing* the track's vRel | hard ticks 53 → 57, +0.145 s response: the ACC value alone lags real closings |
-| smoothing weighted by `240\|7` (no fusion) | responds 62 ms earlier but 153 vs 85 hard ticks |
-| camera-looming veto | no planner benefit |
-| Kalman filter with maneuver adaptation or a range state | follows far slot slides / biased by the range-speed mismatch ([fused](#fused-speed-filter-fused-profile)) |
-
-### Earlier approach: tuned layers (removed)
-
-Before the Kalman filter, five tuned layers each targeted one measured failure: far smoothing, a velocity-jump guard,
-far-track settling, a ramp limiter (+4 / −6 m/s²) and ±3 m/s clips to the ACC target and summaries (17 tuned
-constants). The staircase above shows them added one at a time: together they took held-out hard ticks from 93 to 48,
-which the Kalman filter on the object list alone matches with 3 chosen constants, and `fused` beats (30). They were
-removed; per-layer numbers stay in [`layer_ablation.json`](../data/analysis/summaries/layer_ablation.json).
+`fused` (the default) handles excursions with one Kalman filter per track that weights the object list, the radar's
+ACC target and its summaries by their own uncertainty. The model, every constant, what each part contributes and
+the variants tested are in [12 Kalman speed filter](12_kalman_filter.md).
 
 ## Radar-internal signals that move with an excursion
 

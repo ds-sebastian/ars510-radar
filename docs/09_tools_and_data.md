@@ -9,7 +9,7 @@
 | [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
 | [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several interface profiles side by side |
 | [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
-| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step); a template for plotting your own idea |
+| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](12_kalman_filter.md); a template for plotting your own idea |
 | [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild the other charts in `docs/` |
 | [`tools/compute_stats.py`](../tools/compute_stats.py) | descriptive statistics of the dataset → `data/analysis/stats.json` |
 
@@ -90,7 +90,7 @@ until the last.
 3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
    Do not tune on the drive that motivated it.
 4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the current
-   default profile and with yours, and report the gates used throughout [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step):
+   default profile and with yours, and report the gates used throughout [07](12_kalman_filter.md):
 
    | gate | meaning |
    |---|---|

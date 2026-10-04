@@ -51,6 +51,26 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 
 These are replay results on one owner's car; road reports from other drivers are what confirms them.
 
+## How the filter works
+
+The radar's object list is accurate in distance, but its speed at range sometimes drifts into a false closing for
+1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker outputs: the
+ACC target and target summaries. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
+weighted by its own uncertainty, so the gain changes each cycle:
+
+```text
+predict  v⁻ = v,  P⁻ = P + (1.5 m/s² · Δt)²
+update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P⁻ + σ²)),  P = (1 − K) P⁻
+σ:       object list 0.045 m/s × 240|7 · ACC target 0.5 m/s · summary 0.5 m/s (≤ 80 m)
+```
+
+![the Kalman filter on one track](docs/img/analysis/kalman_trace.png)
+
+*During an excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by about 5%,
+each ACC target reading by about 15%, so the estimate (green) stays with the radar's tracker. radard then runs its
+usual filter on top.* Model, constants, what each part is worth and the variants tested:
+[docs/12](docs/12_kalman_filter.md).
+
 ## Profiles
 
 | profile | install | what it does | use it for |
@@ -63,8 +83,8 @@ These are replay results on one owner's car; road reports from other drivers are
 
 The earlier tuned profiles (`anchor`, `steady`) were outperformed by `fused` and removed; their names now install
 `fused`. How each profile works, each against vision only, pros and cons, assumptions and a comparison with openpilot's
-other radar interfaces: [docs/11](docs/11_profiles_compared.md). Every filter step with examples and replay evidence:
-[docs/07](docs/07_velocity_excursions.md).
+other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itself, with replay evidence for every part:
+[docs/12](docs/12_kalman_filter.md).
 
 ## Status
 
@@ -87,7 +107,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). Every filter st
   `8821F0R01100` is in openpilot's fingerprints but unconfirmed; the installer then relies on seeing the radar's
   messages on bus 1.
 - **Far-range speed excursions.** The radar's object list sometimes reports a far car closing several m/s faster than
-  it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The profiles exist to handle this; `fused` leans on the
+  it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The Kalman filter handles this by leaning on the
   radar's own trackers, but its ACC target covers only about 57% of radar-lead time (5% beyond 80 m) and the summaries
   are used up to 80 m, so the farthest leads rely on the object list alone.
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
@@ -102,7 +122,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). Every filter st
 ```mermaid
 flowchart LR
     CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed"] --> card --> RI["Toyota RadarInterface"]
-    RI -- "ARS510 detected<br/>(firmware or 0x80/0x85)" --> A["Ars510RadarInterface<br/>reassemble · CRC · decode · filter"]
+    RI -- "ARS510 detected<br/>(firmware or 0x80/0x85)" --> A["Ars510RadarInterface<br/>reassemble · CRC · decode · Kalman speed filter"]
     A -- "RadarPoints, 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
@@ -157,11 +177,12 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 | [04 Metadata record](docs/04_metadata_record_0x85.md) | 0x85: pairing with 0x80, prefix flags, lane / road-boundary curve cells |
 | [05 ACC target and support messages](docs/05_acc_target_and_support.md) | 0x235 / 0x237, target summaries, timing, readiness |
 | [06 Accuracy](docs/06_accuracy.md) | distance, lateral, speed and identity against camera and odometry |
-| [07 Velocity excursions](docs/07_velocity_excursions.md) | the far-range false-closing issue and every filter step, with examples and evidence |
+| [07 Velocity excursions](docs/07_velocity_excursions.md) | the far-range false-closing issue: what it looks like, how often, what the radar reports about it |
 | [08 openpilot integration](docs/08_openpilot_integration.md) | how it hooks in, profiles, what radard does, replay and road results, on-car checks |
 | [09 Tools and data](docs/09_tools_and_data.md) | decoding logs, Cabana, replaying drives through openpilot, the dataset, testing on your car |
 | [10 Research directions](docs/10_research_directions.md) | open problems, the signals that would help most, the path to an upstream interface |
 | [11 Profiles compared](docs/11_profiles_compared.md) | each profile against vision only, driving pros and cons, assumptions, other openpilot radar interfaces |
+| [12 Kalman speed filter](docs/12_kalman_filter.md) | the default filter: model, gains, constants and their sources, what each part is worth, variants tested |
 
 ## Repository layout
 

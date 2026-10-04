@@ -65,7 +65,7 @@ the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
   (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s).
 - The object list alone, even weighted by its uncertainty codes, does not reproduce it: the radar's ACC tracker uses
   information the object list does not expose. The `fused` profile therefore feeds it in as a speed measurement
-  ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+  ([07](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
   about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (model outputs, not sensor
   precision). It is present in 38% of 40-130 m windows and 11% beyond 80 m
@@ -116,7 +116,7 @@ speed needs a slope and lags by about half a second.
 
 `parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile uses
-them as a speed measurement up to 80 m ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+them as a speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
 
 ## 0x190: cycle header
 

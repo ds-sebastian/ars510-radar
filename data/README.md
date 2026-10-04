@@ -8,7 +8,7 @@ Three short highway captures, used by the tests and figures:
 |---|---|---|
 | `highway_following_30s.csv.gz` | 30 s | drive A: following a lead that closes from ~88 m to ~45 m; an adjacent-lane car at ~75 m |
 | `highway_vrel_excursion_25s.csv.gz` | 25 s | drive A: a settled lead at 41-57 m whose over-ground speed dips ~8 m/s for ~1 s while its range opens ([docs/07](../docs/07_velocity_excursions.md)) |
-| `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.8 m/s and its range slides 46 → 33 m while the ACC target stays at −0.7 m/s ([docs/07](../docs/07_velocity_excursions.md#7-acc-anchor-anchor)) |
+| `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.8 m/s and its range slides 46 → 33 m while the ACC target stays at −0.7 m/s ([docs/07](../docs/12_kalman_filter.md#the-model)) |
 
 Format `t_s,bus,address,data_hex`, times rebased to 0. Only bus 1 0x80 / 0x81 / 0x85 / 0x86 / 0x192 (and 0x235 / 0x237 in
 the drive E sample) and bus 0 0xB4 are included; no GPS, video, route or device identifier.

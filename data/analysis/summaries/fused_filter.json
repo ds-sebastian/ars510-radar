@@ -120,6 +120,12 @@
    "lead_source_switches_heldout": 2467,
    "lead_source_switches_heldout_fused": 1772,
    "note": "braking neutral; kept because radard flips between radar and vision leads 39 % more often on the unfused far range"
+  },
+  "ego_speed_alignment": {
+   "heldout": 31,
+   "further": 2,
+   "owner": 0,
+   "onset_vs_vision_delta_s": 0.012
   }
  }
 }

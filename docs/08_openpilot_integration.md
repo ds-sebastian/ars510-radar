@@ -23,9 +23,9 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 | fork | status |
 |---|---|
 | current openpilot (opendbc master) | self-check passes; replayed end to end through card → radard → plannerd |
-| sunnypilot v2026.002.002 | self-check passes; native-profile replay through original RadarD / plannerd under two prospective schedules ([07](07_velocity_excursions.md#sunnypilot-profile-comparison)); carries `aRel` / `yvRel`; installed on the owner's device |
+| sunnypilot v2026.002.002 | self-check passes; native-profile replay through original RadarD / plannerd under two prospective schedules ([07](12_kalman_filter.md#earlier-approach-tuned-layers-removed)); carries `aRel` / `yvRel`; installed on the owner's device |
 | StarPilot | same hook; driven by the owner with the earlier patch-based install |
-| any fork | optional `openpilot/radard_vision_fusion.patch` ([07](07_velocity_excursions.md#other-approaches-tested)) |
+| any fork | optional `openpilot/radard_vision_fusion.patch` ([07](12_kalman_filter.md#other-approaches-tested)) |
 
 ## How it hooks in
 
@@ -67,7 +67,7 @@ track: profiles only change *how* a track's values are filtered, never which car
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
+| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([12](12_kalman_filter.md#the-model)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 
@@ -75,7 +75,7 @@ track: profiles only change *how* a track's values are filtered, never which car
 
 Replay against the driver, unchanged openpilot card → radard → planner
 ([fused](../data/analysis/summaries/fused_filter.json),
-[profile figures](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
+[profile figures](12_kalman_filter.md)):
 
 | | `raw` | `fused` without ACC / summary | `fused` |
 |---|---|---|---|
@@ -92,13 +92,13 @@ alone, which is what `fused` falls back to when the radar reports no ACC target.
 `fused` brakes later than `raw` before some driver brakes because it drops a bias: in the 4 s before the driver brakes,
 its lead closing speed is 0.02 m/s from the vision lead on average (the earlier tuned profile: 0.54 m/s more closing).
 The earlier reactions came from the same over-closing that causes false brakes
-([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+([07](12_kalman_filter.md#the-model)).
 
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
 −0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier on average but asks for hard braking three times
 as often as `fused`, almost always because of a velocity excursion.
 
-What each setting does (examples and plots in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
+What each setting does (examples and plots in [07](12_kalman_filter.md)):
 
 | setting | profiles | effect |
 |---|---|---|
@@ -106,7 +106,7 @@ What each setting does (examples and plots in [07](07_velocity_excursions.md#how
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; no point without a fresh ego speed (radard's filter never recovers from NaN) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
-| `fused_speed_filter` (σ per reading from `240\|7`, ACC target, summary; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)); the ACC target is associated by position and the association survives the target's range sliding; summaries are used up to 80 m |
+| `fused_speed_filter` (σ per reading from `240\|7`, ACC target, summary; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([07](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding; summaries are used up to 80 m |
 
 ## What radard does with radar points
 

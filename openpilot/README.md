@@ -99,4 +99,4 @@ replay your own drives stock vs installed, see
 [`radard_vision_fusion.patch`](radard_vision_fusion.patch) is **not** applied by `install.py`. It rewrites radard's
 track filter in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed into the
 matched radar track. Apply it from an openpilot checkout with `git apply`. Effect and settings:
-[docs/07](../docs/07_velocity_excursions.md#other-approaches-tested).
+[docs/07](../docs/12_kalman_filter.md#other-approaches-tested).

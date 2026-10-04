@@ -203,7 +203,80 @@ def kalman_variants() -> None:
     fig.tight_layout(); fig.savefig(OUT / "kalman_variants.png", dpi=130); plt.close(fig)
 
 
+def kalman_trace() -> None:
+    """The filter at work on bundled drive E: readings, estimate with its 1-sigma band, and how much each update moves it."""
+    class Traced(Ars510NativeRadarInterface):
+        log: dict = {}
+
+        def _fused_speed(self, tid, time_s, obj, extra):
+            cfg = self.config
+            sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+            if obj.age < cfg.young_age:
+                w = min(max((cfg.young_age - obj.age) / max(cfg.young_age - 60, 1), 0.0), 1.0)
+                sig *= 1.0 + (cfg.young_sigma_scale - 1.0) * w
+            st = self._fused.get(tid)
+            gains = []
+            if st is not None and 0.0 < time_s - st[0] <= 0.5:
+                p = st[2] + (cfg.lead_accel_std_mps2 * (time_s - st[0])) ** 2
+                for _, r in [(None, sig)] + list(extra):
+                    k = p / (p + r * r); gains.append(k); p *= 1.0 - k
+            v, std = super()._fused_speed(tid, time_s, obj, extra)
+            ego = self._fresh_ego_speed(time_s) or 0.0
+            self.log.setdefault(tid, []).append(dict(t=time_s, raw=obj.v_long_ground * cfg.vground_scale - ego, v=v - ego,
+                                                     std=std, sig=sig, n_extra=len(extra), gains=gains, d=obj.d_rel))
+            return v, std
+
+    path = REPO / "data" / "sample" / "highway_acc_anchor_24s.csv.gz"
+    import csv, gzip
+    it = Traced(FUSED_CONFIG); Traced.log = {}
+    acc = []
+    with gzip.open(path, "rt") as fh:
+        for row in csv.DictReader(fh):
+            t, bus, addr, dat = float(row["t_s"]), int(row["bus"]), int(row["address"], 0), bytes.fromhex(row["data_hex"])
+            it.update_frame(t, bus, addr, dat)
+            if bus == 1 and addr == 0x235 and it._acc_vrel is not None:
+                acc.append((t, it._acc_vrel[1]))
+    tid = max(Traced.log, key=lambda k: sum(r["n_extra"] > 0 for r in Traced.log[k]))
+    L = Traced.log[tid]; t0 = L[0]["t"]
+    t = np.array([r["t"] - t0 for r in L]); v = np.array([r["v"] for r in L]); sd = np.array([r["std"] for r in L])
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=(11, 6.4), sharex=True, gridspec_kw={"height_ratios": [1.6, 1]})
+    a1.scatter(t, [r["raw"] for r in L], s=6, color=GRAY, label="object-list vRel (reading)", zorder=1)
+    ta = np.array([a[0] - t0 for a in acc]); a1.plot(ta[(ta >= t[0]) & (ta <= t[-1])], np.array([a[1] for a in acc])[(ta >= t[0]) & (ta <= t[-1])],
+                                                     color=ACC, lw=1.0, ls="--", label="radar ACC target (reading)")
+    a1.fill_between(t, v - sd, v + sd, color=FUS, alpha=0.2, lw=0, label="estimate ± 1 std")
+    a1.plot(t, v, color=FUS, lw=2, label="Kalman estimate (fused)")
+    a1.set_ylabel("lead vRel (m/s)"); a1.legend(loc="lower left", fontsize=8)
+    a1.set_title("One track through an excursion: the filter weighs each reading by its uncertainty")
+    k_obj = [r["gains"][0] if r["gains"] else np.nan for r in L]
+    k_acc = [r["gains"][1] if len(r["gains"]) > 1 else np.nan for r in L]
+    a2.plot(t, k_obj, color=GRAY, lw=1.6, label="gain on the object-list reading")
+    a2.plot(t, k_acc, color=ACC, lw=1.6, ls="--", label="gain on the ACC target reading")
+    ax = a2.twinx(); ax.plot(t, [r["sig"] for r in L], color=S4, lw=1.0, ls=":"); ax.set_ylabel("object-list σ (m/s, dotted)", color=S4)
+    a2.set_ylabel("Kalman gain K"); a2.set_xlabel("time (s)"); a2.set_ylim(0, 1); a2.legend(loc="upper left", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_trace.png", dpi=130); plt.close(fig)
+
+
+def kalman_ablation() -> None:
+    """Hard radar-only braking ticks with each part of fused removed (34 replay drives)."""
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["part_removed_34_drives"]
+    rows = [("fused (all parts)", "none"), ("− ACC target + summaries", "acc_target_and_summaries"),
+            ("− young-track factor", "young_track_factor"), ("− speed-std gate", "speed_std_publication_gate"),
+            ("− age-60 gate", "age_60_publication_gate"), ("− range fusion", "range_fusion"),
+            ("− ego-speed alignment", "ego_speed_alignment")]
+    rows += [(f"− {lab}", key) for key, lab in S.get("combinations_labels", {}).items()]
+    rows = [(lab, S[key]) for lab, key in rows if isinstance(S.get(key), dict)]
+    y = np.arange(len(rows))
+    fig, ax = plt.subplots(figsize=(10, 0.45 * len(rows) + 1.4))
+    ax.barh(y - 0.2, [r["heldout"] for _, r in rows], 0.4, color=FUS, label="20 held-out routes")
+    ax.barh(y + 0.2, [r["further"] for _, r in rows], 0.4, color=S4, label="4 further drives")
+    ax.axvline(S["none"]["heldout"], color=FUS, lw=0.8, ls=":"); ax.axvline(S["none"]["further"], color=S4, lw=0.8, ls=":")
+    ax.set_yticks(y, [lab for lab, _ in rows]); ax.invert_yaxis()
+    ax.set_xlabel("hard radar-only braking ticks (planner ≤ −2 m/s² while vision-only ≥ −0.5)")
+    ax.set_title("What each part of the Kalman filter is worth (34 replay drives)"); ax.legend(loc="lower right")
+    fig.tight_layout(); fig.savefig(OUT / "kalman_ablation.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png")))
+    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png")))

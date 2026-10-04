@@ -45,7 +45,7 @@ the layout and the smoothing hold beyond one car.
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
 - **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `fused`):
   state the expected effect before running it, replay it through openpilot against the current profile with the gates
-  in [docs/07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step) and the vision-only comparison in
+  in [docs/07](docs/12_kalman_filter.md) and the vision-only comparison in
   [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that
   change, not just the counts. Changes that only look better on the drive that motivated them are not merged.
 - **Integration** (`openpilot/`): run `openpilot/check_integration.py` against every fork you can

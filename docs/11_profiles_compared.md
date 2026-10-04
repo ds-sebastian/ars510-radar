@@ -36,7 +36,7 @@ lines in `ars510/interface.py`.*
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
   withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
 - **`fused`** adds range fusion and **one Kalman filter per track**
-  on the lead's over-ground speed ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)). It is a standard
+  on the lead's over-ground speed ([07](12_kalman_filter.md#the-model)). It is a standard
   one-state Kalman filter: the state is the lead's speed, the motion model lets it change with a lead acceleration of
   1.5 m/s², and each available reading updates it in turn, weighted by its own variance: the object-list speed
   (σ = 0.045 m/s × the radar's `240|7` uncertainty code, × 1.8 for tracks younger than 100 frames), the ACC target

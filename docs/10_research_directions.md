@@ -7,7 +7,7 @@ The most promising next steps, ordered by how directly they would improve the ra
 1. **Resolve the range scale, then put range in the filter.** The radar ACC target's fine range and speed agree at
    nominal units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed
    integrates, while it matches ego speed on near-stationary targets. Until that is resolved, `fused` keeps range out
-   of its Kalman filter and only smooths it with range fusion ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+   of its Kalman filter and only smooths it with range fusion ([07](12_kalman_filter.md#the-model)).
 2. **More of the lead covered by the radar's own trackers.** The ACC target exists for about 57% of radar-lead time and
    5% beyond 80 m; the summaries add far coverage up to 80 m. Far tracks with neither depend on the object list and its
    wide error alone, which is where `fused`'s remaining radar-only braking comes from. Finding when and why the radar
@@ -128,7 +128,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
   fields were identified ([03](03_slot_fields.md#uncertainty-and-quality));
 - what it still lacks for a Tesla-sized interface: a **fault / blockage status**, and the far-range speed error, which
   `fused` handles by weighting each reading by `240|7` and the radar's own trackers
-  ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+  ([07](12_kalman_filter.md#the-model)).
 
 ## Towards an upstream (comma) interface
 
