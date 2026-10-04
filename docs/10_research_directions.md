@@ -127,21 +127,23 @@ and obstacle probabilities, class, size, height and four uncertainty sigmas, plu
 unavailable, dynamics error). The ARS510 slot follows the same Continental pattern, which is how its existence,
 predicted-record and uncertainty fields were identified ([03](03_slot_fields.md#uncertainty-and-quality)). What it
 still lacks for a Tesla-sized interface is a **fault / blockage status** (to report a dirty or misaligned radar) and an
-explanation of the velocity excursions, which occur on measured records with ordinary uncertainty beyond 40 m: the
-reason the ACC anchor and the `steady` layers are still needed.
+explanation of the velocity excursions, which occur on measured records with ordinary uncertainty beyond 40 m. They
+are the wide far-range error that `240|7` reports, so the `fused` profile weights each reading by that uncertainty
+and by the radar's internal trackers (ACC target, summaries) instead of adding tuned guards
+([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
 
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot, but upstream openpilot prefers small radar interfaces
 that pass the radar's own values through and leave filtering to radard. Open work before proposing it there:
 
-1. **Decide how much filtering an upstream version needs.** `stock` plus only the ACC anchor uses nothing but signals
-   the radar provides. In replay it removes most nuisance hard braking (held-out 93 → 46 ticks, owner drives 17 → 2,
-   fresh drives 16 → 2-3) but keeps stock's lead-switch roughness (2,468 vs 1,781 switches for `steady`), answers 5
-   of 167 driver brakes more than 0.15 s later, and leaves 3 vs 1 hard ticks on the further drives
-   ([`acc_anchor.json`](../data/analysis/summaries/acc_anchor.json)). So the anchor is the most valuable single
-   piece, and the remaining work is either keeping a few of the `steady` layers or moving their job into radard
-   (for example the `measured` flag below, so coasted velocity is weighted down).
+1. **Decide how much filtering an upstream version needs.** The `fused` profile is the candidate: the base decode,
+   range fusion and one speed filter whose weights come from the radar's own uncertainty fields and internal
+   trackers, about 30 lines in place of five tuned layers. In replay it brakes falsely less than `anchor` (held-out
+   48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
+   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It needs road testing, and the range/speed
+   scale of the object list ([06](06_accuracy.md)) before range can join the filter. The same weighting could live
+   in radard instead (per-point speed variance), which would leave the interface a pass-through like the others.
 2. **Decode `measured` and fault status** (above), so the interface looks like the others.
 3. **Size and style.** Today: decoder ~1,000 lines including research options. An upstream port needs the
    reassembler, slot decode, the chosen profile and tests only, in opendbc's style, with fingerprint-based detection
