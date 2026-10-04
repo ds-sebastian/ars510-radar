@@ -9,6 +9,7 @@ import pytest
 
 from ars510.constants import ID80_IDLE_SLOT
 from ars510.interface import (
+    ANCHOR_CONFIG,
     OPENPILOT_CONFIG,
     RAW_CONFIG,
     RELINK_MIN_PUBLISH_AGE,
@@ -512,11 +513,11 @@ def test_range_anchor_holds_the_acc_track_against_a_range_slide() -> None:
     assert NativeInterfaceConfig().acc_range_clip_m == 0.0
 
 
-def _summary_run(clip: float) -> list[float]:
+def _summary_run(clip: float, max_range: float = 0.0) -> list[float]:
     """Far lead at ~70 m closing at 1 m/s; its object-list ground speed drifts 6 m/s low after 1.5 s while the radar's
     0x192 summary range keeps closing at 1 m/s. No ACC target."""
     from ars510.objects import encode_slot
-    cfg = replace(NativeInterfaceConfig(), summary_clip_mps=clip)
+    cfg = replace(NativeInterfaceConfig(), summary_clip_mps=clip, summary_max_range_m=max_range)
     iface = Ars510NativeRadarInterface(cfg)
     out = []
     for k in range(60):
@@ -537,3 +538,9 @@ def test_summary_anchor_bounds_a_far_track_by_the_summary_speed() -> None:
     assert min(free[-10:]) < -6.5               # object-list vRel drifted to about -7 m/s
     assert min(anchored[-10:]) >= -1.0 - 3.0 - 0.1  # held within 3 m/s of the summary's -1 m/s
     assert NativeInterfaceConfig().summary_clip_mps == 0.0
+    assert (ANCHOR_CONFIG.summary_clip_mps, ANCHOR_CONFIG.summary_max_range_m) == (3.0, 80.0)
+
+
+def test_summary_anchor_range_limit_leaves_farther_tracks_alone() -> None:
+    assert _summary_run(3.0, max_range=60.0) == _summary_run(0.0)       # lead at ~68 m: beyond the limit
+    assert _summary_run(3.0, max_range=80.0) == _summary_run(3.0)       # within the limit: anchored as before

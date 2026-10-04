@@ -59,7 +59,7 @@ Then reboot the device. The same command works on any fork: it adds the decoder 
 
 | profile | install | what you get |
 |---|---|---|
-| **`anchor`** (default) | `install.py /data/openpilot` | `steady` + the radar's own ACC target as a bound on the lead's speed. Fewest false brakes |
+| **`anchor`** (default) | `install.py /data/openpilot` | `steady` + the radar's own ACC target as a bound on the lead's speed, and its target-range summaries for far cars up to 80 m. Fewest false brakes |
 | `steady` | `--profile steady` | guards and smoothing against velocity excursions, without the ACC target |
 | `stock` | `--profile stock` | the plain decode, for research and comparison. **Velocity excursions reach the planner unfiltered** |
 

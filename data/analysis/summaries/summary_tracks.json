@@ -119,5 +119,69 @@
     "points_changed": 938,
     "share_beyond_60m": 0.857,
     "gates": "all pass, no event changes"
+  },
+  "replay_34_drives_summary_as_replacement": {
+    "note": "anchor + summary anchor with one far layer removed, vs anchor + summary anchor; both removals fail and the layers stay",
+    "without_far_smoothing": {
+      "heldout_hard": [
+        48,
+        45
+      ],
+      "hard_episodes": [
+        11,
+        10
+      ],
+      "target_episodes": [
+        9,
+        11
+      ],
+      "further_hard": [
+        1,
+        3
+      ],
+      "owner_hard": [
+        0,
+        0
+      ],
+      "mean_onset_s": [
+        -1.1277,
+        -1.1582
+      ],
+      "fresh_windows_harder": 2
+    },
+    "without_far_settling": {
+      "heldout_hard": [
+        48,
+        48
+      ],
+      "hard_episodes": [
+        11,
+        11
+      ],
+      "target_episodes": [
+        9,
+        10
+      ],
+      "further_hard": [
+        1,
+        9
+      ],
+      "owner_hard": [
+        0,
+        0
+      ],
+      "mean_onset_s": [
+        -1.1277,
+        -1.11
+      ],
+      "fresh_windows_harder": 0
+    }
+  },
+  "profile": {
+    "anchor": {
+      "summary_clip_mps": 3.0,
+      "summary_max_range_m": 80.0
+    },
+    "why_80m": "optical check: summary closer to the camera reference at 40-60 and 60-80 m, not beyond 80 m"
   }
 }
