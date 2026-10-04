@@ -4,10 +4,10 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **Anchor the range as well.** The `anchor` profile bounds the ACC-target track's velocity, but during an excursion
-   the track's range can still slide (drive E: 46 → 33 m while the radar's ACC target stayed at 46 m). 0x237 carries a
-   fine distance (0.02 m per code for changes); its absolute origin and scale need one calibration against the
-   object list or a measured distance before it can bound dRel the same way.
+1. **Resolve the range scale, then anchor the range.** The radar ACC target's fine range and speed agree at nominal
+   units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed integrates,
+   while it matches ego speed on near-stationary targets. A range anchor built on the fine range helps a little and
+   costs a little until that is resolved ([07](07_velocity_excursions.md#range-anchor-option-off)).
 2. **More of the lead covered by the anchor.** The radar's ACC target exists for about 57% of radar-lead time and 5%
    beyond 80 m, so far excursions still depend on the `steady` layers. Finding when and why the radar drops or
    delays its target (range, speed, curve, camera state) tells whether coverage can grow.
@@ -19,9 +19,13 @@ The most promising next steps, ordered by how directly they would improve the ra
    radar's own ACC velocity, so it is not that filter's measurement variance. Independent motion is needed to give it
    physical units.
 5. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
-6. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
+6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
+   than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.68 vs 0.80 m/s²)
+   and about 0.35 s earlier, with less wobble. radard ignores radar-provided `aRel` for every car; a fork-side radard
+   change that uses it would test whether the brake-release-brake feel while following eases.
+7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
-7. **Simplify further.** The jump guard is gone (no scored effect anywhere). Removing far smoothing or far-track
+8. **Simplify further.** The jump guard is gone (no scored effect anywhere). Removing far smoothing or far-track
    settling from `anchor` each raises the further drives' hard braking from 1 to 9 ticks
    ([07](07_velocity_excursions.md#what-removing-a-layer-does)), so both stay until the excursion source itself is
    handled; the remaining layers each have a measured job.

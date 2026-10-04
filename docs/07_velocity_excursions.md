@@ -299,6 +299,15 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 | far-track settling (from `anchor`) | held-out unchanged (48), further drives 1 → 9, one more target episode on held-out and owner drives, onset 17 ms later: kept |
 | ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
 
+### Range anchor (option, off)
+
+`acc_range_clip_m` clips the ACC-associated track's object-list range to a distance propagated with the radar ACC
+target's fine-range changes (0x237, consistent with its own speed to 1%), with the offset following the object-list
+range over `acc_range_tau_s`. On the 34 replay drives (with `acc_range_clip_m=2`) held-out hard ticks go 48 → 45 and
+lead switches drop 4%, but one more driver brake is answered more than 0.15 s late, one fresh-drive window brakes harder,
+and distances move by up to 12 m where the fine range and the object list disagree on scale (10-20% over long
+approaches). It stays off until that scale is understood ([`acc_fields.json`](../data/analysis/summaries/acc_fields.json)).
+
 ### Other approaches tested
 
 Measured the same way; none is in a profile.

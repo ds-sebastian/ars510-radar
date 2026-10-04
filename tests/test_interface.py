@@ -485,3 +485,28 @@ def test_measured_follows_the_predicted_flag_and_existence_is_exposed() -> None:
     pts = {round(p["dRel"]): p for p in out[0]["radarData"]["points"]}
     assert pts[30]["measured"] is True and pts[30]["existence_pct"] == 100
     assert pts[40]["measured"] is False and pts[40]["existence_pct"] == 60
+
+
+def _range_slide_run(clip_m: float) -> list[float]:
+    """Matched lead at 40 m whose object-list range slides to 30 m while the ACC target's fine range stays put."""
+    from ars510.objects import encode_slot
+    cfg = replace(NativeInterfaceConfig(acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
+                                        acc_match_min_age=20), acc_range_clip_m=clip_m)
+    iface = Ars510NativeRadarInterface(cfg)
+    out = []
+    for k in range(20):
+        t = 0.06 * k
+        d = 40.0 if k < 6 else max(30.0, 40.0 - 2.0 * (k - 5))
+        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + 10.0 / 0.15),
+                           age_cycles=80 + k)
+        fr = [speed_frame(t, 10.0)] + _acc_frames(t + 0.001, 0.0, 40.0, 0.0) + frames_(record({0: lead}), t + 0.002)
+        out += [p["dRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
+    return out
+
+
+def test_range_anchor_holds_the_acc_track_against_a_range_slide() -> None:
+    free, anchored = _range_slide_run(0.0), _range_slide_run(2.0)
+    assert free[10] <= 30.5                      # the object-list range has slid 10 m
+    assert anchored[10] >= 37.5                  # held within 2 m of the ACC-propagated distance
+    assert anchored[-1] > free[-1] + 4           # and only follows slowly (offset time constant 3 s)
+    assert NativeInterfaceConfig().acc_range_clip_m == 0.0
