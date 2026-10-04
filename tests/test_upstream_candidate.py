@@ -109,3 +109,52 @@ def test_radar_interface_publishes_points_and_reports_a_silent_radar(candidate):
   t_end = frames[-1][0]
   silent = [ri.update([(int((t_end + 0.1 * k) * 1e9), [])]) for k in range(1, 20)]
   assert any(r is not None and r.errors.radarUnavailableTemporary for r in silent)
+
+
+def _publication_scan(candidate, radar, t, *, age=126, uncertainty=1, invalid=False, churn=False):
+  import zlib
+  from ars510.objects import encode_slot
+  record = bytearray(candidate.RECORD_LEN)
+  record[0] = 0xE4
+  for slot in range(candidate.SLOTS):
+    data = candidate.IDLE_SLOT
+    if slot == 0 or churn:
+      data = encode_slot(age_cycles=age if slot == 0 else 60,
+                         long_dist=160 + 16 * (50 if slot == 0 else 150),
+                         lat_dist_left=(0 if invalid else 2048) if slot == 0 else 2048 + 20 * 64,
+                         long_vel_over_ground=644, vel_uncertainty_candidate=uncertainty if slot == 0 else 1)
+    start = candidate.SLOT_START + candidate.SLOT_LEN * slot
+    record[start:start + candidate.SLOT_LEN] = data
+  record[737:741] = zlib.crc32(record[1:737]).to_bytes(4, "little")
+  radar.update(t, candidate.CAR_BUS, candidate.SPEED_ADDR, bytes(5) + (7200).to_bytes(2, "big") + bytes(1))
+  points = None
+  for frame in range(candidate.RECORD_FRAMES):
+    data = bytes([0x12 if frame == 0 else 0x20]) + record[7 * frame:7 * (frame + 1)]
+    points = radar.update(t + 0.0001 * frame, candidate.RADAR_BUS, candidate.OBJECTS_ADDR, data)
+  assert points is not None
+  return points
+
+
+def _live_native_recovery(candidate, churn):
+  radar = candidate.Ars510Radar()
+  assert _publication_scan(candidate, radar, 0.0)[0][0] == 1
+  for tick in range(1, 121):
+    _publication_scan(candidate, radar, tick * 0.06, invalid=True, churn=churn)
+  assert radar.slots[0][0] == 1  # invalid geometry never ended the native allocation
+  return radar, _publication_scan(candidate, radar, 7.26, uncertainty=127)
+
+
+@pytest.mark.parametrize("churn", [False, True])
+def test_known_native_recovery_does_not_depend_on_unrelated_track_pressure(candidate, churn):
+  radar, points = _live_native_recovery(candidate, churn)
+  assert radar.kf[1][2] ** 0.5 > candidate.PUBLISH_STD  # reset uncertainty; first publication already happened
+  assert [p[0] for p in points] == [1]
+
+
+def test_new_native_allocation_keeps_initial_speed_std_gate(candidate):
+  radar, _ = _live_native_recovery(candidate, churn=True)
+  new_id = radar.next_tid
+  assert _publication_scan(candidate, radar, 7.32, age=0, uncertainty=127) == []
+  assert _publication_scan(candidate, radar, 7.38, uncertainty=127) == []
+  assert radar.slots[0][0] == new_id and new_id != 1
+  assert radar.kf[new_id][2] ** 0.5 > candidate.PUBLISH_STD

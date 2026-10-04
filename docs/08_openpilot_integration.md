@@ -63,8 +63,9 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 
 ## Profiles
 
-`install.py --profile NAME` picks one; with no `--profile` you get `fused`. Every profile publishes every object-list
-track: profiles only change *how* a track's values are filtered, never which cars exist.
+`install.py --profile NAME` picks one; with no `--profile` you get `fused`. Every profile starts from the native
+object list. Validity, age, guard and filter-readiness rules determine when a track is published; value filtering
+and ID continuity also depend on the profile.
 
 | profile | what it is | when to use |
 |---|---|---|
@@ -72,6 +73,10 @@ track: profiles only change *how* a track's values are filtered, never which car
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
+
+The upstream initial speed-uncertainty gate belongs to a native allocation. Once that allocation has been
+published, its publication history survives temporary invalid geometry and speed-state pruning while the native
+slot lifecycle remains active. A genuinely new allocation must pass the initial gate.
 
 `raw` is the unfiltered radar decode, not vision-only and not stock openpilot; its older names `stock` and `default` are still accepted. The earlier tuned profiles `anchor` and `steady` were outperformed by `fused` and removed: `--profile anchor` or `steady` installs `fused` with a notice.
 
