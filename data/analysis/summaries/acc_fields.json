@@ -1,0 +1,88 @@
+{
+  "scope": "eight fresh/owner drives, 46,251 cycles with an ACC-matched object-list track",
+  "fine_range_0x237": {
+    "abs_fit_m_per_code": 0.02297,
+    "abs_fit_offset_m": 0.98,
+    "resid_mad_m": 0.647,
+    "cycle_jitter_std_m": {
+      "fine": 0.04,
+      "object_list": 0.937
+    }
+  },
+  "closure_3s_windows": {
+    "n": 211,
+    "fine_x0.02_over_int_acc_speed": {
+      "median": 1.007,
+      "iqr": [
+        0.9915,
+        1.0227
+      ]
+    },
+    "object_list_drange_over_int_vrel": {
+      "median": 1.1137,
+      "iqr": [
+        0.9718,
+        1.3434
+      ]
+    },
+    "fine_codes_per_object_list_metre": 41.24
+  },
+  "stationary_range_rate_over_ego": {
+    "windows": 85,
+    "median": 1.0102,
+    "iqr": [
+      0.812,
+      1.203
+    ]
+  },
+  "accel_byte2_vs_independent_lead_accel": {
+    "byte2": {
+      "corr": 0.64,
+      "rms": 0.683,
+      "wobble": 0.12,
+      "lag_s": 0.48
+    },
+    "radard_aLeadK": {
+      "corr": 0.56,
+      "rms": 0.795,
+      "wobble": 0.152,
+      "lag_s": 0.84
+    },
+    "vision_model": {
+      "corr": 0.559,
+      "rms": 0.732,
+      "wobble": 0.096
+    },
+    "byte2_scale_slope": 0.942
+  },
+  "range_anchor_replay_34_drives": {
+    "heldout_hard": [
+      48,
+      45
+    ],
+    "hard_episodes": [
+      11,
+      10
+    ],
+    "target_episodes": [
+      9,
+      10
+    ],
+    "switches": [
+      1781,
+      1709
+    ],
+    "further_hard": [
+      1,
+      1
+    ],
+    "owner_hard": [
+      0,
+      0
+    ],
+    "new_late_response": 1,
+    "fresh_window_gate": "fails once (route brakes -1.95 -> -2.40)",
+    "max_dRel_change_m": 12.1,
+    "decision": "option, off"
+  }
+}
