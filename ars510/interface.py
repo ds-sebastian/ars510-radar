@@ -103,8 +103,10 @@ class NativeInterfaceConfig:
     # (docs/07). Their range slope over summary_window_s gives a relative speed; a summary attaches to an object-list
     # track when range (within 15 %) and speed (within summary_match_mps) agree unambiguously, stays attached while both
     # persist, and that track's vRel is clipped to the summary speed +/- summary_clip_mps. ACC-anchored tracks are left
-    # to the ACC anchor. 0 disables.
+    # to the ACC anchor. 0 disables. summary_max_range_m limits the clip to tracks within that range (0 = no limit):
+    # beyond ~80 m the optical check no longer favours the summary speed (docs/07).
     summary_clip_mps: float = 0.0
+    summary_max_range_m: float = 0.0
     summary_window_s: float = 1.0
     summary_match_mps: float = 1.5
     summary_scales: tuple[tuple[float, float], ...] = ((0.0541, -5.14), (0.0461, -12.45))  # m per code, offset m (0x192, 0x194)
@@ -151,7 +153,7 @@ STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far
 # its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
 # excursions that drag the native range along. The default install profile (docs/08).
 ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
-                        acc_match_min_age=20)
+                        acc_match_min_age=20, summary_clip_mps=3.0, summary_max_range_m=80.0)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -554,7 +556,8 @@ class Ars510NativeRadarInterface:
                 clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
                 self.acc_target_clips += clipped != vrel
                 vrel = clipped
-            elif tid in sum_clip and isfinite(vrel):
+            elif tid in sum_clip and isfinite(vrel) and \
+                    (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
                 vs = sum_clip[tid]
                 clipped = min(max(vrel, vs - cfg.summary_clip_mps), vs + cfg.summary_clip_mps)
                 self.summary_clips += clipped != vrel

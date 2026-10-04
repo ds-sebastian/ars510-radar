@@ -298,8 +298,10 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 | far smoothing (from `anchor`) | held-out hard ticks 48 → 45 but further drives 1 → 9, target episodes 9 → 11, four driver brakes answered > 0.15 s later; fresh drives brake harder in two recorded windows: kept |
 | far-track settling (from `anchor`) | held-out unchanged (48), further drives 1 → 9, one more target episode on held-out and owner drives, onset 17 ms later: kept |
 | ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
+| far smoothing, with the summary anchor on | held-out 48 → 45 but further drives 1 → 3, target episodes 9 → 11; the same two fresh windows brake harder: kept |
+| far-track settling, with the summary anchor on | further drives 1 → 9, as without summaries: kept |
 
-### Summary anchor (option, off)
+### Summary anchor (in `anchor`, up to 80 m)
 
 `summary_clip_mps` does for far cars what the ACC anchor does for the ACC target: the radar's selected-target range
 summaries (0x192 / 0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) come from its internal
@@ -308,7 +310,14 @@ tracker, so their range slope avoids the excursions. A summary attaches to an ob
 held within ± `summary_clip_mps` of the summary speed. On the eight fresh/owner drives the ACC anchor covers 55 % of
 in-lane points beyond 60 m and the summaries add 24 % (79 % together). In replay (`summary_clip_mps=3`) it changes 1 %
 of points, mostly beyond 60 m, and leaves every planner score of `anchor` unchanged on the 34 replay drives and the
-fresh drives: physically better far speeds (camera check above) that these drives' planners rarely act on.
+fresh drives: physically better far speeds that these drives' planners rarely act on.
+
+Against the optical reference (906 windows beyond 40 m matched to a summary) the summary speed is closer to the camera
+at 40-60 m (median error 0.35 vs 0.56 m/s for the object list) and 60-80 m (0.75 vs 0.99; false closings 6.5 % vs
+14.9 %), and in 97 % of the windows where the object list shows a false closing. Beyond 80 m it is not better (1.18 vs
+0.98 m/s, 61 windows), so `anchor` uses it with `summary_clip_mps=3` and `summary_max_range_m=80`. It does not replace
+far smoothing or far-track settling (table above): the cases those layers protect are mostly young or far tracks
+without an attached summary ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)).
 
 ### Range anchor (option, off)
 

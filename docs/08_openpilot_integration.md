@@ -66,7 +66,7 @@ track: profiles only change *how* a track's values are filtered, never which car
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes | everyday driving: the fewest false brakes at the same response as `steady` |
+| **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes, and its target-range summaries (0x192/0x194) for far tracks up to 80 m | everyday driving: the fewest false brakes at the same response as `steady` |
 | `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
 | `stock` | `OPENPILOT_CONFIG`: the plain decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 
@@ -101,6 +101,7 @@ What each setting does (examples and plots in [07](07_velocity_excursions.md#how
 | `far_min_publish_age=100` above 70 m | steady, anchor | far new tracks wait ~6 s instead of ~3.6 s: young far tracks are where pickups misread speed |
 | `ramp_up_mps2=4`, `ramp_down_mps2=6` | steady, anchor | over-ground speed may leave its 3 s average by at most +4 / −6 m/s²; returns pass at once |
 | `acc_target_clip_mps=3`, `acc_target_sticky`, `acc_match_range_m=12`, `acc_match_min_age=20` | anchor | the track the radar reports as its ACC target stays within ±3 m/s of the target's closing speed; the association survives the target's range sliding |
+| `summary_clip_mps=3`, `summary_max_range_m=80` | anchor | a track matched to the radar's target-range summary (0x192/0x194) stays within ±3 m/s of the summary's range-slope speed, up to 80 m; no planner change on 34 drives, closer to the camera reference at 40-80 m |
 
 ## What radard does with radar points
 
