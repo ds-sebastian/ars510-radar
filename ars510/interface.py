@@ -23,11 +23,11 @@ from dataclasses import dataclass, replace
 from math import exp, inf, isfinite, nan, pi
 from collections.abc import Iterable
 
-from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, TOYOTA_KINEMATICS_ADDR,
-                        TOYOTA_SPEED_ADDR)
+from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
+                        TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 from .objects import NativeObject, decode_native_slot
 from .record import id80_crc_ok, occupied_slots
-from .support import parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
+from .support import parse_0x192, parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
@@ -98,6 +98,16 @@ class NativeInterfaceConfig:
     # +/- acc_range_clip_m. Stops the native range sliding with an excursion. 0 disables.
     acc_range_clip_m: float = 0.0
     acc_range_tau_s: float = 3.0
+    # Summary anchor: the radar's selected-target range summaries (0x192 / 0x194) come from its internal tracker, which
+    # does not show the object-list velocity excursions and reaches far range where the ACC target rarely does
+    # (docs/07). Their range slope over summary_window_s gives a relative speed; a summary attaches to an object-list
+    # track when range (within 15 %) and speed (within summary_match_mps) agree unambiguously, stays attached while both
+    # persist, and that track's vRel is clipped to the summary speed +/- summary_clip_mps. ACC-anchored tracks are left
+    # to the ACC anchor. 0 disables.
+    summary_clip_mps: float = 0.0
+    summary_window_s: float = 1.0
+    summary_match_mps: float = 1.5
+    summary_scales: tuple[tuple[float, float], ...] = ((0.0541, -5.14), (0.0461, -12.45))  # m per code, offset m (0x192, 0x194)
     # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
     # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
     # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07).
@@ -188,7 +198,10 @@ class Ars510NativeRadarInterface:
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
+        self.summary_clips = 0
         self._acc_assoc: tuple[int, float, float] | None = None  # sticky (tid, last coarse x, last y)
+        self._summary_hist: dict[int, list[tuple[float, float]]] = {0x192: [], 0x194: []}  # (time, range m)
+        self._summary_assoc: dict[int, int | None] = {0x192: None, 0x194: None}
         self._acc_q: int | None = None  # 0x237 fine-range code of the current ACC target
         self._acc_range: tuple[int, float, float, int] | None = None  # (tid, time, offset m, last code)
         self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
@@ -229,6 +242,10 @@ class Ars510NativeRadarInterface:
             v = parse_toyota_speed_mps(bytes(data))
             if v is not None:
                 self.set_ego_speed(v, time_s)
+            return None
+        if bus == self.config.radar_bus and addr in SUMMARY_ADDRS:
+            if self.config.summary_clip_mps > 0:
+                self._summary_update(addr, float(time_s), bytes(data))
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
             data = bytes(data)
@@ -325,6 +342,57 @@ class Ars510NativeRadarInterface:
             return None, nan
         self._acc_assoc = (costs[0][1], ax, ay)
         return costs[0][1], self._acc_vrel[1]
+
+    def _summary_update(self, addr: int, time_s: float, data: bytes) -> None:
+        hist = self._summary_hist[addr]
+        word = parse_0x192(data)
+        if word is None:
+            hist.clear(); self._summary_assoc[addr] = None
+            return
+        scale, offset = self.config.summary_scales[0 if addr == 0x192 else 1]
+        x = word.range_code13 * scale + offset
+        if hist and (time_s - hist[-1][0] > 0.3 or abs(x - hist[-1][1]) > 5.0):  # gap or a new target
+            hist.clear(); self._summary_assoc[addr] = None
+        hist.append((time_s, x))
+        while hist and hist[0][0] < time_s - self.config.summary_window_s:
+            hist.pop(0)
+
+    def _summary_speed(self, addr: int, time_s: float) -> tuple[float, float] | None:
+        """(range m, relative speed m/s) of a summary from a least-squares slope, or None while too short/stale."""
+        hist = self._summary_hist[addr]
+        w = self.config.summary_window_s
+        if len(hist) < 8 or hist[-1][0] - hist[0][0] < 0.7 * w or time_s - hist[-1][0] > 0.3:
+            return None
+        n = len(hist); mt = sum(t for t, _ in hist) / n; mx = sum(x for _, x in hist) / n
+        den = sum((t - mt) ** 2 for t, _ in hist)
+        return (hist[-1][1], sum((t - mt) * (x - mx) for t, x in hist) / den) if den > 0 else None
+
+    def _summary_match(self, time_s: float, decoded: list, v_ego: float | None, acc_tid: int | None) -> dict[int, float]:
+        """Tracks attached to a summary -> summary relative speed (see the config)."""
+        cfg = self.config
+        out: dict[int, float] = {}
+        if v_ego is None:
+            return out
+        tracks = {tid: obj for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid and obj.age >= 20}
+        for addr in SUMMARY_ADDRS:
+            sv = self._summary_speed(addr, time_s)
+            if sv is None:
+                self._summary_assoc[addr] = None
+                continue
+            x, v = sv
+            tid = self._summary_assoc[addr]
+            if tid is not None and (tid not in tracks or abs(tracks[tid].d_rel - x) > max(8.0, 0.25 * x)):
+                tid = None
+            if tid is None:
+                cands = sorted((abs(o.d_rel - x), t) for t, o in tracks.items()
+                               if abs(o.y_rel) < 3.0 and abs(o.d_rel - x) < max(5.0, 0.15 * x)
+                               and abs(o.v_long_ground * cfg.vground_scale - v_ego - v) < cfg.summary_match_mps)
+                if len(cands) == 1 or (len(cands) > 1 and cands[1][0] - cands[0][0] > 3.0):
+                    tid = cands[0][1]
+            self._summary_assoc[addr] = tid
+            if tid is not None and tid != acc_tid and tid not in out:
+                out[tid] = v
+        return out
 
     def _range_anchored(self, tid: int, time_s: float, d_meas: float) -> float:
         """The ACC track's range, clipped to the ACC-propagated distance +/- acc_range_clip_m (see the config)."""
@@ -469,6 +537,7 @@ class Ars510NativeRadarInterface:
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
         acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
+        sum_clip = self._summary_match(time_s, decoded, v_ego, acc_tid) if cfg.summary_clip_mps > 0 else {}
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
@@ -484,6 +553,11 @@ class Ars510NativeRadarInterface:
             if tid == acc_tid and isfinite(vrel):
                 clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
                 self.acc_target_clips += clipped != vrel
+                vrel = clipped
+            elif tid in sum_clip and isfinite(vrel):
+                vs = sum_clip[tid]
+                clipped = min(max(vrel, vs - cfg.summary_clip_mps), vs + cfg.summary_clip_mps)
+                self.summary_clips += clipped != vrel
                 vrel = clipped
             if cfg.vrel_range_clip_window_s > 0:
                 vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)

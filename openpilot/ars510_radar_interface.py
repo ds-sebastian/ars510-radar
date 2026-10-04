@@ -34,7 +34,7 @@ from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface
-from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS,
+from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
 # Decoder profile (docs/08): "anchor" (ANCHOR_CONFIG, default: steady + the radar's own ACC target as a velocity
@@ -56,7 +56,7 @@ NO_RECORD_WARN_S = 15.0
 EMPTY_PERIOD = 5  # without records, report every 5th update (card calls update at 100 Hz -> 20 Hz)
 # 0x24 (yaw rate) feeds yvRel, which forks with the legacy RadarPoint fields (sunnypilot) publish
 WANTED = {(RADAR_BUS, ID80_ADDR), (CAR_BUS, TOYOTA_SPEED_ADDR), (CAR_BUS, TOYOTA_KINEMATICS_ADDR), (RADAR_BUS, ACC_TARGET_VREL_ADDR),
-          (RADAR_BUS, ACC_TARGET_POS_ADDR)}
+          (RADAR_BUS, ACC_TARGET_POS_ADDR)} | {(RADAR_BUS, a) for a in SUMMARY_ADDRS}
 
 
 class Ars510RadarInterface(RadarInterfaceBase):

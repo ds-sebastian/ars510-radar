@@ -510,3 +510,30 @@ def test_range_anchor_holds_the_acc_track_against_a_range_slide() -> None:
     assert anchored[10] >= 37.5                  # held within 2 m of the ACC-propagated distance
     assert anchored[-1] > free[-1] + 4           # and only follows slowly (offset time constant 3 s)
     assert NativeInterfaceConfig().acc_range_clip_m == 0.0
+
+
+def _summary_run(clip: float) -> list[float]:
+    """Far lead at ~70 m closing at 1 m/s; its object-list ground speed drifts 6 m/s low after 1.5 s while the radar's
+    0x192 summary range keeps closing at 1 m/s. No ACC target."""
+    from ars510.objects import encode_slot
+    cfg = replace(NativeInterfaceConfig(), summary_clip_mps=clip)
+    iface = Ars510NativeRadarInterface(cfg)
+    out = []
+    for k in range(60):
+        t = 0.06 * k
+        d = 70.0 - 1.0 * t
+        vg = 9.0 if k < 25 else 3.0
+        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
+                           age_cycles=min(126, 80 + k))
+        code = round((d - (-5.14)) / 0.0541)
+        fr = [speed_frame(t, 10.0), (t + 0.001, 1, 0x192, code.to_bytes(2, "big") + (2048).to_bytes(2, "big"))]
+        fr += frames_(record({0: lead}), t + 0.002)
+        out += [p["vRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
+    return out
+
+
+def test_summary_anchor_bounds_a_far_track_by_the_summary_speed() -> None:
+    free, anchored = _summary_run(0.0), _summary_run(3.0)
+    assert min(free[-10:]) < -6.5               # object-list vRel drifted to about -7 m/s
+    assert min(anchored[-10:]) >= -1.0 - 3.0 - 0.1  # held within 3 m/s of the summary's -1 m/s
+    assert NativeInterfaceConfig().summary_clip_mps == 0.0

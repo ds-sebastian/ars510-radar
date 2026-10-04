@@ -40,6 +40,7 @@ TOYOTA_KINEMATICS_ADDR = 0x24  # YAW_RATE, left positive (matches the gyro at 1.
 # ars510/support.py and docs/05.
 ACC_TARGET_VREL_ADDR = 0x235
 ACC_TARGET_POS_ADDR = 0x237
+SUMMARY_ADDRS = (0x192, 0x194)  # the radar's selected-target range summaries (docs/05)
 
 # Radar cycle is ~60 ms (records arrive at ~16.7 Hz).
 RADAR_CYCLE_S = 0.06
