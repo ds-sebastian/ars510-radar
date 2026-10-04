@@ -232,7 +232,8 @@ class Ars510Radar:
         for k in [k for k, v in store.items() if v[0] < t - 5.0]:
           store.pop(k)
     if len(self.published) > 400:
-      self.published &= set(self.kf)
+      # Invalid geometry may leave a live allocation without a recent speed-filter entry.
+      self.published &= set(self.kf) | {state[0] for state in self.slots.values()}
 
 
 class RadarInterface(RadarInterfaceBase):
