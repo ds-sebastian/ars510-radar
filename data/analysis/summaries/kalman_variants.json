@@ -42,18 +42,6 @@
   "s200": 0.0691,
   "y": 0.0674
  },
- "real_braking_lag_s": {
-  "fused_RW": {
-   "heldout": 0.451,
-   "fresh": -0.087,
-   "owner": 0.851
-  },
-  "colored": {
-   "heldout": 0.466,
-   "fresh": 0.009,
-   "owner": 0.8
-  }
- },
  "replay_34_drives": {
   "fused": {
    "heldout_hard_ticks": 30,
@@ -830,5 +818,6 @@
    -15.18,
    -12.8
   ]
- }
+ },
+ "acc_drop_response_summary": "kalman_response.json"
 }

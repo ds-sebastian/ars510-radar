@@ -224,5 +224,56 @@
    "passes": false,
    "verdict": "as range fusion removed alone"
   }
+ },
+ "range_retention_no_relink": {
+  "status": "rejected by frozen component-removal gates",
+  "comparison": "Remove range correction and relinking; retain summary and ACC updates. Frozen comparator is original fused including relinking.",
+  "cohorts": {
+   "heldout": {
+    "hard_ticks": 27,
+    "target_eps": 6,
+    "radar_only_episodes": 3,
+    "switches": 2467,
+    "hours": 4.564427099775277
+   },
+   "further": {
+    "hard_ticks": 0,
+    "target_eps": 1,
+    "radar_only_episodes": 0,
+    "switches": 323,
+    "hours": 0.5406465286563905
+   },
+   "sunnypilot": {
+    "hard_ticks": 0,
+    "target_eps": 0,
+    "radar_only_episodes": null,
+    "switches": 0,
+    "hours": 0.0
+   }
+  },
+  "frozen_limits": {
+   "heldout_hard_ticks_max": 33,
+   "further_hard_ticks_max": 4,
+   "owner_hard_ticks_max": 0,
+   "owner_target_episodes_max": 0,
+   "heldout_target_episodes_max": 5,
+   "heldout_radar_added_episodes_max": 2,
+   "heldout_switches_max": 2037.8
+  },
+  "baseline_heldout_switches": 1772,
+  "independent_arithmetic": {
+   "status": "PASS",
+   "scalar_chain_checks": 447,
+   "reaction_rows": 364,
+   "physical_target_motion_validated": false,
+   "old_verification_not_rerun": true,
+   "checked_baseline_arithmetic_reused": true
+  },
+  "switch_increase_percent": 39.22121896162529,
+  "failing_gates": [
+   "heldout_target_episodes",
+   "heldout_radar_added_episodes",
+   "heldout_lead_source_switches"
+  ]
  }
 }

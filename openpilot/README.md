@@ -40,6 +40,10 @@ Omitting `--profile` selects the recommended `fused` profile. The legacy name `-
 historical meaning, `raw`; it does **not** mean the current recommendation. All legacy names print the profile
 they select. `anchor`/`steady` select `fused`, `stock`/`default` select `raw`, and `upstream` selects `openpilot`.
 
+The installed `openpilot` profile shares the standalone candidate's core decoding/filtering through a generic
+fork adapter. See [wrapper boundaries](../docs/08_openpilot_integration.md#profiles) for stale-clock and optional
+legacy-field differences.
+
 ## What gets installed
 
 | file | installed as | what |

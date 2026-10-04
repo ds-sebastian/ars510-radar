@@ -1,0 +1,128 @@
+{
+  "status": "supported saved-trace counterexample",
+  "route": "O1",
+  "tick_rows": 26437,
+  "episode": {
+    "duration_s": 0.5000416689981648,
+    "ticks": 11,
+    "start_case_s": 0
+  },
+  "local_control_exact_equal": true,
+  "variants": {
+    "summary_suppressed": {
+      "target_episodes": 1,
+      "hard_ticks": 0,
+      "episode_min_a": -1.1074,
+      "episode_max_a": -1.0176,
+      "onset": {
+        "a_target": -1.0236,
+        "dRel": 103.313,
+        "vRel": -4.006,
+        "lead_a": -2.041,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "summary_retained": {
+      "target_episodes": 0,
+      "hard_ticks": 0,
+      "episode_min_a": -0.5846,
+      "episode_max_a": -0.4291,
+      "onset": {
+        "a_target": -0.4291,
+        "dRel": 103.738,
+        "vRel": -3.195,
+        "lead_a": -1.85,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "fused": {
+      "target_episodes": 0,
+      "hard_ticks": 0,
+      "episode_min_a": -0.5846,
+      "episode_max_a": -0.4291,
+      "onset": {
+        "a_target": -0.4291,
+        "dRel": 103.738,
+        "vRel": -3.195,
+        "lead_a": -1.85,
+        "source": "radar",
+        "plan_source": "lead0"
+      }
+    },
+    "vision": {
+      "target_episodes": null,
+      "hard_ticks": null,
+      "episode_min_a": -0.1492,
+      "episode_max_a": -0.1205,
+      "onset": {
+        "a_target": -0.1321,
+        "dRel": 111.891,
+        "vRel": -2.436,
+        "lead_a": -0.109,
+        "source": "vision",
+        "plan_source": "e2e"
+      }
+    }
+  },
+  "comparison": {
+    "controlled_change": "Summary speed sigma 0.5 to 10000 m/s; same parser with relinking disabled in both cases. Suppression is negligible precision, not literal removal.",
+    "local_control": "Retained-summary and full fused saved fields match exactly over 119 ticks around the event.",
+    "target_episode": "Planner acceleration <= -1 m/s^2 while captured vision >= -0.3 m/s^2 and ego speed > 1 m/s; contiguous gaps < 0.1 s, duration >= 0.3 s.",
+    "scope": "Saved radard lead and planner output, not physical ground truth. Native cache separately identifies an earlier eligible summary update. Underlying summary range history is absent, so its effective observation time remains unresolved.",
+    "trace": "summary_owner_case.csv; relative event time; zero distance denotes absent lead."
+  },
+  "source_history": {
+    "native_range_at_summary_m": 73.4375,
+    "native_age_at_summary": 95,
+    "summary_application_case_s": -2.1556343310003285,
+    "applied_summaries_before_episode": 1,
+    "applied_ACC_before_episode": 0,
+    "cycles_after_summary_to_last_pre_onset": 36,
+    "resets_after_summary": 0,
+    "enabled_summary_update": {
+      "mean_pre": 23.54333359557923,
+      "P_pre": 0.32539993438617354,
+      "innovation": -3.7759897034071166,
+      "clipped_innovation": -2.275653622473236,
+      "K": 0.5655195889678097,
+      "mean_post": 22.25640689436506,
+      "P_post": 0.14137989724195243
+    },
+    "last_cached_pre_onset": {
+      "to_episode_s": 0.005382431001635268,
+      "cycles_after_summary": 36,
+      "native_d": 113.5,
+      "enabled_mean": 17.136678278834978,
+      "disabled_mean": 16.34377167678295,
+      "enabled_P": 0.26201123895105033,
+      "disabled_P": 0.28605812653310625
+    },
+    "cached_rows": 390,
+    "saved_fused_mean_max_abs_check": 0.0,
+    "scope": "Cache source identity and clock align structurally with saved replay. Applied summary timing is observed; underlying range samples and effective LS observation time are unavailable. Fixed recurrence states are distinct from saved consumer lead values."
+  },
+  "relink_control": {
+    "scope": "Completed owner O1 route only; wider noS suite not scored in this check. One owner episode already rejects this removal under the frozen zero-episode gate.",
+    "summary_sigma_mps": 10000,
+    "relink_max_gap_s": 3.5,
+    "target_episodes": 1,
+    "hard_ticks": 0,
+    "episode": {
+      "duration_s": 0.5000416689981648,
+      "ticks": 11,
+      "min_a": -1.1074,
+      "onset_d": 103.313,
+      "onset_v": -4.006,
+      "output_identity": "T1",
+      "source": "radar",
+      "plan_source": "lead0",
+      "onset_case_s": 0
+    },
+    "same_saved_tick_fields_as_no_relink_case": true,
+    "compared_local_ticks": 119,
+    "config_difference_only_relink": true,
+    "independent_arithmetic": "PASS"
+  }
+}
