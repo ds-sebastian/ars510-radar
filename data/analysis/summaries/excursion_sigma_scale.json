@@ -2,7 +2,9 @@
  "description": "Object-list velocity error against the radar's own ACC target, as a function of the reported 240|7 code; Gaussian sigma = K*code reproduction of the excursion incidence.",
  "confidence": {
   "error_scale_proportional_to_240_7": "likely (RMS 0.04-0.05 m/s per count over codes 14-75; ACC reference error floor about 0.6 m/s)",
-  "excursions_as_expected_tail": "likely (incidence within a factor 1.3; tails beyond 2.5 sigma heavier than Gaussian)"
+  "excursions_as_expected_tail": "likely (incidence within a factor 1.3; tails beyond 2.5 sigma heavier than Gaussian)",
+  "error_scale_is_fitted_not_decoded": "K is a fitted Gaussian-equivalent: the robust (MAD) core is about 0.027 m/s per count over codes 12-70, the RMS 0.04-0.05 because of heavy tails; the unit of the code itself is not decoded",
+  "mean_offset": "not a decode-constant error: it is about -0.08 m/s below 20 m, -0.37 at 40-60 m and -0.62 at 80-110 m, has no ego-speed slope, and differs by drive (std 0.34 m/s)"
  },
  "method": {
   "reference": "OEM ACC target 0x235/0x237 (decoded as in docs/05)",
@@ -234,6 +236,149 @@
   "incidence_overall": {
    "observed": 0.05146803837706623,
    "predicted": 0.06445082252242751
+  },
+  "robust_scale_by_code": {
+   "(3, 6]": {
+    "n": 27155,
+    "code": 4.94,
+    "rms_per_code": 0.1174,
+    "mad_sigma_per_code": 0.0562
+   },
+   "(6, 9]": {
+    "n": 12459,
+    "code": 7.8,
+    "rms_per_code": 0.0845,
+    "mad_sigma_per_code": 0.0604
+   },
+   "(9, 12]": {
+    "n": 6491,
+    "code": 10.93,
+    "rms_per_code": 0.1134,
+    "mad_sigma_per_code": 0.0523
+   },
+   "(12, 15]": {
+    "n": 10903,
+    "code": 14.21,
+    "rms_per_code": 0.0572,
+    "mad_sigma_per_code": 0.038
+   },
+   "(15, 18]": {
+    "n": 15856,
+    "code": 17.02,
+    "rms_per_code": 0.0515,
+    "mad_sigma_per_code": 0.0388
+   },
+   "(18, 21]": {
+    "n": 17325,
+    "code": 20.04,
+    "rms_per_code": 0.0467,
+    "mad_sigma_per_code": 0.0336
+   },
+   "(21, 24]": {
+    "n": 20328,
+    "code": 23.02,
+    "rms_per_code": 0.0477,
+    "mad_sigma_per_code": 0.0324
+   },
+   "(24, 27]": {
+    "n": 18440,
+    "code": 25.98,
+    "rms_per_code": 0.0436,
+    "mad_sigma_per_code": 0.0299
+   },
+   "(27, 30]": {
+    "n": 17958,
+    "code": 28.99,
+    "rms_per_code": 0.04,
+    "mad_sigma_per_code": 0.0267
+   },
+   "(30, 35]": {
+    "n": 25861,
+    "code": 32.85,
+    "rms_per_code": 0.0375,
+    "mad_sigma_per_code": 0.0256
+   },
+   "(35, 40]": {
+    "n": 12286,
+    "code": 37.61,
+    "rms_per_code": 0.041,
+    "mad_sigma_per_code": 0.0273
+   },
+   "(40, 45]": {
+    "n": 5774,
+    "code": 42.86,
+    "rms_per_code": 0.0418,
+    "mad_sigma_per_code": 0.0285
+   },
+   "(45, 50]": {
+    "n": 5243,
+    "code": 47.99,
+    "rms_per_code": 0.0379,
+    "mad_sigma_per_code": 0.0257
+   },
+   "(50, 60]": {
+    "n": 7736,
+    "code": 54.84,
+    "rms_per_code": 0.0401,
+    "mad_sigma_per_code": 0.0252
+   },
+   "(60, 70]": {
+    "n": 4590,
+    "code": 65.03,
+    "rms_per_code": 0.0448,
+    "mad_sigma_per_code": 0.0266
+   },
+   "(70, 80]": {
+    "n": 1317,
+    "code": 74.31,
+    "rms_per_code": 0.0615,
+    "mad_sigma_per_code": 0.027
+   },
+   "(80, 100]": {
+    "n": 331,
+    "code": 86.14,
+    "rms_per_code": 0.0697,
+    "mad_sigma_per_code": 0.0671
+   },
+   "(100, 126]": {
+    "n": 48,
+    "code": 108.58,
+    "rms_per_code": 0.1094,
+    "mad_sigma_per_code": 0.0934
+   }
+  },
+  "bias_by_range_m": {
+   "(3, 20]": {
+    "n": 32938,
+    "mean": -0.082,
+    "median": -0.062
+   },
+   "(20, 40]": {
+    "n": 37500,
+    "mean": -0.285,
+    "median": -0.185
+   },
+   "(40, 60]": {
+    "n": 77280,
+    "mean": -0.366,
+    "median": -0.293
+   },
+   "(60, 80]": {
+    "n": 44005,
+    "mean": -0.261,
+    "median": -0.165
+   },
+   "(80, 110]": {
+    "n": 17151,
+    "mean": -0.619,
+    "median": -0.453
+   }
+  },
+  "bias_vs_ego_slope_per_mps": 0.0103,
+  "per_segment_median_dv": {
+   "mean": -0.289,
+   "std": 0.335,
+   "segments": 244
   }
  },
  "fresh_114_segments": {

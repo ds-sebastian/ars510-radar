@@ -87,8 +87,10 @@ radar's own ACC tracker follows the same object without these errors, so better 
 `240|7` tells how large far errors can be, not when one happens: within a range band it separates excursion records
 from normal ones only below 40 m (AUC 0.95-0.97), not at 40-60 m (0.41-0.49) or beyond (0.55-0.68)
 ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
-Caveats: the ACC target has its own error (about 0.6 m/s), the tails beyond 2.5σ are heavier than Gaussian
-(kurtosis 1.3-8), and the −0.3 m/s offset and the reason the ACC tracker is better are unexplained
+Caveats: the 0.045 is a fitted Gaussian-equivalent, not a decoded unit: the robust (MAD) core is about 0.027 m/s per count
+over codes 12-70 and heavy tails (kurtosis 1.3-8) lift the RMS to 0.04-0.05. The ACC target has its own error (about 0.6 m/s).
+The −0.3 m/s mean offset is not a zero-point or ego-scale error of the decode: it is about −0.1 m/s below 20 m, −0.4 m/s at
+40-60 m and −0.6 m/s at 80-110 m, has no ego-speed slope and differs between drives (std 0.3 m/s). Why the ACC tracker is better is unexplained
 ([summary](../data/analysis/summaries/excursion_sigma_scale.json)).
 
 ![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
