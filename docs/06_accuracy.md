@@ -69,9 +69,9 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   | B | .14869 | [.1463, .1514] |
   | C | .15304 | [.1508, .1550] |
 
-  The first two intervals contain .15; C's does not. These are consistency fits at the retained 1/16 m range
-  scale, not an independent factory-unit calibration. A range-scale error or ego-reference mismatch also moves
-  the fitted velocity scale. Against the ACC target's speed (0x235) the slope is 0.99 / 1.02 at 40-80 m.
+  A and B contain .15, C does not. These are consistency fits at the 1/16 m range scale, not a factory calibration
+  (a range-scale or ego-speed error moves them too). Against the ACC target's speed the slope is 0.99 / 1.02 at
+  40-80 m.
 - **Ego reference.** Toyota 0xB4 reads about 1.5% below GPS and wheel speed in the measured comparisons. Steady
   following against 0xB4 fits .149 m/s per code. The integration profiles use `vground_scale = .149 / .15`, a
   **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed. This empirical alignment is
@@ -102,34 +102,18 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 
 ### Encoding constants and motion geometry
 
-`16 = 2⁴` and `64 = 2⁶` give nominal wire steps of 0.0625 m and 0.015625 m; `2048 = 2¹¹` centres the unsigned
-12-bit lateral code. This is consistent with fixed-point/offset encoding. The 160-code forward bias gives a
-mathematical span of −10 to 245.9375 m; negative headroom is a plausible design reason, not a measured factory
-intent. The velocity step .15 m/s is .54 km/h; it has no established derivation from the radar's waveform.
-Wire quantization is separate from physical measurement resolution and accuracy.
-
-The object velocity is ground-referenced in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)).
-It is a processed object output, not an exposed raw radial Doppler measurement. Its exact upstream sensor inputs
-and filtering are unassigned. The affine decoder uses fixed constants; the integration subtracts host 0xB4
-speed and uses no GPS-grade, pitch or yaw correction to those constants. Turning and slope can change geometry
-and the upstream estimate without changing the wire units. The supported lateral relation is `vy = dy/dt + ω·x`;
-in an ideal planar frame with host forward speed, `vx = dx/dt + v_ego − ω·y`. Neither relation establishes the
-radar's exact internal algorithm or its elevation handling.
-
-The [optical consistency fit](07_velocity_excursions.md#compared-with-an-optical-reference) uses nominal
-0.15 ground velocity and a **carState ego-speed window median**, on 791 near windows. It does not test the
-published `.149/B4` chain. Relative-scale deviation is +0.3% with Theil–Sen versus −2.1% with OLS
-(reported 90% interval −5.2% to +2.0%). Separate residual-versus-ego and residual-versus-relative-speed
-regressions mix scale errors and reference covariance; they do not independently identify both scales.
-The +0.159 m/s median optical-minus-proxy residual is not a factory-zero measurement. Physical calibration
-to 1% is unestablished ([summary](../data/analysis/summaries/video_truth.json)).
-
-Changing the nominal zero from 510.5 to 512 shifts every ground-speed result by −.225 m/s; changing .15 to .149
-changes a nominal 30 m/s result by −.2 m/s. These fixed changes alone cannot produce the observed multi-m/s
-excursions. As an illustration, pure horizontal projection of 30 m/s on a constant 3.4% slope differs by about
-.017 m/s; that calculation does not bound crest/dip association, multipath or tracking errors. Independent
-target/terrain geometry is needed to attribute those errors. Arithmetic and source checks are in
-[`encoding_calibration.json`](../data/analysis/summaries/encoding_calibration.json).
+- **Fixed-point steps:** `16 = 2⁴` and `64 = 2⁶` give 0.0625 m (range) and 0.015625 m (lateral); `2048 = 2¹¹` centres
+  the lateral code. The 160-code range bias gives a span of −10 to 245.9 m. The 0.15 m/s velocity step (0.54 km/h)
+  has no established derivation from the waveform. Wire steps are not measurement accuracy.
+- **Frame:** velocity is over ground in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)), a
+  processed object output, not raw Doppler. Lateral: `vy = dy/dt + ω·x`; in an ideal planar frame
+  `vx = dx/dt + v_ego − ω·y`. The radar's internal algorithm and elevation handling are unknown.
+- **Optical consistency** ([07](07_velocity_excursions.md#compared-with-an-optical-reference), 791 near windows,
+  nominal 0.15 and carState ego speed): relative scale +0.3% (Theil-Sen) to −2.1% (OLS), interval −5.2% to +2.0%.
+  Physical calibration to 1% is not established ([summary](../data/analysis/summaries/video_truth.json)).
+- **Size of the constants' effect:** zero 510.5 → 512 shifts every speed by −0.225 m/s; 0.15 → 0.149 changes 30 m/s
+  by −0.2 m/s; a 3.4% road slope changes 30 m/s by ~0.017 m/s. None of these produces multi-m/s excursions
+  ([`encoding_calibration.json`](../data/analysis/summaries/encoding_calibration.json)).
 
 ## Range walks
 

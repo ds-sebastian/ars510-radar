@@ -121,16 +121,14 @@ What other openpilot radar interfaces read from their radars, and what the ARS51
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, no physical units | units would let radard weight radar against vision |
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames: needs a small reassembler | none on the CAN side; the reassembler is ~80 lines with a CRC check |
 
-The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`): an 89-line
-pass-through of distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`, existence
-and obstacle probabilities, class, size, height and four uncertainty sigmas, plus a status message (blocked,
-unavailable, dynamics error). The ARS510 slot follows the same Continental pattern, which is how its existence,
-predicted-record and uncertainty fields were identified ([03](03_slot_fields.md#uncertainty-and-quality)). What it
-still lacks for a Tesla-sized interface is a **fault / blockage status** (to report a dirty or misaligned radar) and an
-explanation of the velocity excursions, which occur on measured records with ordinary uncertainty beyond 40 m. They
-are the wide far-range error that `240|7` reports, so the `fused` profile weights each reading by that uncertainty
-and by the radar's internal trackers (ACC target, summaries) instead of adding tuned guards
-([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`, 66 code lines):
+- a pass-through of distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`,
+  existence and obstacle probabilities, class, size and uncertainty sigmas, plus a radar status message;
+- the ARS510 slot follows the same Continental pattern, which is how its existence, predicted-record and uncertainty
+  fields were identified ([03](03_slot_fields.md#uncertainty-and-quality));
+- what it still lacks for a Tesla-sized interface: a **fault / blockage status**, and the far-range speed error, which
+  `fused` handles by weighting each reading by `240|7` and the radar's own trackers
+  ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
 
 ## Towards an upstream (comma) interface
 

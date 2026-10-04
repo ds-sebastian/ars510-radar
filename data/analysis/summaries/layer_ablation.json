@@ -8,7 +8,7 @@
       "source": "velocity_guards.json heldout.default"
     },
     {
-      "step": "+ saturation guard (= stock)",
+      "step": "+ saturation guard (= raw)",
       "hard_ticks": 93,
       "source": "velocity_guards.json heldout.default_plus_saturation_guard; F2 stock run 93"
     },

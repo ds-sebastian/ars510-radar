@@ -44,44 +44,32 @@ differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of
 confirmation 86%, n = 421, route-bootstrap 79-99%). Through the drive-A false closing ([07](07_velocity_excursions.md)),
 the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
 
-The stream starts 0.2 s after power-up, before openpilot transmits, tracks the lead and remains present with cruise
-disengaged. It is not openpilot's: openpilot never transmits on the radar bus (the logs hold no bus-1 transmissions
-at all) and never sends 0x235 / 0x237 on any bus, and the stream runs on the radar's clock, not on the clock of
-openpilot's 100 Hz loop. **The radar sends it** (◐): every periodic task inherits its ECU's crystal error, and on four drives the
-link's messages split into two clocks. The radar clock carries 0x100/0x103, 0x190-0x198, 0x202, 0x24F and 0x680;
-the camera clock, shared with the camera's own car-side messages, carries 0x101/0x102, 0x180, 0x197, 0x210,
-0x240-0x248, 0x24D and 0x500/0x501. 0x235/0x237 keep a fixed phase to the radar's 0x190 exactly like the radar's
-own 0x191, while camera messages drift about 15 ms per 30 min against it, and their content changes every third
-frame (the 60 ms radar cycle) ([summary](../data/analysis/summaries/acc_sender_clock.json)). The camera feeds the radar
-lane-like data, so camera input to the radar's target choice is possible; treat the stream as the radar's own
-filtered ACC target with conditional association to an object-list track.
+**Who sends it: the radar** (◐) ([summary](../data/analysis/summaries/acc_sender_clock.json)):
+
+- It starts 0.2 s after power-up, before openpilot transmits, and stays with cruise disengaged.
+- openpilot never transmits on the radar bus and never sends 0x235 / 0x237.
+- Every ECU's periodic messages carry its own crystal error. On four drives the radar link splits into two clocks:
+  - **radar:** 0x100/0x103, 0x190-0x198, 0x202, 0x24F, 0x680, and **0x235/0x237**, which keep a fixed phase to the
+    radar's 0x190 like its own 0x191 and change content every 60 ms radar cycle;
+  - **camera:** 0x101/0x102, 0x180, 0x197, 0x210, 0x240-0x248, 0x24D, 0x500/0x501, drifting ~15 ms per 30 min.
+- The camera feeds the radar lane-like data, so camera input to the radar's target choice is possible. Treat it as the
+  radar's own filtered ACC target, associated with an object-list track by position.
 
 ![sender clock](img/analysis/acc_sender_clock.png)
 
 *Phase of each message against the radar's 0x190, per minute of one drive. Logger timestamps come in ~10 ms USB batches, so camera drift appears as 10 ms steps.*
 
-During disagreements this ACC velocity stays smooth and consistent with the track's range while the object-list
-velocity drifts (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s). A Kalman filter of
-the object-list velocity weighted by the uncertainty codes does not reproduce it, so the radar's ACC tracker uses
-information the object list does not expose. [08](08_openpilot_integration.md) uses it as a cross-check.
+**How good it is:**
 
-The selected matched-window [optical comparison](07_velocity_excursions.md#compared-with-an-optical-reference)
-favours ACC velocity. A four-estimator error decomposition reports ACC scales of 0.31 / 0.54 m/s at
-10–40 / 40–70 m, versus 0.55 / 1.07 for the native object list. These are conditional model outputs:
-error covariance, physical identity and reference accuracy must be bounded before treating them as sensor
-precision or inverse-variance weights. The reported ACC/vision error correlation is about 0.5; this does not
-identify the producing ECU or establish independence from looming. ACC is present in 38% of the selected
-40–130 m windows and 11% beyond 80 m ([summary](../data/analysis/summaries/video_truth.json)).
-
-Its availability differs from the current native list. Across 13 discovery drives, **58,553 active 235/237 pairs**
-coincide with a fresh valid native record whose header and all slots report zero objects; **204 reporting spans
-last at least 1 s**. Most are close to the coarse-range floor and at low ego speed. Separate listing or coasting
-can explain this; continued reporting alone does not establish a new physical target or camera-independent
-motion. [Availability evidence and definitions](../data/analysis/summaries/acc_target_availability.json).
-
-**Coverage** is the limit: the target is present on 57% of radar-lead moments, and on 5% beyond 80 m, where velocity
-excursions concentrate. The interface offers it as an option (`acc_target_clip_mps`, off by default); see
-[07](07_velocity_excursions.md#how-the-filtering-works-step-by-step) for its measured effect.
+- During disagreements it stays smooth and consistent with the track's range while the object-list velocity drifts
+  (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s).
+- The object list alone, even weighted by its uncertainty codes, does not reproduce it: the radar's ACC tracker uses
+  information the object list does not expose. The `fused` profile therefore feeds it in as a speed measurement and
+  `anchor` uses it as a ±3 m/s bound ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+- Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
+  about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (model outputs, not sensor
+  precision). It is present in 38% of 40-130 m windows and 11% beyond 80 m
+  ([summary](../data/analysis/summaries/video_truth.json)).
 
 ## 0x191-0x194: selected-target summaries
 
