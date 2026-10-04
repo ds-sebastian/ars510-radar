@@ -1,6 +1,6 @@
 # 11. Profiles compared: what each does, against vision only and other radar parsers
 
-The two install profiles (and `fused` without the radar's own trackers, to show the filter alone), compared on how
+`raw` and `fused` (plus a diagnostic comparison without the radar's own trackers), compared on how
 they work, against **vision only** (stock openpilot on this car), on driving feel, and against openpilot's other radar
 interfaces.
 
@@ -13,12 +13,12 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | | `raw` | `fused` without ACC / summary | `fused` (default) |
 |---|---|---|---|
 | what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
-| tuned constants beyond `raw` | — | 3 chosen, 4 measured or physical | same |
+| filter settings | — | scalar process scale, robust update and readiness threshold | also tracker weights; [definitions and evidence](12_kalman_filter.md#constants-and-their-sources) |
 | code beyond the shared decode | ~60 lines | +35 | +109 |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
 | first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.03 s | +0.01 s |
-| recommended for | research | what `fused` does by itself when there is no ACC target | everyday driving |
+| recommended for | research | object-only fallback when neither a matched ACC target nor summary is available | everyday driving |
 
 `raw` is the unfiltered radar decode, not vision only and not stock openpilot. The middle column is not a separate
 profile: it is `fused` with the ACC target and summary ignored, which shows the Kalman filter on its own. The earlier
@@ -36,12 +36,12 @@ lines in `ars510/interface.py`.*
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
   withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
 - **`fused`** adds range fusion and **one Kalman filter per track**
-  on the lead's over-ground speed ([07](12_kalman_filter.md#the-model)). It is a standard
-  one-state Kalman filter: the state is the lead's speed, the motion model lets it change with a lead acceleration of
-  1.5 m/s², and each available reading updates it in turn, weighted by its own variance: the object-list speed
-  (σ = 0.045 m/s × the radar's `240|7` uncertainty code, × 1.8 for tracks younger than 100 frames), the ACC target
-  speed (σ 0.5 m/s) and the summary speed (σ 0.5 m/s). Innovations beyond 3σ count as 3σ (a robust Kalman update), and
-  a track is first published once its speed standard deviation is below 0.75 m/s. radard then runs its own Kalman
+  on the lead's over-ground speed ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations
+  with a chosen process-noise scale of 1.5 m/s². Each reading updates it in turn, weighted by its model variance:
+  object-list speed has σ = 0.045 m/s × max(`240|7`, 1), multiplied by 1.8 through age 60 and tapered to 1 at age 100.
+  An available matched ACC target or summary uses σ 0.5 m/s; at most one tracker is applied to each native track. Innovations beyond 3σ count as 3σ (a robust Kalman update), and
+  a track is first published once its modeled speed standard deviation is at most 0.75 m/s (and age at least 60).
+  This is an operational readiness gate, not a calibrated physical error bound. radard then runs its own Kalman
   filter on the lead; `fused` feeds it one speed per track that already combines what the radar knows.
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
@@ -126,7 +126,7 @@ What the radar adds, by profile:
 |---|---|---|
 | vision only | smooth; no radar-specific false braking | camera distance at range; no radar head start on closings through curves or far away |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes for nothing beyond 40 m |
-| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, closing speed unbiased, simplest speed path | braking onset the same as vision on average (no average head start); one car's road miles so far |
+| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, small average pre-brake closing bias against vision in these replays, one speed state | braking onset the same as vision on average (no average head start); one car's road miles so far |
 
 ## Assumptions and limits
 
@@ -160,8 +160,10 @@ What the radar adds, by profile:
 | ARS510 `raw` | +~60 | publication age, ID re-link, saturation guard |
 | ARS510 `fused` | +~109 | `raw` + range fusion + ACC / summary association + one Kalman speed filter |
 
-- Other interfaces read radars that publish clean, validated tracks and leave filtering to radard.
+- The listed interfaces generally consume tracked radar outputs, apply validity/lifecycle checks and leave speed
+  filtering to radard. That code structure does not establish physical accuracy for every radar or driving condition.
 - The ARS510's far-range speed has a wide error that it reports (`240|7`) but does not flag per moment, so some
-  estimation is needed before radard. `fused` keeps that to one textbook filter whose weights come from the radar.
+  estimation is supported by these replay comparisons. `fused` uses one scalar filter with an empirical object-code
+  scale and chosen tracker/process weights ([12](12_kalman_filter.md#the-model)).
 - Moving that weighting into radard (a per-point speed variance) would make this interface a pass-through like the
   others ([10](10_research_directions.md#towards-an-upstream-comma-interface)).

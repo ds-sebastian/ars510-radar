@@ -95,7 +95,7 @@ Replay against the driver, unchanged openpilot card → radard → planner
 | driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.9% |
 
 The middle column is `fused` with the ACC target and summary readings ignored: the Kalman filter on the object list
-alone, which is what `fused` falls back to when the radar reports no ACC target.
+alone, which is the fallback when neither a matched ACC target nor a summary update is available.
 
 `fused` brakes later than `raw` before some driver brakes because it drops a bias: in the 4 s before the driver brakes,
 its lead closing speed is 0.02 m/s from the vision lead on average (the earlier tuned profile: 0.54 m/s more closing).
