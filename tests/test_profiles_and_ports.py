@@ -15,7 +15,7 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["fused"]') == 1
-  assert 'PROFILES = {"fused": FUSED_CONFIG, "raw": BASE_CONFIG, "upstream": None}' in src
+  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -43,12 +43,13 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
-  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("stock", "raw"), ("default", "raw")):  # older names
+  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("stock", "raw"), ("default", "raw"),
+                          ("upstream", "openpilot")):  # older names
     r = _install(tmp_path, "--profile", name)
     assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
     assert f'PROFILE = PROFILES["{installed}"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert _install(tmp_path, "--profile", "upstream").returncode == 0
-  assert 'PROFILE = PROFILES["upstream"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert _install(tmp_path, "--profile", "openpilot").returncode == 0
+  assert 'PROFILE = PROFILES["openpilot"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert (toyota / "ars510_upstream.py").read_text() == (REPO / "upstream" / "ars510_radar.py").read_text()
   r = _install(tmp_path, "--profile", "raw")
   assert r.returncode == 0 and "warning" in r.stdout

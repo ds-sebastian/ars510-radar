@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, Ars510NativeRadarInterface
+from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface
 
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = sorted((REPO / "data" / "sample").glob("*.csv.gz"))
@@ -85,7 +85,7 @@ def _lead_vrel(points) -> list[float]:
 def test_the_filter_removes_the_sample_excursion(candidate):
   """Fails without the speed filter: the unfiltered decode dives to about -6 m/s on this lead (docs/07, drive A)."""
   sample = REPO / "data" / "sample" / "highway_vrel_excursion_25s.csv.gz"
-  raw_iface, cand = Ars510NativeRadarInterface(OPENPILOT_CONFIG), candidate.Ars510Radar()
+  raw_iface, cand = Ars510NativeRadarInterface(BASE_CONFIG), candidate.Ars510Radar()
   raw, filtered = [], []
   for frame in _frames(sample):
     r, c = raw_iface.update_frame(*frame), cand.update(*frame)

@@ -33,7 +33,7 @@ while testing).
 |---|---|
 | `fused` (default) | `FUSED_CONFIG`: `raw` + range fusion + one Kalman speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194) by the radar's own uncertainty. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
-| `upstream` | the single-file upstream candidate ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: the same filter as `fused`, points with `trackId` / `dRel` / `yRel` / `vRel` only |
+| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
 
 ## What gets installed
 
@@ -41,7 +41,7 @@ while testing).
 |---|---|---|
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged |
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
-| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the upstream candidate (used by `--profile upstream`) |
+| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the upstream version (used by `--profile openpilot`) |
 | 4-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)` |
 
 The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC. Parsing does not use them (a DBC

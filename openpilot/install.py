@@ -21,8 +21,8 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   anchor, steady   earlier tuned profiles, outperformed by fused and removed: they install fused (with a notice)
   stock, default   older names for raw
-  upstream  the single-file upstream candidate (upstream/ars510_radar.py): the same filter as fused, points carry
-            only trackId / dRel / yRel / vRel, constants fixed in the file. For driving the merge candidate itself
+  openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): the slimmest filter that
+            keeps fused's driving, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
 """
 from __future__ import annotations
 
@@ -37,8 +37,8 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("fused", "raw", "upstream")
-LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw"}
+PROFILE_NAMES = ("fused", "openpilot", "raw")
+LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"

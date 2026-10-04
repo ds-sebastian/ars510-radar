@@ -137,7 +137,7 @@ candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 300 
 slot decode, track IDs, the ACC target / summary association and the same Kalman speed filter as `fused`, in opendbc's
 style. Constants are fixed in the file, there are no profiles, and points carry only `trackId`, `dRel`, `yRel` and
 `vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it equal to `fused` point for point
-(bundled samples, plus two full drives checked once), and `install.py --profile upstream` drives the candidate itself
+(bundled samples, plus two full drives checked once), and `install.py --profile openpilot` drives the candidate itself
 on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
 1. **A clear reason the filter belongs in the interface.** Every upstream radar interface passes the radar's tracks
@@ -149,7 +149,7 @@ on a fork. What upstream review is likely to ask, from recent openpilot / opendb
 2. **Small, separable PRs.** Decode and points first (opendbc, without the filter, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
 3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`; `8821F0R01100` unconfirmed). Drives on
-   other cars, through `--profile upstream`, are what upstream would weigh.
+   other cars, through `--profile openpilot`, are what upstream would weigh.
 4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
 5. **Alpha longitudinal compatibility.** Confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
    radar-disable request.

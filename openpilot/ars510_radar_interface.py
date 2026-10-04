@@ -39,9 +39,9 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
 
 # Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list, the ACC
 # target and the summaries by the radar's own uncertainty, docs/07), "raw" (BASE_CONFIG: the unfiltered radar
-# decode, research only) or "upstream" (the single-file upstream candidate, ars510_upstream.py: the same filter as
-# fused). `install.py --profile` rewrites this one line in the installed copy.
-PROFILES = {"fused": FUSED_CONFIG, "raw": BASE_CONFIG, "upstream": None}
+# decode, research only) or "openpilot" (the upstream version, ars510_upstream.py: one file in opendbc style).
+# `install.py --profile` rewrites this one line in the installed copy.
+PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG}
 PROFILE = PROFILES["fused"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
