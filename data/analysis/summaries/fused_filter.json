@@ -113,10 +113,13 @@
    "heldout": 27,
    "further": 0,
    "owner": 0,
+   "heldout_hard_episodes": 10,
    "heldout_target_episodes": 6,
-   "radar_only_braking_per_h": 0.66,
-   "on_gas_per_h": 0.22,
-   "note": "more lead-source switches (switch gate fails)"
+   "radar_added_episodes_heldout": 3,
+   "radar_added_episodes_heldout_fused": 1,
+   "lead_source_switches_heldout": 2467,
+   "lead_source_switches_heldout_fused": 1772,
+   "note": "braking neutral; kept because radard flips between radar and vision leads 39 % more often on the unfused far range"
   }
  }
 }

@@ -192,7 +192,7 @@ A's lead at the speed its range trend shows.*
 | the young-track factor | 30 | 11 | 0 | needed |
 | the speed-std publication gate | 30 | 8 | 0 | needed |
 | the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
-| range fusion | 27 | 0 | 0 | needed: radar-only braking ×3 (0.22 → 0.66 per hour, a third on the gas), target episodes 4 → 6, more lead switches |
+| range fusion | 27 | 0 | 0 | braking neutral (milder radar-added episodes 1 → 3 in 4.6 h); kept for lead stability: radar ↔ vision lead switches +39% without it |
 | the saturation guard | identical | identical | identical | removed: the 3σ update absorbs the sentinel |
 
 Against the earlier tuned profile: held-out hard ticks 48 → 30, target episodes 9 → 4, owner-drive target episodes
