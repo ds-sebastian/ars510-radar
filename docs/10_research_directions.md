@@ -41,7 +41,7 @@ should copy:
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
   0.29 m inside that line (21 departures): the rule is "keep the target until its centre reaches my lane line". On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
   6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
-  better lead chooser; the `anchor` profile keeps it in charge and never follows the radar's choice.
+  better lead chooser; the `fused` and `anchor` profiles keep it in charge and never follow the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
 - **The control law (unknown).** How Toyota turns distance, closing speed and relative acceleration into a braking
@@ -103,7 +103,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
   `8821F0R` series as the documented `8821F0R03100` and the only other one. One capture from such a car confirms the
   layout and adds it to `ARS510_FW_VERSIONS` (detection otherwise relies on the bus-1 fallback, which runs before
   the object list starts). A second unit also shows whether 0x500 / 0x502 differ per unit.
-- **More closed-loop driving** with the `anchor` profile, and a second car or driver.
+- **More closed-loop driving** with the `fused` profile (the default), and a second car or driver.
 
 ## Signals that would help most
 
@@ -141,7 +141,7 @@ that pass the radar's own values through and leave filtering to radard. Open wor
    range fusion and one speed filter whose weights come from the radar's own uncertainty fields and internal
    trackers, about 30 lines in place of five tuned layers. In replay it brakes falsely less than `anchor` (held-out
    48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
-   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It needs road testing, and the range/speed
+   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It is the default; it needs more road miles, and the range/speed
    scale of the object list ([06](06_accuracy.md)) before range can join the filter. The same weighting could live
    in radard instead (per-point speed variance), which would leave the interface a pass-through like the others.
 2. **Decode `measured` and fault status** (above), so the interface looks like the others.

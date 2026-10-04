@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
-    python openpilot/install.py /data/openpilot                     # install (anchor profile), then reboot
+    python openpilot/install.py /data/openpilot                     # install (fused profile), then reboot
     python openpilot/install.py /data/openpilot --profile steady    # choose another profile
     python openpilot/install.py /data/openpilot --check             # report state, change nothing
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
@@ -15,12 +15,12 @@ StarPilot and other forks: no fork file is patched in place. The installer
 An install made with an older, patch-based version of this installer is removed first.
 
 Profiles (docs/08 has the details and replay numbers):
-  anchor    ANCHOR_CONFIG (default): steady + the radar's own ACC target (0x235) as a velocity anchor
-  fused     FUSED_CONFIG: raw + range fusion + one speed filter that weights the object list, the ACC target and
-            the summaries by the radar's own uncertainty (replaces the steady layers and the anchor clips)
+  fused     FUSED_CONFIG (default): raw + range fusion + one Kalman speed filter that weights the object list, the
+            ACC target and the summaries by the radar's own uncertainty (replaces the steady layers and anchor clips)
+  anchor    ANCHOR_CONFIG: steady + the radar's own ACC target (0x235) as a velocity anchor
   steady    STEADY_CONFIG: raw + range fusion, far smoothing, far settling, ramp limiter
-  raw       OPENPILOT_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs to run. Velocity excursions reach the
-            planner unfiltered (about twice the hard false braking of steady); for research and comparison only
+  raw       OPENPILOT_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
+            needs to run. Velocity excursions reach the planner unfiltered (about twice the hard false braking of steady); for research and comparison only
   stock     older name for raw, kept so existing installs and instructions keep working
   default   older name for raw, kept for the same reason
 """
@@ -36,7 +36,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
-PROFILE_LINE = 'PROFILE = PROFILES["anchor"]'
+PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
 PROFILE_NAMES = ("anchor", "fused", "steady", "raw", "stock", "default")
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
@@ -96,7 +96,7 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES, default="anchor")
+  ap.add_argument("--profile", choices=PROFILE_NAMES, default="fused")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -157,7 +157,7 @@ def main() -> int:
   if args.profile in ("raw", "stock", "default"):
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
           "reach the planner unfiltered and cause about twice the hard false braking of steady. Use it for research\n"
-          "and comparison only; install.py with no --profile installs the recommended anchor profile.")
+          "and comparison only; install.py with no --profile installs the recommended fused profile.")
   return 0
 
 

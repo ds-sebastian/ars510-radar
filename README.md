@@ -16,12 +16,12 @@ position, labelled with track ID, distance, lateral offset and relative speed.*
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **dRel, yRel, velocity over ground** | ● field layout and motion interpretation; ◐ exact physical zero/scales ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class, width / length, heading over ground, lateral velocity and acceleration, existence score, uncertainties | ◐ decoded; initial output templates, angle defaults and motion-state resets characterised; physical names/scales and independent heading remain provisional ([03](docs/03_slot_fields.md)) |
-| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields, ◐ nominal unit conversions, ◐ sent by the radar (clock fingerprint) ([05](docs/05_acc_target_and_support.md)); the `anchor` profile (default) uses it as a velocity anchor |
+| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields, ◐ nominal unit conversions, ◐ sent by the radar (clock fingerprint) ([05](docs/05_acc_target_and_support.md)); the `fused` profile (default) fuses its speed as a measurement, `anchor` uses it as a velocity bound |
 | **Target summaries** (0x191-0x194) | ● raw structure; ◐ target-summary interpretation; metric and class calibration required ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state whose 10-bit code leads the car's deceleration ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves: offset, heading `48|16` and curvature `64|15` (units bounded), ● prefix copies of the cell flags; ○ the remaining cell fields ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration**: current openpilot, StarPilot, sunnypilot | installable; replayed end to end; driven by the owner on FrogPilot and StarPilot ports ([08](docs/08_openpilot_integration.md)) |
-| **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `anchor` profile (default) bounds the lead's speed by the radar's own ACC target and adds `steady`'s guards and smoothing; together they cut hard false braking from 93 to 48 ticks on 20 held-out routes at the same response ([07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)). The opt-in `fused` profile replaces those layers with one filter that weights each reading by the radar's own uncertainty: 30 ticks, without `anchor`'s closing-speed bias ([07](docs/07_velocity_excursions.md#fused-speed-filter-fused-profile)) |
+| **Main open issue** | velocity excursions: 1-10 s false closings beyond 40 m. The `fused` profile (default) handles them with one Kalman speed filter that weights each reading by the radar's own uncertainty and its internal trackers: hard false braking on 20 held-out routes falls from 93 ticks (unfiltered) to 30, radar-only braking to 0.22 per hour, with vision's timing and smoothness ([07](docs/07_velocity_excursions.md#fused-speed-filter-fused-profile), [11](docs/11_profiles_compared.md)). The tuned `anchor` profile reaches 48 ticks ([07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
 
 ● confirmed · ◐ likely · ○ candidate
 
@@ -60,8 +60,8 @@ Then reboot the device. The same command works on any fork: it adds the decoder 
 
 | profile | install | what you get |
 |---|---|---|
-| **`anchor`** (default) | `install.py /data/openpilot` | `steady` + the radar's own ACC target as a bound on the lead's speed, and its target-range summaries for far cars up to 80 m. Fewest false brakes |
-| `fused` | `--profile fused` | one speed filter that weights the object list, the radar's ACC target and its summaries by the radar's own uncertainty, in place of `steady`'s layers and `anchor`'s clips. Fewer false brakes than `anchor` in replay; opt-in until road-tested |
+| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by the radar's own uncertainty. Fewest false brakes, vision's smoothness ([11](docs/11_profiles_compared.md)) |
+| `anchor` | `--profile anchor` | `steady` + the radar's own ACC target as a bound on the lead's speed, and its target-range summaries for far cars up to 80 m. Earlier reactions, about five times `fused`'s radar-only braking |
 | `steady` | `--profile steady` | guards and smoothing against velocity excursions, without the ACC target |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision-only, not stock openpilot), for research and comparison. **Velocity excursions reach the planner unfiltered** |
 

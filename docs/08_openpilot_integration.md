@@ -61,13 +61,13 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 
 ## Profiles
 
-`install.py --profile NAME` picks one; with no `--profile` you get `anchor`. Every profile publishes every object-list
+`install.py --profile NAME` picks one; with no `--profile` you get `fused`. Every profile publishes every object-list
 track: profiles only change *how* a track's values are filtered, never which cars exist.
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes, and its target-range summaries (0x192/0x194) for far tracks up to 80 m | everyday driving: the fewest false brakes at the same response as `steady` |
-| `fused` | `FUSED_CONFIG` = `raw` + range fusion + one speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | the principled alternative to `anchor`: fewer false brakes, closing speed without `anchor`'s bias; opt-in until road-tested |
+| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | everyday driving: the fewest false brakes, closing speed without the tuned profiles' bias, vision's timing ([11](11_profiles_compared.md)) |
+| `anchor` | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes, and its target-range summaries (0x192/0x194) for far tracks up to 80 m | the previous default: earlier reactions than `fused` (partly from over-closing), about five times its radar-only braking |
 | `steady` | `STEADY_CONFIG` = `raw` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
 | `raw` | `OPENPILOT_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 

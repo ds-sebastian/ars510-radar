@@ -127,8 +127,9 @@ far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
 speed needs a slope and lags by about half a second.
 
 `parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers (0x194 has the same
-layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `anchor` profile uses
-them as a velocity anchor ([07](07_velocity_excursions.md#summary-anchor-in-anchor-up-to-80-m)).
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile uses
+them as a speed measurement ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)), the `anchor` profile as a
+velocity bound ([07](07_velocity_excursions.md#summary-anchor-in-anchor-up-to-80-m)).
 
 ## 0x190: cycle header
 
