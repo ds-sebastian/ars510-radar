@@ -84,7 +84,7 @@ class NativeInterfaceConfig:
     # relative speed; a summary attaches to a track when range (within 15 %) and speed (within summary_match_mps) agree
     # unambiguously and stays attached while both persist. Used up to summary_max_range_m (beyond ~80 m the optical check
     # no longer favours the summary speed, docs/07); the ACC-associated track is left to the ACC target.
-    summary_max_range_m: float = 80.0
+    summary_max_range_m: float = 80.0  # summary_sigma_mps <= 0 below turns the summaries off
     summary_window_s: float = 1.0
     summary_match_mps: float = 1.5
     summary_scales: tuple[tuple[float, float], ...] = ((0.0541, -5.14), (0.0461, -12.45))  # m per code, offset m (0x192, 0x194)
@@ -226,7 +226,7 @@ class Ars510NativeRadarInterface:
                 self.set_ego_speed(v, time_s)
             return None
         if bus == self.config.radar_bus and addr in SUMMARY_ADDRS:
-            if self.config.fused_speed_filter:
+            if self.config.fused_speed_filter and self.config.summary_sigma_mps > 0:
                 self._summary_update(addr, float(time_s), bytes(data))
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
@@ -516,7 +516,8 @@ class Ars510NativeRadarInterface:
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
         acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
-        sum_speed = self._summary_match(time_s, decoded, v_ego, acc_tid) if cfg.fused_speed_filter else {}
+        use_summaries = cfg.fused_speed_filter and cfg.summary_sigma_mps > 0
+        sum_speed = self._summary_match(time_s, decoded, v_ego, acc_tid) if use_summaries else {}
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
