@@ -19,7 +19,7 @@
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
 python tools/decode_log.py rlog.zst --profile all-tracks     # every track, no age gate; reports CRC failures
-python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor   # any install profile
+python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile fused    # any install profile
 ```
 
 ### Cabana
@@ -37,7 +37,7 @@ $OP/tools/cabana/cabana --data_dir cabana_out/route "<route>" --dbc dbc/ars510_o
 | bus-10 address | message | content |
 |---|---|---|
 | 0x700-0x713 | `ARS510_OBJ_00..19` | raw slot bytes with every field of [03](03_slot_fields.md) |
-| 0x720-0x733 | `ARS510_OBJ_xx_DERIVED` | values the interface computes: VREL, V_EGO_0xB4, TRACK_ID_RAW, TRACK_ID_OP, PUBLISHED_OP, SETTLED, DREL_FUSED, VREL_SMOOTHED |
+| 0x720-0x733 | `ARS510_OBJ_xx_DERIVED` | values the interface computes: VREL, V_EGO_0xB4, TRACK_ID_RAW, TRACK_ID_OP, PUBLISHED_OP, SETTLED, DREL_FUSED, VREL_KALMAN |
 | 0x740 / 0x741 | `ARS510_REC_HEADER` / `TRAILER` | record header; CRC32 |
 | 0x760-0x76B | `ARS510_SHELL85_*` | 0x85 prefix, ten cells (with `PARAMETERS_PRESENT`), CRC |
 
@@ -74,7 +74,7 @@ acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/ope
 if clip rendering fails on `-vsync`.
 
 Here `vision` is unmodified openpilot (no radar tracks on this car) and `ars510` the installed integration; install
-another profile into a second opendbc copy (`install.py /tmp/opendbc_anchor --profile anchor`) to compare profiles.
+another profile into a second opendbc copy (`install.py /tmp/opendbc_raw --profile raw`) to compare profiles.
 
 ## Developing and testing a change
 

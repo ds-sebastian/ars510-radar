@@ -211,9 +211,9 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
   over code deciles); that mixes both estimators' errors, so physical units remain provisional
   ([summary](../data/analysis/summaries/video_truth.json)).
 
-A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127 and is withheld
-by both profiles. It appears in short runs on mature tracks at 34–97 m and often decays through 1022, 1014,
-1006 over subsequent records. `STEADY_CONFIG` also withholds record-to-record jumps above 8 m/s
+A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127. It appears in
+short runs on mature tracks at 34–97 m and often decays through 1022, 1014, 1006 over subsequent records. `raw`
+withholds it; in `fused` the speed filter's robust update absorbs it
 ([07](07_velocity_excursions.md#how-the-filtering-works-step-by-step)).
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)

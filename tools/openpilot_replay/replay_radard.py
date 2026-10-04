@@ -40,15 +40,14 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
-from ars510 import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
 PROFILES = {
     "all-tracks": RAW_CONFIG,
     "openpilot": OPENPILOT_CONFIG,
-    # interface options (measured effect in docs/07)
-    "openpilot_fused": replace(OPENPILOT_CONFIG, range_fusion_gain=0.1),
-    "openpilot_rangeclip": replace(OPENPILOT_CONFIG, vrel_range_clip_window_s=4.0, vrel_range_clip_mps=3.5),
-    "openpilot_vsmooth": replace(OPENPILOT_CONFIG, vrel_smooth_far_tau_s=1.0),
+    "fused": FUSED_CONFIG,
+    # without the radar's own trackers: the Kalman filter on the object list alone (docs/07)
+    "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4, summary_sigma_mps=1e4),
 }
 SM_KEYS = ("carState", "controlsState", "selfdriveState", "vehicleParameters", "carControl")
 MAX_CAN_GAP_S = 2.0

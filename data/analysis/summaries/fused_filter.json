@@ -77,5 +77,46 @@
   "maneuver_adaptation": "follows a far slot slide (no ACC target): owner hard 0 -> 12 when driven by the object list, -1.95 m/s2 episode when driven by the summary",
   "range_in_filter": "the object list's range rate and speed disagree by 10-20 %; a coupled filter ran 2-5 m short for seconds",
   "raw_range": "radard's vision match flickers on raw far range (+21 % lead-source switches)"
+ },
+ "part_removed_34_drives": {
+  "definition": "each part removed from fused on its own; hard radar-only ticks (planner <= -2 m/s2 while vision-only >= -0.5) on 20 held-out routes / 4 further drives / 3 owner sunnypilot drives",
+  "none": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0
+  },
+  "acc_target_and_summaries": {
+   "heldout": 48,
+   "further": 2,
+   "owner": 0,
+   "owner_target_episodes": 4
+  },
+  "young_track_factor": {
+   "heldout": 30,
+   "further": 11,
+   "owner": 0
+  },
+  "speed_std_publication_gate": {
+   "heldout": 30,
+   "further": 8,
+   "owner": 0
+  },
+  "age_60_publication_gate": {
+   "heldout": 31,
+   "further": 12,
+   "owner": 0,
+   "radar_only_braking_per_h": 0.66,
+   "onset_vs_vision_s": -0.033
+  },
+  "saturation_guard": "identical on all 34 drives and the 8 fresh drives; removed from fused",
+  "range_fusion": {
+   "heldout": 27,
+   "further": 0,
+   "owner": 0,
+   "heldout_target_episodes": 6,
+   "radar_only_braking_per_h": 0.66,
+   "on_gas_per_h": 0.22,
+   "note": "more lead-source switches (switch gate fails)"
+  }
  }
 }

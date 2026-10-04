@@ -23,10 +23,9 @@ from typing import Iterator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ars510 import ANCHOR_CONFIG, FUSED_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
-PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,
-            "stock": OPENPILOT_CONFIG, "openpilot": OPENPILOT_CONFIG, "all-tracks": RAW_CONFIG}
+PROFILES = {"fused": FUSED_CONFIG, "raw": OPENPILOT_CONFIG, "openpilot": OPENPILOT_CONFIG, "all-tracks": RAW_CONFIG}
 
 
 def frames_from_csv(path: Path) -> Iterator[tuple[float, int, int, bytes]]:
@@ -57,7 +56,7 @@ def main() -> int:
     ap.add_argument("log", type=Path)
     ap.add_argument("-o", "--out", type=Path, default=Path("ars510_points.csv"))
     ap.add_argument("--profile", choices=tuple(PROFILES), default="raw",
-                    help="install profiles anchor / fused / steady / raw (stock and openpilot are older names for raw), "
+                    help="install profiles fused / raw (openpilot is an older name for raw), "
                          "or all-tracks: every track from age 1 with the radar's own IDs")
     args = ap.parse_args()
 

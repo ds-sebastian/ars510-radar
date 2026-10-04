@@ -51,7 +51,7 @@ VIS, ANC, FUS, ACC, SUM = "#7a5fb0", S2, S3, INK, S4
 SCENARIOS = {
     "S1": ("False closing rejected", "object list −4.8 m/s at 41 m; ACC target and summary −0.6"),
     "S2": ("Slowing lead seen early", "the ACC target shows the slowdown before the object list"),
-    "S3": ("Over-estimated closing", "anchor −3.8 m/s; ACC target range ≈ −1.8 m/s"),
+    "S3": ("Over-estimated closing", "object list closing too fast; ACC target range ≈ −1.8 m/s"),
     "S4": ("Fast real closing", "a car closing at ~10 m/s from 60 m"),
     "S5": ("Far slot slide, no ACC target", "object list jumps to −13..−38 m/s at 80-110 m"),
     "S6": ("Stopping behind a car", "stop-and-go at under 15 m"),
@@ -115,10 +115,10 @@ def scenarios() -> None:
                 av.plot(sm.t, sm.value, color=SUM, lw=1.1, ls=":", label="radar summary (1 s slope)")
             for name, color, lab, kw in (("acc_vrel", ACC, "radar ACC target", dict(lw=1.1, ls="--")),
                                           ("vision_vrel", VIS, "vision lead", dict(lw=1.2)),
-                                          ("anchor_vrel", ANC, "anchor", dict(lw=1.8)), ("fused_vrel", FUS, "fused", dict(lw=1.8))):
+                                          ("fused_vrel", FUS, "fused", dict(lw=1.8))):
                 x = s(name)
                 if len(x): av.plot(x.t, x.value, color=color, label=lab, **kw)
-            for name, color, lab in (("vision_a", VIS, "vision only"), ("anchor_a", ANC, "anchor"), ("fused_a", FUS, "fused")):
+            for name, color, lab in (("vision_a", VIS, "vision only"), ("fused_a", FUS, "fused")):
                 x = s(name); aa.plot(x.t, x.value, color=color, label=lab, lw=1.6)
             title, sub = SCENARIOS[sid]
             av.set_title(f"{title}\n{sub}", fontsize=9.5)
@@ -131,43 +131,36 @@ def scenarios() -> None:
 
 
 def layers() -> None:
-    """Which processing each profile applies (rows) and how many code lines it takes."""
-    S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())["code_lines"]["layers"]
-    rows = [("validity, IDs, ego subtraction, saturation guard", "relink", (1, 1, 1, 1)),
-            ("range fusion (gain 0.1)", "range_fusion", (0, 1, 1, 1)),
-            ("far smoothing (τ 0-1 s, 30-60 m)", "far_smoothing", (0, 1, 1, 0)),
-            ("far settling (age 100 above 70 m)", "far_settling", (0, 1, 1, 0)),
-            ("ramp limiter (+4 / −6 m/s²)", "ramp_limiter", (0, 1, 1, 0)),
-            ("ACC target: association", "acc_association_and_clip", (0, 0, 1, 1)),
-            ("ACC target: ±3 m/s clip", None, (0, 0, 1, 0)),
-            ("summary: association", "summary_association_and_clip", (0, 0, 1, 1)),
-            ("summary: ±3 m/s clip (≤ 80 m)", None, (0, 0, 1, 0)),
-            ("Kalman speed filter (σ from the radar)", "fused_speed_filter", (0, 0, 0, 1))]
-    prof = ["raw", "anchor (earlier)", "fused (default)"]; colors = [GRAY, ANC, FUS]
-    fig, ax = plt.subplots(figsize=(9.5, 4.6))
-    for i, (name, key, on) in enumerate(rows):
+    """Which processing each profile applies (rows) and how many code lines each part takes (counted from ars510)."""
+    import inspect
+    from ars510.interface import Ars510NativeRadarInterface as I
+    n = lambda *fs: sum(len(inspect.getsource(f).splitlines()) for f in fs)
+    rows = [("validity, track IDs, ego subtraction", n(I._relink, I._fresh_ego_speed), (1, 1)),
+            ("saturation guard", n(I._guard), (1, 0)),
+            ("range fusion (gain 0.1)", n(I._fused_range), (0, 1)),
+            ("ACC target: association", n(I._acc_target_match), (0, 1)),
+            ("summary: association", n(I._summary_update, I._summary_speed, I._summary_match), (0, 1)),
+            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1))]
+    prof = ["raw", "fused (default)"]; colors = [GRAY, FUS]
+    fig, ax = plt.subplots(figsize=(8.5, 3.6))
+    for i, (name, lines, on) in enumerate(rows):
         y = len(rows) - 1 - i
-        on = (on[0], on[2], on[3])  # rows list the four historical profiles; steady is no longer shown
         for j, flag in enumerate(on):
             ax.add_patch(plt.Rectangle((j + 0.08, y + 0.12), 0.84, 0.76, color=colors[j] if flag else "#efeee9", lw=0))
-        lines = S.get(key) if key else None
-        if key == "relink":
-            lines = S["relink"] + S["saturation_guard"]
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
-        if lines:
-            ax.text(3.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
-    ax.set_xlim(-0.05, 3.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5], prof); ax.xaxis.tick_top()
+        ax.text(2.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
+    ax.set_xlim(-0.05, 2.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5], prof); ax.xaxis.tick_top()
     ax.set_yticks([]); ax.grid(False)
     for sp in ax.spines.values(): sp.set_visible(False)
-    ax.set_title("What each profile does to a track (shared decode: 288 lines)", pad=26)
+    ax.set_title("What each profile does to a track (after the shared 0x80 decode)", pad=26)
     fig.tight_layout(); fig.savefig(OUT / "profile_layers.png", dpi=130); plt.close(fig)
 
 
 def vs_vision() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())
     ev, req = S["heldout_events"], S["heldout_one_system_requests_and_overrides"]
-    prof = ["raw", "anchor", "fused_no_trackers", "fused"]; colors = [GRAY, ANC, "#8fd9bb", FUS]
-    names = ["raw", "anchor\n(earlier)", "fused,\nno ACC/summary", "fused\n(default)"]
+    prof = ["raw", "fused_no_trackers", "fused"]; colors = [GRAY, "#8fd9bb", FUS]
+    names = ["raw", "fused,\nno ACC/summary", "fused\n(default)"]
     fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13.5, 4.0))
     m = [ev[p]["onset_diff_mean_s"] for p in prof]; ci = np.array([ev[p]["onset_diff_ci"] for p in prof]).T
     a1.bar(names, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
@@ -180,7 +173,7 @@ def vs_vision() -> None:
     a2.axhline(ev["fused"]["vision_ant10"] * 100, color=VIS, ls=":", lw=1.1)
     a2.set_xticks(x, names); a2.set_ylabel("% of driver brakes"); a2.set_ylim(0, 100)
     a2.set_title("Already asking within 3 s before (purple: vision only)")
-    a2.text(1.5, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
+    a2.text(1.0, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
     slowed = [req[p]["radar_only_driver"].get("slowed", 0) for p in prof]
     gas = [req[p]["radar_only_driver"].get("on_gas", 0) for p in prof]
     a3.bar(names, slowed, color=colors, label="driver also slowed")

@@ -1295,11 +1295,11 @@ BO_ 1824 ARS510_OBJ_00_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1825 ARS510_OBJ_01_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1308,11 +1308,11 @@ BO_ 1825 ARS510_OBJ_01_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1826 ARS510_OBJ_02_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1321,11 +1321,11 @@ BO_ 1826 ARS510_OBJ_02_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1827 ARS510_OBJ_03_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1334,11 +1334,11 @@ BO_ 1827 ARS510_OBJ_03_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1828 ARS510_OBJ_04_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1347,11 +1347,11 @@ BO_ 1828 ARS510_OBJ_04_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1829 ARS510_OBJ_05_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1360,11 +1360,11 @@ BO_ 1829 ARS510_OBJ_05_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1830 ARS510_OBJ_06_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1373,11 +1373,11 @@ BO_ 1830 ARS510_OBJ_06_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1831 ARS510_OBJ_07_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1386,11 +1386,11 @@ BO_ 1831 ARS510_OBJ_07_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1832 ARS510_OBJ_08_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1399,11 +1399,11 @@ BO_ 1832 ARS510_OBJ_08_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1833 ARS510_OBJ_09_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1412,11 +1412,11 @@ BO_ 1833 ARS510_OBJ_09_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1834 ARS510_OBJ_10_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1425,11 +1425,11 @@ BO_ 1834 ARS510_OBJ_10_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1835 ARS510_OBJ_11_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1438,11 +1438,11 @@ BO_ 1835 ARS510_OBJ_11_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1836 ARS510_OBJ_12_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1451,11 +1451,11 @@ BO_ 1836 ARS510_OBJ_12_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1837 ARS510_OBJ_13_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1464,11 +1464,11 @@ BO_ 1837 ARS510_OBJ_13_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1838 ARS510_OBJ_14_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1477,11 +1477,11 @@ BO_ 1838 ARS510_OBJ_14_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1839 ARS510_OBJ_15_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1490,11 +1490,11 @@ BO_ 1839 ARS510_OBJ_15_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1840 ARS510_OBJ_16_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1503,11 +1503,11 @@ BO_ 1840 ARS510_OBJ_16_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1841 ARS510_OBJ_17_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1516,11 +1516,11 @@ BO_ 1841 ARS510_OBJ_17_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1842 ARS510_OBJ_18_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1529,11 +1529,11 @@ BO_ 1842 ARS510_OBJ_18_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1843 ARS510_OBJ_19_DERIVED: 16 XXX
  SG_ TRACK_ID_OP : 0|16@1+ (1,0) [0|65535] "" XXX
@@ -1542,11 +1542,11 @@ BO_ 1843 ARS510_OBJ_19_DERIVED: 16 XXX
  SG_ SETTLED : 33|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL_VALID : 34|1@1+ (1,0) [0|1] "" XXX
  SG_ DREL_FUSED_VALID : 35|1@1+ (1,0) [0|1] "" XXX
- SG_ VREL_SMOOTHED_VALID : 36|1@1+ (1,0) [0|1] "" XXX
+ SG_ VREL_KALMAN_VALID : 36|1@1+ (1,0) [0|1] "" XXX
  SG_ VREL : 40|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
  SG_ V_EGO_0xB4 : 56|16@1+ (0.01,0) [0|655.35] "m/s" XXX
  SG_ DREL_FUSED : 72|16@1+ (0.01,0) [0|655.35] "m" XXX
- SG_ VREL_SMOOTHED : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
+ SG_ VREL_KALMAN : 88|16@1- (0.01,0) [-327.68|327.67] "m/s" XXX
 
 BO_ 1856 ARS510_REC_HEADER: 20 RADAR
  SG_ CONST_HDR0_8 : 0|8@1+ (1,0) [0|255] "raw" XXX
@@ -3064,141 +3064,141 @@ CM_ SG_ 1824 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (he
 CM_ SG_ 1824 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1824 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1824 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1824 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1824 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1824 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1824 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1825 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 1, for plotting next to the raw fields.";
 CM_ SG_ 1825 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1825 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1825 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1825 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1825 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1825 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1825 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1825 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1826 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 2, for plotting next to the raw fields.";
 CM_ SG_ 1826 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1826 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1826 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1826 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1826 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1826 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1826 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1826 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1827 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 3, for plotting next to the raw fields.";
 CM_ SG_ 1827 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1827 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1827 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1827 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1827 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1827 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1827 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1827 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1828 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 4, for plotting next to the raw fields.";
 CM_ SG_ 1828 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1828 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1828 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1828 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1828 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1828 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1828 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1828 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1829 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 5, for plotting next to the raw fields.";
 CM_ SG_ 1829 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1829 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1829 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1829 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1829 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1829 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1829 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1829 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1830 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 6, for plotting next to the raw fields.";
 CM_ SG_ 1830 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1830 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1830 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1830 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1830 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1830 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1830 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1830 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1831 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 7, for plotting next to the raw fields.";
 CM_ SG_ 1831 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1831 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1831 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1831 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1831 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1831 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1831 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1831 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1832 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 8, for plotting next to the raw fields.";
 CM_ SG_ 1832 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1832 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1832 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1832 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1832 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1832 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1832 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1832 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1833 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 9, for plotting next to the raw fields.";
 CM_ SG_ 1833 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1833 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1833 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1833 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1833 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1833 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1833 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1833 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1834 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 10, for plotting next to the raw fields.";
 CM_ SG_ 1834 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1834 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1834 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1834 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1834 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1834 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1834 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1834 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1835 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 11, for plotting next to the raw fields.";
 CM_ SG_ 1835 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1835 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1835 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1835 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1835 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1835 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1835 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1835 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1836 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 12, for plotting next to the raw fields.";
 CM_ SG_ 1836 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1836 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1836 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1836 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1836 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1836 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1836 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1836 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1837 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 13, for plotting next to the raw fields.";
 CM_ SG_ 1837 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1837 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1837 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1837 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1837 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1837 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1837 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1837 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1838 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 14, for plotting next to the raw fields.";
 CM_ SG_ 1838 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1838 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1838 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1838 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1838 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1838 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1838 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1838 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1839 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 15, for plotting next to the raw fields.";
 CM_ SG_ 1839 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1839 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1839 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1839 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1839 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1839 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1839 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1839 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1840 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 16, for plotting next to the raw fields.";
 CM_ SG_ 1840 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1840 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1840 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1840 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1840 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1840 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1840 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1840 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1841 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 17, for plotting next to the raw fields.";
 CM_ SG_ 1841 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1841 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1841 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1841 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1841 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1841 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1841 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1841 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1842 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 18, for plotting next to the raw fields.";
 CM_ SG_ 1842 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1842 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1842 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1842 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1842 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1842 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1842 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1842 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1843 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 19, for plotting next to the raw fields.";
 CM_ SG_ 1843 TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1843 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";
 CM_ SG_ 1843 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1843 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";
-CM_ SG_ 1843 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of STEADY_CONFIG); halves short-term range walks.";
-CM_ SG_ 1843 VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to 1 s from 60 m.";
+CM_ SG_ 1843 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); halves short-term range walks.";
+CM_ SG_ 1843 VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";
 CM_ BO_ 1856 "0x80 record bytes 0-16, before the 20 object slots. Byte 0 is 0xE4 (transport length low byte).";
 CM_ SG_ 1856 CONST_HDR0_8 "Constant in the captured data.";
 CM_ SG_ 1856 UNK_HDR8_5 "Part of the clock code in record bytes 1-4 (little-endian), which equals the 0x85 fine clock // 100.";

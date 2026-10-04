@@ -41,9 +41,9 @@ should copy:
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
   0.29 m inside that line (21 departures): the rule is "keep the target until its centre reaches my lane line". On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
   6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
-  better lead chooser; the `fused` and `anchor` profiles keep it in charge and never follow the radar's choice.
+  better lead chooser; the `fused` profile keeps it in charge and never follows the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
-  and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
+  and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
 - **The control law (unknown).** How Toyota turns distance, closing speed and relative acceleration into a braking
   request is not visible under openpilot longitudinal.
 
@@ -137,8 +137,8 @@ that pass the radar's own values through and leave filtering to radard. Open wor
 
 1. **Decide how much filtering an upstream version needs.** The `fused` profile is the candidate: the base decode,
    range fusion and one speed filter whose weights come from the radar's own uncertainty fields and internal
-   trackers, about 30 lines in place of five tuned layers. In replay it brakes falsely less than `anchor` (held-out
-   48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
+   trackers, about 30 lines for the filter itself. In replay it brakes falsely less than the earlier tuned layers
+   (held-out 48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
    ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It is the default; it needs more road miles, and the range/speed
    scale of the object list ([06](06_accuracy.md)) before range can join the filter. The same weighting could live
    in radard instead (per-point speed variance), which would leave the interface a pass-through like the others.

@@ -30,7 +30,7 @@ sudo reboot                                                          # required:
    fork and version, the `--check` output, and the time and description of each flagged moment. Do not post route
    IDs, dongle IDs, VINs, GPS or identifying video; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
-   `--profile anchor` (or `raw`) installs another profile. Updating the fork resets `/data/openpilot`, so run
+   `--profile raw` installs the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
    the installer again after an update.
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
@@ -56,13 +56,13 @@ These are replay results on one owner's car; road reports from other drivers are
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
-| `anchor` | `--profile anchor` | the earlier approach: four tuned guards against speed excursions plus ±3 m/s bounds from the radar's ACC target and summaries | fallback: earlier reactions than `fused`, about five times its radar-only braking |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
-How each profile works, each against vision only, pros and cons, assumptions and a comparison with openpilot's other
-radar interfaces: [docs/11](docs/11_profiles_compared.md). Every filter step with examples and replay evidence:
+The earlier tuned profiles (`anchor`, `steady`) were outperformed by `fused` and removed; their names now install
+`fused`. How each profile works, each against vision only, pros and cons, assumptions and a comparison with openpilot's
+other radar interfaces: [docs/11](docs/11_profiles_compared.md). Every filter step with examples and replay evidence:
 [docs/07](docs/07_velocity_excursions.md).
 
 ## Status
@@ -166,7 +166,7 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 
 | path | contents |
 |---|---|
-| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `ANCHOR_CONFIG`, `STEADY_CONFIG`, `OPENPILOT_CONFIG` for `raw`) |
+| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `OPENPILOT_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (parsing does not use them) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |

@@ -1,7 +1,8 @@
 # 11. Profiles compared: what each does, against vision only and other radar parsers
 
-Four install profiles, compared on how they work, against **vision only** (stock openpilot on this car), on driving
-feel, and against openpilot's other radar interfaces.
+The two install profiles (and `fused` without the radar's own trackers, to show the filter alone), compared on how
+they work, against **vision only** (stock openpilot on this car), on driving feel, and against openpilot's other radar
+interfaces.
 
 Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json). Figures: `tools/make_fused_figures.py`,
@@ -9,20 +10,20 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 ## At a glance
 
-| | `raw` | `anchor` (earlier) | `fused` without ACC / summary | `fused` (default) |
-|---|---|---|---|---|
-| what it adds to the decode | nothing (validity, IDs, ego subtraction) | 4 tuned guards + ±3 m/s bounds from the radar's ACC target and summaries | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
-| tuned constants beyond `raw` | — | 17 | 3 chosen, 4 measured or physical | same |
-| code beyond the shared decode | ~60 lines | +115 | +35 | +109 |
-| hard radar-only braking ticks, 20 held-out routes | 93 | 48 | 48 | **30** |
-| braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 1.10 (0.22) | 0.88 (0.22) | **0.22 (0)** |
-| first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.08 s | −0.03 s | +0.01 s |
-| recommended for | research | fallback (previous default) | what `fused` does by itself when there is no ACC target | everyday driving |
+| | `raw` | `fused` without ACC / summary | `fused` (default) |
+|---|---|---|---|
+| what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
+| tuned constants beyond `raw` | — | 3 chosen, 4 measured or physical | same |
+| code beyond the shared decode | ~60 lines | +35 | +109 |
+| hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
+| braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
+| first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.03 s | +0.01 s |
+| recommended for | research | what `fused` does by itself when there is no ACC target | everyday driving |
 
-`raw` is the unfiltered radar decode, not vision only and not stock openpilot; `stock` and `default` are its older
-names. The third column is not a separate profile: it is `fused` with the ACC target and summary ignored, which shows
-the Kalman filter on its own. `steady` (the tuned guards without the ACC target) is superseded by it (53 hard ticks,
-1.31 radar-only brakes per hour) and is no longer shown.
+`raw` is the unfiltered radar decode, not vision only and not stock openpilot. The middle column is not a separate
+profile: it is `fused` with the ACC target and summary ignored, which shows the Kalman filter on its own. The earlier
+tuned profiles (`anchor`: 48 hard ticks, 1.10 radar-only brakes per hour; `steady`: 53, 1.31) were outperformed by
+`fused` and removed; installing them now installs `fused`.
 
 ## How each profile works
 
@@ -34,11 +35,7 @@ lines in `ars510/interface.py`.*
 - **`raw`** publishes the object list as decoded: tracks from age 60 (≈ 3.6 s, once range and speed have converged),
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
   withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
-- **`anchor`** (earlier approach) adds four tuned guards, each against one failure (range fusion, far smoothing over
-  up to 1 s beyond 30-60 m, far settling to age 100 beyond 70 m, a ramp limiter of +4 / −6 m/s²), and bounds the
-  ACC-target and summary tracks within ±3 m/s of the radar's own estimates
-  ([07](07_velocity_excursions.md#earlier-approach-tuned-layers)).
-- **`fused`** keeps the decode and range fusion and replaces the five speed layers with **one Kalman filter per track**
+- **`fused`** adds range fusion and **one Kalman filter per track**
   on the lead's over-ground speed ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)). It is a standard
   one-state Kalman filter: the state is the lead's speed, the motion model lets it change with a lead acceleration of
   1.5 m/s², and each available reading updates it in turn, weighted by its own variance: the object-list speed
@@ -56,70 +53,70 @@ tracks back without a range threshold.*
 
 ![profiles on the bundled samples](img/analysis/profile_comparison.png)
 
-*All four profiles on the two bundled excursions (regenerated from `data/sample/`).*
+*Both profiles on the two bundled excursions (regenerated from `data/sample/`).*
 
 ### `fused` in six real moments
 
 ![fused scenarios 1-3](img/analysis/fused_scenarios_a.png)
 ![fused scenarios 4-6](img/analysis/fused_scenarios_b.png)
 
-*Lead closing speed (top) and planner request (bottom) under vision only, `anchor` and `fused`, through the unchanged
+*Lead closing speed (top) and planner request (bottom) under vision only and `fused`, through the unchanged
 planner; grey dots are the raw object-list speed of the radar lead, dashed is the radar's ACC target, dotted the
 summary slope where the parser would associate it. Times are relative to the moment.*
 
-1. **False closing rejected.** The object list dives to −6 m/s; the ACC target and summary stay at −0.6. `anchor`
-   brakes to −2 m/s², `fused` follows the trackers and asks for what vision asks for.
+1. **False closing rejected.** The object list dives to −6 m/s; the ACC target and summary stay at −0.6. `fused`
+   follows the trackers and asks for what vision asks for.
 2. **Slowing lead seen early.** The ACC target shows the lead slowing before the object list does; `fused` follows it
-   and answers the driver's brake 0.85 s earlier than `anchor`.
-3. **Over-estimated closing.** The object list (and `anchor`, −3.8 m/s) report more closing than the ACC target's own
-   range shows (≈ −1.8 m/s); `fused` stays near the ACC target and vision, so it does not brake early.
+   and asks for braking before the driver presses the brake.
+3. **Over-estimated closing.** The object list reports more closing than the ACC target's own range shows
+   (≈ −1.8 m/s); `fused` stays near the ACC target and vision, so it does not brake early.
 4. **Fast real closing.** All agree it is real. `fused` sits between the object list and the ACC target and brakes
-   slightly less than `anchor` and vision (−2.1 vs −2.3 m/s²).
+   slightly less than vision (−2.1 vs −2.3 m/s²).
 5. **Far slot slide, no ACC target.** The object list jumps to −13 … −38 m/s at 80-110 m (the radar's slot moving
-   between reflectors). `anchor` dips to −1.1 m/s², `fused` to −0.6, vision stays near 0.
-6. **Stopping behind a car.** Near range: the object list dominates in both profiles; `fused` hands the lead to the
-   closer vision lead 0.5 s sooner, like vision.
+   between reflectors). `fused` dips to −0.6 m/s², vision stays near 0.
+6. **Stopping behind a car.** Near range the object list dominates; `fused` hands the lead to the closer vision lead
+   like vision does.
 
 ## Against vision only
 
-All four profiles were replayed on the same 34 drives through the unchanged openpilot card → radard → planner, and
+Each profile was replayed on the same 34 drives through the unchanged openpilot card → radard → planner, and
 judged against what the driver did, with the pre-registered definitions used for the original radar-vs-vision test.
 Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver brake presses, 47 hard slowdowns.
 
 ![profiles against vision only](img/analysis/profiles_vs_vision.png)
 
-| driver brake presses (167) | vision only | `raw` | `anchor` | `fused` w/o ACC / summary | `fused` |
-|---|---|---|---|---|---|
-| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.08 s [−0.16, 0.00] | −0.03 s [−0.11, +0.04] | +0.01 s [−0.04, +0.06] |
-| median first request vs the brake press | −0.61 s | −0.87 s | −0.79 s | −0.74 s | −0.67 s |
-| already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 83.8 % | 81.4 % |
-| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 43.7 % | 41.9 % | 41.9 % |
-| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 | 10 |
+| driver brake presses (167) | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
+|---|---|---|---|---|
+| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | +0.01 s [−0.04, +0.06] |
+| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.67 s |
+| already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 81.4 % |
+| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.9 % |
+| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 
-| over 4.56 h of driver-controlled driving | vision only | `raw` | `anchor` | `fused` w/o ACC / summary | `fused` |
-|---|---|---|---|---|---|
-| braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour | 0 | 1.75 | 1.10 | 0.88 | 0.22 |
-| … of which the driver was on the gas | — | 0.66 | 0.22 | 0.22 | 0 |
-| hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 48 | 30 |
-| driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 8 / 2 | 6 / 1 | 5 / 0 |
-| request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.418 | 0.419 | 0.414 |
-| request jerk (mean \|da/dt\|) | 1.003 m/s³ | 1.029 | 1.009 | 1.007 | 1.001 |
-| share of lead time on a radar lead | 0 | 86.6 % | 86.2 % | 86.8 % | 87.1 % |
+| over 4.56 h of driver-controlled driving | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
+|---|---|---|---|---|
+| braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour | 0 | 1.75 | 0.88 | 0.22 |
+| … of which the driver was on the gas | — | 0.66 | 0.22 | 0 |
+| hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 30 |
+| driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 5 / 0 |
+| request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.419 | 0.414 |
+| request jerk (mean \|da/dt\|) | 1.029 | 1.009 | 1.007 | 1.001 |
+| share of lead time on a radar lead | 0 | 86.6 % | 86.8 % | 87.1 % |
 
 What the radar adds, by profile:
 
-- **`raw` and `anchor` brake earlier than vision** (0.08-0.15 s on average) and anticipate a few more driver
-  brakes. Part of that head start is real (the radar sees closings through curves and before the camera's distance
-  estimate settles); part comes from an over-closing bias: in the 4 s before the driver brakes, `anchor`'s lead closing
-  speed is on average 0.54 m/s more closing than the vision lead's. The same bias causes their radar-only braking.
+- **`raw` brakes earlier than vision** (0.15 s on average) and anticipates a few more driver brakes. Part of that head
+  start is real (the radar sees closings through curves and before the camera's distance estimate settles); part comes
+  from an over-closing bias of the unfiltered object list (the earlier tuned profile was still 0.54 m/s more closing
+  than the vision lead in the 4 s before driver brakes). The same bias causes its radar-only braking.
 - **`fused` removes that bias** (0.02 m/s from vision on average) and, with it, almost all radar-only braking: 0.22 per
   hour, every one while the driver also slowed. Its timing is then the same as vision on average: 11 driver brakes are
   answered earlier than vision (by 0.62 s on average, 7 of them hard slowdowns) and 17 later; 14 of those 17 are
   equally late with every radar profile (the radar lead shows less closing than vision there), so they come from using
   radar at all, not from the filter.
-- **The Kalman filter alone** (no ACC target or summary) already matches `anchor`'s false braking (48 hard ticks) with
-  a little less radar-only braking (0.88 per hour) and onset between `anchor` and `fused`; the radar's own trackers
-  supply the rest of `fused`'s gain.
+- **The Kalman filter alone** (no ACC target or summary) halves `raw`'s false braking (93 → 48 hard ticks, as many as
+  the whole earlier tuned stack) with onset between `raw` and `fused`; the radar's own trackers supply the rest of
+  `fused`'s gain.
 - **Every profile follows a radar lead about 86-87 % of the time a lead exists**, so radard uses radar distance
   (6 cm resolution; frame-to-frame jitter about 3 % of range far out) rather than the camera's distance estimate.
 
@@ -129,8 +126,7 @@ What the radar adds, by profile:
 |---|---|---|
 | vision only | smooth; no radar-specific false braking | camera distance at range; no radar head start on closings through curves or far away |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes for nothing beyond 40 m |
-| `anchor` (earlier) | fewest false brakes of the tuned profiles (no hard ticks on the owner drives); the most road miles | still ~1.1 radar-only brakes per hour; reaction partly comes from over-closing; 17 tuned constants in all |
-| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, closing speed unbiased, simplest speed path | braking onset the same as vision on average (no average head start); the fewest road miles so far; the frozen replay gates for reaction time fail because the reference profile's early reactions included the bias |
+| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, closing speed unbiased, simplest speed path | braking onset the same as vision on average (no average head start); one car's road miles so far |
 
 ## Assumptions and limits
 
