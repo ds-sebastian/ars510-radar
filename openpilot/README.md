@@ -31,6 +31,7 @@ while testing).
 | profile | config |
 |---|---|
 | `anchor` (default) | `ANCHOR_CONFIG`: `steady` + the radar's own ACC target (0x235) as a bound on the lead's speed, and its target-range summaries (0x192/0x194) for far cars up to 80 m. Fewest false brakes at the same response ([docs/08](../docs/08_openpilot_integration.md#profiles)) |
+| `fused` | `FUSED_CONFIG`: `stock` + range fusion + one uncertainty-weighted speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194). Replaces the far-range layers and the anchor clips ([docs/07](../docs/07_velocity_excursions.md#fused-speed-filter-fused-profile)) |
 | `steady` | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
 | `stock` | `OPENPILOT_CONFIG`: the plain decode with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `default` is its older name |
 

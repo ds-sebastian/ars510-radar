@@ -1,0 +1,81 @@
+{
+ "description": "Fused speed filter (FUSED_CONFIG, 'fused' profile): one uncertainty-weighted per-track Kalman filter on over-ground speed replacing far smoothing, far settling, the ramp limiter and the ACC / summary clips. Replay against the driver with the unchanged openpilot card -> radard -> planner (34 replay drives) and the unchanged sunnypilot planner (fresh drives).",
+ "filter": {
+  "object_list_speed_sigma_mps_per_240_7_count": 0.045,
+  "young_track_sigma_scale": 1.8,
+  "young_age_frames": 100,
+  "acc_target_speed_sigma_mps": 0.5,
+  "summary_speed_sigma_mps": 0.5,
+  "summary_max_range_m": 80,
+  "lead_accel_std_mps2": 1.5,
+  "innovation_gate_sigma": 3.0,
+  "publish_speed_std_mps": 0.75,
+  "range": "range fusion 0.1 (not part of the filter)"
+ },
+ "calibration": {
+  "240_7_as_speed_std": "within-range-band AUC for false closings 0.71-0.75 at 25-55 m, 0.67 at 55-85 m, 0.60 beyond 95 m, at or above the ceiling an exact Gaussian sigma allows (0.81 -> 0.55); z std 1.0 at 35-55 m, 0.8-0.9 beyond 55 m",
+  "young_tracks": "at 45-70 m, tracks younger than ~100 frames err 1.4-2x more than 240|7 says (z std 1.36-1.97 vs 0.85 mature), biased toward closing; 240|7 itself does not change with age"
+ },
+ "replay_34_drives": {
+  "anchor": {
+   "heldout_hard_ticks": 48,
+   "heldout_hard_episodes": 11,
+   "heldout_target_episodes": 9,
+   "owner_hard_ticks": 0,
+   "owner_target_episodes": 5,
+   "further_hard_ticks": 1,
+   "heldout_mean_onset_s": -1.128,
+   "anticipation": 0.437
+  },
+  "fused": {
+   "heldout_hard_ticks": 30,
+   "heldout_hard_episodes": 10,
+   "heldout_target_episodes": 4,
+   "owner_hard_ticks": 0,
+   "owner_target_episodes": 0,
+   "further_hard_ticks": 2,
+   "heldout_mean_onset_s": -1.038,
+   "anticipation": 0.419,
+   "events_later_than_150ms": 23
+  }
+ },
+ "closing_bias_before_driver_braking": {
+  "events": 24,
+  "fused_closer_to_vision": 20,
+  "mean_minus_vision_mps": {
+   "anchor": -0.54,
+   "fused": -0.02
+  },
+  "window_s": 4
+ },
+ "fresh_drives": {
+  "hard_ticks": [
+   0,
+   0
+  ],
+  "target_episodes_model": [
+   5,
+   3
+  ],
+  "target_episodes_plan": [
+   4,
+   3
+  ],
+  "mean_onset_change_s": -0.047,
+  "lead_source_switches_per_hour_model": [
+   140.0,
+   145.3
+  ],
+  "slow_lead_event_lag_s": [
+   1.111,
+   0.261
+  ],
+  "failing_window": "one cluster, -1.276 -> -1.362 m/s2, closer to the ACC target with the driver braking"
+ },
+ "ablations": {
+  "no_innovation_gate": "an opening +10 m/s object-list excursion passes; one owner target episode",
+  "maneuver_adaptation": "follows a far slot slide (no ACC target): owner hard 0 -> 12 when driven by the object list, -1.95 m/s2 episode when driven by the summary",
+  "range_in_filter": "the object list's range rate and speed disagree by 10-20 %; a coupled filter ran 2-5 m short for seconds",
+  "raw_range": "radard's vision match flickers on raw far range (+21 % lead-source switches)"
+ }
+}

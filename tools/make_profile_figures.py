@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import ANCHOR_CONFIG, FUSED_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.constants import ID80_IDLE_SLOT  # noqa: E402
 from ars510.objects import encode_slot  # noqa: E402
 from ars510.support import parse_acc_target_vrel  # noqa: E402
@@ -102,11 +102,12 @@ def profiles_figure() -> None:
     fig, axes = plt.subplots(2, 2, figsize=(11, 6.2), sharex="col")
     for col, (name, title) in enumerate((("highway_vrel_excursion_25s.csv.gz", "Drive A: settled lead, ~1 s excursion"),
                                          ("highway_acc_anchor_24s.csv.gz", "Drive E: excursion that drags the range"))):
-        runs = {lab: lead(name, cfg) for lab, cfg in (("stock", STOCK), ("steady", STEADY_CONFIG), ("anchor", ANCHOR_CONFIG))}
+        runs = {lab: lead(name, cfg) for lab, cfg in (("stock", STOCK), ("steady", STEADY_CONFIG), ("anchor", ANCHOR_CONFIG),
+                                                      ("fused", FUSED_CONFIG))}
         av, ad = axes[0, col], axes[1, col]
         if runs["stock"]["acc_t"]:
             av.plot(runs["stock"]["acc_t"], runs["stock"]["acc_v"], color=INK, lw=1.0, ls="--", label="radar's ACC target (0x235)")
-        for lab, color in (("stock", GRAY), ("steady", S1), ("anchor", S2)):
+        for lab, color in (("stock", GRAY), ("steady", S1), ("anchor", S2), ("fused", S3)):
             r = runs[lab]
             av.plot(r["t"], r["v"], color=color, label=lab)
             ad.plot(r["t"], r["d"], color=color, label=lab)
