@@ -58,6 +58,13 @@ samples. The clamp changes the mean correction while the code retains the ordina
 Consequently, a small `P` can coexist with a persistent speed error. Replay and event comparisons support the
 chosen filter, while independent physical-error calibration remains a separate requirement.
 
+The summary's one-second range fit also carries time history. Under constant relative acceleration, its slope
+represents velocity at `mean(t) + sum((t−mean(t))³) / (2·sum((t−mean(t))²))`, near the window midpoint for evenly
+spaced samples. Across 867 applied updates in two bundled samples, that time is a median 0.476 / 0.480 s before
+the filter timestamp; most windows contain 17 samples over 0.960 s. Shorter startup windows differ. These are
+receipt-clock geometry measurements, not radar acquisition latency or a calibrated time shift; adding current
+ego speed further complicates over-ground timing. [Timing measurements and scope](../data/analysis/summaries/summary_window_time.json).
+
 The ordinary Kalman covariance equations assume the specified process/measurement model and its independence
 conditions; see [Särkkä, *Bayesian Filtering and Smoothing*, chapter 4](https://users.aalto.fi/~ssarkka/pub/cup_book_online_20131111.pdf).
 The current `Q = (a Δt)²` corresponds to an acceleration perturbation redrawn each update interval. A continuous
@@ -170,9 +177,14 @@ between −0.15 and −0.12 m/s². Both variants disable relinking; the retained
 locally, and both radar variants use the same lead throughout the episode.
 
 This controlled comparison changes summary speed σ from 0.5 to 10,000 m/s, making its update negligible.
-The plot shows saved radard lead and planner outputs, not the originating summary observations; it cannot identify
-which earlier summary update made the difference or establish physical accuracy. The episode counts against the
-frozen owner-drive requirement of zero additional target-braking episodes. See the
+The plot shows saved radard lead and planner outputs. A separate native cache identifies one applied summary
+2.156 s before onset, at native range 73.44 m and age 95, followed by 36 cycles without a reset. The 80 m limit
+gates new summary inputs; it does not erase their influence from the filter state when a track moves farther away.
+The update changes both mean and covariance: its immediate correction is toward a lower speed, but later native
+updates leave the summary-enabled estimate 0.793 m/s higher just before onset. The fixed recurrence reproduces
+all 390 cached enabled means. This is an explanation of the state history, not physical-error calibration or a
+planner rerun; the underlying summary range samples and their effective observation time remain unavailable.
+The episode counts against the frozen owner-drive requirement of zero additional target-braking episodes. See the
 [definitions and measurements](../data/analysis/summaries/summary_owner_case.json) and
 [anonymous trace](../data/analysis/summary_owner_case.csv).
 

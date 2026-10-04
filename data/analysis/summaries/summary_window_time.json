@@ -1,0 +1,211 @@
+{
+  "scope": "FUSED_CONFIG, three bundled samples only. All applied non-reset scalar summary updates; constant-acceleration geometric effective time, receipt clock rather than OEM acquisition clock.",
+  "config": {
+    "summary_window_s": 1.0,
+    "summary_sigma_mps": 0.5,
+    "lead_accel_std_mps2": 1.5
+  },
+  "synthetic_formula_check": {
+    "relative_times_s": [
+      0,
+      0.040000000000873115,
+      0.13999999999941792,
+      0.37000000000080036,
+      0.5300000000006548,
+      0.8299999999999272,
+      1.0
+    ],
+    "effective_time_relative_s": 0.48440113891047076,
+    "mean_time_relative_s": 0.4157142857145248,
+    "ls_slope_mps": 1.2765180638535731,
+    "derivative_at_effective_time_mps": 1.2765180638521998,
+    "absolute_error_mps": 1.3733458814613186e-12
+  },
+  "samples": [
+    {
+      "sample": "highway_acc_anchor_24s.csv.gz",
+      "bytes": 278873,
+      "applied_nonreset_summary_updates": 0,
+      "by_address": {
+        "0x192": 0,
+        "0x194": 0
+      },
+      "distributions": {
+        "filter_minus_effective_ms": null,
+        "receipt_minus_effective_ms": null,
+        "filter_minus_receipt_ms": null,
+        "history_n": null,
+        "history_span_ms": null,
+        "summary_gain": null,
+        "effective_minus_mean_ms": null
+      },
+      "history_n_counts": {}
+    },
+    {
+      "sample": "highway_following_30s.csv.gz",
+      "bytes": 305447,
+      "applied_nonreset_summary_updates": 465,
+      "by_address": {
+        "0x192": 465,
+        "0x194": 0
+      },
+      "distributions": {
+        "filter_minus_effective_ms": {
+          "n": 465,
+          "min": 449.03766754385185,
+          "p05": 451.51621968283416,
+          "median": 475.9130274724308,
+          "p95": 505.64679192391895,
+          "max": 510.5522583798443,
+          "mean": 477.7441029850545
+        },
+        "receipt_minus_effective_ms": {
+          "n": 465,
+          "min": 471.92060980440687,
+          "p05": 474.3584085011122,
+          "median": 480.0103122613599,
+          "p95": 486.46489808327146,
+          "max": 488.4548722348434,
+          "mean": 480.27744707107604
+        },
+        "filter_minus_receipt_ms": {
+          "n": 465,
+          "min": -31.200000000000117,
+          "p05": -30.155999999998784,
+          "median": 0.0,
+          "p95": 29.63799999999992,
+          "max": 30.7429999999993,
+          "mean": -2.533344086021498
+        },
+        "history_n": {
+          "n": 465,
+          "min": 17,
+          "p05": 17.0,
+          "median": 17.0,
+          "p95": 17.0,
+          "max": 17,
+          "mean": 17.0
+        },
+        "history_span_ms": {
+          "n": 465,
+          "min": 949.1659999999981,
+          "p05": 949.839999999999,
+          "median": 960.0580000000001,
+          "p95": 970.2644000000013,
+          "max": 970.797000000001,
+          "mean": 960.534976344086
+        },
+        "summary_gain": {
+          "n": 465,
+          "min": 0.12921772401562331,
+          "p05": 0.13762669287687856,
+          "median": 0.14713946003433998,
+          "p95": 0.16527612765601932,
+          "max": 0.3907079490848996,
+          "mean": 0.15101020434690227
+        },
+        "effective_minus_mean_ms": {
+          "n": 465,
+          "min": -3.5961412243388224,
+          "p05": -2.055006737213816,
+          "median": -0.031110199557815577,
+          "p95": 2.0859166139153724,
+          "max": 4.61207489612292,
+          "mean": 0.014887274274985984
+        }
+      },
+      "history_n_counts": {
+        "17": 465
+      }
+    },
+    {
+      "sample": "highway_vrel_excursion_25s.csv.gz",
+      "bytes": 253198,
+      "applied_nonreset_summary_updates": 402,
+      "by_address": {
+        "0x192": 402,
+        "0x194": 0
+      },
+      "distributions": {
+        "filter_minus_effective_ms": {
+          "n": 402,
+          "min": 350.6078724185938,
+          "p05": 449.8155090452446,
+          "median": 480.0702325433459,
+          "p95": 509.59190075849284,
+          "max": 510.7623186978394,
+          "mean": 479.2696942185054
+        },
+        "receipt_minus_effective_ms": {
+          "n": 402,
+          "min": 359.85287241859373,
+          "p05": 479.4930728122939,
+          "median": 479.98464991005244,
+          "p95": 480.42699167373826,
+          "max": 488.5972153208904,
+          "mean": 479.2515996911422
+        },
+        "filter_minus_receipt_ms": {
+          "n": 402,
+          "min": -30.919000000000807,
+          "p05": -30.0247500000002,
+          "median": 0.0,
+          "p95": 29.684749999999127,
+          "max": 30.80399999999983,
+          "mean": 0.018094527363216952
+        },
+        "history_n": {
+          "n": 402,
+          "min": 13,
+          "p05": 17.0,
+          "median": 17.0,
+          "p95": 17.0,
+          "max": 17,
+          "mean": 16.975124378109452
+        },
+        "history_span_ms": {
+          "n": 402,
+          "min": 719.976,
+          "p05": 959.1901000000004,
+          "median": 959.9844999999996,
+          "p95": 960.8164999999998,
+          "max": 971.145,
+          "mean": 958.4760796019901
+        },
+        "summary_gain": {
+          "n": 402,
+          "min": 0.1267848079175615,
+          "p05": 0.1360897894847628,
+          "median": 0.14861404689630817,
+          "p95": 0.15837575535789616,
+          "max": 0.2185268905000904,
+          "mean": 0.14824829293741995
+        },
+        "effective_minus_mean_ms": {
+          "n": 402,
+          "min": -2.833318697842202,
+          "p05": -0.14762367292764367,
+          "median": -0.004221587519559478,
+          "p95": 0.1780978599047245,
+          "max": 2.474017872362566,
+          "mean": -0.0010190683724878565
+        }
+      },
+      "history_n_counts": {
+        "13": 1,
+        "14": 1,
+        "15": 1,
+        "16": 1,
+        "17": 398
+      }
+    }
+  ],
+  "total_applied_nonreset_summary_updates": 867,
+  "effective_time_formula": "mean(t) + sum((t-mean(t))^3)/(2*sum((t-mean(t))^2)), for constant relative acceleration",
+  "limits": [
+    "Receipt time is not radar acquisition time.",
+    "All observed applied summaries are 0x192; no 0x194 timing claim.",
+    "Startup windows are shorter; a fixed 480 ms delay does not describe every update.",
+    "Current ego added to delayed relative speed complicates over-ground timing. No extrapolation or profile change is implied."
+  ]
+}
