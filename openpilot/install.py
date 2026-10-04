@@ -160,7 +160,7 @@ def main() -> int:
         "). Reboot the device to activate.")
   if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
-          "reach the planner unfiltered and cause about twice the hard false braking of steady. Use it for research\n"
+          "reach the planner unfiltered and cause about three times the hard false braking of fused. Use it for research\n"
           "and comparison only; install.py with no --profile installs the recommended fused profile.")
   return 0
 
