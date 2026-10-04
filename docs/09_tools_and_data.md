@@ -74,7 +74,7 @@ acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/ope
 if clip rendering fails on `-vsync`.
 
 Here `vision` is unmodified openpilot (no radar tracks on this car) and `ars510` the installed integration; install
-another profile into a second opendbc copy (`install.py /tmp/opendbc_steady --profile steady`) to compare profiles.
+another profile into a second opendbc copy (`install.py /tmp/opendbc_anchor --profile anchor`) to compare profiles.
 
 ## Developing and testing a change
 

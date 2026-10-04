@@ -30,7 +30,7 @@ sudo reboot                                                          # required:
    fork and version, the `--check` output, and the time and description of each flagged moment. Do not post route
    IDs, dongle IDs, VINs, GPS or identifying video; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
-   `--profile anchor` (or `steady`, `raw`) installs another profile. Updating the fork resets `/data/openpilot`, so run
+   `--profile anchor` (or `raw`) installs another profile. Updating the fork resets `/data/openpilot`, so run
    the installer again after an update.
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
@@ -56,8 +56,7 @@ These are replay results on one owner's car; road reports from other drivers are
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
-| `anchor` | `--profile anchor` | four tuned guards against speed excursions plus ±3 m/s bounds from the radar's ACC target and summaries | earlier reactions than `fused`, about five times its radar-only braking |
-| `steady` | `--profile steady` | the four tuned guards without the ACC target | cars whose ACC target is not on the radar bus |
+| `anchor` | `--profile anchor` | the earlier approach: four tuned guards against speed excursions plus ±3 m/s bounds from the radar's ACC target and summaries | fallback: earlier reactions than `fused`, about five times its radar-only braking |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)

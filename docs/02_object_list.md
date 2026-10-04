@@ -154,7 +154,7 @@ from ars510.objects import decode_native_slot
 o = decode_native_slot(3, record[17 + 36 * 3 : 17 + 36 * 4])   # slot 3
 o.d_rel, o.y_rel, o.v_long_ground, o.age, o.movement_code, o.raw_weights148
 vrel_native = o.v_long_ground - v_ego                         # nominal velocity; matched ego reference
-vrel_b4 = o.v_long_ground * (0.149 / 0.15) - v_ego_b4          # openpilot/steady profiles; Toyota 0xB4
+vrel_b4 = o.v_long_ground * (0.149 / 0.15) - v_ego_b4          # all driving profiles; Toyota 0xB4
 ```
 
 The profile factor multiplies radar ground velocity before subtracting ego speed;
