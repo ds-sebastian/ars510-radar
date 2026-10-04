@@ -12,14 +12,13 @@ from ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG
 REPO = Path(__file__).resolve().parents[1]
 
 
-def test_steady_is_openpilot_plus_k4_jump_guard_far_settling_and_ramp_limiter():
+def test_steady_is_openpilot_plus_k4_far_settling_and_ramp_limiter():
   diff = {f.name for f in dataclasses.fields(OPENPILOT_CONFIG)
           if getattr(OPENPILOT_CONFIG, f.name) != getattr(STEADY_CONFIG, f.name)}
-  assert diff == {"range_fusion_gain", "vrel_smooth_far_tau_s", "vjump_thresh_mps", "far_min_publish_age",
-                  "ramp_up_mps2", "ramp_down_mps2"}
+  assert diff == {"range_fusion_gain", "vrel_smooth_far_tau_s", "far_min_publish_age", "ramp_up_mps2", "ramp_down_mps2"}
   assert STEADY_CONFIG.ramp_up_mps2 == 4.0 and STEADY_CONFIG.ramp_down_mps2 == 6.0 and STEADY_CONFIG.ramp_ref_tau_s == 3.0
   assert STEADY_CONFIG.range_fusion_gain == 0.1 and STEADY_CONFIG.vrel_smooth_far_tau_s == 1.0
-  assert STEADY_CONFIG.vjump_thresh_mps == 8.0 and OPENPILOT_CONFIG.drop_saturated_codes
+  assert STEADY_CONFIG.vjump_thresh_mps == 0.0 and OPENPILOT_CONFIG.drop_saturated_codes  # jump guard is an off option
   assert STEADY_CONFIG.far_min_publish_age == 100 and STEADY_CONFIG.far_publish_range_m == 70.0
   assert OPENPILOT_CONFIG.far_min_publish_age == 0
 
