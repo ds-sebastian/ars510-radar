@@ -253,6 +253,8 @@ class RadarInterface(RadarInterfaceBase):
     if points is None:
       if t is None or self.frame % 5 != 0:
         return None
+      if self.last_record_t is not None and t - self.last_record_t <= 0.5:
+        return None
       ret = structs.RadarData()
       ret.errors.radarUnavailableTemporary = self.last_record_t is not None and t - self.last_record_t > 0.5
       return ret

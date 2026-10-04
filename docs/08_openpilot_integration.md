@@ -56,6 +56,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 | situation | RadarData | effect in openpilot |
 |---|---|---|
 | record completed (~16.7 Hz) | points | radard fuses them with the vision leads |
+| between completed records, last record still fresh | no message (`None`) | radard retains the last scan; a genuinely empty completed scan still clears its tracks |
 | before the first record (boot ~6 s) | empty, no error | vision-only leads, as on a radarless car |
 | no record for > 0.5 s after the first | `radarUnavailableTemporary` | radarState invalid → `commIssue` (lateral too); with openpilot long also `radarTempUnavailable` |
 | CRC-failed record | dropped | none; the 0.5 s rule covers sustained loss |
