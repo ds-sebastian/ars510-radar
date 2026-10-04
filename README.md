@@ -166,7 +166,7 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 
 | path | contents |
 |---|---|
-| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `OPENPILOT_CONFIG` for `raw`) |
+| [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `BASE_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (parsing does not use them) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |

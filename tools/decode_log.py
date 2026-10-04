@@ -23,9 +23,9 @@ from typing import Iterator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import FUSED_CONFIG, BASE_CONFIG, ALL_TRACKS_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
-PROFILES = {"fused": FUSED_CONFIG, "raw": OPENPILOT_CONFIG, "openpilot": OPENPILOT_CONFIG, "all-tracks": RAW_CONFIG}
+PROFILES = {"fused": FUSED_CONFIG, "raw": BASE_CONFIG, "all-tracks": ALL_TRACKS_CONFIG}
 
 
 def frames_from_csv(path: Path) -> Iterator[tuple[float, int, int, bytes]]:
@@ -56,7 +56,7 @@ def main() -> int:
     ap.add_argument("log", type=Path)
     ap.add_argument("-o", "--out", type=Path, default=Path("ars510_points.csv"))
     ap.add_argument("--profile", choices=tuple(PROFILES), default="raw",
-                    help="install profiles fused / raw (openpilot is an older name for raw), "
+                    help="install profiles fused / raw, "
                          "or all-tracks: every track from age 1 with the radar's own IDs")
     args = ap.parse_args()
 

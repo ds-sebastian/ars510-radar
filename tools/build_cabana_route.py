@@ -35,7 +35,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from ars510.constants import ID80_IDLE_SLOT, ID80_OBJECT_COUNT, ID80_OBJECT_LEN, ID80_OBJECT_START  # noqa: E402
-from ars510.interface import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510.interface import BASE_CONFIG, ALL_TRACKS_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.objects import ACCEL_LIKE, AGE, LAT_DIST, LAT_INVALID_ABS_CODE, LAT_VEL, LONG_DIST, LONG_VEL_GROUND  # noqa: E402
 from ars510.record import id80_crc_ok  # noqa: E402
 from ars510.shell85 import CELL_COUNT, CELL_LEN, HEADER_LEN, id85_crc_ok  # noqa: E402
@@ -45,8 +45,8 @@ VBUS = 10
 OBJ_BASE, DERIVED_BASE, HEADER_ADDR, TRAILER_ADDR, SHELL_HDR, SHELL_BASE = 0x700, 0x720, 0x740, 0x741, 0x760, 0x761
 OBJ_DLC, DERIVED_DLC, HEADER_DLC, TRAILER_DLC, SHELL_HDR_DLC, SHELL_DLC = 48, 16, 20, 8, 24, 12
 SHELL_CRC = 0x76B
-FUSED_CONFIG = replace(RAW_CONFIG, range_fusion_gain=0.1)
-KALMAN_CONFIG = replace(RAW_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0)
+FUSED_CONFIG = replace(ALL_TRACKS_CONFIG, range_fusion_gain=0.1)
+KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0)
 SETTLED_AGE = 60
 BIT_MAP = REPO / "data" / "reference" / "slot_bit_map.json"
 DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"
@@ -232,8 +232,8 @@ def dbc_text() -> str:
                 _sig("DREL_FUSED", 72, 16, 0.01, 0, 0, 655.35, "m"), _sig("VREL_KALMAN", 88, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), ""]
         comments += [
             f'CM_ BO_ {m} "NOT radar bytes: values the ars510 interface computes for 0x80 slot {s}, for plotting next to the raw fields.";',
-            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age {OPENPILOT_CONFIG.min_publish_age}, re-link within {OPENPILOT_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
-            f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";',
+            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
+            f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
             f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";',
             f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of the fused profile); halves short-term range walks.";',
@@ -343,7 +343,7 @@ def build_segment(seg_dir: Path, out_route_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     a80, a85 = Id80RecordAssembler(), Id85RecordAssembler()
     ifaces = {k: Ars510NativeRadarInterface(c) for k, c in
-              (("raw", RAW_CONFIG), ("op", OPENPILOT_CONFIG), ("fused", FUSED_CONFIG), ("kalman", KALMAN_CONFIG))}
+              (("raw", ALL_TRACKS_CONFIG), ("op", BASE_CONFIG), ("fused", FUSED_CONFIG), ("kalman", KALMAN_CONFIG))}
     used, events, n80, n85, v_ego = set(), [], 0, 0, None
 
     def can_event(t_ns, frames):

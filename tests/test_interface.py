@@ -10,8 +10,8 @@ import pytest
 from ars510.constants import ID80_IDLE_SLOT
 from ars510.interface import (
     FUSED_CONFIG,
-    OPENPILOT_CONFIG,
-    RAW_CONFIG,
+    BASE_CONFIG,
+    ALL_TRACKS_CONFIG,
     RELINK_MIN_PUBLISH_AGE,
     NATIVE_VREL_STATUS,
     UNRESOLVED_NAN,
@@ -146,13 +146,13 @@ class TestNativeInterface:
 
 
 def test_openpilot_profile_holds_settling_tracks_and_relinks() -> None:
-    assert OPENPILOT_CONFIG.min_publish_age == 60 and OPENPILOT_CONFIG.relink_max_gap_s > 0
-    assert OPENPILOT_CONFIG.min_publish_age >= RELINK_MIN_PUBLISH_AGE
-    assert RAW_CONFIG.min_publish_age == 1 and RAW_CONFIG.relink_max_gap_s == 0
+    assert BASE_CONFIG.min_publish_age == 60 and BASE_CONFIG.relink_max_gap_s > 0
+    assert BASE_CONFIG.min_publish_age >= RELINK_MIN_PUBLISH_AGE
+    assert ALL_TRACKS_CONFIG.min_publish_age == 1 and ALL_TRACKS_CONFIG.relink_max_gap_s == 0
 
 
 def test_openpilot_profile_applies_the_measured_velocity_scale() -> None:
-    assert OPENPILOT_CONFIG.vground_scale == pytest.approx(0.149 / 0.15)
+    assert BASE_CONFIG.vground_scale == pytest.approx(0.149 / 0.15)
     iface = Ars510NativeRadarInterface(NativeInterfaceConfig(vground_scale=0.149 / 0.15))
     rec = record({3: slot_bytes(r_code=600, lat_code=2048, vel_code=int(510.5 + 100), age=40)})
     (p,) = iface.update_many([speed_frame(0.0, 20.0)] + frames(rec, 0.01))[0]["radarData"]["points"]
@@ -335,12 +335,12 @@ def test_saturation_guard_withholds_the_sentinel_and_restarts_the_track_id() -> 
 
 def test_age_one_initialization_template_is_withheld() -> None:
     template = slot_bytes(r_code=160, lat_code=2047, vel_code=700, age=1, width=0, length=0)
-    out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(frames(record({0: template}), 0.0))
+    out = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG).update_many(frames(record({0: template}), 0.0))
     assert out and out[-1]["radarData"]["points"] == []
 
 
 def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
-    iface = Ars510NativeRadarInterface(replace(RAW_CONFIG, include_metadata=True))
+    iface = Ars510NativeRadarInterface(replace(ALL_TRACKS_CONFIG, include_metadata=True))
     # yaw rate 0.1 rad/s left: raw = (5.7296 deg/s + 125) / 0.244 = 535.8 -> 536
     yaw_raw = 536
     yaw = (yaw_raw * 0.244 - 125) * math.pi / 180
@@ -359,7 +359,7 @@ def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
 
 
 def test_yvrel_is_nan_without_yaw_rate() -> None:
-    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG)
     iface.set_ego_speed(20.0, 0.0)
     rec = record({2: slot_bytes(r_code=160 + 16 * 40, lat_code=2048, vel_code=644, age=70, vy_code=531, ax_code=536)})
     pt = iface.update_many(frames(rec, 0.001))[-1]["radarData"]["points"][0]

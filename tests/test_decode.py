@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from ars510 import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface
+from ars510 import BASE_CONFIG, ALL_TRACKS_CONFIG, Ars510NativeRadarInterface
 from ars510.constants import ID80_IDLE_SLOT, ID80_RECORD_LEN, ID85_RECORD_LEN
 from ars510.objects import (
     AGE_SATURATION,
@@ -170,7 +170,7 @@ def test_real_shell_parameter_presence_matches_default_blocks(name: str) -> None
 
 @pytest.mark.parametrize("name", ["highway_following_30s.csv.gz", "highway_vrel_excursion_25s.csv.gz"])
 def test_real_samples_decode_cleanly(name: str) -> None:
-    for cfg in (RAW_CONFIG, OPENPILOT_CONFIG):
+    for cfg in (ALL_TRACKS_CONFIG, BASE_CONFIG):
         iface = Ars510NativeRadarInterface(cfg)
         out = iface.update_many(sample_frames(name))
         assert len(out) > 400 and iface.crc_failures == 0
@@ -179,19 +179,19 @@ def test_real_samples_decode_cleanly(name: str) -> None:
             assert len(ids) == len(set(ids))  # never a duplicate ID in one record
             for pt in p["radarData"]["points"]:
                 assert math.isfinite(pt["dRel"]) and math.isfinite(pt["yRel"])
-                if cfg is OPENPILOT_CONFIG:
+                if cfg is BASE_CONFIG:
                     assert math.isfinite(pt["vRel"]) and pt["age"] >= 60
 
 
 def test_initialization_template_is_not_published() -> None:
     # The excursion sample holds two age-1 template outputs (zero size codes, placeholder range 0 m).
-    out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(sample_frames("highway_vrel_excursion_25s.csv.gz"))
+    out = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG).update_many(sample_frames("highway_vrel_excursion_25s.csv.gz"))
     points = [pt for p in out for pt in p["radarData"]["points"]]
     assert points and all(abs(pt["dRel"]) > 0.01 for pt in points)
 
 
 def test_sample_record_rate_is_the_radar_cycle() -> None:
-    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG)
     t = [p["time_s"] for p in iface.update_many(sample_frames("highway_following_30s.csv.gz"))]
     dt = sorted(b - a for a, b in zip(t, t[1:]))
     assert 0.055 < dt[len(dt) // 2] < 0.065
@@ -199,7 +199,7 @@ def test_sample_record_rate_is_the_radar_cycle() -> None:
 
 def test_excursion_sample_shows_the_known_false_closing() -> None:
     """The settled lead's over-ground speed dips ~8 m/s for ~1 s while its range keeps opening (docs/07)."""
-    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG)
     lead = [(p["time_s"], pt) for p in iface.update_many(sample_frames("highway_vrel_excursion_25s.csv.gz"))
             for pt in p["radarData"]["points"] if pt["age"] >= 60 and abs(pt["yRel"]) < 1.8 and pt["dRel"] < 80]
     v = [pt["v_long_ground"] for _, pt in lead]

@@ -4,8 +4,8 @@
 For every logged modelV2 message (radard's cadence), one pipeline per profile steps side by side. Each is an
 unmodified `RadarD` feeding an unmodified `LongitudinalPlanner`:
   - vision:     empty radar points (what a radarless car runs)
-  - raw:        ars510 RAW_CONFIG
-  - openpilot:  ars510 OPENPILOT_CONFIG
+  - raw:        ars510 ALL_TRACKS_CONFIG
+  - openpilot:  ars510 BASE_CONFIG
   - plus any candidate profile from PROFILES below
 radard gets the latest radar record completed before each model message. Planner inputs are the logged
 carState, controlsState, selfdriveState, vehicleParameters and carControl.
@@ -40,11 +40,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
-from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import FUSED_CONFIG, BASE_CONFIG, ALL_TRACKS_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
 PROFILES = {
-    "all-tracks": RAW_CONFIG,
-    "openpilot": OPENPILOT_CONFIG,
+    "all-tracks": ALL_TRACKS_CONFIG,
+    "raw": BASE_CONFIG,
     "fused": FUSED_CONFIG,
     # without the radar's own trackers: the Kalman filter on the object list alone (docs/07)
     "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4, summary_sigma_mps=1e4),
@@ -109,7 +109,7 @@ def main() -> int:
     ap.add_argument("rlogs", nargs="+", type=Path)
     ap.add_argument("--openpilot", type=Path, required=True)
     ap.add_argument("--mpc-shadow", type=Path, default=None, help="dir from build_long_mpc_shadow.py (unbuilt checkouts)")
-    ap.add_argument("--profiles", nargs="+", default=["all-tracks", "openpilot"], choices=list(PROFILES))
+    ap.add_argument("--profiles", nargs="+", default=["all-tracks", "raw"], choices=list(PROFILES))
     ap.add_argument("--fingerprint", default="TOYOTA_RAV4_TSS2_2022")
     ap.add_argument("--force-engaged", action="store_true", help="force longControlState=pid so every tick is scored as engaged")
     ap.add_argument("--out", type=Path, default=Path("replay_out"))

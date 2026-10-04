@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from ars510 import FUSED_CONFIG, OPENPILOT_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.support import parse_acc_target_vrel  # noqa: E402
 
 OUT = REPO / "docs" / "img" / "analysis"
@@ -63,7 +63,7 @@ def lead(name, cfg) -> dict:
     return out
 
 
-STOCK = OPENPILOT_CONFIG
+STOCK = BASE_CONFIG
 
 
 def profiles_figure() -> None:

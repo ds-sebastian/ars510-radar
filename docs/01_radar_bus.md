@@ -65,5 +65,5 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 ## Ego speed
 
 The object velocities are **over ground**, so the consumer subtracts ego speed. Toyota 0xB4 reads about 1.5% below
-GPS and wheel speed; `OPENPILOT_CONFIG` subtracts 0xB4 speed and applies `vground_scale = 0.149 / 0.15` to match
+GPS and wheel speed; `BASE_CONFIG` subtracts 0xB4 speed and applies `vground_scale = 0.149 / 0.15` to match
 ([06](06_accuracy.md#velocity)).

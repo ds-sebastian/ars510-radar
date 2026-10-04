@@ -32,7 +32,7 @@ while testing).
 | profile | config |
 |---|---|
 | `fused` (default) | `FUSED_CONFIG`: `raw` + range fusion + one Kalman speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194) by the radar's own uncertainty. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
-| `raw` | `OPENPILOT_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
+| `raw` | `BASE_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
 
 ## What gets installed
 

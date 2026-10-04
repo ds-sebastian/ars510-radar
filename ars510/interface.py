@@ -9,13 +9,13 @@ with points carrying dRel (m, forward), yRel (m, LEFT positive), vRel (m/s, over
 speed) and trackId (from the radar's own slot / age lifecycle).
 
 Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`. Without a fresh ego speed
-vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
+vRel is NaN, and BASE_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
-Profiles (docs/07 explains the filter, docs/11 compares them with vision only):
-  FUSED_CONFIG     default install profile: one Kalman speed filter per track fusing the object list, the radar's
-                   ACC target and its summaries, each weighted by its own uncertainty
-  OPENPILOT_CONFIG the unfiltered radar decode with only what radard needs (the 'raw' install profile)
-  RAW_CONFIG       every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
+Configs (docs/12 explains the filter, docs/11 compares the profiles with vision only):
+  FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list, the radar's
+                     ACC target and its summaries, each weighted by its own uncertainty
+  BASE_CONFIG        the unfiltered radar decode with only what radard needs (the 'raw' install profile)
+  ALL_TRACKS_CONFIG  every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
 """
 from __future__ import annotations
 
@@ -109,15 +109,15 @@ class NativeInterfaceConfig:
 
 
 # Every valid track, radar's own IDs: the decode-level view.
-RAW_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
+ALL_TRACKS_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
 # The unfiltered radar decode with only the validity rules radard needs: the "raw" install profile (docs/08).
-OPENPILOT_CONFIG = NativeInterfaceConfig(
+BASE_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
 # The default install profile (docs/07, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
 # filter per track that fuses the object list, the radar's ACC target and its summary ranges.
-FUSED_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, drop_saturated_codes=False, fused_speed_filter=True)
+FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, drop_saturated_codes=False, fused_speed_filter=True)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
