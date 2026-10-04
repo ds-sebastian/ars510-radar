@@ -161,7 +161,7 @@ the extra roughness.*
 The radar's object list is already a tracker output, so these layers do not "denoise measurements"; each one targets
 a specific, measured failure of the published track before radard sees it. They run per track, in this order, inside
 `Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). The three install profiles
-are cumulative: `stock` (steps 0-1), `steady` (0-3, 5-6) and `anchor` (0-3, 5-7); step 4 is an option that is off.
+are cumulative: `raw` (steps 0-1), `steady` (0-3, 5-6) and `anchor` (0-3, 5-7); step 4 is an option that is off.
 
 ![each layer added in turn](img/analysis/layer_staircase.png)
 
@@ -288,7 +288,7 @@ far smoothing together (K4) keep most of the head start.*
 
 ![profiles on the samples](img/analysis/profile_comparison.png)
 
-*The three profiles on both bundled excursions: `stock` passes the drop, `steady` softens it, `anchor` also bounds it
+*The three profiles on both bundled excursions: `raw` passes the drop, `steady` softens it, `anchor` also bounds it
 by the radar's own ACC target when that target describes the track.*
 
 ### What removing a layer does
@@ -297,7 +297,7 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 
 | removed | effect |
 |---|---|
-| everything (`stock` instead of `steady`) | held-out hard ticks 53 → 93, target episodes 11 → 19, lead switches 1,781 → 2,468; braking onset 0.04 s earlier |
+| everything (`raw` instead of `steady`) | held-out hard ticks 53 → 93, target episodes 11 → 19, lead switches 1,781 → 2,468; braking onset 0.04 s earlier |
 | ramp limiter | held-out hard ticks 53 → 69 |
 | far settling and jump guard | further drives 1 → 9 hard ticks; one owner episode more |
 | jump guard alone | no scored change on 34 drives or the fresh drives: removed from the profiles |
@@ -337,8 +337,9 @@ approaches). It stays off until that scale is understood ([`acc_fields.json`](..
 ### Fused speed filter (`fused` profile)
 
 The layers above are each tuned against one failure. `fused` replaces far smoothing, far-track settling, the ramp
-limiter and both ±3 m/s clips with one per-track Kalman filter on the lead's over-ground speed, built from what the radar
-itself reports ([summary](../data/analysis/summaries/fused_filter.json)):
+limiter and both ±3 m/s clips with one per-track Kalman filter on the lead's over-ground speed (a standard one-state
+Kalman filter with several measurements per step; [11](11_profiles_compared.md) shows it on six real moments and against
+vision only), built from what the radar itself reports ([summary](../data/analysis/summaries/fused_filter.json)):
 
 - **Each reading is weighted by its own standard deviation.** The object-list speed has σ = 0.045 m/s × `240|7`
   ([above](#far-range-excursions-match-the-reported-velocity-error-scale)): about 0.2 m/s at 15 m, 1.4 m/s at 60 m,

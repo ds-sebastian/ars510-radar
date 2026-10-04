@@ -67,17 +67,17 @@ track: profiles only change *how* a track's values are filtered, never which car
 | profile | what it is | when to use |
 |---|---|---|
 | **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes, and its target-range summaries (0x192/0x194) for far tracks up to 80 m | everyday driving: the fewest false brakes at the same response as `steady` |
-| `fused` | `FUSED_CONFIG` = `stock` + range fusion + one speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | the principled alternative to `anchor`: fewer false brakes, closing speed without `anchor`'s bias; opt-in until road-tested |
-| `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
-| `stock` | `OPENPILOT_CONFIG`: the plain decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
+| `fused` | `FUSED_CONFIG` = `raw` + range fusion + one speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | the principled alternative to `anchor`: fewer false brakes, closing speed without `anchor`'s bias; opt-in until road-tested |
+| `steady` | `STEADY_CONFIG` = `raw` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
+| `raw` | `OPENPILOT_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 
-`default`, the older name of `stock`, is still accepted so earlier instructions keep working.
+`raw` is the unfiltered radar decode, not vision-only and not stock openpilot. Its older names `stock` and `default` are still accepted so earlier instructions keep working.
 
 Replay against the driver, unchanged openpilot card → radard → planner
 ([summary](../data/analysis/summaries/acc_anchor.json), [fused](../data/analysis/summaries/fused_filter.json),
 [profile figures](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
 
-| | `stock` | `steady` | `anchor` | `fused` |
+| | `raw` | `steady` | `anchor` | `fused` |
 |---|---|---|---|---|
 | hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 53 | 48 | **30** |
 | radar-only episodes (hard / target), held-out | 15 / 19 | 12 / 11 | 11 / 9 | **10 / 4** |
@@ -92,7 +92,7 @@ lead closing speed is 0.54 m/s more closing than the vision lead on average, `fu
 its false brakes ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
 
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
-−0.5 m/s²: braking that only the radar wanted. `stock` reacts about 0.04 s earlier on average than the filtered
+−0.5 m/s²: braking that only the radar wanted. `raw` reacts about 0.04 s earlier on average than the filtered
 profiles but asks for hard braking nearly twice as often, almost always because of a velocity excursion.
 
 What each setting does (examples and plots in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
@@ -137,22 +137,22 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
 
 ## Radar + vision against vision only (replay)
 
-20 held-out routes, 4.56 h with the driver controlling speed, openpilot `10b9e73` card → radard → plannerd, default
-profile, judged against what the driver did:
+Every profile against vision only on 20 held-out routes (4.56 h with the driver controlling speed, 167 brake presses),
+unchanged openpilot card → radard → planner; details, driving pros and cons and assumptions in
+[11](11_profiles_compared.md#against-vision-only):
 
-| measure | vision only | radar + vision |
-|---|---|---|
-| first braking request (≤ −0.5 m/s²) around a driver brake press | — | **0.15 s earlier** [0.05, 0.26] |
-| already asking ≤ −0.5 m/s² within 3 s before a brake press | 80.8% | **84.4%** |
-| already asking ≤ −1.0 m/s² | 40.1% | 44.3% |
-| hard slowdowns and stops never asked ≤ −1 m/s² (of 47) | 10 | 9 |
-| stops behind an already-stopped vehicle missed (of 7) | 0 | 0 |
-| moment-to-moment error vs the driver's acceleration 0.5 s later | 0.174 m/s² | 0.186 m/s² |
-| radar-only requests ≤ −1 m/s² for ≥ 0.3 s | — | 1.97 / h (driver on the gas for 0.88 / h) |
-| forward-collision warnings | 0 | 0 |
+| | vision only | `raw` | `steady` | `anchor` | `fused` |
+|---|---|---|---|---|---|
+| first braking request vs vision, mean | — | −0.15 s | −0.08 s | −0.08 s | +0.01 s |
+| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 44.3% | 43.7% | 41.9% |
+| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 | 10 |
+| braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 1.31 (0.22) | 1.10 (0.22) | 0.22 (0) |
+| request jerk, mean \|da/dt\| | 1.003 m/s³ | 1.029 | 1.011 | 1.009 | 1.001 |
+| forward-collision warnings | 0 | 0 | 0 | 0 | 0 |
 
-Radar reacts earlier and a little more often to real slowdowns and adds some jitter from velocity excursions; the
-steady profile keeps most of the first and halves the second.
+The radar profiles' earlier reactions come partly from real head starts (closings through curves, far away) and
+partly from an over-closing bias that also causes their radar-only braking; `fused` removes the bias, keeps vision's
+timing on average and nearly all of radar's distance accuracy.
 
 ![radar sees the closing first](img/shots/curve_early_closing.jpg)
 

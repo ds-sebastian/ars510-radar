@@ -14,7 +14,7 @@ sudo reboot
 ```
 
 That's all: the fork is detected, the `anchor` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. Pick another profile with `--profile steady` or `--profile stock`.
+version of this installer is replaced automatically. Pick another profile with `--profile steady` or `--profile raw`.
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
@@ -31,9 +31,9 @@ while testing).
 | profile | config |
 |---|---|
 | `anchor` (default) | `ANCHOR_CONFIG`: `steady` + the radar's own ACC target (0x235) as a bound on the lead's speed, and its target-range summaries (0x192/0x194) for far cars up to 80 m. Fewest false brakes at the same response ([docs/08](../docs/08_openpilot_integration.md#profiles)) |
-| `fused` | `FUSED_CONFIG`: `stock` + range fusion + one uncertainty-weighted speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194). Replaces the far-range layers and the anchor clips ([docs/07](../docs/07_velocity_excursions.md#fused-speed-filter-fused-profile)) |
+| `fused` | `FUSED_CONFIG`: `raw` + range fusion + one uncertainty-weighted speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194). Replaces the far-range layers and the anchor clips ([docs/07](../docs/07_velocity_excursions.md#fused-speed-filter-fused-profile)) |
 | `steady` | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
-| `stock` | `OPENPILOT_CONFIG`: the plain decode with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `default` is its older name |
+| `raw` | `OPENPILOT_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `stock` and `default` are its older names |
 
 ## What gets installed
 

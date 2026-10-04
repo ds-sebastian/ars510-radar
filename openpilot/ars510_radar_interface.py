@@ -39,11 +39,11 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
 
 # Decoder profile (docs/08): "anchor" (ANCHOR_CONFIG, default: steady + the radar's own ACC target as a velocity
 # anchor), "fused" (FUSED_CONFIG: one uncertainty-weighted speed filter fusing the object list, the ACC target and the
-# summaries, docs/07), "steady" (STEADY_CONFIG: guards and smoothing against velocity excursions, docs/07) or "stock"
-# (OPENPILOT_CONFIG: the plain decode, research only; "default" is its older name). `install.py --profile` rewrites
+# summaries, docs/07), "steady" (STEADY_CONFIG: guards and smoothing against velocity excursions, docs/07) or "raw"
+# (OPENPILOT_CONFIG: the unfiltered radar decode, research only; "stock" and "default" are older names). `install.py --profile` rewrites
 # this one line in the installed copy.
-PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "stock": OPENPILOT_CONFIG,
-            "default": OPENPILOT_CONFIG}
+PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,
+            "stock": OPENPILOT_CONFIG, "default": OPENPILOT_CONFIG}
 PROFILE = PROFILES["anchor"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.

@@ -305,7 +305,7 @@ def brake_events():
         if "v_cam" in Cm and Cm.v_cam.notna().any():
             b.plot(Cm.dt, Cm.v_cam, color=S3, lw=1.4, label="camera box growth")
         c.plot(W.dt, W.vision_aTarget, color=S2, lw=1.4, label="vision-only plan")
-        c.plot(W.dt, W.openpilot_aTarget, color=S1, lw=1.4, label="plan with radar (stock profile)")
+        c.plot(W.dt, W.openpilot_aTarget, color=S1, lw=1.4, label="plan with radar (raw profile)")
         c.plot(W.dt, W.a_ego, color=INK2, lw=0.9, ls=":", label="recorded a_ego")
         c.set_xlabel("s relative to driver brake onset")
         for ax in (a, b, c):
