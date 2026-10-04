@@ -31,7 +31,7 @@ while testing).
 | profile | config |
 |---|---|
 | `anchor` (default) | `ANCHOR_CONFIG`: `steady` + the radar's own ACC target (0x235) as a bound on the lead's speed. Fewest false brakes at the same response ([docs/08](../docs/08_openpilot_integration.md#profiles)) |
-| `steady` | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, saturation and velocity-jump guards, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
+| `steady` | `STEADY_CONFIG`: velocity-aided range, far-range vRel smoothing, far-track settling, ramp limiter ([docs/07](../docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step)) |
 | `stock` | `OPENPILOT_CONFIG`: the plain decode with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `default` is its older name |
 
 ## What gets installed

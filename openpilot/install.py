@@ -16,7 +16,7 @@ An install made with an older, patch-based version of this installer is removed 
 
 Profiles (docs/08 has the details and replay numbers):
   anchor    ANCHOR_CONFIG (default): steady + the radar's own ACC target (0x235) as a velocity anchor
-  steady    STEADY_CONFIG: stock + range fusion, far smoothing, jump/saturation guards, far settling, ramp limiter
+  steady    STEADY_CONFIG: stock + range fusion, far smoothing, far settling, ramp limiter
   stock     OPENPILOT_CONFIG: the plain decode with only what radard needs to run. Velocity excursions reach the
             planner unfiltered (about twice the hard false braking of steady); for research and comparison only
   default   older name for stock, kept so existing installs and instructions keep working

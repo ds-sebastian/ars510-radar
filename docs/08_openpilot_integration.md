@@ -67,7 +67,7 @@ track: profiles only change *how* a track's values are filtered, never which car
 | profile | what it is | when to use |
 |---|---|---|
 | **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes | everyday driving: the fewest false brakes at the same response as `steady` |
-| `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, jump and saturation guards, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
+| `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
 | `stock` | `OPENPILOT_CONFIG`: the plain decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 
 `default`, the older name of `stock`, is still accepted so earlier instructions keep working.
@@ -97,7 +97,7 @@ What each setting does (examples and plots in [07](07_velocity_excursions.md#how
 | `drop_saturated_codes` | all | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards |
 | `range_fusion_gain=0.1` | steady, anchor | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
 | `vrel_smooth_far_tau_s=1.0` | steady, anchor | vRel EMA, time constant 0 s below 30 m rising to 1 s beyond 60 m, where excursions live |
-| `vjump_thresh_mps=8` | steady, anchor | withholds a record more than 8 m/s from the last accepted one; a new level that lasts 1 s is accepted |
+| `vjump_thresh_mps=8` | option, off | withholds a record more than 8 m/s from the last accepted one; a new level that lasts 1 s is accepted. No scored effect once the ramp limiter and far settling are on |
 | `far_min_publish_age=100` above 70 m | steady, anchor | far new tracks wait ~6 s instead of ~3.6 s: young far tracks are where pickups misread speed |
 | `ramp_up_mps2=4`, `ramp_down_mps2=6` | steady, anchor | over-ground speed may leave its 3 s average by at most +4 / −6 m/s²; returns pass at once |
 | `acc_target_clip_mps=3`, `acc_target_sticky`, `acc_match_range_m=12`, `acc_match_min_age=20` | anchor | the track the radar reports as its ACC target stays within ±3 m/s of the target's closing speed; the association survives the target's range sliding |

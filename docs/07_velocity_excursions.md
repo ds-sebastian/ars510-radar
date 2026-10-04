@@ -131,7 +131,7 @@ the extra roughness.*
 The radar's object list is already a tracker output, so these layers do not "denoise measurements"; each one targets
 a specific, measured failure of the published track before radard sees it. They run per track, in this order, inside
 `Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). The three install profiles
-are cumulative: `stock` (step 0-1), `steady` (0-6) and `anchor` (0-7).
+are cumulative: `stock` (steps 0-1), `steady` (0-3, 5-6) and `anchor` (0-3, 5-7); step 4 is an option that is off.
 
 ![each layer added in turn](img/analysis/layer_staircase.png)
 
@@ -188,16 +188,16 @@ near −0.6 m/s while the object-list velocity falls to −5.8.*
 *Extra plan roughness removed against radar head start given up, per option, on 20 held-out routes: range fusion and
 far smoothing together (K4) keep most of the head start.*
 
-### 4. Velocity-jump guard (`steady`, `anchor`)
+### 4. Velocity-jump guard (option, off)
 
 - **Problem:** occasionally one record jumps by many m/s and comes straight back (196 jumps > 5 m/s in the census).
 - **Rule:** a mature track's record more than 8 m/s from its last accepted over-ground velocity is withheld; a new level
   that persists for 1 s is accepted as real and the track continues under a new ID.
 - **Evidence:** added to K4 together with the saturation guard, it cut held-out hard ticks 85 → 69 and halved
   gas-overridden brakes again (0.44 → 0.22 per hour), with lag, anticipation and switches unchanged; 17 of 20 routes
-  are identical. Once the ramp limiter and far
-  settling are present, removing it changes no scored outcome on the 34 replay drives or the fresh drives; it stays as
-  the only layer that catches a single-record spike before it reaches radard.
+  are identical. Once the ramp limiter and far settling are present it adds nothing: `anchor` with and without it is
+  identical in every scored measure on the 34 replay drives (hard ticks 48 / 48, owner 0 / 0, response, anticipation,
+  misses) and on the fresh drives, so it is no longer part of any profile (`vjump_thresh_mps=8` turns it back on).
 - **State contract:** a withheld record still updates the native lifecycle but skips the ramp, smoother, range fusion
   and relink history, so recovery can change later vRel/dRel and the published ID.
 
@@ -270,7 +270,7 @@ From the full profile, on the 34-drive replay suite ([`layer_ablation.json`](../
 | everything (`stock` instead of `steady`) | held-out hard ticks 53 → 93, target episodes 11 → 19, lead switches 1,781 → 2,468; braking onset 0.04 s earlier |
 | ramp limiter | held-out hard ticks 53 → 69 |
 | far settling and jump guard | further drives 1 → 9 hard ticks; one owner episode more |
-| jump guard alone | no scored change (kept as a spike guard) |
+| jump guard alone | no scored change on 34 drives or the fresh drives: removed from the profiles |
 | ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
 
 ### Other approaches tested
@@ -302,7 +302,8 @@ improvement is false. This overlay is separate from the historical full 19-gate 
 for further study, not profile promotion. Independent checks cover source selections, complete output groups and
 1,398 scoring calculations. Native outputs differ in 406 batches, so equal aggregate counts do not mean identical
 behavior. Physical scene/velocity labels, the recorded device's historical profile identity, private map memory and
-actual receive times remain unavailable. Both shipped profiles that build on `steady` (`steady`, `anchor`) keep the jump guard.
+actual receive times remain unavailable. The same comparison for `anchor` on all 34 replay drives is equal in every scored
+measure, and the jump guard is now off in both profiles ([`layer_ablation.json`](../data/analysis/summaries/layer_ablation.json)).
 
 ## Sunnypilot profile comparison
 

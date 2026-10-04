@@ -92,6 +92,49 @@
     },
     "range_fusion_and_far_smoothing": {
       "note": "K4 halves extra roughness (-0.0053 m/s2 [-0.0099,-0.0022]; fresh -0.0081) for ~0.07 s head start; gas-overridden brakes 0.66 -> 0.44 /h"
+    },
+    "jump_guard_from_anchor": {
+      "heldout_hard": [
+        48,
+        48
+      ],
+      "hard_episodes": [
+        11,
+        11
+      ],
+      "target_episodes": [
+        9,
+        9
+      ],
+      "switches": [
+        1781,
+        1781
+      ],
+      "further_hard": [
+        1,
+        1
+      ],
+      "owner_hard": [
+        0,
+        0
+      ],
+      "mean_onset_s": [
+        -1.1277,
+        -1.1277
+      ],
+      "anticipation": [
+        0.437,
+        0.437
+      ],
+      "misses": [
+        72,
+        72
+      ],
+      "fresh_hard": [
+        0,
+        0
+      ],
+      "decision": "removed from steady and anchor; option vjump_thresh_mps kept"
     }
   },
   "stock_vs_steady_heldout": {
