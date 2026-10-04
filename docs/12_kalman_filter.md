@@ -122,8 +122,19 @@ stays radard's job; a speed + acceleration state here did worse ([below](#kalman
 ### 2. Range fusion (`fused`)
 
 - **Problem:** range walks by metres at 60-100 m (3% per frame); radard's distance and vision match jitter.
-- **Rule:** predict dRel with vRel, then move 10% toward the measurement each cycle.
-- **Evidence:** halves 1.5 s range walks, which radard's distance and the planner otherwise pass on.
+- **Rule:** integrate the mean of the previous and current filtered vRel, then move 10% toward the native range:
+
+  ```text
+  predicted range = previous range + 0.5 × (previous vRel + current vRel) × Δt
+  output range    = predicted range + 0.1 × (native range − predicted range)
+  ```
+
+  This is a separate fixed-gain predictor/corrector; it maintains no range covariance. The range residual never
+  changes speed, so the measured range-rate/speed mismatch cannot feed back into the velocity estimate. A new
+  state, invalid speed or gap over 0.5 s starts again at native range. The gain is an empirical setting, justified
+  by the ablation below rather than a decoded sensor uncertainty.
+- **Evidence:** halves 1.5 s range walks, which radard's distance and the planner otherwise pass on. Retaining it
+  chiefly improves lead stability; its removal increases radar/vision lead switches without worsening hard-braking counts.
 
 ## What each part contributes
 
