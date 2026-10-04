@@ -1,7 +1,11 @@
 # Contributing
 
-Thanks for helping. There are three ways in, from least to most involved: drive and report, fix or improve code and
-docs, or add a research result.
+Thanks for helping. There are three ways in, from least to most involved:
+
+1. **Drive and report.** Install it, drive, flag odd moments, and open a drive report. Reports from another car, radar
+   firmware or fork are the most valuable contribution right now.
+2. **Fix or improve code and docs.** Installer support for another fork, clearer docs, tests, tools.
+3. **Add a research result.** An open problem from [docs/10](docs/10_research_directions.md), with the evidence.
 
 ## Workflow
 
@@ -39,10 +43,11 @@ the layout and the smoothing hold beyond one car.
 
 - **Decoder** (`ars510/`): field changes need a test (a synthetic slot in `tests/` or a bundled sample in
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
-- **Driving behaviour** (anything that changes published RadarPoints under the `steady` profile): state the expected
-  effect before running it, replay it through openpilot on drives against the current profile with the same gates as
-  [docs/07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step), and put the numbers in the PR. Behaviour changes that only look
-  better on the drive that motivated them are not merged.
+- **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `fused`):
+  state the expected effect before running it, replay it through openpilot against the current profile with the gates
+  in [docs/07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step) and the vision-only comparison in
+  [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that
+  change, not just the counts. Changes that only look better on the drive that motivated them are not merged.
 - **Integration** (`openpilot/`): run `openpilot/check_integration.py` against every fork you can
   ([`openpilot/README.md`](openpilot/README.md#test-on-a-pc-first)) and list the results in the PR. The installer
   must stay fork-agnostic: no in-place edits of fork files, no new `ToyotaFlags` bits.

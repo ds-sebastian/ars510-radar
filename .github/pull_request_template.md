@@ -5,7 +5,7 @@
 ## Type
 
 - [ ] Decoder (field or transport change): test added, doc row updated
-- [ ] Driving behaviour (changes `steady` output): replay numbers below
+- [ ] Driving behaviour (changes a profile's output, e.g. the default `fused`): replay numbers below
 - [ ] Integration / installer: `check_integration.py` results below
 - [ ] Docs / figures
 - [ ] Research result

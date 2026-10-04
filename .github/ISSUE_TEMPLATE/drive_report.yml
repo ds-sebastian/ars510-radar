@@ -35,7 +35,7 @@ body:
     id: profile
     attributes:
       label: Profile
-      options: [steady (default), default]
+      options: [fused (default), anchor, steady, raw, not sure]
   - type: input
     id: driving
     attributes:

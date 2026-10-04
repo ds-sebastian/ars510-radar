@@ -4,31 +4,31 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **Resolve the range scale, then anchor the range.** The radar ACC target's fine range and speed agree at nominal
-   units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed integrates,
-   while it matches ego speed on near-stationary targets. A range anchor built on the fine range helps a little and
-   costs a little until that is resolved ([07](07_velocity_excursions.md#range-anchor-option-off)).
-2. **More of the lead covered by the anchor.** The radar's ACC target exists for about 57% of radar-lead time and 5%
-   beyond 80 m, so far excursions still depend on the `steady` layers. Finding when and why the radar drops or
-   delays its target (range, speed, curve, camera state) tells whether coverage can grow.
+1. **Resolve the range scale, then put range in the filter.** The radar ACC target's fine range and speed agree at
+   nominal units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed
+   integrates, while it matches ego speed on near-stationary targets. Until that is resolved, `fused` keeps range out
+   of its Kalman filter and only smooths it with range fusion ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+2. **More of the lead covered by the radar's own trackers.** The ACC target exists for about 57% of radar-lead time and
+   5% beyond 80 m; the summaries add far coverage up to 80 m. Far tracks with neither depend on the object list and its
+   wide error alone, which is where `fused`'s remaining radar-only braking comes from. Finding when and why the radar
+   drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
 3. **Is the radar's ACC target camera-assisted?** The radar sends it ([05](05_acc_target_and_support.md)), but it
    receives lane-like camera data. Moments when the camera's messages to the radar go stale (glare, tunnels,
    startup), or one drive with the camera covered, show whether its velocity depends on the camera.
-4. **Uncertainty units before filter tuning.** `240|7` tracks the size of the object list's disagreement with an
-   optical reference ([03](03_slot_fields.md#kinematics)) but a Kalman filter weighted by it does not reproduce the
-   radar's own ACC velocity, so it is not that filter's measurement variance. Independent motion is needed to give it
-   physical units.
-5. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
+4. **Physical units for the uncertainty fields.** `240|7` (speed) and `224|7` (range) are calibrated against the
+   radar's ACC target, which is the radar's own estimate. An independent reference (a second car with a GPS logger,
+   or a known far target) would give them physical units and test `fused`'s weights directly.
+5. **Do the weighting in radard.** A radard that accepts a per-point speed variance would let this interface pass the
+   radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
+   The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 3-4) is a related experiment.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
    than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.68 vs 0.80 m/s²)
    and about 0.35 s earlier, with less wobble. radard ignores radar-provided `aRel` for every car; a fork-side radard
    change that uses it would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
-8. **Simplify further.** The jump guard is gone (no scored effect anywhere). Removing far smoothing or far-track
-   settling from `anchor` each raises the further drives' hard braking from 1 to 9 ticks
-   ([07](07_velocity_excursions.md#what-removing-a-layer-does)), so both stay until the excursion source itself is
-   handled; the remaining layers each have a measured job.
+8. **Road miles with `fused`.** The replay results ([11](11_profiles_compared.md)) need closed-loop confirmation:
+   drives with flagged moments, ideally from a second car, driver or radar firmware.
 
 ## Learn from Toyota's own longitudinal control
 
