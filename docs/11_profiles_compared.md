@@ -13,8 +13,8 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | | `raw` | `fused` without ACC / summary | `fused` (default) |
 |---|---|---|---|
 | what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
-| filter settings | — | scalar process scale, robust update and readiness threshold | also tracker weights; [definitions and evidence](12_kalman_filter.md#constants-and-their-sources) |
-| code beyond the shared decode | ~60 lines | +35 | +109 |
+| filter settings | — | scalar process scale, robust update and readiness threshold | also tracker weights; [definitions and evidence](12_kalman_filter.md#the-model) |
+| code beyond the decode (openpilot-file lines) | ~60 (guard, relink; fork only) | +24 | +84 |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
 | first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.03 s | +0.01 s |
@@ -29,8 +29,8 @@ tuned profiles (`anchor`: 48 hard ticks, 1.10 radar-only brakes per hour; `stead
 
 ![which processing each profile applies](img/analysis/profile_layers.png)
 
-*Each row is one processing step; coloured cells are the steps a profile runs. Line counts are non-blank, non-comment
-lines in `ars510/interface.py`.*
+*Each row is one processing step; coloured cells are the steps a profile runs. Line counts are source lines of the
+fork build (`ars510/`).*
 
 - **`raw`** publishes the object list as decoded: tracks from age 60 (≈ 3.6 s, once range and speed have converged),
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
@@ -156,9 +156,11 @@ What the radar adds, by profile:
 | Chrysler | 56 | pass-through |
 | GM | 71 | pass-through of the radar's targets |
 | Ford | 194 | clusters raw Delphi detections into tracks |
-| **ARS510 shared decode** | 288 | reassembles a 742-byte record from 106 CAN frames, CRC, 20 slots of bit fields |
-| ARS510 `raw` | +~60 | publication age, ID re-link, saturation guard |
-| ARS510 `fused` | +~109 | `raw` + range fusion + ACC / summary association + one Kalman speed filter |
+| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 241 | the whole `fused` profile in one file: |
+| … record reassembly, CRC, slot decode, track IDs, publication | 92 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
+| … ACC target and summary association | 60 | match the radar's own trackers to one track each |
+| … Kalman speed filter and range fusion | 24 | the filter itself |
+| … RadarInterface adapter, constants, pruning | 65 | as in other interfaces |
 
 - The listed interfaces generally consume tracked radar outputs, apply validity/lifecycle checks and leave speed
   filtering to radard. That code structure does not establish physical accuracy for every radar or driving condition.

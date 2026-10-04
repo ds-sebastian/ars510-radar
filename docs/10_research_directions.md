@@ -133,7 +133,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (264 lines). It holds the reassembler, the slot
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 270 lines). It holds the reassembler, the slot
 decode, track IDs, the ACC target / summary association and the Kalman speed filter, in opendbc's style. It is the
 smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives
 ([12](12_kalman_filter.md#removing-parts-together)). Constants are fixed in the file, there are no profiles, and points

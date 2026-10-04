@@ -76,7 +76,7 @@ usual filter on top.* Model, constants, what each part is worth and the variants
 The code comes in two versions that run the same filter:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one 264-line file in opendbc style.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of about 270 lines in opendbc style.
   It is the smallest version that drives like `fused` on 34 replay drives
   ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to `fused` point for point.
 

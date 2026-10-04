@@ -36,13 +36,8 @@ while testing).
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list; road tests only ([docs/12](../docs/12_kalman_filter.md#kalman-variants-tested)) |
 
-Omitting `--profile` selects the recommended `fused` profile. The legacy name `--profile default` retains its
-historical meaning, `raw`; it does **not** mean the current recommendation. All legacy names print the profile
-they select. `anchor`/`steady` select `fused`, `stock`/`default` select `raw`, and `upstream` selects `openpilot`.
-
-The installed `openpilot` profile shares the standalone candidate's core decoding/filtering through a generic
-fork adapter. See [wrapper boundaries](../docs/08_openpilot_integration.md#profiles) for stale-clock and optional
-legacy-field differences.
+Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,
+`upstream` → `openpilot`. Note that `--profile default` means `raw`; leave `--profile` out for the recommended `fused`.
 
 ## What gets installed
 

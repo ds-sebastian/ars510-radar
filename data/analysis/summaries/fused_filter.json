@@ -275,5 +275,13 @@
    "heldout_radar_added_episodes",
    "heldout_lead_source_switches"
   ]
+ },
+ "openpilot_file_lines": {
+  "definition": "non-blank, non-comment lines of upstream/ars510_radar.py",
+  "total": 241,
+  "decode_ids_publication": 92,
+  "tracker_association": 60,
+  "speed_filter_and_range_fusion": 24,
+  "adapter_constants_pruning": 65
  }
 }
