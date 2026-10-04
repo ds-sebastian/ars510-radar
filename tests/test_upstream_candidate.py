@@ -1,4 +1,4 @@
-"""The single-file upstream candidate (upstream/ars510_radar.py) must publish exactly what FUSED_CONFIG publishes."""
+"""The openpilot version (upstream/ars510_radar.py) must publish exactly what its fork config OPENPILOT_EQUIVALENT publishes."""
 from __future__ import annotations
 
 import csv
@@ -10,10 +10,14 @@ from pathlib import Path
 
 import pytest
 
+from dataclasses import replace
+
 from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface
 
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = sorted((REPO / "data" / "sample").glob("*.csv.gz"))
+# fused without the track-ID relink: identical driving on 34 replay drives and 8 fresh drives (docs/12)
+OPENPILOT_EQUIVALENT = replace(FUSED_CONFIG, relink_max_gap_s=0.0)
 
 
 def _fake_opendbc() -> dict:
@@ -65,8 +69,8 @@ def _frames(path: Path):
 
 
 @pytest.mark.parametrize("sample", SAMPLES, ids=lambda p: p.name)
-def test_candidate_equals_fused_on_real_samples(candidate, sample):
-  ref, cand = Ars510NativeRadarInterface(FUSED_CONFIG), candidate.Ars510Radar()
+def test_candidate_equals_its_fork_config_on_real_samples(candidate, sample):
+  ref, cand = Ars510NativeRadarInterface(OPENPILOT_EQUIVALENT), candidate.Ars510Radar()
   records = 0
   for frame in _frames(sample):
     a, b = ref.update_frame(*frame), cand.update(*frame)

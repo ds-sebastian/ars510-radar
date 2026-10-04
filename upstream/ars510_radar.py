@@ -24,7 +24,6 @@ SUMMARY_SCALES = {0x192: (0.0541, -5.14), 0x194: (0.0461, -12.45)}  # m per code
 VGROUND_SCALE = 0.149 / 0.15  # slot over-ground speed aligned to 0xB4 ego speed
 EGO_MAX_AGE_S = 0.5
 PUBLISH_AGE = 60  # ~3.6 s: young tracks have unconverged range and speed
-RELINK_GAP_S, RELINK_MIN_AGE = 3.5, 30  # a re-found track keeps the ID of one lost within 3.5 s
 RANGE_GAIN = 0.1  # velocity-aided range: halves the far-range walk
 # Kalman speed filter (one state: the lead's over-ground speed)
 SIGMA_PER_CODE = 0.045  # m/s per 240|7 count, against the radar's ACC target
@@ -55,7 +54,7 @@ class Ars510Radar:
     self.summary_assoc = {a: None for a in SUMMARY_ADDRS}
     self.kf = {}  # tid -> (time, speed, variance)
     self.rng = {}  # tid -> (time, dRel, vRel)
-    self.first, self.last, self.out_id, self.claimed = {}, {}, {}, set()
+    self.published = set()
 
   def update(self, t: float, bus: int, addr: int, dat: bytes):
     if bus == CAR_BUS and addr == SPEED_ADDR and len(dat) >= 7:
@@ -115,7 +114,6 @@ class Ars510Radar:
                        vg=(bits(s, 64, 10) - 510.5) * 0.15 * VGROUND_SCALE, unc=bits(s, 240, 7),
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}
-    seen = {o["tid"] for o in objs}
     acc_tid = self.acc_match(t, tracks)
     summary = self.summary_match(t, tracks, v_ego, acc_tid)
     out = []
@@ -132,14 +130,10 @@ class Ars510Radar:
         speed, std = self.speed_filter(tid, t, o, readings)
         vrel = speed - v_ego
       d_rel = self.fused_range(tid, t, o["d"], vrel)
-      if o["age"] >= 2:
-        self.first.setdefault(tid, (t, o["d"], o["y"]))
-        self.last[tid] = (t, o["d"], o["y"], vrel, o["age"])
-      if o["age"] < PUBLISH_AGE or (tid not in self.out_id and std > PUBLISH_STD) or not isfinite(vrel):
+      if o["age"] < PUBLISH_AGE or (tid not in self.published and std > PUBLISH_STD) or not isfinite(vrel):
         continue  # no point without a fresh ego speed: one NaN would poison radard's filter
-      if tid not in self.out_id:
-        self.out_id[tid] = self.relink(tid, t, seen)
-      out.append((self.out_id[tid], d_rel, o["y"], vrel))
+      self.published.add(tid)
+      out.append((tid, d_rel, o["y"], vrel))
     self.prune(t)
     return out
 
@@ -232,39 +226,13 @@ class Ars510Radar:
         out[tid] = v
     return out
 
-  def relink(self, tid, t, seen):
-    """A newly published track takes the ID of a settled track lost within RELINK_GAP_S where it predicts."""
-    if tid not in self.first:
-      return tid
-
-    def matches(first, lid):
-      t0, x0, y0 = first
-      tl, xl, yl, vl, al = self.last[lid]
-      gap = t0 - tl
-      if al < RELINK_MIN_AGE or not 0.0 < gap <= RELINK_GAP_S:
-        return False
-      x_pred = xl + (vl if isfinite(vl) else 0.0) * gap
-      return abs(x0 - x_pred) <= max(3.0, 0.10 * xl) + gap and abs(y0 - yl) <= 1.2 + 0.5 * gap
-
-    lost = [k for k in self.last if k not in seen and k != tid and k not in self.claimed and t - self.last[k][0] > 0.3]
-    cands = [k for k in lost if matches(self.first[tid], k)]
-    if len(cands) != 1:
-      return tid
-    self.claimed.add(cands[0])
-    if any(o != tid and o not in self.out_id and o in self.first and matches(self.first[o], cands[0])
-           for o in self.last if o in seen):
-      return tid  # another new track starts there too: nobody inherits the ID
-    return self.out_id.get(cands[0], cands[0])
-
   def prune(self, t):
-    if len(self.last) > 400:
-      for k in [k for k, v in self.last.items() if v[0] < t - RELINK_GAP_S - 60.0]:
-        self.last.pop(k, None)
-        self.first.pop(k, None)
     for store in (self.kf, self.rng):
       if len(store) > 400:
         for k in [k for k, v in store.items() if v[0] < t - 5.0]:
           store.pop(k)
+    if len(self.published) > 400:
+      self.published &= set(self.kf)
 
 
 class RadarInterface(RadarInterfaceBase):
