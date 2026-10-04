@@ -178,7 +178,10 @@ The summaries provide useful speed support when the ACC target does not cover a 
 comparison, retaining summaries keeps the planner request above −0.59 m/s² during a 0.50 s interval; suppressing
 their precision produces an extra target-braking episode reaching −1.11 m/s². Captured vision requests stay
 between −0.15 and −0.12 m/s². Both variants disable relinking; the retained-summary output matches full `fused`
-locally, and both radar variants use the same lead throughout the episode.
+locally, and both radar variants use the same lead throughout the episode. Retaining relinking while
+suppressing summaries produces the same episode: all saved fields agree with the no-relink version for 119 local
+ticks. That completed owner route also fails the zero-episode gate; restoring relinking does not rescue this case.
+This is a route-specific control, not a claim of complete-suite equivalence.
 
 This controlled comparison changes summary speed σ from 0.5 to 10,000 m/s, making its update negligible.
 The plot shows saved radard lead and planner outputs. A separate native cache identifies one applied summary

@@ -102,5 +102,27 @@
     "cached_rows": 390,
     "saved_fused_mean_max_abs_check": 0.0,
     "scope": "Cache source identity and clock align structurally with saved replay. Applied summary timing is observed; underlying range samples and effective LS observation time are unavailable. Fixed recurrence states are distinct from saved consumer lead values."
+  },
+  "relink_control": {
+    "scope": "Completed owner O1 route only; wider noS suite not scored in this check. One owner episode already rejects this removal under the frozen zero-episode gate.",
+    "summary_sigma_mps": 10000,
+    "relink_max_gap_s": 3.5,
+    "target_episodes": 1,
+    "hard_ticks": 0,
+    "episode": {
+      "duration_s": 0.5000416689981648,
+      "ticks": 11,
+      "min_a": -1.1074,
+      "onset_d": 103.313,
+      "onset_v": -4.006,
+      "output_identity": "T1",
+      "source": "radar",
+      "plan_source": "lead0",
+      "onset_case_s": 0
+    },
+    "same_saved_tick_fields_as_no_relink_case": true,
+    "compared_local_ticks": 119,
+    "config_difference_only_relink": true,
+    "independent_arithmetic": "PASS"
   }
 }
