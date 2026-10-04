@@ -820,11 +820,36 @@ def video_truth_excursions():
     save(fig, "video_truth_excursions", "2,657 selected windows; ECC metric scale uses native range. Conditional disagreement, not physical error.")
 
 
+def kalman_response():
+    """Paired route uncertainty for the fixed current colored recurrence against scalar RW."""
+    info = summary("kalman_response")
+    names = [("development", "Development"), ("prior_evaluation", "Prior evaluation"),
+             ("recent_reused", "Recent, reused"), ("owner", "Owner"), ("combined", "Combined")]
+    fig, ax = plt.subplots(figsize=(9, 4.2))
+    for y, (key, label) in enumerate(names):
+        row = info["cohorts"][key]
+        delta = row["paired_lag_difference_s"]["currentCN_minus_RW"]
+        mean = 1000 * delta["mean"]
+        lo, hi = (1000 * v for v in delta["route_block_bootstrap_95"])
+        ax.errorbar(mean, y, xerr=[[mean - lo], [hi - mean]], fmt="o", capsize=4,
+                    color=S1 if key != "combined" else INK, markersize=6)
+    labels = [f"{label}  ({info['cohorts'][key]['event_count']} windows)" for key, label in names]
+    ax.set_yticks(range(len(names)), labels)
+    ax.invert_yaxis()
+    ax.axvline(0, color=INK2, lw=1, ls=":")
+    ax.set_xlim(-220, 245)
+    ax.set_xlabel("Colored model − scalar model response lag (ms); negative = earlier")
+    ax.set_title("ACC-defined response: combined interval includes no difference")
+    fig.tight_layout()
+    save(fig, "kalman_response", "252 windows, 33 routes; paired route-block bootstrap 95% intervals. Trackers hidden during estimation.\n"
+         "Same-radar ACC witness; capped misses and some short follow-up. This is not physical braking ground truth.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response)}
 
 
 if __name__ == "__main__":

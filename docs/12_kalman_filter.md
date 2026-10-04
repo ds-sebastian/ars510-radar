@@ -161,13 +161,30 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | Student-t update instead of the 3σ clamp | same as the clamp | – |
 | speed + acceleration state; optional ACC acceleration observation when trackers are enabled | worse on held-out and owner drives with trackers hidden | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
-| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**, same response to real braking | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
+| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**; ACC-defined response comparison below | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: none better on every check |
 
 The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
 0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
 let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
 `COLORED_CONFIG` is not in the decoder.
+
+### Response to ACC-defined speed drops
+
+![ACC-defined response comparison](img/analysis/kalman_response.png)
+
+On 252 selected windows from 33 reused routes, the object-list-only scalar filter crosses its half-drop threshold
+an average of 0.438 s after the ACC witness; the colored model with wide initialization averages 0.394 s. Its paired
+difference is −44 ms, with a 95% route-bootstrap interval of [−101, +13] ms. The interval includes no difference;
+there is no established equivalence margin. These measurements do not establish physical braking timing.
+
+Candidate windows require an ACC drop of at least 2 m/s over 2 s, native age at least 60 and range at least 20 m.
+Starts are ordered chronologically within each route, with one 4 s exclusion interval across native track IDs.
+The ACC tracker is hidden from both filters, but remains a dependent, same-radar witness. Missing crossings receive
+a capped 4 s value; six windows have less than 4 s of follow-up, including two with a missing crossing. Individual
+events can differ substantially despite similar means. The separate full-replay recovery regression still decides
+against promoting the colored model. Model definitions, the earlier colored recurrence, counts and uncertainty are
+in [`kalman_response.json`](../data/analysis/summaries/kalman_response.json).
 
 ### Other approaches tested
 
