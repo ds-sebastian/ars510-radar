@@ -62,14 +62,22 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 
 ## Profiles
 
-`install.py --profile NAME` picks one; with no `--profile` you get `fused`. Every profile publishes every object-list
-track: profiles only change *how* a track's values are filtered, never which cars exist.
+`install.py --profile NAME` picks one; with no `--profile` you get `fused`. Profiles operate on the object list,
+not just its selected lead. Age, valid data and filter-readiness gates can withhold a track, so filtering can also
+change when a track becomes available to radard.
 
 | profile | what it is | when to use |
 |---|---|---|
 | **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([12](12_kalman_filter.md#the-model)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
-| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
+| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | testing the candidate decoding and filtering through the fork-compatible installer |
+
+The installed `openpilot` profile runs the same `Ars510Radar` core as the standalone candidate. The installer
+adds a generic adapter for fork constructor signatures and optional legacy point fields. It uses record-start
+rather than record-completion time for stale-data detection; the difference is one record's transport duration
+at the timeout boundary. Legacy `aRel` / `yvRel` / `measured` placeholders also differ from standalone schema
+defaults. Shared `(trackId, dRel, yRel, vRel)` behavior is the comparison target; whole-wrapper equivalence is
+not implied. The default `fused` uses the configurable package, including its optional point metadata.
 
 `raw` is the unfiltered radar decode, not vision-only and not stock openpilot; its older names `stock` and `default` are still accepted. The earlier tuned profiles `anchor` and `steady` were outperformed by `fused` and removed: `--profile anchor` or `steady` installs `fused` with a notice.
 

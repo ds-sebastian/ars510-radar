@@ -35,6 +35,10 @@ while testing).
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
 
+The installed `openpilot` profile shares the standalone candidate's core decoding/filtering through a generic
+fork adapter. See [wrapper boundaries](../docs/08_openpilot_integration.md#profiles) for stale-clock and optional
+legacy-field differences.
+
 ## What gets installed
 
 | file | installed as | what |

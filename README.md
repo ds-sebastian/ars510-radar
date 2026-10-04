@@ -77,7 +77,7 @@ usual filter on top.* Model, constants, what each part is worth and the variants
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
-| `openpilot` | `--profile openpilot` | the upstream version: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
+| `openpilot` | `--profile openpilot` | the upstream version: one file in opendbc style with the Kalman filter, points with `trackId` / `dRel` / `yRel` / `vRel` only | testing the candidate core through the fork-compatible installer |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
@@ -190,7 +190,7 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 |---|---|
 | [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `BASE_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
-| [`upstream/`](upstream) | the single-file upstream candidate (`ars510_radar.py`), kept equal to `fused` by a test |
+| [`upstream/`](upstream) | the single-file upstream candidate (`ars510_radar.py`), tested against the corresponding fork configuration on bundled CAN samples |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (parsing does not use them) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |
 | [`data/`](data) | three CAN samples, an anonymised analysis dataset (3 drives, 88 min) and the summary JSONs behind every number in the docs |
