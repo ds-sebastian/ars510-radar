@@ -6,7 +6,7 @@
 fused_how_it_works.png is computed from ars510 itself (FUSED_CONFIG on synthetic leads). fused_scenarios_*.png plot
 data/analysis/fused_scenarios.csv.gz: six real-drive moments replayed through the unchanged openpilot / sunnypilot
 planner (times relative to the moment, no route identifiers). profiles_vs_vision.png plots
-data/analysis/summaries/profiles_vs_vision.json.
+data/analysis/summaries/profiles_vs_vision.json; kalman_variants.png plots data/analysis/summaries/kalman_variants.json.
 """
 from __future__ import annotations
 
@@ -183,7 +183,27 @@ def vs_vision() -> None:
     fig.tight_layout(); fig.savefig(OUT / "profiles_vs_vision.png", dpi=130); plt.close(fig)
 
 
+def kalman_variants() -> None:
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "kalman_variants.json").read_text())
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13.0, 4.0), gridspec_kw=dict(width_ratios=[1, 1.25]))
+    names = list(S["bench_false_closing_pct"]); groups = ["heldout", "fresh", "owner"]
+    y = np.arange(len(names))
+    for k, (g, c) in enumerate(zip(groups, [FUS, S1, ANC])):
+        a1.barh(y + (k - 1) * 0.26, [S["bench_false_closing_pct"][n][g] for n in names], 0.26, color=c, label=g.replace("heldout", "held-out"))
+    a1.set_yticks(y, names); a1.invert_yaxis(); a1.set_xlabel("false closings (% of cycles, error < −2 m/s)")
+    a1.set_xlim(0, 8.6); a1.set_title("Offline bench: object list only, vs the hidden ACC target"); a1.legend(loc="lower right", fontsize=8)
+    T = S["trace"]; t = np.array(T["t"])
+    a2.plot(t, T["raw_vrel"], color=GRAY, lw=1, label="object-list vRel")
+    a2.plot(t, T["fused_vrel"], color=FUS, lw=2, label="fused (one speed state)")
+    a2.plot(t, T["colored_vrel"], color=S4, lw=2, ls="--", label="colored noise (speed + bias state)")
+    a2.set_xlabel("s"); a2.set_ylabel("vRel (m/s)")
+    ax = a2.twinx(); ax.plot(t, T["d"], color=INK2, lw=0.8, ls=":"); ax.set_ylabel("range (m, dotted)", color=INK2)
+    a2.set_title("Why the bias state was not promoted: a far false closing that recovers")
+    a2.legend(loc="lower right", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_variants.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png")))
+    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png")))
