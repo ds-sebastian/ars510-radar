@@ -27,7 +27,7 @@ from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80
                         TOYOTA_SPEED_ADDR)
 from .objects import NativeObject, decode_native_slot
 from .record import id80_crc_ok, occupied_slots
-from .support import parse_acc_target_position, parse_acc_target_vrel
+from .support import parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
@@ -92,6 +92,12 @@ class NativeInterfaceConfig:
     acc_match_min_age: int = 60
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
+    # Range anchor for the ACC-associated track: its distance is propagated with the ACC target's fine-range changes
+    # (0x237, 0.02 m per code, consistent with the ACC speed to 1%), the offset to the object-list range follows with
+    # time constant acc_range_tau_s, and the object-list range fed to range fusion is clipped to that anchored distance
+    # +/- acc_range_clip_m. Stops the native range sliding with an excursion. 0 disables.
+    acc_range_clip_m: float = 0.0
+    acc_range_tau_s: float = 3.0
     # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
     # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
     # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07).
@@ -183,6 +189,8 @@ class Ars510NativeRadarInterface:
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
         self._acc_assoc: tuple[int, float, float] | None = None  # sticky (tid, last coarse x, last y)
+        self._acc_q: int | None = None  # 0x237 fine-range code of the current ACC target
+        self._acc_range: tuple[int, float, float, int] | None = None  # (tid, time, offset m, last code)
         self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
         self._guard_gen: dict[int, int] = {}
         self.guard_rejected = 0
@@ -231,6 +239,7 @@ class Ars510NativeRadarInterface:
             if not available:
                 # Idle payloads decode numerically; neither cached half may survive target loss.
                 self._acc_vrel = self._acc_pos = None
+                self._acc_q = None
                 return None
             if addr == ACC_TARGET_VREL_ADDR:
                 v = parse_acc_target_vrel(bytes(data))
@@ -238,6 +247,7 @@ class Ars510NativeRadarInterface:
             else:
                 p = parse_acc_target_position(bytes(data))
                 self._acc_pos = (time_s, p[0], p[1]) if p is not None else self._acc_pos
+                self._acc_q = parse_acc_target_range_code(bytes(data))
             return None
         if bus != self.config.radar_bus or addr != ID80_ADDR:
             return None
@@ -315,6 +325,24 @@ class Ars510NativeRadarInterface:
             return None, nan
         self._acc_assoc = (costs[0][1], ax, ay)
         return costs[0][1], self._acc_vrel[1]
+
+    def _range_anchored(self, tid: int, time_s: float, d_meas: float) -> float:
+        """The ACC track's range, clipped to the ACC-propagated distance +/- acc_range_clip_m (see the config)."""
+        cfg = self.config
+        q = self._acc_q
+        if q is None:
+            self._acc_range = None
+            return d_meas
+        st = self._acc_range
+        if st is None or st[0] != tid or not 0.0 < time_s - st[1] <= 0.5 or abs(q - st[3]) > 400:  # new association or jump
+            self._acc_range = (tid, time_s, d_meas - 0.02 * q, q)
+            return d_meas
+        _, t0, off, _ = st
+        anchored = 0.02 * q + off
+        out = min(max(d_meas, anchored - cfg.acc_range_clip_m), anchored + cfg.acc_range_clip_m)
+        k = min(1.0, (time_s - t0) / cfg.acc_range_tau_s)
+        self._acc_range = (tid, time_s, off + k * ((d_meas - 0.02 * q) - off), q)
+        return out
 
     # ---- candidate options --------------------------------------------------------------------------
     def _range_clipped_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
@@ -461,7 +489,8 @@ class Ars510NativeRadarInterface:
                 vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
             if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:
                 vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel, obj.vel_unc_code)
-            d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
+            d_meas = self._range_anchored(tid, time_s, obj.d_rel) if (tid == acc_tid and cfg.acc_range_clip_m > 0) else obj.d_rel
+            d_rel = self._fused_range(tid, time_s, d_meas, vrel) if cfg.range_fusion_gain > 0 else d_meas
             if obj.age >= 2:
                 self._first.setdefault(tid, (time_s, obj.d_rel, obj.y_rel))
                 self._last[tid] = (time_s, obj.d_rel, obj.y_rel, vrel, obj.age)
