@@ -828,6 +828,27 @@ def lane_curve_cells():
          f"{min(v['corr'] for v in ch.values()):.2f}…{max(v['corr'] for v in ch.values()):.2f}, curvature {min(v['corr'] for v in cc.values()):.2f}…{max(v['corr'] for v in cc.values()):.2f}.")
 
 
+def excursion_sigma_scale():
+    """Native-minus-ACC velocity error against the reported 240|7 code, and observed vs Gaussian-predicted excursion incidence."""
+    info = summary("excursion_sigma_scale")
+    fig, (a, b) = plt.subplots(1, 2, figsize=(10.5, 4.3))
+    for key, col, lab in (("corpus_700_segments", S1, "development + held-out drives"), ("fresh_114_segments", S2, "fresh drives")):
+        r = info[key]["rms_by_code"]
+        x = [v["code"] for v in r.values() if v["n"] >= 70]; y = [v["rms"] for v in r.values() if v["n"] >= 70]
+        a.plot(x, y, marker="o", color=col, label=lab)
+    xx = np.linspace(5, 100, 50); a.plot(xx, 0.045 * xx, color=INK, ls="--", lw=1, label="0.045 m/s × code")
+    a.set_xlabel("240|7 code (mean in bin)"); a.set_ylabel("RMS of native vRel − ACC speed (m/s)"); a.set_title("Velocity error follows the reported uncertainty"); a.legend()
+    cells = info["corpus_700_segments"]["incidence_cells"]
+    for (k, v), c in zip(cells.items(), [S1, S1, S1, S1, S2, S2, S2, S2, S3, S3, S3, S3, S4, S4, S4, S4]):
+        b.scatter(v["pred"] * 100, v["obs"] * 100, color=c, s=28)
+    b.plot([0, 25], [0, 25], color=INK, ls=":", lw=1)
+    for lab, c in (("40–55 m", S1), ("55–70 m", S2), ("70–85 m", S3), ("85–110 m", S4)): b.scatter([], [], color=c, label=lab)
+    b.set_xlabel("predicted excursion rate (%), Gaussian σ = 0.045 × code"); b.set_ylabel("observed rate (%)"); b.set_title("Excursion incidence per range band and code quartile"); b.legend(loc="upper left")
+    fig.tight_layout()
+    save(fig, "excursion_sigma_scale", "Matched to the radar's own ACC target (227 k development/held-out records, 13 k fresh). Excursion = 9-record median of native − ACC below −2.5 m/s. "
+         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian.")
+
+
 def video_truth_excursions():
     rows = summary("video_truth")["object_list_vs_optical_2s_windows"]
     x = np.arange(len(rows))
@@ -849,7 +870,7 @@ NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection, far_settling, ramp_limiter,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, video_truth_excursions)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions)}
 
 
 if __name__ == "__main__":

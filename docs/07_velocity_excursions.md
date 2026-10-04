@@ -69,6 +69,25 @@ Four closed-loop drives with the radar feeding openpilot's radard (1.05 h, 0.31 
 
 *Two false closings and two real closings the radar saw first. In the first second they look the same.*
 
+### Excursions are the expected low-SNR velocity error
+
+Against the radar's own ACC target, the native velocity error is proportional to the tracker's reported velocity
+uncertainty `240|7` ([03](03_slot_fields.md#kinematics)): RMS of native vRel minus ACC speed is 0.04-0.05 m/s per
+count over codes 14-75 (about 0.8 m/s at code 15 and 2 m/s at code 45), and the same on 114 fresh segments. Codes
+grow with range, so far tracks carry a 1-3 m/s error scale. A Gaussian error with σ = 0.045 × code (and a −0.3 m/s mean
+offset) predicts the share of far (40-110 m) records inside a smoothed excursion (9-record median below −2.5 m/s):
+5.1 % observed against 6.4 % predicted on the development and held-out drives, 6.9 % against 5.5 % on the fresh
+drives, with the right ordering across range bands and code quartiles. The error is low-pass (corner about 0.3 Hz),
+which is why a 1-3σ deviation lasts 1-10 s instead of flickering per frame. Excursions are therefore the tail of a
+noisy velocity estimate whose scale the radar reports itself, not a separate fault mode; they are not explained by
+range leakage, neighbouring objects, clutter, ego compensation, association or lifecycle flags. Per-record flagging
+stays weak because every far track already has a large σ.
+Caveats: the ACC target has its own error (about 0.6 m/s), the tails beyond 2.5σ are heavier than Gaussian
+(kurtosis 1.3-8), and the −0.3 m/s offset and the reason the ACC tracker is better are unexplained
+([summary](../data/analysis/summaries/excursion_sigma_scale.json)).
+
+![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
+
 ## Compared with an optical reference
 
 ECC affine registration measures the lead rear's image scale change over 0.5–1 s. The exploratory metric
@@ -337,7 +356,7 @@ validation remain separate. Numbers: [`sunnypilot_profile_comparison.json`](../d
 
 | signal | behaviour during an excursion |
 |---|---|
-| `240\|7` velocity-error-related candidate | higher; conditional native-minus-ECC RMS slope ≈ 0.05 m/s/count at 40–80 m, with physical sigma unresolved ([03](03_slot_fields.md#kinematics)); AUC 0.65 / 0.85 on discovery / confirmation labels |
+| `240\|7` velocity-error scale | higher; native-minus-ACC RMS ≈ 0.045 m/s/count ([above](#excursions-are-the-expected-low-snr-velocity-error)); conditional native-minus-ECC RMS slope ≈ 0.05 m/s/count at 40–80 m, with physical sigma unresolved ([03](03_slot_fields.md#kinematics)); AUC 0.65 / 0.85 on discovery / confirmation labels |
 | `264` measurement state | more near-scan state 1 at ranges where far scan should also see the object; states 4-8 rise 3-6 s later |
 | 0x235 ACC target | disagrees with the object's vRel (when present) |
 | lane state `128\|3` | changes more often, also on real closings |
