@@ -21,10 +21,11 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
             offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
-  anchor, steady   earlier tuned profiles, outperformed by fused and removed: they install fused (with a notice)
-  stock, default   older names for raw
   openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): the slimmest filter that
             keeps fused's driving, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
+
+Legacy names are aliases, not additional profiles: anchor/steady select fused, upstream selects openpilot,
+and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended fused default.
 """
 from __future__ import annotations
 
@@ -100,7 +101,8 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="fused")
+  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="fused",
+                  metavar="{" + ",".join(PROFILE_NAMES) + "}", help="default: fused; legacy aliases also accepted")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -108,8 +110,8 @@ def main() -> int:
   args = ap.parse_args()
   if args.profile in LEGACY_NAMES:
     new = LEGACY_NAMES[args.profile]
-    if new == "fused":
-      print(f"note: the {args.profile} profile was outperformed by fused and has been removed; installing fused")
+    retired = "the tuned profile was removed; " if new == "fused" else ""
+    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is 'fused'")
     args.profile = new
   root = find_opendbc(args.openpilot)
   if root is None:

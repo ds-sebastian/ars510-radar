@@ -47,6 +47,8 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
                           ("upstream", "openpilot")):  # older names
     r = _install(tmp_path, "--profile", name)
     assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
+    assert f"'{name}' is an alias for '{installed}'" in r.stdout
+    assert "the recommended default is 'fused'" in r.stdout
     assert f'PROFILE = PROFILES["{installed}"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert _install(tmp_path, "--profile", "openpilot").returncode == 0
   assert 'PROFILE = PROFILES["openpilot"]' in (toyota / "ars510_radar_interface.py").read_text()
