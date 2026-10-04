@@ -16,6 +16,8 @@ An install made with an older, patch-based version of this installer is removed 
 
 Profiles (docs/08 has the details and replay numbers):
   anchor    ANCHOR_CONFIG (default): steady + the radar's own ACC target (0x235) as a velocity anchor
+  fused     FUSED_CONFIG: stock + range fusion + one speed filter that weights the object list, the ACC target and
+            the summaries by the radar's own uncertainty (replaces the steady layers and the anchor clips)
   steady    STEADY_CONFIG: stock + range fusion, far smoothing, far settling, ramp limiter
   stock     OPENPILOT_CONFIG: the plain decode with only what radard needs to run. Velocity excursions reach the
             planner unfiltered (about twice the hard false braking of steady); for research and comparison only
@@ -34,7 +36,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["anchor"]'
-PROFILE_NAMES = ("anchor", "steady", "stock", "default")
+PROFILE_NAMES = ("anchor", "fused", "steady", "stock", "default")
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"

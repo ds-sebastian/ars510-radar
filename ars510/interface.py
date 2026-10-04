@@ -130,6 +130,25 @@ class NativeInterfaceConfig:
     ramp_up_mps2: float = 0.0
     ramp_down_mps2: float = 0.0
     ramp_ref_tau_s: float = 3.0
+    # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed that
+    # replaces far smoothing, far settling, the ramp limiter and the ACC / summary clips. Each reading is weighted by
+    # its own standard deviation: the object-list speed by speed_sigma_per_code * 240|7 (the radar's velocity-error
+    # scale, calibrated against its ACC target), times young_sigma_scale for tracks younger than young_age (measured:
+    # young tracks err more than 240|7 says); the radar's ACC target speed for the associated track by acc_sigma_mps;
+    # the target-range summary speed (up to summary_max_range_m) by summary_sigma_mps. The lead's speed may change
+    # with lead_accel_std_mps2 (process noise); a reading beyond innovation_gate_sigma standard deviations is clamped
+    # to that bound (robust update). A track is first published once its speed std is below publish_speed_std_mps.
+    # Range is not part of the filter (the object list's range rate and speed disagree, docs/07); range_fusion_gain
+    # smooths the published range as before.
+    fused_speed_filter: bool = False
+    speed_sigma_per_code: float = 0.045
+    young_sigma_scale: float = 1.8
+    young_age: int = 100
+    acc_sigma_mps: float = 0.5
+    summary_sigma_mps: float = 0.5
+    lead_accel_std_mps2: float = 1.5
+    innovation_gate_sigma: float = 3.0
+    publish_speed_std_mps: float = 0.75
 
 
 # Every valid track, radar's own IDs: the decode-level view.
@@ -154,6 +173,11 @@ STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far
 # excursions that drag the native range along. The default install profile (docs/08).
 ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
                         acc_match_min_age=20, summary_clip_mps=3.0, summary_max_range_m=80.0)
+
+# The fused speed filter (docs/07): the base profile plus range fusion and one uncertainty-weighted filter that fuses
+# the object list, the radar's ACC target and its summary ranges. Same ACC / summary association as ANCHOR.
+FUSED_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, acc_target_sticky=True, acc_match_range_m=12.0,
+                       acc_match_min_age=20, summary_max_range_m=80.0, fused_speed_filter=True)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -197,6 +221,7 @@ class Ars510NativeRadarInterface:
         self._range_hist: dict[int, list[tuple[float, float]]] = {}
         self._vrel_smooth: dict[int, tuple[float, float]] = {}
         self._ramp: dict[int, tuple[float, float, float]] = {}  # tid -> (t, limited v, reference)
+        self._fused: dict[int, tuple[float, float, float]] = {}  # tid -> (t, over-ground speed, variance)
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
         self.acc_target_clips = 0
@@ -246,7 +271,7 @@ class Ars510NativeRadarInterface:
                 self.set_ego_speed(v, time_s)
             return None
         if bus == self.config.radar_bus and addr in SUMMARY_ADDRS:
-            if self.config.summary_clip_mps > 0:
+            if self.config.summary_clip_mps > 0 or self.config.fused_speed_filter:
                 self._summary_update(addr, float(time_s), bytes(data))
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
@@ -321,7 +346,7 @@ class Ars510NativeRadarInterface:
     def _acc_target_match(self, time_s: float, decoded: list) -> tuple[int | None, float]:
         """The object the OEM ACC target witness describes: best position match, cost < 1 and margin > 1, age >= 60."""
         cfg = self.config
-        if cfg.acc_target_clip_mps <= 0 or self._acc_vrel is None or self._acc_pos is None:
+        if (cfg.acc_target_clip_mps <= 0 and not cfg.fused_speed_filter) or self._acc_vrel is None or self._acc_pos is None:
             self._acc_assoc = None
             return None, nan
         if abs(time_s - self._acc_vrel[0]) > cfg.acc_target_max_age_s or abs(time_s - self._acc_pos[0]) > cfg.acc_target_max_age_s:
@@ -449,6 +474,33 @@ class Ars510NativeRadarInterface:
         self._vrel_smooth[tid] = (time_s, out)
         return out
 
+    def _fused_speed(self, tid: int, time_s: float, obj: NativeObject,
+                     extra: list[tuple[float, float]]) -> tuple[float, float]:
+        """Fused over-ground speed and its standard deviation (see fused_speed_filter in the config)."""
+        cfg = self.config
+        sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+        if obj.age < cfg.young_age:
+            w = min(max((cfg.young_age - obj.age) / max(cfg.young_age - 60, 1), 0.0), 1.0)
+            sig *= 1.0 + (cfg.young_sigma_scale - 1.0) * w
+        vg = obj.v_long_ground * cfg.vground_scale
+        st = self._fused.get(tid)
+        if st is None or not 0.0 < time_s - st[0] <= 0.5:
+            self._fused[tid] = (time_s, vg, sig * sig)
+            return vg, sig
+        t0, v, p = st
+        p += (cfg.lead_accel_std_mps2 * (time_s - t0)) ** 2
+        for z, r in [(vg, sig * sig)] + [(z, s * s) for z, s in extra]:
+            s = p + r
+            innov = z - v
+            lim = cfg.innovation_gate_sigma * s ** 0.5
+            if cfg.innovation_gate_sigma > 0 and abs(innov) > lim:
+                innov = lim if innov > 0 else -lim
+            k = p / s
+            v += k * innov
+            p *= 1.0 - k
+        self._fused[tid] = (time_s, v, p)
+        return v, p ** 0.5
+
     def _fused_range(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
         prev = self._range_est.get(tid)
         if prev is None or not isfinite(vrel) or not isfinite(prev[2]) or not 0.0 < time_s - prev[0] <= 0.5:
@@ -539,7 +591,7 @@ class Ars510NativeRadarInterface:
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
         acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
-        sum_clip = self._summary_match(time_s, decoded, v_ego, acc_tid) if cfg.summary_clip_mps > 0 else {}
+        sum_clip = self._summary_match(time_s, decoded, v_ego, acc_tid) if (cfg.summary_clip_mps > 0 or cfg.fused_speed_filter) else {}
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
@@ -547,27 +599,38 @@ class Ars510NativeRadarInterface:
             if (cfg.drop_saturated_codes or cfg.vjump_thresh_mps > 0) and \
                     self._guard(tid, time_s, obj.v_long_ground, obj.vel_code, obj.age):
                 continue
-            v_long = obj.v_long_ground
-            if cfg.ramp_up_mps2 > 0 or cfg.ramp_down_mps2 > 0:
-                v_long = self._ramp_limited(tid, time_s, v_long, obj.age)
-            v_ground = v_long * cfg.vground_scale
-            vrel = float(v_ground - v_ego) if v_ego is not None else nan
-            if tid == acc_tid and isfinite(vrel):
-                clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
-                self.acc_target_clips += clipped != vrel
-                vrel = clipped
-            elif tid in sum_clip and isfinite(vrel) and \
-                    (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
-                vs = sum_clip[tid]
-                clipped = min(max(vrel, vs - cfg.summary_clip_mps), vs + cfg.summary_clip_mps)
-                self.summary_clips += clipped != vrel
-                vrel = clipped
-            if cfg.vrel_range_clip_window_s > 0:
-                vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
-            if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:
-                vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel, obj.vel_unc_code)
-            d_meas = self._range_anchored(tid, time_s, obj.d_rel) if (tid == acc_tid and cfg.acc_range_clip_m > 0) else obj.d_rel
-            d_rel = self._fused_range(tid, time_s, d_meas, vrel) if cfg.range_fusion_gain > 0 else d_meas
+            speed_std = 0.0
+            if cfg.fused_speed_filter and v_ego is not None:
+                extra = []
+                if tid == acc_tid and acc_vrel is not None:
+                    extra.append((acc_vrel + v_ego, cfg.acc_sigma_mps))
+                if tid in sum_clip and (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
+                    extra.append((sum_clip[tid] + v_ego, cfg.summary_sigma_mps))
+                v_ground, speed_std = self._fused_speed(tid, time_s, obj, extra)
+                vrel = float(v_ground - v_ego)
+                d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
+            else:
+                v_long = obj.v_long_ground
+                if cfg.ramp_up_mps2 > 0 or cfg.ramp_down_mps2 > 0:
+                    v_long = self._ramp_limited(tid, time_s, v_long, obj.age)
+                v_ground = v_long * cfg.vground_scale
+                vrel = float(v_ground - v_ego) if v_ego is not None else nan
+                if tid == acc_tid and isfinite(vrel):
+                    clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
+                    self.acc_target_clips += clipped != vrel
+                    vrel = clipped
+                elif tid in sum_clip and isfinite(vrel) and \
+                        (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
+                    vs = sum_clip[tid]
+                    clipped = min(max(vrel, vs - cfg.summary_clip_mps), vs + cfg.summary_clip_mps)
+                    self.summary_clips += clipped != vrel
+                    vrel = clipped
+                if cfg.vrel_range_clip_window_s > 0:
+                    vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
+                if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:
+                    vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel, obj.vel_unc_code)
+                d_meas = self._range_anchored(tid, time_s, obj.d_rel) if (tid == acc_tid and cfg.acc_range_clip_m > 0) else obj.d_rel
+                d_rel = self._fused_range(tid, time_s, d_meas, vrel) if cfg.range_fusion_gain > 0 else d_meas
             if obj.age >= 2:
                 self._first.setdefault(tid, (time_s, obj.d_rel, obj.y_rel))
                 self._last[tid] = (time_s, obj.d_rel, obj.y_rel, vrel, obj.age)
@@ -578,6 +641,9 @@ class Ars510NativeRadarInterface:
                 self.settling_suppressed += 1
                 continue
             if tid not in self._out_id and obj.age < cfg.far_min_publish_age and obj.d_rel > cfg.far_publish_range_m:
+                self.settling_suppressed += 1
+                continue
+            if tid not in self._out_id and speed_std > cfg.publish_speed_std_mps and cfg.fused_speed_filter:
                 self.settling_suppressed += 1
                 continue
             if cfg.drop_unresolved_vrel and not isfinite(vrel):
@@ -609,7 +675,7 @@ class Ars510NativeRadarInterface:
             for k in [k for k, v in self._last.items() if v[0] < horizon]:
                 self._last.pop(k, None)
                 self._first.pop(k, None)
-        for store in (self._range_est, self._vrel_smooth, self._guard_state, self._ramp):
+        for store in (self._range_est, self._vrel_smooth, self._fused, self._guard_state, self._ramp):
             if len(store) > 400:
                 for k in [k for k, v in store.items() if v[0] < time_s - 5.0]:
                     store.pop(k, None)
