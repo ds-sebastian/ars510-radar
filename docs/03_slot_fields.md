@@ -199,7 +199,7 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
 |---|---|---|---|
 | `224\|7` | σ dRel | grows with range, shrinks with track age, rises before deletion | ◐ |
 | `232\|7` | σ yRel | grows with \|yRel\|, shrinks with age | ◐ |
-| `240\|7` | longitudinal velocity uncertainty-like | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
+| `240\|7` | longitudinal velocity error scale (≈ 0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
 | `248\|7` | σ vy | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | angular uncertainty-like code | co-varies with velocity uncertainty candidates; raw63 pairs with angle0, raw127 has exceptions; metric units provisional | ○ |
 | `256\|8` | existence-like | rises with age at fixed range (ρ +0.86 to +0.90), drops before deletion | ○ |
@@ -213,7 +213,10 @@ distance-long, distance-lat, velocity-long, velocity-lat order like Continental'
 velocity excursions well below 40 m (AUC 0.95-0.97) but not at 40-60 m (0.41-0.49) or beyond (0.55-0.68), where
 excursions matter ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 
-`240|7` is exposed as `NativeObject.vel_unc_code`. On selected 40–80 m windows, a through-origin fit of
+`240|7` is exposed as `NativeObject.vel_unc_code`. Against the radar's own ACC target, the RMS of native vRel minus ACC speed
+is 0.04-0.05 m/s per count over codes of about 15-35 on the 700-segment corpus and on the fresh drives (growing more
+slowly above about 40), and a Gaussian σ = 0.045 × code reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
+[summary](../data/analysis/summaries/excursion_sigma_scale.json)); the ACC reference error (about 0.6 m/s) is inside that RMS. On selected 40–80 m windows, a through-origin fit of
 **native-minus-ECC RMS disagreement** against mean code gives 0.049 m/s/count and R² 0.81 across ten code deciles
 (◐ association; [optical comparison](07_velocity_excursions.md#compared-with-an-optical-reference)).
 This includes both estimators' errors, their covariance and squared bias; it does not isolate radar sigma or
