@@ -4,7 +4,8 @@
   "error_scale_proportional_to_240_7": "likely (RMS 0.04-0.05 m/s per count over codes 14-75; ACC reference error floor about 0.6 m/s)",
   "excursions_as_expected_tail": "likely (incidence within a factor 1.3; tails beyond 2.5 sigma heavier than Gaussian)",
   "error_scale_is_fitted_not_decoded": "K is a fitted Gaussian-equivalent: the robust (MAD) core is about 0.027 m/s per count over codes 12-70, the RMS 0.04-0.05 because of heavy tails; the unit of the code itself is not decoded",
-  "mean_offset": "not a decode-constant error: it is about -0.08 m/s below 20 m, -0.37 at 40-60 m and -0.62 at 80-110 m, has no ego-speed slope, and differs by drive (std 0.34 m/s)"
+  "mean_offset": "not a decode-constant error: it is about -0.08 m/s below 20 m, -0.37 at 40-60 m and -0.62 at 80-110 m, has no ego-speed slope, and differs by drive (std 0.34 m/s)",
+  "offset_follows_tracker_acceleration_state": "likely (out-of-sample R2 0.11; ACC acceleration explains none)"
  },
  "method": {
   "reference": "OEM ACC target 0x235/0x237 (decoded as in docs/05)",
@@ -605,5 +606,176 @@
    "observed": 0.06911657337551716,
    "predicted": 0.05518668781132747
   }
+ },
+ "signal_scan": {
+  "description": "Exploratory scan of 13.6 k candidate signals (slot, header, 0x85 bit windows, every aux CAN address, ego, livePose, derived kinematics) against the native-minus-ACC velocity residual after range, 240|7 and ACC-speed strata; score = out-of-sample R2 of a level-mean predictor fitted on half of the segments and scored on the other half.",
+  "rows": 177163,
+  "segments": 457,
+  "offset_predictors": {
+   "ax_84_10_r2": 0.1131,
+   "native_vrel_derivative_r2": 0.0472,
+   "ax_and_derivative_r2": 0.1482,
+   "acc_speed_derivative_r2": 0.0001,
+   "width_216_6_r2": 0.0108,
+   "dv_vs_ax_fit_s_and_intercept_mps": [
+    0.932432772797506,
+    -0.29152140525068965
+   ],
+   "dv_by_ax_far": {
+    "n": [
+     12937,
+     10469,
+     16876,
+     9248,
+     12017,
+     13750,
+     14054,
+     11106,
+     8235,
+     10797,
+     8063,
+     10864
+    ],
+    "ax": [
+     -22.6982,
+     -8.2381,
+     -4.8477,
+     -3.0,
+     -2.0,
+     -1.0,
+     0.0,
+     1.0,
+     2.0,
+     3.4292,
+     5.8483,
+     17.868
+    ],
+    "dv_mean": [
+     -1.2874,
+     -1.0661,
+     -0.8807,
+     -0.6487,
+     -0.4798,
+     -0.3385,
+     -0.1946,
+     -0.0826,
+     0.0324,
+     0.1895,
+     0.3987,
+     0.6298
+    ],
+    "dv_med": [
+     -0.9149,
+     -0.7798,
+     -0.7272,
+     -0.5533,
+     -0.3675,
+     -0.2508,
+     -0.1159,
+     -0.0048,
+     0.0947,
+     0.1562,
+     0.2552,
+     0.3125
+    ],
+    "dvs": [
+     -1.2535,
+     -1.0284,
+     -0.8506,
+     -0.6227,
+     -0.4576,
+     -0.3303,
+     -0.2039,
+     -0.0981,
+     0.0041,
+     0.1533,
+     0.3668,
+     0.6002
+    ],
+    "ax_mps2": [
+     -0.9079,
+     -0.3295,
+     -0.1939,
+     -0.12,
+     -0.08,
+     -0.04,
+     0.0,
+     0.04,
+     0.08,
+     0.1372,
+     0.2339,
+     0.7147
+    ]
+   },
+   "dv_by_measurement_state_264": {
+    "m264": [
+     1,
+     2,
+     3,
+     5
+    ],
+    "size": [
+     30604,
+     126550,
+     10867,
+     3005
+    ],
+    "mean": [
+     -0.751,
+     -0.238,
+     -0.102,
+     -0.567
+    ],
+    "median": [
+     -0.53,
+     -0.176,
+     -0.08,
+     -0.543
+    ]
+   },
+   "dv_by_width_216_6": {
+    "width": [
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21
+    ],
+    "size": [
+     4499,
+     11053,
+     28791,
+     48047,
+     42428,
+     21283,
+     10807,
+     4817
+    ],
+    "mean": [
+     -0.627,
+     -0.659,
+     -0.597,
+     -0.384,
+     -0.242,
+     -0.12,
+     0.069,
+     0.103
+    ],
+    "median": [
+     -0.435,
+     -0.482,
+     -0.455,
+     -0.306,
+     -0.198,
+     -0.098,
+     0.108,
+     0.15
+    ]
+   }
+  },
+  "no_predictor": "ego speed, acceleration, yaw rate, brake, gas, cruise, livePose, record header bytes and every aux CAN address stay below R2 0.006 for the offset; no candidate exceeds R2 0.016 for the scale"
  }
 }

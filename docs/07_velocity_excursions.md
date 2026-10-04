@@ -90,7 +90,11 @@ from normal ones only below 40 m (AUC 0.95-0.97), not at 40-60 m (0.41-0.49) or 
 Caveats: the 0.045 is a fitted Gaussian-equivalent, not a decoded unit: the robust (MAD) core is about 0.027 m/s per count
 over codes 12-70 and heavy tails (kurtosis 1.3-8) lift the RMS to 0.04-0.05. The ACC target has its own error (about 0.6 m/s).
 The −0.3 m/s mean offset is not a zero-point or ego-scale error of the decode: it is about −0.1 m/s below 20 m, −0.4 m/s at
-40-60 m and −0.6 m/s at 80-110 m, has no ego-speed slope and differs between drives (std 0.3 m/s). Why the ACC tracker is better is unexplained
+40-60 m and −0.6 m/s at 80-110 m, has no ego-speed slope and differs between drives (std 0.3 m/s). Of 13.6 k candidate signals (every slot, header and
+0x85 bit window, every aux CAN address, ego and livePose signals), only the object's own state explains it, scored out of sample
+across drives: the filtered acceleration `84|10` (R² 0.11, roughly 3 s × acceleration around zero; the ACC target's own acceleration
+explains nothing), the measurement state `264|8` (mean native-minus-ACC −0.75 m/s in state 1 against −0.24 in state 2) and the
+object width `216|6` (−0.6 m/s at codes 14-16, +0.1 at 20-21). Ego signals, livePose and aux frames stay below R² 0.006. Why the ACC tracker is better is unexplained
 ([summary](../data/analysis/summaries/excursion_sigma_scale.json)).
 
 ![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
