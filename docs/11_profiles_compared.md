@@ -1,11 +1,10 @@
 # 11. Profiles compared: what each does, against vision only and other radar parsers
 
-The integration ships four install profiles. This page shows how each one processes a track, what adding it to
-openpilot changes compared with **vision only** (stock openpilot on this car, which has no radar leads), how that feels
-from the driver's seat, the assumptions behind those numbers, and how the code compares with the other radar
-interfaces in openpilot. Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),
-[`fused_filter.json`](../data/analysis/summaries/fused_filter.json),
-[`acc_anchor.json`](../data/analysis/summaries/acc_anchor.json). Figures: `tools/make_fused_figures.py`,
+Four install profiles, compared on how they work, against **vision only** (stock openpilot on this car), on driving
+feel, and against openpilot's other radar interfaces.
+
+Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),
+[`fused_filter.json`](../data/analysis/summaries/fused_filter.json). Figures: `tools/make_fused_figures.py`,
 `tools/make_profile_figures.py`.
 
 ## At a glance
@@ -163,9 +162,8 @@ What the radar adds, by profile:
 | ARS510 `raw` | +~60 | publication age, ID re-link, saturation guard |
 | ARS510 `fused` | +~109 | `raw` + range fusion + ACC / summary association + one Kalman speed filter |
 
-The other interfaces read radars that publish clean, validated tracks and leave all filtering to radard. The ARS510's
-object list is a processed track list too, but its far-range speed has a wide error that it reports (`240|7`) without
-flagging individual bad moments, so some estimation is needed before radard. `fused` keeps that to one textbook filter
-whose weights come from the radar's own uncertainty fields and internal trackers. The same weighting could instead live
-in radard as a per-point speed variance, which would leave this interface a pass-through like the others
-([10](10_research_directions.md#towards-an-upstream-comma-interface)).
+- Other interfaces read radars that publish clean, validated tracks and leave filtering to radard.
+- The ARS510's far-range speed has a wide error that it reports (`240|7`) but does not flag per moment, so some
+  estimation is needed before radard. `fused` keeps that to one textbook filter whose weights come from the radar.
+- Moving that weighting into radard (a per-point speed variance) would make this interface a pass-through like the
+  others ([10](10_research_directions.md#towards-an-upstream-comma-interface)).

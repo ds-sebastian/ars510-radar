@@ -30,6 +30,7 @@ OUT = REPO / "docs" / "img" / "analysis"
 SAMPLE = REPO / "data" / "sample"
 INK, INK2, GRID, SURFACE = "#1d1d1b", "#5b5a55", "#e6e5df", "#fbfaf7"
 S1, S2, S3, S4 = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
+S5 = "#e87ba4"
 GRAY = "#a9a8a2"
 plt.rcParams.update({
     "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
@@ -62,10 +63,11 @@ def synthetic(kind: str):
         if kind == "glitch":
             vg = 25.0 - 0.5 + (12.0 if k == 100 else 0.0)
             slot = encode_slot(long_dist=round(160 + 50 * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
-                               age_cycles=min(126, 80 + k))
+                               age_cycles=min(126, 80 + k), vel_uncertainty_candidate=35)  # 240|7 ≈ 0.7 per metre
         else:
             slot = encode_slot(long_dist=round(160 + (90 - 0.05 * k) * 16), lat_dist_left=2048,
-                               long_vel_over_ground=round(510.5 + 24.2 / 0.15), age_cycles=min(126, 1 + k))
+                               long_vel_over_ground=round(510.5 + 24.2 / 0.15), age_cycles=min(126, 1 + k),
+                               vel_uncertainty_candidate=63)  # 240|7 ≈ 0.7 per metre
         rec = record({0: slot})
         yield t + 0.002, 1, 0x80, bytes([0x12]) + rec[0:7]
         for j in range(1, 106):
@@ -124,7 +126,7 @@ def layers_figure() -> None:
          "1  Range fusion (drive A)", "lead dRel (m)", None),
         (fol, "v", [("raw", STOCK, GRAY), ("+ far smoothing (tau 0-1 s)", K4, S1)],
          "2  Far smoothing (drive A)", "lead vRel (m/s)", None),
-        (glitch, "v", [("without", K4, GRAY), ("+ 8 m/s jump guard", K4_JUMP, S3)],
+        (glitch, "v", [("without", K4, GRAY), ("+ 8 m/s jump guard", K4_JUMP, S5)],
          "3  Jump guard (synthetic one-record spike)", "lead vRel (m/s)", None),
         (exc, "v", [("K4 + jump guard", K4_JUMP, GRAY), ("+ ramp limiter (+4 / -6 m/s²)", K4_JUMP_RAMP, S4)],
          "4  Ramp limiter (drive A excursion)", "lead vRel (m/s)", None),
@@ -135,6 +137,7 @@ def layers_figure() -> None:
     ]
     fig, axes = plt.subplots(3, 2, figsize=(11, 9.4))
     for ax, (name, key, runs, title, ylabel, xlim) in zip(axes.flat, panels):
+        runs = runs + [("fused (default): one Kalman filter", FUSED_CONFIG, S3)]
         for lab, cfg, color in runs:
             r = lead(name, cfg)
             ax.plot(r["t"], r[key], color=color, label=lab)
@@ -150,16 +153,19 @@ def staircase_figure() -> None:
     import json
     d = json.loads((REPO / "data/analysis/summaries/layer_ablation.json").read_text())["cumulative_heldout"]
     import textwrap
-    labels = [textwrap.fill(x["step"], 18) for x in d]
-    vals = [x["hard_ticks"] for x in d]
-    colors = [GRAY, GRAY, S1, S1, S1, S1, S2]
+    fused = json.loads((REPO / "data/analysis/summaries/fused_filter.json").read_text())["replay_34_drives"]["fused"]
+    labels = [textwrap.fill(x["step"], 18) for x in d] + [textwrap.fill("raw + range fusion + one Kalman filter (= fused, default)", 18)]
+    vals = [x["hard_ticks"] for x in d] + [fused["heldout_hard_ticks"]]
+    colors = [GRAY, GRAY, S1, S1, S1, S1, S2, S3]
     fig, ax = plt.subplots(figsize=(11, 4.2))
-    bars = ax.bar(range(len(vals)), vals, color=colors)
+    xs = list(range(len(vals) - 1)) + [len(vals) - 0.4]  # the fused bar stands apart: it replaces steps 3-7
+    bars = ax.bar(xs, vals, color=colors)
+    ax.axvline(len(vals) - 1.2, color=GRID, lw=1.2)
     for b, v in zip(bars, vals):
         ax.text(b.get_x() + b.get_width() / 2, v + 2, str(v), ha="center", fontsize=9, color=INK)
-    ax.set_xticks(range(len(vals)), labels, fontsize=8)
+    ax.set_xticks(xs, labels, fontsize=8)
     ax.set_ylabel("hard radar-only braking ticks")
-    ax.set_title("Each layer added in turn: 20 held-out routes, 4.6 h (far settling's gain is on other drives)")
+    ax.set_title("Each layer added in turn, and fused instead of the layers: 20 held-out routes, 4.6 h")
     fig.tight_layout(); fig.savefig(OUT / "layer_staircase.png", dpi=130); plt.close(fig)
 
 

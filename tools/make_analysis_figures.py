@@ -654,6 +654,12 @@ def far_settling():
         axes[0].plot(g.time_s, g[prefix + "_d"].where(present), color=color, label=label)
         axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color)
         axes[2].plot(g.time_s, g[prefix + "_a"], color=color)
+    if "fused_a" in g:  # the same drive through the anchor and fused profiles
+        for prefix, color, label in (("anchor", S4, "anchor"), ("fused", S3, "fused (default)")):
+            present = g[prefix + "_present"] == 1
+            axes[0].plot(g.time_s, g[prefix + "_d"].where(present), color=color, lw=1.4, label=label)
+            axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color, lw=1.4)
+            axes[2].plot(g.time_s, g[prefix + "_a"], color=color, lw=1.4)
     axes[2].plot(g.time_s, g.vision_a, color=INK2, ls="--", label="vision only")
     axes[0].legend(loc="upper left", fontsize=9)
     axes[2].legend(loc="lower left", fontsize=9)
@@ -663,7 +669,7 @@ def far_settling():
     axes[2].set_xlabel("time within the example (s)")
     axes[0].set_title("Delay the first far-track pickup while velocity settles")
     save(fig, "far_settling", "Drive D1, targeted open-loop example. Age 100 delays first publication above 70 m; "
-         "it removes this brake episode. Older-track excursions remain.")
+         "it removes this brake episode (−1.31 → −0.38 m/s²). anchor and fused (speed-std publication gate) avoid it too.")
 
 
 def ramp_limiter():
@@ -678,6 +684,12 @@ def ramp_limiter():
         present = g[prefix + "_present"] == 1
         axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color)
         axes[2].plot(g.time_s, g[prefix + "_a"], color=color)
+    if "fused_a" in g:  # the same drive through the anchor and fused profiles
+        for prefix, color, label in (("anchor", S4, "anchor"), ("fused", S3, "fused (default)")):
+            present = g[prefix + "_present"] == 1
+            axes[1].plot(g.time_s, g[prefix + "_v"].where(present), color=color, lw=1.4, label=label)
+            axes[2].plot(g.time_s, g[prefix + "_a"], color=color, lw=1.4)
+        axes[1].legend(loc="lower left", fontsize=9)
     axes[2].plot(g.time_s, g.vision_a, color=INK2, ls="--", label="vision only")
     axes[0].legend(loc="upper left", fontsize=9)
     axes[2].legend(loc="lower left", fontsize=9)
@@ -688,7 +700,7 @@ def ramp_limiter():
     axes[0].set_title("Limit physically implausible velocity ramps")
     save(fig, "ramp_limiter", "Drive D2, targeted open-loop example. The lead's over-ground velocity ramps at ~23 m/s², "
          "spikes (withheld by the jump guard, gap) and decays. The limiter keeps the ramp and most of its tail out of radard: "
-         "the request falls from -1.37 to about -0.45 m/s², no longer a radar-only brake episode.")
+         "the request falls from -1.37 to about -0.55 m/s², no longer a radar-only brake episode; anchor -0.56, fused -0.63.")
 
 
 def event_code_context():

@@ -49,25 +49,16 @@ from this radar's own data.
   [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json),
   [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
 
-  A conditional ego-path comparison supports the approximate angular scale: the output correlates at
-  r = 0.89-0.93 with the road direction where ego later passes the target's reported position. This uses
-  native radar position to select the future path point and assumes the target follows that path; target
-  identity and direction are not independently measured. On rows where the output differs from the
-  component formula, neither comparison establishes a separate or directly derived heading state.
-  Three checked allocation edges keep both component codes fixed while the heading changes, including
-  two with ordinary neighbouring `200|7` codes. These are observed code updates, not three independently
-  verified physical turns. Structural examples and the reference's distinguishing criteria:
-  [`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json).
+  Against the road direction where ego later passes the target's position the output correlates at r = 0.89-0.93
+  (assumes the target follows that path). The heading can change while both velocity codes stay fixed (three checked
+  cases), so it is not purely derived from them
+  ([`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json)).
   Reference assumptions and results:
   [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
-  The neighbouring `200|7` code helps distinguish output states: raw63 pairs with angle0 on all 393,268
-  observed rows. Raw127 usually pairs with zero too, but has 14 nonzero-angle exceptions among 35,871 rows,
-  including one mature moving sample. Preserve the full seven bits. Among the current-bin discrepancies,
-  98,485 of 100,838 occur at63/127; 2,353 remain at other codes. These are conditional code associations,
-  not a universal invalidity flag, calibrated angular uncertainty or a filter decode. Zero angle can also
-  represent clipped rightward motion. Definitions and examples:
-  [`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json).
+  `200|7` helps tell output states apart: code 63 always pairs with heading 0 (393,268 rows); 127 almost always
+  (14 exceptions in 35,871). Heading 0 can also be clipped rightward motion, so keep all seven bits
+  ([`heading_default_state.json`](../data/analysis/summaries/heading_default_state.json)).
 
   ![heading](img/analysis/heading_field.png)
 
@@ -206,23 +197,19 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
 | `264\|8` | measurement state | settled values depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m): a near/far-scan mode | ○ |
 | `184\|8` | secondary score | 59-100 on allocated slots | ○ |
 
-Against each track's own errors on two drives (all tracks, within range bins), `224|7` and `240|7` follow longitudinal
-errors (range residual, velocity against the radar's ACC target, acceleration) and `232|7` and `248|7` lateral ones
-(Spearman ≈ 0.4 with the lateral residual against ≤ 0.13 for the longitudinal pair): an alternating
-distance-long, distance-lat, velocity-long, velocity-lat order like Continental's object-quality fields. They flag
-velocity excursions well below 40 m (AUC 0.95-0.97) but not at 40-60 m (0.41-0.49) or beyond (0.55-0.68), where
-excursions matter ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
-
-`240|7` is exposed as `NativeObject.vel_unc_code`. Against the radar's own ACC target, the RMS of native vRel minus ACC speed
-is 0.04-0.05 m/s per count over codes of about 15-35 on the 700-segment corpus and on the fresh drives (growing more
-slowly above about 40), and a Gaussian σ = 0.045 × code reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
-[summary](../data/analysis/summaries/excursion_sigma_scale.json)); the ACC reference error (about 0.6 m/s) is inside that RMS. On selected 40–80 m windows, a through-origin fit of
-**native-minus-ECC RMS disagreement** against mean code gives 0.049 m/s/count and R² 0.81 across ten code deciles
-(◐ association; [optical comparison](07_velocity_excursions.md#compared-with-an-optical-reference)).
-This includes both estimators' errors, their covariance and squared bias; it does not isolate radar sigma or
-measurement variance. The exploratory transfer fit is 0.054 with R² 0.66; those transfer statistics and the
-reported bootstrap are outside the independent arithmetic check. Physical units and within-target calibration
-remain provisional ([summary](../data/analysis/summaries/video_truth.json)).
+- **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
+  (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
+  Continental order distance-long, distance-lat, velocity-long, velocity-lat
+  ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
+- **`240|7` as a speed standard deviation** (`NativeObject.vel_unc_code`): RMS of native vRel minus the ACC target's
+  speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
+  reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
+  [summary](../data/analysis/summaries/excursion_sigma_scale.json)). The `fused` profile uses it this way.
+- **It is a width, not a flag:** it separates excursion records below 40 m (AUC 0.95-0.97) but weakly beyond
+  (0.41-0.68), where excursions happen.
+- **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
+  over code deciles); that mixes both estimators' errors, so physical units remain provisional
+  ([summary](../data/analysis/summaries/video_truth.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127 and is withheld
 by both profiles. It appears in short runs on mature tracks at 34–97 m and often decays through 1022, 1014,
