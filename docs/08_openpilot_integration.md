@@ -67,22 +67,29 @@ track: profiles only change *how* a track's values are filtered, never which car
 | profile | what it is | when to use |
 |---|---|---|
 | **`anchor`** (default) | `ANCHOR_CONFIG` = `steady` + the radar's own ACC target (0x235) as a velocity anchor for the one track it describes, and its target-range summaries (0x192/0x194) for far tracks up to 80 m | everyday driving: the fewest false brakes at the same response as `steady` |
+| `fused` | `FUSED_CONFIG` = `stock` + range fusion + one speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) | the principled alternative to `anchor`: fewer false brakes, closing speed without `anchor`'s bias; opt-in until road-tested |
 | `steady` | `STEADY_CONFIG` = `stock` + range fusion, far smoothing, far-track settling, ramp limiter | when you want to compare without the ACC target, or on a car whose ACC target is not on the radar bus |
 | `stock` | `OPENPILOT_CONFIG`: the plain decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 
 `default`, the older name of `stock`, is still accepted so earlier instructions keep working.
 
 Replay against the driver, unchanged openpilot card → radard → planner
-([summary](../data/analysis/summaries/acc_anchor.json), [profile figures](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
+([summary](../data/analysis/summaries/acc_anchor.json), [fused](../data/analysis/summaries/fused_filter.json),
+[profile figures](07_velocity_excursions.md#how-the-filtering-works-step-by-step)):
 
-| | `stock` | `steady` | `anchor` |
-|---|---|---|---|
-| hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 53 | **48** |
-| radar-only episodes (hard / target), held-out | 15 / 19 | 12 / 11 | **11 / 9** |
-| hard radar-only braking ticks, owner sunnypilot drives | 17 | 16 | **0** |
-| hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | 7 | **0** |
-| mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.128 s | −1.128 s |
-| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 44.3% | 43.7% |
+| | `stock` | `steady` | `anchor` | `fused` |
+|---|---|---|---|---|
+| hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 53 | 48 | **30** |
+| radar-only episodes (hard / target), held-out | 15 / 19 | 12 / 11 | 11 / 9 | **10 / 4** |
+| hard radar-only braking ticks / target episodes, owner sunnypilot drives | 17 / – | 16 / – | **0** / 5 | **0 / 0** |
+| hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | 7 | **0** | **0** |
+| mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.128 s | −1.128 s | −1.038 s |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 44.3% | 43.7% | 41.9% |
+
+`fused` brakes later before some driver brakes because it drops a bias: in the 4 s before the driver brakes, `anchor`'s
+lead closing speed is 0.54 m/s more closing than the vision lead on average, `fused`'s 0.02 m/s (closer to vision in
+20 of the 24 events it answers later). `anchor`'s earlier reactions there come from the same over-closing that causes
+its false brakes ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
 
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
 −0.5 m/s²: braking that only the radar wanted. `stock` reacts about 0.04 s earlier on average than the filtered
@@ -95,12 +102,13 @@ What each setting does (examples and plots in [07](07_velocity_excursions.md#how
 | `min_publish_age=60`, `relink_max_gap_s=3.5` | all | a track is published after ~3.6 s, once range and velocity have converged; a lost and re-found track keeps its ID |
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; no point without a fresh ego speed (radard's filter never recovers from NaN) |
 | `drop_saturated_codes` | all | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards |
-| `range_fusion_gain=0.1` | steady, anchor | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
+| `range_fusion_gain=0.1` | steady, anchor, fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
 | `vrel_smooth_far_tau_s=1.0` | steady, anchor | vRel EMA, time constant 0 s below 30 m rising to 1 s beyond 60 m, where excursions live |
 | `vjump_thresh_mps=8` | option, off | withholds a record more than 8 m/s from the last accepted one; a new level that lasts 1 s is accepted. No scored effect once the ramp limiter and far settling are on |
 | `far_min_publish_age=100` above 70 m | steady, anchor | far new tracks wait ~6 s instead of ~3.6 s: young far tracks are where pickups misread speed |
 | `ramp_up_mps2=4`, `ramp_down_mps2=6` | steady, anchor | over-ground speed may leave its 3 s average by at most +4 / −6 m/s²; returns pass at once |
-| `acc_target_clip_mps=3`, `acc_target_sticky`, `acc_match_range_m=12`, `acc_match_min_age=20` | anchor | the track the radar reports as its ACC target stays within ±3 m/s of the target's closing speed; the association survives the target's range sliding |
+| `fused_speed_filter` (σ per reading from `240\|7`, ACC target, summary; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one filter in place of far smoothing, far settling, the ramp limiter and the ACC / summary clips ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)) |
+| `acc_target_clip_mps=3`, `acc_target_sticky`, `acc_match_range_m=12`, `acc_match_min_age=20` | anchor (association also in fused) | the track the radar reports as its ACC target stays within ±3 m/s of the target's closing speed; the association survives the target's range sliding |
 | `summary_clip_mps=3`, `summary_max_range_m=80` | anchor | a track matched to the radar's target-range summary (0x192/0x194) stays within ±3 m/s of the summary's range-slope speed, up to 80 m; no planner change on 34 drives, closer to the camera reference at 40-80 m |
 
 ## What radard does with radar points

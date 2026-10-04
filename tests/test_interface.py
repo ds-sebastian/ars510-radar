@@ -544,3 +544,49 @@ def test_summary_anchor_bounds_a_far_track_by_the_summary_speed() -> None:
 def test_summary_anchor_range_limit_leaves_farther_tracks_alone() -> None:
     assert _summary_run(3.0, max_range=60.0) == _summary_run(0.0)       # lead at ~68 m: beyond the limit
     assert _summary_run(3.0, max_range=80.0) == _summary_run(3.0)       # within the limit: anchored as before
+
+
+def _fused_run(cfg: NativeInterfaceConfig, d0: float, unc: int, v_of_t, n: int = 80, summary: bool = False,
+               age0: int = 120) -> list[tuple[float, float]]:
+    """One lead at range d0 (closing with its relative speed); over-ground speed v_of_t(k), 240|7 = unc."""
+    from ars510.objects import encode_slot
+    iface = Ars510NativeRadarInterface(cfg)
+    out, d = [], d0
+    for k in range(n):
+        t = 0.06 * k
+        vg = v_of_t(k)
+        d += (vg - 10.0) * 0.06 if not summary else -0.06
+        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
+                           age_cycles=min(126, age0 + k), vel_uncertainty_candidate=unc)
+        fr = [speed_frame(t, 10.0)]
+        if summary:
+            code = round((d - (-5.14)) / 0.0541)
+            fr.append((t + 0.001, 1, 0x192, code.to_bytes(2, "big") + (2048).to_bytes(2, "big")))
+        fr += frames_(record({0: lead}), t + 0.002)
+        out += [(t, p["vRel"]) for r in iface.update_many(fr) for p in r["radarData"]["points"]]
+    return out
+
+
+def test_fused_filter_weights_each_reading_by_the_radars_sigma() -> None:
+    cfg = replace(NativeInterfaceConfig(), min_publish_age=1, fused_speed_filter=True, publish_speed_std_mps=99.0)
+    noisy = lambda amp: (lambda k: 10.0 + (amp if k % 2 else -amp))
+    spread = lambda pts: max(v for _, v in pts[20:]) - min(v for _, v in pts[20:])
+    far = spread(_fused_run(cfg, 80.0, 50, noisy(2.25)))       # sigma 2.25 m/s, noise of that size
+    near = spread(_fused_run(cfg, 15.0, 5, noisy(0.3)))        # sigma 0.23 m/s
+    assert far / 4.5 < 0.06 and near / 0.6 > 3 * far / 4.5   # far readings are averaged, near ones followed
+    assert NativeInterfaceConfig().fused_speed_filter is False
+
+
+def test_fused_filter_follows_the_summary_through_an_excursion() -> None:
+    """Object-list speed drifts 6 m/s low (sigma 1.35 m/s) while the 0x192 summary keeps closing at 1 m/s."""
+    cfg = replace(NativeInterfaceConfig(), min_publish_age=1, fused_speed_filter=True, publish_speed_std_mps=99.0)
+    out = _fused_run(cfg, 70.0, 30, lambda k: 9.0 if k < 25 else 3.0, summary=True)
+    assert all(v > -2.5 for _, v in out[-20:])                # object list says -7 m/s; the radar's tracker says -1
+
+
+def test_fused_filter_publishes_young_far_tracks_once_their_speed_is_known() -> None:
+    cfg = replace(NativeInterfaceConfig(), min_publish_age=60, fused_speed_filter=True)
+    near = _fused_run(cfg, 20.0, 8, lambda k: 10.0, n=40, age0=55)
+    far = _fused_run(cfg, 90.0, 60, lambda k: 10.0, n=40, age0=55)
+    assert near and near[0][0] < 0.06 * 7                     # published at age 60
+    assert not far or far[0][0] > near[0][0] + 0.5            # speed std still above 0.75 m/s at age 60

@@ -334,6 +334,45 @@ lead switches drop 4%, but one more driver brake is answered more than 0.15 s la
 and distances move by up to 12 m where the fine range and the object list disagree on scale (10-20% over long
 approaches). It stays off until that scale is understood ([`acc_fields.json`](../data/analysis/summaries/acc_fields.json)).
 
+### Fused speed filter (`fused` profile)
+
+The layers above are each tuned against one failure. `fused` replaces far smoothing, far-track settling, the ramp
+limiter and both ±3 m/s clips with one per-track Kalman filter on the lead's over-ground speed, built from what the radar
+itself reports ([summary](../data/analysis/summaries/fused_filter.json)):
+
+- **Each reading is weighted by its own standard deviation.** The object-list speed has σ = 0.045 m/s × `240|7`
+  ([above](#far-range-excursions-match-the-reported-velocity-error-scale)): about 0.2 m/s at 15 m, 1.4 m/s at 60 m,
+  2.7 m/s at 100 m. Tracks younger than 100 frames get 1.8 × that, because their speeds err 1.4-2 × more than `240|7`
+  says while `240|7` itself does not change with age. The radar's ACC target speed (for the associated track) and the
+  target-range summary speed (up to 80 m) are further measurements of the same speed with σ 0.5 m/s. Near, the object
+  list dominates; far, the radar's internal trackers do.
+- **The lead may change speed by a lead acceleration of 1.5 m/s²** (process noise). A reading more than 3 standard
+  deviations from the estimate counts as at most 3 (robust update), which stops one-record spikes.
+- **A track is published once its speed is known to ±0.75 m/s.** That reproduces far-track settling without a range
+  threshold: near tracks publish at age 60, young far tracks wait until their speed has converged.
+- **Range is not in the filter.** The object list's range rate and speed disagree by 10-20 % (range changes faster than
+  the speed integrates), so a filter that ties them runs metres off for seconds. The published range keeps range
+  fusion, which also stops radard's vision match flickering on far-range jitter.
+
+`240|7` is a width, not a flag: its power to single out false closings fades gradually with range (within-band AUC
+0.71-0.75 at 25-55 m, 0.60 beyond 95 m), at or above what an exact standard deviation would allow, because far out the
+excursions are ordinary draws from a wide error rather than rare outliers. That is why it weights readings instead of
+gating them.
+
+![profiles on the bundled samples, with fused](img/analysis/profile_comparison.png)
+
+*`fused` (green) on the bundled samples: it follows the radar's ACC target through both excursions on drive E and
+keeps drive A's lead at the speed its range trend shows.*
+
+On the 34 replay drives `fused` brakes falsely less than `anchor` on every cohort (held-out hard radar-only ticks
+48 → 30, target episodes 9 → 4; owner drives target episodes 5 → 0, hard ticks 0 → 0). It reacts to driver brakes
+0.09 s later on average, all from a few events where `anchor` braked early on an over-estimated closing speed: in the
+4 s before those driver brakes the fused closing speed is within 0.02 m/s of the vision lead on average, `anchor`'s
+0.54 m/s more closing. On the fresh drives one of the radar's slow leads is answered 0.85 s earlier (the ACC target
+showed the slowdown before the object list). Two choices were tested and dropped: adapting the process noise to large
+innovations follows far slot slides as if they were braking, and removing the robust clamp lets a +10 m/s opening
+spike through.
+
 ### Other approaches tested
 
 Measured the same way; none is in a profile.
