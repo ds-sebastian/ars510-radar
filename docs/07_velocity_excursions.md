@@ -199,6 +199,27 @@ over-estimated closing speed (before those driver brakes `anchor` is 0.54 m/s mo
 Dropped variants: adapting the process noise follows far slot slides as if they were braking; without the robust
 clamp a +10 m/s spike passes.
 
+### Kalman variants tested
+
+The single speed state of `fused` was compared with richer filters on an offline bench: every cycle of 8 drive groups,
+the radar's ACC target hidden as the reference, tuned on 3 groups and scored on the rest. The best candidates were then
+replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/kalman_variants.json)).
+
+![Kalman variants](img/analysis/kalman_variants.png)
+
+| variant | bench | openpilot replays |
+|---|---|---|
+| Student-t update instead of the 3σ clamp | same as the clamp | – |
+| speed + acceleration state (as radard), fed the radar's `84\|10` acceleration | worse on held-out and owner drives | – |
+| noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
+| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**, same response to real braking | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
+| retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: none better on every check |
+
+The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
+0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
+let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
+`COLORED_CONFIG` is not in the decoder.
+
 ### Other approaches tested
 
 None is in a profile.
