@@ -64,7 +64,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["anchor"]' in (toyota / "ars510_radar_interface.py").read_text()
-  for name in ("steady", "default"):  # "default" stays accepted as the older name of stock
+  for name in ("fused", "steady", "default"):  # "default" stays accepted as the older name of stock
     assert _install(tmp_path, "--profile", name).returncode == 0
     assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
   r = _install(tmp_path, "--profile", "stock")
