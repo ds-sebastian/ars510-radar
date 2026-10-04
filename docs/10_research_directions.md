@@ -21,9 +21,10 @@ The most promising next steps, ordered by how directly they would improve the ra
 5. **Vision fusion with a softer camera weight.** The radard patch with `VISION_V_STD_SCALE` 3-4, on new drives.
 6. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) removes the brake-then-accelerate swing.
-7. **Simplify further.** The jump guard is gone (no scored effect anywhere). Far smoothing and far-track settling are
-   the next candidates: test each removal from `anchor` on the 34 replay drives and the fresh drives, where the ACC
-   anchor may already cover part of their job.
+7. **Simplify further.** The jump guard is gone (no scored effect anywhere). Removing far smoothing or far-track
+   settling from `anchor` each raises the further drives' hard braking from 1 to 9 ticks
+   ([07](07_velocity_excursions.md#what-removing-a-layer-does)), so both stay until the excursion source itself is
+   handled; the remaining layers each have a measured job.
 
 ## Learn from Toyota's own longitudinal control
 
