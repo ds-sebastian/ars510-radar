@@ -10,14 +10,11 @@ from pathlib import Path
 
 import pytest
 
-from dataclasses import replace
-
 from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface
 
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = sorted((REPO / "data" / "sample").glob("*.csv.gz"))
-# fused without the track-ID relink: identical driving on 34 replay drives and 8 fresh drives (docs/12)
-OPENPILOT_EQUIVALENT = replace(FUSED_CONFIG, relink_max_gap_s=0.0)
+OPENPILOT_EQUIVALENT = FUSED_CONFIG  # the openpilot version is the default profile in one file
 
 
 def _fake_opendbc() -> dict:

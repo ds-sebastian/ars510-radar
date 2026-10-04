@@ -126,6 +126,81 @@
    "further": 2,
    "owner": 0,
    "onset_vs_vision_delta_s": 0.012
+  },
+  "track_id_relink": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0,
+   "note": "identical in every measure (switches 1770 vs 1772)"
   }
+ },
+ "combinations_34_drives": {
+  "definition": "parts removed together from fused; S summaries, L track-ID relink, R range fusion, Y young factor, G speed-std gate; hard radar-only ticks held-out / further / owner, held-out target episodes, owner target episodes, held-out lead-source switches; acceptance rule fixed before results",
+  "fused": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0,
+   "target_episodes": 4,
+   "owner_target_episodes": 0,
+   "switches": 1772,
+   "openpilot_file_lines": 296,
+   "passes": true
+  },
+  "no_L": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0,
+   "target_episodes": 4,
+   "owner_target_episodes": 0,
+   "switches": 1770,
+   "verdict": "identical: removed from the openpilot version",
+   "openpilot_file_lines": 264,
+   "passes": true
+  },
+  "no_SL": {
+   "heldout": 30,
+   "further": 2,
+   "owner": 0,
+   "target_episodes": 4,
+   "owner_target_episodes": 1,
+   "switches": 1760,
+   "verdict": "one owner target episode (-1.11 m/s2 for 0.5 s at 103 m): summaries stay",
+   "openpilot_file_lines": 213,
+   "passes": false
+  },
+  "no_SR": {
+   "heldout": 27,
+   "further": 0,
+   "owner": 0,
+   "target_episodes": 6,
+   "owner_target_episodes": 0,
+   "switches": 2463,
+   "verdict": "as range fusion removed alone",
+   "openpilot_file_lines": 235,
+   "passes": false
+  },
+  "no_SRL": {
+   "heldout": 27,
+   "further": 0,
+   "owner": 0,
+   "target_episodes": 6,
+   "owner_target_episodes": 0,
+   "switches": 2463,
+   "verdict": "as range fusion removed alone",
+   "openpilot_file_lines": 203,
+   "passes": false
+  },
+  "no_SRLYG": {
+   "heldout": 27,
+   "further": 2,
+   "owner": 0,
+   "target_episodes": 5,
+   "owner_target_episodes": 0,
+   "switches": 2470,
+   "verdict": "young factor and std gate still worth their 5 lines",
+   "openpilot_file_lines": 197,
+   "passes": false
+  },
+  "openpilot_file_lines_note": "lines of upstream/ars510_radar.py for each version: measured for fused (296), no_L (264) and no_SL (213); others subtract range fusion (10), young factor (3) and std gate (3)"
  }
 }

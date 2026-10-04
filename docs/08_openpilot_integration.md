@@ -39,8 +39,8 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 9 µs per call on a desktop CPU.
 4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once their
-   speed is known to ±0.75 m/s), with track IDs re-linked across
-   short losses and no point published without a fresh ego speed (vRel is never NaN). Forks whose RadarPoint still
+   speed is known to ±0.75 m/s), with the radar's own track IDs (`raw` also re-links them across short losses) and no
+   point published without a fresh ego speed (vRel is never NaN). Forks whose RadarPoint still
    has the legacy fields (sunnypilot) also get:
    - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24
      (matches the phone gyro at 1.02×). It follows d(yRel)/dt at r = 0.88 with slope 0.86, since the radar filters
@@ -103,7 +103,8 @@ What each setting does (examples and plots in [07](12_kalman_filter.md)):
 
 | setting | profiles | effect |
 |---|---|---|
-| `min_publish_age=60`, `relink_max_gap_s=3.5` | all | a track is published after ~3.6 s, once range and velocity have converged; a lost and re-found track keeps its ID |
+| `min_publish_age=60` | all | a track is published after ~3.6 s, once range and velocity have converged |
+| `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter it changes nothing (34 drives), so `fused` leaves it off |
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; no point without a fresh ego speed (radard's filter never recovers from NaN) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
@@ -114,7 +115,8 @@ What each setting does (examples and plots in [07](12_kalman_filter.md)):
 radard (openpilot, September 2026) runs at the model's 20 Hz:
 
 - **Kalman filter on vLead only.** One filter per track ID; a NaN vRel would poison it permanently (the interface
-  never publishes one). A new track ID resets it, which is why IDs are re-linked.
+  never publishes one). A new track ID resets it; `raw` therefore re-links IDs across short losses, while
+  `fused` hands radard an already filtered speed, so a reset changes nothing measurable there.
 - **Matching needs a vision lead.** radard matches a radar track to the vision lead while the lead probability is
   above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check.
   Matching is evaluated each tick without previous-lead hysteresis; if the camera still selects the departing

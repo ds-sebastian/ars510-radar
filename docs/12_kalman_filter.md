@@ -72,8 +72,8 @@ stays radard's job; a speed + acceleration state here did worse ([below](#kalman
 
 ### 0. The plain decode (every profile)
 
-- **Rule:** publish from age 60 (~3.6 s); subtract 0xB4 ego speed (× 0.149/0.15); no point without a fresh ego speed;
-  keep a track's ID across losses ≤ 3.5 s.
+- **Rule:** publish from age 60 (~3.6 s); subtract 0xB4 ego speed (× 0.149/0.15); no point without a fresh ego speed.
+  `raw` also keeps a track's ID across losses ≤ 3.5 s (relink); `fused` does not need it.
 - **Why:** young tracks have unconverged range and speed ([02](02_object_list.md)); one NaN poisons radard's filter.
 
 ### 1. Saturation guard (`raw`)
@@ -104,6 +104,7 @@ Each part removed from `fused` on its own, 34 replay drives (hard radar-only tic
 | the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
 | range fusion | 27 | 0 | 0 | braking neutral (milder radar-added episodes 1 → 3 in 4.6 h); kept for lead stability: radar ↔ vision lead switches +39% without it |
 | the ego-speed alignment (× 0.149/0.15) | 31 | 2 | 0 | neutral (onset +12 ms); one measured constant |
+| the track-ID relink | 30 | 2 | 0 | identical in every measure (lead switches 1770 vs 1772): removed |
 | the saturation guard | identical | identical | identical | removed: the 3σ update absorbs the sentinel |
 
 Against the earlier tuned profile: held-out hard ticks 48 → 30, target episodes 9 → 4, owner-drive target episodes
@@ -112,7 +113,30 @@ over-estimated closing speed (0.54 m/s more closing than vision before those dri
 Dropped variants: adapting the process noise follows far slot slides as if they were braking; without the robust
 clamp a +10 m/s spike passes.
 
-### Kalman variants tested
+## Removing parts together
+
+One-at-a-time removals can hide parts that only matter together, so the larger parts were also removed in combination
+on the same 34 drives. The rule for "same driving as `fused`" was fixed before the results:
+- held-out hard ticks ≤ 33 and further-drive hard ticks ≤ 4;
+- no hard ticks and no target episodes on the owner drives;
+- target episodes ≤ 5;
+- lead-source switches at most +15 %;
+- onset within ±0.03 s of `fused`.
+
+![fewest lines for the same driving](img/analysis/kalman_combinations.png)
+
+- **The track-ID relink is free:** removing it changes nothing.
+- **The summaries matter only at the margin:** without them (and relink), one mild extra slowdown appears on the owner
+  drives (−1.1 m/s² for 0.5 s at 103 m), which fails the rule.
+- **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39 % more
+  often.
+- **The young-track factor and the speed-std gate cost about 5 lines** and still help in the barest version.
+
+The smallest version with the same driving is `fused` without the relink. That is the default profile, and the
+openpilot version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py), 264 lines) is exactly this profile in
+one file ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json) `combinations_34_drives`).
+
+## Kalman variants tested
 
 The single speed state of `fused` was compared with richer filters on an offline bench: every cycle of 8 drive groups,
 the radar's ACC target hidden as the reference, tuned on 3 groups and scored on the rest. The best candidates were then
@@ -133,7 +157,7 @@ The colored-noise filter is the textbook fix for the object list's slow, correla
 let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
 The fork build keeps it as the experimental `colored` profile (`COLORED_CONFIG`) for road tests.
 
-### Other approaches tested
+## Other approaches tested
 
 None is in a profile.
 
@@ -145,7 +169,7 @@ None is in a profile.
 | camera-looming veto | no planner benefit |
 | Kalman filter with maneuver adaptation or a range state | follows far slot slides / biased by the range-speed mismatch ([fused](#the-model)) |
 
-### Earlier approach: tuned layers (removed)
+## Earlier approach: tuned layers (removed)
 
 Before the Kalman filter, five tuned layers each targeted one measured failure: far smoothing, a velocity-jump guard,
 far-track settling, a ramp limiter (+4 / −6 m/s²) and ±3 m/s clips to the ACC target and summaries (17 tuned

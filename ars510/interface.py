@@ -131,9 +131,12 @@ BASE_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
-# The default install profile (docs/07, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
-# filter per track that fuses the object list, the radar's ACC target and its summary ranges.
-FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, drop_saturated_codes=False, fused_speed_filter=True)
+# The default install profile (docs/12, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
+# filter per track that fuses the object list, the radar's ACC target and its summary ranges. The track-ID relink and the
+# saturation guard of the base decode are off: neither changes the driving with the filter on (docs/12). The openpilot
+# version (upstream/ars510_radar.py) is this profile in one file.
+FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
+                       fused_speed_filter=True)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%

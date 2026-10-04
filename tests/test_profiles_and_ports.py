@@ -149,9 +149,9 @@ def test_legacy_upgrade_inside_parent_git_worktree_restores_originals(tmp_path):
   assert not (toyota / "ars510_radar_interface.py").exists()
 
 
-def test_fused_is_raw_plus_range_fusion_and_one_speed_filter_without_the_guard():
+def test_fused_is_raw_plus_range_fusion_and_one_speed_filter_without_relink_or_guard():
   from dataclasses import fields
   from ars510 import FUSED_CONFIG
   diff = {f.name for f in fields(BASE_CONFIG) if getattr(BASE_CONFIG, f.name) != getattr(FUSED_CONFIG, f.name)}
-  assert diff == {"range_fusion_gain", "drop_saturated_codes", "fused_speed_filter"}
+  assert diff == {"range_fusion_gain", "relink_max_gap_s", "drop_saturated_codes", "fused_speed_filter"}
   assert FUSED_CONFIG.range_fusion_gain == 0.1 and not FUSED_CONFIG.drop_saturated_codes

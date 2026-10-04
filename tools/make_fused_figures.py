@@ -208,7 +208,7 @@ def kalman_trace() -> None:
     class Traced(Ars510NativeRadarInterface):
         log: dict = {}
 
-        def _fused_speed(self, tid, time_s, obj, extra):
+        def _fused_speed(self, tid, time_s, obj, extra, v_ego=0.0):
             cfg = self.config
             sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
             if obj.age < cfg.young_age:
@@ -220,7 +220,7 @@ def kalman_trace() -> None:
                 p = st[2] + (cfg.lead_accel_std_mps2 * (time_s - st[0])) ** 2
                 for _, r in [(None, sig)] + list(extra):
                     k = p / (p + r * r); gains.append(k); p *= 1.0 - k
-            v, std = super()._fused_speed(tid, time_s, obj, extra)
+            v, std = super()._fused_speed(tid, time_s, obj, extra, v_ego)
             ego = self._fresh_ego_speed(time_s) or 0.0
             self.log.setdefault(tid, []).append(dict(t=time_s, raw=obj.v_long_ground * cfg.vground_scale - ego, v=v - ego,
                                                      std=std, sig=sig, n_extra=len(extra), gains=gains, d=obj.d_rel))
@@ -262,7 +262,7 @@ def kalman_ablation() -> None:
     rows = [("fused (all parts)", "none"), ("− ACC target + summaries", "acc_target_and_summaries"),
             ("− young-track factor", "young_track_factor"), ("− speed-std gate", "speed_std_publication_gate"),
             ("− age-60 gate", "age_60_publication_gate"), ("− range fusion", "range_fusion"),
-            ("− ego-speed alignment", "ego_speed_alignment")]
+            ("− ego-speed alignment", "ego_speed_alignment"), ("− track-ID relink", "track_id_relink")]
     rows += [(f"− {lab}", key) for key, lab in S.get("combinations_labels", {}).items()]
     rows = [(lab, S[key]) for lab, key in rows if isinstance(S.get(key), dict)]
     y = np.arange(len(rows))
@@ -276,7 +276,30 @@ def kalman_ablation() -> None:
     fig.tight_layout(); fig.savefig(OUT / "kalman_ablation.png", dpi=130); plt.close(fig)
 
 
+def kalman_combinations() -> None:
+    """Each tested version of the filter: lines in the openpilot file, its driving numbers, pass or fail (34 drives)."""
+    C = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["combinations_34_drives"]
+    names = {"fused": "fused (all parts)", "no_L": "− track-ID relink", "no_SL": "− summaries − relink",
+             "no_SR": "− summaries − range fusion", "no_SRL": "− summaries − relink − range fusion",
+             "no_SRLYG": "all five removed (+ young factor, std gate)"}
+    why = {"no_SL": "1 extra target episode on owner drives", "no_SR": "lead switches +39%, target episodes 4 → 6",
+           "no_SRL": "lead switches +39%, target episodes 4 → 6", "no_SRLYG": "lead switches +39%, target episodes 4 → 5"}
+    rows = sorted(((names[k], k, C[k]) for k in names if k in C), key=lambda r: -r[2]["openpilot_file_lines"])
+    fig, ax = plt.subplots(figsize=(13.5, 0.62 * len(rows) + 1.3))
+    y = np.arange(len(rows))
+    ax.barh(y, [r["openpilot_file_lines"] for _, _, r in rows], color=[FUS if r["passes"] else S4 for _, _, r in rows], height=0.6)
+    for yi, (name, key, r) in zip(y, rows):
+        ax.text(r["openpilot_file_lines"] + 4, yi, f'{r["openpilot_file_lines"]} lines', va="center", fontsize=8.5, color=INK)
+        ax.text(375, yi, f'hard {r["heldout"]} / {r["further"]} / {r["owner"]}   target eps {r["target_episodes"]} (owner {r["owner_target_episodes"]})'
+                f'   switches {r["switches"]}', va="center", fontsize=8.2, color=INK2)
+        ax.text(700, yi, "passes" if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
+                color=FUS if r["passes"] else S4)
+    ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
+    ax.set_xlabel("lines in the openpilot version (upstream/ars510_radar.py)")
+    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives; hard ticks held-out / further / owner)")
+    fig.tight_layout(); fig.savefig(OUT / "kalman_combinations.png", dpi=130); plt.close(fig)
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png")))
+    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png")))
