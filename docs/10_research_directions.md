@@ -6,11 +6,11 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 1. **The far range of every track.** The object list reads far cars short of the radar's own ACC distance (5-8% at
    50-100 m) and the vision lead agrees with the ACC distance ([06](06_accuracy.md#distance)). `fused` takes the ACC
-   distance for the car the radar follows; other tracks keep the object-list range, smoothed by range fusion. The
-   summaries carry the same tracker's range for up to two more cars and could do the same. A drive behind a second car
-   with a GNSS logger gives the true far distance and shows where the short reading comes from; until then range stays
-   out of the speed filter (the object list's range also changes 10-20% more than its speed integrates,
-   [12](12_kalman_filter.md#the-model)).
+   distance for the car the radar follows; other tracks keep the object-list range, smoothed by range fusion (openpilot's
+   lead is rarely a track that only a summary describes, so the summaries' range adds nothing measurable there). A drive
+   behind a second car with a GNSS logger gives the true far distance and shows where the short reading comes from;
+   until then range stays out of the speed filter (the object list's range also changes 10-20% more than its speed
+   integrates, [12](12_kalman_filter.md#the-model)).
 2. **More of the lead covered by the radar's own trackers.** The ACC target exists for about 57% of radar-lead time and
    5% beyond 80 m; the summaries add far coverage up to 80 m. Far tracks with neither depend on the object list and its
    wide error alone, which is where `fused`'s remaining radar-only braking comes from. Finding when and why the radar
