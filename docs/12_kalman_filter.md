@@ -77,9 +77,18 @@ persistent error. The replays below are what justify the constants, not the cova
 
 ## How it fits with radard
 
-radard runs its own per-track Kalman filter on `[vLead, aLead]` with a fixed gain, and derives the lead
-acceleration. This filter cleans only the speed it hands over, so radard and the planner run unchanged. Lead
-acceleration stays radard's job; a speed + acceleration state here did worse ([below](#kalman-variants-tested)).
+radard runs its own per-track Kalman filter on `[vLead, aLead]` with a fixed gain; its `aLeadK` is the lead
+acceleration the planner uses. This filter cleans only the speed it hands over, so radard and the planner run
+unchanged, and lead acceleration stays radard's job. A speed + acceleration state here did worse
+([below](#kalman-variants-tested)). Without it, an excursion reaches `aLeadK` as a −3 to −5 m/s² spike.
+
+The two filters run in series, so all replay numbers already include their combined effect. Measured directly on
+148,219 radar-lead ticks of the 20 held-out routes:
+- **Smoother acceleration:** `aLeadK` changes at 0.46 m/s³ on average with `fused`, against 0.80 with the earlier
+  tuned profile and 0.72 for vision only.
+- **No added delay:** `fused`'s `aLeadK` peaks in cross-correlation at 0 ticks against the tuned profile's on 14 of 15
+  routes, and 1 tick (50 ms) on one (`radard_cascade` in
+  [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
 ## What runs before and around the filter
 

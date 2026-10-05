@@ -278,10 +278,34 @@
  },
  "openpilot_file_lines": {
   "definition": "non-blank, non-comment lines of upstream/ars510_radar.py",
-  "total": 241,
-  "decode_ids_publication": 92,
-  "tracker_association": 60,
+  "total": 238,
+  "decode_ids_publication": 93,
+  "tracker_association": 58,
   "speed_filter_and_range_fusion": 24,
-  "adapter_constants_pruning": 65
+  "adapter_constants_pruning": 63
+ },
+ "radard_cascade": {
+  "definition": "radard's aLeadK in the 34-drive replays (20 held-out routes), ticks where both radar profiles follow a radar lead; roughness = mean |d aLeadK / dt|; lag = cross-correlation peak of fused vs the earlier tuned profile's aLeadK per route (0.05 s ticks)",
+  "ticks": 148219,
+  "by_profile": {
+   "fused": {
+    "mean_abs_aLeadK": 0.363,
+    "mean_abs_daLeadK_dt": 0.464
+   },
+   "tuned": {
+    "mean_abs_aLeadK": 0.463,
+    "mean_abs_daLeadK_dt": 0.802
+   },
+   "vision": {
+    "mean_abs_aLeadK": 0.229,
+    "mean_abs_daLeadK_dt": 0.718
+   }
+  },
+  "lag_ticks_median": 0.0,
+  "lag_ticks_range": [
+   0,
+   1
+  ],
+  "routes": 15
  }
 }

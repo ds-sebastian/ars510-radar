@@ -75,10 +75,11 @@ class Ars510Radar:
     return None
 
   def reassemble(self, t, dat):
-    if len(dat) != 8 or (self.chunks and self.last_frame_t is not None and t < self.last_frame_t):
+    """The 106 frames of one record joined (bytes 1-7 of each); restarts on a first frame (0x12 0xE4)."""
+    if len(dat) != 8 or (self.chunks and t < self.last_frame_t):
       self.chunks = []
-      if len(dat) != 8:
-        return None
+    if len(dat) != 8:
+      return None
     if dat[0] == 0x12 and dat[1] == 0xE4:
       self.chunks, self.record_t = [bytes(dat[1:8])], t
     elif self.chunks:
@@ -165,8 +166,7 @@ class Ars510Radar:
 
   def acc_match(self, t, tracks):
     """The track the radar's ACC target describes: matched by position, kept while both persist."""
-    if self.acc_speed is None or self.acc_pos is None or t - self.acc_speed[0] > 0.1 or t - self.acc_pos[0] > 0.1 \
-       or self.acc_speed[0] - t > 0.1 or self.acc_pos[0] - t > 0.1:
+    if self.acc_speed is None or self.acc_pos is None or max(abs(t - self.acc_speed[0]), abs(t - self.acc_pos[0])) > 0.1:
       self.acc_assoc = None
       return None
     _, ax, ay = self.acc_pos
@@ -205,14 +205,13 @@ class Ars510Radar:
       return out
     tracks = {tid: o for tid, o in tracks.items() if o["age"] >= 20}
     for addr in SUMMARY_ADDRS:
-      hist = self.summary_hist[addr]
-      n = len(hist)
-      den = sum((h[0] - sum(g[0] for g in hist) / n) ** 2 for h in hist) if n else 0.0
+      hist, n = self.summary_hist[addr], len(self.summary_hist[addr])
+      mt, mx = (sum(h[0] for h in hist) / n, sum(h[1] for h in hist) / n) if n else (0.0, 0.0)
+      den = sum((h[0] - mt) ** 2 for h in hist)
       if n < 8 or hist[-1][0] - hist[0][0] < 0.7 or t - hist[-1][0] > 0.3 or den <= 0:
         self.summary_assoc[addr] = None
         continue
-      mt, mx = sum(h[0] for h in hist) / n, sum(h[1] for h in hist) / n
-      x, v = hist[-1][1], sum((h[0] - mt) * (h[1] - mx) for h in hist) / den
+      x, v = hist[-1][1], sum((h[0] - mt) * (h[1] - mx) for h in hist) / den  # range now, least-squares slope
       tid = self.summary_assoc[addr]
       if tid is not None and (tid not in tracks or abs(tracks[tid]["d"] - x) > max(8.0, 0.25 * x)):
         tid = None
@@ -251,13 +250,11 @@ class RadarInterface(RadarInterfaceBase):
         out = self.radar.update(t, src, address, dat)
         if out is not None:
           points, self.last_record_t = out, t
-    if points is None:
-      if t is None or self.frame % 5 != 0:
-        return None
-      if self.last_record_t is not None and t - self.last_record_t <= 0.5:
+    if points is None:  # between scans: report only at 20 Hz, and only before the first scan or once the radar is stale
+      if t is None or self.frame % 5 != 0 or (self.last_record_t is not None and t - self.last_record_t <= 0.5):
         return None
       ret = structs.RadarData()
-      ret.errors.radarUnavailableTemporary = self.last_record_t is not None and t - self.last_record_t > 0.5
+      ret.errors.radarUnavailableTemporary = self.last_record_t is not None
       return ret
     ret = structs.RadarData()
     for track_id, d_rel, y_rel, v_rel in points:
