@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 A192_SENTINEL = bytes.fromhex("00FF00FF")
+A680_IDLE = bytes.fromhex("000008008000800A")
 
 
 @dataclass(frozen=True)
@@ -25,6 +26,31 @@ def parse_0x192(data: bytes) -> Target192 | None:
         return None
     return Target192(int.from_bytes(data[0:2], "big") & 0x1FFF,
                      int.from_bytes(data[2:4], "big") & 0x1FFF)
+
+
+@dataclass(frozen=True)
+class Object680:
+    selector: int        # byte 0: 0 / 1 mostly stationary objects, 3 mostly same-direction vehicles
+    d_rel: float         # m, longitudinal distance, 1/32 m per code
+    y_rel: float         # m, left positive, 1/64 m per code
+    v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
+    flags: int           # 6-bit raw flags (8 on vehicles, 1 / 9 / 49 on stationary objects)
+    lat_speed_code: int  # centred raw code that follows the lateral-position slope
+
+
+def parse_0x680(data: bytes) -> Object680 | None:
+    """0x680 (8 bytes, 2 Hz): one object from the radar's function-level tracker, or None when idle (docs/05).
+
+    Mostly a stationary roadside object, which the 0x80 object list does not carry while driving; sometimes a vehicle.
+    Distance scale is fixed by stationary objects closing at ego speed; the speed unit agrees with the ACC target
+    (0.2 m/s median absolute difference on shared targets). The driving interface does not use this helper."""
+    if len(data) != 8:
+        return None
+    rng, lat = _be_field(data, 43, 13), _be_field(data, 32, 11)
+    if rng <= 1 and lat == 0:
+        return None
+    return Object680(data[0], rng / 32, (lat - 2048 if lat >= 1024 else lat) / 64, (_be_field(data, 22, 10) - 512) * 0.15,
+                     _be_field(data, 16, 6), _be_field(data, 8, 8) - 128)
 
 
 def _be_field(data: bytes, start: int, length: int) -> int:

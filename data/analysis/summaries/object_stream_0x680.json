@@ -1,0 +1,109 @@
+{
+ "description": "0x680 decoded as a 2 Hz single-object stream: distance scale from stationary objects closing at ego speed, speed against the radar ACC target on shared vehicles, content while driving, idle baseline, and start-up delays of the camera acknowledgement (0x101, 0x197) after the first 0x80 record.",
+ "layout_big_endian_msb_first": {
+  "selector": "0|8",
+  "distance_1_32_m": "8|13",
+  "lateral_1_64_m_signed": "21|11",
+  "speed_over_ground_0p15_mps_offset_512": "32|10",
+  "flags": "42|6",
+  "lateral_speed_code_offset_128": "48|8"
+ },
+ "corpus_672_segments": {
+  "frames": 79680,
+  "segments": 672,
+  "codes_per_metre_median": 31.931935384410366,
+  "codes_per_metre_iqr": [
+   30.57,
+   34.04
+  ],
+  "on_acc_target": {
+   "n": 1872,
+   "err_median": -0.04995607052746805,
+   "err_mad": 0.21053113837723741,
+   "within_1": 0.9652777777777778
+  },
+  "list_excursions": {
+   "n": 814,
+   "list_gt2": 51,
+   "x680_within_1_then": 0.9803921568627451,
+   "corr_errors": -0.02703241787941271
+  },
+  "page3_vs_list": {
+   "n": 1771,
+   "dy_mad": 0.078125,
+   "dx_mad": 1.03125
+  },
+  "moving": {
+   "hours": 7.247916666666667,
+   "stationary_obj": 0.8251221615406726,
+   "mover": 0.13088052122257354,
+   "oncoming": 0.028264827057583597,
+   "page3": 0.07484909456740442
+  },
+  "idle_moving": {
+   "frac": 0.0011689182715339658,
+   "runs": 55,
+   "longest_s": 1.0096317589996033
+  }
+ },
+ "held_out_84_segments": {
+  "frames": 9855,
+  "segments": 84,
+  "codes_per_metre_median": 32.04782837824152,
+  "codes_per_metre_iqr": [
+   30.59,
+   33.78
+  ],
+  "on_acc_target": {
+   "n": 9,
+   "err_median": 0.2285363296012317,
+   "err_mad": 0.2285363296012317,
+   "within_1": 1.0
+  },
+  "list_excursions": {
+   "n": 9,
+   "list_gt2": 0,
+   "x680_within_1_then": null,
+   "corr_errors": 0.1436508161616112
+  },
+  "page3_vs_list": {
+   "n": 50,
+   "dy_mad": 0.1015625,
+   "dx_mad": 0.765625
+  },
+  "moving": {
+   "hours": 0.5498611111111111,
+   "stationary_obj": 0.9103308916393028,
+   "mover": 0.03662541045718616,
+   "oncoming": 0.019701944935589796,
+   "page3": 0.02248042434958323
+  },
+  "idle_moving": {
+   "frac": 0.00025258903763576663,
+   "runs": 1,
+   "longest_s": 0.5
+  }
+ },
+ "startup_27_cold_starts": {
+  "cold_starts": 27,
+  "first_record_s": [
+   5.8300238589999935,
+   6.122462256000006
+  ],
+  "c101_delay": [
+   0.14002139900003385,
+   0.0068951139319194605
+  ],
+  "c197_delay": [
+   0.20017113200083259,
+   0.014012673425830855
+  ]
+ },
+ "bus_event_scan": {
+  "onsets_false": 46,
+  "onsets_real": 26,
+  "byte_features": 261,
+  "best_abs_auc_minus_half_outside_acc_target": 0.169,
+  "permutation_null_p95_of_max": 0.245
+ }
+}

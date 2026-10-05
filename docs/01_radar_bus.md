@@ -42,7 +42,7 @@ target-summary codes requiring independent target association and calibration.
 | 0x240-0x245, 0x248 | 8 | 16.7 Hz | context frames with a rolling phase 1-7; 0x240/0x244 carry changing payloads on some drives | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
 | 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
-| 0x680 | 8 | 2 Hz | status nibbles | |
+| 0x680 | 8 | 2 Hz | one tracked object: distance, lateral position, over-ground speed; mostly a stationary roadside object | [05](05_acc_target_and_support.md#0x680-single-object-stream) |
 
 Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) with a one-line comment per signal.
 
@@ -58,7 +58,9 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 - The object list starts after openpilot's fingerprinting has finished, so the openpilot integration detects the
   radar by its firmware version (`8821F0R03100` at 0x750 / 0x0f), with
   0x80 / 0x85 on bus 1 as a fallback ([08](08_openpilot_integration.md)).
-- 0x101 switches 0x1D → 0x11 and 0x197 bit 8 sets 70 ms later: a direct "radar running" signal.
+- 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record and 0x197 bit 8 sets 60 ms later (27 of 27 cold
+  starts, spread 7-14 ms): the camera's acknowledgement of the object list, a direct "radar running" signal.
+- 0x680 carries tracked objects from 1.2 s, before the object list starts.
 - Several addresses send an all-ones or all-zeros first frame (for example 0x100 `FFFF…`, 0x192 `0FFF0FFF`).
 - Early object records contain placeholder tracks, some at exactly 0 m; the age gate removes them.
 
