@@ -51,6 +51,12 @@ flowchart LR
   G --> P["RadarPoint to radard (unchanged)"]
 ```
 
+The object-list σ holds on cars it was not calibrated on: against the 2 Hz object stream 0x680, a tracker-quality witness
+for vehicles outside the ACC target and the summaries, the object-list speed error is 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
+0-40 / 40-60 / 60-80 / 80-110 / 110-170 m, where 0.045 m/s × `240|7` gives 0.6 / 1.1 / 1.6 / 2.6 / 3.4 m/s, and 1-4 % of
+frames lie beyond 3 σ. The error is not centred (median −0.2 to −0.7 m/s up to 110 m, −1.9 m/s beyond: too closing), which
+the trackers correct where they are present ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
+
 A new track (or one silent for over 0.5 s) starts from its object-list speed with `P = σ²`. Each track gets the
 object-list reading plus at most one tracker reading.
 
