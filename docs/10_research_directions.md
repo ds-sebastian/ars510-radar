@@ -4,10 +4,13 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## For a better ride
 
-1. **Resolve the range scale, then put range in the filter.** The radar ACC target's fine range and speed agree at
-   nominal units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed
-   integrates, while it matches ego speed on near-stationary targets. Until that is resolved, `fused` keeps range out
-   of its Kalman filter and only smooths it with range fusion ([07](12_kalman_filter.md#the-model)).
+1. **The far range of every track.** The object list reads far cars short of the radar's own ACC distance (5-8% at
+   50-100 m) and the vision lead agrees with the ACC distance ([06](06_accuracy.md#distance)). `fused` takes the ACC
+   distance for the car the radar follows; other tracks keep the object-list range, smoothed by range fusion. The
+   summaries carry the same tracker's range for up to two more cars and could do the same. A drive behind a second car
+   with a GNSS logger gives the true far distance and shows where the short reading comes from; until then range stays
+   out of the speed filter (the object list's range also changes 10-20% more than its speed integrates,
+   [12](12_kalman_filter.md#the-model)).
 2. **More of the lead covered by the radar's own trackers.** The ACC target exists for about 57% of radar-lead time and
    5% beyond 80 m; the summaries add far coverage up to 80 m. Far tracks with neither depend on the object list and its
    wide error alone, which is where `fused`'s remaining radar-only braking comes from. Finding when and why the radar
@@ -80,8 +83,9 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 ## For the decode
 
 - **Lateral scale and range zero from slow circles.** A stationary object moves sideways at yaw rate × (range +
-  3.6 m) while the car turns. A few minutes of slow circles in an empty lot with parked cars or poles pins the
-  lateral scale and the range zero from the gyro alone, no tape measure needed.
+  3.5 m) while the car turns. Ordinary turns past parked cars already give 69 codes per metre (65-74.5,
+  [06](06_accuracy.md#lateral-position)); a few minutes of slow circles in an empty lot with parked cars or poles would
+  narrow that to a per-cent and pin the range zero from the gyro alone, no tape measure needed.
 - **`272|5` under a known overhead object.** Driving under a bridge or gantry of known clearance, and past parked
   vehicles of known height, relates the code to height. Its ranking of pedestrians below cars points to a size- or
   reflectivity-like quantity.
@@ -92,8 +96,14 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **Class 5:** a few recorded passes of a cyclist and of a pedestrian confirm the bicycle reading of its size and
   speed.
 - **0x195 `q10` with brake pressure:** the logged brake pressure or the brake-assist state next to the event code
-  names the deceleration quantity. The 0x191 descriptor tuples follow speed regime; a drive through the ACC
-  following-distance settings shows whether they encode a mode.
+  names the deceleration quantity.
+- **The radar's ACC tracker bytes and the night light records.** Two bytes of 0x237 rise while the ACC target
+  accelerates or brakes, and the camera's 0x240 / 0x244 frames carry light-source records at night
+  ([05](05_acc_target_and_support.md)). A drive behind a car with known braking, and a night drive past lights at known
+  positions, would name their units.
+- **What the camera association changes.** `112|3` shows which objects the camera has confirmed (inside 45 m by day,
+  farther at night, [03](03_slot_fields.md#camera-association)). A drive with the camera covered shows what the radar
+  does differently for those objects.
 
 ## For the integration
 

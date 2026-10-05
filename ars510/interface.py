@@ -70,23 +70,29 @@ class NativeInterfaceConfig:
     guard_hold_s: float = 1.0
     guard_min_age: int = 60  # younger tracks legitimately converge and are not guarded
     # The radar's own trackers, used as extra speed readings by the speed filter:
-    # ACC target (0x235 / 0x237): matched to an object-list track by position, cost = |dRel - coarse x| / acc_match_range_m
-    # + |yRel - y| / 0.5 < 1 with margin > 1 over the next track, for tracks of age >= acc_match_min_age (the coarse ACC
-    # distance comes in 5.26 m steps). The association is kept while the track and a continuous ACC target persist, even
-    # when the object-list position slides away with an excursion; it re-matches when the ACC target jumps (coarse range >
-    # acc_sticky_jump_m or lateral > 1 m between updates), the track disappears, or its cost exceeds acc_sticky_max_cost.
+    # ACC target (0x235 / 0x237): matched to an object-list track by position, cost = |dRel - x| / max(acc_match_range_m,
+    # acc_match_range_frac * x) + |yRel - y| / 0.5 < 1 with margin > 1 over the next track, for tracks of age >=
+    # acc_match_min_age (x is the ACC target's 0.025 m distance, y its 0.01 m lateral; the range scale grows with range
+    # because the object list reads far cars short of the ACC distance, docs/06). The association is kept while the track
+    # and a continuous ACC target persist, even when the object-list position slides away with an excursion; it re-matches
+    # when the ACC target jumps (range > acc_sticky_jump_m or lateral > 1 m between updates), the track disappears, or its
+    # cost exceeds acc_sticky_max_cost. The associated track takes the ACC distance as the measurement of the range
+    # fusion (acc_range): the radar's own smooth range, which the vision lead agrees with.
     acc_target_max_age_s: float = 0.1
     acc_match_range_m: float = 12.0
+    acc_match_range_frac: float = 0.25
+    acc_range: bool = True
     acc_match_min_age: int = 20
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
-    # Summaries (0x192 / 0x194): the radar's selected-target ranges. Their range slope over summary_window_s gives a
-    # relative speed; a summary attaches to a track when range (within 15 %) and speed (within summary_match_mps) agree
-    # unambiguously and stays attached while both persist. Used up to summary_max_range_m (beyond ~80 m the optical check
-    # no longer favours the summary speed, docs/07); the ACC-associated track is left to the ACC target.
+    # Summaries (0x192 / 0x194): the positions of the radar's selected targets. Their range slope over summary_window_s
+    # gives a relative speed; a summary attaches to the track at its position (range within 15 %, lateral within
+    # summary_match_lat_m, unambiguous) and stays attached while the track stays within 25 % in range and twice that
+    # lateral limit. Used up to summary_max_range_m (beyond ~80 m the optical check no longer favours the summary speed,
+    # docs/07); the ACC-associated track is left to the ACC target.
     summary_max_range_m: float = 80.0  # summary_sigma_mps <= 0 below turns the summaries off
     summary_window_s: float = 1.0
-    summary_match_mps: float = 1.5
+    summary_match_lat_m: float = 1.0
     summary_scales: tuple[tuple[float, float], ...] = ((0.0625, -10.0), (0.0625, -10.0))  # m per code, offset m (0x192, 0x194)
     # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed. Each
     # reading is weighted by
@@ -185,10 +191,11 @@ class Ars510NativeRadarInterface:
         self._range_est: dict[int, tuple[float, float, float]] = {}
         self._fused: dict[int, tuple[float, float, float]] = {}  # tid -> (t, over-ground speed, variance)
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
-        self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
-        self._acc_assoc: tuple[int, float, float] | None = None  # (tid, last coarse x, last y)
+        self._acc_pos: tuple[float, float, float] | None = None  # (time, x, y)
+        self._acc_assoc: tuple[int, float, float] | None = None  # (tid, last x, last y)
         self._summary_hist: dict[int, list[tuple[float, float]]] = {0x192: [], 0x194: []}  # (time, range m)
         self._summary_assoc: dict[int, int | None] = {0x192: None, 0x194: None}
+        self._summary_y: dict[int, float] = {0x192: 0.0, 0x194: 0.0}  # latest summary lateral, m
         self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
         self._guard_gen: dict[int, int] = {}
         self.guard_rejected = 0
@@ -309,7 +316,8 @@ class Ars510NativeRadarInterface:
             self._acc_assoc = None
             return None, nan
         _, ax, ay = self._acc_pos
-        costs = sorted((abs(obj.d_rel - ax) / cfg.acc_match_range_m + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
+        rs = max(cfg.acc_match_range_m, cfg.acc_match_range_frac * ax)
+        costs = sorted((abs(obj.d_rel - ax) / rs + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
                        for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
         if self._acc_assoc is not None:
             tid0, ax0, ay0 = self._acc_assoc
@@ -337,6 +345,7 @@ class Ars510NativeRadarInterface:
         if hist and (time_s - hist[-1][0] > 0.3 or abs(x - hist[-1][1]) > 5.0):  # gap or a new target
             hist.clear(); self._summary_assoc[addr] = None
         hist.append((time_s, x))
+        self._summary_y[addr] = word.y_rel
         while hist and hist[0][0] < time_s - self.config.summary_window_s:
             hist.pop(0)
 
@@ -363,13 +372,14 @@ class Ars510NativeRadarInterface:
                 self._summary_assoc[addr] = None
                 continue
             x, v = sv
+            y = self._summary_y[addr]
             tid = self._summary_assoc[addr]
-            if tid is not None and (tid not in tracks or abs(tracks[tid].d_rel - x) > max(8.0, 0.25 * x)):
+            if tid is not None and (tid not in tracks or abs(tracks[tid].d_rel - x) > max(8.0, 0.25 * x)
+                                    or abs(tracks[tid].y_rel - y) > 2.0 * cfg.summary_match_lat_m):
                 tid = None
             if tid is None:
                 cands = sorted((abs(o.d_rel - x), t) for t, o in tracks.items()
-                               if abs(o.y_rel) < 3.0 and abs(o.d_rel - x) < max(5.0, 0.15 * x)
-                               and abs(o.v_long_ground * cfg.vground_scale - v_ego - v) < cfg.summary_match_mps)
+                               if abs(o.y_rel - y) < cfg.summary_match_lat_m and abs(o.d_rel - x) < max(5.0, 0.15 * x))
                 if len(cands) == 1 or (len(cands) > 1 and cands[1][0] - cands[0][0] > 3.0):
                     tid = cands[0][1]
             self._summary_assoc[addr] = tid
@@ -539,7 +549,8 @@ class Ars510NativeRadarInterface:
             else:
                 v_ground = obj.v_long_ground * cfg.vground_scale
                 vrel = float(v_ground - v_ego) if v_ego is not None else nan
-            d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
+            d_meas = self._acc_pos[1] if cfg.acc_range and acc_tid is not None and tid == acc_tid and self._acc_pos is not None else obj.d_rel
+            d_rel = self._fused_range(tid, time_s, d_meas, vrel) if cfg.range_fusion_gain > 0 else d_meas
             if obj.age >= 2:
                 self._first.setdefault(tid, (time_s, obj.d_rel, obj.y_rel))
                 self._last[tid] = (time_s, obj.d_rel, obj.y_rel, vrel, obj.age)

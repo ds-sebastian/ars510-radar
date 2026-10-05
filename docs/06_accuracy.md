@@ -16,10 +16,10 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | quantity | result |
 |---|---|
 | **dRel** scale and zero, 5-25 m | slope 1.001 / 0.992 / 0.993 against camera ground contact; zero within 0.2 m on flat roads |
-| **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus |
+| **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus; 5-8 % short of the radar's own ACC distance at 50-100 m |
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera, 99.3% against the vision model |
-| **yRel** scale | 1/64 m per code, ±10% (lane peaks 62.8-67.3 codes/m, camera 69-73) |
+| **yRel** scale | 0.015 m per code (66.7 codes/m): exactly 1.5 codes of the ACC target's centimetre lateral; gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
 | **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed; exact calibration remains bounded |
 | **vRel** vs camera | far better than zero or range differencing at every range (table below) |
 | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |
@@ -37,15 +37,41 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   `RADAR_TO_CAMERA = 1.52 m`; a tape-measured gap is needed to pin the physical zero and origin.
 - **Far range** (drive A, camera box scale averaged with the vision model where they agree): median absolute residual
   3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at 100-150 m (ratio 0.979).
+- **Against the radar's own ACC distance** (◐). For the car the radar's ACC function follows, `dRel` agrees with the ACC
+  distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
+  short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2 %, 5 % and 8 %; cars
+  more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 6-10 m at
+  60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m and is nearer
+  to it than to `dRel` on 71-79 % of samples. The ACC distance is therefore the better far range for that car, and any
+  position gate between the object list and the radar's own trackers needs room for this difference
+  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)).
 
-## Lateral
+![far range distance](img/analysis/far_range_distance.png)
+
+## Lateral position
 
 ![lane peaks](img/analysis/lateral_lane_peaks.png)
 
 - **Left positive, Cartesian.** Codes per metre stay constant across range, and ego-lane objects stay within 0.1 m of
   centre from 15 to 130 m on straight road.
-- **Scale 1/64 m, ±10%.** Adjacent-lane peaks at highway speed give 63.9 / 67.3 / 62.8 codes per metre for 3.66 m
-  lanes; camera outer box edges give 68.9 / 69.7 / 72.8. A surveyed offset would pin it.
+- **Scale 0.015 m per code** (66.7 codes per metre, ◐). The object list, the target summaries (0x192 / 0x194) and 0x680
+  share this unit; the ACC target's lateral and the lane-curve offsets of 0x85 are in centimetres.
+
+![lateral unit evidence](img/analysis/lateral_unit_evidence.png)
+
+| evidence | result |
+|---|---|
+| ACC target lateral code (cm, zero 2000) against the summary's object-list code, same target, 344 k rows | 1.4998 / 1.5002 (other drives 1.499 / 1.502, original logs 1.5015), correlation 0.9999 |
+| crossing objects on straight road: lateral position change against the integrated lateral velocity (`74\|10`, 0.15 m/s per code) | 9.9-10.5 position codes per velocity code-second (1/64 m would give 9.6) |
+| stationary cars while ego turns at a steady yaw rate, against the gyro, 93 tracks | 69.4 codes per metre, interval 65.2-74.5 (other drives 68.3) |
+| 0x85 lane-cell offsets against the camera's lane width, 10,262 records | 0.0098 m per centimetre code |
+| adjacent-lane peaks at highway speed | 63.9 / 67.3 / 62.8 codes per 3.66 m lane: lanes of 3.4-3.7 m at this scale |
+| camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |
+
+  The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are
+  independent but wider. Replaying `fused` with these lateral units on 34 drives changes no braking count (held-out hard
+  radar-only ticks 30 → 30, target episodes 4 → 4, lead-source switches +0.7 %).
+  Numbers: [`lateral_units.json`](../data/analysis/summaries/lateral_units.json).
 
 ![lateral scale](img/analysis/lateral_scale_camera.png)
 
@@ -102,9 +128,9 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 
 ### Encoding constants and motion geometry
 
-- **Fixed-point steps:** `16 = 2⁴` and `64 = 2⁶` give 0.0625 m (range) and 0.015625 m (lateral); `2048 = 2¹¹` centres
-  the lateral code. The 160-code range bias gives a span of −10 to 245.9 m. The 0.15 m/s velocity step (0.54 km/h)
-  has no established derivation from the waveform. Wire steps are not measurement accuracy.
+- **Wire steps:** `16 = 2⁴` gives 0.0625 m (range). The lateral step is 1.5 cm and the velocity step 0.15 m/s
+  (0.54 km/h): ten lateral steps per velocity step-second. `2048 = 2¹¹` centres the lateral code and the 160-code range
+  bias gives a span of −10 to 245.9 m. Wire steps are not measurement accuracy.
 - **Frame:** velocity is over ground in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)), a
   processed object output, not raw Doppler. Lateral: `vy = dy/dt + ω·x`; in an ideal planar frame
   `vx = dx/dt + v_ego − ω·y`. The radar's internal algorithm and elevation handling are unknown.

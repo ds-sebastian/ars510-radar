@@ -1,13 +1,16 @@
-"""Support messages: the OEM ACC target witness (0x235 / 0x237) and the selected-target summaries (docs/05).
+"""Support messages: the radar's ACC target (0x235 / 0x237 / 0x239 / 0x23B), the cycle header (0x190), the
+selected-target summaries (0x191-0x194) and the single-object stream (0x680); docs/05.
 
 0x192 / 0x194 (4 bytes, ~radar cycle) each carry the position of one target of the radar's internal tracker in the
-object list's encoding: word 0 distance (code - 160) / 16 m, word 1 lateral (code - 2048) / 64 m, left positive.
-The whole-frame sentinel is 00 FF 00 FF. Parsing a non-sentinel does not certify
-target availability or association. The driving interface does not use this helper.
+object list's encoding: word 0 distance (code - 160) / 16 m, word 1 lateral (code - 2048) * LATERAL_M_PER_CODE m, left
+positive. The whole-frame sentinel is 00 FF 00 FF. Parsing a non-sentinel does not certify target availability or
+association.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+
+from .objects import LATERAL_M_PER_CODE
 
 A192_SENTINEL = bytes.fromhex("00FF00FF")
 A680_IDLE = bytes.fromhex("000008008000800A")
@@ -25,8 +28,8 @@ class Target192:
 
     @property
     def y_rel(self) -> float:
-        """Lateral position in m, left positive: (code - 2048) / 64."""
-        return (self.field1_code13 - 2048) / 64
+        """Lateral position in m, left positive: (code - 2048) * 0.015, the object list's encoding."""
+        return (self.field1_code13 - 2048) * LATERAL_M_PER_CODE
 
 
 def parse_0x192(data: bytes) -> Target192 | None:
@@ -37,14 +40,71 @@ def parse_0x192(data: bytes) -> Target192 | None:
                      int.from_bytes(data[2:4], "big") & 0x1FFF)
 
 
+A191_SENTINEL = bytes.fromhex("FEFEFEFCFCFFFEFF")
+
+
+@dataclass(frozen=True)
+class CycleHeader:
+    active_summaries: int  # 0-2: how many of the 0x191/0x192 and 0x193/0x194 pairs carry a target (0x191 fills first)
+    timestamp_us: int      # radar cycle clock, microseconds (32 bits)
+    counter: int           # mod-16 counter, +3 per cycle
+
+
+def parse_0x190(data: bytes) -> CycleHeader | None:
+    """0x190 (7 bytes, once per radar cycle): summary count, microsecond timestamp, cycle counter (docs/05).
+
+    Byte 0 = count << 2 | 2; the count equals the number of non-sentinel 0x191 / 0x193 frames in every logged cycle.
+    Returns None for a short frame or the all-ones start-up frame."""
+    if len(data) < 7 or data[0] == 0xFF:
+        return None
+    return CycleHeader(data[0] >> 2, int.from_bytes(data[2:6], "big"), data[6] >> 4)
+
+
+@dataclass(frozen=True)
+class Target191:
+    score: int       # 91-100 while a target is present
+    age: int         # radar cycles, saturates at 126
+    track_code: int  # pair-local target code 0-63
+    width_m: float   # class template: 1.8 car, 2.2 truck
+    height_m: float  # class template: 1.5 car, 2.3 truck
+    length_m: float  # class template: 4.5 car, 12.0 truck
+    quality: int     # counter that grows with age and saturates at 30
+
+
+def parse_0x191(data: bytes) -> Target191 | None:
+    """0x191 / 0x193 (8 bytes): companion of the 0x192 / 0x194 target summary, or None for the sentinel (docs/05).
+
+    The three size fields are a class template in 0.1 m (18:15:45 for cars, 22:23:120 for trucks on 99.98 % of
+    frames), the same class the ACC target reports on 0x239 when it is this target."""
+    if len(data) != 8 or bytes(data) == A191_SENTINEL or data[0] >> 1 == 127:
+        return None
+    return Target191(data[0] >> 1, data[1] >> 1, data[3] >> 2, (data[4] >> 2) * 0.1, (data[6] >> 1) * 0.1, data[7] * 0.1,
+                     data[5] >> 3)
+
+
 @dataclass(frozen=True)
 class Object680:
     selector: int        # byte 0: 0 / 1 mostly stationary objects, 3 mostly same-direction vehicles
     d_rel: float         # m, longitudinal distance, 1/32 m per code
-    y_rel: float         # m, left positive, 1/64 m per code
+    y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit)
     v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
-    flags: int           # 6-bit raw flags (8 on vehicles, 1 / 9 / 49 on stationary objects)
-    lat_speed_code: int  # centred raw code that follows the lateral-position slope
+    flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving, bits 4-5 close standstill
+    lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.15 m/s per code (0 on stationary objects)
+
+    @property
+    def stationary(self) -> bool:
+        """Flag bit 0: set on 99.2 % of objects slower than 0.5 m/s over ground and on 0.7 % of moving ones."""
+        return bool(self.flags & 0x01)
+
+    @property
+    def oncoming(self) -> bool:
+        """Flag bit 1: set on 98.5 % of objects faster than 3 m/s toward ego and on 0.7 % of the others."""
+        return bool(self.flags & 0x02)
+
+    @property
+    def seen_moving(self) -> bool:
+        """Flag bit 3: a vehicle that moves or has moved (86 % of moving objects; with bit 0 a stopped vehicle)."""
+        return bool(self.flags & 0x08)
 
 
 def parse_0x680(data: bytes) -> Object680 | None:
@@ -58,8 +118,8 @@ def parse_0x680(data: bytes) -> Object680 | None:
     rng, lat = _be_field(data, 43, 13), _be_field(data, 32, 11)
     if rng <= 1 and lat == 0:
         return None
-    return Object680(data[0], rng / 32, (lat - 2048 if lat >= 1024 else lat) / 64, (_be_field(data, 22, 10) - 512) * 0.15,
-                     _be_field(data, 16, 6), _be_field(data, 8, 8) - 128)
+    return Object680(data[0], rng / 32, (lat - 2048 if lat >= 1024 else lat) * LATERAL_M_PER_CODE,
+                     (_be_field(data, 22, 10) - 512) * 0.15, _be_field(data, 16, 6), _be_field(data, 8, 8) - 128)
 
 
 def _be_field(data: bytes, start: int, length: int) -> int:
@@ -79,28 +139,27 @@ def parse_acc_target_vrel(data: bytes) -> float | None:
 
 
 def parse_acc_target_arel(data: bytes) -> float | None:
-    """0x235 byte 2: nominal relative acceleration of the OEM ACC target witness, m/s^2 (positive = opening).
+    """0x235 byte 2: relative acceleration of the radar's ACC target, m/s^2 (positive = opening).
 
-    (byte 2 - 100) * 0.1; the idle payload's 0x64 decodes to 0. Binned against the derivative of the 0x235 closing
-    speed it gives identical curves on discovery, confirmation and fresh drives, lagging that derivative by
-    0.1-0.2 s. The approximate scale (0.1-0.14 m/s^2 per code) is conditional on the assumed velocity scale,
-    not an independent physical calibration. Meaningful only while the target is active (docs/05).
+    (byte 2 - 100) * 0.125; the idle payload's 0x64 decodes to 0. The unit follows from the frame's own closing
+    speed: over 2 s windows the speed code changes by 1.00 times the integral of this code (0.997 on 222,050 windows,
+    1.002 on other drives), so one code is one speed code (0.125 m/s) per second. Meaningful only while the target
+    is active (docs/05).
     """
     if len(data) < 8:
         return None
-    return (data[2] - 100) * 0.1
+    return (data[2] - 100) * 0.125
 
 
 def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
-    """0x237: nominal (coarse distance m, lateral m left positive) of the OEM ACC target witness.
+    """0x237: (distance m, lateral m left positive) of the radar's ACC target, as the track association uses them.
 
-    Lateral: bits 28..38, 1/60 m per code, offset -16.70 m (Pearson 0.97 against the matched lead). Distance is
-    coarse: bits 47..51 at about 5.26 m per code, +9.6 m (about +-5 m). These empirical conversions are
-    reference-dependent, not independently calibrated physical units or origins.
+    Distance: bits 39..51 (13 bits), code * 0.025 m (parse_acc_target_range_code returns the raw code).
+    Lateral: bits 27..38 (12 bits), (code - 2000) * 0.01 m; one object-list lateral code is exactly 1.5 of these codes.
     """
     if len(data) < 8:
         return None
-    return _be_field(data, 47, 5) * 5.26 + 9.6, _be_field(data, 28, 11) * 0.01667 - 16.70
+    return _be_field(data, 39, 13) * 0.025, (_be_field(data, 27, 12) - 2000) * 0.01
 
 
 def parse_acc_target_range_code(data: bytes) -> int | None:
@@ -114,7 +173,53 @@ def parse_acc_target_range_code(data: bytes) -> int | None:
     return _be_field(data, 39, 13)
 
 
-# ---------------------------------------------------------------- 0x23B: slow value, counter, CRC-8
+@dataclass(frozen=True)
+class AccTarget:
+    target_id: int        # 0x235 bits 59-63: constant while the radar follows one target
+    d_rel: float          # m, 0.025 m per code
+    y_rel: float          # m, left positive, 12-bit (code - 2000) * 0.01
+    v_rel: float          # m/s, negative = closing
+    a_rel: float          # m/s^2, positive = opening
+    v_lat: float          # m/s, left positive, about 0.0125 m/s per code
+    a_lat: float          # m/s^2, relative lateral acceleration, (code - 100) * 0.125: mostly minus ego's own
+    in_path: bool         # in-path confirmed (93.6 % of target frames)
+    in_path_level: int    # 5 confirmed, then 4, 3, 2 as the target moves off the path
+    tracker_codes: tuple[int, int]  # two raw tracker bytes that rise while the target accelerates or brakes
+
+
+def parse_acc_target(data235: bytes, data237: bytes) -> AccTarget | None:
+    """Every field of the radar's ACC target from one 0x235 / 0x237 pair, or None while there is no target (docs/05).
+
+    Field boundaries come from the carry structure of 2 M frames; with no target every numeric field sits at its zero
+    code. The driving interface keeps using the single-field helpers below."""
+    if len(data235) != 8 or len(data237) != 8 or data235[1] & 0x0F != 5 or not _be_field(data237, 10, 1):
+        return None
+    return AccTarget(target_id=_be_field(data235, 0, 5), d_rel=_be_field(data237, 39, 13) * 0.025,
+                     y_rel=(_be_field(data237, 27, 12) - 2000) * 0.01, v_rel=(_be_field(data235, 29, 11) - 1024) * 0.125,
+                     a_rel=(data235[2] - 100) * 0.125, v_lat=(_be_field(data235, 8, 11) - 1024) * 0.0125,
+                     a_lat=(_be_field(data235, 19, 8) - 100) * 0.125, in_path=bool(_be_field(data237, 8, 1)),
+                     in_path_level=_be_field(data237, 4, 3), tracker_codes=(_be_field(data237, 19, 8), _be_field(data237, 11, 8)))
+
+
+@dataclass(frozen=True)
+class AccTargetInfo:
+    target_class: int     # 1 car, 2 truck (the 0x191 template class); 0, 4, 5, 6 other; 7 no target
+    present: bool
+    in_object_list: bool  # the target also has an object in the 0x80 list
+    timestamp_us: int     # radar cycle clock of this target update, same clock as 0x190
+
+
+def parse_0x239(data: bytes) -> AccTargetInfo | None:
+    """0x239 (8 bytes, 50 Hz): class, object-list flag and cycle timestamp of the radar's ACC target (docs/05).
+
+    The timestamp is 32 bits starting 3 bits into byte 3 and equals the 0x190 timestamp of the cycle the 0x235 / 0x237
+    content belongs to. Returns None for a short frame or the all-ones start-up frame."""
+    if len(data) != 8 or data[1] & 0x0F == 0x0F:
+        return None
+    return AccTargetInfo(data[1] & 0x0F, bool(data[3] & 0x08), bool(data[3] & 0x80), _be_field(data, 3, 32))
+
+
+# ---------------------------------------------------------------- 0x23B: target width, counter, CRC-8
 A23B_CRC_XOROUT = 0x59
 
 
@@ -134,10 +239,11 @@ def crc_0x23b(value: int, counter_and_low: int) -> int:
 
 
 def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
-    """0x23B (3 bytes, 50 Hz), in frame order as received: (slow 8-bit value, rolling counter 0-15, check byte valid).
+    """0x23B (3 bytes, 50 Hz), in frame order as received: (ACC target width in cm, rolling counter 0-15, check byte valid).
 
-    Byte 0 = CRC-8, byte 1 = counter << 4 | low nibble (0 except 1 / 15 on 74 of 2 M frames), byte 2 = slow value (about
-    171 +- 6 when nonzero, unreferenced; docs/05). The startup frame 00 0f ff fails the check; every other frame passes."""
+    Byte 0 = CRC-8, byte 1 = counter << 4 | width high nibble, byte 2 = width low byte. The width is 0 exactly while
+    there is no target, 140-220 for the car class (median 171) and 200-280 for the truck class (docs/05). The startup
+    frame 00 0f ff fails the check; every other frame passes."""
     if len(data) != 3:
         return None
-    return data[2], data[1] >> 4, crc_0x23b(data[2], data[1]) == data[0]
+    return (data[1] & 0x0F) << 8 | data[2], data[1] >> 4, crc_0x23b(data[2], data[1]) == data[0]

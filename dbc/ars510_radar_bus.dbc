@@ -82,6 +82,7 @@ BO_ 384 ARS510_A180_CANDIDATE: 5 RADAR
 BO_ 400 ARS510_A190_CANDIDATE: 7 RADAR
  SG_ A190_STATUS_0_4 : 0|4@1+ (1,0) [0|15] "state" RADAR
  SG_ A190_B0_HIGH4 : 4|4@1+ (1,0) [0|15] "raw" RADAR
+ SG_ A190_ACTIVE_SUMMARIES : 3|2@0+ (1,0) [0|3] "count" RADAR
  SG_ A190_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A190_TIMESTAMP_US : 23|32@0+ (1,0) [0|4294967295] "us" RADAR
  SG_ A190_COUNTER_RESERVED0 : 48|4@1+ (1,0) [0|15] "raw" RADAR
@@ -206,9 +207,12 @@ BO_ 1282 ARS510_A502_CANDIDATE: 8 RADAR
 BO_ 1664 ARS510_A680_OBJECT: 8 RADAR
  SG_ A680_SELECTOR : 7|8@0+ (1,0) [0|255] "code" RADAR
  SG_ A680_LONG_DIST : 15|13@0+ (0.03125,0) [0|255.97] "m" RADAR
- SG_ A680_LAT_DIST : 18|11@0- (0.015625,0) [-16|15.98] "m" RADAR
+ SG_ A680_LAT_DIST : 18|11@0- (0.015,0) [-15.36|15.345] "m" RADAR
  SG_ A680_SPEED_OVER_GROUND : 39|10@0+ (0.15,-76.8) [-76.8|76.65] "m/s" RADAR
  SG_ A680_FLAGS : 45|6@0+ (1,0) [0|63] "raw" RADAR
+ SG_ A680_STATIONARY : 40|1@0+ (1,0) [0|1] "" RADAR
+ SG_ A680_ONCOMING : 41|1@0+ (1,0) [0|1] "" RADAR
+ SG_ A680_SEEN_MOVING : 43|1@0+ (1,0) [0|1] "" RADAR
  SG_ A680_LAT_SPEED_CODE : 55|8@0+ (1,-128) [-128|127] "code" RADAR
  SG_ A680_B7_HIGH4 : 63|4@0+ (1,0) [0|15] "raw" RADAR
  SG_ A680_B7_LOW4 : 59|4@0+ (1,0) [0|15] "raw" RADAR
@@ -222,18 +226,18 @@ BO_ 401 ARS510_A191_COMPANION: 8 RADAR
  SG_ A191_B3_RESERVED0_2 : 24|2@1+ (1,0) [0|3] "raw" RADAR
  SG_ A191_PAIR_TRACK_ID6 : 26|6@1+ (1,0) [0|63] "code" RADAR
  SG_ A191_B4_RESERVED0_2 : 32|2@1+ (1,0) [0|3] "raw" RADAR
- SG_ A191_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A191_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (0.1,0) [0|6.3] "m" RADAR
  SG_ A191_B5_RESERVED0_3 : 40|3@1+ (1,0) [0|7] "raw" RADAR
  SG_ A191_PAIR_FIELD5_CODE5 : 43|5@1+ (1,0) [0|31] "code" RADAR
  SG_ A191_B6_RESERVED0 : 48|1@1+ (1,0) [0|1] "raw" RADAR
- SG_ A191_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (1,0) [0|127] "code" RADAR
- SG_ A191_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (1,0) [0|255] "code" RADAR
+ SG_ A191_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (0.1,0) [0|12.7] "m" RADAR
+ SG_ A191_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (0.1,0) [0|25.5] "m" RADAR
 
 BO_ 402 ARS510_A192_COMPANION: 4 RADAR
  SG_ A192_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
  SG_ A192_PAIR_RANGE_CODE13 : 4|13@0+ (0.0625,-10) [-10|501.94] "m" RADAR
  SG_ A192_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A192_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015625,-32) [-32|95.98] "m" RADAR
+ SG_ A192_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015,-30.72) [-30.72|92.145] "m" RADAR
 
 BO_ 403 ARS510_A193_COMPANION: 8 RADAR
  SG_ A193_B0_RESERVED0 : 0|1@1+ (1,0) [0|1] "raw" RADAR
@@ -244,18 +248,18 @@ BO_ 403 ARS510_A193_COMPANION: 8 RADAR
  SG_ A193_B3_RESERVED0_2 : 24|2@1+ (1,0) [0|3] "raw" RADAR
  SG_ A193_PAIR_TRACK_ID6 : 26|6@1+ (1,0) [0|63] "code" RADAR
  SG_ A193_B4_RESERVED0_2 : 32|2@1+ (1,0) [0|3] "raw" RADAR
- SG_ A193_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (1,0) [0|63] "code" RADAR
+ SG_ A193_PAIR_DESCRIPTOR0_CODE6 : 34|6@1+ (0.1,0) [0|6.3] "m" RADAR
  SG_ A193_B5_RESERVED0_3 : 40|3@1+ (1,0) [0|7] "raw" RADAR
  SG_ A193_PAIR_FIELD5_CODE5 : 43|5@1+ (1,0) [0|31] "code" RADAR
  SG_ A193_B6_RESERVED0 : 48|1@1+ (1,0) [0|1] "raw" RADAR
- SG_ A193_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (1,0) [0|127] "code" RADAR
- SG_ A193_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (1,0) [0|255] "code" RADAR
+ SG_ A193_PAIR_DESCRIPTOR1_CODE7 : 49|7@1+ (0.1,0) [0|12.7] "m" RADAR
+ SG_ A193_PAIR_DESCRIPTOR2_CODE8 : 56|8@1+ (0.1,0) [0|25.5] "m" RADAR
 
 BO_ 404 ARS510_A194_COMPANION: 4 RADAR
  SG_ A194_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
  SG_ A194_PAIR_RANGE_CODE13 : 4|13@0+ (0.0625,-10) [-10|501.94] "m" RADAR
  SG_ A194_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A194_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015625,-32) [-32|95.98] "m" RADAR
+ SG_ A194_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015,-30.72) [-30.72|92.145] "m" RADAR
 
 BO_ 565 ARS510_A235_COMPANION: 8 RADAR
  SG_ A235_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -268,7 +272,10 @@ BO_ 565 ARS510_A235_COMPANION: 8 RADAR
  SG_ A235_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.125,-128) [-128|127.875] "m/s" RADAR
- SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.1,-10) [-10|15.5] "m/s^2" RADAR
+ SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.125,-12.5) [-12.5|19.375] "m/s^2" RADAR
+ SG_ A235_ACC_TARGET_VLAT : 42|11@0+ (0.0125,-12.8) [-12.8|12.7875] "m/s" RADAR
+ SG_ A235_ACC_TARGET_ALAT : 34|8@0+ (0.125,-12.5) [-12.5|19.375] "m/s^2" RADAR
+ SG_ A235_TARGET_ID5 : 60|5@0+ (1,0) [0|31] "id" RADAR
 
 BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -280,8 +287,13 @@ BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
- SG_ A237_ACC_TARGET_LAT : 30|11@0+ (0.01667,-16.7) [-16.7|17.42] "m" RADAR
- SG_ A237_ACC_TARGET_DIST_COARSE : 11|5@0+ (5.26,9.6) [9.6|172.66] "m" RADAR
+ SG_ A237_ACC_TARGET_LAT : 30|12@0+ (0.01,-20) [-20|20.95] "m" RADAR
+ SG_ A237_TRACKER_A8 : 34|8@0+ (1,0) [0|255] "code" RADAR
+ SG_ A237_TRACKER_B8 : 42|8@0+ (1,0) [0|255] "code" RADAR
+ SG_ A237_TARGET_PRESENT : 50|1@0+ (1,0) [0|1] "flag" RADAR
+ SG_ A237_IN_PATH_CONFIRMED : 48|1@0+ (1,0) [0|1] "flag" RADAR
+ SG_ A237_IN_PATH_CANDIDATE : 63|1@0+ (1,0) [0|1] "flag" RADAR
+ SG_ A237_IN_PATH_LEVEL3 : 62|3@0+ (1,0) [0|7] "level" RADAR
  SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (0.025,0) [0|204.775] "m" RADAR
 
 BO_ 569 ARS510_A239_COMPANION: 8 RADAR
@@ -294,12 +306,16 @@ BO_ 569 ARS510_A239_COMPANION: 8 RADAR
  SG_ A239_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A239_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A239_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A239_TARGET_IN_OBJECT_LIST : 31|1@0+ (1,0) [0|1] "flag" RADAR
+ SG_ A239_TARGET_PRESENT : 27|1@0+ (1,0) [0|1] "flag" RADAR
+ SG_ A239_TIMESTAMP_US : 26|32@0+ (1,0) [0|4294967295] "us" RADAR
 
 BO_ 571 ARS510_A23B_COMPANION: 3 RADAR
  SG_ A23B_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
  SG_ A23B_STATUS_MUX4 : 8|4@1+ (1,0) [0|15] "state" RADAR
  SG_ A23B_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
  SG_ A23B_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
+ SG_ A23B_TARGET_WIDTH_CM : 11|12@0+ (1,0) [0|4095] "cm" RADAR
 
 BO_ 573 ARS510_A23D_COMPANION: 8 RADAR
  SG_ A23D_OBSERVED_CONSTANT_BE64 : 7|64@0+ (1,0) [0|18446744073709551615] "raw" RADAR
@@ -314,9 +330,9 @@ CM_ BO_ 257 "Radar startup state: 0x1D while booting, 0x11 once running (switche
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";
 CM_ BO_ 259 "Always zero.";
 CM_ BO_ 384 "Constant CF C0 00 00 00.";
-CM_ BO_ 400 "Radar cycle header (16.7 Hz): microsecond timestamp and a mod-16 cycle counter.";
+CM_ BO_ 400 "Radar cycle header (16.7 Hz): number of target summaries, microsecond timestamp and a mod-16 cycle counter.";
 CM_ BO_ 401 "Selected-target companion A (with 0x192): score, age and track code of a target the radar selects itself. Sentinel FE FE FE FC FC FF FE FF = no target.";
-CM_ BO_ 402 "Selected-target summary A (4 bytes): smoothed distance and a lateral lane bin of a target the radar selects itself (ACC / pre-collision). Sentinel 00 FF 00 FF = no target.";
+CM_ BO_ 402 "Selected-target summary A (4 bytes): distance and lateral position of one target of the radar's internal tracker, in the object list's encoding. Sentinel 00 FF 00 FF = no target.";
 CM_ BO_ 403 "Selected-target companion B (with 0x194); same layout as 0x191.";
 CM_ BO_ 404 "Selected-target summary B; same layout as 0x192.";
 CM_ BO_ 405 "Event frame, paired with 0x196: idle 99.97% of the time, active during rare events.";
@@ -325,15 +341,23 @@ CM_ BO_ 407 "Startup phase: bit 8 sets once the radar is running and stays set."
 CM_ BO_ 408 "Constant 0x10.";
 CM_ BO_ 514 "Counter frame: byte 1 high nibble counts mod 16; byte 0 is a check byte that depends only on the counter.";
 CM_ BO_ 528 "Copy of Toyota road-sign-assist data (speed-sign presence, speed-limit value, TSR switch).";
-CM_ BO_ 565 "The OEM ACC target witness, 50 Hz: closing speed and relative acceleration of the target the stock ACC follows.";
+CM_ BO_ 565 "The radar's ACC target, 50 Hz (content per 60 ms radar cycle): closing speed, relative acceleration, lateral speed and acceleration and the target ID. Position and in-path state are on 0x237.";
 CM_ SG_ 565 A235_ACC_TARGET_VREL "Closing speed of the ACC target, m/s, negative = closing; 0.125 m/s per code (stopped leads, distance slope).";
-CM_ SG_ 565 A235_ACC_TARGET_AREL "Nominal relative acceleration of the ACC target (positive = opening): (code - 100) * 0.1 m/s^2. Derivative consistency is conditional on the assumed velocity scale, not independent physical calibration. Code 100 is the idle value.";
-CM_ BO_ 567 "The OEM ACC target witness, 50 Hz: lateral position and distance of the target the stock ACC follows (see 0x235).";
-CM_ SG_ 567 A237_ACC_TARGET_LAT "Nominal lateral position of the ACC target, m, left positive; empirical reference-dependent scale and offset.";
-CM_ SG_ 567 A237_ACC_TARGET_DIST_COARSE "Nominal distance of the ACC target in about 5.26 m steps (+9.6 m), an empirical reference-dependent conversion; the top 5 bits of A237_ACC_TARGET_DISTANCE_CODE.";
+CM_ SG_ 565 A235_ACC_TARGET_AREL "Relative acceleration of the ACC target (positive = opening): (code - 100) * 0.125 m/s^2; one code is one speed code per second (closure 1.00 over 2 s windows). Code 100 is the idle value.";
+CM_ SG_ 565 A235_ACC_TARGET_VLAT "Lateral speed of the ACC target, left positive, about 0.0125 m/s per code (the lateral position changes by 1.2 cm per code-second).";
+CM_ SG_ 565 A235_ACC_TARGET_ALAT "Relative lateral acceleration of the ACC target, left positive: (code - 100) * 0.125 m/s^2 (nominal unit, as the longitudinal field). Mostly minus the ego lateral acceleration (-8.2 codes per m/s^2), plus a lateral-speed term; lags the yaw rate by about 0.5 s.";
+CM_ SG_ 565 A235_TARGET_ID5 "Target identity: constant while the radar follows one target; 31 with the idle payload.";
+CM_ BO_ 567 "The radar's ACC target, 50 Hz: distance, lateral position, in-path state and two tracker bytes (see 0x235).";
+CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is exactly 1.5 of these codes.";
+CM_ SG_ 567 A237_TRACKER_A8 "Raw tracker byte: 35-36 on a steady target, 44-50 while it accelerates, 48-93 while it brakes.";
+CM_ SG_ 567 A237_TRACKER_B8 "Raw tracker byte: about 88 for a stopped target, 97-139 for a steady mover, rises toward 240 (and wraps) while the target accelerates or brakes.";
+CM_ SG_ 567 A237_TARGET_PRESENT "1 with an ACC target.";
+CM_ SG_ 567 A237_IN_PATH_CONFIRMED "1 while the target is confirmed in the path (level 5).";
+CM_ SG_ 567 A237_IN_PATH_CANDIDATE "1 while the target is a candidate (levels 4-2).";
+CM_ SG_ 567 A237_IN_PATH_LEVEL3 "In-path level 5, 4, 3, 2; steps to the neighbouring level only; lower levels sit farther from the path.";
 CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Distance of the ACC target, 0.025 m per code, zero offset (0.02 m median residual against the 0x680 object range).";
-CM_ BO_ 569 "50 Hz companion frame of the 0x23x family: check byte, state nibble, rolling counter and a free-running payload.";
-CM_ BO_ 571 "50 Hz companion frame (3 bytes) of the 0x23x family; holds its payload in sync with 0x235 / 0x237.";
+CM_ BO_ 569 "50 Hz companion of the ACC target: target class, object-list flag and the radar cycle timestamp of the 0x235 / 0x237 content.";
+CM_ BO_ 571 "50 Hz companion of the ACC target (3 bytes): CRC-8, counter and the target width in cm.";
 CM_ BO_ 573 "Always zero.";
 CM_ BO_ 576 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. Carries changing payloads (paired with 0x244) on some drives; default body otherwise.";
 CM_ BO_ 577 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0; default body.";
@@ -448,7 +472,8 @@ CM_ SG_ 400 A190_COUNTER_RESERVED0 "Always zero.";
 CM_ SG_ 400 A190_COUNTER4 "Cycle counter mod 16, +3 per cycle; use it to detect dropped cycles.";
 CM_ SG_ 407 A197_STARTUP_PHASE1 "0 while the radar starts up, 1 once running (stays 1).";
 CM_ SG_ 407 A197_B1_RESERVED1_7 "Always zero.";
-CM_ SG_ 400 A190_STATUS_0_4 "Status nibble.";
+CM_ SG_ 400 A190_STATUS_0_4 "Byte 0 low nibble: summary count << 2 | 2 (values 2, 6, 10).";
+CM_ SG_ 400 A190_ACTIVE_SUMMARIES "Number of target summaries in this cycle (0-2): 0x191/0x192 fill first, then 0x193/0x194.";
 CM_ SG_ 576 A240_B0_UNKNOWN5 "0 with the default body, 8 with a changing body.";
 CM_ SG_ 576 A240_ROLLING_PHASE3 "Rolling phase 1-7 (0 at startup).";
 CM_ SG_ 576 A240_RAW_WORD0_BE24 "Raw 24-bit big-endian view of three payload bytes.";
@@ -484,10 +509,13 @@ CM_ SG_ 584 A248_B7_RESERVED_ZERO8 "Always zero.";
 CM_ SG_ 1281 A501_STATUS_40_4 "State nibble.";
 CM_ SG_ 1664 A680_SELECTOR "0 / 1 mostly stationary objects, 3 mostly same-direction vehicles.";
 CM_ SG_ 1664 A680_LONG_DIST "Longitudinal distance; stationary objects close at ego speed with 32 codes per metre.";
-CM_ SG_ 1664 A680_LAT_DIST "Lateral position, left positive.";
+CM_ SG_ 1664 A680_LAT_DIST "Lateral position, left positive, 0.015 m per code (the object list's lateral unit).";
 CM_ SG_ 1664 A680_SPEED_OVER_GROUND "Speed over ground, nominal unit; 0 for stationary objects.";
-CM_ SG_ 1664 A680_FLAGS "Raw flags: 8 on vehicles, 1 / 9 / 49 on stationary objects.";
-CM_ SG_ 1664 A680_LAT_SPEED_CODE "Follows the lateral-position slope; unit open.";
+CM_ SG_ 1664 A680_FLAGS "Motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving; bits 2, 4, 5 raw. 1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle.";
+CM_ SG_ 1664 A680_STATIONARY "Flag bit 0: set on 99 % of objects slower than 0.5 m/s over ground and on 1 % of moving ones.";
+CM_ SG_ 1664 A680_ONCOMING "Flag bit 1: set on 98 % of objects faster than 3 m/s toward ego and on 1 % of the others.";
+CM_ SG_ 1664 A680_SEEN_MOVING "Flag bit 3: set on 86 % of same-direction moving objects and 10 % of stationary ones (with bit 0: a stopped vehicle).";
+CM_ SG_ 1664 A680_LAT_SPEED_CODE "Lateral speed over ground, left positive, about 0.13-0.18 m/s per code (0.15 nominal); 0 on stationary objects.";
 CM_ SG_ 1664 A680_B7_HIGH4 "14 on most frames.";
 CM_ SG_ 1664 A680_B7_LOW4 "0xA with selector 0, 0xF with selector 1 / 3.";
 CM_ SG_ 401 A191_B0_RESERVED0 "Always zero.";
@@ -497,16 +525,16 @@ CM_ SG_ 401 A191_PAIR_TRACK_AGE7 "Target age in radar cycles, saturates at 126; 
 CM_ SG_ 401 A191_B3_RESERVED0_2 "Always zero.";
 CM_ SG_ 401 A191_PAIR_TRACK_ID6 "Target track code; a code can move between the A (0x191) and B (0x193) pairs.";
 CM_ SG_ 401 A191_B4_RESERVED0_2 "Always zero.";
-CM_ SG_ 401 A191_PAIR_DESCRIPTOR0_CODE6 "Raw descriptor 1 of 3, observed active values 18-30; can change with coherent code and age.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR0_CODE6 "Class template width, m: 1.8 car, 2.2 truck (the class on 0x239 when this is the ACC target); rare other values 2.5-3.0.";
 CM_ SG_ 401 A191_B5_RESERVED0_3 "Zero in practice (seen as 4 once, one frame before a sentinel).";
-CM_ SG_ 401 A191_PAIR_FIELD5_CODE5 "Dynamic target code 8-30 (31 in the sentinel); generally grows with target age.";
+CM_ SG_ 401 A191_PAIR_FIELD5_CODE5 "Counter that grows with target age and saturates at 30 (31 in the sentinel).";
 CM_ SG_ 401 A191_B6_RESERVED0 "Always zero.";
-CM_ SG_ 401 A191_PAIR_DESCRIPTOR1_CODE7 "Raw descriptor 2 of 3, observed active values 15 and 23.";
-CM_ SG_ 401 A191_PAIR_DESCRIPTOR2_CODE8 "Raw descriptor 3 of 3, observed active values 20-120; can change with coherent code and age.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR1_CODE7 "Class template height-like size, m: 1.5 car, 2.3 truck.";
+CM_ SG_ 401 A191_PAIR_DESCRIPTOR2_CODE8 "Class template length, m: 4.5 car, 12.0 truck; rare other values from 2.0.";
 CM_ SG_ 402 A192_WORD0_RESERVED_ZERO3 "Always zero.";
 CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (code - 160) / 16 m, the object list encoding.";
 CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) / 64 m, left positive; keep all 13 bits.";
+CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) * 0.015 m, left positive; keep all 13 bits.";
 CM_ SG_ 403 A193_B0_RESERVED0 "Always zero.";
 CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "Target score: 91-100 while active, 127 in the sentinel.";
 CM_ SG_ 403 A193_B1_RESERVED0 "Always zero.";
@@ -514,27 +542,31 @@ CM_ SG_ 403 A193_PAIR_TRACK_AGE7 "Target age in radar cycles, saturates at 126; 
 CM_ SG_ 403 A193_B3_RESERVED0_2 "Always zero.";
 CM_ SG_ 403 A193_PAIR_TRACK_ID6 "Target track code; a code can move between the A (0x191) and B (0x193) pairs.";
 CM_ SG_ 403 A193_B4_RESERVED0_2 "Always zero.";
-CM_ SG_ 403 A193_PAIR_DESCRIPTOR0_CODE6 "Raw descriptor 1 of 3; pooled active values across both pairs are 18-30.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR0_CODE6 "Class template width, m: 1.8 car, 2.2 truck.";
 CM_ SG_ 403 A193_B5_RESERVED0_3 "Zero; 7 in the sentinel.";
-CM_ SG_ 403 A193_PAIR_FIELD5_CODE5 "Dynamic target code; pooled active range across both pairs is 8-30 (31 in the sentinel).";
+CM_ SG_ 403 A193_PAIR_FIELD5_CODE5 "Counter that grows with target age and saturates at 30 (31 in the sentinel).";
 CM_ SG_ 403 A193_B6_RESERVED0 "Always zero.";
-CM_ SG_ 403 A193_PAIR_DESCRIPTOR1_CODE7 "Raw descriptor 2 of 3, observed active values 15 and 23.";
-CM_ SG_ 403 A193_PAIR_DESCRIPTOR2_CODE8 "Raw descriptor 3 of 3; pooled active values across both pairs are 20-120.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR1_CODE7 "Class template height-like size, m: 1.5 car, 2.3 truck.";
+CM_ SG_ 403 A193_PAIR_DESCRIPTOR2_CODE8 "Class template length, m: 4.5 car, 12.0 truck.";
 CM_ SG_ 404 A194_WORD0_RESERVED_ZERO3 "Always zero.";
 CM_ SG_ 404 A194_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (code - 160) / 16 m, the object list encoding.";
 CM_ SG_ 404 A194_WORD1_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 404 A194_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) / 64 m, left positive; keep all 13 bits.";
+CM_ SG_ 404 A194_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) * 0.015 m, left positive; keep all 13 bits.";
 CM_ SG_ 565 A235_B0_CHECK_BYTE "Check byte over the rest of the frame.";
-CM_ SG_ 565 A235_STATUS_MUX4 "Byte-1 low nibble: 1 while the ACC target is absent (idle payload), other values while active.";
+CM_ SG_ 565 A235_STATUS_MUX4 "Byte-1 low nibble: 5 with an ACC target, 1 without (idle payload), 15 at start-up.";
 CM_ SG_ 565 A235_COUNTER4 "Rolling counter.";
 CM_ SG_ 567 A237_B0_CHECK_BYTE "Check byte: an affine parity function of bytes 1-7.";
-CM_ SG_ 567 A237_STATUS_MUX4 "Byte-1 low nibble; the same bits as the top of A237_ACC_TARGET_DIST_COARSE.";
+CM_ SG_ 567 A237_STATUS_MUX4 "Byte-1 low nibble: the top four bits of A237_ACC_TARGET_DISTANCE_CODE.";
 CM_ SG_ 567 A237_COUNTER4 "Rolling counter.";
 CM_ SG_ 569 A239_B0_CHECK_BYTE "Check byte: an affine parity function of bytes 1-7.";
-CM_ SG_ 569 A239_STATUS_MUX4 "Byte-1 low nibble: 7 while the ACC target is absent (same moments as A235_STATUS_MUX4 == 1).";
+CM_ SG_ 569 A239_STATUS_MUX4 "ACC target class: 1 car, 2 truck (the 0x191 template class), 0 / 4 / 5 / 6 other, 7 no target.";
+CM_ SG_ 569 A239_TARGET_IN_OBJECT_LIST "1 while the ACC target also has an object in the 0x80 list.";
+CM_ SG_ 569 A239_TARGET_PRESENT "1 with an ACC target.";
+CM_ SG_ 569 A239_TIMESTAMP_US "Radar cycle timestamp of this target update, microseconds; equals A190_TIMESTAMP_US of the same cycle.";
 CM_ SG_ 569 A239_COUNTER4 "Rolling counter.";
 CM_ SG_ 571 A23B_B0_CHECK_BYTE "Check byte: CRC8 (poly 0x1D, init 0, MSB first) over B1, B2, XOR 0x59, then XOR 0x3B / 0x76 / 0xEC / 0xC5 for set bits 4 / 5 / 6 / 7 of B1. Startup frames 00 0F FF differ.";
-CM_ SG_ 571 A23B_STATUS_MUX4 "Byte-1 low nibble; always zero.";
+CM_ SG_ 571 A23B_STATUS_MUX4 "Byte-1 low nibble: high bits of the target width (1 for widths of 256 cm and more).";
+CM_ SG_ 571 A23B_TARGET_WIDTH_CM "Width of the ACC target, cm: 0 without a target, 140-220 for the car class (median 171), 200-280 for the truck class.";
 CM_ SG_ 571 A23B_COUNTER4 "Rolling counter.";
 VAL_ 257 A101_STARTUP_STATE8 29 "startup_0x1D" 17 "post_startup_base_0x11" 33 "transient_0x21_unresolved" ;
 VAL_ 258 A102_CONTEXT_BIT11 0 "STATE_0x0" 1 "STATE_0x1" ;
@@ -561,7 +593,7 @@ VAL_ 565 A235_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3
 VAL_ 565 A235_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
 VAL_ 567 A237_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
 VAL_ 567 A237_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
-VAL_ 569 A239_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
+VAL_ 569 A239_STATUS_MUX4 0 "OTHER_0" 1 "CAR" 2 "TRUCK" 4 "OTHER_4" 5 "OTHER_5" 6 "OTHER_6" 7 "NO_TARGET" 15 "STARTUP" ;
 VAL_ 569 A239_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;
 VAL_ 571 A23B_STATUS_MUX4 0 "STATE_0x0" 1 "STATE_0x1" 2 "STATE_0x2" 3 "STATE_0x3" 4 "STATE_0x4" 5 "STATE_0x5" 6 "STATE_0x6" 7 "STATE_0x7" 8 "STATE_0x8" 9 "STATE_0x9" 10 "STATE_0xA" 11 "STATE_0xB" 12 "STATE_0xC" 13 "STATE_0xD" 14 "STATE_0xE" 15 "STATE_0xF" ;
 VAL_ 571 A23B_COUNTER4 0 "COUNT_0x0" 1 "COUNT_0x1" 2 "COUNT_0x2" 3 "COUNT_0x3" 4 "COUNT_0x4" 5 "COUNT_0x5" 6 "COUNT_0x6" 7 "COUNT_0x7" 8 "COUNT_0x8" 9 "COUNT_0x9" 10 "COUNT_0xA" 11 "COUNT_0xB" 12 "COUNT_0xC" 13 "COUNT_0xD" 14 "COUNT_0xE" 15 "COUNT_0xF" ;

@@ -25,7 +25,7 @@ def test_a_flipped_check_bit_fails_and_startup_frame_is_not_valid():
     good = bytearray.fromhex("0940b2")
     good[0] ^= 0x01
     assert parse_0x23b(bytes(good))[2] is False
-    assert parse_0x23b(bytes.fromhex("000fff")) == (0xFF, 0, False)
+    assert parse_0x23b(bytes.fromhex("000fff")) == (0xFFF, 0, False)
     assert parse_0x23b(b"\x00\x00") is None
 
 

@@ -3,11 +3,11 @@ from pathlib import Path
 from ars510.support import parse_acc_target_arel, parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
 
 
-def test_all_raw_codes_and_coarse_alias():
+def test_all_raw_codes_and_metric_distance():
     for code in range(8192):
         payload = ((code << 39) | (1002 << 28) | 0x123).to_bytes(8, "big")
         assert parse_acc_target_range_code(payload) == code
-        assert parse_acc_target_position(payload)[0] == (code >> 8)*5.26+9.6
+        assert parse_acc_target_position(payload)[0] == code * 0.025
         assert payload[1] & 15 == code >> 9
 
 
@@ -16,7 +16,7 @@ def test_diagnostic_parser_rejects_short_frames():
         assert parse_acc_target_range_code(bytes(length)) is None
 
 
-def test_raw_code_does_not_apply_coarse_origin():
+def test_raw_code_has_no_offset():
     assert parse_acc_target_range_code(bytes(8)) == 0
     assert parse_acc_target_range_code((1000 << 39).to_bytes(8, "big")) == 1000
 
@@ -34,10 +34,10 @@ def test_acc_target_arel_byte2_zero_at_idle_payload():
     for code in range(256):
         payload = bytearray(idle)
         payload[2] = code
-        assert parse_acc_target_arel(bytes(payload)) == (code - 100) * 0.1
+        assert parse_acc_target_arel(bytes(payload)) == (code - 100) * 0.125
     assert parse_acc_target_arel(bytes(7)) is None
 
 
 def test_dbc_arel_matches_parser():
     dbc = (Path(__file__).resolve().parents[1] / "dbc/ars510_radar_bus.dbc").read_text()
-    assert 'SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.1,-10) [-10|15.5] "m/s^2"' in dbc
+    assert 'SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.125,-12.5) [-12.5|19.375] "m/s^2"' in dbc

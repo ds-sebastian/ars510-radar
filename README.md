@@ -40,10 +40,10 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 From replaying 34 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
+- **Leads come from the radar** about 89% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
 - **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
-  ≥ 1 m/s² before 45% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  ≥ 1 m/s² before 44% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
@@ -69,8 +69,9 @@ update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P�
 
 *During an excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by about 5%,
 each ACC target reading by about 15%, so the estimate (green) stays with the radar's tracker. radard then runs its
-usual filter on top.* Model, constants, what each part is worth and the variants tested:
-[docs/12](docs/12_kalman_filter.md).
+usual filter on top.* The car the radar's ACC function follows is also published at the radar's ACC distance, which
+agrees with the vision lead and is half as rough as the object-list range. Model, constants, how the trackers are
+matched to tracks, what each part is worth and the variants tested: [docs/12](docs/12_kalman_filter.md).
 
 ## Profiles
 
@@ -103,10 +104,10 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **Distance, lateral position, speed over ground** | ● field layout and motion; ◐ exact physical zero and scales ([06](docs/06_accuracy.md)) |
-| **Object attributes**: lane assignment, class, size, heading, lateral speed and acceleration, existence, uncertainties | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
-| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields; ● speed 0.125 m/s and range 0.025 m per code (checked against `0x680` and stopped leads); ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
-| **Target summaries** (0x191-0x194) | ● raw structure; ● 0x192 / 0x194 = position of one internal track, in the object list's encoding ([05](docs/05_acc_target_and_support.md)) |
-| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects; absolute range at 1/32 m ([05](docs/05_acc_target_and_support.md)) |
+| **Object attributes**: lane assignment, class and its confidence, size, heading, lateral speed and acceleration, existence, uncertainties, camera association | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
+| **Radar's ACC target** (0x235 / 0x237 / 0x239 / 0x23B, 50 Hz) | ● mapped bit for bit: closing speed 0.125 m/s, relative acceleration 0.125 m/s², distance 0.025 m and lateral 0.01 m per code, class, cycle timestamp; ◐ lateral speed and acceleration, in-path state, width; ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
+| **Target summaries** (0x190-0x194) | ● 0x192 / 0x194 = position of one internal track, in the object list's encoding; ● 0x190 counts them; ◐ 0x191 / 0x193 carry the class template (car / truck size) ([05](docs/05_acc_target_and_support.md)) |
+| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects: range at 1/32 m, lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; ○ remaining cell fields ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration** | installable on openpilot, sunnypilot and StarPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
@@ -123,7 +124,8 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
   radar's own trackers, but its ACC target covers only about 57% of radar-lead time (5% beyond 80 m) and the summaries
   are used up to 80 m, so the farthest leads rely on the object list alone.
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
-  range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)).
+  range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)). Beyond
+  50 m it also reads 5-8% short of the radar's own ACC distance ([06](docs/06_accuracy.md#distance)).
 - **openpilot longitudinal.** Stock openpilot sends the radar a "disable" request when it takes over longitudinal
   control; the radar kept transmitting on the owner's setups, but this is not confirmed on every configuration
   ([08](docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)).
@@ -168,7 +170,7 @@ bytes and a CRC32. Each slot is one little-endian bit field:
 | field | bits | decode |
 |---|---|---|
 | dRel (forward) | `32\|12` | `(code − 160) / 16` m |
-| yRel (left +) | `44\|12` | `(code − 2048) / 64` m |
+| yRel (left +) | `44\|12` | `(code − 2048) × 0.015` m |
 | speed over ground | `64\|10` | `(code − 510.5) × 0.15` m/s; vRel = this − ego speed |
 | age | `24\|7` | radar cycles; a restart is a new track |
 | speed uncertainty | `240\|7` | about 0.045 m/s per count (calibrated against the radar's ACC target) |

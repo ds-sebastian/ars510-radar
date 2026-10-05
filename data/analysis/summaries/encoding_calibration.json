@@ -18,10 +18,10 @@
       "start": 44,
       "width": 12,
       "zero_code": 2048.0,
-      "scale": 0.015625,
-      "minimum": -32.0,
-      "maximum": 31.984375,
-      "code_step": 0.015625,
+      "scale": 0.015,
+      "minimum": -30.72,
+      "maximum": 30.705,
+      "code_step": 0.015,
       "unit": "m"
     },
     {

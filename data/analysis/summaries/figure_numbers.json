@@ -1,15 +1,15 @@
 {
  "lane_weights": {
   "right lane (148|4)": {
-   "median_y": -3.8125,
+   "median_y": -3.6599999999999997,
    "n": 10025
   },
   "ego lane (156|4)": {
-   "median_y": -0.078125,
+   "median_y": -0.075,
    "n": 21376
   },
   "left lane (152|4)": {
-   "median_y": 3.6875,
+   "median_y": 3.54,
    "n": 11084
   },
   "sum_15_or_16_share": 1.0

@@ -77,7 +77,7 @@ def main() -> int:
 
   def record(age: int) -> bytes:
     # a car 40.0 m ahead, 1.5 m to the LEFT, moving at 20.0 m/s over ground
-    slot = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 96, long_vel_over_ground=round(510.5 + 20.0 / 0.15 + 0.5), age_cycles=age)
+    slot = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 100, long_vel_over_ground=round(510.5 + 20.0 / 0.15 + 0.5), age_cycles=age)
     rec = bytearray(ID80_RECORD_LEN)
     rec[0] = 0xE4
     for s in range(20):
