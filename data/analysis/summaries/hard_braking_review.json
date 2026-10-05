@@ -243,6 +243,34 @@
     "episodes": 2,
     "ticks": 2
    }
+  },
+  "fused, ACC/summary units corrected": {
+   "justified": {
+    "episodes": 9,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
+  },
+  "fused, ACC trusted (sigma 0.02)": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 22
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
   }
  },
  "fused_episodes": [
