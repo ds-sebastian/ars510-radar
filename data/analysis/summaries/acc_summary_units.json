@@ -152,5 +152,84 @@
    "distance_slope": 0.862,
    "intercept_mps": -0.185
   }
+ },
+ "replay_34_drives_units_only": {
+  "published_fused": {
+   "heldout": {
+    "hard": 30,
+    "eps": 10,
+    "tgt": 4,
+    "sw": 1770
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": 0.013,
+   "radar_lag_s": -1.049,
+   "ant10": 0.419,
+   "events": 148,
+   "radar_only_per_h": 0.22,
+   "on_gas_per_h": 0.0,
+   "reactions": {
+    "later_gt150ms": 23,
+    "lost_ant": 4,
+    "new_miss": 3,
+    "weaker_hard": 0
+   },
+   "failed": [
+    "lag",
+    "anticipation",
+    "per_event",
+    "further_hard"
+   ]
+  },
+  "corrected_units": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "sw": 1751
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.024,
+   "radar_lag_s": -1.085,
+   "ant10": 0.449,
+   "events": 148,
+   "radar_only_per_h": 0.22,
+   "on_gas_per_h": 0.0,
+   "reactions": {
+    "later_gt150ms": 16,
+    "lost_ant": 3,
+    "new_miss": 3,
+    "weaker_hard": 0
+   },
+   "failed": [
+    "lag",
+    "per_event",
+    "further_hard",
+    "R4_window_min"
+   ]
+  },
+  "note": "same filter constants; only the ACC speed unit and the summary distance conversion differ"
  }
 }
