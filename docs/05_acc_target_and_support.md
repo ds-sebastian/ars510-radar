@@ -262,6 +262,13 @@ ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start
   `Object680.stationary`, `.oncoming` and `.seen_moving` expose them.
 - **Lateral speed:** the code is 0 on stationary objects even while ego turns, so it is over ground like `74|10` of the
   object list.
+- **Which vehicles it reports:** of its moving-vehicle frames (13 % of frames while driving), 30 % are the ACC target,
+  28 % a summary target and 42 % another vehicle of the radar's internal tracker (median range 105 m, mostly outside the
+  ego lane). On the ACC target its speed equals the ACC speed (median difference 0.09 m/s on 2,004 frames).
+- **A witness for far tracks:** against it, the object-list track at the same position reads more than 2.5 m/s too closing
+  on 1 % of frames below 40 m, 5 % at 40-60 m, 17-19 % at 60-110 m and 44 % at 110-170 m, and its range is a median 3 m
+  short at 60-110 m and 14 m short at 110-170 m ([06](06_accuracy.md#distance), [07](07_velocity_excursions.md)). The
+  fixes are sparse (about one a minute on tracks that have neither the ACC target nor a summary).
 - **Content while driving:** a stationary roadside object in 83% of frames (typically 8 m to the side), a
   same-direction vehicle in 13%, an oncoming one in 3%. The 0x80 object list does not carry new stationary objects
   while driving ([02](02_object_list.md)); 0x680 does, one at a time.

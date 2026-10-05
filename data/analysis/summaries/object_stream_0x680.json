@@ -278,5 +278,168 @@
     ]
    }
   }
+ },
+ "vehicle_witness": {
+  "note": "0x680 moving same-direction vehicle frames (stationary flag clear, over-ground speed > 3 m/s, ego > 5 m/s) on 700 one-minute segments: which tracker target they are, their speed against the ACC speed, and the object-list track at their position (lateral within 1 m, range within max(8 m, 20 %), age >= 60): share of frames where the object list reads more than 2.5 m/s too closing, and object-list range minus 0x680 range, by 0x680 range in metres; drive_halves repeats the table on two halves of the drives; slot_field_auc_range_stratified: how well each slot field separates the too-closing frames from frames within 1 m/s (0.5 = not at all; ax = 84|10, s240 = 240|7)",
+  "frames_0x680": 81919,
+  "moving_vehicle_frames": 6730,
+  "share_of_live_frames_while_driving": 0.12852341303185394,
+  "vehicle_is": {
+   "acc_target": 0.2977711738484398,
+   "summary_target": 0.28216939078751857,
+   "neither": 0.4200594353640416
+  },
+  "neither": {
+   "frames": 2827,
+   "range_p10_p50_p90_m": [
+    34.337500000000006,
+    104.8125,
+    168.06875000000002
+   ],
+   "in_lane_share": 0.20162716660771135,
+   "with_object_list_track_per_hour": 53.3810888252149
+  },
+  "speed_vs_acc_on_acc_target": {
+   "frames": 2004,
+   "median_abs_diff_mps": 0.09124874316403986
+  },
+  "object_list_vs_0x680": {
+   "frames_with_track": 3453,
+   "by_group": {
+    "acc_target": {
+     "frames": 1738,
+     "speed_diff_median_mps": -0.3414999999999999,
+     "share_more_than_2p5_too_closing": 0.05063291139240506,
+     "share_more_than_2p5_too_opening": 0.012658227848101266
+    },
+    "summary_target": {
+     "frames": 1094,
+     "speed_diff_median_mps": -0.3414999999999999,
+     "share_more_than_2p5_too_closing": 0.11608775137111517,
+     "share_more_than_2p5_too_opening": 0.02376599634369287
+    },
+    "neither": {
+     "frames": 621,
+     "speed_diff_median_mps": -0.44950000000000045,
+     "share_more_than_2p5_too_closing": 0.19162640901771336,
+     "share_more_than_2p5_too_opening": 0.07246376811594203
+    }
+   },
+   "by_range": {
+    "0-40": {
+     "frames": 1338,
+     "share_more_than_2p5_too_closing": 0.009715994020926755,
+     "range_diff_m_p25_p50_p75": [
+      -2.09375,
+      -0.3125,
+      1.125
+     ]
+    },
+    "40-60": {
+     "frames": 955,
+     "share_more_than_2p5_too_closing": 0.04607329842931937,
+     "range_diff_m_p25_p50_p75": [
+      -4.953125,
+      -2.53125,
+      0.40625
+     ]
+    },
+    "60-80": {
+     "frames": 525,
+     "share_more_than_2p5_too_closing": 0.1657142857142857,
+     "range_diff_m_p25_p50_p75": [
+      -6.96875,
+      -3.40625,
+      0.03125
+     ]
+    },
+    "80-110": {
+     "frames": 353,
+     "share_more_than_2p5_too_closing": 0.18696883852691218,
+     "range_diff_m_p25_p50_p75": [
+      -8.84375,
+      -3.34375,
+      2.71875
+     ]
+    },
+    "110-170": {
+     "frames": 282,
+     "share_more_than_2p5_too_closing": 0.4397163120567376,
+     "range_diff_m_p25_p50_p75": [
+      -20.1015625,
+      -14.296875,
+      -6.5
+     ]
+    }
+   }
+  },
+  "slot_field_auc_range_stratified": {
+   "ax": 0.126,
+   "s240": 0.613,
+   "width": 0.545,
+   "length": 0.612,
+   "b112": 0.56,
+   "b115": 0.408,
+   "b181": 0.457,
+   "vy": 0.509,
+   "exist": 0.455,
+   "pred107": 0.508
+  },
+  "drive_halves": {
+   "half_0": {
+    "0-40": {
+     "frames": 585,
+     "share_more_than_2p5_too_closing": 0.014,
+     "range_diff_median_m": -0.5
+    },
+    "40-60": {
+     "frames": 434,
+     "share_more_than_2p5_too_closing": 0.048,
+     "range_diff_median_m": -2.4
+    },
+    "60-80": {
+     "frames": 144,
+     "share_more_than_2p5_too_closing": 0.201,
+     "range_diff_median_m": -3.3
+    },
+    "80-110": {
+     "frames": 71,
+     "share_more_than_2p5_too_closing": 0.408,
+     "range_diff_median_m": -6.6
+    },
+    "110-170": {
+     "frames": 130,
+     "share_more_than_2p5_too_closing": 0.5,
+     "range_diff_median_m": -16.0
+    }
+   },
+   "half_1": {
+    "0-40": {
+     "frames": 753,
+     "share_more_than_2p5_too_closing": 0.007,
+     "range_diff_median_m": -0.2
+    },
+    "40-60": {
+     "frames": 521,
+     "share_more_than_2p5_too_closing": 0.044,
+     "range_diff_median_m": -2.6
+    },
+    "60-80": {
+     "frames": 381,
+     "share_more_than_2p5_too_closing": 0.152,
+     "range_diff_median_m": -3.4
+    },
+    "80-110": {
+     "frames": 282,
+     "share_more_than_2p5_too_closing": 0.131,
+     "range_diff_median_m": -3.0
+    },
+    "110-170": {
+     "frames": 152,
+     "share_more_than_2p5_too_closing": 0.388,
+     "range_diff_median_m": -9.3
+    }
+   }
+  }
  }
 }

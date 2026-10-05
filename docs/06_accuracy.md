@@ -44,7 +44,10 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m and is nearer
   to it than to `dRel` on 71-79 % of samples. The ACC distance is therefore the better far range for that car, and any
   position gate between the object list and the radar's own trackers needs room for this difference
-  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)).
+  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, a
+  second output of the same tracker that also covers other vehicles, shows the same: the object list is a median 2.5 m
+  short at 40-60 m, 3 m at 60-110 m and 14 m at 110-170 m
+  ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
 
 ![far range distance](img/analysis/far_range_distance.png)
 
