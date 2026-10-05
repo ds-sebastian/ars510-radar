@@ -200,7 +200,7 @@ class TestRangeFusionAndUnresolvedVrel:
 
 
 def _acc_frames(t: float, vrel: float, x: float, y: float) -> list:
-    v = round(vrel / 0.1) + 1024
+    v = round(vrel / 0.125) + 1024
     b235 = (v << 29 | 2 << 26 | 4 << 48).to_bytes(8, "big")  # byte 1 bit 2: target available
     xc, yc = round((x - 9.6) / 5.26), round((y + 16.70) / 0.01667)
     b237 = (xc << 47 | yc << 28).to_bytes(8, "big")
@@ -210,7 +210,7 @@ def _acc_frames(t: float, vrel: float, x: float, y: float) -> list:
 def test_acc_target_decodes_round_trip() -> None:
     from ars510.support import parse_acc_target_position, parse_acc_target_vrel
     (_, _, _, b235), (_, _, _, b237) = _acc_frames(0.0, -2.3, 41.7, 1.2)
-    assert parse_acc_target_vrel(b235) == pytest.approx(-2.3, abs=0.05)
+    assert parse_acc_target_vrel(b235) == pytest.approx(-2.3, abs=0.07)
     x, y = parse_acc_target_position(b237)
     assert abs(x - 41.7) < 2.7 and y == pytest.approx(1.2, abs=0.01)
 
@@ -393,7 +393,7 @@ def _fused_run(cfg: NativeInterfaceConfig, d0: float, unc: int, v_of_t, n: int =
                            age_cycles=min(126, age0 + k), vel_uncertainty_candidate=unc)
         fr = [speed_frame(t, 10.0)]
         if summary:
-            code = round((d - (-5.14)) / 0.0541)
+            code = round(160 + d * 16)
             fr.append((t + 0.001, 1, 0x192, code.to_bytes(2, "big") + (2048).to_bytes(2, "big")))
         fr += frames_(record({0: lead}), t + 0.002)
         out += [(t, p["vRel"]) for r in iface.update_many(fr) for p in r["radarData"]["points"]]

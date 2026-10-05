@@ -8,34 +8,35 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows:
 
-The raw field domains and closing/opening direction are retained (●). The conversions below are nominal
-reverse-engineered calibrations (◐), supported by conditional comparisons with native objects and vision and by
-internal consistency. Absolute physical units require an independent metric reference or a matching interface
-definition. See [unit conventions](../data/analysis/summaries/acc_unit_conventions.json).
+Speed and fine distance are in physical units (●): they are fixed by stopped lead vehicles, by the 0x680 object
+range and by the frames' own closure ([units](#units-of-the-acc-target)). The acceleration, lateral and coarse-distance
+conversions are empirical fits (◐).
 
 | field | retained conversion | DBC signal / parser |
 |---|---|---|
-| closing speed | 0x235 bits 29-39: `(code − 1024) × 0.1` m/s, negative = closing | `A235_ACC_TARGET_VREL`, `parse_acc_target_vrel` |
+| closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | `A235_ACC_TARGET_VREL`, `parse_acc_target_vrel` |
 | relative acceleration | 0x235 byte 2: `(code − 100) × 0.1` m/s², positive = opening | `A235_ACC_TARGET_AREL`, `parse_acc_target_arel` |
 | lateral position | 0x237 bits 28-38: `code × 0.01667 − 16.70` m, left positive | `A237_ACC_TARGET_LAT` |
 | distance, coarse | 0x237 bits 47-51: `code × 5.26 + 9.6` m | `A237_ACC_TARGET_DIST_COARSE` |
-| distance, fine | 0x237 bits 39-51: 0.02 m per code for changes | `A237_ACC_TARGET_DISTANCE_CODE`, `parse_acc_target_range_code` |
+| distance, fine | 0x237 bits 39-51: `code × 0.025` m | `A237_ACC_TARGET_DISTANCE_CODE`, `parse_acc_target_range_code` |
 | target present | 0x235 byte-1 low nibble ≠ 1 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) | `A235_STATUS_MUX4` |
 
-How these conventions compare:
-- **Closing speed** correlates with the matched object's vRel at r = 0.78 / 0.82 (discovery / confirmation drives)
-  and has median difference 0.00 m/s against openpilot's vision lead under the retained conversion. These are
-  conditional reference comparisons.
-- **Relative acceleration** gives the same binned curve against the derivative of the closing speed on discovery,
-  confirmation and further drives (r 0.57 / 0.62 / 0.83; slope ≈ 1 at 0.1 m/s² per code), about 0.1-0.2 s behind it.
-- **Fine distance:** using the assumed velocity scale of 0.1 m/s per code, two-second integral closure gives a
-  confirmation median of 0.0198 m per range code on 565 windows. This establishes the relative range/velocity
-  normalization: multiplying both scales by the same factor preserves closure. The parser retains 0.02 m per code
-  for changes; a physical range origin and absolute scale require independent calibration.
-- **Lateral** correlates with the matched object at r = 0.97.
+### Units of the ACC target
 
-The acceleration comparison also differentiates velocity under the retained 0.1 conversion. It supports the
-relative normalization and filtered acceleration interpretation; it shares the velocity scale assumption.
+| check | result |
+|---|---|
+| stopped lead vehicles (true closing speed = ego speed), 97 tracks on 26 drives | closing speed = 1.03 × ego at 0.125 m/s per code; same on 16 held-out tracks |
+| fine distance against the 0x680 object range on the same car, 1,872 frames | 0.02500 m per code, +0.01 m, median residual 0.02 m |
+| closure inside the frames, 2,905 two-second windows | 5.03 distance codes per speed-code-second |
+| closing speed against the slope of the fine distance, 1,862 windows | 0.99 (IQR 0.97-1.00); 0.99 on held-out drives |
+
+- **Relative acceleration** follows the derivative of the closing speed (r 0.57 / 0.62 / 0.83 on three drive sets),
+  about 0.1-0.2 s behind it; its unit scales with the speed unit.
+- **Lateral** correlates with the matched object at r = 0.97.
+- The **object-list** relative speed (`64|10` minus ego) is 0.87 of the same distance slope (IQR 0.77-0.96, every
+  drive 0.78-0.94): on a moving car it reads about 13% smaller in magnitude than the ACC target does.
+
+Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json).
 
 ### A second velocity estimate from the radar itself
 
@@ -97,13 +98,11 @@ independent association.
 
 | bytes | field |
 |---|---|
-| 0-1 | big-endian 13-bit **range** of a target from the radar's internal tracker (◐ ~0.054 m/code on 0x192, ~0.046 on 0x194, scaled to the ACC speed; offsets −5.1 / −12.5 m) |
-| 2-3 | full big-endian 13-bit raw summary; preserve bit 12 |
+| 0-1 | big-endian 13-bit **distance**: `(code − 160) / 16` m, the object list's encoding (●; 0.0625 m per code, −10 m against the 0x680 object range, median residual 0.05-0.07 m over 9-148 m) |
+| 2-3 | big-endian 13-bit **lateral position**: `(code − 2048) / 64` m, left positive (●; median residual 0.01 m) |
 
-The second word crosses 4096 continuously in retained captures: 4091→4109 and 4083→4098. Preserving all 13 bits
-keeps changes of +18 and +15; a 12-bit fold would introduce artificial jumps of −4078 and −4081. These summary
-codes provide diagnostics; physical calibration and reliable target association are required before metric output.
-[Raw boundary evidence](../data/analysis/summaries/selected_target_descriptors.json).
+Each summary is therefore the position of one target of the radar's internal tracker. Keep all 13 bits of the second
+word (it crosses 4096 continuously).
 
 **They come from the radar's good internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
 ACC speed when both describe the same car (correlation 0.90, median difference 0.16 m/s). During object-list velocity
@@ -111,10 +110,10 @@ excursions it stays with the ACC speed in every tested cycle (397 of 397 for 0x1
 a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:
 14.9 % → 6.5 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
 far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
-([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry range only (no speed field), so
+([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry position only (no speed field), so
 speed needs a slope and lags by about half a second.
 
-`parse_0x192()` returns `Target192.range_code13` and `Target192.field1_code13`, both raw integers (0x194 has the same
+`parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile uses
 them as a speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
 

@@ -1,0 +1,235 @@
+{
+ "description": "Units of the radar ACC target (0x235 / 0x237) and of the 0x192 / 0x194 summaries: stopped-lead test of the speed unit, distance fits against the 0x680 object range, closure inside the ACC frames, and the object-list relative speed against the ACC distance slope.",
+ "stopped_leads_ratio_at_0p1_mps_per_code": {
+  "atlas": {
+   "rows": 1722,
+   "tracks": 97,
+   "drives": 26,
+   "ratio_median": 0.8212960354997818,
+   "ratio_iqr": [
+    0.807687863006521,
+    0.8353099677282734
+   ],
+   "mps_per_code_vs_0xB4": 0.12175877598038956,
+   "by_ego": {
+    "(3, 5]": [
+     1156,
+     0.8239554519400686
+    ],
+    "(5, 7]": [
+     378,
+     0.8185222757538595
+    ],
+    "(7, 9]": [
+     137,
+     0.8166232742971273
+    ],
+    "(9, 12]": [
+     39,
+     0.8160238369831818
+    ],
+    "(12, 25]": [
+     12,
+     0.7354880292280934
+    ]
+   }
+  },
+  "fresh": {
+   "rows": 275,
+   "tracks": 16,
+   "drives": 6,
+   "ratio_median": 0.8215374024172901,
+   "ratio_iqr": [
+    0.810113024563025,
+    0.833249508852238
+   ],
+   "mps_per_code_vs_0xB4": 0.12172300336632294,
+   "by_ego": {
+    "(3, 5]": [
+     186,
+     0.823914741161514
+    ],
+    "(5, 7]": [
+     70,
+     0.8191075502525995
+    ],
+    "(7, 9]": [
+     19,
+     0.8185315105478719
+    ]
+   }
+  }
+ },
+ "distance_fits_vs_0x680": {
+  "0x192": {
+   "frames": 6636,
+   "same_object_frames": 3249,
+   "scale_m_per_code": 0.06247251145005899,
+   "offset_m": -9.894675172179614,
+   "residual_mad_m": 0.054173117663097514,
+   "range_span_m": [
+    8.91875,
+    118.34375
+   ],
+   "within_1m_new": 0.4835744424352019,
+   "within_1m_published": 0.10563592525617842,
+   "lateral_within_0p5m": 0.9672795263321907,
+   "lateral_scale_m_per_code": 0.015623151893780274,
+   "lateral_zero_code": 2046.2755781654273
+  },
+  "0x194": {
+   "frames": 5540,
+   "same_object_frames": 809,
+   "scale_m_per_code": 0.06253966784313698,
+   "offset_m": -10.003203174941357,
+   "residual_mad_m": 0.06685849643051256,
+   "range_span_m": [
+    16.95625,
+    147.8687499999999
+   ],
+   "within_1m_new": 0.14169675090252706,
+   "within_1m_published": 0.0184115523465704,
+   "lateral_within_0p5m": 0.89171974522293,
+   "lateral_scale_m_per_code": 0.015657394986844174,
+   "lateral_zero_code": 2046.2769989521537
+  },
+  "acc_range_code": {
+   "frames": 1872,
+   "inliers": 1851,
+   "scale_m_per_code": 0.025003036734568863,
+   "offset_m": 0.008507908756448749,
+   "residual_mad_m": 0.019295397507889334
+  }
+ },
+ "acc_closure_and_object_list_fit": {
+  "range_pairs": 39763,
+  "range_inlier_frac": 0.36984130976033,
+  "metres_per_range_code": 0.023799999999999946,
+  "range_offset_m": 0.5455000000000716,
+  "closure_windows": 2905,
+  "range_codes_per_speed_code_second": 5.025876060539204,
+  "closure_iqr": [
+   4.938527744608937,
+   5.118989007655531
+  ],
+  "speed_unit_mps_per_code": 0.1196158502408328
+ },
+ "speed_over_acc_distance_slope": {
+  "windows_abs_rate_gt_1p5": 1862,
+  "drives": 27,
+  "acc_speed_at_0p125": {
+   "median": 0.988,
+   "iqr": [
+    0.971,
+    1.003
+   ]
+  },
+  "object_list_relative_speed": {
+   "median": 0.868,
+   "iqr": [
+    0.765,
+    0.961
+   ],
+   "per_drive_range": [
+    0.78,
+    0.94
+   ],
+   "steady_windows": 0.842
+  },
+  "object_list_distance_slope": {
+   "median": 0.951,
+   "iqr": [
+    0.738,
+    1.15
+   ]
+  },
+  "held_out": {
+   "acc_speed_at_0p125": 0.988,
+   "object_list_relative_speed": 0.889
+  },
+  "regression_over_ground_speed": {
+   "ego": 0.999,
+   "distance_slope": 0.862,
+   "intercept_mps": -0.185
+  }
+ },
+ "replay_34_drives_units_only": {
+  "published_fused": {
+   "heldout": {
+    "hard": 30,
+    "eps": 10,
+    "tgt": 4,
+    "sw": 1770
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": 0.013,
+   "radar_lag_s": -1.049,
+   "ant10": 0.419,
+   "events": 148,
+   "radar_only_per_h": 0.22,
+   "on_gas_per_h": 0.0,
+   "reactions": {
+    "later_gt150ms": 23,
+    "lost_ant": 4,
+    "new_miss": 3,
+    "weaker_hard": 0
+   },
+   "failed": [
+    "lag",
+    "anticipation",
+    "per_event",
+    "further_hard"
+   ]
+  },
+  "corrected_units": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "sw": 1751
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.024,
+   "radar_lag_s": -1.085,
+   "ant10": 0.449,
+   "events": 148,
+   "radar_only_per_h": 0.22,
+   "on_gas_per_h": 0.0,
+   "reactions": {
+    "later_gt150ms": 16,
+    "lost_ant": 3,
+    "new_miss": 3,
+    "weaker_hard": 0
+   },
+   "failed": [
+    "lag",
+    "per_event",
+    "further_hard",
+    "R4_window_min"
+   ]
+  },
+  "note": "same filter constants; only the ACC speed unit and the summary distance conversion differ"
+ }
+}

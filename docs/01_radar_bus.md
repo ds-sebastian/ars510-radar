@@ -32,7 +32,7 @@ target-summary codes requiring independent target association and calibration.
 | 0x180 | 5 | 16.7 Hz | constant `CF C0 00 00 00` | |
 | 0x190 | 7 | 16.7 Hz | cycle header: µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
 | 0x191 / 0x193 | 8 | 16.7 Hz | selected-target companions: score, age, track code, descriptors | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
-| 0x192 / 0x194 | 4 | 16.7 Hz | target summaries: two raw 13-bit codes, first range-like | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
+| 0x192 / 0x194 | 4 | 16.7 Hz | target summaries: distance and lateral position of one internal-tracker target each | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
 | 0x195 / 0x196 | 8 | 16.7 Hz | paired event frames; exact idle payloads in 99.67% of recorded frames | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
 | 0x197 / 0x198 | 2 / 1 | 16.7 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
 | 0x202 | 5 | 16.7 Hz | counter + check byte | |

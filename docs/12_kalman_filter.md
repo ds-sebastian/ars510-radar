@@ -26,8 +26,13 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 | reading | σ | where the value comes from |
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
-| ACC target speed (0x235, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
-| summary speed (0x192 / 0x194, 1 s range slope) | 0.5 m/s, up to 80 m | the radar's selected-target ranges, matched by range and speed; not used on the ACC track |
+| ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
+| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope) | 0.5 m/s, up to 80 m | the radar's selected-target ranges, matched by range and speed; not used on the ACC track |
+
+The ACC target and summary units were corrected against the absolute `0x680` range (they had been read about 20%
+small). On the 34 replay drives the correction leaves hard radar-only braking and its unjustified part unchanged
+(30 ticks, 3 unjustified), moves braking onset from +0.013 s to −0.024 s against vision and cuts the reactions that
+come more than 0.15 s later than the reference from 23 to 16 ([`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json)).
 
 ```mermaid
 flowchart LR
@@ -56,7 +61,7 @@ present, it dominates.
 ![the filter on one track](img/analysis/kalman_trace.png)
 
 *Bundled drive E. Top: the object-list readings (grey) dive to −6 m/s at 18 s while the ACC target stays near
-−0.7; the estimate follows the ACC target. Bottom: the gain on each reading. Each object-list reading moves the
+−0.9; the estimate follows the ACC target. Bottom: the gain on each reading. Each object-list reading moves the
 estimate by about 5%, each ACC target reading by about 15%. The dotted line is the object-list σ from `240|7`.*
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
