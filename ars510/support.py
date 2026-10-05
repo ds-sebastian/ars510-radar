@@ -152,15 +152,14 @@ def parse_acc_target_arel(data: bytes) -> float | None:
 
 
 def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
-    """0x237: (coarse distance m, lateral m left positive) of the radar's ACC target.
+    """0x237: (distance m, lateral m left positive) of the radar's ACC target, as the track association uses them.
 
+    Distance: bits 39..51 (13 bits), code * 0.025 m (parse_acc_target_range_code returns the raw code).
     Lateral: bits 27..38 (12 bits), (code - 2000) * 0.01 m; one object-list lateral code is exactly 1.5 of these codes.
-    Distance here is the coarse view the track association uses: bits 47..51 at about 5.26 m per code, +9.6 m (the top
-    five bits of the 0.025 m distance code, parse_acc_target_range_code).
     """
     if len(data) < 8:
         return None
-    return _be_field(data, 47, 5) * 5.26 + 9.6, (_be_field(data, 27, 12) - 2000) * 0.01
+    return _be_field(data, 39, 13) * 0.025, (_be_field(data, 27, 12) - 2000) * 0.01
 
 
 def parse_acc_target_range_code(data: bytes) -> int | None:

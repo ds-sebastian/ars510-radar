@@ -40,10 +40,10 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 From replaying 34 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
+- **Leads come from the radar** about 89% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
 - **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
-  ≥ 1 m/s² before 45% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  ≥ 1 m/s² before 44% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
@@ -69,8 +69,9 @@ update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P�
 
 *During an excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by about 5%,
 each ACC target reading by about 15%, so the estimate (green) stays with the radar's tracker. radard then runs its
-usual filter on top.* Model, constants, what each part is worth and the variants tested:
-[docs/12](docs/12_kalman_filter.md).
+usual filter on top.* The car the radar's ACC function follows is also published at the radar's ACC distance, which
+agrees with the vision lead and is half as rough as the object-list range. Model, constants, how the trackers are
+matched to tracks, what each part is worth and the variants tested: [docs/12](docs/12_kalman_filter.md).
 
 ## Profiles
 
@@ -123,7 +124,8 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
   radar's own trackers, but its ACC target covers only about 57% of radar-lead time (5% beyond 80 m) and the summaries
   are used up to 80 m, so the farthest leads rely on the object list alone.
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
-  range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)).
+  range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)). Beyond
+  50 m it also reads 5-8% short of the radar's own ACC distance ([06](docs/06_accuracy.md#distance)).
 - **openpilot longitudinal.** Stock openpilot sends the radar a "disable" request when it takes over longitudinal
   control; the radar kept transmitting on the owner's setups, but this is not confirmed on every configuration
   ([08](docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)).

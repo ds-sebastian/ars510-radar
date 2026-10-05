@@ -294,7 +294,6 @@ BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_IN_PATH_CONFIRMED : 48|1@0+ (1,0) [0|1] "flag" RADAR
  SG_ A237_IN_PATH_CANDIDATE : 63|1@0+ (1,0) [0|1] "flag" RADAR
  SG_ A237_IN_PATH_LEVEL3 : 62|3@0+ (1,0) [0|7] "level" RADAR
- SG_ A237_ACC_TARGET_DIST_COARSE : 11|5@0+ (5.26,9.6) [9.6|172.66] "m" RADAR
  SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (0.025,0) [0|204.775] "m" RADAR
 
 BO_ 569 ARS510_A239_COMPANION: 8 RADAR
@@ -331,7 +330,7 @@ CM_ BO_ 257 "Radar startup state: 0x1D while booting, 0x11 once running (switche
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";
 CM_ BO_ 259 "Always zero.";
 CM_ BO_ 384 "Constant CF C0 00 00 00.";
-CM_ BO_ 400 "Radar cycle header (16.7 Hz): microsecond timestamp and a mod-16 cycle counter.";
+CM_ BO_ 400 "Radar cycle header (16.7 Hz): number of target summaries, microsecond timestamp and a mod-16 cycle counter.";
 CM_ BO_ 401 "Selected-target companion A (with 0x192): score, age and track code of a target the radar selects itself. Sentinel FE FE FE FC FC FF FE FF = no target.";
 CM_ BO_ 402 "Selected-target summary A (4 bytes): distance and lateral position of one target of the radar's internal tracker, in the object list's encoding. Sentinel 00 FF 00 FF = no target.";
 CM_ BO_ 403 "Selected-target companion B (with 0x194); same layout as 0x191.";
@@ -348,7 +347,7 @@ CM_ SG_ 565 A235_ACC_TARGET_AREL "Relative acceleration of the ACC target (posit
 CM_ SG_ 565 A235_ACC_TARGET_VLAT "Lateral speed of the ACC target, left positive, about 0.0125 m/s per code (the lateral position changes by 1.2 cm per code-second).";
 CM_ SG_ 565 A235_ACC_TARGET_ALAT "Relative lateral acceleration of the ACC target, left positive: (code - 100) * 0.125 m/s^2 (nominal unit, as the longitudinal field). Mostly minus the ego lateral acceleration (-8.2 codes per m/s^2), plus a lateral-speed term; lags the yaw rate by about 0.5 s.";
 CM_ SG_ 565 A235_TARGET_ID5 "Target identity: constant while the radar follows one target; 31 with the idle payload.";
-CM_ BO_ 567 "The OEM ACC target witness, 50 Hz: lateral position and distance of the target the stock ACC follows (see 0x235).";
+CM_ BO_ 567 "The radar's ACC target, 50 Hz: distance, lateral position, in-path state and two tracker bytes (see 0x235).";
 CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is exactly 1.5 of these codes.";
 CM_ SG_ 567 A237_TRACKER_A8 "Raw tracker byte: 35-36 on a steady target, 44-50 while it accelerates, 48-93 while it brakes.";
 CM_ SG_ 567 A237_TRACKER_B8 "Raw tracker byte: about 88 for a stopped target, 97-139 for a steady mover, rises toward 240 (and wraps) while the target accelerates or brakes.";
@@ -356,7 +355,6 @@ CM_ SG_ 567 A237_TARGET_PRESENT "1 with an ACC target.";
 CM_ SG_ 567 A237_IN_PATH_CONFIRMED "1 while the target is confirmed in the path (level 5).";
 CM_ SG_ 567 A237_IN_PATH_CANDIDATE "1 while the target is a candidate (levels 4-2).";
 CM_ SG_ 567 A237_IN_PATH_LEVEL3 "In-path level 5, 4, 3, 2; steps to the neighbouring level only; lower levels sit farther from the path.";
-CM_ SG_ 567 A237_ACC_TARGET_DIST_COARSE "Nominal distance of the ACC target in about 5.26 m steps (+9.6 m), an empirical reference-dependent conversion; the top 5 bits of A237_ACC_TARGET_DISTANCE_CODE.";
 CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Distance of the ACC target, 0.025 m per code, zero offset (0.02 m median residual against the 0x680 object range).";
 CM_ BO_ 569 "50 Hz companion of the ACC target: target class, object-list flag and the radar cycle timestamp of the 0x235 / 0x237 content.";
 CM_ BO_ 571 "50 Hz companion of the ACC target (3 bytes): CRC-8, counter and the target width in cm.";
@@ -558,7 +556,7 @@ CM_ SG_ 565 A235_B0_CHECK_BYTE "Check byte over the rest of the frame.";
 CM_ SG_ 565 A235_STATUS_MUX4 "Byte-1 low nibble: 5 with an ACC target, 1 without (idle payload), 15 at start-up.";
 CM_ SG_ 565 A235_COUNTER4 "Rolling counter.";
 CM_ SG_ 567 A237_B0_CHECK_BYTE "Check byte: an affine parity function of bytes 1-7.";
-CM_ SG_ 567 A237_STATUS_MUX4 "Byte-1 low nibble; the same bits as the top of A237_ACC_TARGET_DIST_COARSE.";
+CM_ SG_ 567 A237_STATUS_MUX4 "Byte-1 low nibble: the top four bits of A237_ACC_TARGET_DISTANCE_CODE.";
 CM_ SG_ 567 A237_COUNTER4 "Rolling counter.";
 CM_ SG_ 569 A239_B0_CHECK_BYTE "Check byte: an affine parity function of bytes 1-7.";
 CM_ SG_ 569 A239_STATUS_MUX4 "ACC target class: 1 car, 2 truck (the 0x191 template class), 0 / 4 / 5 / 6 other, 7 no target.";

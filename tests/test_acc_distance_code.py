@@ -3,11 +3,11 @@ from pathlib import Path
 from ars510.support import parse_acc_target_arel, parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
 
 
-def test_all_raw_codes_and_coarse_alias():
+def test_all_raw_codes_and_metric_distance():
     for code in range(8192):
         payload = ((code << 39) | (1002 << 28) | 0x123).to_bytes(8, "big")
         assert parse_acc_target_range_code(payload) == code
-        assert parse_acc_target_position(payload)[0] == (code >> 8)*5.26+9.6
+        assert parse_acc_target_position(payload)[0] == code * 0.025
         assert payload[1] & 15 == code >> 9
 
 
@@ -16,7 +16,7 @@ def test_diagnostic_parser_rejects_short_frames():
         assert parse_acc_target_range_code(bytes(length)) is None
 
 
-def test_raw_code_does_not_apply_coarse_origin():
+def test_raw_code_has_no_offset():
     assert parse_acc_target_range_code(bytes(8)) == 0
     assert parse_acc_target_range_code((1000 << 39).to_bytes(8, "big")) == 1000
 

@@ -27,7 +27,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
 | ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
-| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope) | 0.5 m/s, up to 80 m | the radar's selected-target ranges, matched by range and speed; not used on the ACC track |
+| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope) | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within 15 %, lateral within 1 m); not used on the ACC track |
 
 The ACC target and summary units were corrected against the absolute `0x680` range (they had been read about 20%
 small). On the 34 replay drives the correction leaves hard radar-only braking and its unjustified part unchanged
@@ -45,6 +45,7 @@ flowchart LR
   K --> V
   V --> R["Range: predict with vRel, correct 10%"]
   D["Object-list range"] --> R
+  A -- "ACC distance, for its track" --> R
   K --> G["Publish gates: age ≥ 60, √P ≤ 0.75"]
   R --> G
   G --> P["RadarPoint to radard (unchanged)"]
@@ -115,7 +116,40 @@ The two filters run in series, so all replay numbers already include their combi
   ```
 
   It halves 1.5 s range walks. The range residual never feeds back into speed: range rate and speed disagree by
-  10-20%, and a coupled filter ran 2-5 m short.
+  10-20%, and a coupled filter ran 2-5 m short. For the track the ACC target describes, the measurement is the radar's
+  ACC distance instead of the object-list range ([below](#matching-the-radars-trackers-to-tracks)).
+
+## Matching the radar's trackers to tracks
+
+The ACC target and the summaries are positions from the radar's function-level tracker; the filter needs to know which
+object-list track each one describes.
+
+| tracker | match | kept while |
+|---|---|---|
+| ACC target (0x235 / 0x237) | cost = \|dRel − x\| / max(12 m, 0.25 x) + \|yRel − y\| / 0.5 m below 1, at least 1 better than the next track, track age ≥ 20; x is the 0.025 m ACC distance, y its 0.01 m lateral | the track's cost stays below 4 and the ACC position moves at most 8 m / 1 m per update |
+| summary (0x192 / 0x194) | the track within max(5 m, 15 %) in range and 1 m laterally of the summary position, unambiguous (alone or 3 m nearer than the next), track age ≥ 20 | the track stays within max(8 m, 25 %) in range and 2 m laterally |
+
+- **Position, not speed.** Both matches use the tracker's own position. A summary used to need the object-list speed to
+  agree with its range slope, which blocks the match exactly when the object-list speed is wrong: replayed with their
+  state over the logged frames, the summary sat on the track at its position on 37-69 % of cycles and on 18-45 % of the
+  cycles with an object-list speed excursion; by position it is 99.5-100 % for both.
+- **Room for the object list's short far range.** The object list reads the followed car several metres short of the ACC
+  distance beyond 50 m ([06](06_accuracy.md#distance)), so the ACC cost scales its range term with range. With that
+  scale the ACC target is on the in-lane lead on 92.7 / 74.0 / 37.6 % of lead records at 60-80 / 80-100 / 100-130 m (it
+  is present on 94.8 / 76.9 / 39.9 %).
+- **The ACC distance is the followed car's range.** The matched track takes the ACC distance as the measurement of the
+  range fusion: the radar's own smooth range (0.04 m jitter against 0.9 m,
+  [`acc_fields.json`](../data/analysis/summaries/acc_fields.json)), which the vision lead agrees with. radard
+  then receives a lead distance within a metre of the vision lead up to 90 m (it read 1-5 m short), half as rough from
+  tick to tick, and flips between a radar and a vision lead 30 % less often (1,764 → 1,231 on the 20 held-out drives).
+
+![tracker range](img/analysis/tracker_range.png)
+
+Each step was replayed on the 34 drives against the previous one, with limits fixed before the run. Hard radar-only
+braking stays at 30 ticks on the held-out drives, 2 on the further drives and 0 on the owner drives through all four
+steps (lateral units, ACC fine distance, summaries by position, ACC distance as range), with 11 hard and 4 target
+episodes; braking onset against vision stays at −0.02 s and the share of driver brakes anticipated at −1 m/s² moves from
+44.9 % to 43.7 % (vision only 40.1 %). Numbers: [`tracker_association.json`](../data/analysis/summaries/tracker_association.json).
 
 ## What each part is worth
 

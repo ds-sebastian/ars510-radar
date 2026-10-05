@@ -66,7 +66,8 @@ Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units
 
 ### A second velocity estimate from the radar itself
 
-The ACC target is matched to an object by position. When the object list's vRel and the ACC target's closing speed
+The ACC target is matched to an object by position (its 0.025 m distance and 0.01 m lateral against the track's `dRel`
+and `yRel`). When the object list's vRel and the ACC target's closing speed
 differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
 confirmation 86%, n = 421, route-bootstrap 79-99%). Through the drive-A false closing ([07](07_velocity_excursions.md)),
 the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
@@ -111,7 +112,9 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 | 0x23B | byte 1 low nibble + byte 2 (12 bits) | **target width in cm** | ◐ |
 
 - **Class.** Class 1 goes with the car template of the target summaries below and class 2 with the truck template in every
-  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives).
+  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives). Classes 0 and 6 appear while ego is stopped
+  behind something within a few metres (6 with a car-sized width, 0 with a width of 10-50 cm); classes 4 and 5 carry a
+  120 cm width and sit 1-1.5 m off the path.
 - **Width.** Zero exactly while there is no target. The car class reads 140-220 cm (median 171, clipped at 140), the truck
   class 200-280 cm (exactly 200 on 97 % of its frames); cars read about 175 cm inside 30 m and 165 cm at 90 m.
 - **Object-list flag.** Set on 88-95 % of target frames when the object list holds one to four objects and on 0.2 % when
@@ -164,8 +167,9 @@ far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
 speed needs a slope and lags by about half a second.
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
-layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile uses
-them as a speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile attaches each
+summary to the object-list track at its position (range within 15 %, lateral within 1 m) and uses its range slope as a
+speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
 
 ## 0x190: cycle header
 

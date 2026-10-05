@@ -16,7 +16,7 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | quantity | result |
 |---|---|
 | **dRel** scale and zero, 5-25 m | slope 1.001 / 0.992 / 0.993 against camera ground contact; zero within 0.2 m on flat roads |
-| **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus |
+| **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus; 5-8 % short of the radar's own ACC distance at 50-100 m |
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera, 99.3% against the vision model |
 | **yRel** scale | 0.015 m per code (66.7 codes/m): exactly 1.5 codes of the ACC target's centimetre lateral; gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
@@ -37,6 +37,16 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   `RADAR_TO_CAMERA = 1.52 m`; a tape-measured gap is needed to pin the physical zero and origin.
 - **Far range** (drive A, camera box scale averaged with the vision model where they agree): median absolute residual
   3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at 100-150 m (ratio 0.979).
+- **Against the radar's own ACC distance** (◐). For the car the radar's ACC function follows, `dRel` agrees with the ACC
+  distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
+  short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2 %, 5 % and 8 %; cars
+  more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 6-10 m at
+  60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m and is nearer
+  to it than to `dRel` on 71-79 % of samples. The ACC distance is therefore the better far range for that car, and any
+  position gate between the object list and the radar's own trackers needs room for this difference
+  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)).
+
+![far range distance](img/analysis/far_range_distance.png)
 
 ## Lateral position
 

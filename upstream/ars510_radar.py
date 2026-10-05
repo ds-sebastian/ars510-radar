@@ -62,7 +62,7 @@ class Ars510Radar:
       elif addr == ACC_SPEED_ADDR:
         self.acc_speed = (t, (be_bits(dat, 29, 11) - 1024) * 0.125)
       else:
-        self.acc_pos = (t, be_bits(dat, 47, 5) * 5.26 + 9.6, (be_bits(dat, 27, 12) - 2000) * 0.01)
+        self.acc_pos = (t, be_bits(dat, 39, 13) * 0.025, (be_bits(dat, 27, 12) - 2000) * 0.01)
     elif bus == RADAR_BUS and addr == OBJECTS_ADDR:
       record = self.reassemble(t, dat)
       if record is not None and int.from_bytes(record[737:741], "little") == zlib.crc32(record[1:737]):
@@ -120,7 +120,7 @@ class Ars510Radar:
         readings = [(self.acc_speed[1] + v_ego, ACC_SIGMA)] if tid == acc_tid else []
         speed, std = self.speed_filter(tid, t, o, readings)
         vrel = speed - v_ego
-      d_rel = self.fused_range(tid, t, o["d"], vrel)
+      d_rel = self.fused_range(tid, t, self.acc_pos[1] if tid == acc_tid else o["d"], vrel)  # ACC distance for its track
       if o["age"] < PUBLISH_AGE or (tid not in self.published and std > PUBLISH_STD) or not isfinite(vrel):
         continue  # no point without a fresh ego speed: one NaN would poison radard's filter
       self.published.add(tid)
@@ -160,7 +160,8 @@ class Ars510Radar:
       self.acc_assoc = None
       return None
     _, ax, ay = self.acc_pos
-    costs = sorted((abs(o["d"] - ax) / 12.0 + abs(o["y"] - ay) / 0.5, tid, o["age"]) for tid, o in tracks.items())
+    rs = max(12.0, 0.25 * ax)  # the object list reads far cars short of the ACC distance: the range scale grows with range
+    costs = sorted((abs(o["d"] - ax) / rs + abs(o["y"] - ay) / 0.5, tid, o["age"]) for tid, o in tracks.items())
     if self.acc_assoc is not None:
       tid0, ax0, ay0 = self.acc_assoc
       own = next((c for c, tid, _ in costs if tid == tid0), None)

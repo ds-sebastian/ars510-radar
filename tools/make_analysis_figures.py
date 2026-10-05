@@ -681,6 +681,76 @@ def lateral_unit_evidence():
          "Numbers: data/analysis/summaries/lateral_units.json.")
 
 
+def far_range_distance():
+    """Object-list dRel and the vision lead against the radar's ACC distance, by range (far_range_distance.json)."""
+    D = summary("far_range_distance")
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.2), sharey=True)
+    for ax, key, title in ((axes[0], "set_700_segments", "700 one-minute segments"), (axes[1], "set_114_segments", "114 segments of other drives")):
+        B = D[key]["bands"]
+        def series(get):
+            xs, lo, mid, hi = [], [], [], []
+            for k, r in B.items():
+                v = get(r)
+                if v is None:
+                    continue
+                a, b = (float(z) for z in k.split("-"))
+                xs.append(0.5 * (a + b)); lo.append(v[0]); mid.append(v[1]); hi.append(v[2])
+            return np.array(xs), np.array(lo), np.array(mid), np.array(hi)
+        for get, col, lab in ((lambda r: r.get("object_minus_acc_m_p25_p50_p75"), S2, "object list dRel − ACC distance"),
+                              (lambda r: r.get("vision", {}).get("vision_minus_acc_m_p25_p50_p75"), S1, "vision lead − ACC distance")):
+            xs, lo, mid, hi = series(get)
+            ax.fill_between(xs, lo, hi, color=col, alpha=0.18, lw=0)
+            ax.plot(xs, mid, color=col, marker="o", markersize=4.5, label=lab)
+        ax.axhline(0, color=INK, lw=1)
+        ax.set_xlabel("ACC distance of the followed car (m)")
+        ax.set_title(title)
+        ax.set_xlim(0, 120)
+    axes[0].set_ylabel("difference to the radar's ACC distance (m)")
+    axes[0].legend(loc="lower left")
+    fig.suptitle("Far cars: the object list reads short of the radar's own ACC distance; the vision lead agrees with the ACC distance", fontsize=11)
+    save(fig, "far_range_distance", "Median and interquartile range. Steady following only (closing speed under 1 m/s); object-list track at the ACC target's lateral position. "
+         "The vision lead is a third witness, not ground truth. Numbers: data/analysis/summaries/far_range_distance.json.")
+
+
+def tracker_range():
+    """Published lead distance against the vision lead, with the object-list range and with the ACC distance, and the
+    radar / vision lead flips of each replay step (tracker_association.json)."""
+    D = summary("tracker_association")
+    B = D["published_lead_distance_vs_vision_lead"]["bands"]
+    R = D["replays_34_drives"]
+    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13.5, 4.1), gridspec_kw={"width_ratios": [1.25, 1, 1]})
+    xs = [0.5 * sum(float(z) for z in k.split("-")) for k in B]
+    for key, col, lab in (("before", S2, "object-list range (before)"), ("after", S1, "ACC distance for the followed car")):
+        q = np.array([B[k][f"radar_minus_vision_m_{key}_p25_p50_p75"] for k in B])
+        a1.fill_between(xs, q[:, 0], q[:, 2], color=col, alpha=0.18, lw=0)
+        a1.plot(xs, q[:, 1], color=col, marker="o", markersize=4.5, label=lab)
+    a1.axhline(0, color=INK, lw=1)
+    a1.set_xlabel("vision lead distance (m)")
+    a1.set_ylabel("published radar lead − vision lead (m)")
+    a1.set_title("Lead distance radard receives")
+    a1.legend(loc="lower left")
+    for key, col, lab in (("before", S2, "before"), ("after", S1, "after")):
+        a2.plot(xs, [B[k][f"mean_abs_tick_step_m_{key}"] for k in B], color=col, marker="o", markersize=4.5, label=lab)
+    a2.set_xlabel("vision lead distance (m)")
+    a2.set_ylabel("mean tick-to-tick change of the lead distance (m)")
+    a2.set_title("Roughness of the lead distance")
+    a2.set_ylim(0, None)
+    a2.legend(loc="upper left")
+    steps = (("lateral_units", "lateral\nunits"), ("acc_fine_distance", "ACC fine\ndistance"), ("summary_position_match", "summaries\nby position"),
+             ("acc_range_and_scaled_match", "ACC distance\nas range"))
+    sw = [R[k]["heldout"]["sw"] for k, _ in steps]
+    a3.bar(range(len(steps)), sw, color=[INK2, INK2, INK2, S1], width=0.62)
+    for i, v in enumerate(sw):
+        a3.text(i, v + 25, f"{v:,}", ha="center", fontsize=8.5)
+    a3.set_xticks(range(len(steps)), [lab for _, lab in steps], fontsize=8)
+    a3.set_ylabel("radar / vision lead flips, 20 held-out drives")
+    a3.set_title("Lead-source flips per replay step")
+    a3.set_ylim(0, max(sw) * 1.12)
+    a3.grid(axis="x", visible=False)
+    save(fig, "tracker_range", "Replay through openpilot's radard and planner; ticks where both replays follow the same radar track. Shaded: interquartile range. "
+         "Hard radar-only braking is 30 ticks on the held-out drives in every step. Numbers: data/analysis/summaries/tracker_association.json.")
+
+
 CLASS_RECODE_140 = {0: 1, 5: 2, 7: 3, 1: 4, 3: 5, 4: 6}  # 140|3 -> 163|3
 
 
@@ -1007,7 +1077,7 @@ FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, sta
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
 
 
 if __name__ == "__main__":

@@ -287,10 +287,10 @@
  },
  "openpilot_file_lines": {
   "definition": "non-blank, non-comment lines of upstream/ars510_radar.py (fused without summaries and relink)",
-  "total_lines": 212,
-  "total": 188,
+  "total_lines": 213,
+  "total": 189,
   "decode_ids_publication": 84,
-  "acc_target_association": 18,
+  "acc_target_association": 19,
   "speed_filter_and_range_fusion": 24,
   "adapter_constants_pruning": 62
  },

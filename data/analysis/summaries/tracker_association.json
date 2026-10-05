@@ -1,0 +1,673 @@
+{
+ "description": "How the fused profile matches the radar's own trackers to object-list tracks. ACC target: position cost = |dRel - x| / max(12 m, 0.25 x) + |yRel - y| / 0.5 m with x the 0.025 m ACC distance and y its 0.01 m lateral (earlier: a coarse 5-bit view of the distance and a fixed 12 m scale). Summaries (0x192 / 0x194): attached to the track at the summary position, range within 15 % and lateral within 1 m (earlier: range plus agreement of the object-list speed with the summary slope within 1.5 m/s). Emulations replay the interface rules with their state over the logged frames; set 1 = 700 one-minute segments, set 2 = 114 segments of other drives. Replays: 34 drives through openpilot's radard and planner, each step against the previous one under limits fixed before the run.",
+ "acc_distance_view_stateless_new_match": {
+  "note": "share of ACC cycles with a mature track at the target where the new-match rule (cost < 1, margin > 1, 12 m scale) accepts that track",
+  "set_1": {
+   "0-20": {
+    "rows": 149634,
+    "coarse_minus_fine_median_m": 5.47,
+    "right_track_accepted_coarse": 0.9533,
+    "right_track_accepted_fine": 0.9921,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   },
+   "20-40": {
+    "rows": 86166,
+    "coarse_minus_fine_median_m": 1.61,
+    "right_track_accepted_coarse": 0.9891,
+    "right_track_accepted_fine": 0.9923,
+    "other_track_accepted_coarse": 0.0003,
+    "other_track_accepted_fine": 0.0004
+   },
+   "40-60": {
+    "rows": 64758,
+    "coarse_minus_fine_median_m": -1.67,
+    "right_track_accepted_coarse": 0.9912,
+    "right_track_accepted_fine": 0.9952,
+    "other_track_accepted_coarse": 0.0004,
+    "other_track_accepted_fine": 0.0004
+   },
+   "60-80": {
+    "rows": 44528,
+    "coarse_minus_fine_median_m": -5.15,
+    "right_track_accepted_coarse": 0.9572,
+    "right_track_accepted_fine": 0.9962,
+    "other_track_accepted_coarse": 0.0002,
+    "other_track_accepted_fine": 0.0001
+   },
+   "80-100": {
+    "rows": 8269,
+    "coarse_minus_fine_median_m": -8.96,
+    "right_track_accepted_coarse": 0.6879,
+    "right_track_accepted_fine": 0.9973,
+    "other_track_accepted_coarse": 0.0002,
+    "other_track_accepted_fine": 0.0
+   },
+   "100-130": {
+    "rows": 4338,
+    "coarse_minus_fine_median_m": -12.76,
+    "right_track_accepted_coarse": 0.213,
+    "right_track_accepted_fine": 0.9802,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   }
+  },
+  "set_2": {
+   "0-20": {
+    "rows": 33212,
+    "coarse_minus_fine_median_m": 5.6,
+    "right_track_accepted_coarse": 0.9858,
+    "right_track_accepted_fine": 0.9976,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   },
+   "20-40": {
+    "rows": 7203,
+    "coarse_minus_fine_median_m": 1.82,
+    "right_track_accepted_coarse": 0.9775,
+    "right_track_accepted_fine": 0.991,
+    "other_track_accepted_coarse": 0.0003,
+    "other_track_accepted_fine": 0.0008
+   },
+   "40-60": {
+    "rows": 3153,
+    "coarse_minus_fine_median_m": -1.34,
+    "right_track_accepted_coarse": 0.9778,
+    "right_track_accepted_fine": 0.9848,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   },
+   "60-80": {
+    "rows": 489,
+    "coarse_minus_fine_median_m": -5.33,
+    "right_track_accepted_coarse": 0.865,
+    "right_track_accepted_fine": 0.9407,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   },
+   "80-100": {
+    "rows": 106,
+    "coarse_minus_fine_median_m": -8.66,
+    "right_track_accepted_coarse": 0.4528,
+    "right_track_accepted_fine": 0.934,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   },
+   "100-130": {
+    "rows": 29,
+    "coarse_minus_fine_median_m": -12.49,
+    "right_track_accepted_coarse": 0.3793,
+    "right_track_accepted_fine": 1.0,
+    "other_track_accepted_coarse": 0.0,
+    "other_track_accepted_fine": 0.0
+   }
+  }
+ },
+ "acc_on_the_in_lane_lead_with_state": {
+  "note": "lead proxy per object record: nearest track with |yRel| < 1.8 m, age >= 60, moving with ego; share of those records on which the ACC association is on that track",
+  "set_1": {
+   "0-20": {
+    "lead_records": 25215,
+    "acc_target_present": 0.9793,
+    "acc_on_lead_coarse_view": 0.9708,
+    "acc_on_lead_fine_12m_scale": 0.971,
+    "acc_on_lead_fine_range_scaled": 0.971,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "20-40": {
+    "lead_records": 65526,
+    "acc_target_present": 0.9687,
+    "acc_on_lead_coarse_view": 0.9538,
+    "acc_on_lead_fine_12m_scale": 0.9524,
+    "acc_on_lead_fine_range_scaled": 0.9547,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "40-60": {
+    "lead_records": 74265,
+    "acc_target_present": 0.9792,
+    "acc_on_lead_coarse_view": 0.9573,
+    "acc_on_lead_fine_12m_scale": 0.9504,
+    "acc_on_lead_fine_range_scaled": 0.9565,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "60-80": {
+    "lead_records": 53227,
+    "acc_target_present": 0.9477,
+    "acc_on_lead_coarse_view": 0.9261,
+    "acc_on_lead_fine_12m_scale": 0.9178,
+    "acc_on_lead_fine_range_scaled": 0.9269,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "80-100": {
+    "lead_records": 18434,
+    "acc_target_present": 0.7693,
+    "acc_on_lead_coarse_view": 0.7342,
+    "acc_on_lead_fine_12m_scale": 0.7264,
+    "acc_on_lead_fine_range_scaled": 0.7397,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "100-130": {
+    "lead_records": 11808,
+    "acc_target_present": 0.3988,
+    "acc_on_lead_coarse_view": 0.3578,
+    "acc_on_lead_fine_12m_scale": 0.3719,
+    "acc_on_lead_fine_range_scaled": 0.3758,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   }
+  },
+  "set_2": {
+   "0-20": {
+    "lead_records": 2523,
+    "acc_target_present": 0.9897,
+    "acc_on_lead_coarse_view": 0.9897,
+    "acc_on_lead_fine_12m_scale": 0.9897,
+    "acc_on_lead_fine_range_scaled": 0.9897,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "20-40": {
+    "lead_records": 4757,
+    "acc_target_present": 0.9285,
+    "acc_on_lead_coarse_view": 0.8903,
+    "acc_on_lead_fine_12m_scale": 0.8903,
+    "acc_on_lead_fine_range_scaled": 0.8905,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "40-60": {
+    "lead_records": 2966,
+    "acc_target_present": 0.9602,
+    "acc_on_lead_coarse_view": 0.9336,
+    "acc_on_lead_fine_12m_scale": 0.9204,
+    "acc_on_lead_fine_range_scaled": 0.9289,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "60-80": {
+    "lead_records": 778,
+    "acc_target_present": 0.8111,
+    "acc_on_lead_coarse_view": 0.7905,
+    "acc_on_lead_fine_12m_scale": 0.7275,
+    "acc_on_lead_fine_range_scaled": 0.7943,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "80-100": {
+    "lead_records": 568,
+    "acc_target_present": 0.3327,
+    "acc_on_lead_coarse_view": 0.2852,
+    "acc_on_lead_fine_12m_scale": 0.287,
+    "acc_on_lead_fine_range_scaled": 0.3239,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   },
+   "100-130": {
+    "lead_records": 381,
+    "acc_target_present": 0.1759,
+    "acc_on_lead_coarse_view": 0.1759,
+    "acc_on_lead_fine_12m_scale": 0.1759,
+    "acc_on_lead_fine_range_scaled": 0.1759,
+    "wrong_while_lead_at_acc_position_range_scaled": 0
+   }
+  }
+ },
+ "summary_match_with_state": {
+  "note": "summary cycles (up to 80 m) with a mature track within 3 m of the summary position; excursion cycles = object-list speed more than 2.5 m/s from the summary slope",
+  "set_1": {
+   "range_and_speed_agreement": {
+    "0-20": {
+     "cycles": 52513,
+     "summary_on_the_track_at_its_position": 0.372,
+     "on_another_track": 0.0419,
+     "object_speed_excursion_cycles": 1011,
+     "on_its_track_during_excursions": 0.182
+    },
+    "20-40": {
+     "cycles": 79410,
+     "summary_on_the_track_at_its_position": 0.5432,
+     "on_another_track": 0.0411,
+     "object_speed_excursion_cycles": 2192,
+     "on_its_track_during_excursions": 0.2591
+    },
+    "40-60": {
+     "cycles": 41738,
+     "summary_on_the_track_at_its_position": 0.6622,
+     "on_another_track": 0.0555,
+     "object_speed_excursion_cycles": 2245,
+     "on_its_track_during_excursions": 0.4472
+    },
+    "60-80": {
+     "cycles": 21278,
+     "summary_on_the_track_at_its_position": 0.6929,
+     "on_another_track": 0.0717,
+     "object_speed_excursion_cycles": 2575,
+     "on_its_track_during_excursions": 0.3608
+    }
+   },
+   "position": {
+    "0-20": {
+     "cycles": 52513,
+     "summary_on_the_track_at_its_position": 0.9999,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 1011,
+     "on_its_track_during_excursions": 1.0
+    },
+    "20-40": {
+     "cycles": 79410,
+     "summary_on_the_track_at_its_position": 0.9999,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 2192,
+     "on_its_track_during_excursions": 0.9991
+    },
+    "40-60": {
+     "cycles": 41738,
+     "summary_on_the_track_at_its_position": 0.9999,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 2245,
+     "on_its_track_during_excursions": 0.9996
+    },
+    "60-80": {
+     "cycles": 21278,
+     "summary_on_the_track_at_its_position": 0.9998,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 2575,
+     "on_its_track_during_excursions": 0.9984
+    }
+   }
+  },
+  "set_2": {
+   "range_and_speed_agreement": {
+    "0-20": {
+     "cycles": 2517,
+     "summary_on_the_track_at_its_position": 0.6333,
+     "on_another_track": 0.0767,
+     "object_speed_excursion_cycles": 60,
+     "on_its_track_during_excursions": 0.1667
+    },
+    "20-40": {
+     "cycles": 4081,
+     "summary_on_the_track_at_its_position": 0.8361,
+     "on_another_track": 0.035,
+     "object_speed_excursion_cycles": 125,
+     "on_its_track_during_excursions": 0.288
+    },
+    "40-60": {
+     "cycles": 1505,
+     "summary_on_the_track_at_its_position": 0.897,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 116,
+     "on_its_track_during_excursions": 0.5603
+    },
+    "60-80": {
+     "cycles": 370,
+     "summary_on_the_track_at_its_position": 0.6405,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 52,
+     "on_its_track_during_excursions": 0.4808
+    }
+   },
+   "position": {
+    "0-20": {
+     "cycles": 2517,
+     "summary_on_the_track_at_its_position": 1.0,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 60,
+     "on_its_track_during_excursions": 1.0
+    },
+    "20-40": {
+     "cycles": 4081,
+     "summary_on_the_track_at_its_position": 0.9998,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 125,
+     "on_its_track_during_excursions": 1.0
+    },
+    "40-60": {
+     "cycles": 1505,
+     "summary_on_the_track_at_its_position": 1.0,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 116,
+     "on_its_track_during_excursions": 1.0
+    },
+    "60-80": {
+     "cycles": 370,
+     "summary_on_the_track_at_its_position": 0.9946,
+     "on_another_track": 0.0,
+     "object_speed_excursion_cycles": 52,
+     "on_its_track_during_excursions": 1.0
+    }
+   }
+  }
+ },
+ "replays_34_drives": {
+  "note": "heldout / further / owner: hard radar-only ticks, hard episodes, target episodes, radar-added episodes, lead-source switches",
+  "lateral_units": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1764
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.023,
+   "ant10": 0.443,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "acc_fine_distance": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1772
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.023,
+   "ant10": 0.443,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "summary_position_match": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1764
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.023,
+   "ant10": 0.443,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "tick_differences_acc_fine_distance": {
+   "ticks": 514069,
+   "radar_lead_ticks": 210463,
+   "a_target_changed_gt_0p05": 364,
+   "a_target_changed_gt_0p2": 178,
+   "lead_source_changed": 16,
+   "lead_track_changed": 0,
+   "harder_gt_0p2": 50,
+   "softer_gt_0p2": 128,
+   "windows_gt_0p2": 8
+  },
+  "tick_differences_summary_position_match": {
+   "ticks": 514069,
+   "radar_lead_ticks": 210469,
+   "a_target_changed_gt_0p05": 555,
+   "a_target_changed_gt_0p2": 189,
+   "lead_source_changed": 16,
+   "lead_track_changed": 23,
+   "harder_gt_0p2": 106,
+   "softer_gt_0p2": 83,
+   "windows_gt_0p2": 14
+  },
+  "acc_range_and_scaled_match": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1231
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.022,
+   "ant10": 0.437,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "tick_differences_acc_range_and_scaled_match": {
+   "totals": {
+    "ticks": 514069,
+    "radar_lead_ticks": 210471,
+    "a_target_changed_gt_0p05": 20895,
+    "a_target_changed_gt_0p2": 1803,
+    "lead_source_changed": 3933,
+    "lead_track_changed": 9,
+    "harder_gt_0p2": 795,
+    "softer_gt_0p2": 1008,
+    "windows_gt_0p2": 123
+   },
+   "by_lead_distance": {
+    "0-40": {
+     "radar_lead_ticks": 152225,
+     "lead_v_changed_gt_0p5": 34,
+     "a_target_changed_gt_0p2": 776,
+     "harder_gt_0p2": 380,
+     "softer_gt_0p2": 396,
+     "mean_abs_dv": 0.0005
+    },
+    "40-60": {
+     "radar_lead_ticks": 33399,
+     "lead_v_changed_gt_0p5": 124,
+     "a_target_changed_gt_0p2": 519,
+     "harder_gt_0p2": 111,
+     "softer_gt_0p2": 408,
+     "mean_abs_dv": 0.0076
+    },
+    "60-80": {
+     "radar_lead_ticks": 14285,
+     "lead_v_changed_gt_0p5": 104,
+     "a_target_changed_gt_0p2": 60,
+     "harder_gt_0p2": 11,
+     "softer_gt_0p2": 49,
+     "mean_abs_dv": 0.0113
+    },
+    "80-100": {
+     "radar_lead_ticks": 7356,
+     "lead_v_changed_gt_0p5": 6,
+     "a_target_changed_gt_0p2": 1,
+     "harder_gt_0p2": 1,
+     "softer_gt_0p2": 0,
+     "mean_abs_dv": 0.0023
+    },
+    "100-250": {
+     "radar_lead_ticks": 2241,
+     "lead_v_changed_gt_0p5": 0,
+     "a_target_changed_gt_0p2": 0,
+     "harder_gt_0p2": 0,
+     "softer_gt_0p2": 0,
+     "mean_abs_dv": 0.0
+    }
+   }
+  },
+  "chains_with_changed_counts_acc_range": {
+   "chains_with_changed_counts": [
+    {
+     "cohort": "heldout",
+     "drive": "held-out drive 1",
+     "hard_ticks": [
+      3,
+      4
+     ],
+     "hard_episodes": [
+      2,
+      2
+     ],
+     "radar_only_episodes": [
+      0,
+      0
+     ],
+     "target_eps": [
+      1,
+      1
+     ],
+     "switches": [
+      48,
+      28
+     ]
+    },
+    {
+     "cohort": "heldout",
+     "drive": "held-out drive 2",
+     "hard_ticks": [
+      5,
+      4
+     ],
+     "hard_episodes": [
+      1,
+      1
+     ],
+     "radar_only_episodes": [
+      0,
+      0
+     ],
+     "target_eps": [
+      0,
+      0
+     ],
+     "switches": [
+      74,
+      32
+     ]
+    }
+   ],
+   "switches_fewer": 18,
+   "switches_more": 1,
+   "switches_same": 8
+  }
+ },
+ "published_lead_distance_vs_vision_lead": {
+  "note": "held-out and further replay ticks where the replays before and after follow the same radar track and the vision-only replay has a lead (probability > 0.9); bands are the vision lead distance in metres; step = mean absolute tick-to-tick change of the published lead distance",
+  "bands": {
+   "10-30": {
+    "ticks": 37872,
+    "radar_minus_vision_m_before_p25_p50_p75": [
+     -0.9830000000000005,
+     0.1900000000000004,
+     1.4349999999999987
+    ],
+    "radar_minus_vision_m_after_p25_p50_p75": [
+     -0.38599999999999923,
+     0.3689999999999998,
+     1.1829999999999998
+    ],
+    "median_abs_before": 1.2190000000000012,
+    "median_abs_after": 0.8119999999999985,
+    "mean_abs_tick_step_m_before": 0.11383291477424524,
+    "mean_abs_tick_step_m_after": 0.09699548490515629
+   },
+   "30-50": {
+    "ticks": 46121,
+    "radar_minus_vision_m_before_p25_p50_p75": [
+     -3.286999999999999,
+     -0.9160000000000039,
+     1.6040000000000063
+    ],
+    "radar_minus_vision_m_after_p25_p50_p75": [
+     -0.6929999999999978,
+     0.5069999999999979,
+     1.7720000000000056
+    ],
+    "median_abs_before": 2.552000000000003,
+    "median_abs_after": 1.2819999999999965,
+    "mean_abs_tick_step_m_before": 0.15591559448655495,
+    "mean_abs_tick_step_m_after": 0.07144472356320583
+   },
+   "50-70": {
+    "ticks": 21349,
+    "radar_minus_vision_m_before_p25_p50_p75": [
+     -5.9439999999999955,
+     -2.3400000000000034,
+     1.1940000000000026
+    ],
+    "radar_minus_vision_m_after_p25_p50_p75": [
+     -1.840999999999994,
+     0.34600000000000364,
+     2.6400000000000006
+    ],
+    "median_abs_before": 4.147999999999996,
+    "median_abs_after": 2.237000000000002,
+    "mean_abs_tick_step_m_before": 0.22515234931181774,
+    "mean_abs_tick_step_m_after": 0.0919683436165164
+   },
+   "70-90": {
+    "ticks": 8343,
+    "radar_minus_vision_m_before_p25_p50_p75": [
+     -9.612500000000004,
+     -4.809999999999988,
+     0.3234999999999957
+    ],
+    "radar_minus_vision_m_after_p25_p50_p75": [
+     -4.5405000000000015,
+     -0.6150000000000091,
+     3.23899999999999
+    ],
+    "median_abs_before": 6.25,
+    "median_abs_after": 3.9609999999999985,
+    "mean_abs_tick_step_m_before": 0.2807084775086505,
+    "mean_abs_tick_step_m_after": 0.13395687098368758
+   },
+   "90-130": {
+    "ticks": 3478,
+    "radar_minus_vision_m_before_p25_p50_p75": [
+     -13.434750000000005,
+     -7.9110000000000085,
+     -2.4810000000000088
+    ],
+    "radar_minus_vision_m_after_p25_p50_p75": [
+     -9.949250000000006,
+     -3.946000000000012,
+     1.744499999999995
+    ],
+    "median_abs_before": 8.774000000000008,
+    "median_abs_after": 6.080000000000005,
+    "mean_abs_tick_step_m_before": 0.3454855562384757,
+    "mean_abs_tick_step_m_after": 0.2344824830977258
+   }
+  }
+ }
+}
