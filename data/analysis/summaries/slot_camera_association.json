@@ -220,6 +220,46 @@
      ]
     }
    }
+  },
+  "duty_pattern_168_10": {
+   "note": "168|10 is 1023 or 0 (768 / 832 rare). Tracks with a mixed pattern repeat it every 5 cycles, locked to the track's age; duty = share of cycles on over the track's life",
+   "value_counts": {
+    "1023": 866320,
+    "0": 381949,
+    "768": 4346,
+    "832": 466
+   },
+   "tracks_always_on": 12855,
+   "tracks_always_off": 9669,
+   "tracks_mixed": 5509,
+   "mixed_tracks_value_equals_5_cycles_earlier": 0.979,
+   "mixed_tracks_value_equals_1_2_3_cycles_earlier": [
+    0.703,
+    0.577,
+    0.572
+   ],
+   "mixed_tracks_share_on_by_age_mod_5": [
+    0.202,
+    0.631,
+    0.6,
+    0.419,
+    0.307
+   ],
+   "mixed_tracks_share_on_by_record_index_mod_5": [
+    0.42,
+    0.441,
+    0.446,
+    0.42,
+    0.439
+   ],
+   "duty_by_range_at_age_10_m": {
+    "0-10": 0.35,
+    "10-20": 0.34,
+    "20-40": 0.46,
+    "40-70": 0.86,
+    "70-110": 0.98,
+    "110-250": 0.98
+   }
   }
  },
  "set_114_segments": {
