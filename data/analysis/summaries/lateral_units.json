@@ -1,0 +1,208 @@
+{
+ "description": "Unit of the object-list lateral code (slot 44|12, summaries 0x192 / 0x194 word 1, 0x680): 0.015 m per code, 66.7 codes per metre. Independent estimates in codes per metre, and the replay of the fused profile with the corrected lateral units. Set 1 = 700 one-minute segments, set 2 = 114 segments of other drives, 'original logs' = 13 logs decoded with the public decoder.",
+ "adopted_m_per_code": 0.015,
+ "acc_lateral_code_per_object_list_code": {
+  "note": "the ACC target lateral (0x237, 12 bits, zero code 2000) is a centimetre field; the summary lateral of the same target is in object-list codes",
+  "set_1": {
+   "A": {
+    "rows": 242280,
+    "forward": 1.4998,
+    "reverse": 1.5002,
+    "corr": 0.9999
+   },
+   "B": {
+    "rows": 101508,
+    "forward": 1.5002,
+    "reverse": 1.5006,
+    "corr": 0.9999
+   }
+  },
+  "set_2": {
+   "A": {
+    "rows": 17591,
+    "forward": 1.4988,
+    "reverse": 1.4991,
+    "corr": 0.9999
+   },
+   "B": {
+    "rows": 2332,
+    "forward": 1.5016,
+    "reverse": 1.502,
+    "corr": 0.9999
+   }
+  },
+  "original_logs": {
+   "n": 11232,
+   "forward": 1.5015,
+   "reverse": 1.5019,
+   "corr": 0.9999
+  },
+  "implied_codes_per_m": 66.67
+ },
+ "crossing_objects_position_codes_per_velocity_code_second": {
+  "note": "objects with motion code 3 / 4 on straight road: change of the lateral code over the window against the integral of the lateral-velocity code (74|10, 0.15 m/s per code). 10.0 means 0.015 m per code; 1/64 m would give 9.6",
+  "set_1": {
+   "1.0 s": {
+    "windows": 536,
+    "tracks": 62,
+    "dy_codes_per_int_vy_codes": 9.938,
+    "reverse": 10.5117,
+    "corr": 0.975
+   },
+   "2.0 s": {
+    "windows": 395,
+    "tracks": 46,
+    "dy_codes_per_int_vy_codes": 10.0807,
+    "reverse": 10.4725,
+    "corr": 0.9848
+   },
+   "3.0 s": {
+    "windows": 338,
+    "tracks": 36,
+    "dy_codes_per_int_vy_codes": 10.4501,
+    "reverse": 10.7487,
+    "corr": 0.9891
+   }
+  },
+  "set_2": {
+   "1.0 s": {
+    "windows": 63,
+    "tracks": 8,
+    "dy_codes_per_int_vy_codes": 10.123,
+    "reverse": 11.7267,
+    "corr": 0.9339
+   },
+   "2.0 s": {
+    "windows": 53,
+    "tracks": 5,
+    "dy_codes_per_int_vy_codes": 10.4674,
+    "reverse": 11.4703,
+    "corr": 0.9654
+   }
+  }
+ },
+ "stationary_cars_under_ego_rotation": {
+  "note": "stationary vehicles while ego turns at a steady yaw rate (gyro lag 0.08 s): lateral code change against the rotation of the object's position; track bootstrap interval",
+  "set_1": {
+   "8 cycles": {
+    "windows": 700,
+    "tracks": 93,
+    "codes_per_m": 69.44,
+    "lever_arm_m": 3.45,
+    "ci95": [
+     65.22,
+     74.53
+    ]
+   },
+   "12 cycles": {
+    "windows": 824,
+    "tracks": 97,
+    "codes_per_m": 69.1,
+    "lever_arm_m": 3.71,
+    "ci95": [
+     65.09,
+     73.69
+    ]
+   }
+  },
+  "set_2": {
+   "8 cycles": {
+    "windows": 92,
+    "tracks": 13,
+    "codes_per_m": 68.25,
+    "lever_arm_m": 3.4,
+    "ci95": [
+     60.59,
+     73.92
+    ]
+   }
+  }
+ },
+ "lane_cells_vs_camera_lane_width": {
+  "note": "0x85 lane-cell offsets (centimetre field, zero code 2000) against openpilot's lane lines: ego-lane width 348 codes against 3.41 m",
+  "records": 10262,
+  "m_per_cell_code": [
+   0.00979,
+   0.0098
+  ]
+ },
+ "lane_peaks_codes_per_3p66_m_lane": {
+  "note": "adjacent-lane peaks of moving highway traffic (lane_peaks.json); lane widths vary",
+  "codes_per_m_if_3p66_m": [
+   63.9,
+   67.3,
+   62.8
+  ]
+ },
+ "camera_outer_box_edges_codes_per_m": [
+  68.9,
+  69.7,
+  72.8
+ ],
+ "fused_replay_with_corrected_lateral_units": {
+  "note": "34 replay drives, limits fixed before the run: object-list lateral 0.015 m per code and the 12-bit ACC lateral, against the same profile with the previous lateral conversions",
+  "previous": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1751
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.024,
+   "ant10": 0.449,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "corrected": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1764
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 292
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.023,
+   "ant10": 0.443,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
+  },
+  "ticks": {
+   "ticks": 514069,
+   "radar_lead_ticks": 210410,
+   "a_target_changed_gt_0p05": 878,
+   "a_target_changed_gt_0p2": 240,
+   "lead_source_changed": 117
+  }
+ }
+}

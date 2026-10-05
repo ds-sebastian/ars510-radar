@@ -1,0 +1,393 @@
+{
+ "description": "Slot fields that depend on the camera's day / night mode (112|3, 136|4, 181|1) and the remaining uncertainty codes (200|7, 256|8, 264|8). Night = the camera sends light-source records on 0x240 / 0x244. Mature vehicle rows: class 2 or 3, age above 60. class_confidence_115_5: the 5-bit class confidence (value set, per-cycle steps, value around class changes).",
+ "set_700_segments": {
+  "night_segments": 71,
+  "segments": 698,
+  "b181": {
+   "day_rows": 712348,
+   "day_share": 0.2452,
+   "night_rows": 59988,
+   "night_set": 2
+  },
+  "b112_nonzero_inlane_same_direction_5_40m": {
+   "day_rows": 77526,
+   "day_share": 0.9969,
+   "night_rows": 4062,
+   "night_share": 0.6901
+  },
+  "b112_nonzero_inlane_same_direction_50_80m": {
+   "day_share": 0.0067,
+   "night_share": 0.848
+  },
+  "b112_nonzero_by_range_day": {
+   "0-5": 1.0,
+   "5-10": 1.0,
+   "10-20": 0.996,
+   "20-30": 0.997,
+   "30-40": 0.997,
+   "40-50": 0.617,
+   "50-60": 0.017,
+   "60-80": 0.0,
+   "80-120": 0.0
+  },
+  "b112_nonzero_by_range_night": {
+   "5-10": 0.347,
+   "10-20": 0.556,
+   "20-30": 0.792,
+   "30-40": 0.745,
+   "40-50": 0.885,
+   "50-60": 0.851,
+   "60-80": 0.84,
+   "80-120": 0.424
+  },
+  "b112_nonzero_by_azimuth_deg_day_10_40m": {
+   "-30..-20": 0.666,
+   "-20..-12": 0.79,
+   "-12..-6": 0.94,
+   "-6..-2": 0.981,
+   "-2..2": 0.982,
+   "2..6": 0.976,
+   "6..12": 0.92,
+   "12..20": 0.781,
+   "20..30": 0.618
+  },
+  "b112_nonzero_oncoming_by_range": {
+   "0-10": 0.053,
+   "10-20": 0.084,
+   "20-30": 0.12,
+   "30-40": 0.168,
+   "40-50": 0.165,
+   "50-70": 0.212
+  },
+  "b112_by_class": {
+   "pedestrian": 0.0,
+   "class_5": 0.0,
+   "two_wheeler": 0.0
+  },
+  "b181_share_by_range_day": {
+   "10-20": 0.216,
+   "20-30": 0.205,
+   "30-40": 0.25,
+   "40-50": 0.315,
+   "50-60": 0.349,
+   "60-80": 0.34,
+   "80-120": 0.434
+  },
+  "lateral_step_at_b112_change_m": {
+   "median_abs_change": 0.031,
+   "median_abs_change_other_records": 0.031,
+   "transitions": 15702
+  },
+  "rms_family_frame_scatter_spearman": {
+   "s224": {
+    "x": 0.517,
+    "y": 0.168,
+    "vx": 0.391,
+    "vy": 0.059,
+    "ax": 0.011,
+    "ay": -0.039
+   },
+   "s232": {
+    "x": 0.279,
+    "y": 0.437,
+    "vx": 0.257,
+    "vy": 0.194,
+    "ax": -0.035,
+    "ay": 0.111
+   },
+   "s240": {
+    "x": 0.524,
+    "y": 0.275,
+    "vx": 0.426,
+    "vy": 0.121,
+    "ax": -0.005,
+    "ay": 0.021
+   },
+   "s248": {
+    "x": 0.371,
+    "y": 0.38,
+    "vx": 0.357,
+    "vy": 0.223,
+    "ax": -0.026,
+    "ay": 0.183
+   },
+   "e256": {
+    "x": 0.425,
+    "y": 0.107,
+    "vx": 0.285,
+    "vy": -0.005,
+    "ax": 0.153,
+    "ay": -0.07
+   },
+   "m264": {
+    "x": -0.099,
+    "y": 0.058,
+    "vx": 0.008,
+    "vy": 0.146,
+    "ax": -0.055,
+    "ay": 0.285
+   }
+  },
+  "orientation_rms": {
+   "rows": 103819,
+   "ratio_u200_speed_over_s248_pcts": [
+    2.48,
+    3.1,
+    3.79
+   ],
+   "spearman_u200_vs_s248_over_speed": 0.717
+  },
+  "class_confidence_115_5": {
+   "rows": 1253081,
+   "values_present": [
+    0,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ],
+   "share_high_bits_120_3_zero": 0.9977958328312375,
+   "median_by_class": {
+    "1": 0.0,
+    "2": 16.0,
+    "3": 11.0,
+    "4": 14.0,
+    "5": 9.0,
+    "6": 18.0
+   },
+   "share_zero_class1": 0.828354338780679,
+   "share_zero_class2": 0.0,
+   "median_class2_by_age": {
+    "1-6": 11.0,
+    "6-12": 14.0,
+    "12-25": 16.0,
+    "25-60": 17.0,
+    "60-127": 16.0
+   },
+   "nonzero_steps": 58586,
+   "share_nonzero_steps_pm1": 0.9607414740723039,
+   "class_changes": {
+    "1->2": {
+     "n": 1599,
+     "before_median": 0.0,
+     "before_p10_p90": [
+      0.0,
+      0.0
+     ],
+     "after_median": 15.0,
+     "after_p10_p90": [
+      12.0,
+      18.0
+     ]
+    },
+    "1->3": {
+     "n": 275,
+     "before_median": 0.0,
+     "before_p10_p90": [
+      0.0,
+      0.0
+     ],
+     "after_median": 12.0,
+     "after_p10_p90": [
+      10.0,
+      17.0
+     ]
+    },
+    "3->2": {
+     "n": 106,
+     "before_median": 5.0,
+     "before_p10_p90": [
+      4.0,
+      5.0
+     ],
+     "after_median": 15.0,
+     "after_p10_p90": [
+      14.0,
+      15.0
+     ]
+    }
+   }
+  }
+ },
+ "set_114_segments": {
+  "night_segments": 35,
+  "segments": 114,
+  "b181": {
+   "day_rows": 68857,
+   "day_share": 0.3139,
+   "night_rows": 12136,
+   "night_set": 0
+  },
+  "b112_nonzero_inlane_same_direction_5_40m": {
+   "day_rows": 3519,
+   "day_share": 0.9991,
+   "night_rows": 2853,
+   "night_share": 0.6719
+  },
+  "b112_nonzero_inlane_same_direction_50_80m": {
+   "day_share": 0.0171,
+   "night_share": 0.9956
+  },
+  "rms_family_frame_scatter_spearman": {
+   "s224": {
+    "x": 0.443,
+    "y": 0.246,
+    "vx": 0.357,
+    "vy": 0.102,
+    "ax": -0.065,
+    "ay": 0.071
+   },
+   "s232": {
+    "x": 0.222,
+    "y": 0.335,
+    "vx": 0.22,
+    "vy": 0.139,
+    "ax": -0.117,
+    "ay": 0.115
+   },
+   "s240": {
+    "x": 0.409,
+    "y": 0.296,
+    "vx": 0.355,
+    "vy": 0.125,
+    "ax": -0.085,
+    "ay": 0.103
+   },
+   "s248": {
+    "x": 0.3,
+    "y": 0.345,
+    "vx": 0.282,
+    "vy": 0.174,
+    "ax": -0.11,
+    "ay": 0.165
+   },
+   "e256": {
+    "x": 0.325,
+    "y": 0.166,
+    "vx": 0.258,
+    "vy": 0.019,
+    "ax": 0.052,
+    "ay": 0.048
+   },
+   "m264": {
+    "x": 0.036,
+    "y": 0.171,
+    "vx": 0.041,
+    "vy": 0.091,
+    "ax": -0.143,
+    "ay": 0.164
+   }
+  },
+  "orientation_rms": {
+   "rows": 14099,
+   "ratio_u200_speed_over_s248_pcts": [
+    2.65,
+    3.31,
+    4.14
+   ],
+   "spearman_u200_vs_s248_over_speed": 0.803
+  },
+  "class_confidence_115_5": {
+   "rows": 151794,
+   "values_present": [
+    0,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ],
+   "share_high_bits_120_3_zero": 0.9992292185461876,
+   "median_by_class": {
+    "1": 0.0,
+    "2": 18.0,
+    "3": 12.0,
+    "4": 10.0,
+    "5": 8.0
+   },
+   "share_zero_class1": 0.8303086867848871,
+   "share_zero_class2": 0.0,
+   "median_class2_by_age": {
+    "1-6": 12.0,
+    "6-12": 15.0,
+    "12-25": 17.0,
+    "25-60": 18.0,
+    "60-127": 18.0
+   },
+   "nonzero_steps": 6871,
+   "share_nonzero_steps_pm1": 0.9535729879202445,
+   "class_changes": {
+    "1->2": {
+     "n": 231,
+     "before_median": 0.0,
+     "before_p10_p90": [
+      0.0,
+      0.0
+     ],
+     "after_median": 16.0,
+     "after_p10_p90": [
+      12.0,
+      18.0
+     ]
+    },
+    "1->3": {
+     "n": 30,
+     "before_median": 0.0,
+     "before_p10_p90": [
+      0.0,
+      0.0
+     ],
+     "after_median": 12.0,
+     "after_p10_p90": [
+      9.9,
+      16.1
+     ]
+    },
+    "3->2": {
+     "n": 5,
+     "before_median": 5.0,
+     "before_p10_p90": [
+      4.0,
+      5.0
+     ],
+     "after_median": 15.0,
+     "after_p10_p90": [
+      14.4,
+      15.0
+     ]
+    }
+   }
+  }
+ },
+ "original_logs_public_decoder_13": {
+  "night_vehicle_rows": 8188,
+  "night_b181_set": 0,
+  "day_vehicle_rows": 6633,
+  "day_b181_set": 1979
+ }
+}

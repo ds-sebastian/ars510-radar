@@ -103,10 +103,10 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **Distance, lateral position, speed over ground** | ● field layout and motion; ◐ exact physical zero and scales ([06](docs/06_accuracy.md)) |
-| **Object attributes**: lane assignment, class, size, heading, lateral speed and acceleration, existence, uncertainties | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
-| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields; ● speed 0.125 m/s and range 0.025 m per code (checked against `0x680` and stopped leads); ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
-| **Target summaries** (0x191-0x194) | ● raw structure; ● 0x192 / 0x194 = position of one internal track, in the object list's encoding ([05](docs/05_acc_target_and_support.md)) |
-| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects; absolute range at 1/32 m ([05](docs/05_acc_target_and_support.md)) |
+| **Object attributes**: lane assignment, class and its confidence, size, heading, lateral speed and acceleration, existence, uncertainties, camera association | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
+| **Radar's ACC target** (0x235 / 0x237 / 0x239 / 0x23B, 50 Hz) | ● mapped bit for bit: closing speed 0.125 m/s, relative acceleration 0.125 m/s², distance 0.025 m and lateral 0.01 m per code, class, cycle timestamp; ◐ lateral speed and acceleration, in-path state, width; ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
+| **Target summaries** (0x190-0x194) | ● 0x192 / 0x194 = position of one internal track, in the object list's encoding; ● 0x190 counts them; ◐ 0x191 / 0x193 carry the class template (car / truck size) ([05](docs/05_acc_target_and_support.md)) |
+| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects: range at 1/32 m, lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; ○ remaining cell fields ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration** | installable on openpilot, sunnypilot and StarPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
@@ -168,7 +168,7 @@ bytes and a CRC32. Each slot is one little-endian bit field:
 | field | bits | decode |
 |---|---|---|
 | dRel (forward) | `32\|12` | `(code − 160) / 16` m |
-| yRel (left +) | `44\|12` | `(code − 2048) / 64` m |
+| yRel (left +) | `44\|12` | `(code − 2048) × 0.015` m |
 | speed over ground | `64\|10` | `(code − 510.5) × 0.15` m/s; vRel = this − ego speed |
 | age | `24\|7` | radar cycles; a restart is a new track |
 | speed uncertainty | `240\|7` | about 0.045 m/s per count (calibrated against the radar's ACC target) |

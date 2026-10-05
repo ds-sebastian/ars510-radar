@@ -30,16 +30,16 @@ target-summary codes requiring independent target association and calibration.
 | 0x86 | 8 | 16.7 Hz | record-cycle marker for 0x85 | |
 | 0x100-0x103 | 7/6/3/2 | 10 Hz | startup state: 0x101 goes 0x1D → 0x11 when the radar is running | [05](05_acc_target_and_support.md#startup-and-readiness) |
 | 0x180 | 5 | 16.7 Hz | constant `CF C0 00 00 00` | |
-| 0x190 | 7 | 16.7 Hz | cycle header: µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
-| 0x191 / 0x193 | 8 | 16.7 Hz | selected-target companions: score, age, track code, descriptors | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
+| 0x190 | 7 | 16.7 Hz | cycle header: number of target summaries, µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
+| 0x191 / 0x193 | 8 | 16.7 Hz | selected-target companions: score, age, track code, class template (width, height, length) | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
 | 0x192 / 0x194 | 4 | 16.7 Hz | target summaries: distance and lateral position of one internal-tracker target each | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
 | 0x195 / 0x196 | 8 | 16.7 Hz | paired event frames; exact idle payloads in 99.67% of recorded frames | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
 | 0x197 / 0x198 | 2 / 1 | 16.7 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
 | 0x202 | 5 | 16.7 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
-| **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar): closing speed, relative acceleration, distance, lateral | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
-| 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | companions of the 0x235 family (0x23D all zero); 0x23B = slow 8-bit value + counter + CRC-8 | [05](05_acc_target_and_support.md#other-frames) |
-| 0x240-0x245, 0x248 | 8 | 16.7 Hz | context frames with a rolling phase 1-7; 0x240/0x244 carry changing payloads on some drives | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
+| **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
+| 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | ACC target companions: 0x239 = class, object-list flag, µs timestamp; 0x23B = width in cm + counter + CRC-8; 0x23D all zero | [05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b) |
+| 0x240-0x245, 0x248 | 8 | 16.7 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
 | 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
 | 0x680 | 8 | 2 Hz | one tracked object: distance, lateral position, over-ground speed; mostly a stationary roadside object | [05](05_acc_target_and_support.md#0x680-single-object-stream) |

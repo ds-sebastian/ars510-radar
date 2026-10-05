@@ -74,8 +74,8 @@
    "within_1m_new": 0.4835744424352019,
    "within_1m_published": 0.10563592525617842,
    "lateral_within_0p5m": 0.9672795263321907,
-   "lateral_scale_m_per_code": 0.015623151893780274,
-   "lateral_zero_code": 2046.2755781654273
+   "lateral_zero_code": 2046.2755781654273,
+   "lateral_code_per_0x680_lateral_code": 1.00012
   },
   "0x194": {
    "frames": 5540,
@@ -90,8 +90,8 @@
    "within_1m_new": 0.14169675090252706,
    "within_1m_published": 0.0184115523465704,
    "lateral_within_0p5m": 0.89171974522293,
-   "lateral_scale_m_per_code": 0.015657394986844174,
-   "lateral_zero_code": 2046.2769989521537
+   "lateral_zero_code": 2046.2769989521537,
+   "lateral_code_per_0x680_lateral_code": 0.99793
   },
   "acc_range_code": {
    "frames": 1872,

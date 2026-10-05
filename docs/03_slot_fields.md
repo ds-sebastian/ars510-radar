@@ -24,7 +24,7 @@ from this radar's own data.
 | bits | field | decode | conf. |
 |---|---|---|---|
 | `32\|12` | **dRel**, forward distance from the radar | `(code − 160) / 16` m | ● field/scale; ◐ physical zero |
-| `44\|12` | **yRel**, lateral, left positive | `(code − 2048) / 64` m; \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale (±10%) |
+| `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m; \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | `(code − 510.5) × ~0.147` m/s | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by 0.5-1 s | ◐ |
@@ -124,6 +124,7 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 | `148\|4` | **right-lane weight** | 0-15 | ◐ |
 | `152\|4` | **left-lane weight** | 0-15 | ◐ |
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
+| `131\|4` | dominant lane weight | the largest of the three weights or one less (99.7 % of samples) | ● derived |
 
 The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples): a lane-assignment
 probability in 1/15 steps. The lane state matches the dominant weight on 99.6% of samples and is exactly zero-weight
@@ -131,12 +132,38 @@ for codes 1 / 5 / 7.
 
 ![lane weights](img/analysis/lane_weights.png)
 
-The dominant weight sits one lane width apart: median yRel −3.8 m (right), 0 m (ego), +3.7 m (left). At the lane
+The dominant weight sits one lane width apart: median yRel −3.7 m (right), −0.1 m (ego), +3.5 m (left). At the lane
 edges, weight moves smoothly from one lane to the next. The ego-lane weight is the radar's own **in-path** estimate,
 which openpilot's radard does not have (radard has no lateral gate; [08](08_openpilot_integration.md)).
 
 The decoder exposes the triplet as `NativeObject.raw_weights148` (right, left, ego order as on the wire) and the state
 as `raw_weight_state128`.
+
+## Camera association
+
+| bits | field | behaviour | conf. |
+|---|---|---|---|
+| `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
+| `136\|4` | association confidence | 15 without association; restarts at 3-9 when `112\|3` becomes non-zero and climbs to 14 | ◐ |
+| `181\|1` | daylight-only flag | set on a quarter of mature vehicle rows by day, never at night | ○ |
+
+![camera association by day and night](img/analysis/camera_association.png)
+
+Two slot fields follow what the camera can see, although no camera object frame is visible on this bus (the lane curves in
+0x85 reach the radar the same unseen way):
+
+- **By day** `112|3` is non-zero on 99.7 % of in-lane vehicles at 5-40 m, on 62 % at 40-50 m and on 0.7 % at 50-80 m:
+  a sharp range limit near 45 m, independent of ego speed. It is non-zero on 98 % within ±6° of boresight and falls off
+  beyond ±20°, stays 0 for pedestrians, two-wheelers and class 5, and is set on only 5-21 % of oncoming vehicles.
+- **At night**, when the camera switches to light-source records ([05](05_acc_target_and_support.md#0x240-0x248-context-frames)),
+  the range limit disappears: non-zero on 69 % at 5-40 m and on 85 % at 50-80 m (67 % and 99.6 % on a second set of drives).
+- The position does not step when the state changes (median lateral change 0.03 m, as on any other record), so it is not a
+  reference-point code.
+- `181|1` is set on 24.5 % of mature vehicle rows by day and on 2 of 59,988 at night (31.4 % and 0 of 12,136 on the second
+  set; 29.8 % and 0 of 8,188 decoded from original logs). It occurs only for cars and large vehicles and more often at
+  long range (22 % at 10-40 m, 43 % at 80-120 m).
+
+Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json).
 
 ## Class and size
 
@@ -144,13 +171,21 @@ as `raw_weight_state128`.
 |---|---|---|---|
 | `163\|3` | **class** | 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist/person associations), 6 two-wheeler | ◐; 5 ○ |
 | `140\|3` | class, second encoding | 0, 5, 7, 1, 3, 4 ↔ class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows) | ● |
-| `136\|4` | class confidence | 0-15; 15 on nearly all pedestrians and two-wheelers | ○ |
+| `115\|5` | **class confidence** | `code × 5` %: 0 while not yet classified, 4-20 otherwise | ◐ |
 | `216\|6` | **width** | `(code + 1) × 0.1` m | ◐ |
 | `56\|7` | **length** | `code × 0.1` m | ◐ |
 | `272\|5` | height-like size code | larger for large vehicles | ○ |
 
+**Class confidence `115|5`.** The only values are 0 and 4-20, so 20 is 100 %. It is 0 on 83 % of unclassified rows and
+never on a car, starts near 55 % for a new car and settles at 80-90 % (median 16-18 from age 25), and moves by exactly one
+step per cycle on 95-96 % of its changes. The class follows it: when a large vehicle is re-classified as a car, the value
+has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-5 before and 14-15 after on the middle
+80 %). A newly classified car typically starts at 15, a large vehicle at 12. The decoder exposes it as
+`NativeObject.class_confidence_pct`; the three bits above it (`120|3`) are non-zero on 0.2 % of rows
+([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
+
 **About a quarter of new objects start with an initialization template.** On 5,774 of 22,501 age-1 outputs,
-the confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and they are zero together
+the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and they are zero together
 on every one of 1,253,081 occupied rows (700 segments). These rows always have motion code 5, class 1, state 1,
 range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
 All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so no
@@ -178,8 +213,8 @@ walkers, including one with 31 mature rows. The camera review covers 21 episodes
 45-episode inventory, with ambiguous parked-vehicle, road and traffic-furniture scenes also represented.
 The radar's own kinematics point the same way: class-5 objects measure 1.2 × 0.7 m (between pedestrians at
 0.5 × 0.6 m and two-wheelers at 1.6 × 0.7 m) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
-a bicycle at walking-to-cycling speed. All 968 class-5 samples read 15 in `136|4`, and their height-like `272|5`
-code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
+a bicycle at walking-to-cycling speed. No class-5 sample has a camera association (`136|4` = 15 on all 968), and their
+height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
 [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
 ![object size](img/analysis/object_size.png)
@@ -192,15 +227,17 @@ code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/sum
 | `232\|7` | σ yRel | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
 | `248\|7` | σ vy | grows with \|yRel\|, shrinks with age | ◐ |
-| `200\|7` | angular uncertainty-like code | co-varies with velocity uncertainty candidates; raw63 pairs with angle0, raw127 has exceptions; metric units provisional | ○ |
-| `256\|8` | existence-like | rises with age at fixed range (ρ +0.86 to +0.90), drops before deletion | ○ |
-| `264\|8` | measurement state | settled values depend on range (4 ≈ 10 m, 3 ≈ 12 m, 1 ≈ 30 m, 2 ≈ 47 m): a near/far-scan mode | ○ |
-| `184\|8` | secondary score | 59-100 on allocated slots | ○ |
+| `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
+| `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others ≤ 0.03); grows with range and with age | ○ |
+| `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (11 at age 5-10, 2 from age 40) | ○ |
+| `184\|8` | secondary score | percent: 100 on 98 % of rows, 60-99 on young tracks | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
   (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
   Continental order distance-long, distance-lat, velocity-long, velocity-lat
-  ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
+  ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). `256|8` and `264|8` continue
+  the same alternation for the two accelerations and `200|7` is the orientation term, which completes that list
+  ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 - **`240|7` as a speed standard deviation** (`NativeObject.vel_unc_code`): RMS of native vRel minus the ACC target's
   speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
   reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
@@ -228,10 +265,10 @@ establish physical stationarity or a graded-confidence enum. The raw code is uns
 
 ## Raw and constant bits
 
-- **Raw, unnamed:** 13, 15, 63, 106, `112|3`, `115|8`, `131|4`, `166|2`, `168|10` (only codes 0, 768, 832, 1023),
-  181, 182, 183, `192|8`, 239, `277|11`. Bits 15 and 239 are mostly active near track birth.
-- **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `178|3`, 207, `214|2`,
-  `222|2`, 231, 247, 255.
+- **Raw, unnamed:** 13, 15, 63, 106, `120|3`, `168|10` (only codes 0, 768, 832, 1023), 182, 183, 239. Bits 15 and 239
+  are mostly active near track birth.
+- **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
+  `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 
 The full per-bit statistics of the original survey are in
 [`data/reference/slot_bit_map.json`](../data/reference/slot_bit_map.json); the Cabana DBC

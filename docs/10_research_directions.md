@@ -80,8 +80,9 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 ## For the decode
 
 - **Lateral scale and range zero from slow circles.** A stationary object moves sideways at yaw rate × (range +
-  3.6 m) while the car turns. A few minutes of slow circles in an empty lot with parked cars or poles pins the
-  lateral scale and the range zero from the gyro alone, no tape measure needed.
+  3.5 m) while the car turns. Ordinary turns past parked cars already give 69 codes per metre (65-74.5,
+  [06](06_accuracy.md#lateral-position)); a few minutes of slow circles in an empty lot with parked cars or poles would
+  narrow that to a per-cent and pin the range zero from the gyro alone, no tape measure needed.
 - **`272|5` under a known overhead object.** Driving under a bridge or gantry of known clearance, and past parked
   vehicles of known height, relates the code to height. Its ranking of pedestrians below cars points to a size- or
   reflectivity-like quantity.
@@ -92,8 +93,14 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **Class 5:** a few recorded passes of a cyclist and of a pedestrian confirm the bicycle reading of its size and
   speed.
 - **0x195 `q10` with brake pressure:** the logged brake pressure or the brake-assist state next to the event code
-  names the deceleration quantity. The 0x191 descriptor tuples follow speed regime; a drive through the ACC
-  following-distance settings shows whether they encode a mode.
+  names the deceleration quantity.
+- **The radar's ACC tracker bytes and the night light records.** Two bytes of 0x237 rise while the ACC target
+  accelerates or brakes, and the camera's 0x240 / 0x244 frames carry light-source records at night
+  ([05](05_acc_target_and_support.md)). A drive behind a car with known braking, and a night drive past lights at known
+  positions, would name their units.
+- **What the camera association changes.** `112|3` shows which objects the camera has confirmed (inside 45 m by day,
+  farther at night, [03](03_slot_fields.md#camera-association)). A drive with the camera covered shows what the radar
+  does differently for those objects.
 
 ## For the integration
 

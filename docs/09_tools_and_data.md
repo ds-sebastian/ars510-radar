@@ -45,7 +45,10 @@ For the raw radar bus use `dbc/ars510_radar_bus.dbc` on bus 1. Some Cabana build
 `opendbc/dbc/`; copy the file there locally.
 
 Good first plots: DREL and VREL of one slot next to the video; SCORE_CODE and STATE_CODE as a track ends;
-UNK_148_8 / UNK_156_4 (lane weights) during a lane change; VLONG_OVER_GROUND of a lead you follow (≈ your speed).
+UNK_148_8 / UNK_156_4 (lane weights) during a lane change; VLONG_OVER_GROUND of a lead you follow (≈ your speed);
+UNK_112_3 (camera association) as a car you close on comes inside 45 m; UNK_115_5 (class confidence) of a new track. On
+the radar bus, `A235_ACC_TARGET_VREL` next to `A237_ACC_TARGET_DISTANCE_CODE` and `A239_STATUS_MUX4` (the target's class)
+show the radar's own ACC target.
 
 ### Replay your drives through openpilot
 

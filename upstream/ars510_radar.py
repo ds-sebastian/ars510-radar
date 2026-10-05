@@ -62,7 +62,7 @@ class Ars510Radar:
       elif addr == ACC_SPEED_ADDR:
         self.acc_speed = (t, (be_bits(dat, 29, 11) - 1024) * 0.125)
       else:
-        self.acc_pos = (t, be_bits(dat, 47, 5) * 5.26 + 9.6, be_bits(dat, 28, 11) * 0.01667 - 16.70)
+        self.acc_pos = (t, be_bits(dat, 47, 5) * 5.26 + 9.6, (be_bits(dat, 27, 12) - 2000) * 0.01)
     elif bus == RADAR_BUS and addr == OBJECTS_ADDR:
       record = self.reassemble(t, dat)
       if record is not None and int.from_bytes(record[737:741], "little") == zlib.crc32(record[1:737]):
@@ -106,7 +106,7 @@ class Ars510Radar:
         continue
       age, lat = bits(s, 24, 7), bits(s, 44, 12) - 2048
       init_template = age == 1 and bits(s, 56, 7) == 0 and bits(s, 216, 6) == 0
-      objs.append(dict(tid=self.track_id(t, slot, age), age=age, d=(bits(s, 32, 12) - 160) / 16, y=lat / 64,
+      objs.append(dict(tid=self.track_id(t, slot, age), age=age, d=(bits(s, 32, 12) - 160) / 16, y=lat * 0.015,
                        vg=(bits(s, 64, 10) - 510.5) * 0.15 * VGROUND_SCALE, unc=bits(s, 240, 7),
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}

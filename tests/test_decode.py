@@ -82,12 +82,14 @@ class TestSlotFields:
         assert [s for s, _ in occupied_slots(rec)] == [4]
 
     def test_field_scales_and_signs(self) -> None:
-        slot = encode_slot(long_dist=160 + 16 * 42, lat_dist_left=2048 + 64 * 3, long_vel_over_ground=510 + 100, age_cycles=77)
+        slot = encode_slot(long_dist=160 + 16 * 42, lat_dist_left=2048 + 200, long_vel_over_ground=510 + 100, age_cycles=77,
+                           camera_assoc=1, class_confidence=17)
         o = decode_native_slot(0, slot)
         assert o.d_rel == pytest.approx(42.0)
-        assert o.y_rel == pytest.approx(3.0)  # left positive
+        assert o.y_rel == pytest.approx(3.0)  # left positive, 0.015 m per code
         assert o.v_long_ground == pytest.approx(0.15 * 99.5)
         assert o.age == 77 and o.geometry_valid and o.lateral_valid
+        assert o.camera_assoc == 1 and o.class_confidence_pct == 85
 
     def test_zero_points(self) -> None:
         o = decode_native_slot(0, encode_slot(long_dist=160, lat_dist_left=2048, age_cycles=1))
@@ -139,7 +141,7 @@ class TestShellAndSupport:
         assert parse_0x192(bytes.fromhex("0320")) is None
         t = parse_0x192((640).to_bytes(2, "big") + bytes([7, 0]))
         assert t.range_code13 == 640 and t.field1_code13 == 1792
-        assert t.d_rel == 30.0 and t.y_rel == -4.0
+        assert t.d_rel == 30.0 and t.y_rel == pytest.approx(-256 * 0.015)  # the object list's lateral unit
 
     @pytest.mark.parametrize("before,after,values", [
         ("03C50FFB", "03CD100D", (4091, 4109)),

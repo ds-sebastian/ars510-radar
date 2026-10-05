@@ -31,8 +31,10 @@ class NativeField:
 # Longitudinal distance, forward. Nominal code/16 - 10 m; code 160 decodes to zero.
 # Scale supported; physical zero originally vision-fitted, awaiting measured-gap calibration.
 LONG_DIST = NativeField("long_dist", 32, 12, 160.0, 1.0 / 16.0, "m", "validated")
-# Lateral distance, LEFT positive. 12-bit offset binary around 2048, 1/64 m (scale bounded to about +/-10%).
-LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, 1.0 / 64.0, "m", "validated_sign_scale_pm10pct")
+# Lateral distance, LEFT positive. 12-bit offset binary around 2048, 0.015 m per code: exactly 1.5 codes of the radar's
+# ACC-target lateral (cm), ten codes per lateral-velocity code-second, 69 codes/m [65, 74.5] under ego rotation (docs/06).
+LATERAL_M_PER_CODE = 0.015
+LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, LATERAL_M_PER_CODE, "m", "validated_sign_likely_scale")
 # Longitudinal velocity OVER GROUND (not relative). Nominal 0.15 m/s/code and zero 510.5.
 # Exact factory zero, scale and rounding rule remain provisional (docs/06).
 # vRel = this - ego speed.
@@ -69,6 +71,13 @@ EXISTENCE = NativeField("existence_pct", 16, 8, 0.0, 1.0, "%", "likely")
 # Predicted (not measured) record, the Continental "Meas = 0" state: common in a track's last records (docs/03).
 PREDICTED = NativeField("predicted", 107, 1, 0.0, 1.0, "flag", "likely")
 
+# Camera-association state 112|3: 0 radar only, 1 (rarely 2-4) while the camera has the vehicle. By day it is set inside
+# about 45 m, at night (camera light-source mode) also far out (docs/03).
+CAMERA_ASSOC = NativeField("camera_assoc", 112, 3, 0.0, 1.0, "state", "likely")
+# Confidence of the assigned class in 1/20 steps (0 = unclassified, 20 = 100 %); steps by one per cycle and a large
+# vehicle is re-classified as a car when it has fallen to 5 (docs/03).
+CLASS_CONFIDENCE = NativeField("class_confidence", 115, 5, 0.0, 5.0, "%", "likely")
+
 # Velocity standard deviation (sigma vx) candidate: grows with range and during velocity excursions, higher when the
 # velocity disagrees with the camera by > 2 m/s. Relative confidence; unit not pinned (docs/03).
 VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
@@ -85,7 +94,8 @@ AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
-NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156)
+NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156,
+                CAMERA_ASSOC, CLASS_CONFIDENCE)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -136,6 +146,8 @@ class NativeObject:
     v_lat_code: int = -1  # raw 74|10 code; 0 and 1023 are sentinels
     existence_pct: int | None = None  # 16|8 existence probability, percent
     predicted: bool = False  # 107|1: the record is a prediction, not a measurement
+    camera_assoc: int | None = None  # 112|3: 0 radar only, non-zero while the camera has the vehicle
+    class_confidence_pct: int | None = None  # 115|5 x 5: confidence of the assigned class, percent
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
@@ -170,6 +182,8 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         v_lat_code=int(field_code(slot, LAT_VEL)),
         existence_pct=int(field_code(slot, EXISTENCE)),
         predicted=bool(field_code(slot, PREDICTED)),
+        camera_assoc=int(field_code(slot, CAMERA_ASSOC)),
+        class_confidence_pct=int(field_code(slot, CLASS_CONFIDENCE)) * 5,
     )
 
 

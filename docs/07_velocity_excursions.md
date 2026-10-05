@@ -92,7 +92,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 - A −0.3 m/s mean offset (native more closing than ACC) grows with range (−0.1 below 20 m, −0.6 at 80-110 m), has no
   ego-speed slope and differs by drive (std 0.3 m/s). Of 13.6k candidate signals only the object's own state explains
-  part of it: `84|10` acceleration (R² 0.11), measurement state `264|8`, width `216|6`. Together the object's state
+  part of it: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
   and 3 s history predict ~41-47% of the error variance on 114 held-out drives; no single field carries it
   ([`excursion_sigma_scale.json`](../data/analysis/summaries/excursion_sigma_scale.json)).
 
@@ -138,7 +138,7 @@ the variants tested are in [12 Kalman speed filter](12_kalman_filter.md).
 | signal | behaviour during an excursion |
 |---|---|
 | `240\|7` velocity-error scale | higher (≈ 0.045 m/s per count against the ACC target) |
-| `264` measurement state | more near-scan state 1; states 4-8 rise 3-6 s later |
+| `264\|8` uncertainty code (σ ay candidate) | more samples at code 1; codes 4-8 rise 3-6 s later |
 | 0x235 ACC target | disagrees with the object's vRel (when present) |
 | lane state `128\|3` | changes more often, also on real closings |
 

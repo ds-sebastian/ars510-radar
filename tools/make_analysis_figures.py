@@ -23,6 +23,7 @@ from matplotlib.colors import LinearSegmentedColormap, LogNorm  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+from ars510.objects import LATERAL_M_PER_CODE  # noqa: E402
 from ars510.record import id80_crc_ok  # noqa: E402
 from ars510.transport import Id80RecordAssembler  # noqa: E402
 
@@ -145,27 +146,33 @@ def standstill_codes():
     save(fig, "standstill_codes", "Stopped objects behind a stopped ego pile up on codes 510/511: zero point 510.5 (dashed).")
 
 
+def _lat_bins(half_width_m: float, codes_per_bin: int) -> np.ndarray:
+    """Lateral bin edges on the code grid (whole codes per bin, edges between codes), so histograms do not alias."""
+    n = int(half_width_m / LATERAL_M_PER_CODE) // codes_per_bin * codes_per_bin
+    return (np.arange(-n, n + 1, codes_per_bin) - 0.5) * LATERAL_M_PER_CODE
+
+
 def lateral_hist():
     S = settled()
     S = S[S.x.between(20, 90) & (S.v_ego > 20) & (S.y.abs() < 9) & (S.v_ground > 10)]
     fig, ax = plt.subplots(figsize=(9, 3.8))
-    bins = np.arange(-9, 9.01, 0.125)
+    bins = _lat_bins(9, 8)
     for d, g in S.groupby("drive"):
         ax.hist(g.y, bins=bins, histtype="step", color=DRIVE_COL[d], lw=1.6, density=True, label=f"drive {DRIVE_NAME[d]}")
     for k in (-2, -1, 1, 2):
         ax.axvline(3.66 * k, color=INK2, lw=0.8, ls=":")
-    ax.set_xlabel("yRel = (44|12 code - 2048) / 64  (m, left positive); dotted = 3.66 m lane multiples")
+    ax.set_xlabel("yRel = (44|12 code - 2048) x 0.015  (m, left positive); dotted = 3.66 m lane multiples")
     ax.set_ylabel("density")
-    ax.set_title("Moving traffic at highway speed, 20-90 m: lane peaks near +/-3.66 m support the 1/64 scale (+/-10%)")
+    ax.set_title("Moving traffic at highway speed, 20-90 m: the adjacent lanes sit one lane width from the ego lane")
     ax.legend(loc="upper left")
-    save(fig, "lateral_lane_peaks", "Left of zero = right lanes. Lane widths vary, which is why lane peaks bound the scale only to about 10%.")
+    save(fig, "lateral_lane_peaks", "Left of zero = right lanes. Lane widths vary (3.4-3.7 m here), so lane peaks bound the scale only to about 10%.")
 
 
 def bev_density():
     S = settled()
     fig, axes = plt.subplots(1, 3, figsize=(12, 5.4), sharey=True)
     for ax, (d, g) in zip(axes, S.groupby("drive")):
-        h = ax.hist2d(g.y, g.x, bins=[np.arange(-15, 15.01, 0.25), np.arange(0, 160, 1.0)], cmap=BLUES, norm=LogNorm(), cmin=1)
+        h = ax.hist2d(g.y, g.x, bins=[_lat_bins(15, 16), np.arange(0, 160, 1.0)], cmap=BLUES, norm=LogNorm(), cmin=1)
         ax.invert_xaxis()
         ax.set_title(f"drive {DRIVE_NAME[d]}")
         ax.set_xlabel("yRel (m), left is left")
@@ -201,11 +208,11 @@ def lateral_scale():
     for d, g in L.groupby("drive"):
         ax.scatter(g.cam_Y_outer_center, g.lat_code - 2048, s=3, alpha=0.12, color=DRIVE_COL[d], lw=0, label=f"drive {d}")
     y = np.array([-10, 10])
-    ax.plot(y, 64 * y, color=INK, lw=1.2, ls="--", label="1/64 m (adopted)")
+    ax.plot(y, y / 0.015, color=INK, lw=1.2, ls="--", label="0.015 m per code (adopted)")
     ax.plot(y, 70 * y, color=S4, lw=1.2, ls=":", label="1/70 m (camera fit)")
     ax.set_xlabel("camera lateral of the vehicle centre (outer box edge -/+ 0.9 m), m, left +")
     ax.set_ylabel("44|12 code - 2048")
-    ax.set_title("Lateral: sign is unambiguous, scale is 1/64-1/70 m per code")
+    ax.set_title("Lateral against the camera: sign unambiguous, scale near 0.015 m per code")
     leg = ax.legend(markerscale=4)
     for lh in leg.legend_handles:
         lh.set_alpha(1)
@@ -448,7 +455,8 @@ def range_walk():
 
 # ---------------------------------------------------------------- slot field roles -----------------------------------
 KIN, LIFE, LANE, CLS, UNC, RAW, CONST = "kinematics", "lifecycle & confidence", "lane assignment", "class & size", "uncertainty & quality", "raw, unnamed", "constant"
-GROUP_COL = {KIN: S1, LIFE: S3, LANE: S2, CLS: "#8a5cd6", UNC: "#12a0b8", RAW: "#c9c8c2", CONST: SURFACE}
+CAM = "camera association"
+GROUP_COL = {KIN: S1, LIFE: S3, LANE: S2, CLS: "#8a5cd6", UNC: "#12a0b8", CAM: S4, RAW: "#c9c8c2", CONST: SURFACE}
 CONF_ALPHA = {"confirmed": 1.0, "likely": 0.62, "candidate": 0.32, "raw": 1.0, "const": 1.0}
 # (start, length, label, group, confidence). Kept in sync with docs/03_slot_fields.md.
 SLOT_FIELDS = [
@@ -458,19 +466,19 @@ SLOT_FIELDS = [
     (44, 12, "yRel", KIN, "confirmed"), (56, 7, "length", CLS, "likely"), (63, 1, "", RAW, "raw"),
     (64, 10, "vx (ground)", KIN, "confirmed"), (74, 10, "vy (ground)", KIN, "likely"), (84, 10, "ax", KIN, "likely"),
     (94, 2, "", CONST, "const"), (96, 10, "ay", KIN, "likely"), (106, 1, "", RAW, "raw"), (107, 1, "c", LIFE, "candidate"),
-    (108, 1, "", CONST, "const"), (109, 3, "motion", LIFE, "likely"), (112, 3, "", RAW, "raw"), (115, 8, "", RAW, "raw"),
-    (123, 5, "", CONST, "const"), (128, 3, "lane", LANE, "confirmed"), (131, 4, "", RAW, "raw"), (135, 1, "", CONST, "const"),
-    (136, 4, "cls conf", CLS, "candidate"), (140, 3, "cls alt", CLS, "likely"), (143, 5, "", CONST, "const"),
+    (108, 1, "", CONST, "const"), (109, 3, "motion", LIFE, "likely"), (112, 3, "cam", CAM, "likely"), (115, 5, "cls conf", CLS, "likely"),
+    (120, 3, "", RAW, "raw"), (123, 5, "", CONST, "const"), (128, 3, "lane", LANE, "confirmed"), (131, 4, "w max", LANE, "confirmed"),
+    (135, 1, "", CONST, "const"), (136, 4, "cam conf", CAM, "likely"), (140, 3, "cls alt", CLS, "likely"), (143, 5, "", CONST, "const"),
     (148, 4, "w R", LANE, "likely"), (152, 4, "w L", LANE, "likely"), (156, 4, "w ego", LANE, "likely"),
-    (160, 3, "", CONST, "const"), (163, 3, "class", CLS, "likely"), (166, 2, "", RAW, "raw"), (168, 10, "flags", RAW, "raw"),
-    (178, 3, "", CONST, "const"), (181, 1, "", RAW, "raw"), (182, 1, "", RAW, "raw"), (183, 1, "", RAW, "raw"),
-    (184, 8, "score 2", UNC, "candidate"), (192, 8, "", RAW, "raw"), (200, 7, "σ head", UNC, "candidate"),
+    (160, 3, "", CONST, "const"), (163, 3, "class", CLS, "likely"), (166, 2, "", CONST, "const"), (168, 10, "flags", RAW, "raw"),
+    (178, 3, "", CONST, "const"), (181, 1, "d", CAM, "candidate"), (182, 1, "", RAW, "raw"), (183, 1, "", RAW, "raw"),
+    (184, 8, "score 2", UNC, "candidate"), (192, 8, "", CONST, "const"), (200, 7, "σ head", UNC, "likely"),
     (207, 1, "", CONST, "const"), (208, 6, "heading", KIN, "likely"), (214, 2, "", CONST, "const"),
     (216, 6, "width", CLS, "likely"), (222, 2, "", CONST, "const"), (224, 7, "σ dRel", UNC, "likely"),
     (231, 1, "", CONST, "const"), (232, 7, "σ yRel", UNC, "likely"), (239, 1, "", RAW, "raw"), (240, 7, "σ vx", UNC, "likely"),
     (247, 1, "", CONST, "const"), (248, 7, "σ vy", UNC, "likely"), (255, 1, "", CONST, "const"),
-    (256, 8, "existence", UNC, "candidate"), (264, 8, "meas. state", UNC, "candidate"), (272, 5, "height?", CLS, "candidate"),
-    (277, 11, "", RAW, "raw"),
+    (256, 8, "σ ax", UNC, "candidate"), (264, 8, "σ ay", UNC, "candidate"), (272, 5, "height?", CLS, "candidate"),
+    (277, 11, "", CONST, "const"),
 ]
 
 
@@ -504,7 +512,7 @@ def field_map():
     for c in range(0, 32, 4):
         ax.text(c + 0.5, -0.35, str(c), ha="center", fontsize=7.5, color=INK2)
     ax.text(-0.7, -0.35, "bit", ha="right", fontsize=7.5, color=INK2)
-    handles = [Patch(facecolor=GROUP_COL[g], edgecolor="#8f8e89" if g == CONST else "none", label=g) for g in (KIN, LIFE, LANE, CLS, UNC, RAW, CONST)]
+    handles = [Patch(facecolor=GROUP_COL[g], edgecolor="#8f8e89" if g == CONST else "none", label=g) for g in (KIN, LIFE, LANE, CLS, UNC, CAM, RAW, CONST)]
     handles += [Patch(facecolor="#9b9a95", edgecolor="none", label="confirmed (solid, bold label)"),
                 Patch(facecolor=(0.61, 0.60, 0.58, 0.62), edgecolor="#6f6e6a", lw=1.4, label="likely (lighter, outlined)"),
                 Patch(facecolor=(0.61, 0.60, 0.58, 0.32), edgecolor="#6f6e6a", lw=1.4, label="candidate (pale, outlined)")]
@@ -528,14 +536,14 @@ def lane_weights():
     dom = W.argmax(1)
     names, cols = ("right lane (148|4)", "ego lane (156|4)", "left lane (152|4)"), (S2, S1, S3)
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(13, 4.3), gridspec_kw={"width_ratios": [1.25, 1]})
-    bins = np.arange(-8, 8.01, 0.1)
+    bins = _lat_bins(8, 7)
     for k in range(3):
         a1.hist(S.y[dom == k], bins=bins, color=cols[k], alpha=0.75, label=names[k])
     a1.set_xlabel("yRel (m, left positive)")
     a1.set_ylabel("settled samples")
     a1.set_title("Which weight dominates, by lateral position")
     a1.legend(fontsize=8)
-    yb = np.arange(-7, 7.01, 0.25)
+    yb = _lat_bins(7, 16)
     idx = np.digitize(S.y, yb)
     frac = W / W.sum(1, keepdims=True)
     for k in range(3):
@@ -548,6 +556,129 @@ def lane_weights():
     NUMBERS["lane_weights"] = {names[k]: {"median_y": float(np.median(S.y[dom == k])), "n": int((dom == k).sum())} for k in range(3)}
     NUMBERS["lane_weights"]["sum_15_or_16_share"] = float(np.isin(W.sum(1), (15, 16)).mean())
     save(fig, "lane_weights", "Settled tracks, 5-120 m, all drives, rows with a nonzero triplet. The three nibbles sum to 15 or 16.")
+
+
+# ---------------------------------------------------------------- ACC target frames ----------------------------------
+XPORT, STATE, TIME, TRK = "check byte / counter", "state & flags", "time", "tracker bytes (raw)"
+ACC_GROUP_COL = {XPORT: "#e9e8e3", KIN: S1, STATE: S3, CLS: "#8a5cd6", TIME: S4, TRK: "#12a0b8", CONST: SURFACE}
+# (frame, bits, [(first bit, length, label, group, confidence)]); bits counted as sent: byte 0 first, MSB first. Kept in
+# sync with docs/05_acc_target_and_support.md and ars510.support.parse_acc_target / parse_0x239 / parse_0x23b.
+ACC_FRAMES = [
+    ("0x235", 64, [(0, 8, "check", XPORT, "confirmed"), (8, 4, "ctr", XPORT, "confirmed"), (12, 4, "state", STATE, "confirmed"),
+                   (16, 8, "aRel", KIN, "confirmed"), (24, 11, "vRel", KIN, "confirmed"), (35, 2, "", CONST, "const"),
+                   (37, 8, "aLat", KIN, "likely"), (45, 11, "vLat", KIN, "likely"), (56, 3, "idle", STATE, "confirmed"),
+                   (59, 5, "ID", STATE, "likely")]),
+    ("0x237", 64, [(0, 8, "check", XPORT, "confirmed"), (8, 4, "ctr", XPORT, "confirmed"), (12, 13, "distance", KIN, "confirmed"),
+                   (25, 12, "lateral", KIN, "confirmed"), (37, 8, "tracker A", TRK, "candidate"), (45, 8, "tracker B", TRK, "candidate"),
+                   (53, 1, "p", STATE, "confirmed"), (54, 1, "", CONST, "const"), (55, 1, "c", STATE, "likely"),
+                   (56, 1, "k", STATE, "likely"), (57, 3, "lvl", STATE, "likely"), (60, 4, "", CONST, "const")]),
+    ("0x239", 64, [(0, 8, "check", XPORT, "confirmed"), (8, 4, "ctr", XPORT, "confirmed"), (12, 4, "class", CLS, "confirmed"),
+                   (16, 2, "p", STATE, "confirmed"), (18, 6, "", RAW, "raw"), (24, 1, "L", STATE, "likely"), (25, 3, "", CONST, "const"),
+                   (28, 1, "p", STATE, "confirmed"), (29, 32, "timestamp (µs)", TIME, "confirmed"), (61, 3, "", CONST, "const")]),
+    ("0x23B", 24, [(0, 8, "CRC-8", XPORT, "confirmed"), (8, 4, "ctr", XPORT, "confirmed"), (12, 12, "width (cm)", CLS, "likely")]),
+]
+
+
+def acc_frame_map():
+    """Bit layout of the radar's ACC target frames, one row per frame."""
+    from matplotlib.patches import Patch, Rectangle
+    fig, ax = plt.subplots(figsize=(14, 3.9))
+    ax.set_xlim(-4.5, 64.5)
+    ax.set_ylim(len(ACC_FRAMES) - 0.05, -0.85)
+    ax.axis("off")
+    for row, (name, nbits, fields) in enumerate(ACC_FRAMES):
+        cover = np.zeros(nbits, int)
+        for st, ln, *_ in fields:
+            cover[st:st + ln] += 1
+        assert (cover == 1).all(), f"{name} fields must tile the frame"
+        ax.text(-0.8, row + 0.43, name, ha="right", va="center", fontsize=10, fontweight="bold")
+        for st, ln, lab, grp, conf in fields:
+            col, alpha = ACC_GROUP_COL.get(grp, GROUP_COL.get(grp)), CONF_ALPHA[conf]
+            ax.add_patch(Rectangle((st, row), ln, 0.86, facecolor=col, alpha=alpha, edgecolor="#8f8e89" if grp == CONST else "none", lw=0.6))
+            if grp not in (RAW, CONST, XPORT) and conf != "confirmed":
+                ax.add_patch(Rectangle((st, row), ln, 0.86, facecolor="none", edgecolor=col, lw=1.4))
+            if lab:
+                ax.text(st + ln / 2, row + 0.45, lab, ha="center", va="center", fontsize=8.4 if ln >= 4 else 6.8, color=INK,
+                        fontweight="bold" if conf == "confirmed" and grp != XPORT else "normal")
+        for k in range(1, nbits // 8):
+            ax.plot([8 * k, 8 * k], [row - 0.04, row + 0.9], color="#8f8e89", lw=0.8)
+    for c in range(0, 64, 8):
+        ax.text(c + 4, -0.3, f"byte {c // 8}", ha="center", fontsize=8, color=INK2)
+    groups = (XPORT, STATE, KIN, CLS, TIME, TRK, RAW, CONST)
+    handles = [Patch(facecolor=ACC_GROUP_COL.get(g, GROUP_COL.get(g)), edgecolor="#8f8e89" if g == CONST else "none", label=g) for g in groups]
+    ax.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=8, fontsize=8.5)
+    ax.set_title("The radar's ACC target, bit for bit (as sent: byte 0 first, most significant bit first)", fontsize=11, pad=4)
+    save(fig, "acc_frame_map", "aRel, vRel: relative acceleration and closing speed. aLat, vLat: relative lateral acceleration and lateral speed. p: target present. "
+         "c / k: in-path confirmed / candidate, lvl: in-path level. L: the target is also in the 0x80 object list.\n"
+         "Solid with bold label = confirmed, outlined = likely or candidate. Conversions are in docs/05.")
+
+
+def camera_association():
+    """112|3 by range, day against night, and the daylight-only flag 181|1 (slot_camera_association.json)."""
+    D = summary("slot_camera_association")
+    A = D["set_700_segments"]
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(12.5, 4.1), gridspec_kw={"width_ratios": [1.7, 1]})
+    def mid(k):
+        lo, hi = (float(v) for v in k.split("-"))
+        return 0.5 * (lo + hi)
+    for key, col, lab in (("b112_nonzero_by_range_day", S4, "day"), ("b112_nonzero_by_range_night", S1, "night (camera reports light sources)")):
+        ks = list(A[key])
+        a1.plot([mid(k) for k in ks], [100 * A[key][k] for k in ks], color=col, marker="o", markersize=5, label=lab)
+    a1.set_xlabel("dRel (m), in-lane vehicles moving with ego")
+    a1.set_ylabel("share with 112|3 non-zero (%)")
+    a1.set_title("Camera-association state 112|3: a 45 m limit by day, none at night")
+    a1.set_ylim(-3, 104)
+    a1.legend(loc="center right")
+    sets = (("700 segments", A["b181"]["day_share"], A["b181"]["night_set"] / A["b181"]["night_rows"]),
+            ("114 other segments", D["set_114_segments"]["b181"]["day_share"], D["set_114_segments"]["b181"]["night_set"] / D["set_114_segments"]["b181"]["night_rows"]),
+            ("13 original logs", D["original_logs_public_decoder_13"]["day_b181_set"] / D["original_logs_public_decoder_13"]["day_vehicle_rows"],
+             D["original_logs_public_decoder_13"]["night_b181_set"] / D["original_logs_public_decoder_13"]["night_vehicle_rows"]))
+    x = np.arange(len(sets))
+    a2.bar(x - 0.19, [100 * s_[1] for s_ in sets], 0.36, color=S4, label="day")
+    a2.bar(x + 0.19, [100 * s_[2] for s_ in sets], 0.36, color=S1, label="night")
+    for i, s_ in enumerate(sets):
+        a2.text(i - 0.19, 100 * s_[1] + 0.8, f"{100 * s_[1]:.1f}", ha="center", fontsize=8.5)
+        a2.text(i + 0.19, 100 * s_[2] + 0.8, f"{100 * s_[2]:.2f}".rstrip("0").rstrip(".") if s_[2] else "0", ha="center", fontsize=8.5)
+    a2.set_xticks(x, [s_[0] for s_ in sets])
+    a2.set_ylabel("mature vehicle rows with 181|1 set (%)")
+    a2.set_title("Flag 181|1 is set only by day")
+    a2.legend(loc="upper left")
+    save(fig, "camera_association", "Night = the camera sends light-source records on 0x240 / 0x244. Mature vehicle rows: class 2 or 3, age above 60. "
+         "Numbers: data/analysis/summaries/slot_camera_association.json.")
+
+
+def lateral_unit_evidence():
+    """Independent estimates of the lateral code unit, in codes per metre (lateral_units.json)."""
+    D = summary("lateral_units")
+    cr = D["crossing_objects_position_codes_per_velocity_code_second"]
+    rot, rot2 = D["stationary_cars_under_ego_rotation"]["set_1"]["8 cycles"], D["stationary_cars_under_ego_rotation"]["set_2"]["8 cycles"]
+    ratios = [v["forward"] for g in ("set_1", "set_2") for v in D["acc_lateral_code_per_object_list_code"][g].values()] + [D["acc_lateral_code_per_object_list_code"]["original_logs"]["forward"]]
+    vy = [v["dy_codes_per_int_vy_codes"] / 0.15 for g in ("set_1", "set_2") for v in cr[g].values()]   # forward fits
+    vy_hi = max(v["reverse"] for v in cr["set_1"].values()) / 0.15                                    # errors-in-variables upper bound
+    rows = [  # (label, low, centre, high, colour)
+        ("ACC target lateral (cm) per object-list code\n1.499-1.502 on five sets, 375 k rows", 100 / max(ratios), 100 / 1.5, 100 / min(ratios), S1),
+        ("crossing objects: lateral position against\nintegrated lateral velocity (0.15 m/s per code)", min(vy), float(np.median(vy)), vy_hi, S3),
+        (f"stationary cars while ego turns (gyro), {rot['tracks']} tracks", rot["ci95"][0], rot["codes_per_m"], rot["ci95"][1], S2),
+        (f"same, other drives, {rot2['tracks']} tracks", rot2["ci95"][0], rot2["codes_per_m"], rot2["ci95"][1], S2),
+        ("camera outer box edges, three drives", min(D["camera_outer_box_edges_codes_per_m"]), float(np.median(D["camera_outer_box_edges_codes_per_m"])), max(D["camera_outer_box_edges_codes_per_m"]), S4),
+        ("adjacent-lane peaks if lanes are 3.66 m, three drives", min(D["lane_peaks_codes_per_3p66_m_lane"]["codes_per_m_if_3p66_m"]), float(np.median(D["lane_peaks_codes_per_3p66_m_lane"]["codes_per_m_if_3p66_m"])),
+         max(D["lane_peaks_codes_per_3p66_m_lane"]["codes_per_m_if_3p66_m"]), S5),
+    ]
+    fig, ax = plt.subplots(figsize=(10, 3.9))
+    for i, (lab, lo, c, hi, col) in enumerate(rows):
+        ax.plot([lo, hi], [i, i], color=col, lw=5, alpha=0.45, solid_capstyle="round")
+        ax.plot([c], [i], marker="o", color=col, markersize=7)
+    ax.axvline(1 / 0.015, color=INK, lw=1.3, ls="--")
+    ax.text(1 / 0.015 + 0.15, -0.72, "0.015 m per code (66.7)", fontsize=8.5, color=INK, va="center")
+    ax.axvline(64, color=INK2, lw=1.0, ls=":")
+    ax.text(64 - 0.15, -0.72, "1/64 m", fontsize=8.5, color=INK2, ha="right", va="center")
+    ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=8.5)
+    ax.set_ylim(len(rows) - 0.5, -1.05)
+    ax.set_xlabel("object-list lateral codes per metre")
+    ax.set_title("The object-list lateral step is 1.5 cm: independent estimates")
+    ax.grid(axis="y", visible=False)
+    save(fig, "lateral_unit_evidence", "Dot = estimate, bar = range across sets or 95 % track-bootstrap interval. "
+         "Numbers: data/analysis/summaries/lateral_units.json.")
 
 
 CLASS_RECODE_140 = {0: 1, 5: 2, 7: 3, 1: 4, 3: 5, 4: 6}  # 140|3 -> 163|3
@@ -675,7 +806,7 @@ def initial_attribute_zeros():
     info = summary("initial_attribute_zeros")
     g = pd.DataFrame(info["example"]["samples"])
     fig, axes = plt.subplots(2, 3, figsize=(10.2, 5.4), sharex=True)
-    fields = [("confidence_like", "Confidence-like 136|4", S1),
+    fields = [("confidence_like", "Association confidence 136|4", S1),
               ("length_code", "Length 56|7", S2),
               ("width_code", "Width 216|6", S3),
               ("height_full_code", "Full height-like byte 272|8", S4),
@@ -875,7 +1006,8 @@ NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case)}
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
+                                   acc_frame_map, camera_association, lateral_unit_evidence)}
 
 
 if __name__ == "__main__":
