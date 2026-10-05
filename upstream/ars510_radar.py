@@ -60,7 +60,7 @@ class Ars510Radar:
       if len(dat) != 8 or (not dat[1] & 4 if addr == ACC_SPEED_ADDR else dat[2:] == bytes.fromhex("003E80000000")):
         self.acc_speed = self.acc_pos = None  # no target
       elif addr == ACC_SPEED_ADDR:
-        self.acc_speed = (t, (be_bits(dat, 29, 11) - 1024) * 0.1)
+        self.acc_speed = (t, (be_bits(dat, 29, 11) - 1024) * 0.125)
       else:
         self.acc_pos = (t, be_bits(dat, 47, 5) * 5.26 + 9.6, be_bits(dat, 28, 11) * 0.01667 - 16.70)
     elif bus == RADAR_BUS and addr == OBJECTS_ADDR:

@@ -87,7 +87,7 @@ class NativeInterfaceConfig:
     summary_max_range_m: float = 80.0  # summary_sigma_mps <= 0 below turns the summaries off
     summary_window_s: float = 1.0
     summary_match_mps: float = 1.5
-    summary_scales: tuple[tuple[float, float], ...] = ((0.0541, -5.14), (0.0461, -12.45))  # m per code, offset m (0x192, 0x194)
+    summary_scales: tuple[tuple[float, float], ...] = ((0.0625, -10.0), (0.0625, -10.0))  # m per code, offset m (0x192, 0x194)
     # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed. Each
     # reading is weighted by
     # its own standard deviation: the object-list speed by speed_sigma_per_code * 240|7 (the radar's velocity-error

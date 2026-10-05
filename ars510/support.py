@@ -1,8 +1,7 @@
 """Support messages: the OEM ACC target witness (0x235 / 0x237) and the selected-target summaries (docs/05).
 
-0x192 / 0x194 (4 bytes, ~radar cycle) each carry two raw 13-bit summaries.
-Word 0 is range-like; physical scale and origin require independent calibration.
-Preserve all of word 1, including bit 12, before physical interpretation.
+0x192 / 0x194 (4 bytes, ~radar cycle) each carry the position of one target of the radar's internal tracker in the
+object list's encoding: word 0 distance (code - 160) / 16 m, word 1 lateral (code - 2048) / 64 m, left positive.
 The whole-frame sentinel is 00 FF 00 FF. Parsing a non-sentinel does not certify
 target availability or association. The driving interface does not use this helper.
 """
@@ -18,6 +17,16 @@ A680_IDLE = bytes.fromhex("000008008000800A")
 class Target192:
     range_code13: int
     field1_code13: int
+
+    @property
+    def d_rel(self) -> float:
+        """Distance in m: the object list's encoding, (code - 160) / 16."""
+        return (self.range_code13 - 160) / 16
+
+    @property
+    def y_rel(self) -> float:
+        """Lateral position in m, left positive: (code - 2048) / 64."""
+        return (self.field1_code13 - 2048) / 64
 
 
 def parse_0x192(data: bytes) -> Target192 | None:
@@ -59,15 +68,14 @@ def _be_field(data: bytes, start: int, length: int) -> int:
 
 
 def parse_acc_target_vrel(data: bytes) -> float | None:
-    """0x235: nominal closing speed of the OEM ACC target witness, m/s (negative = closing).
+    """0x235: closing speed of the radar's ACC target, m/s (negative = closing).
 
-    Bits 29..39, offset 1024, nominal 0.1 m/s per code; physical units are not independently calibrated.
-    On 20 routes the median difference against the vision-matched lead is 0.00 m/s under this convention.
-    When native vRel and this value differ by > 3 m/s, vision agrees with this value in 86-90% of cases (docs/05).
+    Bits 29..39, offset 1024, 0.125 m/s per code. The unit is fixed by stopped lead vehicles (true closing speed =
+    ego speed) and by the slope of the target's own range code: speed / range rate = 0.99 on 1,862 windows (docs/05).
     """
     if len(data) < 8:
         return None
-    return (_be_field(data, 29, 11) - 1024) * 0.1
+    return (_be_field(data, 29, 11) - 1024) * 0.125
 
 
 def parse_acc_target_arel(data: bytes) -> float | None:
@@ -96,14 +104,10 @@ def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
 
 
 def parse_acc_target_range_code(data: bytes) -> int | None:
-    """0x237 BE39|13 raw distance code, without an assumed absolute origin.
+    """0x237 BE39|13 distance code of the radar's ACC target: distance = 0.025 m x code, zero offset.
 
-    Nominal changes of about 0.02 m/code agree with integrated OEM 0x235 vRel
-    assuming 0.1 m/s per velocity code on continuous-target windows. Jointly
-    rescaling both preserves this closure; it does not calibrate physical units.
-    Do not reuse the coarse decoder's +9.6 m offset. Callers must
-    establish target availability and continuity before interpreting changes.
-    The default radar interface does not consume this diagnostic field.
+    Against the 0x680 object range the fit is 0.02500 m per code, +0.01 m, 0.02 m median residual (docs/05). Callers
+    must establish target availability first. The default radar interface does not consume this field.
     """
     if len(data) < 8:
         return None
