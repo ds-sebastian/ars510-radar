@@ -142,4 +142,8 @@ the variants tested are in [12 Kalman speed filter](12_kalman_filter.md).
 | 0x235 ACC target | disagrees with the object's vRel (when present) |
 | lane state `128\|3` | changes more often, also on real closings |
 
-None alone separates an excursion from a real closing within the first second ([10](10_research_directions.md)).
+None alone separates an excursion from a real closing within the first second ([10](10_research_directions.md)), and
+neither do they together: a classifier on every slot field and its 1 s changes separates false-closing frames from real
+closings with a cross-validated AUC of 0.70, and from closings where the lead really brakes with 0.59. The object list
+carries no per-frame trust flag and no second speed; the radar's clean speeds are its ACC target, the two summaries and the
+sparse 0x680 reports ([`frame_trust_classifier.json`](../data/analysis/summaries/frame_trust_classifier.json)).
