@@ -171,10 +171,40 @@ radar link.
 | signal | booting | running |
 |---|---|---|
 | 0x101 byte 0 | `0x1D` | `0x11` |
-| 0x197 bit 8 | 0 | 1 (70 ms after 0x101 switches) |
+| 0x197 bit 8 | 0 | 1 (60 ms after 0x101 switches) |
 | 0x24F bit 6 | 0 | 1 |
 
-All three switch once and stay, so they are a direct "radar running" signal and a radar-reboot detector.
+All three switch once and stay, so they are a direct "radar running" signal and a radar-reboot detector. 0x101 and
+0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread
+7 and 14 ms): they acknowledge the object list.
+
+## 0x680: single-object stream
+
+Every 0.5 s the radar reports **one object from its function-level tracker**, the same smooth tracker that feeds the
+ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
+
+| field | reading | conf. |
+|---|---|---|
+| `0\|8` | selector: 0 / 1 mostly stationary objects, 3 mostly same-direction vehicles | ◐ |
+| `8\|13` | longitudinal distance, 1/32 m per code (0-256 m) | ● |
+| `21\|11` signed | lateral position, 1/64 m per code, left positive | ◐ |
+| `32\|10` − 512 | speed over ground, 0.15 m/s per code | ◐ |
+| `42\|6` | flags: 8 on vehicles, 1 / 9 / 49 on stationary objects | ○ |
+| `48\|8` − 128 | follows the lateral-position slope (lateral speed) | ○ |
+
+- **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
+  held-out segments).
+- **Speed:** on 1,872 frames where 0x680 and the ACC target are on the same vehicle, the two speeds differ by 0.21 m/s
+  (median absolute). When the object list is more than 2 m/s away from the ACC target, 0x680 stays within 1 m/s of
+  the ACC target in 50 of 51 frames.
+- **Content while driving:** a stationary roadside object in 83% of frames (typically 8 m to the side), a
+  same-direction vehicle in 13%, an oncoming one in 3%. The 0x80 object list does not carry new stationary objects
+  while driving ([02](02_object_list.md)); 0x680 does, one at a time.
+- **Idle** payload `00 00 08 00 80 00 80 0A` appears in 0.12% of frames above 5 m/s and never for longer than 1.0 s
+  in 7.8 h, so a long idle run while driving is a candidate "radar sees nothing" indicator
+  ([10](10_research_directions.md)).
+
+Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json).
 
 ## Other frames
 
@@ -189,5 +219,5 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 - **0x210:** copy of Toyota road-sign-assist data (speed-sign presence, `RSA1.SPDVAL1`, `RSA3.TSRMSW`).
 - **0x500 / 0x502:** unit-specific constants (redacted in the shared DBC; compare yours) and two slowly drifting codes
   in 0x502 (temperature-like behaviour).
-- **0x680, 0x501:** status nibbles.
+- **0x501:** status nibble.
 - **0x180, 0x198, 0x23D:** constants.
