@@ -139,6 +139,7 @@ class TestShellAndSupport:
         assert parse_0x192(bytes.fromhex("0320")) is None
         t = parse_0x192((640).to_bytes(2, "big") + bytes([7, 0]))
         assert t.range_code13 == 640 and t.field1_code13 == 1792
+        assert t.d_rel == 30.0 and t.y_rel == -4.0
 
     @pytest.mark.parametrize("before,after,values", [
         ("03C50FFB", "03CD100D", (4091, 4109)),

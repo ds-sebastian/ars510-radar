@@ -21,9 +21,10 @@ def test_raw_code_does_not_apply_coarse_origin():
     assert parse_acc_target_range_code((1000 << 39).to_bytes(8, "big")) == 1000
 
 
-def test_dbc_keeps_unknown_absolute_origin_as_raw_code():
+def test_dbc_distance_code_is_metric_with_zero_offset():
     dbc = (Path(__file__).resolve().parents[1] / "dbc/ars510_radar_bus.dbc").read_text()
-    assert 'SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (1,0) [0|8191] "code"' in dbc
+    assert 'SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (0.025,0) [0|204.775] "m"' in dbc
+    assert 'SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.125,-128)' in dbc
 
 
 def test_acc_target_arel_byte2_zero_at_idle_payload():

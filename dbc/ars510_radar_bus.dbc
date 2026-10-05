@@ -231,9 +231,9 @@ BO_ 401 ARS510_A191_COMPANION: 8 RADAR
 
 BO_ 402 ARS510_A192_COMPANION: 4 RADAR
  SG_ A192_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A192_PAIR_RANGE_CODE13 : 4|13@0+ (0.046875,0) [0|383.95] "m" RADAR
+ SG_ A192_PAIR_RANGE_CODE13 : 4|13@0+ (0.0625,-10) [-10|501.94] "m" RADAR
  SG_ A192_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A192_PAIR_FIELD1_CODE13 : 20|13@0+ (1,0) [0|8191] "code" RADAR
+ SG_ A192_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015625,-32) [-32|95.98] "m" RADAR
 
 BO_ 403 ARS510_A193_COMPANION: 8 RADAR
  SG_ A193_B0_RESERVED0 : 0|1@1+ (1,0) [0|1] "raw" RADAR
@@ -253,9 +253,9 @@ BO_ 403 ARS510_A193_COMPANION: 8 RADAR
 
 BO_ 404 ARS510_A194_COMPANION: 4 RADAR
  SG_ A194_WORD0_RESERVED_ZERO3 : 5|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A194_PAIR_RANGE_CODE13 : 4|13@0+ (0.046875,0) [0|383.95] "m" RADAR
+ SG_ A194_PAIR_RANGE_CODE13 : 4|13@0+ (0.0625,-10) [-10|501.94] "m" RADAR
  SG_ A194_WORD1_RESERVED_ZERO3 : 21|3@1+ (1,0) [0|7] "raw" RADAR
- SG_ A194_PAIR_FIELD1_CODE13 : 20|13@0+ (1,0) [0|8191] "code" RADAR
+ SG_ A194_PAIR_FIELD1_CODE13 : 20|13@0+ (0.015625,-32) [-32|95.98] "m" RADAR
 
 BO_ 565 ARS510_A235_COMPANION: 8 RADAR
  SG_ A235_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -267,7 +267,7 @@ BO_ 565 ARS510_A235_COMPANION: 8 RADAR
  SG_ A235_B5 : 40|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A235_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
- SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.1,-102.4) [-102.4|102.3] "m/s" RADAR
+ SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.125,-128) [-128|127.875] "m/s" RADAR
  SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.1,-10) [-10|15.5] "m/s^2" RADAR
 
 BO_ 567 ARS510_A237_COMPANION: 8 RADAR
@@ -282,7 +282,7 @@ BO_ 567 ARS510_A237_COMPANION: 8 RADAR
  SG_ A237_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A237_ACC_TARGET_LAT : 30|11@0+ (0.01667,-16.7) [-16.7|17.42] "m" RADAR
  SG_ A237_ACC_TARGET_DIST_COARSE : 11|5@0+ (5.26,9.6) [9.6|172.66] "m" RADAR
- SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (1,0) [0|8191] "code" RADAR
+ SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (0.025,0) [0|204.775] "m" RADAR
 
 BO_ 569 ARS510_A239_COMPANION: 8 RADAR
  SG_ A239_B0_CHECK_BYTE : 0|8@1+ (1,0) [0|255] "debug" RADAR
@@ -326,12 +326,12 @@ CM_ BO_ 408 "Constant 0x10.";
 CM_ BO_ 514 "Counter frame: byte 1 high nibble counts mod 16; byte 0 is a check byte that depends only on the counter.";
 CM_ BO_ 528 "Copy of Toyota road-sign-assist data (speed-sign presence, speed-limit value, TSR switch).";
 CM_ BO_ 565 "The OEM ACC target witness, 50 Hz: closing speed and relative acceleration of the target the stock ACC follows.";
-CM_ SG_ 565 A235_ACC_TARGET_VREL "Nominal closing speed of the ACC target, m/s, negative = closing. The 0.1 m/s per code convention is not independently calibrated. Median difference against the vision lead is 0.00 m/s under this convention; when it and an object's vRel differ by more than 3 m/s, vision agrees with this value 86-90% of the time.";
+CM_ SG_ 565 A235_ACC_TARGET_VREL "Closing speed of the ACC target, m/s, negative = closing; 0.125 m/s per code (stopped leads, distance slope).";
 CM_ SG_ 565 A235_ACC_TARGET_AREL "Nominal relative acceleration of the ACC target (positive = opening): (code - 100) * 0.1 m/s^2. Derivative consistency is conditional on the assumed velocity scale, not independent physical calibration. Code 100 is the idle value.";
 CM_ BO_ 567 "The OEM ACC target witness, 50 Hz: lateral position and distance of the target the stock ACC follows (see 0x235).";
 CM_ SG_ 567 A237_ACC_TARGET_LAT "Nominal lateral position of the ACC target, m, left positive; empirical reference-dependent scale and offset.";
 CM_ SG_ 567 A237_ACC_TARGET_DIST_COARSE "Nominal distance of the ACC target in about 5.26 m steps (+9.6 m), an empirical reference-dependent conversion; the top 5 bits of A237_ACC_TARGET_DISTANCE_CODE.";
-CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Full 13-bit distance code of the ACC target. Nominal 0.02 m/code distance changes close against integrated velocity assuming 0.1 m/s/code; this identifies a scale ratio, not absolute physical units. Absolute offset is unmeasured; use for changes, not absolute range.";
+CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Distance of the ACC target, 0.025 m per code, zero offset (0.02 m median residual against the 0x680 object range).";
 CM_ BO_ 569 "50 Hz companion frame of the 0x23x family: check byte, state nibble, rolling counter and a free-running payload.";
 CM_ BO_ 571 "50 Hz companion frame (3 bytes) of the 0x23x family; holds its payload in sync with 0x235 / 0x237.";
 CM_ BO_ 573 "Always zero.";
@@ -504,9 +504,9 @@ CM_ SG_ 401 A191_B6_RESERVED0 "Always zero.";
 CM_ SG_ 401 A191_PAIR_DESCRIPTOR1_CODE7 "Raw descriptor 2 of 3, observed active values 15 and 23.";
 CM_ SG_ 401 A191_PAIR_DESCRIPTOR2_CODE8 "Raw descriptor 3 of 3, observed active values 20-120; can change with coherent code and age.";
 CM_ SG_ 402 A192_WORD0_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Range-like raw summary; physical scale and offset require independent calibration and target association.";
+CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (code - 160) / 16 m, the object list encoding.";
 CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Full 13-bit raw summary, with continuous crossings of 4096; retain bit 12 before any physical interpretation.";
+CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) / 64 m, left positive; keep all 13 bits.";
 CM_ SG_ 403 A193_B0_RESERVED0 "Always zero.";
 CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "Target score: 91-100 while active, 127 in the sentinel.";
 CM_ SG_ 403 A193_B1_RESERVED0 "Always zero.";
@@ -521,9 +521,9 @@ CM_ SG_ 403 A193_B6_RESERVED0 "Always zero.";
 CM_ SG_ 403 A193_PAIR_DESCRIPTOR1_CODE7 "Raw descriptor 2 of 3, observed active values 15 and 23.";
 CM_ SG_ 403 A193_PAIR_DESCRIPTOR2_CODE8 "Raw descriptor 3 of 3; pooled active values across both pairs are 20-120.";
 CM_ SG_ 404 A194_WORD0_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 404 A194_PAIR_RANGE_CODE13 "Range-like raw summary; physical scale and offset require independent calibration and target association.";
+CM_ SG_ 404 A194_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (code - 160) / 16 m, the object list encoding.";
 CM_ SG_ 404 A194_WORD1_RESERVED_ZERO3 "Always zero.";
-CM_ SG_ 404 A194_PAIR_FIELD1_CODE13 "Full 13-bit raw summary; preserve bit 12 and require independent physical calibration.";
+CM_ SG_ 404 A194_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) / 64 m, left positive; keep all 13 bits.";
 CM_ SG_ 565 A235_B0_CHECK_BYTE "Check byte over the rest of the frame.";
 CM_ SG_ 565 A235_STATUS_MUX4 "Byte-1 low nibble: 1 while the ACC target is absent (idle payload), other values while active.";
 CM_ SG_ 565 A235_COUNTER4 "Rolling counter.";
