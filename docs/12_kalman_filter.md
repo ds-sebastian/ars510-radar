@@ -149,7 +149,9 @@ Each step was replayed on the 34 drives against the previous one, with limits fi
 braking stays at 30 ticks on the held-out drives, 2 on the further drives and 0 on the owner drives through all four
 steps (lateral units, ACC fine distance, summaries by position, ACC distance as range), with 11 hard and 4 target
 episodes; braking onset against vision stays at −0.02 s and the share of driver brakes anticipated at −1 m/s² moves from
-44.9 % to 43.7 % (vision only 40.1 %). Numbers: [`tracker_association.json`](../data/analysis/summaries/tracker_association.json).
+44.9 % to 43.7 % (vision only 40.1 %). The openpilot version (no summaries) replayed with the same changes has the same
+hard braking (30 / 2 / 0 ticks, 11 hard and 4 target episodes), 1,242 lead flips, onset −0.015 s and 43.1 % anticipated.
+Numbers: [`tracker_association.json`](../data/analysis/summaries/tracker_association.json).
 
 ## What each part is worth
 

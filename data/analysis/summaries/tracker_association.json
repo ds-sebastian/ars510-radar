@@ -578,6 +578,34 @@
    "switches_fewer": 18,
    "switches_more": 1,
    "switches_same": 8
+  },
+  "openpilot_version_summaries_off": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1242
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.015,
+   "ant10": 0.431,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0
   }
  },
  "published_lead_distance_vs_vision_lead": {
