@@ -317,5 +317,32 @@
    1
   ],
   "routes": 15
+ },
+ "acc_target_weight": {
+  "definition": "ACC target speed sigma in fused: 0.5 (default), 0.13 (its measured error), 0.02 (trusted almost completely); 34 replay drives and 8 fresh drives",
+  "replay_34_drives": {
+   "0.5": {
+    "heldout_hard": 30,
+    "unjustified_hard": 3,
+    "onset_vs_vision_s": 0.013,
+    "anticipated": 0.419,
+    "switches": 1772
+   },
+   "0.13": {
+    "heldout_hard": 26,
+    "onset_vs_vision_s": 0.017,
+    "anticipated": 0.431,
+    "switches": 1753
+   },
+   "0.02": {
+    "heldout_hard": 25,
+    "unjustified_hard": 3,
+    "onset_vs_vision_s": 0.0,
+    "anticipated": 0.437,
+    "switches": 1755
+   }
+  },
+  "fresh_8_drives": "no hard ticks for any; mean gap to vision unchanged (0.086-0.087); harder windows mostly while the driver braked, but two system-driven windows softer than both fused and vision (-2.29 -> -1.94, vision -2.33; -1.40 -> -1.24, vision -1.42)",
+  "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default stays 0.5"
  }
 }

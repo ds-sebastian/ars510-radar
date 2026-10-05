@@ -206,6 +206,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
 | object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**; responds as fast to ACC-defined drops (below) | 34 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: none better on every check |
+| ACC target trusted more (σ 0.13, its measured error, or 0.02 instead of 0.5) | – | 34 drives: held-out 30 → 26 / 25 hard ticks (the difference is over-braking after the driver released), same unjustified braking; fresh drives: two real slowdowns with openpilot driving got softer braking than both `fused` and vision. Mixed: default stays 0.5 (`acc_target_weight` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)) |
 
 The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
 0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
