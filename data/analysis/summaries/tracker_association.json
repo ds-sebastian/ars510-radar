@@ -606,6 +606,35 @@
    "events": 167,
    "radar_only_per_h": 0.22,
    "radar_only_on_gas_per_h": 0.0
+  },
+  "summary_range_for_summary_tracks_not_adopted": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1236
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 295
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.018,
+   "ant10": 0.437,
+   "events": 167,
+   "radar_only_per_h": 0.22,
+   "radar_only_on_gas_per_h": 0.0,
+   "note": "summary-attached tracks taking the summary range: no count changes and no measurable change of the lead distance; not part of fused"
   }
  },
  "published_lead_distance_vs_vision_lead": {
