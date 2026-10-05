@@ -9,32 +9,31 @@ with points carrying dRel (m, forward), yRel (m, LEFT positive), vRel (m/s, over
 speed) and trackId (from the radar's own slot / age lifecycle).
 
 Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`. Without a fresh ego speed
-vRel is NaN, and OPENPILOT_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
+vRel is NaN, and BASE_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
 
-Profiles (docs/08 has the replay numbers, docs/07 explains every layer):
-  ANCHOR_CONFIG   STEADY + the radar's own ACC target (0x235) as a velocity anchor
-  FUSED_CONFIG    default install profile: one Kalman speed filter fusing the object list, ACC target and summaries
-  STEADY_CONFIG   OPENPILOT_CONFIG + range fusion, far smoothing, far-track settling, ramp limiter
-  OPENPILOT_CONFIG (= STOCK_CONFIG)  the unfiltered radar decode with only what radard needs (the 'raw' install profile)
-  RAW_CONFIG      every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
+Configs (docs/12 explains the filter, docs/11 compares the profiles with vision only):
+  FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list, the radar's
+                     ACC target and its summaries, each weighted by its own uncertainty
+  COLORED_CONFIG     experimental: fused with a colored-noise (bias) state for the object list
+  BASE_CONFIG        the unfiltered radar decode with only what radard needs (the 'raw' install profile)
+  ALL_TRACKS_CONFIG  every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from math import exp, inf, isfinite, nan, pi
+from math import exp, isfinite, nan, pi
 from collections.abc import Iterable
 
 from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
                         TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 from .objects import NativeObject, decode_native_slot
 from .record import id80_crc_ok, occupied_slots
-from .support import parse_0x192, parse_acc_target_position, parse_acc_target_range_code, parse_acc_target_vrel
+from .support import parse_0x192, parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
 EGO_ACCEL_TAU_S = 0.3  # smoothing of the ego-speed derivative used for aRel
 ACCEL_SCALE = 0.04  # m/s^2 per code of the filtered over-ground acceleration 84|10 (docs/03)
-RAMP_RESET_GAP_S = 3.5  # a longer silence restarts the ramp limiter's state
 GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30
 RELINK_MIN_PUBLISH_AGE = 6
@@ -46,8 +45,6 @@ class NativeInterfaceConfig:
     ego_speed_bus: int = CAR_BUS
     max_ego_speed_age_s: float = 0.5
     include_metadata: bool = True
-    # Suppress age-1 samples only (a subset of what min_publish_age does).
-    suppress_age_one: bool = False
     # Hold back tracks younger than this many cycles. Young tracks carry unconverged range and velocity
     # (stopped cars read as moving; one lead read 38 m while ~100 m away for ~3 s). 60 cycles ~ 3.6 s.
     min_publish_age: int = 1
@@ -62,77 +59,37 @@ class NativeInterfaceConfig:
     vground_scale: float = 1.0
     # Withhold points whose vRel is unresolved (no fresh ego speed).
     drop_unresolved_vrel: bool = False
-    # --- options, off by default (docs/07 has their measured effect; STEADY_CONFIG turns on the first and third) ---
     # Velocity-aided range: predict dRel with vRel, correct toward measured dRel with this gain (0 disables).
     range_fusion_gain: float = 0.0
-    # Clip vRel to the track's own causal range slope over this window +/- vrel_range_clip_mps (0 disables).
-    vrel_range_clip_window_s: float = 0.0
-    vrel_range_clip_mps: float = 3.5
-    # Causal EMA on vRel with tau = clip((dRel-30)/30, 0, 1) * this value (0 disables).
-    vrel_smooth_far_tau_s: float = 0.0
-    # Uncertainty-weighted vRel smoothing: tau = this value * clip((code - lo) / (hi - lo), 0, 1), where code is the
-    # candidate velocity-uncertainty field 240|7. Confident tracks pass through unsmoothed (0 disables).
-    vrel_smooth_unc_tau_s: float = 0.0
-    vrel_smooth_unc_lo: float = 25.0
-    vrel_smooth_unc_hi: float = 42.0
-    # ACC-target cross-check: the OEM ACC target witness (0x235 / 0x237) is matched to an object by position. The matched
-    # object's vRel is clipped to the target's closing speed +/- this many m/s (0 disables). 1.0 is the p95 of their
-    # difference on normal samples (docs/05).
-    acc_target_clip_mps: float = 0.0
+    # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
+    # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
+    # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07). The speed filter's
+    # robust update absorbs the sentinel on its own, so FUSED_CONFIG leaves this off.
+    drop_saturated_codes: bool = False
+    sat_recover_mps: float = 5.0
+    guard_hold_s: float = 1.0
+    guard_min_age: int = 60  # younger tracks legitimately converge and are not guarded
+    # The radar's own trackers, used as extra speed readings by the speed filter:
+    # ACC target (0x235 / 0x237): matched to an object-list track by position, cost = |dRel - coarse x| / acc_match_range_m
+    # + |yRel - y| / 0.5 < 1 with margin > 1 over the next track, for tracks of age >= acc_match_min_age (the coarse ACC
+    # distance comes in 5.26 m steps). The association is kept while the track and a continuous ACC target persist, even
+    # when the object-list position slides away with an excursion; it re-matches when the ACC target jumps (coarse range >
+    # acc_sticky_jump_m or lateral > 1 m between updates), the track disappears, or its cost exceeds acc_sticky_max_cost.
     acc_target_max_age_s: float = 0.1
-    # Keep the ACC-target association while the matched track and a continuous ACC target persist, even when the native
-    # position slides away from the target's coarse position. Excursions often move the native range as well (a slot
-    # sliding onto another reflector), which is exactly when a per-cycle position match drops the cross-check.
-    # Re-matching happens when the ACC target jumps (coarse range > acc_sticky_jump_m or lateral > 1 m between
-    # updates), the track disappears, or its position cost exceeds acc_sticky_max_cost.
-    acc_target_sticky: bool = False
-    # Initial ACC match: cost = |dRel - coarse x| / acc_match_range_m + |yRel - y| / 0.5 must be < 1 with margin > 1 over
-    # the next track, for tracks of age >= acc_match_min_age. The coarse ACC distance comes in 5.26 m steps with a
-    # range-dependent bias, while its lateral position agrees with the track to ~0.2 m.
-    acc_match_range_m: float = 6.0
-    acc_match_min_age: int = 60
+    acc_match_range_m: float = 12.0
+    acc_match_min_age: int = 20
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
-    # Range anchor for the ACC-associated track: its distance is propagated with the ACC target's fine-range changes
-    # (0x237, 0.02 m per code, consistent with the ACC speed to 1%), the offset to the object-list range follows with
-    # time constant acc_range_tau_s, and the object-list range fed to range fusion is clipped to that anchored distance
-    # +/- acc_range_clip_m. Stops the native range sliding with an excursion. 0 disables.
-    acc_range_clip_m: float = 0.0
-    acc_range_tau_s: float = 3.0
-    # Summary anchor: the radar's selected-target range summaries (0x192 / 0x194) come from its internal tracker, which
-    # does not show the object-list velocity excursions and reaches far range where the ACC target rarely does
-    # (docs/07). Their range slope over summary_window_s gives a relative speed; a summary attaches to an object-list
-    # track when range (within 15 %) and speed (within summary_match_mps) agree unambiguously, stays attached while both
-    # persist, and that track's vRel is clipped to the summary speed +/- summary_clip_mps. ACC-anchored tracks are left
-    # to the ACC anchor. 0 disables. summary_max_range_m limits the clip to tracks within that range (0 = no limit):
-    # beyond ~80 m the optical check no longer favours the summary speed (docs/07).
-    summary_clip_mps: float = 0.0
-    summary_max_range_m: float = 0.0
+    # Summaries (0x192 / 0x194): the radar's selected-target ranges. Their range slope over summary_window_s gives a
+    # relative speed; a summary attaches to a track when range (within 15 %) and speed (within summary_match_mps) agree
+    # unambiguously and stays attached while both persist. Used up to summary_max_range_m (beyond ~80 m the optical check
+    # no longer favours the summary speed, docs/07); the ACC-associated track is left to the ACC target.
+    summary_max_range_m: float = 80.0  # summary_sigma_mps <= 0 below turns the summaries off
     summary_window_s: float = 1.0
     summary_match_mps: float = 1.5
     summary_scales: tuple[tuple[float, float], ...] = ((0.0541, -5.14), (0.0461, -12.45))  # m per code, offset m (0x192, 0x194)
-    # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
-    # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
-    # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07).
-    drop_saturated_codes: bool = False
-    sat_recover_mps: float = 5.0
-    # Velocity-jump guard: a record whose over-ground velocity differs from the track's last accepted one by more than
-    # this (m/s, 0 = off) is withheld the same way. A new level that persists for guard_hold_s is accepted as a real
-    # step under a new trackId.
-    vjump_thresh_mps: float = 0.0
-    guard_hold_s: float = 1.0
-    guard_min_age: int = 60  # younger tracks legitimately converge and are not guarded
-    # Delay the first publication of a far track while its velocity settles. Once published, it stays eligible.
-    far_min_publish_age: int = 0
-    far_publish_range_m: float = 70.0
-    # Ramp limiter: a mature track's over-ground velocity may move AWAY from its slow reference (EMA, ramp_ref_tau_s)
-    # by at most ramp_up_mps2 / ramp_down_mps2; moves back toward the reference pass unchanged. Real vehicles do not
-    # change speed at 20+ m/s^2, while excursion ramps do (docs/07). 0 = off.
-    ramp_up_mps2: float = 0.0
-    ramp_down_mps2: float = 0.0
-    ramp_ref_tau_s: float = 3.0
-    # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed that
-    # replaces far smoothing, far settling, the ramp limiter and the ACC / summary clips. Each reading is weighted by
+    # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed. Each
+    # reading is weighted by
     # its own standard deviation: the object-list speed by speed_sigma_per_code * 240|7 (the radar's velocity-error
     # scale, calibrated against its ACC target), times young_sigma_scale for tracks younger than young_age (measured:
     # young tracks err more than 240|7 says); the radar's ACC target speed for the associated track by acc_sigma_mps;
@@ -150,36 +107,43 @@ class NativeInterfaceConfig:
     lead_accel_std_mps2: float = 1.5
     innovation_gate_sigma: float = 3.0
     publish_speed_std_mps: float = 0.75
+    # Colored measurement noise (state augmentation): the object-list speed error persists for ~1.2 s (lag-1
+    # autocorrelation 0.95 per 60 ms record), so the filter also estimates it as a slowly varying bias b
+    # (first-order Gauss-Markov, time constant speed_bias_tau_s, stationary sd speed_bias_sigma_per_code x scale);
+    # the object list measures v + b, the ACC target and summaries measure v. 0 = off (white noise only).
+    # The noise scale of a reading is 240|7 x (1 + speed_sigma_ego_gain x v_ego / 30 m/s)
+    #   x (1 + speed_sigma_accel_gain x |84|10| / 100): errors grow with ego speed and with the radar's acceleration.
+    speed_bias_tau_s: float = 0.0
+    speed_bias_sigma_per_code: float = 0.0
+    speed_sigma_ego_gain: float = 0.0
+    speed_sigma_accel_gain: float = 0.0
+    # Colored filter only: a new track's first reading gets this extra sd per 240|7 count (first readings are often
+    # far off, 240|7 near 160), and a tracker reading (ACC target, summary) beyond the innovation gate means the
+    # speed state has diverged: its variance is widened to the innovation before the update (covariance inflation).
+    speed_init_sigma_per_code: float = 0.0
+    speed_divergence_inflation: bool = False
 
 
 # Every valid track, radar's own IDs: the decode-level view.
-RAW_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
-# Base openpilot-facing profile (docs/08_openpilot_integration.md).
-OPENPILOT_CONFIG = NativeInterfaceConfig(
+ALL_TRACKS_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
+# The unfiltered radar decode with only the validity rules radard needs: the "raw" install profile (docs/08).
+BASE_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
-# The unfiltered radar decode with only the validity rules radard needs: the "raw" install profile (formerly "stock").
-STOCK_CONFIG = OPENPILOT_CONFIG
-# Filtered profile (docs/07): velocity-aided range and far-range vRel smoothing (K4) remove about half of radar's extra
-# output roughness over vision-only for ~0.07 s of radar's head start. Far tracks first publish at age 100 to reduce
-# settling pickups. The ramp limiter (+4 / -6 m/s^2 away from a 3 s reference) removes gradual-ramp excursions. The
-# 8 m/s velocity-jump guard (vjump_thresh_mps) is an option: on 34 replay drives and the fresh drives it changed no
-# scored outcome once the ramp limiter and far settling are present, so it is off.
-STEADY_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, vrel_smooth_far_tau_s=1.0,
-                       far_min_publish_age=100, far_publish_range_m=70.0, ramp_up_mps2=4.0, ramp_down_mps2=6.0)
+# The default install profile (docs/12, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
+# filter per track that fuses the object list, the radar's ACC target and its summary ranges. The track-ID relink and the
+# saturation guard of the base decode are off: neither changes the driving with the filter on (docs/12). The openpilot
+# version (upstream/ars510_radar.py) is this profile in one file.
+FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
+                       fused_speed_filter=True)
 
-# STEADY plus the radar's own ACC target as a velocity anchor (docs/07 "ACC anchor"): the object the radar reports as
-# its ACC target keeps its native vRel within +/-3 m/s of the target's closing speed, and the association survives
-# excursions that drag the native range along (docs/08).
-ANCHOR_CONFIG = replace(STEADY_CONFIG, acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
-                        acc_match_min_age=20, summary_clip_mps=3.0, summary_max_range_m=80.0)
-
-# The fused speed filter (docs/07): the base profile plus range fusion and one uncertainty-weighted filter that fuses
-# the object list, the radar's ACC target and its summary ranges. Same ACC / summary association as ANCHOR. The default
-# install profile (docs/08, docs/11).
-FUSED_CONFIG = replace(OPENPILOT_CONFIG, range_fusion_gain=0.1, acc_target_sticky=True, acc_match_range_m=12.0,
-                       acc_match_min_age=20, summary_max_range_m=80.0, fused_speed_filter=True)
+# Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
+# bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
+# fewer false closings offline and closer to vision on fresh drives, but slow to let go of a far excursion that recovers.
+COLORED_CONFIG = replace(FUSED_CONFIG, speed_sigma_per_code=0.001, speed_bias_tau_s=1.19, speed_bias_sigma_per_code=0.0096,
+                         speed_sigma_ego_gain=0.48, speed_sigma_accel_gain=0.51, young_sigma_scale=1.0,
+                         lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -211,7 +175,6 @@ class Ars510NativeRadarInterface:
         self._yaw: tuple[float, float] | None = None  # (time, yaw rate rad/s, left positive)
         self.crc_failures = 0
         self.records = 0
-        self.startup_suppressed = 0
         self.settling_suppressed = 0
         self.relinks = 0
         self.unresolved_suppressed = 0
@@ -220,19 +183,12 @@ class Ars510NativeRadarInterface:
         self._out_id: dict[int, int] = {}
         self._claimed: set[int] = set()
         self._range_est: dict[int, tuple[float, float, float]] = {}
-        self._range_hist: dict[int, list[tuple[float, float]]] = {}
-        self._vrel_smooth: dict[int, tuple[float, float]] = {}
-        self._ramp: dict[int, tuple[float, float, float]] = {}  # tid -> (t, limited v, reference)
         self._fused: dict[int, tuple[float, float, float]] = {}  # tid -> (t, over-ground speed, variance)
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, coarse x, y)
-        self.acc_target_clips = 0
-        self.summary_clips = 0
-        self._acc_assoc: tuple[int, float, float] | None = None  # sticky (tid, last coarse x, last y)
+        self._acc_assoc: tuple[int, float, float] | None = None  # (tid, last coarse x, last y)
         self._summary_hist: dict[int, list[tuple[float, float]]] = {0x192: [], 0x194: []}  # (time, range m)
         self._summary_assoc: dict[int, int | None] = {0x192: None, 0x194: None}
-        self._acc_q: int | None = None  # 0x237 fine-range code of the current ACC target
-        self._acc_range: tuple[int, float, float, int] | None = None  # (tid, time, offset m, last code)
         self._guard_state: dict[int, list] = {}  # tid -> [t_last, ref_v, episode_start | None, saturated_in_episode]
         self._guard_gen: dict[int, int] = {}
         self.guard_rejected = 0
@@ -273,7 +229,7 @@ class Ars510NativeRadarInterface:
                 self.set_ego_speed(v, time_s)
             return None
         if bus == self.config.radar_bus and addr in SUMMARY_ADDRS:
-            if self.config.summary_clip_mps > 0 or self.config.fused_speed_filter:
+            if self.config.fused_speed_filter and self.config.summary_sigma_mps > 0:
                 self._summary_update(addr, float(time_s), bytes(data))
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
@@ -285,7 +241,6 @@ class Ars510NativeRadarInterface:
             if not available:
                 # Idle payloads decode numerically; neither cached half may survive target loss.
                 self._acc_vrel = self._acc_pos = None
-                self._acc_q = None
                 return None
             if addr == ACC_TARGET_VREL_ADDR:
                 v = parse_acc_target_vrel(bytes(data))
@@ -293,7 +248,6 @@ class Ars510NativeRadarInterface:
             else:
                 p = parse_acc_target_position(bytes(data))
                 self._acc_pos = (time_s, p[0], p[1]) if p is not None else self._acc_pos
-                self._acc_q = parse_acc_target_range_code(bytes(data))
             return None
         if bus != self.config.radar_bus or addr != ID80_ADDR:
             return None
@@ -344,11 +298,11 @@ class Ars510NativeRadarInterface:
         self.relinks += 1
         return self._out_id.get(lid, lid)
 
-    # ---- ACC-target cross-check ----------------------------------------------------------------------
+    # ---- the radar's own trackers -------------------------------------------------------------------
     def _acc_target_match(self, time_s: float, decoded: list) -> tuple[int | None, float]:
-        """The object the OEM ACC target witness describes: best position match, cost < 1 and margin > 1, age >= 60."""
+        """The track the radar's ACC target describes (see the config) and the target's relative speed."""
         cfg = self.config
-        if (cfg.acc_target_clip_mps <= 0 and not cfg.fused_speed_filter) or self._acc_vrel is None or self._acc_pos is None:
+        if not cfg.fused_speed_filter or self._acc_vrel is None or self._acc_pos is None:
             self._acc_assoc = None
             return None, nan
         if abs(time_s - self._acc_vrel[0]) > cfg.acc_target_max_age_s or abs(time_s - self._acc_pos[0]) > cfg.acc_target_max_age_s:
@@ -357,7 +311,7 @@ class Ars510NativeRadarInterface:
         _, ax, ay = self._acc_pos
         costs = sorted((abs(obj.d_rel - ax) / cfg.acc_match_range_m + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
                        for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
-        if cfg.acc_target_sticky and self._acc_assoc is not None:
+        if self._acc_assoc is not None:
             tid0, ax0, ay0 = self._acc_assoc
             own = next((c for c, tid, _ in costs if tid == tid0), None)
             if own is not None and own < cfg.acc_sticky_max_cost and abs(ax - ax0) <= cfg.acc_sticky_jump_m \
@@ -423,70 +377,24 @@ class Ars510NativeRadarInterface:
                 out[tid] = v
         return out
 
-    def _range_anchored(self, tid: int, time_s: float, d_meas: float) -> float:
-        """The ACC track's range, clipped to the ACC-propagated distance +/- acc_range_clip_m (see the config)."""
-        cfg = self.config
-        q = self._acc_q
-        if q is None:
-            self._acc_range = None
-            return d_meas
-        st = self._acc_range
-        if st is None or st[0] != tid or not 0.0 < time_s - st[1] <= 0.5 or abs(q - st[3]) > 400:  # new association or jump
-            self._acc_range = (tid, time_s, d_meas - 0.02 * q, q)
-            return d_meas
-        _, t0, off, _ = st
-        anchored = 0.02 * q + off
-        out = min(max(d_meas, anchored - cfg.acc_range_clip_m), anchored + cfg.acc_range_clip_m)
-        k = min(1.0, (time_s - t0) / cfg.acc_range_tau_s)
-        self._acc_range = (tid, time_s, off + k * ((d_meas - 0.02 * q) - off), q)
-        return out
-
-    # ---- candidate options --------------------------------------------------------------------------
-    def _range_clipped_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
-        w = self.config.vrel_range_clip_window_s
-        hist = self._range_hist.setdefault(tid, [])
-        if hist and time_s - hist[-1][0] > 0.5:
-            hist.clear()
-        hist.append((time_s, d_meas))
-        while hist and hist[0][0] < time_s - w:
-            hist.pop(0)
-        if not isfinite(vrel) or len(hist) < 9 or hist[-1][0] - hist[0][0] < 0.7 * w:
-            return vrel
-        n = len(hist)
-        mt = sum(t for t, _ in hist) / n
-        md = sum(d for _, d in hist) / n
-        den = sum((t - mt) ** 2 for t, _ in hist)
-        if den <= 0:
-            return vrel
-        slope = sum((t - mt) * (d - md) for t, d in hist) / den
-        m = self.config.vrel_range_clip_mps
-        return min(max(vrel, slope - m), slope + m)
-
-    def _smoothed_vrel(self, tid: int, time_s: float, d_meas: float, vrel: float, unc_code: int = 0) -> float:
-        cfg = self.config
-        prev = self._vrel_smooth.get(tid)
-        tau = min(max((d_meas - 30.0) / 30.0, 0.0), 1.0) * cfg.vrel_smooth_far_tau_s
-        if cfg.vrel_smooth_unc_tau_s > 0 and cfg.vrel_smooth_unc_hi > cfg.vrel_smooth_unc_lo:
-            w = (unc_code - cfg.vrel_smooth_unc_lo) / (cfg.vrel_smooth_unc_hi - cfg.vrel_smooth_unc_lo)
-            tau = max(tau, min(max(w, 0.0), 1.0) * cfg.vrel_smooth_unc_tau_s)
-        if prev is None or not isfinite(vrel) or not isfinite(prev[1]) or not 0.0 < time_s - prev[0] <= 0.5 or tau <= 0:
-            out = vrel
-        else:
-            out = prev[1] + min(1.0, (time_s - prev[0]) / tau) * (vrel - prev[1])
-        self._vrel_smooth[tid] = (time_s, out)
-        return out
-
     def _fused_speed(self, tid: int, time_s: float, obj: NativeObject,
-                     extra: list[tuple[float, float]]) -> tuple[float, float]:
+                     extra: list[tuple[float, float]], v_ego: float = 0.0) -> tuple[float, float]:
         """Fused over-ground speed and its standard deviation (see fused_speed_filter in the config)."""
         cfg = self.config
-        sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+        young = 1.0
         if obj.age < cfg.young_age:
             w = min(max((cfg.young_age - obj.age) / max(cfg.young_age - 60, 1), 0.0), 1.0)
-            sig *= 1.0 + (cfg.young_sigma_scale - 1.0) * w
+            young = 1.0 + (cfg.young_sigma_scale - 1.0) * w
+        if cfg.speed_bias_tau_s > 0:
+            scale = max(obj.vel_unc_code, 1) * young * (1.0 + cfg.speed_sigma_ego_gain * v_ego / 30.0) \
+                * (1.0 + cfg.speed_sigma_accel_gain * abs(obj.accel_like_code) / 100.0)
+            return self._fused_speed_colored(tid, time_s, obj, extra, scale)
+        sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+        if obj.age < cfg.young_age:
+            sig *= young
         vg = obj.v_long_ground * cfg.vground_scale
         st = self._fused.get(tid)
-        if st is None or not 0.0 < time_s - st[0] <= 0.5:
+        if st is None or len(st) != 3 or not 0.0 < time_s - st[0] <= 0.5:
             self._fused[tid] = (time_s, vg, sig * sig)
             return vg, sig
         t0, v, p = st
@@ -503,6 +411,43 @@ class Ars510NativeRadarInterface:
         self._fused[tid] = (time_s, v, p)
         return v, p ** 0.5
 
+    def _fused_speed_colored(self, tid: int, time_s: float, obj: NativeObject,
+                             extra: list[tuple[float, float]], scale: float) -> tuple[float, float]:
+        """Speed filter with the object-list error as a first-order Gauss-Markov bias state (state [v, b])."""
+        cfg = self.config
+        sw = cfg.speed_sigma_per_code * scale
+        sb = cfg.speed_bias_sigma_per_code * scale
+        vg = obj.v_long_ground * cfg.vground_scale
+        st = self._fused.get(tid)
+        if st is None or len(st) != 6 or not 0.0 < time_s - st[0] <= 0.5:
+            p00 = sw * sw + sb * sb + (cfg.speed_init_sigma_per_code * scale) ** 2
+            self._fused[tid] = (time_s, vg, 0.0, p00, 0.0, sb * sb)
+            return vg, p00 ** 0.5
+        t0, v, b, p00, p01, p11 = st
+        dt = time_s - t0
+        phi = exp(-dt / cfg.speed_bias_tau_s)
+        b *= phi
+        p00 += (cfg.lead_accel_std_mps2 * dt) ** 2
+        p01 *= phi
+        p11 = phi * phi * p11 + sb * sb * (1.0 - phi * phi)
+        for z, r, h1 in [(vg, sw * sw, 1.0)] + [(z, s * s, 0.0) for z, s in extra]:
+            ph0, ph1 = p00 + h1 * p01, p01 + h1 * p11  # P H^T, H = [1, h1]
+            s = ph0 + h1 * ph1 + r
+            innov = z - (v + h1 * b)
+            lim = cfg.innovation_gate_sigma * s ** 0.5
+            if cfg.speed_divergence_inflation and h1 == 0.0 and lim > 0 and abs(innov) > lim:
+                p00 += (abs(innov) / cfg.innovation_gate_sigma) ** 2 - s + r
+                ph0, s = p00, p00 + r
+                lim = cfg.innovation_gate_sigma * s ** 0.5
+            if cfg.innovation_gate_sigma > 0 and abs(innov) > lim:
+                innov = lim if innov > 0 else -lim
+            k0, k1 = ph0 / s, ph1 / s
+            v += k0 * innov
+            b += k1 * innov
+            p00, p01, p11 = p00 - k0 * ph0, p01 - k0 * ph1, p11 - k1 * ph1
+        self._fused[tid] = (time_s, v, b, p00, p01, p11)
+        return v, p00 ** 0.5
+
     def _fused_range(self, tid: int, time_s: float, d_meas: float, vrel: float) -> float:
         prev = self._range_est.get(tid)
         if prev is None or not isfinite(vrel) or not isfinite(prev[2]) or not 0.0 < time_s - prev[0] <= 0.5:
@@ -515,7 +460,7 @@ class Ars510NativeRadarInterface:
 
     # ---- output -----------------------------------------------------------------------------------
     def _guard(self, tid: int, time_s: float, v: float, code: int, age: int) -> bool:
-        """True when this record of the track is rejected by the saturation / velocity-jump guard."""
+        """True when this record of the track is rejected by the saturation guard."""
         cfg = self.config
         sat = cfg.drop_saturated_codes and (code >= 1023 or code == 0)
         st = self._guard_state.get(tid)
@@ -533,8 +478,7 @@ class Ars510NativeRadarInterface:
         bad = sat
         if not sat and isfinite(ref):
             dv = abs(v - ref)
-            bad = (cfg.vjump_thresh_mps > 0 and dv > cfg.vjump_thresh_mps) or (
-                cfg.drop_saturated_codes and st[3] and dv > cfg.sat_recover_mps)
+            bad = st[3] and dv > cfg.sat_recover_mps
         if not bad:
             if st[2] is not None:  # episode over: continue under a new trackId
                 self._guard_gen[tid] = self._guard_gen.get(tid, 0) + 1
@@ -551,24 +495,6 @@ class Ars510NativeRadarInterface:
             return False
         self.guard_rejected += 1
         return True
-
-    def _ramp_limited(self, tid: int, time_s: float, v: float, age: int) -> float:
-        cfg = self.config
-        st = self._ramp.get(tid)
-        # guard-withheld records do not update this state, so allow gaps as long as a guard episode
-        if st is None or age < cfg.guard_min_age or time_s - st[0] > RAMP_RESET_GAP_S:
-            self._ramp[tid] = (time_s, v, v)
-            return v
-        t0, prev, ref = st
-        dt = time_s - t0
-        if abs(v - ref) <= abs(prev - ref):
-            new = v  # back toward the reference
-        else:
-            up = cfg.ramp_up_mps2 * dt if cfg.ramp_up_mps2 > 0 else inf
-            down = cfg.ramp_down_mps2 * dt if cfg.ramp_down_mps2 > 0 else inf
-            new = prev + min(max(v - prev, -down), up)
-        self._ramp[tid] = (time_s, new, ref + min(dt / cfg.ramp_ref_tau_s, 1.0) * (new - ref))
-        return new
 
     def _yv_rel(self, obj: NativeObject, time_s: float) -> float:
         """Lateral velocity in the ego frame: the radar's over-ground vy minus the rotation term yaw rate x range."""
@@ -593,56 +519,31 @@ class Ars510NativeRadarInterface:
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
         acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
-        sum_clip = self._summary_match(time_s, decoded, v_ego, acc_tid) if (cfg.summary_clip_mps > 0 or cfg.fused_speed_filter) else {}
+        use_summaries = cfg.fused_speed_filter and cfg.summary_sigma_mps > 0
+        sum_speed = self._summary_match(time_s, decoded, v_ego, acc_tid) if use_summaries else {}
         points = []
         for slot, obj, tid in decoded:
             if not obj.geometry_valid or not obj.lateral_valid:
                 continue
-            if (cfg.drop_saturated_codes or cfg.vjump_thresh_mps > 0) and \
-                    self._guard(tid, time_s, obj.v_long_ground, obj.vel_code, obj.age):
+            if cfg.drop_saturated_codes and self._guard(tid, time_s, obj.v_long_ground, obj.vel_code, obj.age):
                 continue
             speed_std = 0.0
             if cfg.fused_speed_filter and v_ego is not None:
                 extra = []
                 if tid == acc_tid and acc_vrel is not None:
                     extra.append((acc_vrel + v_ego, cfg.acc_sigma_mps))
-                if tid in sum_clip and (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
-                    extra.append((sum_clip[tid] + v_ego, cfg.summary_sigma_mps))
-                v_ground, speed_std = self._fused_speed(tid, time_s, obj, extra)
+                if tid in sum_speed and (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
+                    extra.append((sum_speed[tid] + v_ego, cfg.summary_sigma_mps))
+                v_ground, speed_std = self._fused_speed(tid, time_s, obj, extra, v_ego)
                 vrel = float(v_ground - v_ego)
-                d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
             else:
-                v_long = obj.v_long_ground
-                if cfg.ramp_up_mps2 > 0 or cfg.ramp_down_mps2 > 0:
-                    v_long = self._ramp_limited(tid, time_s, v_long, obj.age)
-                v_ground = v_long * cfg.vground_scale
+                v_ground = obj.v_long_ground * cfg.vground_scale
                 vrel = float(v_ground - v_ego) if v_ego is not None else nan
-                if tid == acc_tid and isfinite(vrel):
-                    clipped = min(max(vrel, acc_vrel - cfg.acc_target_clip_mps), acc_vrel + cfg.acc_target_clip_mps)
-                    self.acc_target_clips += clipped != vrel
-                    vrel = clipped
-                elif tid in sum_clip and isfinite(vrel) and \
-                        (cfg.summary_max_range_m <= 0 or obj.d_rel <= cfg.summary_max_range_m):
-                    vs = sum_clip[tid]
-                    clipped = min(max(vrel, vs - cfg.summary_clip_mps), vs + cfg.summary_clip_mps)
-                    self.summary_clips += clipped != vrel
-                    vrel = clipped
-                if cfg.vrel_range_clip_window_s > 0:
-                    vrel = self._range_clipped_vrel(tid, time_s, obj.d_rel, vrel)
-                if cfg.vrel_smooth_far_tau_s > 0 or cfg.vrel_smooth_unc_tau_s > 0:
-                    vrel = self._smoothed_vrel(tid, time_s, obj.d_rel, vrel, obj.vel_unc_code)
-                d_meas = self._range_anchored(tid, time_s, obj.d_rel) if (tid == acc_tid and cfg.acc_range_clip_m > 0) else obj.d_rel
-                d_rel = self._fused_range(tid, time_s, d_meas, vrel) if cfg.range_fusion_gain > 0 else d_meas
+            d_rel = self._fused_range(tid, time_s, obj.d_rel, vrel) if cfg.range_fusion_gain > 0 else obj.d_rel
             if obj.age >= 2:
                 self._first.setdefault(tid, (time_s, obj.d_rel, obj.y_rel))
                 self._last[tid] = (time_s, obj.d_rel, obj.y_rel, vrel, obj.age)
-            if cfg.suppress_age_one and obj.age == 1:
-                self.startup_suppressed += 1
-                continue
             if obj.age < cfg.min_publish_age:
-                self.settling_suppressed += 1
-                continue
-            if tid not in self._out_id and obj.age < cfg.far_min_publish_age and obj.d_rel > cfg.far_publish_range_m:
                 self.settling_suppressed += 1
                 continue
             if tid not in self._out_id and speed_std > cfg.publish_speed_std_mps and cfg.fused_speed_filter:
@@ -677,10 +578,15 @@ class Ars510NativeRadarInterface:
             for k in [k for k, v in self._last.items() if v[0] < horizon]:
                 self._last.pop(k, None)
                 self._first.pop(k, None)
-        for store in (self._range_est, self._vrel_smooth, self._fused, self._guard_state, self._ramp):
+        for store in (self._range_est, self._fused, self._guard_state):
             if len(store) > 400:
                 for k in [k for k, v in store.items() if v[0] < time_s - 5.0]:
                     store.pop(k, None)
-        if len(self._range_hist) > 400:
-            for k in [k for k, v in self._range_hist.items() if not v or v[-1][0] < time_s - 5.0]:
-                self._range_hist.pop(k, None)
+        # Published IDs and guard generations may outlive position updates during a guard.
+        # Keep every native slot lifecycle ID, as well as every retained relink candidate.
+        if max(len(self._out_id), len(self._claimed), len(self._guard_gen)) > 400:
+            retained = set(self._last) | {state[0] for state in self._tracks._state.values()}
+            for store in (self._out_id, self._guard_gen):
+                for k in store.keys() - retained:
+                    store.pop(k)
+            self._claimed.intersection_update(retained)

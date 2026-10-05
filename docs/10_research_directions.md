@@ -7,7 +7,7 @@ The most promising next steps, ordered by how directly they would improve the ra
 1. **Resolve the range scale, then put range in the filter.** The radar ACC target's fine range and speed agree at
    nominal units (ratio 1.007 over 3 s windows), but the object list's range changes 10-20% more than either speed
    integrates, while it matches ego speed on near-stationary targets. Until that is resolved, `fused` keeps range out
-   of its Kalman filter and only smooths it with range fusion ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+   of its Kalman filter and only smooths it with range fusion ([07](12_kalman_filter.md#the-model)).
 2. **More of the lead covered by the radar's own trackers.** The ACC target exists for about 57% of radar-lead time and
    5% beyond 80 m; the summaries add far coverage up to 80 m. Far tracks with neither depend on the object list and its
    wide error alone, which is where `fused`'s remaining radar-only braking comes from. Finding when and why the radar
@@ -41,9 +41,9 @@ should copy:
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
   0.29 m inside that line (21 departures): the rule is "keep the target until its centre reaches my lane line". On the fresh drives openpilot's model moved to a new lead 1.5 s and more than
   6 s before the radar's target did (n = 3). openpilot's model, which sees lanes, is the
-  better lead chooser; the `fused` and `anchor` profiles keep it in charge and never follow the radar's choice.
+  better lead chooser; the `fused` profile keeps it in charge and never follows the radar's choice.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
-  and 0x235 also carries a filtered relative acceleration. `anchor` already uses the speed as a bound.
+  and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
 - **The control law (unknown).** How Toyota turns distance, closing speed and relative acceleration into a braking
   request is not visible under openpilot longitudinal.
 
@@ -128,25 +128,30 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
   fields were identified ([03](03_slot_fields.md#uncertainty-and-quality));
 - what it still lacks for a Tesla-sized interface: a **fault / blockage status**, and the far-range speed error, which
   `fused` handles by weighting each reading by `240|7` and the radar's own trackers
-  ([07](07_velocity_excursions.md#fused-speed-filter-fused-profile)).
+  ([07](12_kalman_filter.md#the-model)).
 
 ## Towards an upstream (comma) interface
 
-The integration works on every fork without changing openpilot, but upstream openpilot prefers small radar interfaces
-that pass the radar's own values through and leave filtering to radard. Open work before proposing it there:
+The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 210 lines). It holds the reassembler, the slot
+decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. It is the smallest
+version with the same driving as the full filter: parts were removed alone and together on 34 replay drives, and every
+hard brake was checked against the radar's raw range, the camera and the driver
+([12](12_kalman_filter.md#removing-parts-together)). Constants are fixed in the file, there are no profiles, and points
+carry only `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it
+equal to `fused` with the summaries off, point for point (bundled samples; two full drives checked once), and
+`install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
-1. **Decide how much filtering an upstream version needs.** The `fused` profile is the candidate: the base decode,
-   range fusion and one speed filter whose weights come from the radar's own uncertainty fields and internal
-   trackers, about 30 lines in place of five tuned layers. In replay it brakes falsely less than `anchor` (held-out
-   48 → 30 hard ticks, owner target episodes 5 → 0) with an unbiased closing speed
-   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). It is the default; it needs more road miles, and the range/speed
-   scale of the object list ([06](06_accuracy.md)) before range can join the filter. The same weighting could live
-   in radard instead (per-point speed variance), which would leave the interface a pass-through like the others.
-2. **Decode `measured` and fault status** (above), so the interface looks like the others.
-3. **Size and style.** Today: decoder ~1,000 lines including research options. An upstream port needs the
-   reassembler, slot decode, the chosen profile and tests only, in opendbc's style, with fingerprint-based detection
-   (`8821F0R03100`; `8821F0R01100` unconfirmed).
-4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests, and a car test
-   on at least one more vehicle or firmware.
+1. **A clear reason the filter belongs in the interface.** Every upstream radar interface passes the radar's tracks
+   through. The ARS510's object list has slow, correlated speed errors that the radar reports (`240|7`) but does not
+   flag per moment; without the filter it asks for hard braking three times as often as `fused`
+   ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). The candidate's test fails without the filter
+   (the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
+   variance), leaving the interface a pass-through.
+2. **Small, separable PRs.** Decode and points first (opendbc, without the filter, tested on recorded frames), the
+   filter second with before/after plots and process-replay diffs.
+3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`; `8821F0R01100` unconfirmed). Drives on
+   other cars, through `--profile openpilot`, are what upstream would weigh.
+4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
 5. **Alpha longitudinal compatibility.** Confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
    radar-disable request.

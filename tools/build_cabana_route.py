@@ -35,7 +35,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from ars510.constants import ID80_IDLE_SLOT, ID80_OBJECT_COUNT, ID80_OBJECT_LEN, ID80_OBJECT_START  # noqa: E402
-from ars510.interface import OPENPILOT_CONFIG, RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510.interface import BASE_CONFIG, ALL_TRACKS_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.objects import ACCEL_LIKE, AGE, LAT_DIST, LAT_INVALID_ABS_CODE, LAT_VEL, LONG_DIST, LONG_VEL_GROUND  # noqa: E402
 from ars510.record import id80_crc_ok  # noqa: E402
 from ars510.shell85 import CELL_COUNT, CELL_LEN, HEADER_LEN, id85_crc_ok  # noqa: E402
@@ -45,8 +45,8 @@ VBUS = 10
 OBJ_BASE, DERIVED_BASE, HEADER_ADDR, TRAILER_ADDR, SHELL_HDR, SHELL_BASE = 0x700, 0x720, 0x740, 0x741, 0x760, 0x761
 OBJ_DLC, DERIVED_DLC, HEADER_DLC, TRAILER_DLC, SHELL_HDR_DLC, SHELL_DLC = 48, 16, 20, 8, 24, 12
 SHELL_CRC = 0x76B
-FUSED_CONFIG = replace(RAW_CONFIG, range_fusion_gain=0.1)
-SMOOTH_CONFIG = replace(RAW_CONFIG, vrel_smooth_far_tau_s=1.0)
+FUSED_CONFIG = replace(ALL_TRACKS_CONFIG, range_fusion_gain=0.1)
+KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0)
 SETTLED_AGE = 60
 BIT_MAP = REPO / "data" / "reference" / "slot_bit_map.json"
 DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"
@@ -227,17 +227,17 @@ def dbc_text() -> str:
                 _sig("TRACK_ID_OP", 0, 16, 1, 0, 0, 65535, ""), _sig("TRACK_ID_RAW", 16, 16, 1, 0, 0, 65535, ""),
                 _sig("PUBLISHED_OP", 32, 1, 1, 0, 0, 1, ""), _sig("SETTLED", 33, 1, 1, 0, 0, 1, ""),
                 _sig("VREL_VALID", 34, 1, 1, 0, 0, 1, ""), _sig("DREL_FUSED_VALID", 35, 1, 1, 0, 0, 1, ""),
-                _sig("VREL_SMOOTHED_VALID", 36, 1, 1, 0, 0, 1, ""),
+                _sig("VREL_KALMAN_VALID", 36, 1, 1, 0, 0, 1, ""),
                 _sig("VREL", 40, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), _sig("V_EGO_0xB4", 56, 16, 0.01, 0, 0, 655.35, "m/s"),
-                _sig("DREL_FUSED", 72, 16, 0.01, 0, 0, 655.35, "m"), _sig("VREL_SMOOTHED", 88, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), ""]
+                _sig("DREL_FUSED", 72, 16, 0.01, 0, 0, 655.35, "m"), _sig("VREL_KALMAN", 88, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), ""]
         comments += [
             f'CM_ BO_ {m} "NOT radar bytes: values the ars510 interface computes for 0x80 slot {s}, for plotting next to the raw fields.";',
-            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under OPENPILOT_CONFIG (held until age {OPENPILOT_CONFIG.min_publish_age}, re-link within {OPENPILOT_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
-            f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (RAW_CONFIG).";',
+            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
+            f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
             f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";',
-            f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of STEADY_CONFIG); halves short-term range walks.";',
-            f'CM_ SG_ {m} VREL_SMOOTHED "Far-range vRel smoothing (part of STEADY_CONFIG): causal EMA, tau 0 s below 30 m rising to {SMOOTH_CONFIG.vrel_smooth_far_tau_s:g} s from 60 m.";',
+            f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of the fused profile); halves short-term range walks.";',
+            f'CM_ SG_ {m} VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";',
         ]
         vals += [f'VAL_ {m} PUBLISHED_OP 0 "held back or absent" 1 "published" ;', f'VAL_ {m} SETTLED 0 "settling (age<60)" 1 "settled" ;']
 
@@ -297,7 +297,7 @@ def _pad(b: bytes, n: int) -> bytes:
     return b + bytes(n - len(b))
 
 
-def derived_bytes(track_op, published, track_raw, age, vrel, v_ego, drel_fused=None, vrel_smoothed=None) -> bytes:
+def derived_bytes(track_op, published, track_raw, age, vrel, v_ego, drel_fused=None, vrel_kalman=None) -> bytes:
     value = (track_op & 0xFFFF) | ((track_raw & 0xFFFF) << 16)
     value |= int(published) << 32 | int(age >= SETTLED_AGE) << 33
     ok = vrel == vrel
@@ -305,10 +305,10 @@ def derived_bytes(track_op, published, track_raw, age, vrel, v_ego, drel_fused=N
     value |= (int(round(vrel * 100)) & 0xFFFF if ok else 0) << 40
     value |= (int(round((v_ego or 0.0) * 100)) & 0xFFFF) << 56
     f_ok = drel_fused is not None and drel_fused == drel_fused
-    s_ok = vrel_smoothed is not None and vrel_smoothed == vrel_smoothed
+    s_ok = vrel_kalman is not None and vrel_kalman == vrel_kalman
     value |= int(f_ok) << 35 | int(s_ok) << 36
     value |= (int(round(drel_fused * 100)) & 0xFFFF if f_ok else 0) << 72
-    value |= (int(round(vrel_smoothed * 100)) & 0xFFFF if s_ok else 0) << 88
+    value |= (int(round(vrel_kalman * 100)) & 0xFFFF if s_ok else 0) << 88
     return value.to_bytes(DERIVED_DLC, "little")
 
 
@@ -343,7 +343,7 @@ def build_segment(seg_dir: Path, out_route_dir: Path) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     a80, a85 = Id80RecordAssembler(), Id85RecordAssembler()
     ifaces = {k: Ars510NativeRadarInterface(c) for k, c in
-              (("raw", RAW_CONFIG), ("op", OPENPILOT_CONFIG), ("fused", FUSED_CONFIG), ("smooth", SMOOTH_CONFIG))}
+              (("raw", ALL_TRACKS_CONFIG), ("op", BASE_CONFIG), ("fused", FUSED_CONFIG), ("kalman", KALMAN_CONFIG))}
     used, events, n80, n85, v_ego = set(), [], 0, 0, None
 
     def can_event(t_ns, frames):
@@ -381,7 +381,7 @@ def build_segment(seg_dir: Path, out_route_dir: Path) -> dict:
                     if rp is not None:
                         out.append((DERIVED_BASE + s, derived_bytes(op["trackId"] if op else 0, op is not None, rp["trackId"], rp["age"],
                                                                      rp["vRel"], v_ego, pts["fused"].get(s, {}).get("dRel"),
-                                                                     pts["smooth"].get(s, {}).get("vRel"))))
+                                                                     pts["kalman"].get(s, {}).get("vRel"))))
                 events.append(can_event(int(rec.time_s * 1e9), out))
             elif f.address == 0x85:
                 rec = a85.push(t, dat)

@@ -1,0 +1,412 @@
+{
+ "description": "Were the hard radar-only braking requests real? Every hard episode (planner <= -2 m/s2 while the vision-only replay of the same drive asks >= -0.5) in each 34-drive replay, judged without the radar speed.",
+ "method": {
+  "justified": "the driver braked or slowed at <= -1 m/s2 within [-1, +4] s, and the gap was really closing (< -1 m/s): radar raw range of the same object decoded from the original CAN, else the camera lead distance of the vision-only replay",
+  "unjustified": "the driver did not slow, and the real closing needed less than 0.5 m/s2 of braking (closing^2 / 2 (gap - 4 m)) or the gap was opening",
+  "unclear": "otherwise"
+ },
+ "by_run": {
+  "fused": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
+  },
+  "tuned (anchor)": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 22
+   },
+   "unclear": {
+    "episodes": 1,
+    "ticks": 1
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 26
+   }
+  },
+  "colored": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 25
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 32
+   }
+  },
+  "fused - ACC - summaries": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 21
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 27
+   }
+  },
+  "fused - young factor": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 12
+   }
+  },
+  "fused - std gate": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 9
+   }
+  },
+  "fused - age 60": {
+   "justified": {
+    "episodes": 9,
+    "ticks": 28
+   },
+   "unclear": {
+    "episodes": 6,
+    "ticks": 6
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 9
+   }
+  },
+  "fused - range fusion": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 24
+   },
+   "unclear": {
+    "episodes": 1,
+    "ticks": 1
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 2
+   }
+  },
+  "fused - ego scale": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 4
+   }
+  },
+  "fused - ACC (summaries kept)": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 21
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 3,
+    "ticks": 27
+   }
+  },
+  "fused - summaries": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
+  },
+  "fused - relink": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
+  },
+  "fused - S - L": {
+   "justified": {
+    "episodes": 8,
+    "ticks": 27
+   },
+   "unclear": {
+    "episodes": 2,
+    "ticks": 2
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 3
+   }
+  },
+  "fused - S - R - L": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 24
+   },
+   "unclear": {
+    "episodes": 1,
+    "ticks": 1
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 2
+   }
+  },
+  "fused - S - R": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 24
+   },
+   "unclear": {
+    "episodes": 1,
+    "ticks": 1
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 2
+   }
+  },
+  "fused - R - L": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 24
+   },
+   "unclear": {
+    "episodes": 1,
+    "ticks": 1
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 2
+   }
+  },
+  "fused - S - R - L - Y - G": {
+   "justified": {
+    "episodes": 7,
+    "ticks": 24
+   },
+   "unclear": {
+    "episodes": 3,
+    "ticks": 3
+   },
+   "unjustified": {
+    "episodes": 2,
+    "ticks": 2
+   }
+  }
+ },
+ "fused_episodes": [
+  {
+   "cohort": "heldout",
+   "ticks": 7,
+   "min_request": -2.6,
+   "radar_range_m": 24.6,
+   "range_rate": -4.54,
+   "required_decel": 0.5,
+   "driver_braked": true,
+   "driver_min_accel": -2.94,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.37,
+   "radar_range_m": 47.0,
+   "range_rate": -9.25,
+   "required_decel": 1.0,
+   "driver_braked": true,
+   "driver_min_accel": -0.84,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.11,
+   "radar_range_m": null,
+   "range_rate": null,
+   "required_decel": null,
+   "driver_braked": true,
+   "driver_min_accel": -0.92,
+   "verdict": "unclear"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.34,
+   "radar_range_m": 13.9,
+   "range_rate": -3.76,
+   "required_decel": 0.71,
+   "driver_braked": true,
+   "driver_min_accel": -1.44,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 2,
+   "min_request": -2.18,
+   "radar_range_m": null,
+   "range_rate": null,
+   "required_decel": null,
+   "driver_braked": false,
+   "driver_min_accel": -0.11,
+   "verdict": "unjustified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.56,
+   "radar_range_m": 10.4,
+   "range_rate": -3.28,
+   "required_decel": 0.84,
+   "driver_braked": true,
+   "driver_min_accel": -1.38,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "further",
+   "ticks": 1,
+   "min_request": -2.21,
+   "radar_range_m": null,
+   "range_rate": null,
+   "required_decel": null,
+   "driver_braked": false,
+   "driver_min_accel": -0.62,
+   "verdict": "unclear"
+  },
+  {
+   "cohort": "further",
+   "ticks": 1,
+   "min_request": -2.07,
+   "radar_range_m": 11.6,
+   "range_rate": -2.76,
+   "required_decel": 0.5,
+   "driver_braked": true,
+   "driver_min_accel": -1.37,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 9,
+   "min_request": -3.5,
+   "radar_range_m": 10.4,
+   "range_rate": -3.31,
+   "required_decel": 0.86,
+   "driver_braked": true,
+   "driver_min_accel": -1.32,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 6,
+   "min_request": -3.06,
+   "radar_range_m": 46.6,
+   "range_rate": -6.61,
+   "required_decel": 0.51,
+   "driver_braked": true,
+   "driver_min_accel": -1.21,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.1,
+   "radar_range_m": 10.7,
+   "range_rate": -2.58,
+   "required_decel": 0.5,
+   "driver_braked": true,
+   "driver_min_accel": -1.29,
+   "verdict": "justified"
+  },
+  {
+   "cohort": "heldout",
+   "ticks": 1,
+   "min_request": -2.9,
+   "radar_range_m": null,
+   "range_rate": null,
+   "required_decel": null,
+   "driver_braked": false,
+   "driver_min_accel": -0.47,
+   "verdict": "unjustified"
+  }
+ ],
+ "acc_target_removed_summaries_kept": {
+  "heldout_hard": 48,
+  "further_hard": 2,
+  "owner_hard": 0,
+  "target_episodes": 8,
+  "owner_target_episodes": 3,
+  "radar_only_per_h": 0.88
+ },
+ "summaries_planner_effect": {
+  "definition": "fused vs fused without summaries, ticks where one requests >= 0.3 m/s2 more braking; camera range closing (< -1 m/s) or not; about 5 h of driving",
+  "totals": {
+   "noS_harder": {
+    "ticks": 143,
+    "closing": 107,
+    "opening_or_flat": 36,
+    "unknown": 0,
+    "driver_slowed": 47
+   },
+   "fused_harder": {
+    "ticks": 55,
+    "closing": 35,
+    "opening_or_flat": 20,
+    "unknown": 0,
+    "driver_slowed": 48
+   }
+  }
+ },
+ "owner_case_without_summaries": {
+  "note": "owner drive at the -1.11 m/s2 episode (0.5 s, lead about 100 m): radar and camera range then fell from about 104 to 80 m in 4.5 s and vision-only asked for -1.37 m/s2 4.5 s later: an early reaction to a real slowdown, not a false brake"
+ }
+}

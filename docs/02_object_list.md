@@ -73,7 +73,7 @@ The decoder builds `trackId` from **slot + continuous age run** (`ars510/tracks.
 - a slot quiet for more than 0.3 s → new ID;
 - a new occupant of a reused slot always gets a new ID, and no ID is ever live in two slots.
 
-`OPENPILOT_CONFIG` also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near its predicted
+`BASE_CONFIG` also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near its predicted
 position, so radard's per-track filter is not reset.
 
 ![slot occupancy](img/analysis/slot_occupancy_and_tracks.png)
@@ -88,7 +88,7 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 
 1. **Birth.** Age 1, motion code 5 (initializing), class 1 (not yet classified). The startup code `8|5` counts down
    30, 30, 30, 30, 20, 13, 9, 6, 4, 2, 1, 1, 0 while the motion code stays 5.
-2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `OPENPILOT_CONFIG` publishes from age 60.
+2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `BASE_CONFIG` publishes from age 60.
 3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
    100 but can decline. These fields do not certify measurement availability or accuracy.
 4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 (occasionally 1) per cycle.
@@ -144,7 +144,7 @@ Tracks younger than about 50-60 cycles carry unconverged range and velocity:
 
 ![age convergence](img/analysis/age_convergence.png)
 
-Hence `min_publish_age = 60` in `OPENPILOT_CONFIG`. Radard falls back to vision for a new car's first ~3.6 s.
+Hence `min_publish_age = 60` in `BASE_CONFIG`. Radard falls back to vision for a new car's first ~3.6 s.
 
 ## Worked example
 

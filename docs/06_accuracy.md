@@ -146,5 +146,5 @@ than the native velocity field.
   the same age run.
 - **Against the camera** (within 60 m, tracks with a long camera chain): the radar track keeps one camera identity for
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
-- **Re-link:** `OPENPILOT_CONFIG` re-links a track the radar re-initialises within 3.5 s near its predicted position,
+- **Re-link:** `BASE_CONFIG` re-links a track the radar re-initialises within 3.5 s near its predicted position,
   so radard keeps its filter state across short losses.

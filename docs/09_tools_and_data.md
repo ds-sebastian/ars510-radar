@@ -9,7 +9,7 @@
 | [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
 | [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several interface profiles side by side |
 | [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
-| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step); a template for plotting your own idea |
+| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](12_kalman_filter.md); a template for plotting your own idea |
 | [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild the other charts in `docs/` |
 | [`tools/compute_stats.py`](../tools/compute_stats.py) | descriptive statistics of the dataset → `data/analysis/stats.json` |
 
@@ -19,7 +19,7 @@
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
 python tools/decode_log.py rlog.zst --profile all-tracks     # every track, no age gate; reports CRC failures
-python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor   # any install profile
+python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile fused    # any install profile
 ```
 
 ### Cabana
@@ -37,7 +37,7 @@ $OP/tools/cabana/cabana --data_dir cabana_out/route "<route>" --dbc dbc/ars510_o
 | bus-10 address | message | content |
 |---|---|---|
 | 0x700-0x713 | `ARS510_OBJ_00..19` | raw slot bytes with every field of [03](03_slot_fields.md) |
-| 0x720-0x733 | `ARS510_OBJ_xx_DERIVED` | values the interface computes: VREL, V_EGO_0xB4, TRACK_ID_RAW, TRACK_ID_OP, PUBLISHED_OP, SETTLED, DREL_FUSED, VREL_SMOOTHED |
+| 0x720-0x733 | `ARS510_OBJ_xx_DERIVED` | values the interface computes: VREL, V_EGO_0xB4, TRACK_ID_RAW, TRACK_ID_OP, PUBLISHED_OP, SETTLED, DREL_FUSED, VREL_KALMAN |
 | 0x740 / 0x741 | `ARS510_REC_HEADER` / `TRAILER` | record header; CRC32 |
 | 0x760-0x76B | `ARS510_SHELL85_*` | 0x85 prefix, ten cells (with `PARAMETERS_PRESENT`), CRC |
 
@@ -74,7 +74,7 @@ acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/ope
 if clip rendering fails on `-vsync`.
 
 Here `vision` is unmodified openpilot (no radar tracks on this car) and `ars510` the installed integration; install
-another profile into a second opendbc copy (`install.py /tmp/opendbc_anchor --profile anchor`) to compare profiles.
+another profile into a second opendbc copy (`install.py /tmp/opendbc_raw --profile raw`) to compare profiles.
 
 ## Developing and testing a change
 
@@ -90,7 +90,7 @@ until the last.
 3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
    Do not tune on the drive that motivated it.
 4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the current
-   default profile and with yours, and report the gates used throughout [07](07_velocity_excursions.md#how-the-filtering-works-step-by-step):
+   default profile and with yours, and report the gates used throughout [07](12_kalman_filter.md):
 
    | gate | meaning |
    |---|---|

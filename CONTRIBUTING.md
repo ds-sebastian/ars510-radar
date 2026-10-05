@@ -28,7 +28,7 @@ The confirmed radar firmware is `8821F0R03100` at 0x750 / 0x0f on the Toyota ARS
 `8821F0R01100` is listed in openpilot fingerprints but its layout and integration remain unconfirmed; detection
 currently depends on observing both 0x80 and 0x85 on bus 1. See [firmware validation](docs/10_research_directions.md#for-the-integration).
 Install with [`openpilot/README.md`](openpilot/README.md). The installer supports openpilot and forks, and the
-`fused` profile is the default (`--profile anchor` / `raw` for comparison). Then:
+`fused` profile is the default (`--profile raw` for comparison). Then:
 
 1. Reboot, drive, and press the bookmark (flag) button whenever braking feels wrong or a lead seems stuck.
 2. Open a **Drive report** issue. Give the fork and version, `install.py --check` output, road type, and for each
@@ -45,7 +45,7 @@ the layout and the smoothing hold beyond one car.
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
 - **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `fused`):
   state the expected effect before running it, replay it through openpilot against the current profile with the gates
-  in [docs/07](docs/07_velocity_excursions.md#how-the-filtering-works-step-by-step) and the vision-only comparison in
+  in [docs/07](docs/12_kalman_filter.md) and the vision-only comparison in
   [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that
   change, not just the counts. Changes that only look better on the drive that motivated them are not merged.
 - **Integration** (`openpilot/`): run `openpilot/check_integration.py` against every fork you can

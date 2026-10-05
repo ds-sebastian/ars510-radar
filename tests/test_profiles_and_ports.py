@@ -7,36 +7,15 @@ from pathlib import Path
 import subprocess
 import sys
 
-from ars510 import ANCHOR_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG
+from ars510 import BASE_CONFIG
 
 REPO = Path(__file__).resolve().parents[1]
-
-
-def test_steady_is_openpilot_plus_k4_far_settling_and_ramp_limiter():
-  diff = {f.name for f in dataclasses.fields(OPENPILOT_CONFIG)
-          if getattr(OPENPILOT_CONFIG, f.name) != getattr(STEADY_CONFIG, f.name)}
-  assert diff == {"range_fusion_gain", "vrel_smooth_far_tau_s", "far_min_publish_age", "ramp_up_mps2", "ramp_down_mps2"}
-  assert STEADY_CONFIG.ramp_up_mps2 == 4.0 and STEADY_CONFIG.ramp_down_mps2 == 6.0 and STEADY_CONFIG.ramp_ref_tau_s == 3.0
-  assert STEADY_CONFIG.range_fusion_gain == 0.1 and STEADY_CONFIG.vrel_smooth_far_tau_s == 1.0
-  assert STEADY_CONFIG.vjump_thresh_mps == 0.0 and OPENPILOT_CONFIG.drop_saturated_codes  # jump guard is an off option
-  assert STEADY_CONFIG.far_min_publish_age == 100 and STEADY_CONFIG.far_publish_range_m == 70.0
-  assert OPENPILOT_CONFIG.far_min_publish_age == 0
-
-
-def test_anchor_is_steady_plus_acc_and_summary_anchors_only():
-  from dataclasses import fields
-  diff = {f.name for f in fields(STEADY_CONFIG) if getattr(STEADY_CONFIG, f.name) != getattr(ANCHOR_CONFIG, f.name)}
-  assert diff == {"acc_target_clip_mps", "acc_target_sticky", "acc_match_range_m", "acc_match_min_age",
-                  "summary_clip_mps", "summary_max_range_m"}
-  assert ANCHOR_CONFIG.acc_target_clip_mps == 3.0 and ANCHOR_CONFIG.acc_target_sticky
-  assert not STEADY_CONFIG.acc_target_sticky and STEADY_CONFIG.acc_target_clip_mps == 0.0
 
 
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["fused"]') == 1
-  assert ('PROFILES = {"anchor": ANCHOR_CONFIG, "fused": FUSED_CONFIG, "steady": STEADY_CONFIG, "raw": OPENPILOT_CONFIG,\n'
-          '            "stock": OPENPILOT_CONFIG, "default": OPENPILOT_CONFIG}') in src
+  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -64,9 +43,16 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
-  for name in ("anchor", "steady", "stock", "default"):  # "stock" and "default" stay accepted as older names of raw
-    assert _install(tmp_path, "--profile", name).returncode == 0
-    assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
+  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("stock", "raw"), ("default", "raw"),
+                          ("upstream", "openpilot")):  # older names
+    r = _install(tmp_path, "--profile", name)
+    assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
+    assert f"'{name}' is an alias for '{installed}'" in r.stdout
+    assert "the recommended default is 'fused'" in r.stdout
+    assert f'PROFILE = PROFILES["{installed}"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert _install(tmp_path, "--profile", "openpilot").returncode == 0
+  assert 'PROFILE = PROFILES["openpilot"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert (toyota / "ars510_upstream.py").read_text() == (REPO / "upstream" / "ars510_radar.py").read_text()
   r = _install(tmp_path, "--profile", "raw")
   assert r.returncode == 0 and "warning" in r.stdout
   assert 'PROFILE = PROFILES["raw"]' in (toyota / "ars510_radar_interface.py").read_text()
@@ -74,6 +60,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
+  assert not (toyota / "ars510_upstream.py").exists()
 
 
 def test_legacy_patches_are_kept_for_upgrades():
@@ -164,11 +151,9 @@ def test_legacy_upgrade_inside_parent_git_worktree_restores_originals(tmp_path):
   assert not (toyota / "ars510_radar_interface.py").exists()
 
 
-def test_fused_is_base_plus_range_fusion_and_one_speed_filter():
+def test_fused_is_raw_plus_range_fusion_and_one_speed_filter_without_relink_or_guard():
   from dataclasses import fields
   from ars510 import FUSED_CONFIG
-  diff = {f.name for f in fields(OPENPILOT_CONFIG) if getattr(OPENPILOT_CONFIG, f.name) != getattr(FUSED_CONFIG, f.name)}
-  assert diff == {"range_fusion_gain", "acc_target_sticky", "acc_match_range_m", "acc_match_min_age", "summary_max_range_m",
-                  "fused_speed_filter"}
-  assert FUSED_CONFIG.acc_target_clip_mps == 0.0 and FUSED_CONFIG.summary_clip_mps == 0.0
-  assert FUSED_CONFIG.vrel_smooth_far_tau_s == 0.0 and FUSED_CONFIG.far_min_publish_age == 0 and FUSED_CONFIG.ramp_up_mps2 == 0.0
+  diff = {f.name for f in fields(BASE_CONFIG) if getattr(BASE_CONFIG, f.name) != getattr(FUSED_CONFIG, f.name)}
+  assert diff == {"range_fusion_gain", "relink_max_gap_s", "drop_saturated_codes", "fused_speed_filter"}
+  assert FUSED_CONFIG.range_fusion_gain == 0.1 and not FUSED_CONFIG.drop_saturated_codes

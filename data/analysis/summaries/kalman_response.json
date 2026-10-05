@@ -1,0 +1,281 @@
+{
+  "description": "Corrected chronological response selection with fixed scalar RW and colored-noise speed models; object-list-only estimation against a hidden same-radar ACC witness.",
+  "status": "Exploratory comparison on reused cached routes with fixed model parameters.",
+  "selection": {
+    "order": "Enumerate eligible starts within native contiguous track segments, then sort all candidate starts chronologically within each route; apply one route-wide 4 s refractory interval across native track IDs; reset the refractory clock between routes.",
+    "eligibility": {
+      "distance_at_start_m_min_inclusive": 20,
+      "age_cycles_min_inclusive": 60,
+      "acc_speed_finite_at_start": true,
+      "window_s": 2,
+      "finite_acc_samples_min_exclusive": 10,
+      "acc_drop_mps_min_inclusive": 2,
+      "native_segment_gap_s_max": 0.5
+    },
+    "deduplication_limit": "Route-wide spacing suppresses near-simultaneous ACC/native association duplicates; it is not independent physical episode identification."
+  },
+  "metric": {
+    "name": "ACC-defined half-drop response lag",
+    "definition": "Estimate first falls by half the 2 s ACC drop relative to its own start value; lag is that crossing time minus the ACC half-drop crossing time. Follow-up ends at 6 s or native segment termination; missing crossings or lag at least 4 s receive a capped 4 s miss value.",
+    "followup_limit_s": 6,
+    "coded_miss_lag_s": 4,
+    "shorter_than_4s_followup_windows": 6,
+    "miss_containing_short_followup_windows": 2,
+    "negative_lag_meaning": "Estimator crosses before the ACC witness, not independently established physical anticipation."
+  },
+  "model_versions": {
+    "RW": {
+      "label": "Original historical fused random-walk recurrence",
+      "process_accel_std_mps2": 1.5,
+      "sigma_mps_per_code": 0.045,
+      "young_scale": 1.8,
+      "innovation_gate_sigma": 3
+    },
+    "historicalCN": {
+      "label": "Historical response-bench CN before the settling fix",
+      "process_accel_std_mps2": 1.0003,
+      "white_sigma_mps_per_code": 0,
+      "bias_tau_s": 1.18757,
+      "bias_sigma_mps_per_code": 0.0096,
+      "ego_gain_per_30mps": 0.4825,
+      "accel_gain_per_100_codes": 0.5095,
+      "extra_initial_sigma_mps_per_code": 0,
+      "young_scale": 1,
+      "innovation_gate_sigma": 3
+    },
+    "currentCN": {
+      "label": "Current colored recurrence with wide initialization; trackers hidden, so tracker-triggered divergence inflation inactive",
+      "process_accel_std_mps2": 1,
+      "white_sigma_mps_per_code": 0.001,
+      "bias_tau_s": 1.19,
+      "bias_sigma_mps_per_code": 0.0096,
+      "ego_gain_per_30mps": 0.48,
+      "accel_gain_per_100_codes": 0.51,
+      "extra_initial_sigma_mps_per_code": 0.045,
+      "young_scale": 1,
+      "innovation_gate_sigma": 3
+    }
+  },
+  "uncertainty": {
+    "method": "Paired route-block bootstrap; resample complete contributing routes with replacement and recompute event-weighted lag differences.",
+    "draws": 4000,
+    "seed": 510,
+    "interpretation": "Intervals quantify route variation of a dependent-witness response metric; no preregistered equivalence or noninferiority margin."
+  },
+  "reference_limits": [
+    "ACC is a same-radar filtered witness, not independently timed physical braking truth.",
+    "Native association and missing ACC samples condition eligible windows.",
+    "Half-drop thresholds use each estimator's own start value and do not verify absolute speed accuracy.",
+    "Repeatedly used recent routes are development evidence, not untouched confirmation.",
+    "CurrentCN here is a recurrence comparison with trackers hidden; it is not a runtime publication, association or full-profile replay.",
+    "Comparable aggregate response does not exclude delayed individual events; one newly selected historicalCN window is 2.220 s later than RW.",
+    "Separate colored full-replay recovery regression remains unchanged and prevents default promotion."
+  ],
+  "selection_counts": {
+    "nonempty_input_routes": 37,
+    "contributing_routes": 33,
+    "selected_windows": 252
+  },
+  "cohorts": {
+    "development": {
+      "event_count": 76,
+      "contributing_routes": 8,
+      "models": {
+        "RW": {
+          "mean": 0.4354282240526322,
+          "median": 0.2749707260000491,
+          "miss": 0,
+          "unit": "s"
+        },
+        "historicalCN": {
+          "mean": 0.38715016232892757,
+          "median": 0.23423153749990888,
+          "miss": 1,
+          "unit": "s"
+        },
+        "currentCN": {
+          "mean": 0.3942918522499755,
+          "median": 0.23988760149950394,
+          "miss": 1,
+          "unit": "s"
+        }
+      },
+      "paired_lag_difference_s": {
+        "historicalCN_minus_RW": {
+          "mean": -0.048278061723704614,
+          "route_block_bootstrap_95": [
+            -0.1261113027333969,
+            0.06689609343500054
+          ]
+        },
+        "currentCN_minus_RW": {
+          "mean": -0.04113637180265671,
+          "route_block_bootstrap_95": [
+            -0.12681882915816717,
+            0.09492241362733894
+          ]
+        }
+      }
+    },
+    "prior_evaluation": {
+      "event_count": 113,
+      "contributing_routes": 15,
+      "models": {
+        "RW": {
+          "mean": 0.4030241767699777,
+          "median": 0.18935655700079224,
+          "miss": 2,
+          "unit": "s"
+        },
+        "historicalCN": {
+          "mean": 0.35760572363720766,
+          "median": 0.18047578800002384,
+          "miss": 1,
+          "unit": "s"
+        },
+        "currentCN": {
+          "mean": 0.34840299315934375,
+          "median": 0.18047578800002384,
+          "miss": 1,
+          "unit": "s"
+        }
+      },
+      "paired_lag_difference_s": {
+        "historicalCN_minus_RW": {
+          "mean": -0.045418453132770015,
+          "route_block_bootstrap_95": [
+            -0.17157193830726888,
+            0.04364858116020362
+          ]
+        },
+        "currentCN_minus_RW": {
+          "mean": -0.054621183610633915,
+          "route_block_bootstrap_95": [
+            -0.1836926150173836,
+            0.0347254702358872
+          ]
+        }
+      }
+    },
+    "recent_reused": {
+      "event_count": 17,
+      "contributing_routes": 5,
+      "models": {
+        "RW": {
+          "mean": 0.375943920529422,
+          "median": 0.3801967140002489,
+          "miss": 0,
+          "unit": "s"
+        },
+        "historicalCN": {
+          "mean": 0.3658075694705842,
+          "median": 0.4090676899998016,
+          "miss": 0,
+          "unit": "s"
+        },
+        "currentCN": {
+          "mean": 0.3693952759999925,
+          "median": 0.4090676899998016,
+          "miss": 0,
+          "unit": "s"
+        }
+      },
+      "paired_lag_difference_s": {
+        "historicalCN_minus_RW": {
+          "mean": -0.01013635105883783,
+          "route_block_bootstrap_95": [
+            -0.13112419523084257,
+            0.21657284191676732
+          ]
+        },
+        "currentCN_minus_RW": {
+          "mean": -0.006548644529429486,
+          "route_block_bootstrap_95": [
+            -0.13112419523084257,
+            0.21657284191676732
+          ]
+        }
+      }
+    },
+    "owner": {
+      "event_count": 46,
+      "contributing_routes": 5,
+      "models": {
+        "RW": {
+          "mean": 0.552164432391059,
+          "median": 0.14997926100022596,
+          "miss": 2,
+          "unit": "s"
+        },
+        "historicalCN": {
+          "mean": 0.5089092145869828,
+          "median": 0.15515719650102255,
+          "miss": 1,
+          "unit": "s"
+        },
+        "currentCN": {
+          "mean": 0.5141227016738807,
+          "median": 0.18527319250097207,
+          "miss": 1,
+          "unit": "s"
+        }
+      },
+      "paired_lag_difference_s": {
+        "historicalCN_minus_RW": {
+          "mean": -0.04325521780407618,
+          "route_block_bootstrap_95": [
+            -0.05975951285477127,
+            -0.01841871699951298
+          ]
+        },
+        "currentCN_minus_RW": {
+          "mean": -0.03804173071717821,
+          "route_block_bootstrap_95": [
+            -0.05768930453795735,
+            -0.011190877959525097
+          ]
+        }
+      }
+    },
+    "combined": {
+      "event_count": 252,
+      "contributing_routes": 33,
+      "models": {
+        "RW": {
+          "mean": 0.43819399818252547,
+          "median": 0.23968249749941606,
+          "miss": 4,
+          "unit": "s"
+        },
+        "historicalCN": {
+          "mean": 0.3946881415079528,
+          "median": 0.19018013950085333,
+          "miss": 3,
+          "unit": "s"
+        },
+        "currentCN": {
+          "mean": 0.3939090593928666,
+          "median": 0.19018013950085333,
+          "miss": 3,
+          "unit": "s"
+        }
+      },
+      "paired_lag_difference_s": {
+        "historicalCN_minus_RW": {
+          "mean": -0.04350585667457266,
+          "route_block_bootstrap_95": [
+            -0.09785156979694141,
+            0.010833021768335484
+          ]
+        },
+        "currentCN_minus_RW": {
+          "mean": -0.0442849387896589,
+          "route_block_bootstrap_95": [
+            -0.10119926260174507,
+            0.012572279129314445
+          ]
+        }
+      }
+    }
+  }
+}

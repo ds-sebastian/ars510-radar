@@ -3,8 +3,7 @@
 The radar's velocity is its best channel ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for 1-10 s while the range does not follow**, mostly as a **false closing beyond 40 m**.
 In openpilot that shows up as extra jitter in the plan and, rarely, a braking request vision would not make. The
-profiles exist to handle it; the default `fused` does so with one Kalman filter
-([below](#fused-speed-filter-fused-profile)).
+default `fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)).
 
 **In short**
 
@@ -128,177 +127,11 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 *20 held-out routes: in steady following radar+vision is only +0.005 m/s² RMS rougher than vision; around radar/vision
 disagreements (20% of the time) +0.032, about 70% of the extra roughness.*
 
-## How the filtering works, step by step
+## How it is filtered
 
-`fused` (the default) runs three shared steps and one Kalman filter per track, in
-`Ars510NativeRadarInterface._payload` ([`ars510/interface.py`](../ars510/interface.py)). `raw` runs steps 0-1 only.
-The earlier tuned approach (`anchor`) is summarised [below](#earlier-approach-tuned-layers).
-
-![each layer added in turn](img/analysis/layer_staircase.png)
-
-*Hard radar-only braking requests (planner ≤ −2 m/s² while vision-only asks ≥ −0.5) on 20 held-out routes: the tuned
-layers added one at a time, and `fused` instead of them
-([`layer_ablation.json`](../data/analysis/summaries/layer_ablation.json),
-[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).*
-
-### 0. The plain decode (every profile)
-
-- **Rule:** publish from age 60 (~3.6 s); subtract 0xB4 ego speed (× 0.149/0.15); no point without a fresh ego speed;
-  keep a track's ID across losses ≤ 3.5 s.
-- **Why:** young tracks have unconverged range and speed ([02](02_object_list.md)); one NaN poisons radard's filter.
-
-### 1. Saturation guard (every profile)
-
-- **Problem:** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
-- **Rule:** withhold the track until the velocity is back within 5 m/s of the last good value (or 1 s); continue under
-  a new ID.
-- **Evidence:** one sentinel otherwise reaches the planner as −3.5 m/s²; held-out hard ticks 117 → 93.
-
-### 2. Range fusion (`fused`, `anchor`)
-
-- **Problem:** range walks by metres at 60-100 m (3% per frame); radard's distance and vision match jitter.
-- **Rule:** predict dRel with vRel, then move 10% toward the measurement each cycle.
-- **Evidence:** halves 1.5 s range walks; with far smoothing removes about half of radar's extra plan roughness; costs
-  ~0.07 s of head start together with far smoothing.
-
-### Fused speed filter (`fused` profile)
-
-One standard Kalman filter per track on the lead's over-ground speed
-([summary](../data/analysis/summaries/fused_filter.json); six real moments and the vision-only comparison in
-[11](11_profiles_compared.md)). Every cycle it predicts the lead keeps its speed (allowing a lead acceleration), then
-folds in each available reading weighted by its own uncertainty:
-
-| ingredient | value | where it comes from |
-|---|---|---|
-| object-list speed σ | 0.045 m/s × `240\|7` (≈ 0.2 m/s at 15 m, 1.4 at 60 m, 2.7 at 100 m) | calibrated against the radar's ACC target ([above](#far-range-excursions-match-the-reported-velocity-error-scale)) |
-| young-track factor | × 1.8 below age 100 | measured: young tracks err 1.4-2× more than `240\|7` says |
-| ACC target speed σ, summary speed σ | 0.5 m/s each (summary up to 80 m) | the radar's own trackers |
-| lead acceleration (process noise) | 1.5 m/s² | physical |
-| robust update | innovations clamped at 3σ | standard; stops one-record spikes |
-| first publication | speed std ≤ 0.75 m/s (and age ≥ 60) | replaces far-track settling without a range threshold |
-| range | not in the filter; range fusion as before | range rate and speed disagree by 10-20% |
-
-![profiles on the bundled samples](img/analysis/profile_comparison.png)
-
-*All four profiles on the bundled excursions: `fused` (green) follows the radar's ACC target on drive E and keeps drive
-A's lead at the speed its range trend shows.*
-
-**What each part contributes** (34 replay drives, held-out hard ticks / radar-only target episodes):
-
-| | hard ticks | target episodes | owner-drive episodes |
-|---|---|---|---|
-| tuned layers, no ACC target (`steady`) | 53 | 11 | – |
-| tuned layers + ACC target (`anchor`) | 48 | 9 | 5 |
-| Kalman filter on the object list alone | 48 | 8 | 4 |
-| Kalman filter + ACC target + summary (`fused`) | **30** | **4** | **0** |
-
-The filter alone matches the whole tuned stack; the radar's own trackers add the rest
-([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Against `anchor`: held-out hard ticks 48 → 30, target episodes 9 → 4, owner-drive target
-episodes 5 → 0. Braking onset is 0.09 s later on average, all from events where `anchor` braked early on an
-over-estimated closing speed (before those driver brakes `anchor` is 0.54 m/s more closing than vision, `fused` 0.02).
-Dropped variants: adapting the process noise follows far slot slides as if they were braking; without the robust
-clamp a +10 m/s spike passes.
-
-### Other approaches tested
-
-None is in a profile.
-
-| approach | result |
-|---|---|
-| vision speed fused into the matched track ([radard patch](../openpilot/radard_vision_fusion.patch)) | better driver agreement, small on fresh drives; needs a radard change |
-| the ACC target's speed *replacing* the track's vRel | hard ticks 53 → 57, +0.145 s response: the ACC value alone lags real closings |
-| smoothing weighted by `240\|7` (no fusion) | responds 62 ms earlier but 153 vs 85 hard ticks |
-| camera-looming veto | no planner benefit |
-| Kalman filter with maneuver adaptation or a range state | follows far slot slides / biased by the range-speed mismatch ([fused](#fused-speed-filter-fused-profile)) |
-
-<details>
-<summary>Earlier approach: tuned layers (<code>anchor</code>, <code>steady</code>)</summary>
-
-### Earlier approach: tuned layers
-
-Before the Kalman filter, five tuned layers each targeted one measured failure. `anchor` (steps 0-3, 5-7) is kept as a
-fallback profile; `steady` (0-3, 5-6) is superseded by `fused`, which falls back to the object list alone when there is
-no ACC target and does better without it (48 vs 53 hard ticks).
-
-![one example per layer](img/analysis/layer_examples.png)
-
-*One example per layer from the bundled samples (panels 3 and 5 synthetic), with `fused` in green
-([`tools/make_profile_figures.py`](../tools/make_profile_figures.py)). On a one-record spike (panel 3) `fused` lets a
-small, quickly fading part through where the jump guard blocks it.*
-
-### 3. Far smoothing (`steady`, `anchor`)
-
-- **Rule:** exponential smoothing of vRel, time constant 0 s below 30 m rising to 1 s at 60 m.
-- **Evidence:** removes ~29% of the extra roughness for 0.06 s alone.
-
-![roughness against head start](img/analysis/jitter_tradeoff.png)
-
-### 4. Velocity-jump guard (option, off)
-
-- **Rule:** withhold a record > 8 m/s from the last accepted value; a level that lasts 1 s is real (new ID).
-- **Evidence:** helped before the ramp limiter existed (85 → 69 hard ticks); with it, no scored change on 34 drives,
-  so it is off (`vjump_thresh_mps=8`).
-
-### 5. Far-track settling (`steady`, `anchor`)
-
-- **Problem:** tracks first seen beyond 70 m are often unconverged at age 60.
-- **Rule:** such tracks wait until age 100 (~6 s); once published they stay eligible.
-- **Evidence:** further drives 10 → 3 hard ticks; removing it raises them 1 → 9
-  ([`far_settling.json`](../data/analysis/summaries/far_settling.json)).
-
-![far-track settling example](img/analysis/far_settling.png)
-
-### 6. Ramp limiter (`steady`, `anchor`)
-
-- **Problem:** excursions ramp at ~+23 m/s² over ground; no car changes speed that fast.
-- **Rule:** over-ground speed may move away from its 3 s average by at most +4 / −6 m/s²; moves back pass unchanged.
-- **Evidence:** held-out hard ticks 69 → 53, further drives 3 → 1, no driver brake loses its early reaction
-  ([`ramp_limiter.json`](../data/analysis/summaries/ramp_limiter.json)).
-
-![ramp limiter example](img/analysis/ramp_limiter.png)
-
-### 7. ACC anchor (`anchor`)
-
-- **Problem:** steps 3-6 slow an excursion but cannot tell it from a real closing. The radar's own ACC target
-  (0x235 / 0x237, [05](05_acc_target_and_support.md)) can: it stays consistent with range during excursions (closer to
-  the range trend in 76% of disagreements) and still follows real decelerations. It is the same car: in 653
-  disagreement cycles no other track was near the target
-  ([`acc_target_choice.json`](../data/analysis/summaries/acc_target_choice.json)).
-- **Rule:** match the ACC target to one track by position (lateral within 0.5 m, range within 12 m, age ≥ 20), keep the
-  match while both persist (excursions drag the range), and clip that track's vRel to the target speed ± 3 m/s.
-- **Evidence:** held-out hard ticks 53 → 48, owner drives 16 → 0, fresh drives 7 → 0; onset unchanged
-  ([`acc_anchor.json`](../data/analysis/summaries/acc_anchor.json)).
-- **Limits:** the target covers ~57% of radar-lead time and 5% beyond 80 m.
-
-### Summary anchor (in `anchor`, up to 80 m)
-
-The radar's target-range summaries (0x192 / 0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries))
-come from its internal tracker too. A summary attaches to a track when range (within 15%) and speed (within 1.5 m/s)
-agree; that track's vRel is held within ±3 m/s of the summary's range slope. Against the optical reference the summary
-speed is better at 40-80 m (false closings 6.5% vs 14.9% at 60-80 m), not beyond 80 m. No planner change on 34 drives
-on its own ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)).
-
-### Range anchor (option, off)
-
-`acc_range_clip_m` bounds the ACC track's range by the ACC target's fine range. Held-out hard ticks 48 → 45, but
-distances move by up to 12 m where fine range and object list disagree on scale, so it stays off
-([`acc_fields.json`](../data/analysis/summaries/acc_fields.json)).
-
-### What removing a layer does
-
-From the full tuned profile, 34 replay drives ([`layer_ablation.json`](../data/analysis/summaries/layer_ablation.json)):
-
-| removed | effect |
-|---|---|
-| everything (`raw` instead of `steady`) | held-out hard ticks 53 → 93, target episodes 11 → 19, lead switches +39%; onset 0.04 s earlier |
-| ramp limiter | held-out hard ticks 53 → 69 |
-| far smoothing (from `anchor`) | held-out 48 → 45 but further drives 1 → 9, target episodes 9 → 11 |
-| far-track settling (from `anchor`) | further drives 1 → 9 |
-| jump guard | no scored change: removed from the profiles |
-| ACC anchor (`steady` instead of `anchor`) | held-out 48 → 53, owner 0 → 16, fresh 0 → 7 |
-| far smoothing or settling, with the summary anchor on | further drives 1 → 3 / 1 → 9: summaries do not replace them |
-
-</details>
+`fused` (the default) handles excursions with one Kalman filter per track that weights the object list, the radar's
+ACC target and its summaries by their own uncertainty. The model, every constant, what each part contributes and
+the variants tested are in [12 Kalman speed filter](12_kalman_filter.md).
 
 ## Radar-internal signals that move with an excursion
 
@@ -310,30 +143,3 @@ From the full tuned profile, 34 replay drives ([`layer_ablation.json`](../data/a
 | lane state `128\|3` | changes more often, also on real closings |
 
 None alone separates an excursion from a real closing within the first second ([10](10_research_directions.md)).
-
-<details>
-<summary>Earlier replay comparisons (fresh jump-guard check, sunnypilot profile comparison)</summary>
-
-## Fresh jump-guard simplification comparison
-
-`steady` without the 8 m/s jump guard on eight fresh routes (114 segments) through the unchanged sunnypilot radard and
-planner, two publication schedules, 779,076 ticks: hard command-disagreement ticks 7 → 7, radar-only episodes 6 → 6,
-all 19 driver events and 83 recorded command windows unchanged. Preregistered non-increase overlay met; strict
-improvement false. With `anchor` the same holds on all 34 replay drives, so the guard is off in both
-([`fresh_s4_replay.json`](../data/analysis/summaries/fresh_s4_replay.json)).
-
-## Sunnypilot profile comparison
-
-Owner drives through sunnypilot's original radard and planner (72 segments, 84,659 model ticks, two schedules):
-
-| drive | `steady` episodes | `raw` episodes | `steady` + ACC clip episodes |
-|---|---:|---:|---:|
-| D1 | 5 | 8 | 4 |
-| D2 | 0 | 2 | 0 |
-| D3 (recorded radar disabled) | 0 | 0 | 0 |
-
-An episode is ≥ 0.3 s of request ≤ −1 m/s² while the same-fork vision-only replay asks ≥ −0.3 m/s². In D2's window
-`steady` and the clip reach −0.99 m/s² against −2.07 for `raw`
-([`sunnypilot_profile_comparison.json`](../data/analysis/summaries/sunnypilot_profile_comparison.json)).
-
-</details>

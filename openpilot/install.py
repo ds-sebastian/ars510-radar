@@ -2,7 +2,7 @@
 """Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
     python openpilot/install.py /data/openpilot                     # install (fused profile), then reboot
-    python openpilot/install.py /data/openpilot --profile steady    # choose another profile
+    python openpilot/install.py /data/openpilot --profile raw       # the unfiltered decode, for comparison
     python openpilot/install.py /data/openpilot --check             # report state, change nothing
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
 
@@ -15,14 +15,17 @@ StarPilot and other forks: no fork file is patched in place. The installer
 An install made with an older, patch-based version of this installer is removed first.
 
 Profiles (docs/08 has the details and replay numbers):
-  fused     FUSED_CONFIG (default): raw + range fusion + one Kalman speed filter that weights the object list, the
-            ACC target and the summaries by the radar's own uncertainty (replaces the steady layers and anchor clips)
-  anchor    ANCHOR_CONFIG: the earlier tuned layers + the radar's own ACC target (0x235) as a velocity anchor (fallback)
-  steady    STEADY_CONFIG: the earlier tuned layers without the ACC target; superseded by fused
-  raw       OPENPILOT_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
-            needs to run. Velocity excursions reach the planner unfiltered (about twice the hard false braking of steady); for research and comparison only
-  stock     older name for raw, kept so existing installs and instructions keep working
-  default   older name for raw, kept for the same reason
+  fused     FUSED_CONFIG (default): the radar decode + range fusion + one Kalman speed filter per track that weights
+            the object list, the radar's ACC target and its summaries by their own uncertainty
+  raw       BASE_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
+            needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
+  colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
+            offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
+  openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): the slimmest filter that
+            keeps fused's driving, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
+
+Legacy names are aliases, not additional profiles: anchor/steady select fused, upstream selects openpilot,
+and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended fused default.
 """
 from __future__ import annotations
 
@@ -37,7 +40,8 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("anchor", "fused", "steady", "raw", "stock", "default")
+PROFILE_NAMES = ("fused", "openpilot", "raw", "colored")
+LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
@@ -61,7 +65,8 @@ def find_opendbc(path: Path) -> Path | None:
 
 def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
-  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py"}
+  return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
+          "upstream": toyota / "ars510_upstream.py"}
 
 
 def old_dbcs(root: Path) -> list[Path]:
@@ -96,12 +101,18 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES, default="fused")
+  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="fused",
+                  metavar="{" + ",".join(PROFILE_NAMES) + "}", help="default: fused; legacy aliases also accepted")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
   g.add_argument("--uninstall", action="store_true")
   args = ap.parse_args()
+  if args.profile in LEGACY_NAMES:
+    new = LEGACY_NAMES[args.profile]
+    retired = "the tuned profile was removed; " if new == "fused" else ""
+    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is 'fused'")
+    args.profile = new
   root = find_opendbc(args.openpilot)
   if root is None:
     print(f"no opendbc/car/toyota/interface.py under {args.openpilot} (or its opendbc_repo)", file=sys.stderr)
@@ -117,7 +128,7 @@ def main() -> int:
     print(f"older patch-based install: {legacy.name if legacy else 'none'}")
     if t["interface"].exists():
       txt = t["interface"].read_text()
-      prof = next((k for k in PROFILE_NAMES if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
+      prof = next((k for k in PROFILE_NAMES + tuple(LEGACY_NAMES) if f'PROFILE = PROFILES["{k}"]' in txt), "unknown")
       print(f"profile: {prof}")
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'missing'} ({p})")
@@ -148,15 +159,16 @@ def main() -> int:
   if t["package"].exists():
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+  shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
   interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
-  if args.profile in ("raw", "stock", "default"):
+  if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
-          "reach the planner unfiltered and cause about twice the hard false braking of steady. Use it for research\n"
+          "reach the planner unfiltered and cause about three times the hard false braking of fused. Use it for research\n"
           "and comparison only; install.py with no --profile installs the recommended fused profile.")
   return 0
 

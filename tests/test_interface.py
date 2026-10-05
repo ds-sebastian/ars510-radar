@@ -9,9 +9,9 @@ import pytest
 
 from ars510.constants import ID80_IDLE_SLOT
 from ars510.interface import (
-    ANCHOR_CONFIG,
-    OPENPILOT_CONFIG,
-    RAW_CONFIG,
+    FUSED_CONFIG,
+    BASE_CONFIG,
+    ALL_TRACKS_CONFIG,
     RELINK_MIN_PUBLISH_AGE,
     NATIVE_VREL_STATUS,
     UNRESOLVED_NAN,
@@ -52,32 +52,6 @@ def frames(rec: bytes, t0: float):
 def speed_frame(t: float, v_mps: float):
     code = round(v_mps * 3.6 / 0.01)
     return (t, 0, 0xB4, bytes(5) + code.to_bytes(2, "big") + b"\x00")
-
-
-@pytest.mark.parametrize("age_threshold", [100, 126])
-def test_far_settling_first_publication_and_lifecycle_restart(age_threshold):
-    cfg = NativeInterfaceConfig(min_publish_age=60, far_min_publish_age=age_threshold)
-    iface = Ars510NativeRadarInterface(cfg)
-
-    def points(t, age, distance):
-        rec = record({2: slot_bytes(r_code=160+16*distance, lat_code=2048, vel_code=640, age=age)})
-        return iface.update_many([speed_frame(t, 20)] + frames(rec, t+.001))[0]["radarData"]["points"]
-
-    assert not points(0, age_threshold-1, 90)
-    published = points(.06, age_threshold, 90)
-    assert len(published) == 1
-    assert not points(.12, 0, 90)
-    assert not points(.18, 60, 90)
-    assert points(.24, 61, 70)  # only distances strictly above 70 m are delayed
-    returned = points(.30, 62, 90)  # first publication is remembered
-    assert returned and returned[0]["trackId"] != published[0]["trackId"]
-
-
-def test_disabled_far_settling_preserves_default_publication():
-    cfg = replace(OPENPILOT_CONFIG, include_metadata=False)
-    iface = Ars510NativeRadarInterface(cfg)
-    rec = record({2: slot_bytes(r_code=160+16*90, lat_code=2048, vel_code=640, age=60)})
-    assert iface.update_many([speed_frame(0, 20)] + frames(rec, .001))[0]["radarData"]["points"]
 
 
 class TestNativeInterface:
@@ -172,13 +146,13 @@ class TestNativeInterface:
 
 
 def test_openpilot_profile_holds_settling_tracks_and_relinks() -> None:
-    assert OPENPILOT_CONFIG.min_publish_age == 60 and OPENPILOT_CONFIG.relink_max_gap_s > 0
-    assert OPENPILOT_CONFIG.min_publish_age >= RELINK_MIN_PUBLISH_AGE
-    assert RAW_CONFIG.min_publish_age == 1 and RAW_CONFIG.relink_max_gap_s == 0
+    assert BASE_CONFIG.min_publish_age == 60 and BASE_CONFIG.relink_max_gap_s > 0
+    assert BASE_CONFIG.min_publish_age >= RELINK_MIN_PUBLISH_AGE
+    assert ALL_TRACKS_CONFIG.min_publish_age == 1 and ALL_TRACKS_CONFIG.relink_max_gap_s == 0
 
 
 def test_openpilot_profile_applies_the_measured_velocity_scale() -> None:
-    assert OPENPILOT_CONFIG.vground_scale == pytest.approx(0.149 / 0.15)
+    assert BASE_CONFIG.vground_scale == pytest.approx(0.149 / 0.15)
     iface = Ars510NativeRadarInterface(NativeInterfaceConfig(vground_scale=0.149 / 0.15))
     rec = record({3: slot_bytes(r_code=600, lat_code=2048, vel_code=int(510.5 + 100), age=40)})
     (p,) = iface.update_many([speed_frame(0.0, 20.0)] + frames(rec, 0.01))[0]["radarData"]["points"]
@@ -225,57 +199,6 @@ class TestRangeFusionAndUnresolvedVrel:
         assert len(out[0]["radarData"]["points"]) == 1
 
 
-def test_range_clip_bounds_vrel_to_the_track_range_slope() -> None:
-    cfg = NativeInterfaceConfig(vrel_range_clip_window_s=2.0, vrel_range_clip_mps=1.0)
-    # range constant at 40 m while the velocity field claims about -5.1 m/s closing
-    pts = TestRangeFusionAndUnresolvedVrel._run(cfg, [40.0] * 60)
-    late = [p["vRel"] for p in pts[40:]]
-    assert all(v == pytest.approx(-1.0, abs=0.05) for v in late)
-    raw = TestRangeFusionAndUnresolvedVrel._run(NativeInterfaceConfig(), [40.0] * 60)
-    assert raw[-1]["vRel"] == pytest.approx(0.15 * 99.5 - 20.0, abs=0.01)
-
-
-def test_far_vrel_smoothing_leaves_near_raw_and_lags_far() -> None:
-    cfg = NativeInterfaceConfig(vrel_smooth_far_tau_s=1.0)
-    near = TestRangeFusionAndUnresolvedVrel._run(cfg, [20.0] * 10)
-    assert all(p["vRel"] == pytest.approx(0.15 * 99.5 - 20.0, abs=0.01) for p in near)
-    # far object: ego speed steps from 20 to 25 m/s; smoothed vRel approaches the new value with a ~1 s lag
-    iface = Ars510NativeRadarInterface(cfg)
-    vals = []
-    for i in range(70):
-        t = i * 0.06
-        rec = record({0: slot_bytes(r_code=160 + 16 * 80, lat_code=2048, vel_code=int(510.5 + 100), age=min(126, 60 + i))})
-        for payload in iface.update_many([speed_frame(t, 20.0 if i < 10 else 25.0)] + frames(rec, t + 0.001)):
-            vals += [p["vRel"] for p in payload["radarData"]["points"]]
-    raw_after = 0.15 * 99.5 - 25.0
-    assert vals[10] > raw_after + 3.0  # not jumped yet
-    assert abs(vals[-1] - raw_after) < 0.5  # converged ~3.6 s after the step
-
-
-def _vrel_step_response(unc_code: int) -> list[float]:
-    """vRel published for a track whose velocity steps by +20 codes (3 m/s) after 5 records."""
-    from ars510.objects import encode_slot
-    cfg = NativeInterfaceConfig(vrel_smooth_unc_tau_s=1.0, vrel_smooth_unc_lo=25, vrel_smooth_unc_hi=42)
-    iface = Ars510NativeRadarInterface(cfg)
-    out = []
-    for k in range(10):
-        t = 0.06 * k
-        vel = 600 + (20 if k >= 5 else 0)
-        slot = encode_slot(long_dist=160 + 16 * 40, lat_dist_left=2048, long_vel_over_ground=vel, age_cycles=70 + k,
-                           vel_uncertainty_candidate=unc_code)
-        (p,) = iface.update_many([speed_frame(t, 10.0)] + frames(record({2: slot}), t + 0.001))[0]["radarData"]["points"]
-        out.append(p["vRel"])
-    return out
-
-
-def test_uncertainty_weighted_smoothing_leaves_confident_tracks_alone() -> None:
-    confident, uncertain = _vrel_step_response(20), _vrel_step_response(50)
-    step = 20 * 0.15
-    assert confident[5] - confident[4] == pytest.approx(step, abs=1e-6)  # passes straight through
-    assert 0 < uncertain[5] - uncertain[4] < 0.2 * step  # tau 1 s: one 60 ms record moves ~6% of the step
-    assert uncertain[-1] < confident[-1]
-
-
 def _acc_frames(t: float, vrel: float, x: float, y: float) -> list:
     v = round(vrel / 0.1) + 1024
     b235 = (v << 29 | 2 << 26 | 4 << 48).to_bytes(8, "big")  # byte 1 bit 2: target available
@@ -292,61 +215,64 @@ def test_acc_target_decodes_round_trip() -> None:
     assert abs(x - 41.7) < 2.7 and y == pytest.approx(1.2, abs=0.01)
 
 
-def test_acc_target_cross_check_clips_the_matched_object_only() -> None:
+FUSED_ACC = replace(FUSED_CONFIG, min_publish_age=1, relink_max_gap_s=0.0, range_fusion_gain=0.0, publish_speed_std_mps=99.0,
+                    vground_scale=1.0)
+
+
+def test_acc_target_reading_pulls_only_the_matched_object() -> None:
     from ars510.objects import encode_slot
-    cfg = NativeInterfaceConfig(acc_target_clip_mps=1.0)
+    cfg = replace(FUSED_ACC, young_sigma_scale=1.0)
     iface = Ars510NativeRadarInterface(cfg)
     # lead at 40 m in lane with a native vRel glitch (-6 m/s); a second car 3.5 m to the left with the same glitch
-    lead = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
-    side = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 224, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
-    frames = [speed_frame(0.0, 10.0)] + _acc_frames(0.005, 0.0, 40.0, 0.0) + frames_(record({0: lead, 1: side}), 0.01)
-    pts = {round(p["yRel"]): p for p in iface.update_many(frames)[0]["radarData"]["points"]}
-    assert pts[0]["vRel"] == pytest.approx(-1.0, abs=0.02)  # clipped to 0x235 (0.0) - 1.0
+    # 240|7 = 40: object-list sigma 1.8 m/s, so the ACC target (0.5 m/s) dominates once the filter has run a few cycles
+    frames = []
+    for k in range(6):
+        t = 0.06 * k
+        lead, side = (encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + dy, long_vel_over_ground=round(510.5 + 4.0 / 0.15),
+                                  age_cycles=80 + k, vel_uncertainty_candidate=40) for dy in (0, 224))
+        frames += [speed_frame(t, 10.0)] + _acc_frames(t + 0.005, 0.0, 40.0, 0.0) + frames_(record({0: lead, 1: side}), t + 0.01)
+    pts = {round(p["yRel"]): p for p in iface.update_many(frames)[-1]["radarData"]["points"]}
     native = (round(510.5 + 4.0 / 0.15) - 510.5) * 0.15 - 10.0
-    assert pts[0]["vRel"] > native + 4  # the glitch is gone on the matched lead
+    assert pts[0]["vRel"] > native + 4  # the matched lead follows the ACC target (0.0), not the -6 m/s glitch
     assert pts[4]["vRel"] == pytest.approx(native, abs=1e-6)  # the side car is untouched
-    assert iface.acc_target_clips == 1
+    assert iface._acc_assoc[0] is not None
 
 
 frames_ = frames
 
 
-def _sliding_lead_run(sticky: bool) -> list[float]:
+def _sliding_lead_run() -> list[float]:
     """Matched lead at 40 m; then its native range slides to 30 m while vRel drops to -6 m/s (a re-association
     excursion). The ACC target stays at 40 m / 0.0 m/s throughout."""
     from ars510.objects import encode_slot
-    cfg = NativeInterfaceConfig(acc_target_clip_mps=1.5, acc_target_sticky=sticky)
-    iface = Ars510NativeRadarInterface(cfg)
+    iface = Ars510NativeRadarInterface(FUSED_ACC)
     out = []
     for k in range(12):
         t = 0.06 * k
         d = 40.0 if k < 4 else 40.0 - 2.5 * (k - 3)
         vg = 10.0 if k < 4 else 4.0
         lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048,
-                           long_vel_over_ground=round(510.5 + vg / 0.15), age_cycles=80 + k)
+                           long_vel_over_ground=round(510.5 + vg / 0.15), age_cycles=80 + k, vel_uncertainty_candidate=40)
         fr = [speed_frame(t, 10.0)] + _acc_frames(t + 0.001, 0.0, 40.0, 0.0) + frames_(record({0: lead}), t + 0.002)
         out += [p["vRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
     return out
 
 
-def test_sticky_acc_association_keeps_the_cross_check_through_a_range_slide() -> None:
-    loose, sticky = _sliding_lead_run(False), _sliding_lead_run(True)
-    # once the native range has slid > 6 m from the ACC coarse range, the per-cycle match drops the clip
-    assert min(loose[-3:]) < -5.5
-    # the sticky association keeps the matched track clipped to ACC (0.0) - 1.5
-    assert min(sticky) == pytest.approx(-1.5, abs=0.02)
+def test_acc_association_holds_through_a_range_slide() -> None:
+    # the native range slides 20 m away from the ACC coarse range, yet the track keeps its ACC reading
+    assert min(_sliding_lead_run()) > -2.5  # the object list alone says -6 m/s
 
 
-def test_sticky_acc_association_rematches_after_an_acc_target_jump() -> None:
+def test_acc_association_rematches_after_an_acc_target_jump() -> None:
     from ars510.objects import encode_slot
-    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0, acc_target_sticky=True))
+    iface = Ars510NativeRadarInterface(FUSED_ACC)
     near = encode_slot(long_dist=160 + 30 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
     far = encode_slot(long_dist=160 + 60 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 4.0 / 0.15), age_cycles=80)
     fr = [speed_frame(0.0, 10.0)] + _acc_frames(0.001, 0.0, 30.0, 0.0) + frames_(record({0: near, 1: far}), 0.002)
     fr += [speed_frame(0.06, 10.0)] + _acc_frames(0.061, 0.0, 60.0, 0.0) + frames_(record({0: near, 1: far}), 0.062)
-    last = {round(p["dRel"]): p["vRel"] for p in iface.update_many(fr)[-1]["radarData"]["points"]}
-    assert last[60] == pytest.approx(-1.0, abs=0.02)  # the target jumped to the far car: clip follows it
-    assert last[30] == pytest.approx(-6.0, abs=0.1)  # the near car is no longer the ACC target
+    out = iface.update_many(fr)
+    ids = {round(p["dRel"]): p["trackId"] for p in out[-1]["radarData"]["points"]}
+    assert iface._acc_assoc is not None and iface._acc_assoc[0] == ids[60]  # the target jumped to the far car
 
 
 @pytest.mark.parametrize("address,data", [
@@ -355,7 +281,7 @@ def test_sticky_acc_association_rematches_after_an_acc_target_jump() -> None:
     (0x235, bytes(7)), (0x237, bytes(9)),
 ])
 def test_acc_unavailable_clears_both_halves(address, data):
-    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0))
+    iface = Ars510NativeRadarInterface(FUSED_ACC)
     iface.update_many(_acc_frames(0.0, -2.0, 40.0, 0.0))
     assert iface._acc_vrel is not None and iface._acc_pos is not None
     iface.update_frame(0.01, 1, address, data)
@@ -366,15 +292,15 @@ def test_acc_unavailable_clears_both_halves(address, data):
     assert iface._acc_pos is not None
 
 
-def test_idle_acc_cannot_clip_a_real_closing_object():
-    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(acc_target_clip_mps=1.0))
+def test_idle_acc_cannot_pull_a_real_closing_object():
+    iface = Ars510NativeRadarInterface(FUSED_ACC)
     rec = record({0: slot_bytes(r_code=320, lat_code=2048, vel_code=537, age=80)})
     inputs = [speed_frame(0.0, 10.0),
               (0.001, 1, 0x235, bytes.fromhex("000164800B2400FF")),
               (0.001, 1, 0x237, bytes.fromhex("0000003E80000000"))] + frames(rec, 0.01)
     (point,) = iface.update_many(inputs)[0]["radarData"]["points"]
     assert point["vRel"] == pytest.approx((537 - 510.5) * .15 - 10.)
-    assert point["dRel"] == 10.0 and iface.acc_target_clips == 0
+    assert point["dRel"] == 10.0 and iface._acc_assoc is None
 
 
 def test_other_bus_idle_does_not_clear_acc():
@@ -383,11 +309,6 @@ def test_other_bus_idle_does_not_clear_acc():
     before = iface._acc_vrel, iface._acc_pos
     iface.update_frame(0.01, 0, 0x235, bytes(8))
     assert (iface._acc_vrel, iface._acc_pos) == before
-
-
-def test_acc_clip_remains_disabled_by_default():
-    assert NativeInterfaceConfig().acc_target_clip_mps == 0.0
-    assert OPENPILOT_CONFIG.acc_target_clip_mps == RAW_CONFIG.acc_target_clip_mps == 0.0
 
 
 def _guard_run(vel_codes: list[int], cfg) -> list:
@@ -412,44 +333,14 @@ def test_saturation_guard_withholds_the_sentinel_and_restarts_the_track_id() -> 
     assert all(len(p) == 1 for p in plain) and plain[5][0]["vRel"] > 50  # without the guard the reading is published
 
 
-def test_jump_guard_withholds_a_glitch_and_accepts_a_persistent_step() -> None:
-    base = round(510.5 + 20.0 / 0.15)
-    cfg = NativeInterfaceConfig(vjump_thresh_mps=8.0)
-    glitch = _guard_run([base] * 5 + [base - 70] * 2 + [base] * 3, cfg)  # 10.5 m/s drop for two records
-    assert [len(p) for p in glitch] == [1] * 5 + [0, 0] + [1] * 3
-    step = _guard_run([base] * 5 + [base - 70] * 25, cfg)  # a level that persists longer than guard_hold_s (1 s)
-    assert sum(len(p) == 0 for p in step) <= 18 and len(step[-1]) == 1
-    assert step[-1][0]["trackId"] != step[4][0]["trackId"]
-
-
 def test_age_one_initialization_template_is_withheld() -> None:
     template = slot_bytes(r_code=160, lat_code=2047, vel_code=700, age=1, width=0, length=0)
-    out = Ars510NativeRadarInterface(RAW_CONFIG).update_many(frames(record({0: template}), 0.0))
+    out = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG).update_many(frames(record({0: template}), 0.0))
     assert out and out[-1]["radarData"]["points"] == []
 
 
-def test_ramp_limiter_limits_moves_away_and_passes_returns() -> None:
-    cfg = replace(RAW_CONFIG, guard_min_age=1, ramp_up_mps2=4.0, ramp_down_mps2=10.0, ramp_ref_tau_s=3.0,
-                  include_metadata=True)
-    iface = Ars510NativeRadarInterface(cfg)
-    iface.set_ego_speed(20.0, 0.0)
-    # 1 s steady at code 644 (~20 m/s), then a 0.3 s ramp of +3 m/s per cycle, then straight back
-    codes = [644] * 17 + [664, 684, 704, 724, 744] + [644] * 5
-    out = []
-    for k, code in enumerate(codes):
-        t = 0.06 * k
-        iface.set_ego_speed(20.0, t)
-        rec = record({2: slot_bytes(r_code=160 + 16 * 60, lat_code=2048, vel_code=code, age=70 + k)})
-        r = iface.update_many(frames(rec, t))
-        out.append(r[-1]["radarData"]["points"][0]["v_long_ground"])
-    base = out[16]
-    ramp = out[17:22]
-    assert max(ramp) - base <= 4.0 * 0.06 * 5 + 1e-6  # the +15 m/s ramp is limited to +4 m/s^2
-    assert out[22] == pytest.approx(base, abs=1e-6)  # the return passes unlimited
-
-
 def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
-    iface = Ars510NativeRadarInterface(replace(RAW_CONFIG, include_metadata=True))
+    iface = Ars510NativeRadarInterface(replace(ALL_TRACKS_CONFIG, include_metadata=True))
     # yaw rate 0.1 rad/s left: raw = (5.7296 deg/s + 125) / 0.244 = 535.8 -> 536
     yaw_raw = 536
     yaw = (yaw_raw * 0.244 - 125) * math.pi / 180
@@ -468,7 +359,7 @@ def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
 
 
 def test_yvrel_is_nan_without_yaw_rate() -> None:
-    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG)
     iface.set_ego_speed(20.0, 0.0)
     rec = record({2: slot_bytes(r_code=160 + 16 * 40, lat_code=2048, vel_code=644, age=70, vy_code=531, ax_code=536)})
     pt = iface.update_many(frames(rec, 0.001))[-1]["radarData"]["points"][0]
@@ -486,64 +377,6 @@ def test_measured_follows_the_predicted_flag_and_existence_is_exposed() -> None:
     pts = {round(p["dRel"]): p for p in out[0]["radarData"]["points"]}
     assert pts[30]["measured"] is True and pts[30]["existence_pct"] == 100
     assert pts[40]["measured"] is False and pts[40]["existence_pct"] == 60
-
-
-def _range_slide_run(clip_m: float) -> list[float]:
-    """Matched lead at 40 m whose object-list range slides to 30 m while the ACC target's fine range stays put."""
-    from ars510.objects import encode_slot
-    cfg = replace(NativeInterfaceConfig(acc_target_clip_mps=3.0, acc_target_sticky=True, acc_match_range_m=12.0,
-                                        acc_match_min_age=20), acc_range_clip_m=clip_m)
-    iface = Ars510NativeRadarInterface(cfg)
-    out = []
-    for k in range(20):
-        t = 0.06 * k
-        d = 40.0 if k < 6 else max(30.0, 40.0 - 2.0 * (k - 5))
-        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + 10.0 / 0.15),
-                           age_cycles=80 + k)
-        fr = [speed_frame(t, 10.0)] + _acc_frames(t + 0.001, 0.0, 40.0, 0.0) + frames_(record({0: lead}), t + 0.002)
-        out += [p["dRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
-    return out
-
-
-def test_range_anchor_holds_the_acc_track_against_a_range_slide() -> None:
-    free, anchored = _range_slide_run(0.0), _range_slide_run(2.0)
-    assert free[10] <= 30.5                      # the object-list range has slid 10 m
-    assert anchored[10] >= 37.5                  # held within 2 m of the ACC-propagated distance
-    assert anchored[-1] > free[-1] + 4           # and only follows slowly (offset time constant 3 s)
-    assert NativeInterfaceConfig().acc_range_clip_m == 0.0
-
-
-def _summary_run(clip: float, max_range: float = 0.0) -> list[float]:
-    """Far lead at ~70 m closing at 1 m/s; its object-list ground speed drifts 6 m/s low after 1.5 s while the radar's
-    0x192 summary range keeps closing at 1 m/s. No ACC target."""
-    from ars510.objects import encode_slot
-    cfg = replace(NativeInterfaceConfig(), summary_clip_mps=clip, summary_max_range_m=max_range)
-    iface = Ars510NativeRadarInterface(cfg)
-    out = []
-    for k in range(60):
-        t = 0.06 * k
-        d = 70.0 - 1.0 * t
-        vg = 9.0 if k < 25 else 3.0
-        lead = encode_slot(long_dist=round(160 + d * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
-                           age_cycles=min(126, 80 + k))
-        code = round((d - (-5.14)) / 0.0541)
-        fr = [speed_frame(t, 10.0), (t + 0.001, 1, 0x192, code.to_bytes(2, "big") + (2048).to_bytes(2, "big"))]
-        fr += frames_(record({0: lead}), t + 0.002)
-        out += [p["vRel"] for r in iface.update_many(fr) for p in r["radarData"]["points"]]
-    return out
-
-
-def test_summary_anchor_bounds_a_far_track_by_the_summary_speed() -> None:
-    free, anchored = _summary_run(0.0), _summary_run(3.0)
-    assert min(free[-10:]) < -6.5               # object-list vRel drifted to about -7 m/s
-    assert min(anchored[-10:]) >= -1.0 - 3.0 - 0.1  # held within 3 m/s of the summary's -1 m/s
-    assert NativeInterfaceConfig().summary_clip_mps == 0.0
-    assert (ANCHOR_CONFIG.summary_clip_mps, ANCHOR_CONFIG.summary_max_range_m) == (3.0, 80.0)
-
-
-def test_summary_anchor_range_limit_leaves_farther_tracks_alone() -> None:
-    assert _summary_run(3.0, max_range=60.0) == _summary_run(0.0)       # lead at ~68 m: beyond the limit
-    assert _summary_run(3.0, max_range=80.0) == _summary_run(3.0)       # within the limit: anchored as before
 
 
 def _fused_run(cfg: NativeInterfaceConfig, d0: float, unc: int, v_of_t, n: int = 80, summary: bool = False,
@@ -590,3 +423,13 @@ def test_fused_filter_publishes_young_far_tracks_once_their_speed_is_known() -> 
     far = _fused_run(cfg, 90.0, 60, lambda k: 10.0, n=40, age0=55)
     assert near and near[0][0] < 0.06 * 7                     # published at age 60
     assert not far or far[0][0] > near[0][0] + 0.5            # speed std still above 0.75 m/s at age 60
+
+
+def test_colored_filter_follows_the_summary_and_still_tracks_a_lasting_speed_change() -> None:
+    from ars510 import COLORED_CONFIG
+    cfg = replace(COLORED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    excursion = _fused_run(cfg, 70.0, 30, lambda k: 9.0 if k < 25 else 3.0, summary=True)
+    assert all(v > -2.5 for _, v in excursion[-20:])          # the 6 m/s drop is read as object-list bias
+    step = _fused_run(cfg, 40.0, 30, lambda k: 10.0 if k < 20 else 7.0, n=140)
+    assert -3.0 < step[-1][1] < -2.0                         # without trackers a lasting change is followed, but slowly
+    assert COLORED_CONFIG.fused_speed_filter and COLORED_CONFIG.speed_bias_tau_s > 0

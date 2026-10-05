@@ -14,8 +14,8 @@ sudo reboot
 ```
 
 That's all: the fork is detected, the `fused` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. Pick another profile with `--profile anchor` or `--profile raw`
-([docs/11](../docs/11_profiles_compared.md) compares them).
+version of this installer is replaced automatically. `--profile raw` installs the unfiltered decode for comparison
+([docs/11](../docs/11_profiles_compared.md) compares them); the removed `anchor` and `steady` names install `fused`.
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
@@ -32,8 +32,12 @@ while testing).
 | profile | config |
 |---|---|
 | `fused` (default) | `FUSED_CONFIG`: `raw` + range fusion + one Kalman speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194) by the radar's own uncertainty. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
-| `anchor` | `ANCHOR_CONFIG` (earlier approach, fallback): tuned guards + the radar's own ACC target (0x235) as a bound on the lead's speed, and its target-range summaries (0x192/0x194) for far cars up to 80 m ([docs/08](../docs/08_openpilot_integration.md#profiles)) |
-| `raw` | `OPENPILOT_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (about twice the hard false braking of `steady`); the installer prints a warning. `stock` and `default` are its older names. `--profile steady` (the tuned guards without the ACC target) still installs but is superseded by `fused` |
+| `raw` | `BASE_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
+| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter minus the summaries, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
+| `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list; road tests only ([docs/12](../docs/12_kalman_filter.md#kalman-variants-tested)) |
+
+Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,
+`upstream` → `openpilot`. Note that `--profile default` means `raw`; leave `--profile` out for the recommended `fused`.
 
 ## What gets installed
 
@@ -41,6 +45,7 @@ while testing).
 |---|---|---|
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged |
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
+| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the upstream version (used by `--profile openpilot`) |
 | 4-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)` |
 
 The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC. Parsing does not use them (a DBC
@@ -58,7 +63,7 @@ No `ToyotaFlags` bit is added, so the install cannot collide with a fork's own f
 Fork notes:
 - **StarPilot** runs its own radard (lateral gate when matching, match hysteresis, faster lead-acceleration decay) and
   enables its radar extras (adjacent-lane leads, "Force Stop" hint, radar UI) once radar is available. In replay with
-  StarPilot's radard, the earlier `steady` profile gives a 0.24 s head start over StarPilot's own vision-only, with 1.8
+  StarPilot's radard, an earlier tuned profile gave a 0.24 s head start over StarPilot's own vision-only, with 1.8
   radar-only brakes per hour (0.9 overridden with gas).
 - **sunnypilot** carries `aRel` and `yvRel`: the radar's filtered acceleration and its lateral velocity, the latter
   using the Toyota 0x24 yaw rate.
@@ -91,11 +96,11 @@ replay your own drives stock vs installed, see
 | radar leads disappeared after a fork update | the update reset `/data/openpilot`; run the installer again and reboot |
 | `radarUnavailableTemporary` alerts | the radar stopped sending its object list for more than 0.5 s; check the wiring / harness and whether openpilot longitudinal disabled the radar ([docs/08](../docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)) |
 | the lead chevron sits on the hood when stopped close behind a car | a UI quirk: the chevron is drawn from the radar distance in the camera frame; driving is not affected |
-| braking feels wrong | flag the moment with the bookmark button and open a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml); `--profile anchor` gives earlier reactions, `--uninstall` returns to vision only |
+| braking feels wrong | flag the moment with the bookmark button and open a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml); `--uninstall` returns to vision only |
 
 ## Optional radard patch
 
 [`radard_vision_fusion.patch`](radard_vision_fusion.patch) is **not** applied by `install.py`. It rewrites radard's
 track filter in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed into the
 matched radar track. Apply it from an openpilot checkout with `git apply`. Effect and settings:
-[docs/07](../docs/07_velocity_excursions.md#other-approaches-tested).
+[docs/07](../docs/12_kalman_filter.md#other-approaches-tested).

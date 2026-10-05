@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Figures for the install profiles and each smoothing layer, decoded from the bundled CAN samples.
+"""Figures for the install profiles, decoded from the bundled CAN samples.
 
-    python tools/make_profile_figures.py      # writes docs/img/analysis/profile_*.png and layer_*.png
+    python tools/make_profile_figures.py      # writes docs/img/analysis/profile_comparison.png, layer_staircase.png, acc_sender_clock.png
 
 Every panel runs ars510.Ars510NativeRadarInterface on data/sample/*.csv.gz and plots the in-lane lead (|yRel| < 1.8 m,
 nearest) as published, so the figures can be regenerated from the repository alone.
@@ -11,7 +11,6 @@ from __future__ import annotations
 import csv
 import gzip
 import sys
-from dataclasses import replace
 from pathlib import Path
 
 import matplotlib
@@ -20,11 +19,8 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from ars510 import ANCHOR_CONFIG, FUSED_CONFIG, OPENPILOT_CONFIG, STEADY_CONFIG, Ars510NativeRadarInterface  # noqa: E402
-from ars510.constants import ID80_IDLE_SLOT  # noqa: E402
-from ars510.objects import encode_slot  # noqa: E402
+from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.support import parse_acc_target_vrel  # noqa: E402
-import zlib  # noqa: E402
 
 OUT = REPO / "docs" / "img" / "analysis"
 SAMPLE = REPO / "data" / "sample"
@@ -48,32 +44,6 @@ def frames(name: str):
             yield float(r["t_s"]), int(r["bus"]), int(r["address"], 16), bytes.fromhex(r["data_hex"])
 
 
-def synthetic(kind: str):
-    """Synthetic CAN for effects the samples do not show: 'glitch' (one-record velocity spike on a settled lead)
-    and 'far' (a new track appearing at 90 m)."""
-    def record(slots):
-        rec = bytearray(742); rec[0] = 0xE4
-        for i in range(20):
-            rec[17 + 36 * i:17 + 36 * (i + 1)] = slots.get(i, ID80_IDLE_SLOT)
-        rec[737:741] = (zlib.crc32(bytes(rec[1:737])) & 0xFFFFFFFF).to_bytes(4, "little")
-        return bytes(rec)
-    for k in range(200):
-        t = 0.06 * k
-        yield t, 0, 0xB4, bytes(5) + round(25.0 * 3.6 / 0.01).to_bytes(2, "big") + b"\x00"
-        if kind == "glitch":
-            vg = 25.0 - 0.5 + (12.0 if k == 100 else 0.0)
-            slot = encode_slot(long_dist=round(160 + 50 * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
-                               age_cycles=min(126, 80 + k), vel_uncertainty_candidate=35)  # 240|7 ≈ 0.7 per metre
-        else:
-            slot = encode_slot(long_dist=round(160 + (90 - 0.05 * k) * 16), lat_dist_left=2048,
-                               long_vel_over_ground=round(510.5 + 24.2 / 0.15), age_cycles=min(126, 1 + k),
-                               vel_uncertainty_candidate=63)  # 240|7 ≈ 0.7 per metre
-        rec = record({0: slot})
-        yield t + 0.002, 1, 0x80, bytes([0x12]) + rec[0:7]
-        for j in range(1, 106):
-            yield t + 0.002 + 0.0001 * j, 1, 0x80, bytes([0x20]) + rec[7 * j:7 * j + 7]
-
-
 def lead(name, cfg) -> dict:
     """Published in-lane lead per radar cycle, plus the radar's ACC target closing speed when present."""
     radar = Ars510NativeRadarInterface(cfg)
@@ -93,60 +63,24 @@ def lead(name, cfg) -> dict:
     return out
 
 
-STOCK = OPENPILOT_CONFIG
-K4_RANGE = replace(STOCK, range_fusion_gain=0.1)
-K4 = replace(K4_RANGE, vrel_smooth_far_tau_s=1.0)
-K4_JUMP = replace(K4, vjump_thresh_mps=8.0)
-K4_JUMP_RAMP = replace(K4_JUMP, ramp_up_mps2=4.0, ramp_down_mps2=6.0)
+STOCK = BASE_CONFIG
 
 
 def profiles_figure() -> None:
     fig, axes = plt.subplots(2, 2, figsize=(11, 6.2), sharex="col")
     for col, (name, title) in enumerate((("highway_vrel_excursion_25s.csv.gz", "Drive A: settled lead, ~1 s excursion"),
                                          ("highway_acc_anchor_24s.csv.gz", "Drive E: excursion that drags the range"))):
-        runs = {lab: lead(name, cfg) for lab, cfg in (("raw", STOCK), ("steady", STEADY_CONFIG), ("anchor", ANCHOR_CONFIG),
-                                                      ("fused", FUSED_CONFIG))}
+        runs = {lab: lead(name, cfg) for lab, cfg in (("raw", STOCK), ("fused", FUSED_CONFIG))}
         av, ad = axes[0, col], axes[1, col]
         if runs["raw"]["acc_t"]:
             av.plot(runs["raw"]["acc_t"], runs["raw"]["acc_v"], color=INK, lw=1.0, ls="--", label="radar's ACC target (0x235)")
-        for lab, color in (("raw", GRAY), ("steady", S1), ("anchor", S2), ("fused", S3)):
+        for lab, color in (("raw", GRAY), ("fused", S3)):
             r = runs[lab]
             av.plot(r["t"], r["v"], color=color, label=lab)
             ad.plot(r["t"], r["d"], color=color, label=lab)
         av.set_title(title); av.set_ylabel("lead vRel (m/s)"); ad.set_ylabel("lead dRel (m)"); ad.set_xlabel("time (s)")
         av.legend(loc="lower left")
     fig.tight_layout(); fig.savefig(OUT / "profile_comparison.png", dpi=130); plt.close(fig)
-
-
-def layers_figure() -> None:
-    exc, fol, anc = "highway_vrel_excursion_25s.csv.gz", "highway_following_30s.csv.gz", "highway_acc_anchor_24s.csv.gz"
-    glitch, far = (lambda: synthetic("glitch")), (lambda: synthetic("far"))
-    panels = [
-        (fol, "d", [("raw", STOCK, GRAY), ("+ range fusion (gain 0.1)", K4_RANGE, S1)],
-         "1  Range fusion (drive A)", "lead dRel (m)", None),
-        (fol, "v", [("raw", STOCK, GRAY), ("+ far smoothing (tau 0-1 s)", K4, S1)],
-         "2  Far smoothing (drive A)", "lead vRel (m/s)", None),
-        (glitch, "v", [("without", K4, GRAY), ("+ 8 m/s jump guard", K4_JUMP, S5)],
-         "3  Jump guard (synthetic one-record spike)", "lead vRel (m/s)", None),
-        (exc, "v", [("K4 + jump guard", K4_JUMP, GRAY), ("+ ramp limiter (+4 / -6 m/s²)", K4_JUMP_RAMP, S4)],
-         "4  Ramp limiter (drive A excursion)", "lead vRel (m/s)", None),
-        (far, "d", [("raw: published from age 60", STOCK, GRAY), ("steady: from age 100 above 70 m", STEADY_CONFIG, S1)],
-         "5  Far-track settling (synthetic new track at 90 m)", "dRel (m)", (0, 12)),
-        (anc, "v", [("steady", STEADY_CONFIG, S1), ("anchor: within ±3 m/s of the ACC target", ANCHOR_CONFIG, S2)],
-         "6  ACC anchor (drive E excursion)", "lead vRel (m/s)", (14, 19.5)),
-    ]
-    fig, axes = plt.subplots(3, 2, figsize=(11, 9.4))
-    for ax, (name, key, runs, title, ylabel, xlim) in zip(axes.flat, panels):
-        runs = runs + [("fused (default): one Kalman filter", FUSED_CONFIG, S3)]
-        for lab, cfg, color in runs:
-            r = lead(name, cfg)
-            ax.plot(r["t"], r[key], color=color, label=lab)
-            if key == "v" and r["acc_t"] and lab.startswith("anchor"):
-                ax.plot(r["acc_t"], r["acc_v"], color=INK, lw=1.0, ls="--", label="radar's ACC target")
-        if xlim:
-            ax.set_xlim(*xlim)
-        ax.set_title(title); ax.set_ylabel(ylabel); ax.set_xlabel("time (s)"); ax.legend(loc="best")
-    fig.tight_layout(); fig.savefig(OUT / "layer_examples.png", dpi=130); plt.close(fig)
 
 
 def staircase_figure() -> None:
@@ -187,7 +121,6 @@ def clock_figure() -> None:
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     profiles_figure()
-    layers_figure()
     staircase_figure()
     clock_figure()
-    print("wrote", OUT / "profile_comparison.png", OUT / "layer_examples.png")
+    print("wrote", OUT / "profile_comparison.png", OUT / "layer_staircase.png", OUT / "acc_sender_clock.png")

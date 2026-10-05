@@ -6,7 +6,7 @@
 fused_how_it_works.png is computed from ars510 itself (FUSED_CONFIG on synthetic leads). fused_scenarios_*.png plot
 data/analysis/fused_scenarios.csv.gz: six real-drive moments replayed through the unchanged openpilot / sunnypilot
 planner (times relative to the moment, no route identifiers). profiles_vs_vision.png plots
-data/analysis/summaries/profiles_vs_vision.json.
+data/analysis/summaries/profiles_vs_vision.json; kalman_variants.png plots data/analysis/summaries/kalman_variants.json.
 """
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ VIS, ANC, FUS, ACC, SUM = "#7a5fb0", S2, S3, INK, S4
 SCENARIOS = {
     "S1": ("False closing rejected", "object list −4.8 m/s at 41 m; ACC target and summary −0.6"),
     "S2": ("Slowing lead seen early", "the ACC target shows the slowdown before the object list"),
-    "S3": ("Over-estimated closing", "anchor −3.8 m/s; ACC target range ≈ −1.8 m/s"),
+    "S3": ("Over-estimated closing", "object list closing too fast; ACC target range ≈ −1.8 m/s"),
     "S4": ("Fast real closing", "a car closing at ~10 m/s from 60 m"),
     "S5": ("Far slot slide, no ACC target", "object list jumps to −13..−38 m/s at 80-110 m"),
     "S6": ("Stopping behind a car", "stop-and-go at under 15 m"),
@@ -115,10 +115,10 @@ def scenarios() -> None:
                 av.plot(sm.t, sm.value, color=SUM, lw=1.1, ls=":", label="radar summary (1 s slope)")
             for name, color, lab, kw in (("acc_vrel", ACC, "radar ACC target", dict(lw=1.1, ls="--")),
                                           ("vision_vrel", VIS, "vision lead", dict(lw=1.2)),
-                                          ("anchor_vrel", ANC, "anchor", dict(lw=1.8)), ("fused_vrel", FUS, "fused", dict(lw=1.8))):
+                                          ("fused_vrel", FUS, "fused", dict(lw=1.8))):
                 x = s(name)
                 if len(x): av.plot(x.t, x.value, color=color, label=lab, **kw)
-            for name, color, lab in (("vision_a", VIS, "vision only"), ("anchor_a", ANC, "anchor"), ("fused_a", FUS, "fused")):
+            for name, color, lab in (("vision_a", VIS, "vision only"), ("fused_a", FUS, "fused")):
                 x = s(name); aa.plot(x.t, x.value, color=color, label=lab, lw=1.6)
             title, sub = SCENARIOS[sid]
             av.set_title(f"{title}\n{sub}", fontsize=9.5)
@@ -131,43 +131,38 @@ def scenarios() -> None:
 
 
 def layers() -> None:
-    """Which processing each profile applies (rows) and how many code lines it takes."""
-    S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())["code_lines"]["layers"]
-    rows = [("validity, IDs, ego subtraction, saturation guard", "relink", (1, 1, 1, 1)),
-            ("range fusion (gain 0.1)", "range_fusion", (0, 1, 1, 1)),
-            ("far smoothing (τ 0-1 s, 30-60 m)", "far_smoothing", (0, 1, 1, 0)),
-            ("far settling (age 100 above 70 m)", "far_settling", (0, 1, 1, 0)),
-            ("ramp limiter (+4 / −6 m/s²)", "ramp_limiter", (0, 1, 1, 0)),
-            ("ACC target: association", "acc_association_and_clip", (0, 0, 1, 1)),
-            ("ACC target: ±3 m/s clip", None, (0, 0, 1, 0)),
-            ("summary: association", "summary_association_and_clip", (0, 0, 1, 1)),
-            ("summary: ±3 m/s clip (≤ 80 m)", None, (0, 0, 1, 0)),
-            ("Kalman speed filter (σ from the radar)", "fused_speed_filter", (0, 0, 0, 1))]
-    prof = ["raw", "anchor (earlier)", "fused (default)"]; colors = [GRAY, ANC, FUS]
-    fig, ax = plt.subplots(figsize=(9.5, 4.6))
-    for i, (name, key, on) in enumerate(rows):
+    """Which processing each profile applies (rows) and how many code lines each part takes (counted from ars510)."""
+    import inspect
+    from ars510.interface import Ars510NativeRadarInterface as I
+    n = lambda *fs: sum(len(inspect.getsource(f).splitlines()) for f in fs)
+    from ars510.tracks import NativeTrackIdAssigner
+    rows = [("validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (1, 1)),
+            ("track-ID relink across short losses", n(I._relink), (1, 0)),
+            ("saturation guard", n(I._guard), (1, 0)),
+            ("range fusion (gain 0.1)", n(I._fused_range), (0, 1)),
+            ("ACC target: association", n(I._acc_target_match), (0, 1)),
+            ("summary: association", n(I._summary_update, I._summary_speed, I._summary_match), (0, 1)),
+            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1))]
+    prof = ["raw", "fused (default)"]; colors = [GRAY, FUS]
+    fig, ax = plt.subplots(figsize=(8.5, 3.6))
+    for i, (name, lines, on) in enumerate(rows):
         y = len(rows) - 1 - i
-        on = (on[0], on[2], on[3])  # rows list the four historical profiles; steady is no longer shown
         for j, flag in enumerate(on):
             ax.add_patch(plt.Rectangle((j + 0.08, y + 0.12), 0.84, 0.76, color=colors[j] if flag else "#efeee9", lw=0))
-        lines = S.get(key) if key else None
-        if key == "relink":
-            lines = S["relink"] + S["saturation_guard"]
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
-        if lines:
-            ax.text(3.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
-    ax.set_xlim(-0.05, 3.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5], prof); ax.xaxis.tick_top()
+        ax.text(2.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
+    ax.set_xlim(-0.05, 2.8); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5], prof); ax.xaxis.tick_top()
     ax.set_yticks([]); ax.grid(False)
     for sp in ax.spines.values(): sp.set_visible(False)
-    ax.set_title("What each profile does to a track (shared decode: 288 lines)", pad=26)
+    ax.set_title("What each profile does to a track (after the shared 0x80 decode)", pad=26)
     fig.tight_layout(); fig.savefig(OUT / "profile_layers.png", dpi=130); plt.close(fig)
 
 
 def vs_vision() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())
     ev, req = S["heldout_events"], S["heldout_one_system_requests_and_overrides"]
-    prof = ["raw", "anchor", "fused_no_trackers", "fused"]; colors = [GRAY, ANC, "#8fd9bb", FUS]
-    names = ["raw", "anchor\n(earlier)", "fused,\nno ACC/summary", "fused\n(default)"]
+    prof = ["raw", "fused_no_trackers", "fused"]; colors = [GRAY, "#8fd9bb", FUS]
+    names = ["raw", "fused,\nno ACC/summary", "fused\n(default)"]
     fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13.5, 4.0))
     m = [ev[p]["onset_diff_mean_s"] for p in prof]; ci = np.array([ev[p]["onset_diff_ci"] for p in prof]).T
     a1.bar(names, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
@@ -180,7 +175,7 @@ def vs_vision() -> None:
     a2.axhline(ev["fused"]["vision_ant10"] * 100, color=VIS, ls=":", lw=1.1)
     a2.set_xticks(x, names); a2.set_ylabel("% of driver brakes"); a2.set_ylim(0, 100)
     a2.set_title("Already asking within 3 s before (purple: vision only)")
-    a2.text(1.5, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
+    a2.text(1.0, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
     slowed = [req[p]["radar_only_driver"].get("slowed", 0) for p in prof]
     gas = [req[p]["radar_only_driver"].get("on_gas", 0) for p in prof]
     a3.bar(names, slowed, color=colors, label="driver also slowed")
@@ -190,7 +185,152 @@ def vs_vision() -> None:
     fig.tight_layout(); fig.savefig(OUT / "profiles_vs_vision.png", dpi=130); plt.close(fig)
 
 
+def kalman_variants() -> None:
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "kalman_variants.json").read_text())
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13.0, 4.0), gridspec_kw=dict(width_ratios=[1, 1.25]))
+    names = list(S["bench_false_closing_pct"]); groups = ["heldout", "fresh", "owner"]
+    y = np.arange(len(names))
+    for k, (g, c) in enumerate(zip(groups, [FUS, S1, ANC])):
+        a1.barh(y + (k - 1) * 0.26, [S["bench_false_closing_pct"][n][g] for n in names], 0.26, color=c, label=g.replace("heldout", "held-out"))
+    a1.set_yticks(y, names); a1.invert_yaxis(); a1.set_xlabel("false closings (% of cycles, error < −2 m/s)")
+    a1.set_xlim(0, 8.6); a1.set_title("Offline bench: object list only, vs the hidden ACC target"); a1.legend(loc="lower right", fontsize=8)
+    T = S["trace"]; t = np.array(T["t"])
+    a2.plot(t, T["raw_vrel"], color=GRAY, lw=1, label="object-list vRel")
+    a2.plot(t, T["fused_vrel"], color=FUS, lw=2, label="fused (one speed state)")
+    a2.plot(t, T["colored_vrel"], color=S4, lw=2, ls="--", label="colored noise (speed + bias state)")
+    a2.set_xlabel("s"); a2.set_ylabel("vRel (m/s)")
+    ax = a2.twinx(); ax.plot(t, T["d"], color=INK2, lw=0.8, ls=":"); ax.set_ylabel("range (m, dotted)", color=INK2)
+    a2.set_title("Why the bias state was not promoted: a far false closing that recovers")
+    a2.legend(loc="lower right", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_variants.png", dpi=130); plt.close(fig)
+
+
+def kalman_trace() -> None:
+    """The filter at work on bundled drive E: readings, estimate with its 1-sigma band, and how much each update moves it."""
+    class Traced(Ars510NativeRadarInterface):
+        log: dict = {}
+
+        def _fused_speed(self, tid, time_s, obj, extra, v_ego=0.0):
+            cfg = self.config
+            sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
+            if obj.age < cfg.young_age:
+                w = min(max((cfg.young_age - obj.age) / max(cfg.young_age - 60, 1), 0.0), 1.0)
+                sig *= 1.0 + (cfg.young_sigma_scale - 1.0) * w
+            st = self._fused.get(tid)
+            gains = []
+            if st is not None and 0.0 < time_s - st[0] <= 0.5:
+                p = st[2] + (cfg.lead_accel_std_mps2 * (time_s - st[0])) ** 2
+                for _, r in [(None, sig)] + list(extra):
+                    k = p / (p + r * r); gains.append(k); p *= 1.0 - k
+            v, std = super()._fused_speed(tid, time_s, obj, extra, v_ego)
+            ego = self._fresh_ego_speed(time_s) or 0.0
+            self.log.setdefault(tid, []).append(dict(t=time_s, raw=obj.v_long_ground * cfg.vground_scale - ego, v=v - ego,
+                                                     std=std, sig=sig, n_extra=len(extra), gains=gains, d=obj.d_rel))
+            return v, std
+
+    path = REPO / "data" / "sample" / "highway_acc_anchor_24s.csv.gz"
+    import csv, gzip
+    it = Traced(FUSED_CONFIG); Traced.log = {}
+    acc = []
+    with gzip.open(path, "rt") as fh:
+        for row in csv.DictReader(fh):
+            t, bus, addr, dat = float(row["t_s"]), int(row["bus"]), int(row["address"], 0), bytes.fromhex(row["data_hex"])
+            it.update_frame(t, bus, addr, dat)
+            if bus == 1 and addr == 0x235 and it._acc_vrel is not None:
+                acc.append((t, it._acc_vrel[1]))
+    tid = max(Traced.log, key=lambda k: sum(r["n_extra"] > 0 for r in Traced.log[k]))
+    L = Traced.log[tid]; t0 = L[0]["t"]
+    t = np.array([r["t"] - t0 for r in L]); v = np.array([r["v"] for r in L]); sd = np.array([r["std"] for r in L])
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=(11, 6.4), sharex=True, gridspec_kw={"height_ratios": [1.6, 1]})
+    a1.scatter(t, [r["raw"] for r in L], s=6, color=GRAY, label="object-list vRel (reading)", zorder=1)
+    ta = np.array([a[0] - t0 for a in acc]); a1.plot(ta[(ta >= t[0]) & (ta <= t[-1])], np.array([a[1] for a in acc])[(ta >= t[0]) & (ta <= t[-1])],
+                                                     color=ACC, lw=1.0, ls="--", label="radar ACC target (reading)")
+    a1.fill_between(t, v - sd, v + sd, color=FUS, alpha=0.2, lw=0, label="estimate ± 1 std")
+    a1.plot(t, v, color=FUS, lw=2, label="Kalman estimate (fused)")
+    a1.set_ylabel("lead vRel (m/s)"); a1.legend(loc="lower left", fontsize=8)
+    a1.set_title("One track through an excursion: the filter weighs each reading by its uncertainty")
+    k_obj = [r["gains"][0] if r["gains"] else np.nan for r in L]
+    k_acc = [r["gains"][1] if len(r["gains"]) > 1 else np.nan for r in L]
+    a2.plot(t, k_obj, color=GRAY, lw=1.6, label="gain on the object-list reading")
+    a2.plot(t, k_acc, color=ACC, lw=1.6, ls="--", label="gain on the ACC target reading")
+    ax = a2.twinx(); ax.plot(t, [r["sig"] for r in L], color=S4, lw=1.0, ls=":"); ax.set_ylabel("object-list σ (m/s, dotted)", color=S4)
+    a2.set_ylabel("Kalman gain K"); a2.set_xlabel("time (s)"); a2.set_ylim(0, 1); a2.legend(loc="upper left", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_trace.png", dpi=130); plt.close(fig)
+
+
+def kalman_ablation() -> None:
+    """Hard radar-only braking ticks with each part of fused removed (34 replay drives)."""
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["part_removed_34_drives"]
+    rows = [("fused (all parts)", "none"), ("− ACC target + summaries", "acc_target_and_summaries"),
+            ("− young-track factor", "young_track_factor"), ("− speed-std gate", "speed_std_publication_gate"),
+            ("− age-60 gate", "age_60_publication_gate"), ("− range fusion", "range_fusion"),
+            ("− ego-speed alignment", "ego_speed_alignment"), ("− track-ID relink", "track_id_relink")]
+    rows += [(f"− {lab}", key) for key, lab in S.get("combinations_labels", {}).items()]
+    rows = [(lab, S[key]) for lab, key in rows if isinstance(S.get(key), dict)]
+    y = np.arange(len(rows))
+    fig, ax = plt.subplots(figsize=(10, 0.45 * len(rows) + 1.4))
+    ax.barh(y - 0.2, [r["heldout"] for _, r in rows], 0.4, color=FUS, label="20 held-out routes")
+    ax.barh(y + 0.2, [r["further"] for _, r in rows], 0.4, color=S4, label="4 further drives")
+    ax.axvline(S["none"]["heldout"], color=FUS, lw=0.8, ls=":"); ax.axvline(S["none"]["further"], color=S4, lw=0.8, ls=":")
+    ax.set_yticks(y, [lab for lab, _ in rows]); ax.invert_yaxis()
+    ax.set_xlabel("hard radar-only braking ticks (planner ≤ −2 m/s² while vision-only ≥ −0.5)")
+    ax.set_title("What each part of the Kalman filter is worth (34 replay drives)"); ax.legend(loc="lower right")
+    fig.tight_layout(); fig.savefig(OUT / "kalman_ablation.png", dpi=130); plt.close(fig)
+
+
+def kalman_combinations() -> None:
+    """Each tested version of the filter: lines in the openpilot file, its driving numbers, pass or fail (34 drives)."""
+    C = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["combinations_34_drives"]
+    names = {"fused": "fused (all parts)", "no_L": "− track-ID relink", "no_S": "− summaries", "no_RL": "− range fusion − relink",
+             "no_SL": "− summaries − relink",
+             "no_SR": "− summaries − range fusion", "no_SRL": "− summaries − relink − range fusion",
+             "no_SRLYG": "all five removed (+ young factor, std gate)"}
+    why = {
+           "no_RL": "lead switches +39%, target episodes 4 → 6", "no_SR": "lead switches +39%, target episodes 4 → 6",
+           "no_SRL": "lead switches +39%, target episodes 4 → 6", "no_SRLYG": "lead switches +39%, target episodes 4 → 5"}
+    rows = sorted(((names[k], k, C[k]) for k in names if k in C), key=lambda r: -r[2]["openpilot_file_lines"])
+    fig, ax = plt.subplots(figsize=(13.5, 0.62 * len(rows) + 1.3))
+    y = np.arange(len(rows))
+    ax.barh(y, [r["openpilot_file_lines"] for _, _, r in rows], color=[FUS if r["passes"] else S4 for _, _, r in rows], height=0.6)
+    for yi, (name, key, r) in zip(y, rows):
+        ax.text(r["openpilot_file_lines"] + 4, yi, f'{r["openpilot_file_lines"]} lines', va="center", fontsize=8.5, color=INK)
+        ax.text(375, yi, f'unjustified hard braking {r["unjustified_ticks"]} ticks   lead switches {r["switches"]}', va="center",
+                fontsize=8.2, color=INK2)
+        ax.text(700, yi, ("passes: the openpilot version" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
+                color=FUS if r["passes"] else S4)
+    ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
+    ax.set_xlabel("lines in the openpilot version (upstream/ars510_radar.py)")
+    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives)")
+    fig.tight_layout(); fig.savefig(OUT / "kalman_combinations.png", dpi=130); plt.close(fig)
+
+def kalman_justified() -> None:
+    """Hard radar-only braking split by whether it was real (hard_braking_review.json), for each version."""
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "hard_braking_review.json").read_text())["by_run"]
+    order = ["fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
+             "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
+             "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
+    names = {"fused": "fused (default)", "fused - S - L": "fused − summaries − relink (openpilot version)",
+             "fused - S - R - L": "fused − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
+             "fused - ACC (summaries kept)": "fused − ACC target", "fused - ACC - summaries": "fused − ACC target − summaries",
+             "colored": "colored (experimental)", "tuned (anchor)": "earlier tuned profile"}
+    rows = [(names.get(k, k.replace(" - ", " − ")), S[k]) for k in order if k in S]
+    y = np.arange(len(rows))
+    fig, ax = plt.subplots(figsize=(11, 0.42 * len(rows) + 1.5))
+    left = np.zeros(len(rows))
+    for key, color, lab in (("justified", FUS, "real: the gap was closing and the driver slowed too"),
+                            ("unclear", GRAY, "unclear"), ("unjustified", S4, "unjustified: no real closing, driver did not slow")):
+        vals = np.array([r[key]["ticks"] for _, r in rows], dtype=float)
+        ax.barh(y, vals, left=left, color=color, label=lab, height=0.6); left += vals
+    for yi, (_, r) in zip(y, rows):
+        ax.text(left[yi] + 0.6, yi, f'{r["unjustified"]["ticks"]} unjustified', va="center", fontsize=8, color=S4)
+    ax.set_yticks(y, [n for n, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, max(left) + 14)
+    ax.set_xlabel("hard radar-only braking ticks, 34 replay drives (planner ≤ −2 m/s² while vision-only asks ≥ −0.5)")
+    ax.set_title("Were the radar's hard brakes real? Judged by the radar's raw range, the camera and the driver")
+    ax.legend(loc="upper right", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_justified.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png")))
+    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations(); kalman_justified()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png", "kalman_justified.png")))

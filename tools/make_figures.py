@@ -15,13 +15,13 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from ars510 import RAW_CONFIG, Ars510NativeRadarInterface  # noqa: E402
+from ars510 import ALL_TRACKS_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 
 IMG = REPO / "docs" / "img"
 
 
 def excursion_figure() -> None:
-    iface = Ars510NativeRadarInterface(RAW_CONFIG)
+    iface = Ars510NativeRadarInterface(ALL_TRACKS_CONFIG)
     rows = csv.DictReader(gzip.open(REPO / "data/sample/highway_vrel_excursion_25s.csv.gz", "rt"))
     frames = ((float(r["t_s"]), int(r["bus"]), int(r["address"], 0), bytes.fromhex(r["data_hex"])) for r in rows)
     tr = defaultdict(list)
