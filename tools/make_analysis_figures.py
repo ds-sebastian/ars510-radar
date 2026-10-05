@@ -470,7 +470,7 @@ SLOT_FIELDS = [
     (120, 3, "", RAW, "raw"), (123, 5, "", CONST, "const"), (128, 3, "lane", LANE, "confirmed"), (131, 4, "w max", LANE, "confirmed"),
     (135, 1, "", CONST, "const"), (136, 4, "cam conf", CAM, "likely"), (140, 3, "cls alt", CLS, "likely"), (143, 5, "", CONST, "const"),
     (148, 4, "w R", LANE, "likely"), (152, 4, "w L", LANE, "likely"), (156, 4, "w ego", LANE, "likely"),
-    (160, 3, "", CONST, "const"), (163, 3, "class", CLS, "likely"), (166, 2, "", CONST, "const"), (168, 10, "flags", RAW, "raw"),
+    (160, 3, "", CONST, "const"), (163, 3, "class", CLS, "likely"), (166, 2, "", CONST, "const"), (168, 10, "first det.", LIFE, "candidate"),
     (178, 3, "", CONST, "const"), (181, 1, "d", CAM, "candidate"), (182, 1, "", RAW, "raw"), (183, 1, "", RAW, "raw"),
     (184, 8, "score 2", UNC, "candidate"), (192, 8, "", CONST, "const"), (200, 7, "σ head", UNC, "likely"),
     (207, 1, "", CONST, "const"), (208, 6, "heading", KIN, "likely"), (214, 2, "", CONST, "const"),

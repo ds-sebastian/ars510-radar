@@ -231,6 +231,7 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 | `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others ≤ 0.03); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (11 at age 5-10, 2 from age 40) | ○ |
 | `184\|8` | secondary score | percent: 100 on 98 % of rows, 60-99 on young tracks | ○ |
+| `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the range where the track was first seen | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
   (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
@@ -247,6 +248,12 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
   over code deciles); that mixes both estimators' errors, so physical units remain provisional
   ([summary](../data/analysis/summaries/video_truth.json)).
+
+**`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
+phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
+beyond 70 m are on in 98 % of cycles, those first seen at 40-70 m in 86 % and those first seen inside 40 m in 34-46 %, so the
+field records how the track was first detected (the far scan sets it) rather than its present state
+([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127. It appears in
 short runs on mature tracks at 34–97 m and often decays through 1022, 1014, 1006 over subsequent records. `raw`
@@ -265,8 +272,7 @@ establish physical stationarity or a graded-confidence enum. The raw code is uns
 
 ## Raw and constant bits
 
-- **Raw, unnamed:** 13, 15, 63, 106, `120|3`, `168|10` (only codes 0, 768, 832, 1023), 182, 183, 239. Bits 15 and 239
-  are mostly active near track birth.
+- **Raw, unnamed:** 13, 15, 63, 106, `120|3`, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
 - **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
   `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 
