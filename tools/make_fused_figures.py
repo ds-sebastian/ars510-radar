@@ -274,7 +274,7 @@ def kalman_ablation() -> None:
     ax.axvline(S["none"]["heldout"], color=FUS, lw=0.8, ls=":"); ax.axvline(S["none"]["further"], color=S4, lw=0.8, ls=":")
     ax.set_yticks(y, [lab for lab, _ in rows]); ax.invert_yaxis()
     ax.set_xlabel("hard radar-only braking ticks (planner ≤ −2 m/s² while vision-only ≥ −0.5)")
-    ax.set_title("What each part of the Kalman filter is worth (34 replay drives)"); ax.legend(loc="lower right")
+    ax.set_title("What each part of the Kalman filter is worth (34 replay drives, before the ACC unit fix)"); ax.legend(loc="lower right")
     fig.tight_layout(); fig.savefig(OUT / "kalman_ablation.png", dpi=130); plt.close(fig)
 
 
@@ -300,16 +300,17 @@ def kalman_combinations() -> None:
                 color=FUS if r["passes"] else S4)
     ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
     ax.set_xlabel("lines in the openpilot version (upstream/ars510_radar.py)")
-    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives)")
+    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives, before the ACC unit fix)")
     fig.tight_layout(); fig.savefig(OUT / "kalman_combinations.png", dpi=130); plt.close(fig)
 
 def kalman_justified() -> None:
     """Hard radar-only braking split by whether it was real (hard_braking_review.json), for each version."""
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "hard_braking_review.json").read_text())["by_run"]
-    order = ["fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
+    order = ["fused, ACC/summary units corrected", "fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
              "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
              "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
-    names = {"fused": "fused (default)", "fused - S - L": "fused − summaries − relink (openpilot version)",
+    names = {"fused, ACC/summary units corrected": "fused (default)", "fused": "fused, before the ACC unit fix",
+             "fused - S - L": "fused − summaries − relink (openpilot version)",
              "fused - S - R - L": "fused − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
              "fused - ACC (summaries kept)": "fused − ACC target", "fused - ACC - summaries": "fused − ACC target − summaries",
              "colored": "colored (experimental)", "tuned (anchor)": "earlier tuned profile"}

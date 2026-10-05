@@ -88,18 +88,17 @@ Replay against the driver, unchanged openpilot card → radard → planner
 |---|---|---|---|
 | hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 48 | **30** |
 | radar-only episodes (hard / target), held-out | 15 / 19 | 10 / 8 | **10 / 4** |
-| hard radar-only braking ticks / target episodes, owner sunnypilot drives | 17 / – | **0** / 4 | **0 / 0** |
+| hard radar-only braking ticks / target episodes, owner sunnypilot drives | 17 / – | **0** / 4 | **0** / 1 (an early reaction to a real slowdown) |
 | hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | – | **0** |
-| mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.090 s | −1.038 s |
-| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.9% |
+| mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.090 s | −1.085 s |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 44.9% |
 
 The middle column is `fused` with the ACC target and summary readings ignored: the Kalman filter on the object list
 alone, which is the fallback when neither a matched ACC target nor a summary update is available.
 
-`fused` brakes later than `raw` before some driver brakes because it drops a bias: in the 4 s before the driver brakes,
-its lead closing speed is 0.02 m/s from the vision lead on average (the earlier tuned profile: 0.54 m/s more closing).
-The earlier reactions came from the same over-closing that causes false brakes
-([07](12_kalman_filter.md#the-model)).
+`raw` reacts earlier than `fused` before some driver brakes because of an over-closing bias, the same one that causes
+its false brakes ([12](12_kalman_filter.md#the-model)). `fused` still asks for braking slightly before vision on
+average (−0.02 s).
 
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
 −0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier on average but asks for hard braking three times
@@ -149,16 +148,16 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 
 | | vision only | `raw` | `fused` without ACC / summary | `fused` |
 |---|---|---|---|---|
-| first braking request vs vision, mean | — | −0.15 s | −0.03 s | +0.01 s |
-| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.9% |
-| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
+| first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.02 s |
+| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 44.9% |
+| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 9 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
-| request jerk, mean \|da/dt\| | 1.029 | 1.009 | 1.007 | 1.001 |
+| request jerk, mean \|da/dt\| | 1.029 | 1.009 | 1.007 | 1.002 |
 | forward-collision warnings | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and
-partly from an over-closing bias that also causes its radar-only braking; `fused` removes the bias, keeps vision's
-timing on average and nearly all of radar's distance accuracy.
+partly from an over-closing bias that also causes its radar-only braking; `fused` removes the bias, still asks for
+braking slightly before vision on average, and keeps nearly all of radar's distance accuracy.
 
 ![radar sees the closing first](img/shots/curve_early_closing.jpg)
 

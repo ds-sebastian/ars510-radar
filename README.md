@@ -42,8 +42,9 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 
 - **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
-- **Braking starts when vision-only would** on average. On some real slowdowns the radar sees the closing first (curves,
-  far leads); on others vision does.
+- **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
+  ≥ 1 m/s² before 45% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
@@ -103,8 +104,9 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **Distance, lateral position, speed over ground** | ● field layout and motion; ◐ exact physical zero and scales ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class, size, heading, lateral speed and acceleration, existence, uncertainties | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
-| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields, ◐ unit conversions, ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
-| **Target summaries** (0x191-0x194) | ● raw structure, ◐ meaning; range scale fitted ([05](docs/05_acc_target_and_support.md)) |
+| **Radar's ACC target** (0x235 / 0x237, 50 Hz) | ● raw fields; ● speed 0.125 m/s and range 0.025 m per code (checked against `0x680` and stopped leads); ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
+| **Target summaries** (0x191-0x194) | ● raw structure; ● 0x192 / 0x194 = position of one internal track, in the object list's encoding ([05](docs/05_acc_target_and_support.md)) |
+| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects; absolute range at 1/32 m ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; ○ remaining cell fields ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration** | installable on openpilot, sunnypilot and StarPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |

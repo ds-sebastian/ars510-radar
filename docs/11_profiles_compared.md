@@ -17,7 +17,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | code beyond the decode | ~60 (guard, relink; fork only) | +24 | +82 with the summaries (fork); +42 in the openpilot version |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
-| first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.03 s | +0.01 s |
+| first braking request vs vision only, 167 driver brakes | −0.15 s | −0.03 s | −0.02 s |
 | recommended for | research | object-only fallback when neither a matched ACC target nor summary is available | everyday driving |
 
 `raw` is the unfiltered radar decode, not vision only and not stock openpilot. The middle column is not a separate
@@ -62,7 +62,7 @@ tracks back without a range threshold.*
 
 *Lead closing speed (top) and planner request (bottom) under vision only and `fused`, through the unchanged
 planner; grey dots are the raw object-list speed of the radar lead, dashed is the radar's ACC target, dotted the
-summary slope where the parser would associate it. Times are relative to the moment.*
+summary slope where the parser would associate it. Times are relative to the moment. Replayed before the ACC / summary unit correction.*
 
 1. **False closing rejected.** The object list dives to −6 m/s; the ACC target and summary stay at −0.6. `fused`
    follows the trackers and asks for what vision asks for.
@@ -87,20 +87,20 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 
 | driver brake presses (167) | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
 |---|---|---|---|---|
-| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | +0.01 s [−0.04, +0.06] |
-| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.67 s |
-| already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 81.4 % |
-| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.9 % |
-| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
+| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.02 s [−0.08, +0.03] |
+| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.71 s |
+| already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 82.0 % |
+| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 44.9 % |
+| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 9 |
 
 | over 4.56 h of driver-controlled driving | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
 |---|---|---|---|---|
 | braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour | 0 | 1.75 | 0.88 | 0.22 |
 | … of which the driver was on the gas | — | 0.66 | 0.22 | 0 |
 | hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 30 |
-| driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 5 / 0 |
+| driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 7 / 0 |
 | request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.419 | 0.414 |
-| request jerk (mean \|da/dt\|) | 1.029 | 1.009 | 1.007 | 1.001 |
+| request jerk (mean \|da/dt\|) | 1.029 | 1.009 | 1.007 | 1.002 |
 | share of lead time on a radar lead | 0 | 86.6 % | 86.8 % | 87.1 % |
 
 What the radar adds, by profile:
@@ -109,11 +109,11 @@ What the radar adds, by profile:
   start is real (the radar sees closings through curves and before the camera's distance estimate settles); part comes
   from an over-closing bias of the unfiltered object list (the earlier tuned profile was still 0.54 m/s more closing
   than the vision lead in the 4 s before driver brakes). The same bias causes its radar-only braking.
-- **`fused` removes that bias** (0.02 m/s from vision on average) and, with it, almost all radar-only braking: 0.22 per
-  hour, every one while the driver also slowed. Its timing is then the same as vision on average: 11 driver brakes are
-  answered earlier than vision (by 0.62 s on average, 7 of them hard slowdowns) and 17 later; 14 of those 17 are
-  equally late with every radar profile (the radar lead shows less closing than vision there), so they come from using
-  radar at all, not from the filter.
+- **`fused` removes that bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
+  driver also slowed. It still brakes slightly earlier than vision on average (−0.02 s): 19 of 148 paired driver brakes
+  are answered earlier than vision and 14 later, and it is already asking for ≥ 1 m/s² before 44.9% of brake presses
+  (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.46 m/s less closing than the vision lead
+  (median 0.27; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
 - **The Kalman filter alone** (no ACC target or summary) halves `raw`'s false braking (93 → 48 hard ticks, as many as
   the whole earlier tuned stack) with onset between `raw` and `fused`; the radar's own trackers supply the rest of
   `fused`'s gain.
@@ -126,7 +126,7 @@ What the radar adds, by profile:
 |---|---|---|
 | vision only | smooth; no radar-specific false braking | camera distance at range; no radar head start on closings through curves or far away |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes for nothing beyond 40 m |
-| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, small average pre-brake closing bias against vision in these replays, one speed state | braking onset the same as vision on average (no average head start); one car's road miles so far |
+| `fused` | closest to vision in feel (lowest jerk, smallest error vs the driver), radar-only braking almost gone, slightly earlier than vision on average, one speed state | the head start over vision is small on average; one car's road miles so far |
 
 ## Assumptions and limits
 

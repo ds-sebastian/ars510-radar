@@ -119,7 +119,8 @@ The two filters run in series, so all replay numbers already include their combi
 
 ## What each part is worth
 
-Each part removed from `fused` on its own, 34 replay drives. Counts are hard radar-only braking ticks (planner
+Each part removed from `fused` on its own, 34 replay drives (measured before the ACC / summary unit correction, which
+leaves hard braking unchanged). Counts are hard radar-only braking ticks (planner
 ≤ −2 m/s² while vision-only asks ≥ −0.5) on 20 held-out routes / 4 further drives / 3 owner drives:
 
 ![what each part is worth](img/analysis/kalman_ablation.png)
