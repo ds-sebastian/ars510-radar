@@ -133,12 +133,13 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 270 lines). It holds the reassembler, the slot
-decode, track IDs, the ACC target / summary association and the Kalman speed filter, in opendbc's style. It is the
-smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 210 lines). It holds the reassembler, the slot
+decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. It is the smallest
+version with the same driving as the full filter: parts were removed alone and together on 34 replay drives, and every
+hard brake was checked against the radar's raw range, the camera and the driver
 ([12](12_kalman_filter.md#removing-parts-together)). Constants are fixed in the file, there are no profiles, and points
 carry only `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it
-equal to the default `fused` profile point for point (bundled samples; two full drives checked once), and
+equal to `fused` with the summaries off, point for point (bundled samples; two full drives checked once), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
 1. **A clear reason the filter belongs in the interface.** Every upstream radar interface passes the radar's tracks

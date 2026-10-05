@@ -14,7 +14,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 |---|---|---|---|
 | what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
 | filter settings | — | scalar process scale, robust update and readiness threshold | also tracker weights; [definitions and evidence](12_kalman_filter.md#the-model) |
-| code beyond the decode (openpilot-file lines) | ~60 (guard, relink; fork only) | +24 | +82 |
+| code beyond the decode | ~60 (guard, relink; fork only) | +24 | +82 with the summaries (fork); +42 in the openpilot version |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
 | first braking request vs vision only, 167 driver brakes | **−0.15 s** | −0.03 s | +0.01 s |
@@ -156,11 +156,11 @@ What the radar adds, by profile:
 | Chrysler | 56 | pass-through |
 | GM | 71 | pass-through of the radar's targets |
 | Ford | 194 | clusters raw Delphi detections into tracks |
-| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 238 | the whole `fused` profile in one file: |
-| … record reassembly, CRC, slot decode, track IDs, publication | 93 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
-| … ACC target and summary association | 58 | match the radar's own trackers to one track each |
+| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 188 | `fused` without the summaries, in one file: |
+| … record reassembly, CRC, slot decode, track IDs, publication | 84 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
+| … ACC target association | 18 | match the radar's own ACC target to one track |
 | … Kalman speed filter and range fusion | 24 | the filter itself |
-| … RadarInterface adapter, constants, pruning | 63 | as in other interfaces |
+| … RadarInterface adapter, constants, pruning | 62 | as in other interfaces |
 
 - The listed interfaces generally consume tracked radar outputs, apply validity/lifecycle checks and leave speed
   filtering to radard. That code structure does not establish physical accuracy for every radar or driving condition.

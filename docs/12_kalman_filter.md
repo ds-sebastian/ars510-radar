@@ -7,7 +7,7 @@ weighted by its own uncertainty: the object list, the radar's ACC target and its
 runs its usual filter on what this one publishes.
 
 Code: `Ars510NativeRadarInterface._fused_speed` in [`ars510/interface.py`](../ars510/interface.py) (fork build), and
-the same filter in [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (openpilot version). Numbers:
+the same filter without the summaries in [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (openpilot version). Numbers:
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json).
 
 ## The model
@@ -123,6 +123,7 @@ Each part removed from `fused` on its own, 34 replay drives. Counts are hard rad
 |---|---|---|---|---|
 | (nothing: `fused`) | **30** | **2** | **0** | |
 | the ACC target and summaries (filter on the object list alone) | 48 | 2 | 0 (4 target episodes) | needed |
+| the ACC target only (summaries kept) | 48 | 2 | 0 (3 target episodes) | needed: the ACC target carries the trackers' benefit |
 | the young-track factor | 30 | 11 | 0 | needed |
 | the speed-std publication gate | 30 | 8 | 0 | needed |
 | the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
@@ -130,6 +131,21 @@ Each part removed from `fused` on its own, 34 replay drives. Counts are hard rad
 | the ego-speed alignment (× 0.149/0.15) | 31 | 2 | 0 | neutral (onset +12 ms); one measured constant |
 | the track-ID relink | 30 | 2 | 0 | identical in every measure: removed |
 | the saturation guard | identical | identical | identical | removed: the robust update absorbs the sentinel |
+
+**Were those hard brakes real?** "Hard radar-only" only means the radar planner braked hard where vision-only did not; the
+radar may simply have seen a real slowdown first. Every hard episode in every run was therefore judged without the
+radar speed:
+- **the radar's raw range** of the same object, decoded from the original CAN (range has no excursions), else the
+  camera's lead distance from the vision-only replay;
+- **the braking the real closing needed:** closing² / 2(gap − 4 m);
+- **the driver:** did they brake or slow down too?
+
+![were the hard brakes real](img/analysis/kalman_justified.png)
+
+27 of `fused`'s 32 hard ticks were real slowdowns the driver also braked for, where the radar reacted earlier or harder
+than the camera; 3 were unjustified. Each part kept in `fused` is needed because removing it adds *unjustified*
+braking: the ACC target +24 ticks, the young-track factor +9, the std gate and the age gate +6 each
+([`hard_braking_review.json`](../data/analysis/summaries/hard_braking_review.json)).
 
 Against the earlier tuned profile, `fused` takes held-out hard ticks from 48 to 30, target episodes from 9 to 4 and
 owner-drive target episodes from 5 to 0. Braking starts 0.09 s later on average. All of that comes from events where
@@ -139,33 +155,41 @@ those driver brakes, `fused` 0.02.
 ### Removing parts together
 
 One-at-a-time removals can hide parts that only matter together, so the larger parts were also removed in
-combination on the same 34 drives. The rule for "same driving as `fused`" was fixed before the results:
-- hard ticks: held-out ≤ 33, further ≤ 4, owner drives 0;
-- target episodes: at most 5 held-out and none on the owner drives;
-- lead-source switches: at most +15%;
-- onset within ±0.03 s of `fused`.
+combination on the same 34 drives. A version drives the same as `fused` when its unjustified hard braking is within
+2 ticks of `fused` and its radar ↔ vision lead switches rise by at most 15%.
 
 ![fewest lines for the same driving](img/analysis/kalman_combinations.png)
 
 - **The track-ID relink is free:** removing it changes nothing.
-- **The summaries matter only at the margin:** without them, with or without relink, one mild extra slowdown appears
-  on the owner drives (below), which fails the rule.
+- **The summaries change little:** without them, unjustified braking and lead stability are the same (see below).
 - **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39%
-  more often.
-- **The young-track factor and the speed-std gate cost about 5 lines** and still help in the barest version.
+  more often, with one real early brake fewer.
+- **The young-track factor and the std gate cost about 5 lines.** With range fusion kept they prevent unjustified
+  braking on a far lead (12 and 9 ticks).
 
-The smallest version with the same driving is `fused` without the relink. That is the default profile, and the
-openpilot version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py), about 270 lines) is exactly this
-profile in one file (`combinations_34_drives` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
+The smallest version with the same driving is `fused` without the summaries and the relink. That is the openpilot
+version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py), about 210 lines; a test keeps it equal to this
+configuration point for point). The fork's default `fused` keeps the summaries for the smoother response described
+below (`combinations_34_drives` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
-### Why the summaries stay
+The rule fixed before these results also required no target episode on the owner drives, which the version without
+summaries missed by one. Reviewed afterwards, that episode was an early reaction to a real slowdown, not a false brake,
+so it is not counted as a failure: a judgment made after the results, stated here.
+
+### What the summaries do
 
 ![summary updates in an owner-drive replay](img/analysis/summary_owner_case.png)
 
-*Owner drive, lead at about 100 m with no ACC target. With summary readings the planner asks for at most
-−0.58 m/s²; without them, −1.11 m/s² for 0.5 s, an extra radar-only slowdown (vision: about −0.13). One summary
-reading 2.2 s earlier, at 73 m, still shapes the estimate: the 80 m limit gates new summary readings, not their
-lasting effect on the state ([`summary_owner_case.json`](../data/analysis/summaries/summary_owner_case.json)).*
+*Owner drive, lead at about 100 m with no ACC target. With summaries the planner asks for at most −0.58 m/s²; without
+them, −1.11 m/s² for 0.5 s (vision: about −0.13 at that moment). Over the next 4.5 s the radar's and the camera's range
+both fell from about 104 to 80 m and vision-only asked for −1.37 m/s²: the slowdown was real, and the version without
+summaries reacted about 4 s earlier ([`summary_owner_case.json`](../data/analysis/summaries/summary_owner_case.json),
+[`hard_braking_review.json`](../data/analysis/summaries/hard_braking_review.json)).*
+
+Over the 34 replay drives (about 5 h), the summaries change the planner's request by 0.3 m/s² or more on 198 ticks
+(about 10 s). Without them the planner brakes harder on 143 of those ticks: 107 while the gap really was closing, 36
+while it was not. The summaries soften the response to far leads without an ACC target, half usefully and half not.
+That is why the fork's `fused` keeps them and the openpilot version leaves them out.
 
 ## Kalman variants tested
 

@@ -5,9 +5,9 @@ numbers wrap every 16 frames, so a DBC cannot describe it and it is reassembled 
 object; the radar keeps an object in its slot while the slot's age counts up, which gives the track IDs.
 
 The slot speed has slow, correlated errors at range (false closings of 1-10 s beyond ~40 m). The radar reports their
-size in 240|7. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own trackers:
-its ACC target (0x235 / 0x237) and its target-range summaries (0x192 / 0x194). radard then filters as for any radar.
-Single-file candidate for upstream; ars510-radar docs/07 has the evidence for every constant.
+size in 240|7. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own ACC target
+(0x235 / 0x237) for the track it describes. radard then filters as for any radar.
+Single-file candidate for upstream; ars510-radar docs/12 has the evidence for every constant and every omitted part.
 """
 import zlib
 from math import isfinite, nan
@@ -16,10 +16,9 @@ from opendbc.car import structs
 from opendbc.car.interfaces import RadarInterfaceBase
 
 RADAR_BUS, CAR_BUS = 1, 0
-SPEED_ADDR, OBJECTS_ADDR, ACC_SPEED_ADDR, ACC_POS_ADDR, SUMMARY_ADDRS = 0xB4, 0x80, 0x235, 0x237, (0x192, 0x194)
+SPEED_ADDR, OBJECTS_ADDR, ACC_SPEED_ADDR, ACC_POS_ADDR = 0xB4, 0x80, 0x235, 0x237
 RECORD_FRAMES, RECORD_LEN, SLOT_START, SLOT_LEN, SLOTS = 106, 742, 17, 36, 20
 IDLE_SLOT = bytes.fromhex("FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000")
-SUMMARY_SCALES = {0x192: (0.0541, -5.14), 0x194: (0.0461, -12.45)}  # m per code, offset m
 
 VGROUND_SCALE = 0.149 / 0.15  # slot over-ground speed aligned to 0xB4 ego speed
 EGO_MAX_AGE_S = 0.5
@@ -28,7 +27,7 @@ RANGE_GAIN = 0.1  # velocity-aided range: halves the far-range walk
 # Kalman speed filter (one state: the lead's over-ground speed)
 SIGMA_PER_CODE = 0.045  # m/s per 240|7 count, against the radar's ACC target
 YOUNG_SCALE, YOUNG_AGE = 1.8, 100  # young tracks err more than 240|7 says
-ACC_SIGMA, SUMMARY_SIGMA, SUMMARY_MAX_RANGE = 0.5, 0.5, 80.0
+ACC_SIGMA = 0.5  # m/s, the radar's ACC target speed
 LEAD_ACCEL = 1.5  # m/s^2, process noise
 GATE_SIGMA = 3.0  # innovations beyond 3 sigma count as 3 sigma
 PUBLISH_STD = 0.75  # m/s: a new track is published once its speed is this certain
@@ -50,8 +49,6 @@ class Ars510Radar:
     self.slots = {}  # slot -> (radar track id, age, time)
     self.next_tid = 1
     self.acc_speed = self.acc_pos = self.acc_assoc = None
-    self.summary_hist = {a: [] for a in SUMMARY_ADDRS}
-    self.summary_assoc = {a: None for a in SUMMARY_ADDRS}
     self.kf = {}  # tid -> (time, speed, variance)
     self.rng = {}  # tid -> (time, dRel, vRel)
     self.published = set()
@@ -59,8 +56,6 @@ class Ars510Radar:
   def update(self, t: float, bus: int, addr: int, dat: bytes):
     if bus == CAR_BUS and addr == SPEED_ADDR and len(dat) >= 7:
       self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6)
-    elif bus == RADAR_BUS and addr in SUMMARY_ADDRS:
-      self.summary_update(addr, t, dat)
     elif bus == RADAR_BUS and addr in (ACC_SPEED_ADDR, ACC_POS_ADDR):
       if len(dat) != 8 or (not dat[1] & 4 if addr == ACC_SPEED_ADDR else dat[2:] == bytes.fromhex("003E80000000")):
         self.acc_speed = self.acc_pos = None  # no target
@@ -116,18 +111,13 @@ class Ars510Radar:
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}
     acc_tid = self.acc_match(t, tracks)
-    summary = self.summary_match(t, tracks, v_ego, acc_tid)
     out = []
     for o in objs:
       if not o["valid"]:
         continue
       tid, vrel, std = o["tid"], nan, 0.0
       if v_ego is not None:
-        readings = []
-        if tid == acc_tid:
-          readings.append((self.acc_speed[1] + v_ego, ACC_SIGMA))
-        if tid in summary and o["d"] <= SUMMARY_MAX_RANGE:
-          readings.append((summary[tid] + v_ego, SUMMARY_SIGMA))
+        readings = [(self.acc_speed[1] + v_ego, ACC_SIGMA)] if tid == acc_tid else []
         speed, std = self.speed_filter(tid, t, o, readings)
         vrel = speed - v_ego
       d_rel = self.fused_range(tid, t, o["d"], vrel)
@@ -182,48 +172,6 @@ class Ars510Radar:
       return None
     self.acc_assoc = (costs[0][1], ax, ay)
     return costs[0][1]
-
-  def summary_update(self, addr, t, dat):
-    hist = self.summary_hist[addr]
-    if len(dat) < 4 or bytes(dat[:4]) == bytes.fromhex("00FF00FF"):
-      hist.clear()
-      self.summary_assoc[addr] = None
-      return
-    scale, offset = SUMMARY_SCALES[addr]
-    x = (int.from_bytes(dat[0:2], "big") & 0x1FFF) * scale + offset
-    if hist and (t - hist[-1][0] > 0.3 or abs(x - hist[-1][1]) > 5.0):  # a gap or a new target
-      hist.clear()
-      self.summary_assoc[addr] = None
-    hist.append((t, x))
-    while hist and hist[0][0] < t - 1.0:
-      hist.pop(0)
-
-  def summary_match(self, t, tracks, v_ego, acc_tid):
-    """Tracks attached to a summary -> the summary's relative speed (1 s range slope)."""
-    out = {}
-    if v_ego is None:
-      return out
-    tracks = {tid: o for tid, o in tracks.items() if o["age"] >= 20}
-    for addr in SUMMARY_ADDRS:
-      hist, n = self.summary_hist[addr], len(self.summary_hist[addr])
-      mt, mx = (sum(h[0] for h in hist) / n, sum(h[1] for h in hist) / n) if n else (0.0, 0.0)
-      den = sum((h[0] - mt) ** 2 for h in hist)
-      if n < 8 or hist[-1][0] - hist[0][0] < 0.7 or t - hist[-1][0] > 0.3 or den <= 0:
-        self.summary_assoc[addr] = None
-        continue
-      x, v = hist[-1][1], sum((h[0] - mt) * (h[1] - mx) for h in hist) / den  # range now, least-squares slope
-      tid = self.summary_assoc[addr]
-      if tid is not None and (tid not in tracks or abs(tracks[tid]["d"] - x) > max(8.0, 0.25 * x)):
-        tid = None
-      if tid is None:
-        cands = sorted((abs(o["d"] - x), k) for k, o in tracks.items() if abs(o["y"]) < 3.0
-                       and abs(o["d"] - x) < max(5.0, 0.15 * x) and abs(o["vg"] - v_ego - v) < 1.5)
-        if len(cands) == 1 or (len(cands) > 1 and cands[1][0] - cands[0][0] > 3.0):
-          tid = cands[0][1]
-      self.summary_assoc[addr] = tid
-      if tid is not None and tid != acc_tid and tid not in out:
-        out[tid] = v
-    return out
 
   def prune(self, t):
     for store in (self.kf, self.rng):

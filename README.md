@@ -76,15 +76,17 @@ usual filter on top.* Model, constants, what each part is worth and the variants
 The code comes in two versions that run the same filter:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of about 270 lines in opendbc style.
-  It is the smallest version that drives like `fused` on 34 replay drives
-  ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to `fused` point for point.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of about 210 lines in opendbc style.
+  It is the smallest version that drives like `fused` on 34 replay drives: the same filter without the radar's
+  summaries and the track-ID relink, which change no unjustified braking
+  ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to that configuration point for
+  point.
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
-| `openpilot` | `--profile openpilot` | the openpilot version: the same filter as `fused` from the single upstream file, points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
+| `openpilot` | `--profile openpilot` | the openpilot version: `fused`'s filter without the summaries, from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)

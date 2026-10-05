@@ -285,7 +285,7 @@ def kalman_combinations() -> None:
              "no_SL": "− summaries − relink",
              "no_SR": "− summaries − range fusion", "no_SRL": "− summaries − relink − range fusion",
              "no_SRLYG": "all five removed (+ young factor, std gate)"}
-    why = {"no_SL": "1 extra target episode on owner drives", "no_S": "1 extra target episode on owner drives",
+    why = {
            "no_RL": "lead switches +39%, target episodes 4 → 6", "no_SR": "lead switches +39%, target episodes 4 → 6",
            "no_SRL": "lead switches +39%, target episodes 4 → 6", "no_SRLYG": "lead switches +39%, target episodes 4 → 5"}
     rows = sorted(((names[k], k, C[k]) for k in names if k in C), key=lambda r: -r[2]["openpilot_file_lines"])
@@ -294,16 +294,43 @@ def kalman_combinations() -> None:
     ax.barh(y, [r["openpilot_file_lines"] for _, _, r in rows], color=[FUS if r["passes"] else S4 for _, _, r in rows], height=0.6)
     for yi, (name, key, r) in zip(y, rows):
         ax.text(r["openpilot_file_lines"] + 4, yi, f'{r["openpilot_file_lines"]} lines', va="center", fontsize=8.5, color=INK)
-        ax.text(375, yi, f'hard {r["heldout"]} / {r["further"]} / {r["owner"]}   target eps {r["target_episodes"]} (owner {r["owner_target_episodes"]})'
-                f'   switches {r["switches"]}', va="center", fontsize=8.2, color=INK2)
-        ax.text(700, yi, "passes" if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
+        ax.text(375, yi, f'unjustified hard braking {r["unjustified_ticks"]} ticks   lead switches {r["switches"]}', va="center",
+                fontsize=8.2, color=INK2)
+        ax.text(700, yi, ("passes: the openpilot version" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
                 color=FUS if r["passes"] else S4)
     ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
     ax.set_xlabel("lines in the openpilot version (upstream/ars510_radar.py)")
-    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives; hard ticks held-out / further / owner)")
+    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives)")
     fig.tight_layout(); fig.savefig(OUT / "kalman_combinations.png", dpi=130); plt.close(fig)
+
+def kalman_justified() -> None:
+    """Hard radar-only braking split by whether it was real (hard_braking_review.json), for each version."""
+    S = json.loads((REPO / "data" / "analysis" / "summaries" / "hard_braking_review.json").read_text())["by_run"]
+    order = ["fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
+             "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
+             "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
+    names = {"fused": "fused (default)", "fused - S - L": "fused − summaries − relink (openpilot version)",
+             "fused - S - R - L": "fused − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
+             "fused - ACC (summaries kept)": "fused − ACC target", "fused - ACC - summaries": "fused − ACC target − summaries",
+             "colored": "colored (experimental)", "tuned (anchor)": "earlier tuned profile"}
+    rows = [(names.get(k, k.replace(" - ", " − ")), S[k]) for k in order if k in S]
+    y = np.arange(len(rows))
+    fig, ax = plt.subplots(figsize=(11, 0.42 * len(rows) + 1.5))
+    left = np.zeros(len(rows))
+    for key, color, lab in (("justified", FUS, "real: the gap was closing and the driver slowed too"),
+                            ("unclear", GRAY, "unclear"), ("unjustified", S4, "unjustified: no real closing, driver did not slow")):
+        vals = np.array([r[key]["ticks"] for _, r in rows], dtype=float)
+        ax.barh(y, vals, left=left, color=color, label=lab, height=0.6); left += vals
+    for yi, (_, r) in zip(y, rows):
+        ax.text(left[yi] + 0.6, yi, f'{r["unjustified"]["ticks"]} unjustified', va="center", fontsize=8, color=S4)
+    ax.set_yticks(y, [n for n, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, max(left) + 14)
+    ax.set_xlabel("hard radar-only braking ticks, 34 replay drives (planner ≤ −2 m/s² while vision-only asks ≥ −0.5)")
+    ax.set_title("Were the radar's hard brakes real? Judged by the radar's raw range, the camera and the driver")
+    ax.legend(loc="upper right", fontsize=8)
+    fig.tight_layout(); fig.savefig(OUT / "kalman_justified.png", dpi=130); plt.close(fig)
+
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png")))
+    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations(); kalman_justified()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png", "kalman_justified.png")))
