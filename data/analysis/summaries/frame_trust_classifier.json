@@ -1,0 +1,46 @@
+{
+ "description": "Can the object-list slot fields mark the frames of a false closing? Frames beyond 40 m with ego above 10 m/s where the radar's ACC target and an object-list track at its lateral position describe the same car. False closing: object-list relative speed more than 2.5 m/s below the ACC speed (and below -2 m/s). Real closing: ACC relative speed below -2 m/s with the object list within 1 m/s. Gradient-boosted classifier, 5-fold cross-validation grouped by drive; AUC 0.5 = no separation.",
+ "frames": {
+  "false_closing": 7294,
+  "real_closing": 7180,
+  "real_closing_lead_braking_over_1_mps2": 1725,
+  "drives": 26
+ },
+ "auc_single_fields": {
+  "240|7": 0.603,
+  "84|10": 0.644,
+  "1 s speed change": 0.647,
+  "width 216|6": 0.573
+ },
+ "auc_with_ego_speed_and_acceleration_added": {
+  "note": "not usable by a controller: ego is already decelerating when the lead really brakes (median -0.79 m/s2) and not during false closings (0.00), so these features carry the driver's reaction",
+  "vs_all_real_closings": 0.846,
+  "vs_real_closings_with_a_braking_lead": 0.898
+ },
+ "independent_witness_0x680": {
+  "note": "same question on vehicles outside the ACC target, labelled by the 0x680 speed (range-stratified AUC, too-closing frames against frames within 1 m/s)",
+  "240|7": 0.613,
+  "length 56|7": 0.612,
+  "camera association 112|3": 0.56,
+  "width 216|6": 0.545
+ },
+ "auc_all_slot_fields_and_1s_changes": {
+  "note": "every non-constant slot field and twelve 1 s changes along the track, no ego input",
+  "vs_all_real_closings": 0.781,
+  "vs_real_closings_with_a_braking_lead": 0.821,
+  "inside_range_x_target_speed_strata": 0.745,
+  "real_closing_frames_flagged_at_80pct_recall": 0.395,
+  "braking_lead_frames_flagged_at_80pct_recall": 0.315,
+  "real_closing_frames_flagged_at_50pct_recall": 0.147,
+  "braking_lead_frames_flagged_at_50pct_recall": 0.097
+ },
+ "auc_context_only_object_ground_speed_and_range": {
+  "vs_all_real_closings": 0.62,
+  "vs_real_closings_with_a_braking_lead": 0.71
+ },
+ "auc_five_radar_fields": {
+  "note": "object relative speed, acceleration 84|10, 1 s speed change, 240|7 and range",
+  "vs_all_real_closings": 0.702,
+  "vs_real_closings_with_a_braking_lead": 0.585
+ }
+}
