@@ -6,12 +6,6 @@
   "real_closing_lead_braking_over_1_mps2": 1725,
   "drives": 26
  },
- "auc_radar_fields_only": {
-  "note": "object relative speed, acceleration 84|10, 1 s speed change, 240|7 and range",
-  "vs_all_real_closings": 0.702,
-  "vs_real_closings_with_a_braking_lead": 0.585
- },
- "auc_quality_fields_without_speed_acceleration_range": 0.687,
  "auc_single_fields": {
   "240|7": 0.603,
   "84|10": 0.644,
@@ -29,5 +23,24 @@
   "length 56|7": 0.612,
   "camera association 112|3": 0.56,
   "width 216|6": 0.545
+ },
+ "auc_all_slot_fields_and_1s_changes": {
+  "note": "every non-constant slot field and twelve 1 s changes along the track, no ego input",
+  "vs_all_real_closings": 0.781,
+  "vs_real_closings_with_a_braking_lead": 0.821,
+  "inside_range_x_target_speed_strata": 0.745,
+  "real_closing_frames_flagged_at_80pct_recall": 0.395,
+  "braking_lead_frames_flagged_at_80pct_recall": 0.315,
+  "real_closing_frames_flagged_at_50pct_recall": 0.147,
+  "braking_lead_frames_flagged_at_50pct_recall": 0.097
+ },
+ "auc_context_only_object_ground_speed_and_range": {
+  "vs_all_real_closings": 0.62,
+  "vs_real_closings_with_a_braking_lead": 0.71
+ },
+ "auc_five_radar_fields": {
+  "note": "object relative speed, acceleration 84|10, 1 s speed change, 240|7 and range",
+  "vs_all_real_closings": 0.702,
+  "vs_real_closings_with_a_braking_lead": 0.585
  }
 }
