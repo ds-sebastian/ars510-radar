@@ -18,7 +18,7 @@
     "development_drives": 2,
     "new_owner_drives": 10,
     "new_owner_summary_rows": 178187,
-    "association": "ACC and summary position agree within 0.25 m continuously for at least 1.5 s",
+    "association": "ACC and summary range agree within 0.25 m continuously for at least 1.5 s; conditional witness selection, not independent physical identity",
     "input_clock": "recorded CAN receipt time",
     "ego_lookup": "past only, at most 0.15 s stale",
     "reused_transfer_input_drives": 25
@@ -253,5 +253,288 @@
     "owner_largest_handover_a_change_mps2": -1.5566,
     "owner_largest_same_track_a_change_mps2": -0.2385,
     "interpretation": "all aggregate gates pass; comparable driving behavior, no established improvement or profile change"
+  },
+  "cycle_clock": {
+    "status": "supported comparison on ten reused owner drives; not a replayed profile",
+    "common_rows": 176089,
+    "observation_rule": "preceding 0x190 in CAN order within 70 ms; nominal microsecond clock modulo 2^32; coalesce exact full summary and target-metadata repetitions only; conflict or missing metadata resets",
+    "frequency_calibration": "nominal, not independently calibrated acquisition time",
+    "timing": [
+      {
+        "addr": "0x192",
+        "input_rows": 307917,
+        "exact_pair_duplicate_clock_rows": 8056,
+        "conflicting_pair_same_clock_rows": 282,
+        "missing_header_rows": 11,
+        "common_scored": 127662
+      },
+      {
+        "addr": "0x194",
+        "input_rows": 211535,
+        "exact_pair_duplicate_clock_rows": 4685,
+        "conflicting_pair_same_clock_rows": 130,
+        "missing_header_rows": 12,
+        "common_scored": 48427
+      }
+    ],
+    "scores": {
+      "0x192": {
+        "KF_receipt": {
+          "n": 127662,
+          "rmse": 0.15099539814890992,
+          "mae": 0.10070632890779736,
+          "p99": 0.5570428102792948,
+          "lag_proxy_s": 0.040117623869937225,
+          "maneuver_rmse": 0.2885955898867558,
+          "maneuver_n": 2109
+        },
+        "poly_receipt": {
+          "n": 127662,
+          "rmse": 0.15262035430009735,
+          "mae": 0.09896433287100406,
+          "p99": 0.5738410950936957,
+          "lag_proxy_s": 0.001531662086244732,
+          "maneuver_rmse": 0.25489386976036077,
+          "maneuver_n": 2109
+        },
+        "poly_cycle_clock": {
+          "n": 127662,
+          "rmse": 0.13329063601940613,
+          "mae": 0.08415546818887067,
+          "p99": 0.5225916660126649,
+          "lag_proxy_s": 0.0008203803938216867,
+          "maneuver_rmse": 0.20267175652108732,
+          "maneuver_n": 2109
+        },
+        "KF_cycle_clock": {
+          "n": 127662,
+          "rmse": 0.13316121828748817,
+          "mae": 0.08953519768057007,
+          "p99": 0.473375675922355,
+          "lag_proxy_s": 0.03866559087966389,
+          "maneuver_rmse": 0.2510476135647322,
+          "maneuver_n": 2109
+        }
+      },
+      "0x194": {
+        "KF_receipt": {
+          "n": 48427,
+          "rmse": 0.14369856440596843,
+          "mae": 0.0957872957535264,
+          "p99": 0.5465689576176376,
+          "lag_proxy_s": 0.04261573566638054,
+          "maneuver_rmse": 0.25618333707728613,
+          "maneuver_n": 480
+        },
+        "poly_receipt": {
+          "n": 48427,
+          "rmse": 0.14507273582839253,
+          "mae": 0.09246769147485026,
+          "p99": 0.5650939057625498,
+          "lag_proxy_s": 0.017734614648825954,
+          "maneuver_rmse": 0.2478077619670352,
+          "maneuver_n": 480
+        },
+        "poly_cycle_clock": {
+          "n": 48427,
+          "rmse": 0.13029393242767992,
+          "mae": 0.08243432669738607,
+          "p99": 0.5045314749623827,
+          "lag_proxy_s": 0.014772654690424374,
+          "maneuver_rmse": 0.2334160396853185,
+          "maneuver_n": 480
+        },
+        "KF_cycle_clock": {
+          "n": 48427,
+          "rmse": 0.13177559576466918,
+          "mae": 0.08858276212663677,
+          "p99": 0.48605536006194916,
+          "lag_proxy_s": 0.04000388945155752,
+          "maneuver_rmse": 0.23626986649393156,
+          "maneuver_n": 480
+        }
+      }
+    },
+    "paired_MSE": [
+      {
+        "scope": "owner",
+        "addr": "0x192",
+        "baseline": "poly_receipt",
+        "routes": 9,
+        "delta_MSE": -0.005526578896229444,
+        "CI95": [
+          -0.010601539319420228,
+          -0.004092993837805487
+        ]
+      },
+      {
+        "scope": "owner",
+        "addr": "0x192",
+        "baseline": "KF_cycle_clock",
+        "routes": 9,
+        "delta_MSE": 3.448359464972552e-05,
+        "CI95": [
+          -0.0008284732791034559,
+          0.0008626699892391968
+        ]
+      },
+      {
+        "scope": "owner",
+        "addr": "0x194",
+        "baseline": "poly_receipt",
+        "routes": 8,
+        "delta_MSE": -0.004069589853265749,
+        "CI95": [
+          -0.009077655863022584,
+          -0.0024231953070180594
+        ]
+      },
+      {
+        "scope": "owner",
+        "addr": "0x194",
+        "baseline": "KF_cycle_clock",
+        "routes": 8,
+        "delta_MSE": -0.00038829881166467994,
+        "CI95": [
+          -0.002339202870616793,
+          0.0018201147654882727
+        ]
+      }
+    ],
+    "aggregate_gates_vs_clock_KF": "all four gates pass on both streams",
+    "route_limits": "individual tail, maneuver, RMSE and low-excitation lag failures; all retained in research evidence",
+    "transfer_interval_diagnostics": [
+      {
+        "addr": "0x192",
+        "input_rows": 366743,
+        "missing_clock_rows": 18,
+        "nonpositive_dt_within_run": 11682,
+        "paired_dt_rows": 351751,
+        "host_minus_clock_dt_p50_ms": -0.1472699994407578,
+        "host_minus_clock_dt_abs_p95_ms": 11.345959000001168,
+        "clock_dt_p50_s": 0.060127999999999994
+      },
+      {
+        "addr": "0x194",
+        "input_rows": 241404,
+        "missing_clock_rows": 22,
+        "nonpositive_dt_within_run": 6676,
+        "paired_dt_rows": 231511,
+        "host_minus_clock_dt_p50_ms": 0.14282600014285662,
+        "host_minus_clock_dt_abs_p95_ms": 11.536274000435283,
+        "clock_dt_p50_s": 0.059845999999999996
+      }
+    ]
+  },
+  "slimming": {
+    "status": "reused owner ablation; reductions not yet driving-replayed",
+    "common_rows": 178187,
+    "scores": {
+      "0x192": {
+        "KF": {
+          "n": 129417,
+          "rmse": 0.1513602886042831,
+          "mae": 0.10099326696943087,
+          "p99": 0.5581155925423342,
+          "lag_proxy_s": 0.0399612406443825,
+          "maneuver_rmse": 0.28774564422850724,
+          "maneuver_n": 2135
+        },
+        "Huber_ground": {
+          "n": 129417,
+          "rmse": 0.15308119714215002,
+          "mae": 0.09938449040464424,
+          "p99": 0.5748095597031558,
+          "lag_proxy_s": 0.0017396146241204144,
+          "maneuver_rmse": 0.2552124888559497,
+          "maneuver_n": 2135
+        },
+        "OLS_ground": {
+          "n": 129417,
+          "rmse": 0.15360206410947272,
+          "mae": 0.09953907943311194,
+          "p99": 0.5792340589445811,
+          "lag_proxy_s": 0.0023697545471034797,
+          "maneuver_rmse": 0.2554397780889098,
+          "maneuver_n": 2135
+        },
+        "OLS_relative": {
+          "n": 129417,
+          "rmse": 0.15357873059820495,
+          "mae": 0.09924104026982326,
+          "p99": 0.5797852249851219,
+          "lag_proxy_s": -0.004453222063890956,
+          "maneuver_rmse": 0.2597718355177313,
+          "maneuver_n": 2135
+        }
+      },
+      "0x194": {
+        "KF": {
+          "n": 48770,
+          "rmse": 0.1439853546512472,
+          "mae": 0.09593467029644835,
+          "p99": 0.5481858573718258,
+          "lag_proxy_s": 0.0422310209381143,
+          "maneuver_rmse": 0.2558098938289057,
+          "maneuver_n": 489
+        },
+        "Huber_ground": {
+          "n": 48770,
+          "rmse": 0.1453573140724956,
+          "mae": 0.09268088986524471,
+          "p99": 0.5655298971572815,
+          "lag_proxy_s": 0.017405172307689194,
+          "maneuver_rmse": 0.24788547693563973,
+          "maneuver_n": 489
+        },
+        "OLS_ground": {
+          "n": 48770,
+          "rmse": 0.1455544560957626,
+          "mae": 0.0929575765840974,
+          "p99": 0.568847917832514,
+          "lag_proxy_s": 0.01781864314122973,
+          "maneuver_rmse": 0.24903087460633244,
+          "maneuver_n": 489
+        },
+        "OLS_relative": {
+          "n": 48770,
+          "rmse": 0.14441065163353067,
+          "mae": 0.0913266121510381,
+          "p99": 0.5602156849968593,
+          "lag_proxy_s": 0.009021077626633376,
+          "maneuver_rmse": 0.25709342656112877,
+          "maneuver_n": 489
+        }
+      }
+    },
+    "aggregate_gates_vs_receipt_KF": "all four gates pass for both OLS variants on both streams",
+    "curvature_control_reused_transfer": {
+      "linear_ground_rmse": [
+        0.293837,
+        0.264019
+      ],
+      "linear_ground_lag_proxy_s": [
+        0.253442,
+        0.255374
+      ],
+      "quadratic_ground_rmse": [
+        0.178145,
+        0.168535
+      ],
+      "quadratic_ground_lag_proxy_s": [
+        0.006456,
+        0.008516
+      ]
+    },
+    "runtime": {
+      "calls": 5000,
+      "max_array_difference": 3.019806626980426e-13,
+      "max_numpy_polyfit_difference": 3.161915174132446e-13,
+      "max_observed_history": 21,
+      "elapsed_us_per_sample": 10.257670594000956,
+      "limits": "Kernel-only microbenchmark, historical sampled windows, not full decoder throughput"
+    },
+    "kernel_description": "approximately 16 executable lines of analytic quadratic endpoint derivative; history, association, confidence and adapters add code",
+    "limits": "removing robust fit and ego integration is competitive here, not a universal equivalence; ego jerk and individual-route failures remain"
   }
 }

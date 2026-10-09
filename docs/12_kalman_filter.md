@@ -312,12 +312,13 @@ candidate velocity source for fusion; the recommended profile remains `fused`.
 
 ![summary endpoint regression compared with Kalman](img/analysis/summary_endpoint_regression.png)
 
-On ten owner drives excluded from estimator tuning, against the ACC speed of the same sustained target, the quadratic estimate and a
+On ten owner drives excluded from estimator tuning, against ACC speed during sustained range agreement, the quadratic estimate and a
 constant-velocity ground-speed Kalman give almost equal error: **0.153 versus 0.151 m/s RMSE** for `0x192`, and **0.145
 versus 0.144 m/s** for `0x194`. The acceleration-linked lag proxy is 2 versus 40 ms and 17 versus 42 ms. This proxy is
 `−Σ((v_est−v_ACC)·a_ACC)/Σ(a_ACC²)`; it also includes acceleration-correlated error and is not a latency measurement.
 The ACC speed is a dependent radar witness, so these are tracker discrepancies, not calibrated physical errors.
 
+The labels require range agreement within 0.25 m for at least 1.5 s; they do not independently establish physical identity.
 The quadratic fit passes the fixed aggregate error, tail and maneuver limits on both streams; individual drives have
 maneuver or tail regressions. A route-cluster interval for its squared-error difference includes zero on both streams.
 The Kalman model is an equally competitive, compact choice with constant-sized state; the regression instead retains
@@ -328,6 +329,33 @@ one-tick 1.56 m/s² stronger braking transient. This is comparable behavior, wit
 ([`summary_endpoint_regression.json`](../data/analysis/summaries/summary_endpoint_regression.json)). The model follows
 [local polynomial regression](https://www3.stat.sinica.edu.tw/statistica/j6n1/j6n17/j6n17.htm); robust finite-horizon
 estimation supplies a related [outlier-resistant formulation](https://arxiv.org/abs/2210.02166).
+
+### Which parts earn their code?
+
+![summary timing and necessary complexity](img/analysis/summary_timing_slimming.png)
+
+On the ten owner drives reused for these ablations, the existing `0x190` cycle clock reduces the quadratic estimate's
+RMSE from **0.153 / 0.145 to 0.133 / 0.130 m/s** on 176,089 common range-matched samples. Kalman with the same clock
+gives **0.133 / 0.132 m/s**. Timing improves both estimators: p95 receipt-minus-cycle interval disagreement is about
+11.5 ms on the transfer corpus, against a nominal 60 ms cycle. The encoded clock is nominal microseconds, with no
+independent acquisition-time calibration. Pairing is causal to a preceding header within 70 ms; repeated cycles are
+coalesced only when the complete summary and target metadata repeat exactly. A conflict or missing metadata resets
+history. This use of the summary's clock does not associate the header with the native object list.
+
+A fixed-window **plain quadratic fit of relative range** gives 0.154 / 0.144 m/s RMSE, versus robust ground-position
+0.153 / 0.145 on 178,187 receipt-time samples. It passes the aggregate error, tail, maneuver and lag-proxy limits, with
+individual-drive failures. The derivative kernel uses five time moments, three position moments and an analytic 3×3
+solve: about 16 executable lines, without a robust loop or ego integral. History management, association, confidence
+and the rest of the parser add code. Five thousand original windows match an independent polynomial fit within
+3.2×10⁻¹³ m/s; the roughly 10 µs source-kernel measurement is not full-parser throughput.
+
+Curvature earns its place: a straight-line ground-position fit has 0.294 / 0.264 m/s RMSE and about 0.25 s lag proxy on
+reused transfer, versus quadratic 0.178 / 0.169 and 0.006 / 0.009 s. Huber fitting and ego integration add little average
+benefit on this scope. If ego speed is locally affine, its integral is quadratic, so subtracting endpoint ego speed
+from the ground fit equals fitting relative range directly. Ego jerk breaks that equivalence. These ablations support
+simplification candidates; only the robust ground-position source has completed driving replay. The clock and plain
+fits are competitive source comparisons, with no profile or default change
+([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
 
 ## Other approaches tested
 

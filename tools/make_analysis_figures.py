@@ -1109,15 +1109,53 @@ def summary_endpoint_regression() -> None:
         ax.annotate("", xy=(end, .42), xytext=(start, .42), arrowprops={"arrowstyle": "->", "color": INK2})
     fig.suptitle("Summary velocity: competitive error with a finite-history estimator", fontsize=12)
     fig.tight_layout()
-    save(fig, "summary_endpoint_regression", "Ten independent owner drives, 178,187 same-target samples. ACC is a dependent radar witness.\n"
+    save(fig, "summary_endpoint_regression", "Ten owner drives excluded from tuning; 178,187 range-matched samples. ACC is a dependent radar witness.\n"
          "The lag proxy is a regression diagnostic, not measured latency; neither estimator establishes physical accuracy.")
+
+
+def summary_timing_slimming() -> None:
+    """Timing controls and complexity ablation, each on its own common support."""
+    info = summary("summary_endpoint_regression")
+    fig = plt.figure(figsize=(11, 7.6))
+    grid = fig.add_gridspec(2, 2, height_ratios=[2, 1.6], hspace=.55)
+    addresses = ["0x192", "0x194"]
+    controls = [
+        ("cycle_clock", "Cycle timing improves both estimators", [
+            ("KF_receipt", "Kalman · receipt", S1), ("poly_receipt", "Quadratic · receipt", S2),
+            ("KF_cycle_clock", "Kalman · cycle", "#788b9d"), ("poly_cycle_clock", "Quadratic · cycle", "#73ac91")]),
+        ("slimming", "A plain quadratic keeps comparable error", [
+            ("KF", "Kalman", S1), ("Huber_ground", "Huber · ground", S2),
+            ("OLS_ground", "Plain · ground", "#788b9d"), ("OLS_relative", "Plain · relative", "#73ac91")]),
+    ]
+    for i, (section, title, methods) in enumerate(controls):
+        ax = fig.add_subplot(grid[0, i]); x = np.arange(2)
+        for j, (method, label, color) in enumerate(methods):
+            values = [info[section]["scores"][addr][method]["rmse"] for addr in addresses]
+            bars = ax.bar(x+(j-1.5)*.19, values, .19, label=label, color=color)
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x()+bar.get_width()/2, value+.0015, f"{value:.3f}", ha="center", fontsize=7)
+        ax.set_xticks(x, addresses); ax.set_ylim(0, .21); ax.set_ylabel("ACC speed discrepancy RMSE (m/s)")
+        ax.set_title(title, fontsize=10); ax.legend(fontsize=8, loc="upper center", ncol=2)
+    ax = fig.add_subplot(grid[1, :]); ax.axis("off")
+    parts = [(.01,.10,.26,.80,"Timing and target continuity\nUse causal cycle observations\nReset incompatible histories"),
+             (.37,.10,.26,.80,"Curvature is needed\nLast 1.2 s: quadratic fit\nEndpoint slope → vRel"),
+             (.73,.10,.26,.80,"Optional complexity here\nHuber loops: little average gain\nEgo integral: locally redundant")]
+    for bx, by, bw, bh, label in parts:
+        ax.add_patch(plt.Rectangle((bx,by),bw,bh, facecolor="#eaf1f8", edgecolor=S1, lw=1))
+        ax.text(bx+bw/2,by+bh/2,label,ha="center",va="center",fontsize=9)
+    for start,end in [(.27,.37),(.63,.73)]:
+        ax.annotate("",xy=(end,.5),xytext=(start,.5),arrowprops={"arrowstyle":"->","color":INK2})
+    fig.suptitle("Summary velocity: improve the observations, retain only useful estimator parts", fontsize=12, y=.98)
+    save(fig, "summary_timing_slimming", "Ten reused owner drives. Clock: 176,089 common samples; slimming: 178,187. Different supports.\n"
+         "ACC is a dependent range-matched witness. Ego jerk and individual-drive failures limit simplification.\n"
+         "Only the robust ground-position source has completed driving replay; these ablations do not change a profile.")
 
 
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case, summary_endpoint_regression,
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case, summary_endpoint_regression, summary_timing_slimming,
                                    acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
 
 
