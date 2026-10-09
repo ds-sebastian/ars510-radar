@@ -80,7 +80,8 @@ hardware, firmware `8821F0R03100`; [`radar_disable_unfiltered.json`](../data/ana
 | 0x101 / 0x197 / 0x24F running flags | running | running |
 
 So the decoder needs no CAN filter on this firmware: the object list, the ACC target and the target summaries all
-survive openpilot's radar disable.
+survive openpilot's radar disable. The car-bus messages it switches off, including the radar's PCS / AEB brake
+request, are described in [13](13_car_bus_messages.md).
 
 ## Ego speed
 
