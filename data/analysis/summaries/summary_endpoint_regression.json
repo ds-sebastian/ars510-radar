@@ -172,5 +172,86 @@
   "sources": {
     "local_regression": "https://www3.stat.sinica.edu.tw/statistica/j6n1/j6n17/j6n17.htm",
     "robust_MHE": "https://arxiv.org/abs/2210.02166"
+  },
+  "driving_replay": {
+    "scope": "27 reused chains: 20 held-out, 4 further, 3 owner chains",
+    "input_ticks": 514069,
+    "baseline_profile": "published fused 2.1",
+    "candidate_change": "replace summary velocity source by frozen ground-position quadratic Huber fit; scalar speed fusion unchanged",
+    "comparison": {
+      "fused": {
+        "heldout": {
+          "hard": 30,
+          "eps": 11,
+          "tgt": 4,
+          "radar_added": 1,
+          "sw": 1231
+        },
+        "further": {
+          "hard": 2,
+          "eps": 2,
+          "tgt": 3,
+          "radar_added": 0,
+          "sw": 298
+        },
+        "owner": {
+          "hard": 0,
+          "eps": 0,
+          "tgt": 1,
+          "radar_added": 0,
+          "sw": 0
+        },
+        "onset_vs_vision_s": -0.022,
+        "ant10": 0.437,
+        "events": 167,
+        "radar_only_per_h": 0.22,
+        "radar_only_on_gas_per_h": 0.0
+      },
+      "polynomial": {
+        "heldout": {
+          "hard": 30,
+          "eps": 11,
+          "tgt": 4,
+          "radar_added": 1,
+          "sw": 1234
+        },
+        "further": {
+          "hard": 2,
+          "eps": 2,
+          "tgt": 3,
+          "radar_added": 0,
+          "sw": 300
+        },
+        "owner": {
+          "hard": 0,
+          "eps": 0,
+          "tgt": 1,
+          "radar_added": 0,
+          "sw": 0
+        },
+        "onset_vs_vision_s": -0.025,
+        "ant10": 0.431,
+        "events": 167,
+        "radar_only_per_h": 0.22,
+        "radar_only_on_gas_per_h": 0.0,
+        "gates_vs_fused": {
+          "heldout_hard": true,
+          "further_hard": true,
+          "owner_hard_zero": true,
+          "owner_target_eps": true,
+          "heldout_target_eps": true,
+          "radar_added_eps": true,
+          "switches": true,
+          "onset": true
+        },
+        "all_gates_pass": true
+      }
+    },
+    "independent_scalar_checks": 447,
+    "independent_reaction_rows": 364,
+    "owner_changed_ticks_a_gt_0_05": 63,
+    "owner_largest_handover_a_change_mps2": -1.5566,
+    "owner_largest_same_track_a_change_mps2": -0.2385,
+    "interpretation": "all aggregate gates pass; comparable driving behavior, no established improvement or profile change"
   }
 }

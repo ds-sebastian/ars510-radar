@@ -312,7 +312,7 @@ candidate velocity source for fusion; the recommended profile remains `fused`.
 
 ![summary endpoint regression compared with Kalman](img/analysis/summary_endpoint_regression.png)
 
-On ten independent owner drives, against the ACC speed of the same sustained target, the quadratic estimate and a
+On ten owner drives excluded from estimator tuning, against the ACC speed of the same sustained target, the quadratic estimate and a
 constant-velocity ground-speed Kalman give almost equal error: **0.153 versus 0.151 m/s RMSE** for `0x192`, and **0.145
 versus 0.144 m/s** for `0x194`. The acceleration-linked lag proxy is 2 versus 40 ms and 17 versus 42 ms. This proxy is
 `−Σ((v_est−v_ACC)·a_ACC)/Σ(a_ACC²)`; it also includes acceleration-correlated error and is not a latency measurement.
@@ -321,7 +321,10 @@ The ACC speed is a dependent radar witness, so these are tracker discrepancies, 
 The quadratic fit passes the fixed aggregate error, tail and maneuver limits on both streams; individual drives have
 maneuver or tail regressions. A route-cluster interval for its squared-error difference includes zero on both streams.
 The Kalman model is an equally competitive, compact choice with constant-sized state; the regression instead retains
-recent samples. Compare the **complete parser's** driving behavior before selecting either as a profile
+recent samples. With this source inside fused, the complete parser passes the fixed gates on 27 reused driving chains:
+hard radar-only ticks remain **30 / 2 / 0** on held-out / further / owner cohorts, with unchanged target-episode counts.
+Mean onset against vision is 3 ms earlier, while anticipation changes from 43.7% to 43.1%. An owner handover has a
+one-tick 1.56 m/s² stronger braking transient. This is comparable behavior, without evidence for changing the default
 ([`summary_endpoint_regression.json`](../data/analysis/summaries/summary_endpoint_regression.json)). The model follows
 [local polynomial regression](https://www3.stat.sinica.edu.tw/statistica/j6n1/j6n17/j6n17.htm); robust finite-horizon
 estimation supplies a related [outlier-resistant formulation](https://arxiv.org/abs/2210.02166).
