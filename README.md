@@ -50,7 +50,9 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
 
-These are replay results on one owner's car; road reports from other drivers are what confirms them.
+These are replay results on one owner's car. On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
+2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking, and the two mild slowdowns were far leads
+paired with a car in the next lane ([08](docs/08_openpilot_integration.md#on-the-road)).
 
 ## How the filter works
 

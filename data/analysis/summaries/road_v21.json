@@ -1,0 +1,90 @@
+{
+ "description": "fused 2.1.0 on the road: owner's car (9 sunnypilot drives, logged closed loop, plus open-loop replays of the same drives against vision only through the pinned openpilot of the 34-drive suite) and the numbers a second driver reported in issue #66",
+ "build_check": {
+  "logged_track_points": 300754,
+  "match_2_1_0": 1.0,
+  "match_without_acc_range_range": "0.49-0.91 per drive"
+ },
+ "hours": {
+  "total": 7.42,
+  "engaged": 4.39,
+  "engaged_with_lead": 3.34
+ },
+ "radar_lead_share_engaged": 0.981,
+ "speed_gap_over_3mps_share": {
+  "owner": {
+   "all": 0.0178,
+   "beyond70": 0.0824,
+   "below70": 0.0072,
+   "n_same_ticks": 301168,
+   "engaged_all": 0.0129
+  },
+  "issue66": {
+   "all": 0.017,
+   "beyond70": 0.07
+  }
+ },
+ "range_radar_minus_camera_m": {
+  "0-20": {
+   "n": 31039,
+   "median": -1.37,
+   "mad_sigma": 0.57
+  },
+  "20-40": {
+   "n": 76429,
+   "median": -1.12,
+   "mad_sigma": 1.21
+  },
+  "40-70": {
+   "n": 151245,
+   "median": -0.9,
+   "mad_sigma": 1.6
+  },
+  "70-90": {
+   "n": 20694,
+   "median": -0.53,
+   "mad_sigma": 4.28
+  },
+  "90-150": {
+   "n": 21761,
+   "median": 1.62,
+   "mad_sigma": 5.86
+  }
+ },
+ "acc_target_present_share": {
+  "owner": {
+   "15-40": 0.987,
+   "40-80": 0.989,
+   "80-200": 0.659
+  },
+  "issue66": {
+   "15-40": 0.99,
+   "40-80": 0.95,
+   "80-200": 0.66
+  }
+ },
+ "engaged_braking": {
+  "episodes_le_1p5": 26,
+  "le_1p5_without_camera_or_acc_closing": 0,
+  "episodes_le_1p0": 49,
+  "radar_caused_without_closing_witness": 2,
+  "note": "both about -1.5 m/s2, lead beyond 95 m, no ACC target, radar object a lane over (curve, work-zone lane shift)"
+ },
+ "replay_vs_vision": {
+  "moving_hours": 5.83,
+  "hard_radar_only_episodes": 0,
+  "hard_vision_only_episodes": 0,
+  "mild_radar_only_episodes": 10,
+  "onset_vs_vision_s_per_drive": [
+   -1.217,
+   -0.984,
+   -0.867,
+   -0.75,
+   -0.683,
+   -0.456,
+   -0.41,
+   -0.371
+  ],
+  "onset_note": "ego motion recorded under fused, which favours fused in the onset comparison"
+ }
+}
