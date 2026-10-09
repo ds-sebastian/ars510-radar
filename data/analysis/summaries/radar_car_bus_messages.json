@@ -2,18 +2,18 @@
  "description": "The radar's Toyota driving-support messages on the car bus (bus 0) and what happens to them under openpilot longitudinal. Owner drives O2 (13 min), O3 (4 min), O4 (29 min) have a smartDSU-style radar CAN filter; U1 (stock ACC, 21 min) and U2 (alpha longitudinal, radar disabled over UDS, 26 min) are the unfiltered second RAV4 of radar_disable_unfiltered.json. Times are seconds from the start of a log. Bit positions marked msb are counted from the first payload bit (bit 0 = MSB of byte 0).",
  "idle_payloads_owner_O2": {
   "0x283": {
-   "0000000000008c": 24983
+   "00 00 00 00 00 00 8C": 24983
   },
   "0x344": {
-   "0000010000000050": 14991
+   "00 00 01 00 00 00 00 50": 14991
   },
   "0x411_payloads_773_segments": {
-   "0020000000008000": 752,
-   "4020000000008000": 27
+   "00 20 00 00 00 00 80 00": 752,
+   "40 20 00 00 00 00 80 00": 27
   },
   "0x411_startup_payload_segments": 27,
-  "0x494": "8200000000000000 (census.py, every owner and U1 frame)",
-  "0x4FF": "3f00000000000000 (census.py)"
+  "0x494": "82 00 00 00 00 00 00 00 (census.py, every owner and U1 frame)",
+  "0x4FF": "3F 00 00 00 00 00 00 00 (census.py)"
  },
  "constant_payload_census": {
   "source": "census.py over owner drives (O2 13 min, O4 29 min, a 3.1 h owner drive) and U1 21 min: one payload per message after power-up",
@@ -137,13 +137,13 @@
  "U1_stock_acc": {
   "pcs_payloads": {
    "0x283": {
-    "0000000000008c": 21
+    "00 00 00 00 00 00 8C": 21
    },
    "0x344": {
-    "0000010000000050": 21
+    "00 00 01 00 00 00 00 50": 21
    },
    "0x411": {
-    "0020000000008000": 21
+    "00 20 00 00 00 00 80 00": 21
    }
   },
   "stockAeb_or_stockFcw_events": 0,
@@ -242,7 +242,7 @@
   },
   "0x320_bit13_other_segments": "set in every frame of segments 1-25 (route_bits.py: constant after the first 20 s)",
   "openpilot_0x411": {
-   "4020000010010000": 26
+   "40 20 00 00 10 01 00 00": 26
   },
   "radar_pcs_frames_after_disable": {
    "0x283": 0,
