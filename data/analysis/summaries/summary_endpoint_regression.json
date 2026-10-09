@@ -536,5 +536,215 @@
     },
     "kernel_description": "approximately 16 executable lines of analytic quadratic endpoint derivative; history, association, confidence and adapters add code",
     "limits": "removing robust fit and ego integration is competitive here, not a universal equivalence; ego jerk and individual-route failures remain"
+  },
+  "clock_plain_combination": {
+    "status": "supported source comparison; consumer replay running, no profile change",
+    "input_scope": "actual original CAN header/metadata/summary in order on ten reused owner drives",
+    "labelled_rows": 176089,
+    "finite_rows": 175938,
+    "unavailable": 151,
+    "different_prefiltered_history_rows": 25,
+    "max_difference_from_prefiltered_bench_mps": 0.06804297581161711,
+    "bench_scope_difference": "The ground-estimator bench discarded summary observations when ego was stale; the relative estimator has no ego input. Actual-source comparison is recomputed on common finite labels.",
+    "scores": [
+      {
+        "addr": "0x192",
+        "candidate": "runtime_relative",
+        "n": 127595,
+        "rmse": 0.13404536774642578,
+        "mae": 0.08425105844852451,
+        "p99": 0.5292433748114656,
+        "lag_proxy_s": -0.004612314404610035,
+        "maneuver_rmse": 0.20511056796215354,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x192",
+        "candidate": "OLS_relative",
+        "n": 127595,
+        "rmse": 0.13404599301960488,
+        "mae": 0.08425173974422578,
+        "p99": 0.5292433748114543,
+        "lag_proxy_s": -0.004619946848106747,
+        "maneuver_rmse": 0.20511056796215432,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x192",
+        "candidate": "KF_clock",
+        "n": 127595,
+        "rmse": 0.1331816187410788,
+        "mae": 0.08954586760235116,
+        "p99": 0.47341168980299775,
+        "lag_proxy_s": 0.03872302792143329,
+        "maneuver_rmse": 0.2510476135647322,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x194",
+        "candidate": "runtime_relative",
+        "n": 48343,
+        "rmse": 0.1298211454412263,
+        "mae": 0.08126650714117357,
+        "p99": 0.5068891271724869,
+        "lag_proxy_s": 0.00878552764733391,
+        "maneuver_rmse": 0.23931441841175033,
+        "maneuver_n": 480
+      },
+      {
+        "addr": "0x194",
+        "candidate": "OLS_relative",
+        "n": 48343,
+        "rmse": 0.12982041255430812,
+        "mae": 0.0812675061024042,
+        "p99": 0.5068891271724943,
+        "lag_proxy_s": 0.00878902642808538,
+        "maneuver_rmse": 0.23931441841175163,
+        "maneuver_n": 480
+      },
+      {
+        "addr": "0x194",
+        "candidate": "KF_clock",
+        "n": 48343,
+        "rmse": 0.13182023176934152,
+        "mae": 0.0885911550993055,
+        "p99": 0.48624714365205296,
+        "lag_proxy_s": 0.04007000596991561,
+        "maneuver_rmse": 0.23626986649393156,
+        "maneuver_n": 480
+      }
+    ],
+    "gates": [
+      {
+        "addr": "0x192",
+        "gates": {
+          "rmse": true,
+          "p99": true,
+          "maneuver": true,
+          "lag_proxy": true
+        }
+      },
+      {
+        "addr": "0x194",
+        "gates": {
+          "rmse": true,
+          "p99": true,
+          "maneuver": true,
+          "lag_proxy": true
+        }
+      }
+    ],
+    "independent_original_history_checks": 1759,
+    "independent_max_difference_mps": 2.7355895326763857e-13,
+    "summary_update_plus_derivative_us": 7.775549429899536,
+    "max_observed_history": 21,
+    "cost_limit": "summary-only interface calls, not full decoder throughput; header pairing/metadata/history/forwarding add code to the roughly 16-line kernel",
+    "paired_MSE_on_prefiltered_scope": [
+      {
+        "scope": "transfer",
+        "addr": "0x192",
+        "cohort": "transfer_reused",
+        "candidate": "OLS_relative",
+        "baseline": "Huber_ground",
+        "delta_MSE": 0.00042349668431334984,
+        "route_cluster_95": [
+          -0.00013071305710371194,
+          0.0012294754794327871
+        ],
+        "routes": 25
+      },
+      {
+        "scope": "transfer",
+        "addr": "0x192",
+        "cohort": "transfer_reused",
+        "candidate": "OLS_relative",
+        "baseline": "KF_clock",
+        "delta_MSE": 0.0006824755949888417,
+        "route_cluster_95": [
+          -0.0009235138265050473,
+          0.0037349113281254483
+        ],
+        "routes": 25
+      },
+      {
+        "scope": "transfer",
+        "addr": "0x194",
+        "cohort": "transfer_reused",
+        "candidate": "OLS_relative",
+        "baseline": "Huber_ground",
+        "delta_MSE": 0.0001930934556226939,
+        "route_cluster_95": [
+          -0.001494289459828892,
+          0.0017723306671789724
+        ],
+        "routes": 19
+      },
+      {
+        "scope": "transfer",
+        "addr": "0x194",
+        "cohort": "transfer_reused",
+        "candidate": "OLS_relative",
+        "baseline": "KF_clock",
+        "delta_MSE": 0.0007498108134500117,
+        "route_cluster_95": [
+          -0.0009837139884685646,
+          0.007497339443255653
+        ],
+        "routes": 19
+      },
+      {
+        "scope": "owner",
+        "addr": "0x192",
+        "cohort": "owner_reused",
+        "candidate": "OLS_relative",
+        "baseline": "Huber_ground",
+        "delta_MSE": 0.00019840340782806507,
+        "route_cluster_95": [
+          -0.00020039381646391106,
+          0.0006964034976135761
+        ],
+        "routes": 9
+      },
+      {
+        "scope": "owner",
+        "addr": "0x192",
+        "cohort": "owner_reused",
+        "candidate": "OLS_relative",
+        "baseline": "KF_clock",
+        "delta_MSE": 0.00023288700247779069,
+        "route_cluster_95": [
+          -0.0004262385708583992,
+          0.0008509420399940634
+        ],
+        "routes": 9
+      },
+      {
+        "scope": "owner",
+        "addr": "0x194",
+        "cohort": "owner_reused",
+        "candidate": "OLS_relative",
+        "baseline": "Huber_ground",
+        "delta_MSE": -0.00014169814344716915,
+        "route_cluster_95": [
+          -0.00039819240840773966,
+          0.00018570235750857433
+        ],
+        "routes": 8
+      },
+      {
+        "scope": "owner",
+        "addr": "0x194",
+        "cohort": "owner_reused",
+        "candidate": "OLS_relative",
+        "baseline": "KF_clock",
+        "delta_MSE": -0.0005299969551118491,
+        "route_cluster_95": [
+          -0.0020631918194985114,
+          0.001402032676710815
+        ],
+        "routes": 8
+      }
+    ],
+    "limits": "Reused conditional witness agreement; individual-route failures and route-cluster intervals including zero; no physical accuracy, acquisition time, whole-parser or default superiority claim"
   }
 }

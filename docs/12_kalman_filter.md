@@ -339,7 +339,7 @@ RMSE from **0.153 / 0.145 to 0.133 / 0.130 m/s** on 176,089 common range-matched
 gives **0.133 / 0.132 m/s**. Timing improves both estimators: p95 receipt-minus-cycle interval disagreement is about
 11.5 ms on the transfer corpus, against a nominal 60 ms cycle. The encoded clock is nominal microseconds, with no
 independent acquisition-time calibration. Pairing is causal to a preceding header within 70 ms; repeated cycles are
-coalesced only when the complete summary and target metadata repeat exactly. A conflict or missing metadata resets
+coalesced only when the complete summary and target metadata repeat exactly. A same-clock conflict or missing metadata resets
 history. This use of the summary's clock does not associate the header with the native object list.
 
 A fixed-window **plain quadratic fit of relative range** gives 0.154 / 0.144 m/s RMSE, versus robust ground-position
@@ -353,8 +353,13 @@ Curvature earns its place: a straight-line ground-position fit has 0.294 / 0.264
 reused transfer, versus quadratic 0.178 / 0.169 and 0.006 / 0.009 s. Huber fitting and ego integration add little average
 benefit on this scope. If ego speed is locally affine, its integral is quadratic, so subtracting endpoint ego speed
 from the ground fit equals fitting relative range directly. Ego jerk breaks that equivalence. These ablations support
-simplification candidates; only the robust ground-position source has completed driving replay. The clock and plain
-fits are competitive source comparisons, with no profile or default change
+simplification candidates; only the robust ground-position source has completed driving replay. Combining clock timing with the plain relative fit gives **0.134 / 0.130 m/s**, versus clock Kalman 0.133 / 0.132,
+on 175,938 common finite rows from actual CAN. The source passes all aggregate limits; 151 labelled rows are unavailable.
+It uses no ego input, so it retains a few position samples dropped by the earlier ground-estimator bench; these actual
+source scores account for that history difference. The roughly 8 µs summary-update-and-derivative measurement excludes
+the rest of the parser. Clock pairing, metadata checks, bounded history and message forwarding add code beyond the
+small derivative kernel. Its independent original-history checks and source results support a separate consumer test,
+which is running. The clock and plain fits remain competitive source comparisons, with no profile or default change
 ([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
 
 ## Other approaches tested
