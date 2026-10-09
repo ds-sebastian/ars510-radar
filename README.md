@@ -51,8 +51,8 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
   speed can still cause a short, mild slowdown.
 
 These are replay results on one owner's car. On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
-2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking, and the two mild slowdowns were far leads
-paired with a car in the next lane ([08](docs/08_openpilot_integration.md#on-the-road)).
+2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking; the two mild slowdowns had far leads beyond
+95 m without the radar's ACC target ([08](docs/08_openpilot_integration.md#on-the-road)).
 
 ## How the filter works
 

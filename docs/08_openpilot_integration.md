@@ -190,8 +190,8 @@ The owner has driven the integration on three forks:
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera and the radar's
   ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
   braking starts 0.4-1.0 s before vision on every drive. Two mild slowdowns (about 1.5 m/s², both
-  overridden with the gas) came from radard pairing the camera's far lead (beyond 95 m, no ACC target) with a radar
-  object a lane over, on a curve and in a work-zone lane shift. One late, firm brake (2.8 m/s²) came from a car first
+  overridden with the gas) had a lead beyond 95 m and no ACC target: on a curve radard paired the camera's lead with a
+  radar object a lane over, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm brake (2.8 m/s²) came from a car first
   detected at 66 m whose object-list range read 15-20 m short until it settled.
 - **A second driver's 2025 RAV4 Hybrid** (sunnypilot, `fused` 2.1.0, [issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)):
   the same numbers as the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the

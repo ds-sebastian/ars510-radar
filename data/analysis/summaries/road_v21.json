@@ -68,7 +68,7 @@
   "le_1p5_without_camera_or_acc_closing": 0,
   "episodes_le_1p0": 49,
   "radar_caused_without_closing_witness": 2,
-  "note": "both about -1.5 m/s2, lead beyond 95 m, no ACC target, radar object a lane over (curve, work-zone lane shift)"
+  "note": "both about -1.5 m/s2, lead beyond 95 m, no ACC target: one radard pairing with a radar object a lane over (curve), one far speed excursion on the right car (work-zone lane shift)"
  },
  "replay_vs_vision": {
   "moving_hours": 5.83,
