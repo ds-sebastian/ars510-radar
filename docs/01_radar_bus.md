@@ -64,6 +64,24 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 - Several addresses send an all-ones or all-zeros first frame (for example 0x100 `FFFF…`, 0x192 `0FFF0FFF`).
 - Early object records contain placeholder tracks, some at exactly 0 m; the age gate removes them.
 
+## openpilot's radar disable
+
+On the RAV4 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
+longitudinal (alpha long) switches the radar's car-bus output off with UDS CommunicationControl `28 01 01` (receive
+on, transmit off) to 0x750 / 0x0F, then keeps it off with tester-present `3E 00` every ~0.2 s. That request only
+covers bus 0; **bus 1 keeps running unchanged** (●, one unfiltered drive with no CAN filter or other bus-1
+hardware, firmware `8821F0R03100`; [`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json)):
+
+| | before the request | after (26 min, openpilot longitudinal engaged 8 min) |
+|---|---|---|
+| radar's response | | `68 01` (positive) 20 ms later |
+| bus 0 from the radar: 0x283, 0x343 (33 Hz), 0x344 (20 Hz), 0x33E, 0x365, 0x366 (5 Hz), 0x411, 0x494, 0x4FF (~1 Hz) | sent | silent |
+| bus 1: all 36 addresses, 0x80 / 0x85 records, ACC target 0x235 / 0x237 | sent | sent at full rate; 25,849 records, 0 CRC failures |
+| 0x101 / 0x197 / 0x24F running flags | running | running |
+
+So the decoder needs no CAN filter on this firmware: the object list, the ACC target and the target summaries all
+survive openpilot's radar disable.
+
 ## Ego speed
 
 The object velocities are **over ground**, so the consumer subtracts ego speed. Toyota 0xB4 reads about 1.5% below

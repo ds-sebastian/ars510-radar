@@ -107,8 +107,6 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## For the integration
 
-- **Stock openpilot alpha longitudinal:** confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
-  radar-disable.
 - **Other cars and firmware:** openpilot's fingerprints list `8821F0R01100` for the RAV4 2022 platform, the same
   `8821F0R` series as the documented `8821F0R03100` and the only other one. One capture from such a car confirms the
   layout and adds it to `ARS510_FW_VERSIONS` (detection otherwise relies on the bus-1 fallback, which runs before
@@ -163,5 +161,6 @@ equal to `fused` with the summaries off, point for point (bundled samples; two f
 3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`; `8821F0R01100` unconfirmed). Drives on
    other cars, through `--profile openpilot`, are what upstream would weigh.
 4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
-5. **Alpha longitudinal compatibility.** Confirm on a parked car that 0x80 keeps arriving after openpilot's UDS
-   radar-disable request.
+5. **Alpha longitudinal compatibility.** Covered for `8821F0R03100`: after openpilot's UDS radar-disable request the
+   radar stops only its car-bus messages and keeps sending bus 1, without a CAN filter
+   ([01](01_radar_bus.md#openpilots-radar-disable)).
