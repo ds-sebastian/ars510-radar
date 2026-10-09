@@ -22,8 +22,8 @@ raw `can_packets` card.py passes in, CRC-checked, and decoded in `ars510`. The D
 Output cadence: one RadarData per completed record (~16.7 Hz, inside radard's 8-24 Hz radarTracks window).
 - After power-up the radar sends its first object record ~6 s after first CAN. Until the first valid record, this
   behaves like openpilot's radarless default: empty RadarData at 20 Hz, no error, vision-only leads. A warning is
-  logged if no record has arrived NO_RECORD_WARN_S after start (e.g. the radar was silenced by the alpha-longitudinal
-  radar disable).
+  logged if no record has arrived NO_RECORD_WARN_S after start (e.g. wiring, or firmware that also silences bus 1 on
+  the alpha-longitudinal radar disable; 8821F0R03100 does not).
 - Once records have arrived, if none arrives for STALE_S, a radarUnavailableTemporary RadarData is sent at 20 Hz
   until records resume, instead of radard silently reusing the last tracks.
 - A CRC-failed record is dropped. It is not flagged as a CAN error: the staleness check covers sustained loss.

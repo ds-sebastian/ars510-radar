@@ -195,5 +195,7 @@ The owner has driven the integration on three forks:
    `carParams.flags` bit.)
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
-3. **openpilot longitudinal:** on stock openpilot, alpha long sends the radar a UDS "disable transmit" at startup; check
-   that 0x80 keeps arriving on bus 1 (on the owner's forks, with a smartDSU-style setup, it does).
+3. **openpilot longitudinal:** alpha long sends the radar a UDS "disable transmit" (`28 01 01`) at startup. That stops
+   only the radar's car-bus messages; 0x80 keeps arriving on bus 1 without a CAN filter, so radar tracks continue
+   ([01](01_radar_bus.md#openpilots-radar-disable)). Check that the radar answers `68 01` and that `radarTracks` stay at
+   ~16.7 Hz after it.

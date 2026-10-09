@@ -126,9 +126,10 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
   range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)). Beyond
   50 m it also reads 5-8% short of the radar's own ACC distance ([06](docs/06_accuracy.md#distance)).
-- **openpilot longitudinal.** Stock openpilot sends the radar a "disable" request when it takes over longitudinal
-  control; the radar kept transmitting on the owner's setups, but this is not confirmed on every configuration
-  ([08](docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)).
+- **openpilot longitudinal needs no CAN filter.** openpilot's radar-disable request silences only the radar's
+  car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
+  `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)). Other
+  firmware is unchecked.
 - **Not upstream.** This is a community integration installed on top of openpilot; comma has not reviewed it.
 
 ## How it fits into openpilot

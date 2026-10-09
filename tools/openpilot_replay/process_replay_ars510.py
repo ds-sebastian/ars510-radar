@@ -24,8 +24,8 @@ Run it once with a stock opendbc and once with a patched copy, then compare:
 - CarParams.openpilotLongitudinalControl is cleared. Otherwise process_replay turns
   alpha long on, and on a RADAR_ACC Toyota card's startup then runs the UDS radar-disable routine. In
   process_replay card stalls after that routine (stock opendbc too): 80 carState messages per segment instead of
-  6000. radard and the planner do not depend on the toggle. Whether the radar keeps sending 0x80 after a real
-  disable request can only be checked on the car (docs/08).
+  6000. radard and the planner do not depend on the toggle. On the car the radar keeps sending 0x80 after the real
+  disable request (docs/01).
 - When logged carFw is present, fingerprintSource is set to "fw" so process_replay can reuse it, including logs
   from forks that manually select the car. Without logged firmware the original fingerprint source is kept.
 
