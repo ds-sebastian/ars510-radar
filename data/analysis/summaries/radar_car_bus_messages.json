@@ -1,0 +1,318 @@
+{
+ "description": "The radar's Toyota driving-support messages on the car bus (bus 0) and what happens to them under openpilot longitudinal. Owner drives O2 (13 min), O3 (4 min), O4 (29 min) have a smartDSU-style radar CAN filter; U1 (stock ACC, 21 min) and U2 (alpha longitudinal, radar disabled over UDS, 26 min) are the unfiltered second RAV4 of radar_disable_unfiltered.json. Times are seconds from the start of a log. Bit positions marked msb are counted from the first payload bit (bit 0 = MSB of byte 0).",
+ "idle_payloads_owner_O2": {
+  "0x283": {
+   "00 00 00 00 00 00 8C": 24983
+  },
+  "0x344": {
+   "00 00 01 00 00 00 00 50": 14991
+  },
+  "0x411_payloads_773_segments": {
+   "00 20 00 00 00 00 80 00": 752,
+   "40 20 00 00 00 00 80 00": 27
+  },
+  "0x411_startup_payload_segments": 27,
+  "0x494": "82 00 00 00 00 00 00 00 (census.py, every owner and U1 frame)",
+  "0x4FF": "3F 00 00 00 00 00 00 00 (census.py)"
+ },
+ "constant_payload_census": {
+  "source": "census.py over owner drives (O2 13 min, O4 29 min, a 3.1 h owner drive) and U1 21 min: one payload per message after power-up",
+  "hours": 4.1,
+  "messages": [
+   "0x283",
+   "0x344",
+   "0x411",
+   "0x494",
+   "0x4FF"
+  ]
+ },
+ "filter_owner_O4": {
+  "radar_0x343_last_t_s": 3.487,
+  "openpilot_0x343_first_t_s": 3.501,
+  "0x2FF_rate_hz": 51.1
+ },
+ "lead_fits": {
+  "O2": {
+   "ego_max_mps": 22,
+   "no_target_share_0x365": 0.777,
+   "0x365_byte4_m_vs_acc_distance_m": {
+    "scale": 0.9915,
+    "offset": -0.047,
+    "r": 0.9995,
+    "mad": 0.236,
+    "n": 830
+   },
+   "0x365_byte5_kmh_vs_acc_vrel_kmh": {
+    "scale": 0.9993,
+    "offset": -0.002,
+    "r": 0.9997,
+    "mad": 0.142,
+    "n": 830
+   },
+   "0x366_msb16_9_vs_acc_vrel_mps": {
+    "scale": 0.119,
+    "offset": -18.203,
+    "r": 0.8918,
+    "mad": 0.249,
+    "n": 836
+   },
+   "0x366_msb25_7_vs_acc_distance_m": {
+    "scale": 0.7829,
+    "offset": 0.652,
+    "r": 0.9869,
+    "mad": 0.331,
+    "n": 836
+   }
+  },
+  "O3": {
+   "ego_max_mps": 18,
+   "no_target_share_0x365": 0.605,
+   "0x365_byte4_m_vs_acc_distance_m": {
+    "scale": 0.9972,
+    "offset": 0.007,
+    "r": 0.9992,
+    "mad": 0.167,
+    "n": 474
+   },
+   "0x365_byte5_kmh_vs_acc_vrel_kmh": {
+    "scale": 1.0007,
+    "offset": -0.005,
+    "r": 0.9995,
+    "mad": 0.143,
+    "n": 474
+   },
+   "0x366_msb16_9_vs_acc_vrel_mps": {
+    "scale": 0.0219,
+    "offset": -3.679,
+    "r": 0.2979,
+    "mad": 0.641,
+    "n": 459
+   },
+   "0x366_msb25_7_vs_acc_distance_m": {
+    "scale": 0.6864,
+    "offset": 2.235,
+    "r": 0.9047,
+    "mad": 1.567,
+    "n": 459
+   }
+  },
+  "U1_expressway_seg9_15": {
+   "ego_max_mps": 37,
+   "no_target_share_0x365": 0.135,
+   "0x365_byte4_m_vs_acc_distance_m": {
+    "scale": 0.9968,
+    "offset": 0.13,
+    "r": 0.9992,
+    "mad": 0.221,
+    "n": 1816
+   },
+   "0x365_byte5_kmh_vs_acc_vrel_kmh": {
+    "scale": 0.9952,
+    "offset": -0.006,
+    "r": 0.993,
+    "mad": 0.266,
+    "n": 1816
+   },
+   "0x366_msb16_9_vs_acc_vrel_mps": {
+    "scale": 0.1398,
+    "offset": -21.608,
+    "r": 0.9973,
+    "mad": 0.049,
+    "n": 1815
+   },
+   "0x366_msb25_7_vs_acc_distance_m": {
+    "scale": 0.7908,
+    "offset": 0.349,
+    "r": 0.9994,
+    "mad": 0.195,
+    "n": 1815
+   }
+  }
+ },
+ "0x33E_owner_O2": {
+  "frames": 3748,
+  "non_7fff_frames": 1053,
+  "non_7fff_with_acc_target": 833
+ },
+ "U1_stock_acc": {
+  "pcs_payloads": {
+   "0x283": {
+    "00 00 00 00 00 00 8C": 21
+   },
+   "0x344": {
+    "00 00 01 00 00 00 00 50": 21
+   },
+   "0x411": {
+    "00 20 00 00 00 00 80 00": 21
+   }
+  },
+  "stockAeb_or_stockFcw_events": 0,
+  "radar_0x343_payload_changes": 5134,
+  "radar_0x343_accel_cmd_min_max": [
+   -0.519,
+   0.201
+  ],
+  "radar_0x343_flags": {
+   "ACC_TYPE": {
+    "1": 5134
+   },
+   "ALLOW_LONG_PRESS": {
+    "3": 5134
+   },
+   "MINI_CAR": {
+    "1": 5086,
+    "0": 48
+   },
+   "PERMIT_BRAKING": {
+    "1": 4971,
+    "0": 163
+   },
+   "DISTANCE": {
+    "0": 5111,
+    "1": 23
+   },
+   "RELEASE_STANDSTILL": {
+    "0": 5134
+   },
+   "ACC_CUT_IN": {
+    "0": 5134
+   },
+   "RADAR_DIRTY": {
+    "0": 5134
+   },
+   "ACC_MALFUNCTION": {
+    "0": 5134
+   },
+   "CANCEL_REQ": {
+    "0": 5134
+   }
+  },
+  "event_pair_0x195_episodes": [
+   {
+    "duration_s": 1.01,
+    "ego_mps": 5.5,
+    "acc_ttc_s": 10.0
+   },
+   {
+    "duration_s": 0.72,
+    "ego_mps": 5.3,
+    "acc_ttc_s": 3.9
+   },
+   {
+    "duration_s": 0.6,
+    "ego_mps": 6.2,
+    "acc_ttc_s": null
+   },
+   {
+    "duration_s": 0.12,
+    "ego_mps": 6.1,
+    "acc_ttc_s": null
+   },
+   {
+    "duration_s": 0.12,
+    "ego_mps": 6.4,
+    "acc_ttc_s": null
+   }
+  ],
+  "0x320_seg0": {
+   "communication_control_t_s": null,
+   "last_radar_car_bus_frame_t_s": 60.942,
+   "0x320_bit13_transitions_t_s_value": [
+    [
+     0.02,
+     0
+    ]
+   ]
+  }
+ },
+ "U2_radar_disabled": {
+  "0x320_seg0": {
+   "communication_control_t_s": 12.501,
+   "last_radar_car_bus_frame_t_s": 12.519,
+   "0x320_bit13_transitions_t_s_value": [
+    [
+     0.02,
+     0
+    ],
+    [
+     12.69,
+     1
+    ]
+   ]
+  },
+  "0x320_bit13_other_segments": "set in every frame of segments 1-25 (route_bits.py: constant after the first 20 s)",
+  "openpilot_0x411": {
+   "40 20 00 00 10 01 00 00": 26
+  },
+  "radar_pcs_frames_after_disable": {
+   "0x283": 0,
+   "0x344": 0
+  },
+  "event_pair_0x195_episodes_while_disabled": [
+   {
+    "duration_s": 0.61,
+    "ego_mps": 4.5,
+    "acc_ttc_s": 4.2
+   },
+   {
+    "duration_s": 0.36,
+    "ego_mps": 3.8,
+    "acc_ttc_s": 3.6
+   },
+   {
+    "duration_s": 1.13,
+    "ego_mps": 6.0,
+    "acc_ttc_s": null
+   },
+   {
+    "duration_s": 0.12,
+    "ego_mps": 4.2,
+    "acc_ttc_s": 7.5
+   },
+   {
+    "duration_s": 1.26,
+    "ego_mps": 7.3,
+    "acc_ttc_s": 4.0
+   },
+   {
+    "duration_s": 0.3,
+    "ego_mps": 5.3,
+    "acc_ttc_s": null
+   }
+  ],
+  "stockAeb_or_stockFcw_events": 0
+ },
+ "owner_O2_0x320_seg0": {
+  "communication_control_t_s": null,
+  "last_radar_car_bus_frame_t_s": 61.573,
+  "0x320_bit13_transitions_t_s_value": [
+   [
+    0.04,
+    1
+   ],
+   [
+    0.28,
+    0
+   ]
+  ]
+ },
+ "panda_toyota_long_tx": {
+  "allowed_any_content": [
+   "0x344",
+   "0x33E",
+   "0x365",
+   "0x366",
+   "0x411"
+  ],
+  "allowed_with_accel_limits": {
+   "0x343": "ACCEL_CMD -3.5..+2.0 m/s^2"
+  },
+  "allowed_idle_only": {
+   "0x283": "bytes 0-5 must be zero"
+  },
+  "not_allowed": [
+   "0x494",
+   "0x4FF"
+  ]
+ }
+}

@@ -113,7 +113,24 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
   the object list starts). A second unit also shows whether 0x500 / 0x502 differ per unit.
 - **More closed-loop driving** with the `fused` profile (the default), and a second car or driver.
 
-## Signals that would help most
+## Keeping AEB under openpilot longitudinal
+
+Without a radar CAN filter, openpilot longitudinal switches off the radar's car-bus output, including its PCS / AEB
+brake request, and the car flags the loss ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)).
+Ways to keep AEB:
+
+- **A filter in the radar's line** (smartDSU-style) drops only the radar's 0x343 and passes its AEB. This works today and
+  needs hardware at the radar, because the comma harness is not in the radar's path to the gateway.
+- **Relay the radar's own decision.** A disabled radar keeps running its threat assessment on bus 1 (0x195 / 0x196).
+  If its brake request also appears on bus 1, openpilot can forward it as 0x283 / 0x344, keeping Toyota's decision
+  logic. One recorded stock AEB activation with bus 1 logged (for example against an inflatable PCS test target on a
+  closed lot) shows whether it does.
+- **An openpilot AEB on 0x283 / 0x344.** This needs the actuation sequence from a recorded activation, an AEB decision in
+  openpilot, and a panda safety change (0x283 is idle-only). It is a fork-level safety function.
+- **Name 0x320 bit 13** (the brake system's missing-PCS flag) by replaying the radar's idle 0x283 / 0x344 while it is
+  disabled. This shows which message the brake system checks. Showing PCS as available is only appropriate while an AEB
+  source actually exists.
+
 
 What other openpilot radar interfaces read from their radars, and what the ARS510 decode still lacks
 ([`opendbc/car/*/radar_interface.py`](https://github.com/commaai/opendbc/tree/master/opendbc/car)):
