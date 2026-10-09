@@ -1072,11 +1072,52 @@ def summary_owner_case():
          "Saved planner/lead output; captured vision is a comparison, not physical ground truth.")
 
 
+def summary_endpoint_regression() -> None:
+    """Anonymous frozen owner comparison of a nonrecursive summary velocity source."""
+    info = summary("summary_endpoint_regression")
+    fig = plt.figure(figsize=(10.2, 5.3))
+    grid = fig.add_gridspec(2, 2, height_ratios=[2.2, 1.1])
+    axes = [fig.add_subplot(grid[0, i]) for i in range(2)]
+    addresses = ["0x192", "0x194"]
+    x = np.arange(2)
+    for index, (key, label, factor) in enumerate([
+        ("rmse", "ACC speed discrepancy RMSE (m/s)", 1),
+        ("lag_proxy_s", "Acceleration-linked lag proxy (ms)", 1000),
+    ]):
+        ax = axes[index]
+        for j, (method, title, color) in enumerate([
+            ("baseline", "Ground-speed Kalman", S1),
+            ("candidate", "Quadratic Huber fit", S2),
+        ]):
+            values = [info["new_owner"][address][method][key] * factor for address in addresses]
+            bars = ax.bar(x + (j - .5) * .34, values, .34, label=title, color=color)
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x() + bar.get_width()/2, value, f"{value:.3f}" if index == 0 else f"{value:.1f}",
+                        ha="center", va="bottom", fontsize=8)
+        ax.set_xticks(x, addresses)
+        ax.set_ylabel(label)
+        ax.set_ylim(0, .19 if index == 0 else 52)
+    axes[0].legend(loc="upper left", fontsize=8)
+    ax = fig.add_subplot(grid[1, :]); ax.axis("off")
+    boxes = [(.01, .02, .25, .80, "Summary range +\nintegrated ego displacement\nGround-position observations"),
+             (.36, .02, .28, .80, "Last 1.2 s: quadratic Huber fit\nEndpoint speed + acceleration"),
+             (.74, .02, .25, .80, "Current ground speed\nSubtract ego for vRel")]
+    for bx, by, bw, bh, text in boxes:
+        ax.add_patch(plt.Rectangle((bx, by), bw, bh, facecolor="#eaf1f8", edgecolor=S1, lw=1))
+        ax.text(bx+bw/2, by+bh/2, text, ha="center", va="center", fontsize=9)
+    for start, end in [(.26, .36), (.64, .74)]:
+        ax.annotate("", xy=(end, .42), xytext=(start, .42), arrowprops={"arrowstyle": "->", "color": INK2})
+    fig.suptitle("Summary velocity: competitive error with a finite-history estimator", fontsize=12)
+    fig.tight_layout()
+    save(fig, "summary_endpoint_regression", "Ten independent owner drives, 178,187 same-target samples. ACC is a dependent radar witness.\n"
+         "The lag proxy is a regression diagnostic, not measured latency; neither estimator establishes physical accuracy.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case, summary_endpoint_regression,
                                    acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
 
 

@@ -1,0 +1,176 @@
+{
+  "status": "supported conditional comparison; candidate velocity source, no profile change",
+  "model": {
+    "name": "causal quadratic Huber regression",
+    "input": "summary position plus trapezoid-integrated past B4 ego speed",
+    "window_s": 1.2,
+    "position_scale_m": 0.02,
+    "huber_threshold": 2.5,
+    "IRLS_passes": 3,
+    "estimated_state": "position intercept, endpoint ground speed and ground acceleration"
+  },
+  "comparator": {
+    "name": "constant-velocity ground-speed Kalman",
+    "acceleration_scale_mps2": 1.5,
+    "position_scale_m": 0.02
+  },
+  "scope": {
+    "development_drives": 2,
+    "new_owner_drives": 10,
+    "new_owner_summary_rows": 178187,
+    "association": "ACC and summary position agree within 0.25 m continuously for at least 1.5 s",
+    "input_clock": "recorded CAN receipt time",
+    "ego_lookup": "past only, at most 0.15 s stale",
+    "reused_transfer_input_drives": 25
+  },
+  "new_owner": {
+    "0x192": {
+      "baseline": {
+        "n": 129417,
+        "rmse": 0.1513602886042831,
+        "mae": 0.10099326696943087,
+        "p99": 0.5581155925423342,
+        "lag_proxy_s": 0.0399612406443825,
+        "maneuver_rmse": 0.28774564422850724,
+        "maneuver_n": 2135
+      },
+      "candidate": {
+        "n": 129417,
+        "rmse": 0.15308119714215002,
+        "mae": 0.09938449040464424,
+        "p99": 0.5748095597031558,
+        "lag_proxy_s": 0.0017396146241204144,
+        "maneuver_rmse": 0.2552124888559497,
+        "maneuver_n": 2135
+      },
+      "gates": {
+        "rmse": true,
+        "p99": true,
+        "lag_proxy": true,
+        "maneuver": true
+      },
+      "paired_MSE": {
+        "MSE_delta": 0.0005239159521019315,
+        "route_cluster_95": [
+          -0.0007007233582641389,
+          0.0015822144030464126
+        ],
+        "routes": 9
+      }
+    },
+    "0x194": {
+      "baseline": {
+        "n": 48770,
+        "rmse": 0.1439853546512472,
+        "mae": 0.09593467029644835,
+        "p99": 0.5481858573718258,
+        "lag_proxy_s": 0.0422310209381143,
+        "maneuver_rmse": 0.2558098938289057,
+        "maneuver_n": 489
+      },
+      "candidate": {
+        "n": 48770,
+        "rmse": 0.1453573140724956,
+        "mae": 0.09268088986524471,
+        "p99": 0.5655298971572815,
+        "lag_proxy_s": 0.017405172307689194,
+        "maneuver_rmse": 0.24788547693563973,
+        "maneuver_n": 489
+      },
+      "gates": {
+        "rmse": true,
+        "p99": true,
+        "lag_proxy": true,
+        "maneuver": true
+      },
+      "paired_MSE": {
+        "MSE_delta": 0.0003969664003246932,
+        "route_cluster_95": [
+          -0.0010119511726524946,
+          0.002317444334373339
+        ],
+        "routes": 8
+      }
+    }
+  },
+  "reused_transfer": {
+    "0x192": {
+      "baseline": {
+        "candidate": "fused_summary_KF",
+        "addr": "0x192",
+        "cohort": "transfer_reused",
+        "n": 117347,
+        "rmse": 0.17665369566264694,
+        "mae": 0.11650898963816106,
+        "p99": 0.611657157240064,
+        "lag_proxy_s": 0.04758974154038572,
+        "maneuver_rmse": 0.3243626151340443,
+        "maneuver_n": 4647
+      },
+      "candidate": {
+        "candidate": "P2_h1.2_c2.5",
+        "addr": "0x192",
+        "cohort": "transfer_reused",
+        "n": 117347,
+        "rmse": 0.17814483458711466,
+        "mae": 0.11526303596088809,
+        "p99": 0.5995776548497468,
+        "lag_proxy_s": 0.006455696632320976,
+        "maneuver_rmse": 0.35475235748134276,
+        "maneuver_n": 4647
+      },
+      "paired_MSE": {
+        "paired_MSE_delta": 0.0005290538987993699,
+        "route_cluster_95": [
+          -0.0007386824870184397,
+          0.0024805180258628125
+        ],
+        "routes": 25
+      }
+    },
+    "0x194": {
+      "baseline": {
+        "candidate": "fused_summary_KF",
+        "addr": "0x194",
+        "cohort": "transfer_reused",
+        "n": 43062,
+        "rmse": 0.1666288727752502,
+        "mae": 0.10782474213015494,
+        "p99": 0.5919587636520571,
+        "lag_proxy_s": 0.054052975925111275,
+        "maneuver_rmse": 0.28043387974286293,
+        "maneuver_n": 802
+      },
+      "candidate": {
+        "candidate": "P2_h1.2_c2.5",
+        "addr": "0x194",
+        "cohort": "transfer_reused",
+        "n": 43062,
+        "rmse": 0.16853505647660136,
+        "mae": 0.10388858884630886,
+        "p99": 0.5918100058216137,
+        "lag_proxy_s": 0.008516336988925139,
+        "maneuver_rmse": 0.22790683525397296,
+        "maneuver_n": 802
+      },
+      "paired_MSE": {
+        "paired_MSE_delta": 0.0006388840192206908,
+        "route_cluster_95": [
+          -0.0015784090750801819,
+          0.007506492542815992
+        ],
+        "routes": 19
+      }
+    }
+  },
+  "limits": [
+    "ACC is a dependent tracker witness, not calibrated physical truth",
+    "The lag proxy is a regression diagnostic, not measured latency",
+    "Route-level maneuver and tail regressions remain visible",
+    "No full non-Kalman parser or recommended profile is promoted"
+  ],
+  "sources": {
+    "local_regression": "https://www3.stat.sinica.edu.tw/statistica/j6n1/j6n17/j6n17.htm",
+    "robust_MHE": "https://arxiv.org/abs/2210.02166"
+  }
+}
