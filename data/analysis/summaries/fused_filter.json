@@ -1,5 +1,5 @@
 {
- "description": "Fused speed filter (FUSED_CONFIG, 'fused' profile): one uncertainty-weighted per-track Kalman filter on over-ground speed replacing far smoothing, far settling, the ramp limiter and the ACC / summary clips. Replay against the driver with the unchanged openpilot card -> radard -> planner (34 replay drives) and the unchanged sunnypilot planner (fresh drives).",
+ "description": "Fused speed filter (FUSED_CONFIG, 'fused' profile): one uncertainty-weighted per-track Kalman filter on over-ground speed replacing far smoothing, far settling, the ramp limiter and the ACC / summary clips. Replay against the driver with the unchanged openpilot card -> radard -> planner (27 replay drives) and the unchanged sunnypilot planner (fresh drives). Replay, ablation and combination numbers are fused 2.0 (with the summaries, ACC sigma 0.5); the current 2.5 counts are in profiles_vs_vision.json and acc_weight.json.",
  "filter": {
   "object_list_speed_sigma_mps_per_240_7_count": 0.045,
   "young_track_sigma_scale": 1.8,
@@ -109,7 +109,7 @@
    "radar_only_braking_per_h": 0.66,
    "onset_vs_vision_s": -0.033
   },
-  "saturation_guard": "identical on all 34 drives and the 8 fresh drives; removed from fused",
+  "saturation_guard": "identical on all 27 drives and the 8 fresh drives; removed from fused",
   "range_fusion": {
    "heldout": 27,
    "further": 0,
@@ -287,7 +287,7 @@
   ]
  },
  "openpilot_file_lines": {
-  "definition": "non-blank, non-comment lines of upstream/ars510_radar.py (fused without summaries and relink)",
+  "definition": "non-blank, non-comment lines of the openpilot version of 2.0 (fused without summaries and relink); current counts (183 code lines of 223) in openpilot_file_parts.json",
   "total_lines": 213,
   "total": 189,
   "decode_ids_publication": 84,
@@ -296,7 +296,7 @@
   "adapter_constants_pruning": 62
  },
  "radard_cascade": {
-  "definition": "radard's aLeadK in the 34-drive replays (20 held-out routes), ticks where both radar profiles follow a radar lead; roughness = mean |d aLeadK / dt|; lag = cross-correlation peak of fused vs the earlier tuned profile's aLeadK per route (0.05 s ticks)",
+  "definition": "radard's aLeadK in the 27-drive replays (20 held-out routes), ticks where both radar profiles follow a radar lead; roughness = mean |d aLeadK / dt|; lag = cross-correlation peak of fused vs the earlier tuned profile's aLeadK per route (0.05 s ticks)",
   "ticks": 148219,
   "by_profile": {
    "fused": {
@@ -320,7 +320,7 @@
   "routes": 15
  },
  "acc_target_weight": {
-  "definition": "ACC target speed sigma in fused: 0.5 (default), 0.13 (its measured error), 0.02 (trusted almost completely); 34 replay drives and 8 fresh drives",
+  "definition": "ACC target speed sigma in fused: 0.5 (the default up to 2.4), 0.13 (its measured error), 0.02 (trusted almost completely); measured on 2.0 with the ACC speed at 0.1 m/s per code; 27 replay drives and 8 fresh drives",
   "replay_34_drives": {
    "0.5": {
     "heldout_hard": 30,

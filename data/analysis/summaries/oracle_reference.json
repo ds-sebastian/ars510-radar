@@ -78,7 +78,7 @@
  "turning_lead_case": "video and optical looming: the in-lane lead slowed to turn off (about -3 m/s at 105-115 m) then left the lane; 2.1 braked -1.54 m/s2 for a car a lane over whose radar speed read a false -7 m/s; 2.3 -0.29; vision -0.08",
  "suite_34_drives": {
   "hours": 6.72,
-  "note": "the 34 replay drives (20 held-out, 4 further, 3 owner); 4 chains have no lead data in their logs and are not scored",
+  "note": "the 27 replay drives (20 held-out, 4 further, 3 owner); 4 chains have no lead data in their logs and are not scored",
   "confident": {
    "vision": {
     "unnecessary": {

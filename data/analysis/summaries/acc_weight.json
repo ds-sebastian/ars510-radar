@@ -1,5 +1,5 @@
 {
- "description": "Weight of the radar's ACC target speed in fused's per-track speed filter: 2.4 (sigma 0.5 m/s), 2.5 (0.3 m/s) and the ACC target's values copied unblended for its track. Unchanged openpilot card -> radard -> planner replays: the 34 replay drives (gate counts as in docs/09) and the hindsight-lead oracle (oracle_reference.json), plus the road drives (owner 2.1 drives and a second car, open loop). Gates were fixed before the 0.3 result.",
+ "description": "Weight of the radar's ACC target speed in fused's per-track speed filter: 2.4 (sigma 0.5 m/s), 2.5 (0.3 m/s) and the ACC target's values copied unblended for its track. Unchanged openpilot card -> radard -> planner replays: the 27 replay drives (gate counts as in docs/09) and the hindsight-lead oracle (oracle_reference.json), plus the road drives (owner 2.1 drives and a second car, open loop). Gates were fixed before the 0.3 result.",
  "sigma_mps": {
   "2.4": 0.5,
   "2.5": 0.3

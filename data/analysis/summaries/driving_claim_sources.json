@@ -276,7 +276,7 @@
     "default_plus_saturation_guard": 93
    },
    "source": "research workspace SCR-113",
-   "note": "velocity_guards.json is no longer in the public repo; 93 also appears as raw's hard ticks in profiles_vs_vision.json. Add the summary back or cite it in fused_filter.json."
+   "note": "Source: fused_filter.json saturation_guard_heldout (117 -> 93)."
   },
   {
    "doc": "12:287",

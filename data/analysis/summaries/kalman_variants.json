@@ -1,5 +1,5 @@
 {
- "description": "Kalman filter variants for the lead speed: offline bench (false closings vs the hidden ACC target, object list only) and openpilot replays (34 drives).",
+ "description": "Kalman filter variants for the lead speed: offline bench (false closings vs the hidden ACC target, object list only) and openpilot replays (27 drives).",
  "bench_false_closing_pct": {
   "fused (random walk)": {
    "heldout": 5.9,

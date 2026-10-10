@@ -7,7 +7,8 @@ exercised:
   - radard: `Track`, `match_vision_to_track`, `get_lead`, `RadarD.update` (lead selection, per-track Kalman filter)
   - long_mpc: `LongitudinalMpc.process_lead` and the helpers it calls (the lead trajectory the MPC is given)
 
-What is NOT here: the MPC solver, the rest of the planner, the controls. "Demand" below is a proxy: the constant
+Runs radard and process_lead only; the MPC solver, the rest of the planner and the controls are replaced by the "demand"
+proxy below: the constant
 deceleration that keeps the lead-based safety distance, applied to the lead trajectory the fork hands to its MPC. It
 ranks forks and radar profiles against each other; it is not the planner's output.
 

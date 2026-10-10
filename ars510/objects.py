@@ -76,7 +76,8 @@ PREDICTED = NativeField("predicted", 107, 1, 0.0, 1.0, "flag", "likely")
 # Camera-association state 112|3: 0 radar only, 1 (rarely 2-4) while the camera has the vehicle. By day it is set inside
 # about 45 m, at night (camera light-source mode) also far out (docs/03).
 CAMERA_ASSOC = NativeField("camera_assoc", 112, 3, 0.0, 1.0, "state", "likely")
-# Confidence of the assigned class in 1/20 steps (0 = unclassified, 20 = 100 %); steps by one per cycle and a large
+# Confidence of the assigned class in 1/20 steps (mostly 0 while unclassified, 20 = 100 %); steps by one per cycle on
+# 95-96 % of its changes, and a large
 # vehicle is re-classified as a car when it has fallen to 5 (docs/03).
 CLASS_CONFIDENCE = NativeField("class_confidence", 115, 5, 0.0, 5.0, "%", "likely")
 

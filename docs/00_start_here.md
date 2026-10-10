@@ -78,8 +78,8 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 openpilot's radard picks the radar track that best matches the camera's lead in distance, lateral position and speed,
 each weighted by the camera's uncertainty, then checks only distance and speed. Far out the camera's lateral
 uncertainty is wide, so a car in the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
-from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track matched to the ACC
-target always stays visible.
+from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The path gate never withholds the
+track matched to the ACC target.
 
 ![path gate](img/analysis/guide_lead_guards.png)
 

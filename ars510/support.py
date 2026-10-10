@@ -53,7 +53,8 @@ class CycleHeader:
 def parse_0x190(data: bytes) -> CycleHeader | None:
     """0x190 (7 bytes, once per radar cycle): summary count, microsecond timestamp, cycle counter (docs/05).
 
-    Byte 0 = count << 2 | 2; the count equals the number of non-sentinel 0x191 / 0x193 frames in every logged cycle.
+    Byte 0 = count << 2 | 2; the count equals the number of non-sentinel 0x191 / 0x193 frames in every logged cycle after start-up
+    (681,864 of 681,879; the rest are startup frames).
     Returns None for a short frame or the all-ones start-up frame."""
     if len(data) < 7 or data[0] == 0xFF:
         return None

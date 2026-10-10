@@ -140,7 +140,7 @@
   72.8
  ],
  "fused_replay_with_corrected_lateral_units": {
-  "note": "34 replay drives, limits fixed before the run: object-list lateral 0.015 m per code and the 12-bit ACC lateral, against the same profile with the previous lateral conversions",
+  "note": "27 replay drives, limits fixed before the run: object-list lateral 0.015 m per code and the 12-bit ACC lateral, against the same profile with the previous lateral conversions",
   "previous": {
    "heldout": {
     "hard": 30,

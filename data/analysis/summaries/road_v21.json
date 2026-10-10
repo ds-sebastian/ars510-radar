@@ -1,5 +1,5 @@
 {
- "description": "fused 2.1.0 on the road: owner's car (9 sunnypilot drives, logged closed loop, plus open-loop replays of the same drives against vision only through the pinned openpilot of the 34-drive suite) and the numbers a second driver reported in issue #66",
+ "description": "fused 2.1.0 on the road: owner's car (9 sunnypilot drives, logged closed loop, plus open-loop replays of the same drives against vision only through the pinned openpilot of the 27-drive suite) and the numbers a second driver reported in issue #66",
  "build_check": {
   "logged_track_points": 300754,
   "match_2_1_0": 1.0,
