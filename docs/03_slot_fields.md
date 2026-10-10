@@ -266,8 +266,8 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   range), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
   reference is the radar's own estimate.
 - **Reference-free axis check:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
-  `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
-  codes describe slowly varying tracker error.
+  `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). For `232|7` and `240|7` the
+  jitter is about a fifth of the ACC-referenced error per count, so these codes describe slowly varying tracker error.
 - **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95) and barely beyond
   (0.42-0.55), where excursions happen; its size follows the error width ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)), so it serves as a per-reading weight.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
