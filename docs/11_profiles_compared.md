@@ -47,7 +47,7 @@ fork build (`ars510/`); the summaries are a fork option, on in `colored`.*
 *Left: how much `fused` trusts each reading by range. Middle: the share of the estimate coming from the radar's ACC
 target when it is present. Very close in, the object list dominates; from about 15 m on the ACC target does. Right:
 speed standard deviation of a new track against age; the 0.75 m/s line is the publication gate, which holds young far
-tracks back without a range threshold.*
+tracks back through the filter's own uncertainty.*
 
 ![profiles on the bundled samples](img/analysis/profile_comparison.png)
 
@@ -86,15 +86,15 @@ What the radar adds, by profile:
 - **`raw` brakes earlier than vision** (0.15 s on average) and anticipates a few more driver brakes. Part of that head
   start is real (the radar sees closings through curves and before the camera's distance estimate settles); part comes
   from an over-closing bias of the unfiltered object list. The same bias causes its radar-only braking.
-- **`fused` removes that bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
+- **`fused` removes that over-closing bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
   driver also slowed. It still brakes slightly earlier than vision on average (−0.01 s): 20 of 148 paired driver brakes
-  are answered earlier than vision and 13 later, and it is already asking for ≥ 1 m/s² before 41.3% of brake presses
+  are answered earlier than vision and 13 later, and it is already asking for ≤ −1 m/s² before 41.3% of brake presses
   (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
   (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
 - **The Kalman filter alone** (no ACC target) halves `raw`'s false braking (93 → 48 hard ticks) with onset between
   `raw` and `fused`; the radar's ACC target supplies the rest of `fused`'s gain.
-- **Every profile follows a radar lead about 87 % of the time a lead exists**, so radard uses radar distance rather
-  than the camera's distance estimate. In `fused` the car the radar's ACC function follows is published at the radar's
+- **Every profile follows a radar lead about 87 % of the time a lead exists**, so radard uses the radar distance for
+  those leads. In `fused` the car the radar's ACC function follows is published at the radar's
   ACC distance, which agrees with the vision lead within a metre up to 90 m and cuts the flips between a radar and a
   vision lead by 30 % ([12](12_kalman_filter.md#matching-the-radars-trackers-to-tracks)); other tracks keep the
   object-list range (6 cm resolution; frame-to-frame jitter about 3 % of range far out).
@@ -104,7 +104,7 @@ What the radar adds, by profile:
 | profile | pros | cons |
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away seen later than the radar sees them |
-| `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes for nothing beyond 40 m |
+| `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 | `fused` | closest to vision in feel (lowest jerk; smallest error vs the driver among the radar profiles), radar-only braking almost gone, slightly earlier than vision on average, one speed state | the head start over vision is small on average; road miles from two cars so far |
 
 ## Assumptions and limits
@@ -134,16 +134,16 @@ What the radar adds, by profile:
 | Rivian | 54 | `STATE`; pass-through |
 | Chrysler | 56 | pass-through |
 | GM | 71 | pass-through of the radar's targets |
-| Ford | 194 | clusters raw Delphi detections into tracks |
+| Ford | 194 (268 lines in all) | clusters raw Delphi detections into tracks |
 | **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 183 | `fused` in one file; part by part in [10](10_research_directions.md#parts-of-the-openpilot-file): |
 | … transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
 | … ACC target decode and association | 27 | match the radar's own ACC target to one track |
 | … Kalman speed filter, its young-track factor and publication gates | 29 | the filter itself |
 | … range fusion, path gate, state pruning, fork compatibility | 24 | lead stability, next-lane leads, bounded state |
 
-- The other interfaces pass the radar's tracks through with validity and lifecycle checks and leave speed filtering to
-  radard.
-- The ARS510 reports the width of its far-range speed error (`240|7`) and flags no single bad moment, so `fused` weights
-  each reading in one scalar filter ([12](12_kalman_filter.md#the-model)); the replays above are its evidence.
+- The other interfaces, except Ford's, pass the radar's tracks through with validity and lifecycle checks and leave
+  speed filtering to radard.
+- The ARS510 reports the width of its far-range speed error (`240|7`) as a continuous per-reading scale, so `fused`
+  weights each reading in one scalar filter ([12](12_kalman_filter.md#the-model)); the replays above are its evidence.
 - Moving that weighting into radard (a per-point speed variance) would make this interface a pass-through like the
   others ([10](10_research_directions.md#towards-an-upstream-comma-interface)).

@@ -25,7 +25,7 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
 
 Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x344 and 0x283 end in the Toyota
-checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF never change
+checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
 (4.1 h of owner drives and U1; 0x411 over 773 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, for 0.2-3 s
 after each of 27 cold starts).
 0x33E, 0x365 and 0x366 change with the lead.
@@ -94,19 +94,19 @@ bus, so openpilot longitudinal needs one of two setups:
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
 | PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: no AEB source |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
-| car's reaction | none | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
+| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
 
 **0x320 bit 13 (◐).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the driving-support ECU. On U2,
 bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) goes 0 → 1 at 12.69 s. That is 0.17 s after the radar's last car-bus frame,
 right after the disable request and it stays set for all 26 minutes. It stays 0 on U1 at the same moment (the harness relay
 switch) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
-messages begin. It is the brake system's flag for a missing driving-support / PCS link.
+messages begin. It behaves as the brake system's flag for a missing driving-support / PCS link.
 
 **The radar keeps assessing threats while disabled.** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target
-time to collision 3.6-7.5 s). Its decisions have no car-bus output. On U1 (stock ACC) the 5 comparable short states
-left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that precedes PCS action, and the brake request
+time to collision 3.6-7.5 s). Its decisions stay on bus 1 while it is disabled. On U1 (stock ACC) the 5 comparable short states
+left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that precedes PCS action (◐), and the brake request
 travels on the car bus.
 
 ## What panda allows openpilot to send
@@ -118,7 +118,7 @@ openpilot's Toyota longitudinal TX list (DSU-unplugged TSS-P support) already co
 | 0x343 | allowed, `ACCEL_CMD` −3.5..+2.0 m/s² |
 | 0x344, 0x33E, 0x365, 0x366, 0x411 | allowed |
 | 0x283 | allowed only with bytes 0-5 zero (the idle frame) |
-| 0x494, 0x4FF | not in the list |
+| 0x494, 0x4FF | outside the TX list |
 
 opendbc's `toyotacan.create_pcs_commands` builds 0x283 + 0x344. Ways to keep AEB under openpilot longitudinal
 without a filter are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).

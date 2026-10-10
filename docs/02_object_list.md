@@ -28,7 +28,7 @@ flowchart LR
 - **Reassembly:** append bytes 1..7 of every frame, the first included, until 106 frames have arrived. Record byte 0 is `E4`.
 - **CRC:** `zlib.crc32(record[1:737])`, stored little-endian at `record[737:741]`. Every record of every logged drive
   passes.
-- `ars510/transport.py` does this in about 60 lines. Reassembly has to happen in code: the sequence nibble wraps every
+- `ars510/transport.py` does this in 78 lines. Reassembly has to happen in code: the sequence nibble wraps every
   16 frames, so a frame's place in the record comes from counting frames since the first.
 
 ![raw records](img/analysis/record_raster.png)
@@ -65,7 +65,7 @@ third of the time, so use the counters.
 
 ## Slots and track IDs
 
-Each slot is one object. The radar fills the **lowest free slot first**: in 88 minutes it never used more than 10 of
+Each slot is one object. The radar fills the **lowest free slot first**: in 88 minutes it used at most 10 of
 the 20 slots, and 94-99% of samples sit in slots 0-4. An object keeps its slot for its whole life, and the slot's
 **age** field (`24|7`) counts its radar cycles.
 

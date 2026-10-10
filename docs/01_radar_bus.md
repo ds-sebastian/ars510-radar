@@ -37,7 +37,7 @@ the radar's internal tracker ([05](05_acc_target_and_support.md#0x191-0x194-sele
 | 0x197 / 0x198 | 2 / 1 | 16.7 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
 | 0x202 | 5 | 16.7 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
-| **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
+| **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar, ◐): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
 | 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | ACC target companions: 0x239 = class, object-list flag, µs timestamp; 0x23B = width in cm + counter + CRC-8; 0x23D all zero | [05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b) |
 | 0x240-0x245, 0x248 | 8 | 16.7 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
@@ -79,7 +79,7 @@ hardware, firmware `8821F0R03100`; [`radar_disable_unfiltered.json`](../data/ana
 | bus 1: all 36 addresses, 0x80 / 0x85 records, ACC target 0x235 / 0x237 | sent | sent at full rate; 25,849 records, 0 CRC failures |
 | 0x101 / 0x197 / 0x24F running flags | running | running |
 
-So the decoder needs no CAN filter on this firmware: the object list, the ACC target and the target summaries all
+So on this firmware the decoder works with the radar line unfiltered: the object list, the ACC target and the target summaries all
 survive openpilot's radar disable. The car-bus messages it switches off, including the radar's PCS / AEB brake
 request, are described in [13](13_car_bus_messages.md).
 

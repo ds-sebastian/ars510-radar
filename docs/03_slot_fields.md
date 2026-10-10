@@ -31,7 +31,7 @@ from this radar's own data.
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
-- **The velocity is over ground**, not relative: traffic sits on the ego-speed diagonal, parked objects on 0 and
+- **The velocity is over ground**: traffic sits on the ego-speed diagonal, parked objects on 0 and
   oncoming traffic on −v_ego.
 
   ![over ground](img/analysis/vground_vs_ego.png)
@@ -78,7 +78,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
 | `16\|8` | **existence probability** | % (10-100); `20\|3` is its coded class; `NativeObject.existence_pct`, point metadata `existence_pct` | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
-| `107\|1` | **predicted (not measured)** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
+| `107\|1` | **predicted record** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
 
 **Score `16|8`.** Commonly sits at 100 on settled tracks and can decline in either state. In state 2 it steps
@@ -119,7 +119,7 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `128\|3` | **lane state** | 3 ego lane, 2 right lane, 4 left lane; 1 / 5 / 7 = no lane weights | ● structure, ◐ names |
+| `128\|3` | **lane state** | 3 ego lane, 2 right lane, 4 left lane; 1 / 5 / 7 = all lane weights zero | ● structure, ◐ names |
 | `148\|4` | **right-lane weight** | 0-15 | ◐ |
 | `152\|4` | **left-lane weight** | 0-15 | ◐ |
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
@@ -132,8 +132,8 @@ for codes 1 / 5 / 7.
 ![lane weights](img/analysis/lane_weights.png)
 
 The dominant weight sits one lane width apart: median yRel −3.7 m (right), −0.1 m (ego), +3.5 m (left). At the lane
-edges, weight moves smoothly from one lane to the next. The ego-lane weight is the radar's own **in-path** estimate,
-something radard itself lacks: it pairs leads by range ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
+edges, weight moves smoothly from one lane to the next. The ego-lane weight is the radar's own **in-path** estimate;
+radard pairs leads by range ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
 
 The decoder exposes the triplet as `NativeObject.raw_weights148` (right, left, ego order as on the wire) and the state
 as `raw_weight_state128`.
@@ -143,7 +143,7 @@ as `raw_weight_state128`.
 | bits | field | behaviour | conf. |
 |---|---|---|---|
 | `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
-| `136\|4` | association confidence | 15 without association; restarts at 3-9 when `112\|3` becomes non-zero and climbs to 14 | ◐ |
+| `136\|4` | association confidence | 15 while unassociated; restarts at 3-9 when `112\|3` becomes non-zero and climbs to 14 | ◐ |
 | `181\|1` | daylight flag | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night | ○ |
 
 ![camera association by day and night](img/analysis/camera_association.png)
@@ -186,8 +186,8 @@ has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-
 the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and they are zero together
 on every one of 1,253,081 occupied rows (700 segments). These rows always have motion code 5, class 1, state 1,
 range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
-All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so no
-interface profile publishes a phantom object at 0 m. Counts are in
+All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so every
+interface profile withholds them. Counts are in
 [`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
 
 ![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
@@ -211,7 +211,7 @@ walkers, including one with 31 mature rows. The camera review covers 21 episodes
 45-episode inventory, with ambiguous parked-vehicle, road and traffic-furniture scenes also represented.
 The radar's own kinematics point the same way: class-5 objects measure 1.2 × 0.7 m (length × width, per-object
 medians; between pedestrians at 0.5 × 0.6 m and two-wheelers at 1.6 × 0.7 m) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
-a bicycle at walking-to-cycling speed. All 968 class-5 samples read `136|4` = 15, the value without camera association, and their
+a bicycle at walking-to-cycling speed. All 968 class-5 samples read `136|4` = 15, the unassociated value, and their
 height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
 [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
@@ -265,18 +265,18 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (the same at every
   range), `224|7` 0.23 m below 40 m (beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
   reference is the radar's own estimate.
-- **Axis check without a reference:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
+- **Reference-free axis check:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
   codes describe slowly varying tracker error.
 - **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95-0.97) and weakly beyond
-  (0.41-0.68), where excursions happen, so it weights readings rather than flagging them.
+  (0.41-0.68), where excursions happen, so it serves as a per-reading weight.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
   over code deciles), which includes the camera's own error
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 **Reference scope.** The units above measure the disagreement between two estimates of the same target:
-`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels in it, so
-the physical error per count needs a reference with its own known error, such as a second car that logs its speed
+`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels in it; a
+reference with its own known error, such as a second car that logs its speed, gives the physical error per count
 ([10](10_research_directions.md#for-a-better-ride)). In `fused` the codes set an empirical weight per reading, which the
 replays justify ([12](12_kalman_filter.md#what-each-part-is-worth)).
 

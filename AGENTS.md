@@ -19,7 +19,7 @@ Start with [README.md](README.md), then the doc for your area:
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
 
-Parsing does not use a DBC; `dbc/` is for Cabana only.
+Parsing works from raw frames; `dbc/` is for Cabana.
 
 ## Commands
 

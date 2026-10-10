@@ -1,7 +1,7 @@
 # 12. The Kalman speed filter
 
 The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
-([07](07_velocity_excursions.md)). The radar reports their size in `240|7`, as a width rather than a per-moment flag. The default
+([07](07_velocity_excursions.md)). The radar reports their size in `240|7`, as a width: a per-reading error scale. The default
 `fused` profile handles them with **one Kalman filter per track** on the lead's speed over ground. Every reading is
 weighted by its own uncertainty: the object list and the radar's ACC target. radard then runs its usual filter on what
 this one publishes.
@@ -87,7 +87,7 @@ publication gate, and the replays below are what justify the constants
 radard runs its own per-track Kalman filter on `[vLead, aLead]` with a fixed gain; its `aLeadK` is the lead
 acceleration the planner uses. This filter cleans only the speed it hands over, so radard and the planner run
 unchanged, and lead acceleration stays radard's job; one speed state scores better here than a speed + acceleration
-state ([below](#kalman-variants-tested)). Without the filter, an excursion reaches `aLeadK` as a −3 to −5 m/s² spike.
+state ([below](#kalman-variants-tested)). Unfiltered (`raw`), an excursion reaches `aLeadK` as a −3 to −5 m/s² spike.
 
 The two filters run in series, so all replay numbers already include their combined effect. Measured directly on
 148,219 radar-lead ticks of the 20 held-out routes (fused 2.0, `radard_cascade` in
@@ -108,7 +108,7 @@ The two filters run in series, so all replay numbers already include their combi
   `raw` withholds the track until the speed is back within 5 m/s (or 1 s), then continues under a new ID. Held-out
   hard ticks 117 → 93. In `fused` the robust update absorbs the sentinel, so the guard is off.
 - **Track-ID relink (`raw` only):** a track lost and re-found within 3.5 s keeps its ID. With the filter on, the
-  driving is identical without it, so `fused` leaves it off.
+  driving is identical with or without it, so `fused` leaves it off.
 - **Range fusion (`fused`):** range walks by metres at 60-100 m (3% per frame). A fixed-gain predictor, separate from
   the speed filter:
 
@@ -131,7 +131,7 @@ it describes. The summaries (a fork option) are matched the same way.
 | ACC target (0x235 / 0x237) | cost = \|dRel − x\| / max(12 m, 0.4 x) + \|yRel − y\| / 0.5 m below 1, at least 1 better than the next track, track age ≥ 20; x is the 0.025 m ACC distance, y its 0.01 m lateral | the track's cost stays below 4 and the ACC position moves at most 8 m / 1 m per update |
 | summary (0x192 / 0x194), option | the track within max(5 m, 15 %) in range and 1 m laterally of the summary position, unambiguous (alone or 3 m nearer than the next), track age ≥ 20 | the track stays within max(8 m, 25 %) in range and 2 m laterally |
 
-- **Position, not speed.** Both matches use the tracker's own position, so they keep holding while the object-list
+- **Matched by position.** Both matches use the tracker's own position, so they keep holding while the object-list
   speed is wrong: replayed over the logged frames, a summary matched by position sits on its track on 99.5-100 % of cycles,
   also during object-list speed excursions, where a speed-agreement rule kept only 18-45 %.
 - **Room for the object list's short far range.** The object list reads the followed car several metres short of the ACC
@@ -201,7 +201,7 @@ drops a lead the camera still follows (a lead turning out of the lane).
 
 Over 7.65 h of the owner's road drives, `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
 5.4 s against 10.2 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (7.2 s,
-vision 10.3 s, 2.1 9.5 s). On the 27 replay drives, which did not shape it (6.72 h scored), it is the best of all versions on
+vision 10.3 s, 2.1 9.5 s). On the 27 replay drives (6.72 h scored), it is the best of all versions on
 both: 7.1 s unnecessary (vision 31.9 s, 2.1 9.4 s) and 3.0 s missed (vision 10.0 s, 2.1 4.1 s). Scoring covers moving
 moments (above 1 m/s), where the lead signal decides; at standstill the planner's stop-and-go logic does. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
@@ -230,7 +230,7 @@ the same hard braking on these drives (30 / 1 / 0, [above](#path-gate)). Counts 
 **Were those hard brakes real?** "Hard radar-only" means the radar planner braked hard where vision-only stayed below
 −0.5 m/s²; the radar may simply have seen a real slowdown first. Every hard episode in every run was therefore judged
 against references independent of the radar speed:
-- **the radar's raw range** of the same object, decoded from the original CAN (range has no excursions), else the
+- **the radar's raw range** of the same object, decoded from the original CAN (range holds steady through speed excursions, [07](07_velocity_excursions.md)), else the
   camera's lead distance from the vision-only replay;
 - **the braking the real closing needed:** closing² / 2(gap − 4 m);
 - **the driver:** did they brake or slow down too?
@@ -238,8 +238,8 @@ against references independent of the radar speed:
 ![were the hard brakes real](img/analysis/kalman_justified.png)
 
 27 of `fused` 2.0's 32 hard ticks on the 27 drives were real slowdowns the driver also braked for, where the radar
-reacted earlier or harder than the camera; 3 were unjustified and 2 unclear. Each part kept in `fused` is needed because removing it adds *unjustified*
-braking: the ACC target +24 ticks, the young-track factor +9, the std gate and the age gate +6 each
+reacted earlier or harder than the camera; 3 were unjustified and 2 unclear. Each braking-related part kept in `fused` earns its place because removing it adds *unjustified*
+braking (range fusion stays for lead stability): the ACC target +24 ticks, the young-track factor +9, the std gate and the age gate +6 each
 ([`hard_braking_review.json`](../data/analysis/summaries/hard_braking_review.json)).
 
 ### Removing parts together
@@ -250,7 +250,7 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
 
 ![fewest lines for the same driving](img/analysis/kalman_combinations.png)
 
-- **The track-ID relink is free:** the driving is identical without it.
+- **The track-ID relink is free:** the driving is identical with or without it.
 - **The summaries change little:** without them, unjustified braking and lead stability are the same (see below).
 - **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39%
   more often, with one real early brake fewer.
@@ -279,11 +279,11 @@ summaries reacted about 4 s earlier ([`summary_owner_case.json`](../data/analysi
 
 Over the 27 replay drives (about 5 h, `fused` 2.0), the summaries change the planner's request by 0.3 m/s² or more on 198 ticks
 (about 10 s). Without them the planner brakes harder on 143 of those ticks: 107 while the gap really was closing, 36
-while it was not (camera range). The summaries soften the response to far leads without an ACC target, mostly while
+while it held or opened (camera range). The summaries soften the response to far leads without an ACC target, mostly while
 the gap was really closing.
 
 Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-done)) the version without them scores
-better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead of 3.3 s on the 27 independent drives
+better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead of 3.3 s on the 27 replay drives
 (2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same requests on all 23 bookmarks,
 with 0 hard radar-only braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 7.2
 against 9.5 s missed. So `fused` leaves them out since 2.4, and the fork default and the openpilot version drive

@@ -1,8 +1,8 @@
 # Installing the ARS510 integration
 
 One installer for openpilot and its forks (sunnypilot, StarPilot and other trees with openpilot's `opendbc_repo`
-layout). It adds the decoder and appends one marked block to the end of Toyota's `interface.py`; no fork file is
-edited in place, and card, radard and the planner are untouched. How it works and what it does on the road:
+layout). It adds the decoder and appends one marked block to the end of Toyota's `interface.py`; the fork's files stay as
+shipped apart from that block, and card, radard and the planner run as shipped. How it works and what it does on the road:
 [docs/08](../docs/08_openpilot_integration.md).
 
 ## Install on a comma device
@@ -21,7 +21,7 @@ version of this installer is replaced automatically. `--profile raw` installs th
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
 
 ```bash
-python /data/ars510-radar/openpilot/install.py /data/openpilot --check        # report state, change nothing
+python /data/ars510-radar/openpilot/install.py /data/openpilot --check        # report state (read-only)
 python /data/ars510-radar/openpilot/install.py /data/openpilot --uninstall    # remove everything it added
 cd /data/ars510-radar && git pull && python openpilot/install.py /data/openpilot   # update, then reboot
 ```
@@ -58,7 +58,7 @@ The hook wraps the fork's own Toyota `CarInterface` after it is defined:
   RadarInterface for every other car. Extra constructor arguments (sunnypilot's `CP_SP`) pass through, and forks
   whose RadarPoint still has `aRel` / `yvRel` / `measured` get those fields filled.
 
-The install adds no `ToyotaFlags` bit, so it leaves a fork's own flags free.
+The install leaves `ToyotaFlags` as the fork defines it.
 
 Fork notes:
 - **StarPilot** runs its own radard (lateral gate when matching, match hysteresis, faster lead-acceleration decay) and

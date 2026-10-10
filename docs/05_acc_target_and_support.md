@@ -7,7 +7,7 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 ## The radar's ACC target (0x235 / 0x237)
 
 At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows.
-The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and with no target
+The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and while idle
 every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
 
 ![ACC target frames](img/analysis/acc_frame_map.png)
@@ -98,7 +98,7 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
   therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
   about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (error scales against that
-  reference). It is present in 38% of 40-130 m windows and 11% beyond 80 m
+  reference). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
@@ -194,7 +194,7 @@ In 59 of 60 changes where the low seven bits move by more than 64 codes, the hig
 direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
 non-idle samples, so recognise idle frames by the whole payload. The DBC keeps the remaining sub-fields as raw codes.
 
-**The event pair is a short-time-to-collision state.** Across 700 segments, compared with matched moving moments:
+**The event pair behaves like a short-time-to-collision state (◐).** Across 700 segments, compared with matched moving moments:
 
 | | non-idle 0x195 frames | matched moving moments |
 |---|---|---|
@@ -216,8 +216,7 @@ By day their bodies hold a default payload (`00 10 01 00 10 01 00`). **At night 
 records**: they leave the default in every drive that starts after dark and in none that ends before dusk (71 of 698
 one-minute segments; 35 of 114 on a second set, ramping in over three minutes at dusk). Each frame holds two records of
 {type nibble, 3 flag bits, 13-bit signed value, 8-bit value}; the two records of 0x244 share the 8-bit value. One record
-kind sweeps from small to large values while its byte falls from 255, as an approaching light does. The record units are
-open. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
+kind sweeps from small to large values while its byte falls from 255, as an approaching light does. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
 
 The night mode matters for the object list: two slot fields change with it ([03](03_slot_fields.md#camera-association)).
 
@@ -266,7 +265,7 @@ ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start
   short at 60-110 m and 14 m short at 110-170 m ([06](06_accuracy.md#distance), [07](07_velocity_excursions.md)). The
   fixes are sparse (about one a minute on tracks that have neither the ACC target nor a summary).
 - **Content while driving:** a stationary roadside object in 83% of frames (typically 8 m to the side), a
-  same-direction vehicle in 13%, an oncoming one in 3%. While driving the 0x80 object list drops new stationary objects
+  same-direction vehicle in 13%, an oncoming one in 3%. While driving the 0x80 object list drops most new stationary objects
   ([02](02_object_list.md#what-the-radar-lists)); 0x680 reports them, one at a time.
 - **Idle** payload `00 00 08 00 80 00 80 0A` appears in 0.12% of frames above 5 m/s and never for longer than 1.0 s
   in 7.8 h, so a long idle run while driving is a candidate "radar sees nothing" indicator
@@ -277,8 +276,8 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
 ## Other frames
 
 - **0x202:** counter in byte 1 high nibble (+1 per frame); byte 0 is a fixed function of the counter (map in the DBC): a CRC-8 with
-  polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the other bytes are constant, so only the counter
-  dependence is identified).
+  polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the fit identifies the counter dependence; the other
+  bytes are constant).
 - **0x23B (50 Hz, 3 bytes, in received order):** byte 0 = **CRC-8** (polynomial 0x1D, MSB first, init 0, xor 0x59) over the
   bit stream [counter 4 bits][0000][low nibble][byte 2]; byte 1 = rolling counter in the high nibble; the low nibble and
   byte 2 are the ACC target width ([above](#class-width-and-timestamp-0x239--0x23b)). 3,615 of 3,616 distinct payloads over

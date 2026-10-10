@@ -1,8 +1,8 @@
 # ARS510 radar for openpilot
 
 openpilot drives the **Toyota RAV4 TSS2 2022 / 2023** (`TOYOTA_RAV4_TSS2_2022` / `_2023`) on camera alone, because the
-car's front radar, a **Continental ARS510** (firmware `8821F0R03100` at 0x750 / 0x0f), speaks a format openpilot
-cannot read. This repo decodes that radar and plugs it into openpilot and its forks, so radard gets radar leads with
+car's front radar, a **Continental ARS510** (firmware `8821F0R03100` at 0x750 / 0x0f), speaks its own
+segmented object-list format, which stock openpilot leaves unused. This repo decodes that radar and plugs it into openpilot and its forks, so radard gets radar leads with
 measured distance and speed. It contains the decoder, an installer, the evidence behind every decoded field, and
 replay comparisons against vision only.
 
@@ -43,7 +43,7 @@ From replaying 27 recorded drives through openpilot's unchanged radard and plann
 - **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
   and speed.
 - **Braking starts slightly before vision-only would** on average (0.01 s), and the planner is already asking for
-  ≥ 1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  ≤ −1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed (0 per hour with the driver on the gas). The requests are as smooth as vision-only.
@@ -61,8 +61,8 @@ These are replay results on one owner's car. On the road (7.4 h on the owner's c
 
 ## How the filter works
 
-The radar's object list is accurate in distance, but its speed at range sometimes drifts into a false closing for
-1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
+The radar's object list reads distance steadily from moment to moment, but its speed at range sometimes drifts into
+a false closing for 1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
 car its ACC function follows: the ACC target. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
 weighted by its own uncertainty, so the gain changes each cycle:
 
@@ -88,7 +88,7 @@ The code comes in two versions that drive identically:
 - **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 223 lines (183 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build also keeps the
   radar's target summaries and the track-ID relink as options (`colored` uses the summaries); the default drives as
-  well or better without them ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
+  well without them (fewer missed brakes, slightly more unnecessary braking on road drives) ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
@@ -109,7 +109,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
 | **Distance, lateral position, speed over ground** | ● field layout, range scale, lateral sign, speed over ground; ◐ range zero, lateral and speed scales ([06](docs/06_accuracy.md)) |
-| **Object attributes**: lane assignment, class and its confidence, size, heading, lateral speed and acceleration, existence, uncertainties, camera association | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
+| **Object attributes**: lane assignment, class and its confidence, size, heading, lateral speed and acceleration, existence, uncertainties, camera association | ◐ decoded; some physical names and scales ○ ([03](docs/03_slot_fields.md)) |
 | **Radar's ACC target** (0x235 / 0x237 / 0x239 / 0x23B, 50 Hz) | ● mapped bit for bit: closing speed 0.125 m/s, relative acceleration 0.125 m/s² and distance 0.025 m per code, class, cycle timestamp; ◐ lateral 0.01 m per code, lateral speed and acceleration, in-path state, width; ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
 | **Target summaries** (0x190-0x194) | ● 0x192 / 0x194 = position of one internal track, in the object list's encoding; ● 0x190 counts them; ◐ 0x191 / 0x193 carry the class template (car / truck size) ([05](docs/05_acc_target_and_support.md)) |
 | **Car-bus target report** (0x366, 5 Hz) | ◐ mostly the ACC target, also reports without one: relative speed 0.5 km/h, distance ≈ 0.8 m, lateral 0.34 m per code ([13](docs/13_car_bus_messages.md)) |
@@ -124,7 +124,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 
 - **One owner's car.** The decode and the replays come from one RAV4 2022 with radar firmware `8821F0R03100`; a second
   driver's 2025 RAV4 Hybrid with the same firmware reported the same road numbers ([08](docs/08_openpilot_integration.md#on-the-road)).
-  Firmware `8821F0R01100`, also in openpilot's fingerprints, is detected by its bus-1 messages only when the radar is
+  Firmware `8821F0R01100`, also in openpilot's fingerprints, is detected by its bus-1 messages when the radar is
   already running at fingerprinting (a warm restart); one capture from such a car adds it to the firmware list.
 - **Far-range speed excursions.** The radar's object list sometimes reports a far car closing several m/s faster than
   it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The Kalman filter handles this by leaning on the radar's
@@ -134,7 +134,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
   range is smoothed separately from the speed filter ([12](docs/12_kalman_filter.md#what-runs-before-and-around-the-filter)).
   At 50-100 m it also reads 5-8% short of the radar's own ACC distance, which the followed car takes as its range
   ([06](docs/06_accuracy.md#distance)).
-- **openpilot longitudinal needs no CAN filter.** openpilot's radar-disable request silences only the radar's
+- **openpilot longitudinal works with the radar line unfiltered.** openpilot's radar-disable request silences only the radar's
   car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
   `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)).
 - **Community integration.** It installs on top of openpilot; the single-file openpilot version is the candidate for an
@@ -149,13 +149,13 @@ flowchart LR
     A -- "RadarPoints, 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
-The installer adds the decoder package and appends one hook block to the end of Toyota's `interface.py`. Nothing else in
-the fork changes: card, radard and the planner run as shipped.
+The installer adds the decoder package and appends one hook block to the end of Toyota's `interface.py`. The rest of
+the fork (card, radard, the planner) runs as shipped.
 
 ## Decode in Python
 
 ```bash
-pip install -e .[dev]    # the decoder itself has no dependencies
+pip install -e .[dev]    # the decoder itself is pure standard-library Python
 pytest
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 ```
@@ -184,7 +184,7 @@ bytes and a CRC32. Each slot is one little-endian bit field:
 | age | `24\|7` | radar cycles; a restart is a new track |
 | speed uncertainty | `240\|7` | about 0.043-0.045 m/s per count against the radar's ACC target |
 | lane weights (right / left / ego) | `148\|4`, `152\|4`, `156\|4` | 0-15, summing to 15 or 16 |
-| class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler |
+| class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 cyclist / person (○), 6 two-wheeler |
 
 Scales and zero points are nominal ([06](docs/06_accuracy.md#encoding-constants-and-motion-geometry)). The driving
 profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 ego speed. Every field:

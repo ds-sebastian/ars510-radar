@@ -1,6 +1,6 @@
 # 08. openpilot integration
 
-The integration turns the object list into openpilot radar tracks without changing openpilot itself: a decoder plus
+The integration turns the object list into openpilot radar tracks with openpilot itself running as shipped: a decoder plus
 one appended hook block in opendbc's Toyota port (detection and hand-over). radard, the planner and card run unchanged.
 
 ```mermaid
@@ -18,7 +18,7 @@ flowchart LR
 Install instructions for each fork are in [`openpilot/README.md`](../openpilot/README.md).
 
 One installer serves every fork: it copies the decoder and appends a 4-line hook block to the end of
-`opendbc/car/toyota/interface.py`, with no in-place edits and no new flag bit.
+`opendbc/car/toyota/interface.py`, append-only, with the fork's own flags as they are.
 
 | fork | status |
 |---|---|
@@ -33,9 +33,9 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    `radarUnavailable = False` when its radar firmware is in `ARS510_FW_VERSIONS` (`8821F0R03100`) or 0x80 and 0x85
    were seen on bus 1. The firmware rule matters: the object list starts ~5.9 s after power-up, after fingerprinting.
 2. **Hand-over** (hook on `CarInterface.RadarInterface`, which card instantiates). A radar-ACC Toyota with radar
-   available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card needs no
-   change.
-3. **Decoding without a CANParser.** The interface reads the raw `(address, data, src)` tuples card already passes,
+   available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card runs as
+   shipped.
+3. **Decoding from raw frames.** The interface reads the raw `(address, data, src)` tuples card already passes,
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 9 µs per call on a desktop CPU.
 4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once their
@@ -51,7 +51,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
 
    `aRel` and `yvRel` are NaN without fresh yaw rate or ego speed. openpilot's and sunnypilot's radard choose leads
-   from `dRel`, `yRel` and `vRel`; they store `measured` without weighting it.
+   from `dRel`, `yRel` and `vRel`; they store `measured` as point metadata.
 
 | situation | RadarData | effect in openpilot |
 |---|---|---|
@@ -69,7 +69,7 @@ filtered and how its ID continues.
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`fused`** (default) | `FUSED_CONFIG`: the `raw` decode with range fusion and one Kalman speed filter that weights the object list and the radar's ACC target by their own uncertainty ([12](12_kalman_filter.md#the-model)), plus a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)); the filter makes `raw`'s relink and saturation guard redundant, so they are off | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
+| **`fused`** (default) | `FUSED_CONFIG`: the `raw` decode with range fusion and one Kalman speed filter that weights the object list and the radar's ACC target by their own uncertainty ([12](12_kalman_filter.md#the-model)), plus a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)); the filter makes `raw`'s relink and saturation guard redundant, so they are off | everyday driving: the fewest false brakes, closing speed close to vision's, vision's timing ([11](11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
@@ -105,7 +105,7 @@ What each setting does (examples and plots in [12](12_kalman_filter.md)):
 | setting | profiles | effect |
 |---|---|---|
 | `min_publish_age=60` | all | a track is published after ~3.6 s, once range and velocity have converged |
-| `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter it changes nothing (27 drives), so `fused` leaves it off |
+| `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter the output is identical on 27 drives, so `fused` leaves it off |
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
@@ -118,10 +118,10 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
 
 - **Kalman filter on vLead only.** One filter per track ID; a NaN vRel would stay in it for good, so the interface
   publishes finite values only. A new track ID resets it; `raw` therefore re-links IDs across short losses, while
-  `fused` hands radard an already filtered speed, so a reset changes nothing measurable there.
+  `fused` hands radard an already filtered speed, so a reset leaves its output unchanged.
 - **Matching needs a vision lead.** radard matches a radar track to the vision lead while the lead probability is
-  above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check. Matching runs every tick without
-  hysteresis, so the radar lead follows whichever car the camera currently selects.
+  above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check. Matching runs afresh every tick,
+  so the radar lead follows whichever car the camera currently selects.
 - **Range-only pairing.** radard pairs by distance and speed. If the true lead is missing from the radar list, an
   adjacent-lane object at the right distance and speed becomes the lead 34-78% of the time, still 35-50% at 6 m
   offset. `fused`'s path gate withholds such tracks beyond 15 m ([12](12_kalman_filter.md#path-gate)); the radar's
@@ -133,7 +133,7 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
   without vision.
 - **16.7 Hz into 20 Hz.** radard re-uses the latest radar record on every tick, so 17.5% of ticks repeat the previous
   vRel; this adds about 1% to `aLeadK` roughness.
-- **Stopped vehicles** first seen stopped come from vision ([02](02_object_list.md#what-the-radar-lists)).
+- **Stopped vehicles** first seen stopped come mostly from vision ([02](02_object_list.md#what-the-radar-lists)).
 
 ## Radar + vision against vision only (replay)
 
@@ -179,8 +179,8 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 - **A second driver's 2025 RAV4 Hybrid** (sunnypilot, `fused` 2.1.0, [issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)):
   the same numbers as the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the
   lead time (owner: 1.8%), 7.0% beyond 70 m (owner: 8.2%), and the ACC target is present 99 / 95 / 66% of the
-  radar-lead time at 15-40 / 40-80 / 80-200 m (owner: 99 / 99 / 66%). The driver reports no braking without a cause in
-  21 engaged minutes on 2.1.0; replayed open loop, that car's one hard radar-only brake was a lead taken from the next
+  radar-lead time at 15-40 / 40-80 / 80-200 m (owner: 99 / 99 / 66%). The driver reports every braking in 21 engaged minutes on
+  2.1.0 as having a cause; replayed open loop, that car's one hard radar-only brake was a lead taken from the next
   lane, the same radard pairing as above, which the path gate removes.
 - **Earlier tuned profiles** were driven on a FrogPilot 0.9.7 port (4 drives, 1.05 h; the disagreement census in
   [07](07_velocity_excursions.md#how-often-on-real-drives)), StarPilot (2 drives) and sunnypilot (2 drives).
@@ -194,8 +194,8 @@ Numbers: [`road_v21.json`](../data/analysis/summaries/road_v21.json).
 ## Checking a new install on the car
 
 1. **Parked, ignition on:** `install.py --check` shows the hook as present; in the log, `carParams.radarUnavailable` is
-   false and `radarTracks` (or `liveTracks`) arrive at ~16.7 Hz with points after ~6 s. (The integration adds no
-   `carParams.flags` bit.)
+   false and `radarTracks` (or `liveTracks`) arrive at ~16.7 Hz with points after ~6 s. (`carParams.flags` stays as the
+   fork sets it.)
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
 3. **openpilot longitudinal:** alpha long sends the radar a UDS "disable transmit" (`28 01 01`) at startup. That stops

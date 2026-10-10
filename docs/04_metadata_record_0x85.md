@@ -79,7 +79,7 @@ A populated cell is one boundary curve, `y(x) = c0 + c1·x + c2·x²/2 + c3·x³
 
 Unpopulated cells hold the defaults 900 at `48|16` and 500 at `64|15`; the conversions apply to populated cells only.
 
-**Heading.** Three references that do not use the radar's own objects agree on sign and zero:
+**Heading.** Three references independent of the radar's own objects agree on sign and zero:
 * the ego-motion offset rate, `d(c0)/d(distance driven)` from consecutive records and carState speed, falls linearly with the code: binned correlation −0.985…−0.993 and slope −1.63…−1.80e-5 rad/code in cells 2, 3, 8 and 9;
 * the camera lane line's fitted slope correlates −0.61…−0.69 with the code and crosses zero at 31,167-31,322; its gain is about half the ego-motion one (shrinkage of the model's lane lines is a likely cause), so the unit rests on the ego-motion reference;
 * the radar's own ego-lane assignment (slot `128|3` = 3) for objects at 45-90 m is predicted from the cell-2 / cell-3 curves with AUC .9967 on the offsets alone and .9992 once the heading term is added; the AUC is a plateau at 1.3-2.0e-5 rad/code and falls to .9937 at 4e-5.
@@ -110,7 +110,7 @@ Against openpilot's lane model the median offset error is 3-10 cm:
 *24,878 CRC-valid records from 25 segments, speed ≥ 5 m/s, lane probability ≥ 0.8, cells with parameters present
 ([summary](../data/analysis/summaries/id85_lane_lateral_candidates.json)).*
 
-The assignment follows boundaries rather than being fixed to one: during a lane change or at a turn pocket a cell
+Each cell follows a nearby boundary, and that boundary can change: during a lane change or at a turn pocket a cell
 can keep describing the old or a different boundary for a while, and single-cycle spikes of a few metres occur.
 Treat a cell as "a nearby boundary" whose identity can change. Cells 6 and 7 are candidates for road-edge curves (they follow openpilot's road-edge estimate within a drive).
 

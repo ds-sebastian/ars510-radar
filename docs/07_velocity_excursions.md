@@ -1,8 +1,8 @@
 # 07. Velocity excursions (the false-closing issue)
 
-The radar's velocity is its best channel ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
+The radar's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for 1-10 s while the range holds steady**, mostly as a **false closing beyond 40 m**.
-In openpilot that shows up as extra jitter in the plan and, rarely, a braking request vision would not make. The
+In openpilot that shows up as extra jitter in the plan and, rarely, a braking request only the radar makes. The
 default `fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)).
 
 **In short**
@@ -10,7 +10,7 @@ default `fused` profile handles it with one Kalman filter per track ([12](12_kal
 - 84-88% of excursions are false closings; they ramp up over ~1.5 s and decay over ~2 s.
 - Rare close in, common far out: ~0.1 per 1,000 records below 20 m, 130 at 60-80 m, ~18% of track time at 100 m.
 - Their size matches the speed uncertainty the radar reports itself (`240|7`); the radar's own ACC tracker follows the
-  same car without them.
+  same car smoothly.
 - `fused` weights every reading by that uncertainty and leans on the radar's own ACC target: hard radar-only braking
   93 (`raw`) → 30 ticks on 20 held-out routes.
 
@@ -32,8 +32,7 @@ warning and −3.5 m/s².*
 
 - **Smooth drift:** the gap to the ACC target ramps from about −1 to −3.4 m/s; record-to-record steps stay
   small (1.7% exceed 2 m/s).
-- **Range holds steady**, but range itself walks by metres at 60-100 m, so range alone confirms a drift only after
-  2-4 s.
+- **Range holds steady**, but range itself walks by metres at 60-100 m, so range confirms a drift after 2-4 s.
 - **The motion state moves with it:** the acceleration field `84|10` follows the drift.
 
 <details>

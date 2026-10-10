@@ -1,7 +1,7 @@
 # 06. Accuracy: how well the object fields match the world
 
-Three drives carry the accuracy measurements: **A** (development, 26 min mixed), **B** (held out, 43 min city, often
-wet or at night, hilly) and **C** (held out, 24 min highway). The references each measure something different:
+Three drives carry the accuracy measurements: **A** (development, 24 min decoded, mixed), **B** (held out, 40 min city,
+often wet or at night, hilly) and **C** (held out, 24 min highway). The references each measure something different:
 
 | reference | what it gives |
 |---|---|
@@ -34,14 +34,14 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 - **Nominal zero at code 160.** The formula is `code / 16 − 10 m`: code 160 decodes to zero. The offset was
   originally fitted against a vision reference. Camera ground contact is consistent within 0.2 m on A and C;
   hilly drive B reads +0.7 m, consistent with a 0.25° camera-pitch error. That comparison assumes openpilot's
-  `RADAR_TO_CAMERA = 1.52 m`; a tape-measured gap is needed to pin the physical zero and origin.
+  `RADAR_TO_CAMERA = 1.52 m`; a tape-measured radar-to-camera gap pins the physical zero and origin.
 - **Far range** (drive A, camera box scale averaged with the vision model where they agree): median absolute residual
   3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at 100-150 m (ratio 0.979).
 - **Against the radar's own ACC distance** (◐). For the car the radar's ACC function follows, `dRel` agrees with the ACC
   distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
   short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2 %, 5 % and 8 %; cars
   more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 6-10 m at
-  60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m on the
+  60-100 m. openpilot's vision lead, an independent camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
   700-segment set (3-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
   beyond 30 m. The ACC distance is therefore the better far range for that car, and any
   position gate between the object list and the radar's own trackers needs room for this difference
@@ -73,7 +73,7 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |
 
   The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are
-  independent but wider. Replaying `fused` with these lateral units on 27 drives changes no braking count (held-out hard
+  independent but wider. Replaying `fused` with these lateral units on 27 drives keeps every braking count (held-out hard
   radar-only ticks 30 → 30, target episodes 4 → 4, lead-source switches +0.7 %).
   Numbers: [`lateral_units.json`](../data/analysis/summaries/lateral_units.json).
 
@@ -161,7 +161,8 @@ better** than the radar's range change does:
 *A real closing: the radar lead reads 24.7 m against the vision model's 36.8 m while the camera box grows only 16%.
 The radar's velocity was right; its range walked. radard's 25% distance gate rejects the radar lead here.*
 
-So velocity is the radar's strong channel and range its noisy one. Velocity-aided range (`range_fusion_gain = 0.1`)
+So from record to record velocity is the radar's steady channel and range the jittery one; over seconds at range,
+velocity has the excursions of [07](07_velocity_excursions.md). Velocity-aided range (`range_fusion_gain = 0.1`)
 halves the walks ([08](08_openpilot_integration.md#profiles)). Differentiating range to get velocity is 4-10× worse
 than the native velocity field.
 
@@ -172,4 +173,4 @@ than the native velocity field.
 - **Against the camera** (within 60 m, tracks with a long camera chain): the radar track keeps one camera identity for
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
 - **Re-link:** `raw` re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
-  its filter state across short losses; with `fused`'s speed filter the re-link changes nothing, so it is off there.
+  its filter state across short losses; with `fused`'s speed filter the output is identical with or without it, so `fused` runs without it.

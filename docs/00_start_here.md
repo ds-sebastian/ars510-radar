@@ -29,7 +29,7 @@ More: [02](02_object_list.md#an-objects-life), [03 Slot fields](03_slot_fields.m
 
 ## 3. How good is each measurement?
 
-Distance and lateral position are good; speed is the problem. On the owner's 2.1 drives (300,000 radar-lead ticks
+Distance and lateral position are steady; speed at range has excursions. On the owner's 2.1 drives (300,000 radar-lead ticks
 matched to the camera's lead) the radar reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
 from 0.6 m to 4-6 m at range.
 
@@ -76,7 +76,7 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 openpilot's radard pairs the camera's lead with the radar track nearest in range, whatever its lateral position, so a
 car in the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
 from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track the ACC target
-follows is never withheld.
+follows always stays visible.
 
 ![path gate](img/analysis/guide_lead_guards.png)
 
@@ -130,13 +130,13 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 | `profiles_vs_vision.json` |
 | braking onset against vision only | −0.01 s (95 % CI −0.07 … +0.04) | `profiles_vs_vision.json` |
 | driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.3 %, vision 40.1 % | `profiles_vs_vision.json` |
-| owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision | `road_v21.json` |
+| owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion favours `fused`) | `road_v21.json` |
 | unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 5.4 / 7.2 s, vision 10.2 / 10.3 s; 27 replay drives (6.72 h): `fused` 7.1 / 3.0 s, vision 31.9 / 10.0 s | `oracle_reference.json` |
 | openpilot file | 183 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence
 
-- **Replay, not simulation.** Recorded drives run through openpilot's own card → radard → planner, once with vision
+- **Replay of recorded drives.** Recorded drives run through openpilot's own card → radard → planner, once with vision
   only and once with the radar ([09](09_tools_and_data.md)). The car's motion stays as recorded (open loop), so a
   replay shows what openpilot would have *asked for*.
 - **The 27 drives.** 20 held-out drives, 4 further drives and 3 owner sunnypilot drives. Limits for a change are

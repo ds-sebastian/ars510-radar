@@ -75,7 +75,7 @@ To **plot**, open a saved `rlog.zst` in PlotJuggler: `longitudinalPlan.aTarget`,
 acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on `PATH`
 if clip rendering fails on `-vsync`.
 
-Here `vision` is unmodified openpilot (no radar tracks on this car) and `ars510` the installed integration; install
+Here `vision` is unmodified openpilot (vision-only leads on this car) and `ars510` the installed integration; install
 another profile into a second opendbc copy (`install.py /tmp/opendbc_raw --profile raw`) to compare profiles.
 
 ## Developing and testing a change
