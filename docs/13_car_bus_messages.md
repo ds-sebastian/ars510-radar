@@ -19,7 +19,7 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking) | ● idle, ◐ fields |
 | 0x33E | none | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
-| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **ACC lead relative speed (≈ 0.5 km/h per code)** and a distance-like field | ◐ |
+| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **the ACC target again**: relative speed (0.5 km/h), distance (≈ 0.8 m) and lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
 | 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
@@ -44,14 +44,24 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
-### 0x366: lead relative speed (◐)
+### 0x366: the ACC target, re-quantized (◐)
 
-Bytes 2-3 read 0x7FFF without a target. Counting from the first payload bit, bits 16-24 (9 bits) carry the ACC
-target's relative speed at 0.140 m/s per code, zero near code 155 (U1 expressway: r 0.997, MAD 0.05 m/s). Bits 25-31
-follow its distance at ≈ 0.79 m per code (r 0.9994). The fit is looser in city traffic (O2: r 0.89 / 0.99), where the
-message can describe another target. Byte 0 is 0x50 or 0x52; bytes 4-5 take a few state values (`00 7A` without a
-target). The Toyota DBC names this message's fields `TGT_DIST`, `TGT_VGAP`, `PCSDISP`, `XPCSRDY` and `XREQ*`, but with a different
-layout.
+Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` returns them (`None` for the `7FFF` no-target word).
+
+| bits | field | coding |
+|---|---|---|
+| `16\|9` | relative speed | `(code − 155) × 0.5 km/h`, negative when closing |
+| `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
+| `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = no target, −16 = invalid (mostly a target beyond ±5 m) |
+
+Against the latest `0x235`/`0x237` on an owner drive (820 frames, 0.6 % outside tolerance) the residuals are 0.06 m/s, 0.26 m
+and 0.14 m, about the quantization of both frames: this is the ACC target again, not a second measurement or a Doppler field.
+Against the preceding 0x365 (two owner drives) 92 / 95 % of reports agree in distance within 1.5 m, with a speed p95 of
+0.28 m/s ([summary](../data/analysis/summaries/target_366_coding.json)); a few large speed differences remain unexplained.
+It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are undecoded speed / range-dependent flags,
+and the low three bits of byte 5 are constant. No profile reads this message.
+
+![0x366 against 0x365](img/analysis/target_366_coding.png)
 
 ### 0x343 from the radar (●)
 
