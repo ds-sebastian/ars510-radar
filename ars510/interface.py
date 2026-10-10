@@ -73,31 +73,25 @@ class NativeInterfaceConfig:
     # ACC target (0x235 / 0x237): matched to an object-list track by position, cost = |dRel - x| / max(acc_match_range_m,
     # acc_match_range_frac * x) + |yRel - y| / 0.5 < 1 with margin > 1 over the next track, for tracks of age >=
     # acc_match_min_age (x is the ACC target's 0.025 m distance, y its 0.01 m lateral; the range scale grows with range
-    # because the object list reads far cars short of the ACC distance, docs/06). The association is kept while the track
+    # because the object list reads far cars short of the ACC distance: often 15-20 m for a newly detected car, docs/06,
+    # docs/12). The association is kept while the track
     # and a continuous ACC target persist, even when the object-list position slides away with an excursion; it re-matches
     # when the ACC target jumps (range > acc_sticky_jump_m or lateral > 1 m between updates), the track disappears, or its
     # cost exceeds acc_sticky_max_cost. The associated track takes the ACC distance as the measurement of the range
     # fusion (acc_range): the radar's own smooth range, which the vision lead agrees with.
     acc_target_max_age_s: float = 0.1
     acc_match_range_m: float = 12.0
-    acc_match_range_frac: float = 0.25
+    acc_match_range_frac: float = 0.4
     acc_range: bool = True
     acc_match_min_age: int = 20
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
-    # Young tracks (age < young_age) may match with range scale max(.., acc_young_match_frac * x) when their relative
-    # speed is within acc_young_match_mps of the target's: a new object-list track can read 15-20 m short of the ACC
-    # distance. A track that becomes the ACC track before it is published starts its range at the ACC distance.
-    acc_young_match_frac: float = 0.0  # 0 = off (fused: 0.4)
-    acc_young_match_mps: float = 5.0
-    # Lead-choice guards (radard has no lateral gate and pairs the vision lead with the nearest track by range):
-    # - while the ACC target is present, a non-ACC track within max(5 m, 10 %) of its range but more than
-    #   acc_lateral_withhold_m from it laterally is not published (a car in the next lane at the lead's range);
-    # - beyond far_path_min_range_m, a non-ACC track more than far_path_offset_m from the ego path predicted from yaw rate
-    #   and speed (constant curvature: y - yaw / v * d^2 / 2) is not published (a car a lane over on a curve).
-    acc_lateral_withhold_m: float = 0.0  # 0 = off (fused: 2.5)
-    far_path_offset_m: float = 0.0  # 0 = off (fused: 2.5)
-    far_path_min_range_m: float = 60.0
+    # Path gate (radard has no lateral gate and pairs the vision lead with the track nearest in range): beyond
+    # path_gate_min_range_m, a track other than the ACC target's that is more than path_gate_m from the ego path predicted
+    # from yaw rate and speed (constant curvature: y - yaw / v * d^2 / 2) is not published: a car a lane over, also on a
+    # curve. Closer in, cars moving into the lane must stay visible.
+    path_gate_m: float = 0.0  # 0 = off (fused: 2.5)
+    path_gate_min_range_m: float = 15.0
     # Summaries (0x192 / 0x194): the positions of the radar's selected targets. Their range slope over summary_window_s
     # gives a relative speed; a summary attaches to the track at its position (range within 15 %, lateral within
     # summary_match_lat_m, unambiguous) and stays attached while the track stays within 25 % in range and twice that
@@ -157,7 +151,7 @@ BASE_CONFIG = NativeInterfaceConfig(
 # yaw-predicted path at range (docs/12 "Lead-choice guards"). The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
-                       fused_speed_filter=True, acc_young_match_frac=0.4, acc_lateral_withhold_m=2.5, far_path_offset_m=2.5)
+                       fused_speed_filter=True, path_gate_m=2.5)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
@@ -208,8 +202,7 @@ class Ars510NativeRadarInterface:
         self._acc_vrel: tuple[float, float] | None = None  # (time, closing speed)
         self._acc_pos: tuple[float, float, float] | None = None  # (time, x, y)
         self._acc_assoc: tuple[int, float, float] | None = None  # (tid, last x, last y)
-        self._prev_acc_tid: int | None = None
-        self.lane_withheld = 0
+        self.path_gated = 0
         self._summary_hist: dict[int, list[tuple[float, float]]] = {0x192: [], 0x194: []}  # (time, range m)
         self._summary_assoc: dict[int, int | None] = {0x192: None, 0x194: None}
         self._summary_y: dict[int, float] = {0x192: 0.0, 0x194: 0.0}  # latest summary lateral, m
@@ -323,7 +316,7 @@ class Ars510NativeRadarInterface:
         return self._out_id.get(lid, lid)
 
     # ---- the radar's own trackers -------------------------------------------------------------------
-    def _acc_target_match(self, time_s: float, decoded: list, v_ego: float | None = None) -> tuple[int | None, float]:
+    def _acc_target_match(self, time_s: float, decoded: list) -> tuple[int | None, float]:
         """The track the radar's ACC target describes (see the config) and the target's relative speed."""
         cfg = self.config
         if not cfg.fused_speed_filter or self._acc_vrel is None or self._acc_pos is None:
@@ -334,14 +327,7 @@ class Ars510NativeRadarInterface:
             return None, nan
         _, ax, ay = self._acc_pos
         rs = max(cfg.acc_match_range_m, cfg.acc_match_range_frac * ax)
-        rs_young = max(rs, cfg.acc_young_match_frac * ax)
-
-        def scale(obj):
-            if cfg.acc_young_match_frac > 0 and obj.age < cfg.young_age and v_ego is not None \
-                    and abs(obj.v_long_ground * cfg.vground_scale - v_ego - self._acc_vrel[1]) < cfg.acc_young_match_mps:
-                return rs_young
-            return rs
-        costs = sorted((abs(obj.d_rel - ax) / scale(obj) + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
+        costs = sorted((abs(obj.d_rel - ax) / rs + abs(obj.y_rel - ay) / 0.5, tid, obj.age)
                        for _, obj, tid in decoded if obj.geometry_valid and obj.lateral_valid)
         if self._acc_assoc is not None:
             tid0, ax0, ay0 = self._acc_assoc
@@ -552,12 +538,7 @@ class Ars510NativeRadarInterface:
             # every occupied slot updates the lifecycle, including age 0, so a restart is never missed
             decoded.append((slot, obj, self._tracks.update(time_s, slot, obj.age)))
         seen = {tid for _, _, tid in decoded}
-        acc_tid, acc_vrel = self._acc_target_match(time_s, decoded, v_ego)
-        acc_fresh = self._acc_pos is not None and abs(time_s - self._acc_pos[0]) <= cfg.acc_target_max_age_s
-        if cfg.acc_young_match_frac > 0 and acc_tid is not None and acc_tid != self._prev_acc_tid \
-                and acc_tid not in self._out_id and cfg.acc_range:
-            self._range_est.pop(acc_tid, None)  # restart the unpublished track's range at the ACC distance
-        self._prev_acc_tid = acc_tid
+        acc_tid, acc_vrel = self._acc_target_match(time_s, decoded)
         use_summaries = cfg.fused_speed_filter and cfg.summary_sigma_mps > 0
         sum_speed = self._summary_match(time_s, decoded, v_ego, acc_tid) if use_summaries else {}
         points = []
@@ -586,15 +567,10 @@ class Ars510NativeRadarInterface:
             if obj.age < cfg.min_publish_age:
                 self.settling_suppressed += 1
                 continue
-            if cfg.acc_lateral_withhold_m > 0 and acc_fresh and tid != acc_tid \
-                    and abs(d_rel - self._acc_pos[1]) < max(5.0, 0.1 * self._acc_pos[1]) \
-                    and abs(obj.y_rel - self._acc_pos[2]) > cfg.acc_lateral_withhold_m:
-                self.lane_withheld += 1
-                continue
-            if cfg.far_path_offset_m > 0 and tid != acc_tid and d_rel > cfg.far_path_min_range_m and v_ego is not None:
+            if cfg.path_gate_m > 0 and tid != acc_tid and d_rel > cfg.path_gate_min_range_m and v_ego is not None:
                 yaw = self._fresh_yaw_rate(time_s)
-                if yaw is not None and abs(obj.y_rel - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > cfg.far_path_offset_m:
-                    self.lane_withheld += 1
+                if yaw is not None and abs(obj.y_rel - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > cfg.path_gate_m:
+                    self.path_gated += 1
                     continue
             if tid not in self._out_id and speed_std > cfg.publish_speed_std_mps and cfg.fused_speed_filter:
                 self.settling_suppressed += 1

@@ -1,7 +1,7 @@
 {
- "description": "Parts of upstream/ars510_radar.py (2.2.0): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 34 replay drives, and its status for an upstream openpilot PR.",
- "file_code_lines": 196,
- "file_total_lines": 236,
+ "description": "Parts of upstream/ars510_radar.py (2.3.0): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 34 replay drives, and its status for an upstream openpilot PR.",
+ "file_code_lines": 184,
+ "file_total_lines": 224,
  "parts": [
   {
    "part": "transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper",
@@ -14,9 +14,9 @@
   {
    "part": "ACC target decode and association",
    "code_lines": 27,
-   "since": "2.0",
+   "since": "2.0 (range scale 0.4 x since 2.3)",
    "evidence": "hard_braking_review.json",
-   "without": "+24 unjustified hard ticks on 34 drives",
+   "without": "+24 unjustified hard ticks on 34 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2",
    "upstream": "keep"
   },
   {
@@ -76,28 +76,12 @@
    "upstream": "required"
   },
   {
-   "part": "young-track ACC match + range restart",
-   "code_lines": 7,
-   "since": "2.2",
-   "evidence": "lead_choice_guards.json",
-   "without": "neutral on 34 drives; one road late brake -1.47 -> -2.36 m/s2 (constants chosen on that drive)",
-   "upstream": "first to drop"
-  },
-  {
-   "part": "next-lane guard (ACC target)",
-   "code_lines": 5,
-   "since": "2.2",
-   "evidence": "lead_choice_guards.json",
-   "without": "neutral on 34 drives; one 0.15 s false hard brake on a second car",
-   "upstream": "first to drop (lead selection is radard's job)"
-  },
-  {
-   "part": "off-path guard (yaw rate)",
+   "part": "path gate (yaw rate)",
    "code_lines": 6,
-   "since": "2.2",
+   "since": "2.3 (2.2 from 60 m)",
    "evidence": "lead_choice_guards.json",
-   "without": "target episodes 3 -> 4, owner 0 -> 1; one road slowdown; lead flips -11 %",
-   "upstream": "candidate to drop or move to radard as a lateral gate"
+   "without": "held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
+   "upstream": "candidate: keep, or move into radard as a lateral gate"
   },
   {
    "part": "fork compatibility (CP_SP argument, points assigned as a list)",

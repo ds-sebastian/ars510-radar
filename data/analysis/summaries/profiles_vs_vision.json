@@ -1,5 +1,5 @@
 {
- "description": "Every radar profile against vision only (stock openpilot leads on this car) on the same 34 replay drives, unchanged openpilot card -> radard -> planner, judged against the human driver with the pre-registered definitions: driver-brake events (anticipation within 3 s before the brake press, onset = first request <= -0.5 m/s2 in [-3, +2] s, hard slowdowns = driver <= -2 m/s2 or a stop), braking requests only one system made (<= -1 m/s2 for >= 0.3 s) with what the driver did, and driver overrides (whose request was closer to what the driver then did).",
+ "description": "Every radar profile against vision only (stock openpilot leads on this car) on the same 34 replay drives, unchanged openpilot card -> radard -> planner, judged against the human driver with the pre-registered definitions: driver-brake events (anticipation within 3 s before the brake press, onset = first request <= -0.5 m/s2 in [-3, +2] s, hard slowdowns = driver <= -2 m/s2 or a stop), braking requests only one system made (<= -1 m/s2 for >= 0.3 s) with what the driver did, and driver overrides (whose request was closer to what the driver then did). fused: release 2.3.0.",
  "profiles": {
   "raw": "OPENPILOT_CONFIG (formerly 'stock', the unfiltered radar decode)",
   "steady": "STEADY_CONFIG",
@@ -33,10 +33,10 @@
    "vision_ant05": 0.8084,
    "radar_ant05": 0.8204,
    "vision_ant10": 0.4012,
-   "radar_ant10": 0.4371,
-   "onset_diff_mean_s": -0.022,
+   "radar_ant10": 0.4192,
+   "onset_diff_mean_s": -0.018,
    "onset_diff_ci": [
-    -0.082,
+    -0.075,
     0.035
    ],
    "earlier_share": 0.149,
@@ -280,7 +280,7 @@
     "radar_further": 1,
     "same": 33,
     "mean_err_after_vision": 0.652,
-    "mean_err_after_radar": 0.617
+    "mean_err_after_radar": 0.621
    }
   },
   "fused_no_trackers": {
@@ -334,9 +334,9 @@
   },
   "fused": {
    "request_rmse_vs_driver_mps2": 0.415,
-   "mean_abs_jerk_mps3": 1.001,
-   "radar_lead_share_of_lead_time": 0.886,
-   "lead_source_switches_per_h": 480.0,
+   "mean_abs_jerk_mps3": 0.999,
+   "radar_lead_share_of_lead_time": 0.87,
+   "lead_source_switches_per_h": 493.9,
    "hours": 2.66
   },
   "fused_no_trackers": {
@@ -451,9 +451,9 @@
   },
   "fused": {
    "heldout_hard_ticks": 30,
-   "heldout_target_episodes": 4,
-   "owner_target_episodes": 1,
-   "further_hard_ticks": 2
+   "heldout_target_episodes": 3,
+   "owner_target_episodes": 0,
+   "further_hard_ticks": 1
   }
  },
  "fused_note": "fused rows: corrected ACC / summary units (0x235 at 0.125 m/s per code; summaries (code - 160) / 16 m), lateral unit 0.015 m, ACC target and summaries matched by position, ACC distance as the followed car's range (tracker_association.json); its one owner target episode is an early reaction to a real slowdown (hard_braking_review.json)",

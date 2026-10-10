@@ -75,18 +75,20 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 ## 6. Choosing which tracks openpilot sees
 
 openpilot's radard pairs the camera's lead with the radar track nearest in range and has no lateral gate, so a car in
-the next lane can become the lead. Two guards withhold such tracks. The track the ACC target follows is never withheld.
+the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
+from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track the ACC target
+follows is never withheld.
 
-![lead-choice guards](img/analysis/guide_lead_guards.png)
+![path gate](img/analysis/guide_lead_guards.png)
 
 What that changes on the road, replayed through openpilot's planner:
 
 ![two road moments](img/analysis/guide_cases.png)
 
-*Left: a pickup first detected at 66 m read 15-20 m short in the object list; 2.2 publishes it at the ACC distance and
-asks for −1.47 m/s² instead of −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead with a slower car
-two lanes over; 2.1 asked for −1.54 m/s², 2.2 for −0.28 (vision −0.08).* More:
-[12](12_kalman_filter.md#lead-choice-guards).
+*Left: a pickup first detected at 66 m read 15-20 m short in the object list; 2.3 matches it to the ACC target and
+asks for −1.47 m/s² instead of −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead with a car a lane
+over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about −3 m/s; 2.1 asked
+for −1.54 m/s², 2.3 for −0.29 (vision −0.08).* More: [12](12_kalman_filter.md#path-gate).
 
 ## 7. What each part is worth
 
@@ -107,7 +109,13 @@ More: [12](12_kalman_filter.md#what-each-part-is-worth), [10](10_research_direct
 
 ![profiles against vision only](img/analysis/profiles_vs_vision.png)
 
-More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integration.md#on-the-road).
+Vision only is not the truth either. Against openpilot's own planner fed a hindsight lead (the radar's ACC target and
+smoothed range, checked with the camera), the default brakes unnecessarily half as long as vision only and misses no
+more:
+
+![against the oracle](img/analysis/guide_oracle.png)
+
+More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integration.md#on-the-road), [12](12_kalman_filter.md#against-what-the-car-should-have-done).
 
 ## By the numbers
 
@@ -116,13 +124,14 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | object list | 16.7 Hz, 20 slots, ~5 objects on a highway | [02](02_object_list.md) |
 | radar − camera range, 20-70 m (same car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
-| leads from the radar when a lead exists | about 89 % | [11](11_profiles_compared.md) |
+| leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
 | braking only the radar asked for, per hour (34 drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
 | hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 (27 of 32 hard ticks judged real) | `hard_braking_review.json` |
 | braking onset against vision only | −0.02 s (95 % CI −0.08 … +0.04) | `profiles_vs_vision.json` |
-| driver brakes already anticipated at ≤ −1 m/s² | `fused` 43.7 %, vision 40.1 % | `profiles_vs_vision.json` |
+| driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.9 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
-| openpilot file | 196 code lines | `openpilot_file_parts.json` |
+| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s; 34 replay drives (6.72 h): `fused` 8.2 / 3.9 s, vision 32.6 / 11.0 s | `oracle_reference.json` |
+| openpilot file | 184 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence
 
