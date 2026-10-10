@@ -1,0 +1,162 @@
+{
+ "description": "Residual of the object list against the radar's own ACC target as a function of each uncertainty code: Gaussian-ML fit sd^2 = floor^2 + (k*code)^2 on mature, position-matched, unique object/ACC pairs (drive set A, 483 segments, every 4th matched record, 65,638 pairs); 90 % bootstrap over segments.",
+ "residuals": {
+  "224|7": "slot range minus ACC distance (m)",
+  "232|7": "slot lateral minus ACC lateral (m)",
+  "240|7": "slot over-ground speed minus ego speed minus ACC relative speed (m/s)",
+  "248|7": "slot lateral ground speed minus ACC lateral speed (m/s)"
+ },
+ "k_per_count": {
+  "240|7 (m/s)": {
+   "n": 65638,
+   "floor": 0.3582,
+   "k": 0.0432,
+   "k_ci90": [
+    0.0409,
+    0.0453
+   ],
+   "cov1": 0.78,
+   "cov2": 0.945
+  },
+  "224|7 (m)": {
+   "n": 65638,
+   "floor": 0.5986,
+   "k": 0.2271,
+   "k_ci90": [
+    0.2218,
+    0.2337
+   ],
+   "cov1": 0.695,
+   "cov2": 0.95
+  },
+  "232|7 (m)": {
+   "n": 65638,
+   "floor": 0.0801,
+   "k": 0.1045,
+   "k_ci90": [
+    0.0982,
+    0.1107
+   ],
+   "cov1": 0.779,
+   "cov2": 0.945
+  },
+  "248|7 (m/s)": {
+   "n": 65638,
+   "floor": 0.156,
+   "k": 0.3679,
+   "k_ci90": [
+    0.3489,
+    0.3775
+   ],
+   "cov1": 0.793,
+   "cov2": 0.934
+  }
+ },
+ "split_halves_k": {
+  "240|7": [
+   0.0433,
+   0.0431
+  ],
+  "224|7": [
+   0.2242,
+   0.2301
+  ],
+  "232|7": [
+   0.1086,
+   0.1003
+  ],
+  "248|7": [
+   0.3742,
+   0.3607
+  ]
+ },
+ "k_by_range_band_m": {
+  "240|7": {
+   "5-40 m": 0.0665,
+   "40-80 m": 0.0324,
+   "80+ m": 0.0415
+  },
+  "224|7": {
+   "5-40 m": 0.2411,
+   "40-80 m": 0.1493,
+   "80+ m": 0.0463
+  },
+  "232|7": {
+   "5-40 m": 0.1171,
+   "40-80 m": 0.1057,
+   "80+ m": 0.0997
+  },
+  "248|7": {
+   "5-40 m": 0.4039,
+   "40-80 m": 0.3588,
+   "80+ m": 0.2631
+  }
+ },
+ "confidence": {
+  "240|7": "likely: .043 m/s per count, same as the earlier excursion_sigma_scale fit (.045); a fitted Gaussian-equivalent over heavy tails, not a decoded unit",
+  "232|7": "likely: .10 m per count and constant across range bands (.10-.12); codes run only 0-9, so it is coarse near 0",
+  "224|7": "candidate: .23 m per count overall (.24 at 5-40 m), falling to .15 (40-80 m) and .05 (80+ m) while the floor rises to 4-8 m: beyond 40 m most of the range error is not graded by the code",
+  "248|7": "candidate: .37 m/s per count; the reference mixes ground lateral speed with the ACC's relative lateral speed",
+  "256|8": "candidate: follows the frame scatter of 84|10 (.0062 m/s^2 per count, plus a .045 floor); no reference acceleration exists, so no error unit"
+ },
+ "limits": "The reference is the radar's own ACC estimate: these are relative units (an upper bound on sensor error plus ACC error and slot-vs-ACC bias), not physical truth. 256|8, 264|8 and 200|7 have no error unit.",
+ "frame_scatter_k_per_count": {
+  "description": "Self-referenced check: white-noise-equivalent frame-to-frame scatter (second difference / sqrt 6) of each native quantity on 217,031 mature continuous slot-run triples (drive set A), sd^2 = floor^2 + (k*code)^2; 90 % bootstrap over segments.",
+  "232|7 vs yRel (m)": {
+   "n": 72344,
+   "floor": 0.0306,
+   "k": 0.0207,
+   "k_ci90": [
+    0.0199,
+    0.0216
+   ]
+  },
+  "240|7 vs vRel (m/s)": {
+   "n": 72344,
+   "floor": 0.1279,
+   "k": 0.008,
+   "k_ci90": [
+    0.006,
+    0.0106
+   ]
+  },
+  "248|7 vs lateral speed (m/s)": {
+   "n": 72344,
+   "floor": 0.0479,
+   "k": 0.0114,
+   "k_ci90": [
+    0.0085,
+    0.0152
+   ]
+  },
+  "224|7 vs dRel (m)": {
+   "n": 72344,
+   "floor": 0.2517,
+   "k": 0.0633,
+   "k_ci90": [
+    0.062,
+    0.0645
+   ]
+  },
+  "256|8 vs 84|10 acceleration (m/s^2)": {
+   "n": 72344,
+   "floor": 0.0448,
+   "k": 0.0062,
+   "k_ci90": [
+    0.005,
+    0.0074
+   ]
+  },
+  "264|8 vs lateral speed (m/s)": {
+   "n": 72344,
+   "floor": 0.045,
+   "k": 0.0128,
+   "k_ci90": [
+    0.0091,
+    0.0176
+   ]
+  }
+ },
+ "frame_scatter_axis_spearman": "|scatter| against the code within range bands: yRel~232|7 .19-.27, lateral speed~248|7 .16-.19, 84|10~256|8 .13-.23 (the only consistent link), vRel~240|7 .29 at <=25 m falling to ~0 beyond 70 m, dRel~224|7 weak (.28 at <=25 m, negative beyond 70 m); 264|8 follows lateral speed (.08-.18), not 84|10 or yRel.",
+ "scatter_to_error_ratio": "Per-count frame scatter is about 20 % of the ACC-referenced error (232|7 .021 vs .104; 240|7 .008 vs .043; 224|7 .063 vs .227): the codes describe temporally correlated tracker error, of which record-to-record jitter is a fifth."
+}

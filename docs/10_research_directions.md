@@ -18,8 +18,8 @@ The most promising next steps, ordered by how directly they would improve the ra
 3. **Is the radar's ACC target camera-assisted?** The radar sends it ([05](05_acc_target_and_support.md)), but it
    receives lane-like camera data. Moments when the camera's messages to the radar go stale (glare, tunnels,
    startup), or one drive with the camera covered, show whether its velocity depends on the camera.
-4. **Physical units for the uncertainty fields.** `240|7` (speed) and `224|7` (range) are calibrated against the
-   radar's ACC target, which is the radar's own estimate. An independent reference (a second car with a GPS logger,
+4. **Physical units for the uncertainty fields.** `240|7`, `232|7`, `224|7` and `248|7` are scaled against the radar's ACC
+   target, the radar's own estimate ([03](03_slot_fields.md#uncertainty-and-quality)). An independent reference (a second car with a GPS logger,
    or a known far target) would give them physical units and test `fused`'s weights directly.
 5. **Do the weighting in radard.** A radard that accepts a per-point speed variance would let this interface pass the
    radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
