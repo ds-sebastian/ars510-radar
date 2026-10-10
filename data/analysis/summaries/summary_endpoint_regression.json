@@ -826,5 +826,95 @@
       "owner_other_same_track_a_delta_mps2": -0.3156,
       "interpretation": "competitive source; aggregate braking and onset unchanged, no physical or driver improvement established"
     }
+  },
+  "published_summary_control": {
+    "status": "supported conditional source comparison",
+    "published_method": "one-second receipt-time straight-line relative-range derivative; actual published source, not the offline ground-speed Kalman comparator",
+    "source_calls": 623290,
+    "segments": 312,
+    "availability": [
+      {
+        "addr": "0x192",
+        "labels": 127662,
+        "published_unavailable": 59,
+        "clock_plain_unavailable": 67
+      },
+      {
+        "addr": "0x194",
+        "labels": 48427,
+        "published_unavailable": 75,
+        "clock_plain_unavailable": 84
+      }
+    ],
+    "scores": [
+      {
+        "addr": "0x192",
+        "candidate": "published_linear",
+        "n": 127595,
+        "rmse": 0.17540562033162077,
+        "mae": 0.1178264220190684,
+        "p99": 0.6317605279822852,
+        "lag_proxy_s": 0.42242880056663346,
+        "maneuver_rmse": 0.7071261710750175,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x192",
+        "candidate": "runtime_relative",
+        "n": 127595,
+        "rmse": 0.13404536774642578,
+        "mae": 0.08425105844852451,
+        "p99": 0.5292433748114656,
+        "lag_proxy_s": -0.004612314404610035,
+        "maneuver_rmse": 0.20511056796215354,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x192",
+        "candidate": "KF_clock",
+        "n": 127595,
+        "rmse": 0.1331816187410788,
+        "mae": 0.08954586760235116,
+        "p99": 0.47341168980299775,
+        "lag_proxy_s": 0.03872302792143329,
+        "maneuver_rmse": 0.2510476135647322,
+        "maneuver_n": 2109
+      },
+      {
+        "addr": "0x194",
+        "candidate": "published_linear",
+        "n": 48343,
+        "rmse": 0.15411670305719186,
+        "mae": 0.0975391941322825,
+        "p99": 0.5517799107710051,
+        "lag_proxy_s": 0.43067871759614573,
+        "maneuver_rmse": 0.7641351698762658,
+        "maneuver_n": 480
+      },
+      {
+        "addr": "0x194",
+        "candidate": "runtime_relative",
+        "n": 48343,
+        "rmse": 0.1298211454412263,
+        "mae": 0.08126650714117357,
+        "p99": 0.5068891271724869,
+        "lag_proxy_s": 0.00878552764733391,
+        "maneuver_rmse": 0.23931441841175033,
+        "maneuver_n": 480
+      },
+      {
+        "addr": "0x194",
+        "candidate": "KF_clock",
+        "n": 48343,
+        "rmse": 0.13182023176934152,
+        "mae": 0.0885911550993055,
+        "p99": 0.48624714365205296,
+        "lag_proxy_s": 0.04007000596991561,
+        "maneuver_rmse": 0.23626986649393156,
+        "maneuver_n": 480
+      }
+    ],
+    "limits": "ten reused owner drives, range-selected dependent ACC labels; fullconsumer replay already recorded in NK-C8; no physical calibration or profile change",
+    "physical_accuracy_calibrated": false
   }
 }

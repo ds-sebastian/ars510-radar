@@ -308,7 +308,9 @@ filters, not physical braking ([`kalman_response.json`](../data/analysis/summari
 A summary position plus the integrated ego displacement is the target's displacement over ground. A quadratic fit to
 its last 1.2 s gives **current ground speed** from the endpoint derivative; Huber loss limits the influence of a bad
 position sample. This estimates speed and acceleration with bounded history and no covariance recursion. It is a
-candidate velocity source for fusion; the recommended profile remains `fused`.
+candidate velocity source for fusion; the recommended profile remains `fused`. Its current summary source is a
+one-second straight-line relative-range derivative. The ground-speed Kalman below is an offline comparison model,
+not the published summary implementation.
 
 ![summary endpoint regression compared with Kalman](img/analysis/summary_endpoint_regression.png)
 
@@ -364,6 +366,16 @@ onset against vision is unchanged; anticipation is 43.1% versus 43.7%. On 84,659
 more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. These are competitive
 source and consumer comparisons, without evidence for changing the default. Scalar Kalman speed fusion remains
 in both comparisons ([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
+
+![published source comparison and complete-parser replay](img/analysis/summary_source_replay.png)
+
+On the same 175,938 common finite owner labels, the actual published linear summary derivative has **0.175 / 0.154 m/s**
+RMSE, versus **0.134 / 0.130** for clock/plain quadratic. That reduces conditional source discrepancy by 24% / 16%;
+most driving output remains governed by other sources, matching, range prediction and the unchanged consumers.
+The published summary methods total 23 literal source lines, versus 44 for the clock/plain methods and derivative,
+before additional header state and forwarding. The alternative removes robust loops and ego integration, but earns
+its extra timing and curvature code as a competitive fork experiment, rather than reducing total production code.
+The best-supported installation default remains `fused`.
 
 ## Other approaches tested
 
