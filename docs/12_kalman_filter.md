@@ -183,6 +183,7 @@ track the ACC target follows is never withheld:
 | 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s |
 | + young match, next-lane guard | 30 / 11 / 4 | 2 / 0 | 1 | 1,229 | −0.024 s |
 | + off-path guard | 30 / 11 / 3 | 2 / 0 | 0 | 1,372 | −0.016 s |
+| openpilot version (no summaries): 2.1 → with all three | 30 / 11 / 4 → 30 / 11 / 3 | 2 / 0 → 2 / 0 | 1 → 0 | 1,242 → 1,382 | −0.015 → −0.010 s |
 
 On the owner's 5.8 h of 2.1 road drives (replayed open loop) all three together keep hard radar-only braking at 0 and
 miss no hard vision brake. They cut radar-only requests of 1 m/s² or more from 10 to 7, start braking within 0.015 s of
