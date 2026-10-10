@@ -8,10 +8,10 @@ The most promising next steps, ordered by how directly they would improve the ra
    50-100 m) and the vision lead agrees with the ACC distance ([06](06_accuracy.md#distance)). `fused` takes the ACC
    distance for the car the radar follows; other tracks keep the object-list range, smoothed by range fusion. A drive
    behind a second car with a GNSS logger gives the true far distance and shows where the short reading comes from;
-   until then range is smoothed separately from the speed filter (the object list's range also changes 10-20% more than its speed
-   integrates, [12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
-2. **More of the lead covered by the radar's own trackers.** The ACC target is present for 99% of radar-lead time up to
-   80 m and 66% beyond ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
+   until then range is smoothed separately from the speed filter (the object list's range rate and speed
+   disagree by 10-20%, [12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
+2. **More of the lead covered by the radar's own trackers.** The ACC target is present for 99% of radar-lead time at
+   15-80 m and 66% beyond on the owner's car ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
    and its wide error alone, which is where `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
    drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
 3. **Is the radar's ACC target camera-assisted?** The radar sends it (◐, [05](05_acc_target_and_support.md)), and it
@@ -34,15 +34,15 @@ The most promising next steps, ordered by how directly they would improve the ra
 
 ## Learn from Toyota's own longitudinal control
 
-Toyota's stock ACC on this car brakes and slows well for a lead in its own lane, and holds on to a lead that leaves for
+In the owner's experience, Toyota's stock ACC on this car brakes and slows well for a lead in its own lane, and holds on to a lead that leaves for
 a turning lane. Those are likely two different parts of its pipeline; openpilot can learn from the first:
 
-- **Target choice (Toyota's weak point).** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
+- **Target choice.** The radar picks its ACC target ([05](05_acc_target_and_support.md)) and
   keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures). Measured
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
-  0.29 m inside that line (21 departures): the release fits the rule "keep the target until its centre reaches my lane
-  line". On two matched cut-ins on the fresh drives, openpilot's model moved to the new lead first (1.5 s and ≥ 6 s
-  earlier); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
+  0.29 m inside that line (21 departures): the release is consistent with the rule "keep the target until its centre reaches my lane
+  line". On two matched cut-ins on the fresh drives (inconclusive at n = 2), openpilot's model moved to the new lead first
+  (1.5 s and ≥ 6 s earlier); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
 - **The control law (to be fitted).** How Toyota turns distance, closing speed and relative acceleration into a braking
@@ -84,8 +84,8 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 - **`272|5` under a known overhead object.** Driving under a bridge or gantry of known clearance, and past parked
   vehicles of known height, relates the code to height. Its ranking of pedestrians below cars points to a size- or
   reflectivity-like quantity.
-- **0x85 curve cells: units and the remaining fields.** Heading `48|16` and curvature `64|15` are bounded to about
-  ±15 %. A camera lane polynomial with matched timing, or a drive along a surveyed curve of known radius, pins both
+- **0x85 curve cells: units and the remaining fields.** Heading `48|16` and curvature `64|15` are bounded to
+  1.6-2.2e-5 rad and 2.0-2.7e-6 1/m per code ([04](04_metadata_record_0x85.md#lane--road-boundary-curves)). A camera lane polynomial with matched timing, or a drive along a surveyed curve of known radius, pins both
   units and names the flag `79|1` and the structured fields `0|9`, `20|4`, `24|4`, `44|4` and `80|6`
   ([04](04_metadata_record_0x85.md#lane--road-boundary-curves)).
 - **Class 5:** a few recorded passes of a cyclist and of a pedestrian test the bicycle reading of its size and speed.
@@ -101,9 +101,10 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## For the integration
 
-- **Other cars and firmware:** openpilot's fingerprints list `8821F0R01100` for the RAV4 2022 platform, the same
-  `8821F0R` series as the documented `8821F0R03100` and the only other one. One capture from such a car confirms the
-  layout and adds it to `ARS510_FW_VERSIONS` (until then it is detected by the bus-1 fallback on a warm restart). A second unit also shows whether 0x500 / 0x502 differ per unit.
+- **Other cars and firmware:** openpilot's fingerprints list `8821F0R01100` for the RAV4 2022 platform, the only other
+  `8821F0R` entry besides the documented `8821F0R03100`. One capture from such a car confirms the
+  layout and adds it to `ARS510_FW_VERSIONS` (until then it is detected by the bus-1 fallback on a warm
+  restart). A second unit also shows whether 0x500 / 0x502 differ per unit.
 - **More closed-loop driving** with the `fused` profile (the default), and a second car or driver.
 
 ## Keeping AEB under openpilot longitudinal
@@ -123,6 +124,7 @@ Ways to keep AEB:
 - **Name 0x320 bit 13** (likely the brake system's missing-PCS flag, ◐) by replaying the radar's idle 0x283 / 0x344 while it is
   disabled. This shows which message the brake system checks. Show PCS as available while an AEB source is active.
 
+## What radard gets from other radars
 
 What other openpilot radar interfaces read from their radars, and the ARS510 counterpart
 ([`opendbc/car/*/radar_interface.py`](https://github.com/commaai/opendbc/tree/master/opendbc/car)):
@@ -133,7 +135,7 @@ What other openpilot radar interfaces read from their radars, and the ARS510 cou
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (●) | in place |
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | the ACC target carries a relative speed for the followed car |
 | relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` over-ground acceleration (◐, lags 0.5-1 s); the ACC target's relative acceleration (●) | calibrate `84\|10` against independent motion |
-| **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.147-0.155 m/s per code against the gyro) | already published as `yvRel` where forks carry it |
+| **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.147-0.155 m/s per code against the gyro, `decode_references.json`) | already published as `yvRel` where forks carry it |
 | radar **fault / blockage** status | Honda `RADAR_STATE`, Tesla `sensorBlocked` | "no record for 0.5 s" is reported; candidates: Toyota's car-bus 0x411 `PCS_HUD` alerts (`PCS_DUST2` sensor blocked, `PCS_INDICATOR` = 2 fault), the camera's object-list acknowledgement (0x101 byte 0, 0x197), and a long idle run of 0x680 while driving (longest 1.0 s in 7.8 h of normal driving) | a drive with a covered or dirty radar, or in heavy rain or snow, shows which of them reacts |
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, scaled against the radar's ACC target | physical units would let radard weight radar against vision |
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames | a reassembler of about 80 lines (`ars510/transport.py`) and a CRC check |
@@ -195,7 +197,7 @@ upstream PR.
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
 | ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
-| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | 2.1 → 2.3 together with the 0.4 x match: held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
 
 Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for

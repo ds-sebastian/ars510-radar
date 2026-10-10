@@ -83,7 +83,7 @@ are still accepted. The names of the earlier tuned profiles, `anchor` and `stead
 Replay against the driver, unchanged openpilot card → radard → planner on the 27 replay drives
 ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)):
 
-| | `raw` | `fused` without ACC target | `fused` |
+| | `raw` | `fused` 2.0 without ACC target | `fused` |
 |---|---|---|---|
 | hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 48 | **30** |
 | radar-only target episodes, 20 held-out drives (whole drives) | 19 | 8 | **3** |
@@ -140,10 +140,10 @@ Every profile against vision only on 20 held-out routes (4.56 h with the driver 
 unchanged openpilot card → radard → planner; details, driving pros and cons and assumptions in
 [11](11_profiles_compared.md#against-vision-only):
 
-| | vision only | `raw` | `fused` without ACC target | `fused` |
+| | vision only | `raw` | `fused` 2.0 without ACC target | `fused` |
 |---|---|---|---|---|
 | first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.01 s |
-| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.3% |
+| already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after a brake press | 40.1% | 44.3% | 41.9% | 41.3% |
 | hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 10 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
 | request jerk, mean \|da/dt\| | 1.003 | 1.029 | 1.007 | 0.999 |
@@ -170,7 +170,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera or the radar's
   ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
   braking starts 0.4-1.2 s before vision on every drive with a brake event (8 of 9; the recorded motion is the one `fused` drove, which favours it
-  in this comparison). Two mild slowdowns (about 1.5 m/s², one overridden with the gas) had a lead beyond 95 m and no
+  in this comparison). Two mild slowdowns (−1.46 and −1.48 m/s², just below that threshold; one overridden with the gas) had a lead beyond 95 m and no
   ACC target: on a curve radard paired the camera's lead with a radar object a lane over, the case the path gate now
   handles, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm
   brake (2.8 m/s²) came from a car first detected at 66 m whose object-list range read 15-20 m short until it settled;

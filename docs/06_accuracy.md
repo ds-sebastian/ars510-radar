@@ -70,7 +70,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 | crossing objects on straight road: lateral position change against the integrated lateral velocity (`74\|10`, 0.15 m/s per code) | 9.9-10.5 position codes per velocity code-second (1/64 m would give 9.6) |
 | stationary cars while ego turns at a steady yaw rate, against the gyro, 93 tracks | 69.4 codes per metre, interval 65.2-74.5 (other drives 68.3) |
 | 0x85 lane-cell offsets against the camera's lane width, 10,262 records | 0.0098 m per centimetre code |
-| adjacent-lane peaks at highway speed | 63.9 / 67.3 / 62.8 codes per 3.66 m lane: lanes of 3.4-3.7 m at this scale |
+| adjacent-lane peaks at highway speed | 63.9 / 67.3 / 62.8 codes per metre if lanes are 3.66 m: lanes of 3.4-3.7 m at this scale |
 | camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |
 
   The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are

@@ -15,7 +15,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "data" / "analysis"
 DOC = DATA / "STATS.md"
-NAMES = {"A": "A (development, mixed)", "B": "B (held-out, city)", "C": "C (held-out, highway)"}
+NAMES = {"A": "A (development, mixed)", "B": "B (city)", "C": "C (highway)"}
 
 
 def r(x, n=2):

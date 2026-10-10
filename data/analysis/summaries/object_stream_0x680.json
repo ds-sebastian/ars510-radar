@@ -514,5 +514,12 @@
     "share_beyond_3_sigma": 0.025
    }
   }
+ },
+ "acc_unit_0125_recompute": {
+  "note": "speed-vs-ACC comparisons recomputed with the ACC speed at 0.125 m/s per code (the original extraction used 0.1)",
+  "same_vehicle_frames": 1872,
+  "median_abs_speed_diff_mps": 0.09,
+  "within_1_mps_share": 0.989,
+  "object_list_excursion_frames_within_1_mps": "64 of 64"
  }
 }

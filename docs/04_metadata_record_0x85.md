@@ -30,7 +30,7 @@ counter85 = int.from_bytes(record85[5:7], "little") >> 1
 same_cycle = counter80 == counter85 and int.from_bytes(record80[1:5], "little") == int.from_bytes(record85[1:5], "little") // 100
 ```
 
-This matches 446,371 record pairs across 28 drives, over 99.96% of 0x80 records. Nearest arrival time picks the
+On the 700-segment set this pairs 677,115 of the 677,754 CRC-valid 0x85 records with their 0x80 record. Nearest arrival time picks the
 neighbouring cycle about a third of the time, so pair by counter.
 
 ## Prefix bytes
@@ -43,7 +43,7 @@ Bytes `[1:21]` of the record hold more than the clock and counter. Counts are ov
 | 7 (low 4 bits) | counter, +1 per record | ○ |
 | 15 (bits 6-7) | evenly spread 2-bit value that holds for 1-4 records | ○ |
 | 16 (low 5 bits) | count-like quantity, 2-20 above a fixed `0x20`: correlates with ego speed (non-monotone: mean 3.5 at standstill, 10.4 at 14-22 m/s, 7.5 above 30 m/s), with the number of populated cells (ρ .58) and with 0x80 header byte 13 | ○ |
-| 17.2-3, 17.4-5, 17.7, 18.1, 18.3, 18.4, 18.6-7, 19.1-3, 19.4-7 | **inverted copies of the cell "parameters present" flag** of cells 3, 4, 5, 2, 1, 0: the bit is 1 exactly when bit 30 of that cell is 0, 2-4 bits per cell. Cells 6-9 have no copy; the other bits of bytes 17-19 are constant 1. `shell85.prefix_flags_consistent` checks it | ● |
+| 17.2-3; 17.4-5, 17.7; 18.1, 18.3; 18.4, 18.6-7; 19.1-3; 19.4-7 | **inverted copies of the cell "parameters present" flag** of cells 3, 4, 5, 2, 1, 0: the bit is 1 exactly when bit 30 of that cell is 0, 2-4 bits per cell. Cells 6-9 have no copy; the other bits of bytes 17-19 are constant 1. `shell85.prefix_flags_consistent` checks it | ● |
 | 9, 11, 13, 14 | zero in 99.1 % of records; sporadic event bytes otherwise | raw |
 
 Bits agree on all 677,754 records for cells 0, 2, 3, 4 and 5 and on all but 238 for cell 1 (a default block with a nonzero `32|12`);
@@ -85,7 +85,7 @@ Unpopulated cells hold the defaults 900 at `48|16` and 500 at `64|15`; the conve
 * the camera lane line's fitted slope correlates −0.61…−0.69 with the code and crosses zero at 31,167-31,322; its gain is about half the ego-motion one (shrinkage of the model's lane lines is a likely cause), so the unit rests on the ego-motion reference;
 * the radar's own ego-lane assignment (slot `128|3` = 3) for objects at 45-90 m is predicted from the cell-2 / cell-3 curves with AUC .9967 on the offsets alone and .9992 once the heading term is added; the AUC is a plateau at 1.3-2.0e-5 rad/code and falls to .9937 at 4e-5.
 
-**Curvature.** Taking bit 79 out of the old 16-bit word is what makes it a clean quantity: the correlation with the camera lane curvature is +0.94 (cell 2/3, bit 79 clear) and +0.80…+0.91 otherwise, with a zero at 15,987-16,037; the best-correlated cells give 2.1-2.3e-6 (regressing the reference on the code) up to 2.4-2.8e-6 (inverting the regression of the code on the reference) 1/m per code.
+**Curvature.** Taking bit 79 out of the old 16-bit word is what makes it a clean quantity: the correlation with the camera lane curvature is +0.94 (cell 2/3, bit 79 clear) and +0.80…+0.91 otherwise, with a zero at 15,987-16,037; the best-correlated cells give 2.1-2.3e-6 (regressing the reference on the code) up to 2.4-2.6e-6 (inverting the regression of the code on the reference) 1/m per code.
 Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.44 for the whole word. The ego-lane assignment is predicted as well from offset and heading alone as with an `x²/2` term, so the radar's lane state appears to use offset and heading.
 
 ![Raw word and measured future ego path](img/analysis/id85_direction_code_structure.png)
