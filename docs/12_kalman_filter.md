@@ -188,7 +188,9 @@ On the owner's 5.8 h of 2.1 road drives (replayed open loop) 2.3 keeps hard rada
 vision brake. It cuts radar-only requests of 1 m/s² or more from 10 to 7, starts braking within 0.015 s of 2.1 on every
 drive, and raises lead flips by 8 %. It also removes the second car's hard false brake. In the late-brake case above,
 the first radar lead is at 63 m instead of 47 m and the request −1.47 instead of −2.36 m/s² (vision −1.61). The cost is
-a slightly lower share of driver brakes anticipated at −1 m/s² (41.9 against 43.7 %). The openpilot file's parts and
+a slightly lower share of driver brakes anticipated at −1 m/s² (41.9 against 43.7 %). Both new constants sit in a
+flat region: an ACC match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m give the same 34-drive counts and stay
+within 0.4 s of 2.3 against the hindsight-lead oracle below. The openpilot file's parts and
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 

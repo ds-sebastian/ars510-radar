@@ -197,5 +197,45 @@
    "note": "real lead slowing to turn off closed at about -3 m/s (optical looming); 2.1 braked for a car a lane over whose radar speed read a false -7 m/s"
   },
   "onset_change_per_drive_max_s": 0.015
+ },
+ "sensitivity_independent_drives": {
+  "note": "34-drive counts and oracle seconds (confident moments, independent drives)",
+  "variants": {
+   "2.3 (match 0.4 x, gate 2.5 m)": {
+    "heldout_hard": 30,
+    "heldout_target": 3,
+    "switches": 1342,
+    "oracle_unnecessary_s": 8.2,
+    "oracle_missed_s": 3.8
+   },
+   "match 0.33 x": {
+    "heldout_hard": 30,
+    "heldout_target": 3,
+    "switches": 1345,
+    "oracle_unnecessary_s": 8.3,
+    "oracle_missed_s": 3.8
+   },
+   "match 0.5 x": {
+    "heldout_hard": 30,
+    "heldout_target": 3,
+    "switches": 1334,
+    "oracle_unnecessary_s": 8.2,
+    "oracle_missed_s": 3.8
+   },
+   "gate 2.0 m": {
+    "heldout_hard": 30,
+    "heldout_target": 2,
+    "switches": 1354,
+    "oracle_unnecessary_s": 8.1,
+    "oracle_missed_s": 3.6
+   },
+   "gate 3.0 m": {
+    "heldout_hard": 30,
+    "heldout_target": 3,
+    "switches": 1294,
+    "oracle_unnecessary_s": 8.5,
+    "oracle_missed_s": 3.6
+   }
+  }
  }
 }
