@@ -6,17 +6,19 @@ object; the radar keeps an object in its slot while the slot's age counts up, wh
 
 The slot speed has slow, correlated errors at range (false closings of 1-10 s beyond ~40 m). The radar reports their
 size in 240|7. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own ACC target
-(0x235 / 0x237) for the track it describes. radard then filters as for any radar.
+(0x235 / 0x237) for the track it describes. radard then filters as for any radar. radard pairs the vision lead with
+the nearest track by range and has no lateral gate, so tracks a lane away from the ACC target, or from the yaw-predicted
+path at range, are not published.
 Single-file candidate for upstream; ars510-radar docs/12 has the evidence for every constant and every omitted part.
 """
 import zlib
-from math import isfinite, nan
+from math import isfinite, nan, pi
 
 from opendbc.car import structs
 from opendbc.car.interfaces import RadarInterfaceBase
 
 RADAR_BUS, CAR_BUS = 1, 0
-SPEED_ADDR, OBJECTS_ADDR, ACC_SPEED_ADDR, ACC_POS_ADDR = 0xB4, 0x80, 0x235, 0x237
+SPEED_ADDR, YAW_ADDR, OBJECTS_ADDR, ACC_SPEED_ADDR, ACC_POS_ADDR = 0xB4, 0x24, 0x80, 0x235, 0x237
 RECORD_FRAMES, RECORD_LEN, SLOT_START, SLOT_LEN, SLOTS = 106, 742, 17, 36, 20
 IDLE_SLOT = bytes.fromhex("FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000")
 
@@ -31,6 +33,9 @@ ACC_SIGMA = 0.5  # m/s, the radar's ACC target speed
 LEAD_ACCEL = 1.5  # m/s^2, process noise
 GATE_SIGMA = 3.0  # innovations beyond 3 sigma count as 3 sigma
 PUBLISH_STD = 0.75  # m/s: a new track is published once its speed is this certain
+YOUNG_MATCH, YOUNG_MATCH_MPS = 0.4, 5.0  # young tracks can read 15-20 m short: wider ACC match if the speed agrees
+LANE_OFFSET = 2.5  # m: lateral distance from the ACC target / the yaw-predicted path that marks another lane
+PATH_RANGE = 60.0  # m: beyond this, tracks off the yaw-predicted path are not published
 
 
 def bits(b: bytes, start: int, length: int) -> int:
@@ -45,10 +50,10 @@ class Ars510Radar:
   """Raw CAN frames in, points (trackId, dRel, yRel, vRel) out once per 0x80 record."""
   def __init__(self):
     self.chunks, self.record_t, self.last_frame_t = [], 0.0, None
-    self.v_ego = None  # (time, m/s)
+    self.v_ego = self.yaw = None  # (time, m/s), (time, rad/s left positive)
     self.slots = {}  # slot -> (radar track id, age, time)
     self.next_tid = 1
-    self.acc_speed = self.acc_pos = self.acc_assoc = None
+    self.acc_speed = self.acc_pos = self.acc_assoc = self.acc_tid = None
     self.kf = {}  # tid -> (time, speed, variance)
     self.rng = {}  # tid -> (time, dRel, vRel)
     self.published = set()
@@ -56,6 +61,8 @@ class Ars510Radar:
   def update(self, t: float, bus: int, addr: int, dat: bytes):
     if bus == CAR_BUS and addr == SPEED_ADDR and len(dat) >= 7:
       self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6)
+    elif bus == CAR_BUS and addr == YAW_ADDR and len(dat) >= 2:
+      self.yaw = (t, (((dat[0] & 0x03) << 8 | dat[1]) * 0.244 - 125.0) * pi / 180.0)
     elif bus == RADAR_BUS and addr in (ACC_SPEED_ADDR, ACC_POS_ADDR):
       if len(dat) != 8 or (not dat[1] & 4 if addr == ACC_SPEED_ADDR else dat[2:] == bytes.fromhex("003E80000000")):
         self.acc_speed = self.acc_pos = None  # no target
@@ -110,7 +117,12 @@ class Ars510Radar:
                        vg=(bits(s, 64, 10) - 510.5) * 0.15 * VGROUND_SCALE, unc=bits(s, 240, 7),
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}
-    acc_tid = self.acc_match(t, tracks)
+    acc_tid = self.acc_match(t, tracks, v_ego)
+    if acc_tid is not None and acc_tid != self.acc_tid and acc_tid not in self.published:
+      self.rng.pop(acc_tid, None)  # a new ACC track starts its range at the ACC distance
+    self.acc_tid = acc_tid
+    yaw = self.yaw[1] if self.yaw is not None and abs(t - self.yaw[0]) <= EGO_MAX_AGE_S else None
+    acc_now = self.acc_pos if self.acc_pos is not None and abs(t - self.acc_pos[0]) <= 0.1 else None
     out = []
     for o in objs:
       if not o["valid"]:
@@ -123,6 +135,11 @@ class Ars510Radar:
       d_rel = self.fused_range(tid, t, self.acc_pos[1] if tid == acc_tid else o["d"], vrel)  # ACC distance for its track
       if o["age"] < PUBLISH_AGE or (tid not in self.published and std > PUBLISH_STD) or not isfinite(vrel):
         continue  # no point without a fresh ego speed: one NaN would poison radard's filter
+      if tid != acc_tid and acc_now is not None and abs(d_rel - acc_now[1]) < max(5.0, 0.1 * acc_now[1]) \
+          and abs(o["y"] - acc_now[2]) > LANE_OFFSET:
+        continue  # a car in the next lane at the ACC target's range
+      if tid != acc_tid and d_rel > PATH_RANGE and yaw is not None and abs(o["y"] - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > LANE_OFFSET:
+        continue  # a car a lane over on a curve
       self.published.add(tid)
       out.append((tid, d_rel, o["y"], vrel))
     self.prune(t)
@@ -154,14 +171,17 @@ class Ars510Radar:
     self.rng[tid] = (t, d, vrel)
     return d
 
-  def acc_match(self, t, tracks):
+  def acc_match(self, t, tracks, v_ego):
     """The track the radar's ACC target describes: matched by position, kept while both persist."""
     if self.acc_speed is None or self.acc_pos is None or max(abs(t - self.acc_speed[0]), abs(t - self.acc_pos[0])) > 0.1:
       self.acc_assoc = None
       return None
     _, ax, ay = self.acc_pos
     rs = max(12.0, 0.25 * ax)  # the object list reads far cars short of the ACC distance: the range scale grows with range
-    costs = sorted((abs(o["d"] - ax) / rs + abs(o["y"] - ay) / 0.5, tid, o["age"]) for tid, o in tracks.items())
+    young = max(rs, YOUNG_MATCH * ax)
+    scale = {tid: young if o["age"] < YOUNG_AGE and v_ego is not None and abs(o["vg"] - v_ego - self.acc_speed[1]) < YOUNG_MATCH_MPS
+             else rs for tid, o in tracks.items()}
+    costs = sorted((abs(o["d"] - ax) / scale[tid] + abs(o["y"] - ay) / 0.5, tid, o["age"]) for tid, o in tracks.items())
     if self.acc_assoc is not None:
       tid0, ax0, ay0 = self.acc_assoc
       own = next((c for c, tid, _ in costs if tid == tid0), None)
