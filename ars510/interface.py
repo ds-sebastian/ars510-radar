@@ -151,14 +151,15 @@ BASE_CONFIG = NativeInterfaceConfig(
 # yaw-predicted path at range (docs/12 "Lead-choice guards"). The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
-                       fused_speed_filter=True, path_gate_m=2.5)
+                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
 # fewer false closings offline and closer to vision on fresh drives, but slow to let go of a far excursion that recovers.
 COLORED_CONFIG = replace(FUSED_CONFIG, speed_sigma_per_code=0.001, speed_bias_tau_s=1.19, speed_bias_sigma_per_code=0.0096,
                          speed_sigma_ego_gain=0.48, speed_sigma_accel_gain=0.51, young_sigma_scale=1.0,
-                         lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True)
+                         lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True,
+                         summary_sigma_mps=0.5)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"

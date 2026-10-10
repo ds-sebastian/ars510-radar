@@ -10,14 +10,13 @@ from pathlib import Path
 
 import pytest
 
-from dataclasses import replace
 
 from ars510 import FUSED_CONFIG, BASE_CONFIG, Ars510NativeRadarInterface
 
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = sorted((REPO / "data" / "sample").glob("*.csv.gz"))
-# the openpilot version is fused without the summaries (docs/12: no difference in unjustified braking on 34 drives)
-OPENPILOT_EQUIVALENT = replace(FUSED_CONFIG, summary_sigma_mps=0.0)
+# the openpilot version is fused (since 2.4 neither uses the radar's summaries, docs/12)
+OPENPILOT_EQUIVALENT = FUSED_CONFIG
 
 
 def _fake_opendbc() -> dict:

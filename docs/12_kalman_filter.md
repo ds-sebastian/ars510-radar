@@ -3,11 +3,11 @@
 The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
 ([07](07_velocity_excursions.md)). The radar reports their size in `240|7` but does not flag each one. The default
 `fused` profile handles them with **one Kalman filter per track** on the lead's speed over ground. Every reading is
-weighted by its own uncertainty: the object list, the radar's ACC target and its target-range summaries. radard then
-runs its usual filter on what this one publishes.
+weighted by its own uncertainty: the object list and the radar's ACC target. radard then runs its usual filter on what
+this one publishes.
 
 Code: `Ars510NativeRadarInterface._fused_speed` in [`ars510/interface.py`](../ars510/interface.py) (fork build), and
-the same filter without the summaries in [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (openpilot version). Numbers:
+the same filter in [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (openpilot version). Numbers:
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json).
 
 ## The model
@@ -27,7 +27,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
 | ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
-| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope) | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within 15 %, lateral within 1 m); not used on the ACC track |
+| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within 15 %, lateral within 1 m); not used on the ACC track ([below](#what-the-summaries-do)) |
 
 The ACC target and summary units were corrected against the absolute `0x680` range (they had been read about 20%
 small). On the 34 replay drives the correction leaves hard radar-only braking and its unjustified part unchanged
@@ -105,8 +105,9 @@ The two filters run in series, so all replay numbers already include their combi
 ## What runs before and around the filter
 
 - **Plain decode (every profile):**
-  - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)); publishing
-    the ACC target's track earlier exposes young far tracks before their speed settles, so it waits too;
+  - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)). Age 40
+    exposes young far false closings (further-drive hard ticks 1 → 9), and so does publishing the ACC target's track
+    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.8 → 4.3 s on 34 drives);
   - multiply the object list's over-ground speed by 0.149/0.15, then subtract 0xB4 ego speed;
   - publish no point without a fresh ego speed, because one NaN poisons radard's filter.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
@@ -180,14 +181,15 @@ leads beyond 60 m drops from 77 % to 73 % (vision covers the rest).
 | 34 drives | held-out hard ticks / episodes / target | further / owner hard ticks | owner target episodes | lead flips (held-out) | onset vs vision | driver brakes anticipated |
 |---|---|---|---|---|---|---|
 | 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s | 43.7 % |
-| 2.3 `fused` (0.4 x ACC match, path gate) | 30 / 11 / 3 | 1 / 0 | 0 | 1,342 | −0.018 s | 41.9 % |
-| openpilot version (no summaries): 2.1 → 2.3 | 30 / 11 / 4 → 30 / 11 / 3 | 2 / 0 → 1 / 0 | 1 → 0 | 1,242 → 1,349 | −0.015 → −0.010 s | 43.1 → 41.3 % |
+| 2.4 `fused` (0.4 x ACC match, path gate; = the openpilot version) | 30 / 11 / 3 | 1 / 0 | 0 | 1,349 | −0.010 s | 41.3 % |
 
 On the owner's 5.8 h of 2.1 road drives (replayed open loop) 2.3 keeps hard radar-only braking at 0 and misses no hard
 vision brake. It cuts radar-only requests of 1 m/s² or more from 10 to 7, starts braking within 0.015 s of 2.1 on every
 drive, and raises lead flips by 8 %. It also removes the second car's hard false brake. In the late-brake case above,
 the first radar lead is at 63 m instead of 47 m and the request −1.47 instead of −2.36 m/s² (vision −1.61). The cost is
-a slightly lower share of driver brakes anticipated at −1 m/s² (41.9 against 43.7 %). The openpilot file's parts and
+a slightly lower share of driver brakes anticipated at −1 m/s² (41.3 against 43.7 %). Both new constants sit in a
+flat region: an ACC match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m give the same 34-drive counts and stay
+within 0.4 s of 2.3 against the hindsight-lead oracle below. The openpilot file's parts and
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 
@@ -203,10 +205,10 @@ because the model's lead range slides from one car to the next at cut-ins.
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
-Over 7.65 h of the owner's road drives, 2.3 brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
-4.9 s against 10.6 s for vision only and 11.5 s for 2.1, and misses no more of the braking the oracle asked for (16.1 s,
-vision 16.9 s). On the 34 replay drives, which did not shape 2.3 (6.72 h scored), it is the best of the three on both:
-8.2 s unnecessary (vision 32.6 s, 2.1 8.4 s) and 3.9 s missed (vision 11.0 s, 2.1 5.1 s). Standstill is not scored: the
+Over 7.65 h of the owner's road drives, `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
+5.4 s against 10.6 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (13.8 s,
+vision 16.9 s). On the 34 replay drives, which did not shape it (6.72 h scored), it is the best of all versions on
+both: 7.2 s unnecessary (vision 32.6 s, 2.1 8.4 s) and 3.6 s missed (vision 11.0 s, 2.1 5.1 s). Standstill is not scored: the
 planner's stop-and-go logic dominates there. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 
@@ -266,10 +268,11 @@ combination on the same 34 drives. A version drives the same as `fused` when its
 - **The young-track factor and the std gate cost about 5 lines.** With range fusion kept they prevent unjustified
   braking on a far lead (12 and 9 ticks).
 
-The smallest version with the same driving is `fused` without the summaries and the relink. That is the openpilot
-version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file); a test keeps it equal to this
-configuration point for point). The fork's default `fused` keeps the summaries for the smoother response described
-below (`combinations_34_drives` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
+The smallest version with the same driving is `fused` without the summaries and the relink, and since 2.4 that is
+`fused` itself. The openpilot version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line
+costs are in [10](10_research_directions.md#parts-of-the-openpilot-file)) is the same filter in one file, and a test
+keeps the two equal point for point (`combinations_34_drives` in
+[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
 The rule fixed before these results also required no target episode on the owner drives, which the version without
 summaries missed by one. Reviewed afterwards, that episode was an early reaction to a real slowdown, not a false brake,
@@ -288,7 +291,13 @@ summaries reacted about 4 s earlier ([`summary_owner_case.json`](../data/analysi
 Over the 34 replay drives (about 5 h), the summaries change the planner's request by 0.3 m/s² or more on 198 ticks
 (about 10 s). Without them the planner brakes harder on 143 of those ticks: 107 while the gap really was closing, 36
 while it was not. The summaries soften the response to far leads without an ACC target, half usefully and half not.
-That is why the fork's `fused` keeps them and the openpilot version leaves them out.
+
+Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-done)) they do not pay: without them 2.3
+brakes unnecessarily for 7.2 s instead of 8.2 s and misses 3.6 s instead of 3.8 s on the 34 independent drives (RMS
+0.244 against 0.245). On the owner's road drives the two are identical on all 23 bookmarks, with 0 hard radar-only
+braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 13.8 against 16.0 s missed.
+Since 2.4 `fused` leaves them out, so the fork default and the openpilot version drive identically. The code stays as a
+fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
 
 ## Kalman variants tested
 

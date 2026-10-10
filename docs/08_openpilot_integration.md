@@ -92,14 +92,14 @@ and ID continuity also depend on the profile.
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([12](12_kalman_filter.md#the-model)), with a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
+| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list and the radar's ACC target by their own uncertainty ([12](12_kalman_filter.md#the-model)), with a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
-| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter minus the summaries, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
+| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
 
 `--profile openpilot` runs the same `Ars510Radar` core as the standalone file through the fork adapter (fork
-constructor arguments, legacy point fields); its `trackId` / `dRel` / `yRel` / `vRel` match `fused` with the summaries
-off ([12](12_kalman_filter.md#removing-parts-together)).
+constructor arguments, legacy point fields); its `trackId` / `dRel` / `yRel` / `vRel` match `fused` exactly
+([12](12_kalman_filter.md#removing-parts-together)).
 
 `raw` is the unfiltered radar decode, not vision-only and not stock openpilot; its older names `stock` and `default` are still accepted. The earlier tuned profiles `anchor` and `steady` were outperformed by `fused` and removed: `--profile anchor` or `steady` installs `fused` with a notice.
 
@@ -114,7 +114,7 @@ Replay against the driver, unchanged openpilot card → radard → planner
 | hard radar-only braking ticks / target episodes, owner sunnypilot drives | 17 / – | **0** / 4 | **0** / 1 (an early reaction to a real slowdown) |
 | hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | – | **0** |
 | mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.090 s | −1.085 s |
-| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.9% |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.3% |
 
 The middle column is `fused` with the ACC target and summary readings ignored: the Kalman filter on the object list
 alone, which is the fallback when neither a matched ACC target nor a summary update is available.
@@ -136,7 +136,7 @@ What each setting does (examples and plots in [07](12_kalman_filter.md)):
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; no point without a fresh ego speed (radard's filter never recovers from NaN) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
-| `fused_speed_filter` (σ per reading from `240\|7`, ACC target, summary; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([07](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding; summaries are used up to 80 m |
+| `fused_speed_filter` (σ per reading from `240\|7`, ACC target; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([07](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding; the summaries are an option, off |
 
 ## What radard does with radar points
 
@@ -171,12 +171,12 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 
 | | vision only | `raw` | `fused` without ACC / summary | `fused` |
 |---|---|---|---|---|
-| first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.02 s |
-| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.9% |
+| first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.01 s |
+| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.3% |
 | hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
 | request jerk, mean \|da/dt\| | 1.029 | 1.009 | 1.007 | 0.999 |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 494 |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 497 |
 | forward-collision warnings | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and

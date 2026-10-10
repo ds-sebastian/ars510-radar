@@ -37,8 +37,8 @@ from opendbc.car.toyota.ars510 import BASE_CONFIG, COLORED_CONFIG, FUSED_CONFIG,
 from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
-# Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list, the ACC
-# target and the summaries by the radar's own uncertainty, docs/07), "raw" (BASE_CONFIG: the unfiltered radar
+# Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list and the ACC
+# target by the radar's own uncertainty, plus a path gate, docs/12), "raw" (BASE_CONFIG: the unfiltered radar
 # decode, research only) or "openpilot" (the upstream version, ars510_upstream.py: one file in opendbc style).
 # "colored" is an experimental fused variant for road tests (docs/12). `install.py --profile` rewrites this one line.
 PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG}
