@@ -303,7 +303,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | variant | bench | openpilot replays |
 |---|---|---|
 | Student-t update instead of the 3σ clamp | same as the clamp | – |
-| speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state | – |
+| speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state on held-out and owner drives, slightly better on fresh | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
 | object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: the current constants are as good as any retuned set on every check |

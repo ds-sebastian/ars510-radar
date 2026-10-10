@@ -136,11 +136,11 @@ Tracks younger than about 50-60 cycles carry unconverged range and velocity:
   age 11; figure below);
 - about a quarter of age-1 samples (26% over 700 segments) are an initialization template with a placeholder
   position at 0 m; the decoder withholds them ([03](03_slot_fields.md#class-and-size));
-- a newborn track can start tens of metres off (one read 38 m for a car at about 100 m and walked out over 3 s).
+- a newborn track can start tens of metres off (one read about 39 m for a car at about 100 m and walked out within about 5 s of its birth).
 
 ![young track](img/shots/young_track_convergence.jpg)
 
-*A newborn track (gray, dashed) reads 38 m for cars about 100 m ahead and walks out to 107 m over ~3 s.*
+*A newborn track (gray, dashed) reads about 40 m for cars about 100 m ahead and walks out to about 107 m within 5 s.*
 
 ![age convergence](img/analysis/age_convergence.png)
 
