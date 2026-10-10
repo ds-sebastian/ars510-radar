@@ -19,7 +19,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 | **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus; 5-8 % short of the radar's own ACC distance at 50-100 m |
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera |
-| **yRel** scale | 0.015 m per code (66.7 codes/m): exactly 1.5 codes of the ACC target's centimetre lateral; gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
+| **yRel** scale | 0.015 m per code (66.7 codes/m): 1.5 codes of the ACC target's centimetre lateral (1.499-1.502 on five sets); gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
 | **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed |
 | **vRel** vs camera | lower error than a constant zero or range differencing at every range (table below) |
 | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |

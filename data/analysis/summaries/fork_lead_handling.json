@@ -12,7 +12,7 @@
    "note": "compiled release branch, radard and planner are readable source"
   },
   "starpilot": {
-   "branch": "main",
+   "branch": "StarPilot",
    "commit": "2a12dbd"
   }
  },

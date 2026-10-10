@@ -224,7 +224,7 @@ def test_acc_target_reading_pulls_only_the_matched_object() -> None:
     cfg = replace(FUSED_ACC, young_sigma_scale=1.0, path_gate_m=0.0)  # keep the side car published
     iface = Ars510NativeRadarInterface(cfg)
     # lead at 40 m in lane with a native vRel glitch (-6 m/s); a second car 3.6 m to the left with the same glitch
-    # 240|7 = 40: object-list sigma 1.8 m/s, so the ACC target (0.5 m/s) dominates once the filter has run a few cycles
+    # 240|7 = 40: object-list sigma 1.8 m/s, so the ACC target (0.3 m/s) dominates once the filter has run a few cycles
     frames = []
     for k in range(6):
         t = 0.06 * k

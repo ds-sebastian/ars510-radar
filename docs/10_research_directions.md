@@ -24,7 +24,7 @@ The most promising next steps, ordered by how directly they would improve the ra
 5. **Where the weighting lives.** radard's per-track filter is built for radars with a clean relative speed, so the
    ARS510's weighting stays in the interface. In replay, a pass-through interface that hands radard each reading's
    variance (radard also fusing the vision lead's speed) asks for hard radar-only braking about twice as often as
-   `fused` (57 against 30 held-out ticks); radard's vision fusion (`VISION_V_STD_SCALE` 2.0) on top of `fused` lowers
+   `fused` (57 against 30 held-out ticks for `fused` 2.4, the version these radard variants ran against); radard's vision fusion (`VISION_V_STD_SCALE` 2.0) on top of `fused` lowers
    unnecessary braking against the hindsight oracle but misses more of it on the road drives (8.4 against 7.2 s)
    ([`radard_side_options.json`](../data/analysis/summaries/radard_side_options.json)). A radard that weighs every
    radar by its reported uncertainty needs its own filter design.
@@ -178,8 +178,8 @@ upstream). A test keeps it equal to `fused` point for point (bundled samples; on
    tracks through. The ARS510's object list has slow, correlated speed errors whose width the radar's `240|7` code
    follows as a continuous scale (◐); the unfiltered decode asks for hard braking three times as often as `fused`
    ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). The candidate's test covers the filter
-   (unfiltered, the bundled excursion dives to −6 m/s). Handing radard a per-point speed variance instead, with the
-   interface a pass-through, does not reproduce it in replay (hard radar-only ticks about twice `fused`'s; [item 5 above](#for-a-better-ride)). Processing in the interface has precedent: openpilot's Ford
+   (unfiltered, the bundled excursion dives to −6 m/s). With the interface a pass-through and radard weighting each reading by a per-point
+   variance, replay asks for hard radar-only braking about twice as often as `fused` (57 against 30 ticks on 2.4; [item 5 above](#for-a-better-ride)). Processing in the interface has precedent: openpilot's Ford
    interface (Delphi MRR, 272 lines, 184 of them code) clusters raw detections into tracks and associates them over time.
 2. **Small, separable PRs.** Decode and points first (opendbc, decode only, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
@@ -201,13 +201,13 @@ upstream PR.
 | transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
 | ACC target decode and association | 27 | 2.0 (range scale 0.4 x since 2.3) | +24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2 | keep |
 | Kalman speed filter (one state, uncertainty-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
-| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
-| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
+| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 (on 2.0) | keep |
+| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 (on 2.0) | keep |
 | age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
 | ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
-| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match; on 2.4): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
 
 Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for

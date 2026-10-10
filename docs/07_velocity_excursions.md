@@ -13,7 +13,7 @@ default `fused` profile handles it with one Kalman filter per track ([12](12_kal
 - Their size matches the speed-error code the radar reports (`240|7`, ◐); the radar's own ACC tracker follows the
   same car smoothly.
 - `fused` weights every reading by that uncertainty and leans on the radar's own ACC target: hard radar-only braking
-  93 (`raw`) → 30 ticks on 20 held-out routes.
+  93 (`raw`) → 29 ticks on 20 held-out routes.
 
 ## What an excursion looks like
 

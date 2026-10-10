@@ -30,7 +30,7 @@ every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
 
 - **Lateral position.** The twelfth bit is the real least-significant bit: it flips more often than the eleventh, its
   carries stay inside the field, and against the 0x192 lateral of the same target the residual is half a code with it and a
-  full code with it inverted. One summary (or object-list) lateral code is exactly 1.500 of these codes (344 k rows,
+  full code with it inverted. One summary (or object-list) lateral code is 1.500 of these codes (1.499-1.502 on five sets; 344 k rows,
   correlation 0.9999), which ties the two lateral units together ([06](06_accuracy.md#lateral-position)).
 - **Lateral speed.** Over two-second windows the lateral position changes by 1.21 codes per code-second of this field
   (correlation 0.97 on a 114-segment set; 1.03-1.24 on the larger, noisier 700-segment set), so one code is about
@@ -81,7 +81,7 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
     the radar's 0x190 like its own 0x191 and change content every 60 ms radar cycle;
   - **camera:** 0x101/0x102, 0x180, 0x197, 0x210, 0x240-0x248, 0x24D, 0x500/0x501, drifting 16-57 ms per 30 min against
     the radar.
-- **Its distance and closing speed show no camera input** (◐, [summary](../data/analysis/summaries/acc_target_camera.json)).
+- **Its distance and closing speed come from the radar's own tracker** (◐, [summary](../data/analysis/summaries/acc_target_camera.json)).
   The slot's camera-association state `112|3` ([03](03_slot_fields.md#camera-association)) ends between 40 and 60 m by
   day, so the same cars are followed with and without the camera's association. At 40-60 m both have the same ACC
   distance and speed jitter and the same agreement with openpilot's vision lead, and at 216 association onsets and
@@ -91,7 +91,7 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
 - **The choice of target is mostly the radar's:** all 539 daytime acquisitions beyond 60 m happen without the camera's
   association, and the radar follows the nearest moving in-lane object as often at 60-70 m as at 20-40 m (0.93 / 0.92).
   At the camera's daytime range limit (40-50 m), 11 % of acquisitions come within 0.25 s of the camera associating the
-  object, so there the ACC target's presence is not a fully independent confirmation of the camera's lead. The camera
+  object, so there the ACC target's presence partly follows the camera's association. The camera
   also feeds the radar its lane curves (0x85); a drive with the camera covered tests the rest
   ([10](10_research_directions.md)). Treat it as the radar's own filtered ACC target, associated with an object-list
   track by position.

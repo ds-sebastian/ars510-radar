@@ -822,7 +822,7 @@
     "duration_s": 2.92
    },
    "source": "research workspace SCR-459; recomputed from the research captures",
-   "note": "'0.2-3 s' is a time window, not a duration range: 40 20.. appears 0.16-0.47 s into the log and switches to idle at 3.08-3.39 s (always ~2.9 s, i.e. ~3 frames at 1 Hz). Suggest 'for the first ~3 s (until 3.1-3.4 s)'. Also summary JSON's 752/27 are change-event counts, not segment counts."
+   "note": "'0.2-3 s' is a time window, not a duration range: 40 20.. appears 0.16-0.47 s into the log and switches to idle at 3.08-3.39 s (always ~2.9 s, i.e. ~3 frames at 1 Hz). Suggest 'for the first ~3 s (until 3.1-3.4 s)'. 752 is the number of owner segments with 0x411 frames; 27 of them start with 40 20 ...."
   },
   {
    "doc": "13",

@@ -1,7 +1,7 @@
 # 00. Start here: the parser in pictures
 
 A guided tour from the radar's CAN frames to openpilot's planner, one figure per step, with the key numbers and a link to
-the topic doc that has the detail. Read this first; docs 01-13 are the reference. Terms in **bold** are in the
+the topic doc that has the detail. Read this first; docs 01-14 are the reference. Terms in **bold** are in the
 [glossary](#glossary).
 
 ![the parser's nine steps](img/analysis/guide_pipeline.png)
@@ -70,7 +70,7 @@ confirms, come through.
 
 ![the Kalman filter on one track](img/analysis/kalman_trace.png)
 
-*During an excursion the object list (grey) dives to −6 m/s; each reading moves the estimate by about 5 %.*
+*During an excursion the object list (grey) dives to −6 m/s; each object-list reading moves the estimate by about 4 %, each ACC target reading by about 24 %.*
 More: [12 Kalman speed filter](12_kalman_filter.md).
 
 ## 6. Choosing which tracks openpilot sees
@@ -90,8 +90,9 @@ What that changes on the road, replayed through openpilot's planner:
 *Left: a pickup first detected at 66 m read 15-20 m short in the object list; the current filter matches it to the ACC
 target and asks for −1.47 m/s² instead of 2.1's −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead
 with a car a lane over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about
-−3 m/s; 2.1 asked for −1.54 m/s², the current filter for −0.29 (vision −0.08). 2.3, 2.4 and 2.5 ask the same in both
-moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json)).* More:
+−3 m/s; 2.1 asked for −1.54 m/s², the current filter for −0.29 (vision −0.08). 2.3 and 2.4 ask the same in both
+moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json)); across 23 bookmarked road moments
+2.5's requests stay within 0.06 m/s² of 2.4's ([`acc_weight.json`](../data/analysis/summaries/acc_weight.json)).* More:
 [12](12_kalman_filter.md#path-gate).
 
 ## 7. What each part is worth

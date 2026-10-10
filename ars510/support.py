@@ -155,7 +155,7 @@ def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
     """0x237: (distance m, lateral m left positive) of the radar's ACC target, as the track association uses them.
 
     Distance: bits 39..51 (13 bits), code * 0.025 m (parse_acc_target_range_code returns the raw code).
-    Lateral: bits 27..38 (12 bits), (code - 2000) * 0.01 m; one object-list lateral code is exactly 1.5 of these codes.
+    Lateral: bits 27..38 (12 bits), (code - 2000) * 0.01 m; one object-list lateral code is 1.5 of these codes (1.499-1.502).
     """
     if len(data) < 8:
         return None

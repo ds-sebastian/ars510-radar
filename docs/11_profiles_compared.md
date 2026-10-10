@@ -15,9 +15,9 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | what it adds to the decode | validity, IDs, ego subtraction | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target, plus a path gate |
 | filter settings | — | scalar process scale, robust update and readiness threshold | also the ACC target's weight; [definitions and evidence](12_kalman_filter.md#the-model) |
 | code | fork build: relink and saturation guard on the shared decode ([below](#how-each-profile-works)) | fork build: speed filter and range fusion | the openpilot version is 183 code lines in all ([10](10_research_directions.md#parts-of-the-openpilot-file)) |
-| hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
+| hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **29** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
-| first braking request vs vision only (148 paired driver brakes) | −0.15 s | −0.03 s | −0.01 s |
+| first braking request vs vision only (148 paired driver brakes; 149 for `fused`) | −0.15 s | −0.03 s | −0.01 s |
 | recommended for | research | diagnostic: the filter on the object list alone | everyday driving |
 
 `raw` is the unfiltered radar decode. The middle column is a diagnostic: `fused` with the ACC target ignored, which
@@ -45,7 +45,7 @@ fork build (`ars510/`); the summaries are a fork option, on in `colored`.*
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
 
 *Left: how much `fused` trusts each reading by range. Middle: the share of the estimate coming from the radar's ACC
-target when it is present. Very close in, the object list dominates; from about 15 m on the ACC target does. Right:
+target when it is present. Very close in, the object list dominates; from about 10 m on the ACC target does. Right:
 speed standard deviation of a new track against age; the 0.75 m/s line is the publication gate, which holds young far
 tracks back through the filter's own uncertainty.*
 

@@ -8,6 +8,7 @@
   "2.4": {
    "hard_ticks_heldout_further_owner": [30, 1, 0],
    "target_episodes_heldout_further": [3, 3],
+   "hard_episodes_heldout_further": [11, 1],
    "heldout_lead_source_switches": 1349,
    "onset_vs_vision_s": -0.010,
    "anticipated_at_minus_1": 0.413,
@@ -18,6 +19,7 @@
   "2.5": {
    "hard_ticks_heldout_further_owner": [29, 1, 0],
    "target_episodes_heldout_further": [4, 3],
+   "hard_episodes_heldout_further": [11, 1],
    "heldout_lead_source_switches": 1336,
    "onset_vs_vision_s": -0.009,
    "anticipated_at_minus_1": 0.425,

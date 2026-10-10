@@ -36,7 +36,7 @@
     }
   ],
   "original_CAN_witness": {
-    "drive": "A",
+    "drive": "O2",
     "consecutive_nonidle_reports": 32,
     "duration_s": 6.200070188999689,
     "ACC_state": 1,
@@ -48,7 +48,7 @@
     "Matched mature-target coding does not establish every report as an ACC copy.",
     "Additional coverage does not establish per-object Doppler or a PCS-specific source."
   ],
-  "absent_ACC_context_drive_A": {
+  "absent_ACC_context_drive_O2": {
     "reports": 224,
     "median_ego_mps": 1.6,
     "median_nominal_vrel_mps": -7.36,

@@ -46,7 +46,7 @@ class NativeInterfaceConfig:
     max_ego_speed_age_s: float = 0.5
     include_metadata: bool = True
     # Hold back tracks younger than this many cycles. Young tracks carry unconverged range and velocity
-    # (stopped cars read as moving; one lead read 38 m while ~100 m away for ~3 s). 60 cycles ~ 3.6 s.
+    # (stopped cars read as moving; one lead read about 39 m while ~100 m away and walked out over about 5 s). 60 cycles ~ 3.6 s.
     min_publish_age: int = 1
     # When a new track is first published, give it the trackId of a settled track (age >= 30) lost within
     # this many seconds if it starts where that track predicts and the match is one-to-one. 0 disables.
@@ -93,7 +93,7 @@ class NativeInterfaceConfig:
     path_gate_m: float = 0.0  # 0 = off (fused: 2.5)
     path_gate_min_range_m: float = 15.0
     # Summaries (0x192 / 0x194): the positions of the radar's selected targets. Their range slope over summary_window_s
-    # gives a relative speed; a summary attaches to the track at its position (range within 15 %, lateral within
+    # gives a relative speed; a summary attaches to the track at its position (range within max(5 m, 15 %), lateral within
     # summary_match_lat_m, unambiguous) and stays attached while the track stays within 25 % in range and twice that
     # lateral limit. Used up to summary_max_range_m (the optical check favours the summary speed out to ~80 m, docs/05);
     # the ACC-associated track is left to the ACC target. A fork option: off in FUSED_CONFIG, on in COLORED_CONFIG.

@@ -5,7 +5,7 @@
   "qualification_boundary_is_not_a_decoded_sign_boundary": true,
   "groups": [
     {
-      "drive": "A",
+      "drive": "O2",
       "present": 1059,
       "low_codes": 1053,
       "high_codes": 6,
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "drive": "B",
+      "drive": "O3",
       "present": 467,
       "low_codes": 465,
       "high_codes": 2,

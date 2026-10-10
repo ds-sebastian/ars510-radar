@@ -11,7 +11,7 @@ NS_ :
 
 BS_:
 
-BU_: RADAR XXX
+BU_: RADAR CAMERA XXX
 
 BO_ 128 ARS510_ID80_SEGMENT: 8 RADAR
  SG_ ID80_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
@@ -57,11 +57,11 @@ BO_ 256 ARS510_A100_CANDIDATE: 7 RADAR
  SG_ A100_STARTUP_WORD_BE16 : 7|16@0+ (1,0) [0|65535] "raw" RADAR
  SG_ A100_B2_B6_RESERVED_ZERO40 : 23|40@0+ (1,0) [0|1099511627775] "raw" RADAR
 
-BO_ 257 ARS510_A101_CANDIDATE: 6 RADAR
+BO_ 257 ARS510_A101_CANDIDATE: 6 CAMERA
  SG_ A101_STARTUP_STATE8 : 0|8@1+ (1,0) [0|255] "state" RADAR
  SG_ A101_B1_B5_RESERVED_ZERO40 : 15|40@0+ (1,0) [0|1099511627775] "raw" RADAR
 
-BO_ 258 ARS510_A102_CANDIDATE: 3 RADAR
+BO_ 258 ARS510_A102_CANDIDATE: 3 CAMERA
  SG_ A102_B0_RESERVED_ZERO8 : 0|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A102_B1_RESERVED_ZERO3 : 8|3@1+ (1,0) [0|7] "raw" RADAR
  SG_ A102_CONTEXT_BIT11 : 11|1@1+ (1,0) [0|1] "state" RADAR
@@ -76,7 +76,7 @@ BO_ 259 ARS510_A103_CANDIDATE: 2 RADAR
  SG_ A103_B0_RESERVED_ZERO8 : 0|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A103_B1_RESERVED_ZERO8 : 8|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 384 ARS510_A180_CANDIDATE: 5 RADAR
+BO_ 384 ARS510_A180_CANDIDATE: 5 CAMERA
  SG_ A180_OBSERVED_CONSTANT_BE40 : 7|40@0+ (1,0) [0|1099511627775] "raw" RADAR
 
 BO_ 400 ARS510_A190_CANDIDATE: 7 RADAR
@@ -112,7 +112,7 @@ BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
  SG_ A196_B7_UNKNOWN2 : 63|2@0+ (1,0) [0|3] "raw" RADAR
  SG_ A196_FIELD4_CODE6 : 61|6@0+ (1,0) [0|63] "code" RADAR
 
-BO_ 407 ARS510_A197_CANDIDATE: 2 RADAR
+BO_ 407 ARS510_A197_CANDIDATE: 2 CAMERA
  SG_ A197_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A197_STARTUP_PHASE1 : 8|1@1+ (1,0) [0|1] "state" RADAR
  SG_ A197_B1_RESERVED1_7 : 9|7@1+ (1,0) [0|127] "raw" RADAR
@@ -126,7 +126,7 @@ BO_ 514 ARS510_A202_CANDIDATE: 5 RADAR
  SG_ A202_COUNTER4 : 12|4@1+ (1,0) [0|15] "counter" RADAR
  SG_ A202_B2_B4_OBSERVED_CONSTANT_BE24 : 23|24@0+ (1,0) [0|16777215] "raw" RADAR
 
-BO_ 528 ARS510_A210_CANDIDATE: 7 RADAR
+BO_ 528 ARS510_A210_CANDIDATE: 7 CAMERA
  SG_ A210_RSA_SPEED_SIGN_PRESENT1 : 0|1@1+ (1,0) [0|1] "state" RADAR
  SG_ A210_B0_RESERVED1_7 : 1|7@1+ (1,0) [0|127] "raw" RADAR
  SG_ A210_RSA_SPEED_LIMIT_VALUE8 : 8|8@1+ (1,0) [0|255] "display_speed" RADAR
@@ -138,35 +138,35 @@ BO_ 528 ARS510_A210_CANDIDATE: 7 RADAR
  SG_ A210_B5_STATUS_BIT7 : 47|1@1+ (1,0) [0|1] "state" RADAR
  SG_ A210_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 576 ARS510_A240_CANDIDATE: 8 RADAR
+BO_ 576 ARS510_A240_CANDIDATE: 8 CAMERA
  SG_ A240_B0_UNKNOWN5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
  SG_ A240_ROLLING_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
  SG_ A240_RAW_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A240_RAW_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A240_B7_UNKNOWN8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 577 ARS510_A241_CANDIDATE: 8 RADAR
+BO_ 577 ARS510_A241_CANDIDATE: 8 CAMERA
  SG_ A241_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
  SG_ A241_ROLLING_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
  SG_ A241_RAW_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A241_RAW_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A241_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 580 ARS510_A244_CANDIDATE: 8 RADAR
+BO_ 580 ARS510_A244_CANDIDATE: 8 CAMERA
  SG_ A244_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
  SG_ A244_ROLLING_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
  SG_ A244_RAW_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A244_RAW_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A244_B7_UNKNOWN8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 581 ARS510_A245_CANDIDATE: 8 RADAR
+BO_ 581 ARS510_A245_CANDIDATE: 8 CAMERA
  SG_ A245_B0_RESERVED_ZERO5 : 0|5@1+ (1,0) [0|31] "raw" RADAR
  SG_ A245_ROLLING_PHASE3 : 5|3@1+ (1,0) [0|7] "state" RADAR
  SG_ A245_RAW_WORD0_BE24 : 15|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A245_RAW_WORD1_BE24 : 39|24@0+ (1,0) [0|16777215] "raw" RADAR
  SG_ A245_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 584 ARS510_A248_CANDIDATE: 8 RADAR
+BO_ 584 ARS510_A248_CANDIDATE: 8 CAMERA
  SG_ A248_B0_UNKNOWN2 : 0|2@1+ (1,0) [0|3] "raw" RADAR
  SG_ A248_STARTUP_STATUS2 : 2|2@1+ (1,0) [0|3] "state" RADAR
  SG_ A248_MUX_PHASE_RESERVED0 : 4|1@1+ (1,0) [0|1] "raw" RADAR
@@ -180,7 +180,7 @@ BO_ 584 ARS510_A248_CANDIDATE: 8 RADAR
  SG_ A248_B6_RESERVED2_6 : 50|6@1+ (1,0) [0|63] "raw" RADAR
  SG_ A248_B7_RESERVED_ZERO8 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 589 ARS510_A24D_CANDIDATE: 7 RADAR
+BO_ 589 ARS510_A24D_CANDIDATE: 7 CAMERA
  SG_ A24D_OBSERVED_CONSTANT_BE56 : 7|56@0+ (1,0) [0|72057594037927935] "raw" RADAR
 
 BO_ 591 ARS510_A24F_CANDIDATE: 1 RADAR
@@ -188,10 +188,10 @@ BO_ 591 ARS510_A24F_CANDIDATE: 1 RADAR
  SG_ A24F_STARTUP_PHASE1 : 6|1@1+ (1,0) [0|1] "state" RADAR
  SG_ A24F_B0_RESERVED_ZERO1 : 7|1@1+ (1,0) [0|1] "raw" RADAR
 
-BO_ 1280 ARS510_A500_CANDIDATE: 6 RADAR
+BO_ 1280 ARS510_A500_CANDIDATE: 6 CAMERA
  SG_ A500_OBSERVED_CONSTANT_BE48 : 7|48@0+ (1,0) [0|281474976710655] "raw" RADAR
 
-BO_ 1281 ARS510_A501_CANDIDATE: 7 RADAR
+BO_ 1281 ARS510_A501_CANDIDATE: 7 CAMERA
  SG_ A501_B0_B3_OBSERVED_CONSTANT_BE32 : 7|32@0+ (1,0) [0|4294967295] "raw" RADAR
  SG_ A501_B4_OBSERVED_CONSTANT8 : 32|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A501_STATUS_40_4 : 40|4@1+ (1,0) [0|15] "state" RADAR
@@ -326,7 +326,7 @@ CM_ BO_ 133 "0x85 metadata-record transport: a 147-byte record (prefix, ten 12-b
 CM_ BO_ 129 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x80 record start.";
 CM_ BO_ 134 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x85 record start.";
 CM_ BO_ 256 "Startup context: word 0 is 0xFFFF in the first frame after power-up, zero afterwards.";
-CM_ BO_ 257 "Radar startup state: 0x1D while booting, 0x11 once running (switches 60 ms before 0x197 bit 8 sets).";
+CM_ BO_ 257 "Camera-sent radar-running state: 0x1D while the radar boots, 0x11 once its object list arrives (switches 60 ms before 0x197 bit 8 sets).";
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";
 CM_ BO_ 259 "Always zero.";
 CM_ BO_ 384 "Constant CF C0 00 00 00.";
@@ -350,7 +350,7 @@ CM_ SG_ 565 A235_TARGET_ID5 "Target identity: constant while the radar follows o
 CM_ SG_ 565 A235_B7 "Byte 7: bits 0-4 the target identity (A235_TARGET_ID5); bits 5-7 = 0 with an ACC target, 7 idle.";
 CM_ SG_ 569 A239_B2 "Byte 2: bits 6-7 = 1 with an ACC target, 2 idle.";
 CM_ BO_ 567 "The radar's ACC target, 50 Hz: distance, lateral position, in-path state and two tracker bytes (see 0x235).";
-CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is exactly 1.5 of these codes.";
+CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is 1.5 of these codes (1.499-1.502 on five sets).";
 CM_ SG_ 567 A237_TRACKER_A8 "Raw tracker byte: 35-36 on a steady target, 44-50 while it accelerates, a median of 48-74 while it brakes.";
 CM_ SG_ 567 A237_TRACKER_B8 "Raw tracker byte: about 86 for a stopped target, 128-135 for a steady mover, rises toward 240 (and wraps) while the target accelerates or brakes.";
 CM_ SG_ 567 A237_TARGET_PRESENT "1 with an ACC target.";
@@ -361,9 +361,9 @@ CM_ SG_ 567 A237_ACC_TARGET_DISTANCE_CODE "Distance of the ACC target, 0.025 m p
 CM_ BO_ 569 "50 Hz companion of the ACC target: target class, object-list flag and the radar cycle timestamp of the 0x235 / 0x237 content.";
 CM_ BO_ 571 "50 Hz companion of the ACC target (3 bytes): CRC-8, counter and the target width in cm.";
 CM_ BO_ 573 "Always zero.";
-CM_ BO_ 576 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. Carries changing payloads (paired with 0x244) on some drives; default body otherwise.";
+CM_ BO_ 576 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. At night carries light-source records (two per frame, paired with 0x244); default body by day.";
 CM_ BO_ 577 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0; default body.";
-CM_ BO_ 580 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. Carries changing payloads (paired with 0x240) on some drives; bytes 4 and 7 are always equal.";
+CM_ BO_ 580 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. At night carries light-source records (two per frame, paired with 0x240); bytes 4 and 7 are always equal.";
 CM_ BO_ 581 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0; default body.";
 CM_ BO_ 584 "Startup / event context frame with the same rolling phase as 0x240-0x245.";
 CM_ BO_ 589 "State frame: 00 00 00 00 00 00 56 normally; 00 00 00 00 02 00 58 in a rare second state.";
@@ -563,7 +563,7 @@ CM_ SG_ 569 A239_B0_CHECK_BYTE "Check byte: an affine parity function of bytes 1
 CM_ SG_ 569 A239_STATUS_MUX4 "ACC target class: 1 car, 2 truck (the 0x191 template class), 0 / 4 / 5 / 6 other, 7 no target.";
 CM_ SG_ 569 A239_TARGET_IN_OBJECT_LIST "1 while the ACC target also has an object in the 0x80 list.";
 CM_ SG_ 569 A239_TARGET_PRESENT "1 with an ACC target.";
-CM_ SG_ 569 A239_TIMESTAMP_US "Radar cycle timestamp of this target update, microseconds; equals A190_TIMESTAMP_US of the same cycle.";
+CM_ SG_ 569 A239_TIMESTAMP_US "Radar cycle timestamp of this target update, microseconds, on the 0x190 clock: equal to A190_TIMESTAMP_US in 73 % of frames, within one cycle in 99.8 %.";
 CM_ SG_ 569 A239_COUNTER4 "Rolling counter.";
 CM_ SG_ 571 A23B_B0_CHECK_BYTE "Check byte: CRC8 (poly 0x1D, init 0, MSB first) over B1, B2, XOR 0x59, then XOR 0x3B / 0x76 / 0xEC / 0xC5 for set bits 4 / 5 / 6 / 7 of B1. Startup frames 00 0F FF differ.";
 CM_ SG_ 571 A23B_STATUS_MUX4 "Byte-1 low nibble: high bits of the target width (1 for widths of 256 cm and more).";

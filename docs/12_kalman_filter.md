@@ -153,7 +153,7 @@ it describes. The summaries (a fork option) are matched the same way.
 ![tracker range](img/analysis/tracker_range.png)
 
 Each of these matching rules was replayed on the 27 drives against the previous version with limits fixed before the
-run; hard radar-only braking stayed at 30 held-out ticks throughout
+run; hard radar-only braking stayed at 30 held-out ticks throughout (2.1-2.4)
 ([`tracker_association.json`](../data/analysis/summaries/tracker_association.json)).
 
 ## Path gate
@@ -183,7 +183,7 @@ second car's hard false brake. In the late-brake case above, the first radar lea
 request −1.47 instead of −2.36 m/s² (vision −1.61); 2.4 asks the same as 2.3 in that moment. The cost is a slightly
 lower share of driver brakes anticipated at −1 m/s²: 43.7 → 41.9 % from the path gate and 0.4 x match, and 41.3 % after
 dropping the summaries in 2.4. Both constants sit in a flat region: an ACC
-match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard ticks at 30 (target episodes 2-3) and
+match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard ticks at 30 on 2.3 (target episodes 2-3) and
 stay within 0.4 s of the chosen values against the hindsight-lead oracle below. The openpilot file's parts and
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
@@ -215,7 +215,7 @@ moments (above 1 m/s), where the lead signal decides; at standstill the planner'
 ## What each part is worth
 
 Each part removed from `fused` 2.0 on its own, 27 replay drives. 2.0 also fused the summaries; today's `fused` has nearly
-the same hard braking on these drives (30 / 1 / 0, [above](#path-gate)). Counts are hard radar-only braking ticks
+the same hard braking on these drives (29 / 1 / 0, [above](#path-gate)). Counts are hard radar-only braking ticks
 (planner ≤ −2 m/s² while vision-only asks ≥ −0.5) on 20 held-out routes / 4 further drives / 3 owner drives:
 
 ![what each part is worth](img/analysis/kalman_ablation.png)
@@ -324,7 +324,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | Student-t update instead of the 3σ clamp | about the same as the clamp (up to 0.2 points more false closings) | – |
 | speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state on held-out and owner drives, slightly better on fresh | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
-| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
+| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives, against the `fused` of that time: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, lead accel) | – | 8 fresh drives: the current constants are as good as any retuned set on every check |
 | ACC target weight (σ 0.3, the default since 2.5; 0.5 before) | – | [above](#the-acc-targets-weight) |
 

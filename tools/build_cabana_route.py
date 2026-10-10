@@ -276,7 +276,7 @@ def dbc_text() -> str:
         comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (the same in cells 2 and 3 on 99 % of rows).";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
-        comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";')
+        comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 + c3 x^3 / 6 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";')
     out += [f"BO_ {SHELL_CRC} ARS510_SHELL85_CRC: 8 RADAR",
             _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, "raw"),
             _sig("TRAILER_BYTES", 32, 16, 1, 0, 0, 65535, "raw"), ""]

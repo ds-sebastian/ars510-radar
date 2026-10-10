@@ -844,7 +844,7 @@ def heading_field():
     ax.set_title("208|6 closely follows the clipped velocity angle\n(empirical comparison; approximately π/64 per code)")
     NUMBERS["heading"] = {"exact": float((pred == code).mean()), "within_one": float((np.abs(pred - code) <= 1).mean()), "n": int(m.sum())}
     save(fig, "heading_field", "Settled tracks moving faster than 5 m/s under nominal velocity scaling.\n"
-         "Exact inputs, state updates and angular calibration remain provisional.")
+         "Empirical match; angular scale nominal (◐).")
 
 
 def event_code_context():

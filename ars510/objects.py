@@ -31,7 +31,7 @@ class NativeField:
 # Longitudinal distance, forward. Nominal code/16 - 10 m; code 160 decodes to zero.
 # Scale 1/16 m; zero code 160 fitted against vision, consistent with camera ground contact within about 0.2 m (docs/06).
 LONG_DIST = NativeField("long_dist", 32, 12, 160.0, 1.0 / 16.0, "m", "validated")
-# Lateral distance, LEFT positive. 12-bit offset binary around 2048, 0.015 m per code: exactly 1.5 codes of the radar's
+# Lateral distance, LEFT positive. 12-bit offset binary around 2048, 0.015 m per code: 1.5 codes (1.499-1.502) of the radar's
 # ACC-target lateral (cm), ten codes per lateral-velocity code-second, 69 codes/m [65, 74.5] under ego rotation (docs/06).
 LATERAL_M_PER_CODE = 0.015
 LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, LATERAL_M_PER_CODE, "m", "validated_sign_likely_scale")
@@ -95,11 +95,11 @@ WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 # Remaining uncertainty, class, size and score codes, passed through raw (docs/03). UNCERTAINTY_PER_COUNT: scales against the radar's own
 # ACC target (docs/03, uncertainty section), relative to that reference.
 UNC_RANGE_224 = NativeField("range_uncertainty_code", 224, 7, 0.0, 1.0, "code", "candidate")
-UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "candidate")
+UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "likely")
 UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "code", "candidate")
 UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
 UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
-UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "candidate")
+UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "likely")
 SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "obstacle_probability_candidate")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
 HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "candidate")
