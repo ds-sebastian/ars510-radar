@@ -251,10 +251,10 @@ def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
                   re.findall(r" SG_ (\w+) : (\d+)\|(\d+)@1", block)}
         covered = [bit for start, width in fields.values() for bit in range(start, start + width)]
         assert sorted(covered) == list(range(288))
-        assert fields["UNK_256_6"] == (256, 6)
-        assert fields["UNK_264_5"] == (264, 5)
-        # Carries must be visible as +1 rather than wrapping the old low-bit windows.
-        for name, before, after in [("UNK_256_6", 31, 32), ("UNK_264_5", 15, 16)]:
+        assert fields["UNK_256_8"] == (256, 8)
+        assert fields["UNK_264_8"] == (264, 8)
+        # Carries show as +1 inside the full uncertainty-code windows.
+        for name, before, after in [("UNK_256_8", 31, 32), ("UNK_264_8", 15, 16)]:
             start, width = fields[name]
             mask = (1 << width) - 1
             assert (((after << start) >> start) & mask) - (((before << start) >> start) & mask) == 1

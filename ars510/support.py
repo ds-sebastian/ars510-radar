@@ -270,7 +270,7 @@ class Target366:
 
     @property
     def d_rel(self) -> float:
-        """Approximate range in metres; .8 m/code is not a physical calibration."""
+        """Approximate range in metres at the fitted 0.8 m per code (fit 0.79, docs/13)."""
         return self.distance_code * .8
 
 

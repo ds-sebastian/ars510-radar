@@ -67,10 +67,8 @@ BO_ 1792 ARS510_OBJ_00: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -133,10 +131,8 @@ BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -199,10 +195,8 @@ BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -265,10 +259,8 @@ BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -331,10 +323,8 @@ BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -397,10 +387,8 @@ BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -463,10 +451,8 @@ BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -529,10 +515,8 @@ BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -595,10 +579,8 @@ BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -661,10 +643,8 @@ BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -727,10 +707,8 @@ BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -793,10 +771,8 @@ BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -859,10 +835,8 @@ BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -925,10 +899,8 @@ BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -991,10 +963,8 @@ BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1057,10 +1027,8 @@ BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1123,10 +1091,8 @@ BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1189,10 +1155,8 @@ BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1255,10 +1219,8 @@ BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1321,10 +1283,8 @@ BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_255_1 : 255|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_256_6 : 256|6@1+ (1,0) [0|63] "raw" XXX
- SG_ UNK_262_2 : 262|2@1+ (1,0) [0|3] "raw" XXX
- SG_ UNK_264_5 : 264|5@1+ (1,0) [0|31] "raw" XXX
- SG_ UNK_269_3 : 269|3@1+ (1,0) [0|7] "raw" XXX
+ SG_ UNK_256_8 : 256|8@1+ (1,0) [0|255] "raw" XXX
+ SG_ UNK_264_8 : 264|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_272_5 : 272|5@1+ (1,0) [0|31] "raw" XXX
  SG_ UNK_277_11 : 277|11@1+ (1,0) [0|2047] "raw" XXX
 
@@ -1858,7 +1818,7 @@ CM_ SG_ 1792 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1792 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1792 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1792 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1792 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1792 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1792 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1792 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -1898,10 +1858,8 @@ CM_ SG_ 1792 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1792 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1792 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1792 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1792 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1792 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1792 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1792 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1792 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1792 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1792 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1793 "Reassembled 0x80 object slot 1 (record bytes 53-88), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -1923,7 +1881,7 @@ CM_ SG_ 1793 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1793 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1793 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1793 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1793 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1793 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1793 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1793 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -1963,10 +1921,8 @@ CM_ SG_ 1793 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1793 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1793 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1793 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1793 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1793 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1793 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1793 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1793 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1793 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1793 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1794 "Reassembled 0x80 object slot 2 (record bytes 89-124), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -1988,7 +1944,7 @@ CM_ SG_ 1794 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1794 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1794 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1794 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1794 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1794 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1794 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1794 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2028,10 +1984,8 @@ CM_ SG_ 1794 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1794 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1794 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1794 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1794 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1794 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1794 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1794 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1794 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1794 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1794 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1795 "Reassembled 0x80 object slot 3 (record bytes 125-160), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2053,7 +2007,7 @@ CM_ SG_ 1795 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1795 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1795 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1795 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1795 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1795 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1795 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1795 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2093,10 +2047,8 @@ CM_ SG_ 1795 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1795 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1795 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1795 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1795 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1795 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1795 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1795 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1795 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1795 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1795 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1796 "Reassembled 0x80 object slot 4 (record bytes 161-196), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2118,7 +2070,7 @@ CM_ SG_ 1796 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1796 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1796 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1796 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1796 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1796 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1796 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1796 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2158,10 +2110,8 @@ CM_ SG_ 1796 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1796 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1796 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1796 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1796 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1796 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1796 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1796 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1796 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1796 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1796 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1797 "Reassembled 0x80 object slot 5 (record bytes 197-232), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2183,7 +2133,7 @@ CM_ SG_ 1797 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1797 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1797 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1797 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1797 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1797 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1797 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1797 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2223,10 +2173,8 @@ CM_ SG_ 1797 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1797 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1797 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1797 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1797 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1797 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1797 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1797 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1797 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1797 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1797 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1798 "Reassembled 0x80 object slot 6 (record bytes 233-268), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2248,7 +2196,7 @@ CM_ SG_ 1798 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1798 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1798 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1798 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1798 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1798 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1798 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1798 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2288,10 +2236,8 @@ CM_ SG_ 1798 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1798 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1798 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1798 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1798 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1798 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1798 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1798 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1798 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1798 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1798 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1799 "Reassembled 0x80 object slot 7 (record bytes 269-304), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2313,7 +2259,7 @@ CM_ SG_ 1799 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1799 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1799 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1799 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1799 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1799 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1799 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1799 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2353,10 +2299,8 @@ CM_ SG_ 1799 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1799 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1799 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1799 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1799 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1799 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1799 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1799 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1799 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1799 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1799 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1800 "Reassembled 0x80 object slot 8 (record bytes 305-340), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2378,7 +2322,7 @@ CM_ SG_ 1800 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1800 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1800 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1800 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1800 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1800 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1800 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1800 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2418,10 +2362,8 @@ CM_ SG_ 1800 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1800 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1800 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1800 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1800 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1800 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1800 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1800 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1800 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1800 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1800 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1801 "Reassembled 0x80 object slot 9 (record bytes 341-376), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2443,7 +2385,7 @@ CM_ SG_ 1801 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1801 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1801 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1801 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1801 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1801 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1801 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1801 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2483,10 +2425,8 @@ CM_ SG_ 1801 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1801 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1801 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1801 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1801 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1801 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1801 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1801 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1801 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1801 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1801 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1802 "Reassembled 0x80 object slot 10 (record bytes 377-412), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2508,7 +2448,7 @@ CM_ SG_ 1802 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1802 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1802 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1802 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1802 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1802 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1802 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1802 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2548,10 +2488,8 @@ CM_ SG_ 1802 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1802 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1802 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1802 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1802 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1802 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1802 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1802 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1802 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1802 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1802 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1803 "Reassembled 0x80 object slot 11 (record bytes 413-448), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2573,7 +2511,7 @@ CM_ SG_ 1803 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1803 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1803 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1803 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1803 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1803 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1803 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1803 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2613,10 +2551,8 @@ CM_ SG_ 1803 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1803 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1803 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1803 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1803 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1803 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1803 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1803 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1803 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1803 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1803 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1804 "Reassembled 0x80 object slot 12 (record bytes 449-484), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2638,7 +2574,7 @@ CM_ SG_ 1804 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1804 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1804 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1804 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1804 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1804 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1804 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1804 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2678,10 +2614,8 @@ CM_ SG_ 1804 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1804 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1804 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1804 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1804 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1804 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1804 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1804 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1804 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1804 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1804 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1805 "Reassembled 0x80 object slot 13 (record bytes 485-520), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2703,7 +2637,7 @@ CM_ SG_ 1805 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1805 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1805 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1805 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1805 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1805 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1805 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1805 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2743,10 +2677,8 @@ CM_ SG_ 1805 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1805 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1805 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1805 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1805 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1805 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1805 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1805 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1805 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1805 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1805 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1806 "Reassembled 0x80 object slot 14 (record bytes 521-556), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2768,7 +2700,7 @@ CM_ SG_ 1806 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1806 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1806 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1806 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1806 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1806 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1806 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1806 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2808,10 +2740,8 @@ CM_ SG_ 1806 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1806 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1806 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1806 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1806 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1806 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1806 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1806 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1806 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1806 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1806 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1807 "Reassembled 0x80 object slot 15 (record bytes 557-592), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2833,7 +2763,7 @@ CM_ SG_ 1807 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1807 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1807 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1807 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1807 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1807 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1807 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1807 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2873,10 +2803,8 @@ CM_ SG_ 1807 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1807 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1807 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1807 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1807 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1807 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1807 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1807 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1807 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1807 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1807 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1808 "Reassembled 0x80 object slot 16 (record bytes 593-628), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2898,7 +2826,7 @@ CM_ SG_ 1808 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1808 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1808 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1808 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1808 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1808 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1808 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1808 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -2938,10 +2866,8 @@ CM_ SG_ 1808 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1808 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1808 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1808 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1808 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1808 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1808 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1808 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1808 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1808 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1808 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1809 "Reassembled 0x80 object slot 17 (record bytes 629-664), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -2963,7 +2889,7 @@ CM_ SG_ 1809 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1809 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1809 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1809 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1809 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1809 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1809 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1809 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -3003,10 +2929,8 @@ CM_ SG_ 1809 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1809 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1809 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1809 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1809 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1809 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1809 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1809 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1809 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1809 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1809 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1810 "Reassembled 0x80 object slot 18 (record bytes 665-700), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -3028,7 +2952,7 @@ CM_ SG_ 1810 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1810 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1810 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1810 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1810 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1810 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1810 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1810 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -3068,10 +2992,8 @@ CM_ SG_ 1810 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1810 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1810 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1810 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1810 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1810 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1810 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1810 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1810 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1810 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1810 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
 CM_ BO_ 1811 "Reassembled 0x80 object slot 19 (record bytes 701-736), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";
@@ -3093,7 +3015,7 @@ CM_ SG_ 1811 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (co
 CM_ SG_ 1811 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1811 UNK_106_1 "Raw, unnamed.";
-CM_ SG_ 1811 UNK_107_1 "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
+CM_ SG_ 1811 UNK_107_1 "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.";
 CM_ SG_ 1811 CONST_108_1 "Constant in the captured data.";
 CM_ SG_ 1811 MOVE_STATE "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.";
 CM_ SG_ 1811 UNK_111_1 "Bit 2 of the motion code (see MOVE_STATE).";
@@ -3133,146 +3055,144 @@ CM_ SG_ 1811 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), abo
 CM_ SG_ 1811 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
 CM_ SG_ 1811 CONST_255_1 "Constant in the captured data.";
-CM_ SG_ 1811 UNK_256_6 "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.";
-CM_ SG_ 1811 UNK_262_2 "Upper bits of the candidate sigma ax at 256.";
-CM_ SG_ 1811 UNK_264_5 "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.";
-CM_ SG_ 1811 UNK_269_3 "Upper bits of the candidate sigma ay at 264.";
+CM_ SG_ 1811 UNK_256_8 "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.";
+CM_ SG_ 1811 UNK_264_8 "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.";
 CM_ SG_ 1811 UNK_272_5 "Height-like size code (candidate); larger for large vehicles.";
 CM_ SG_ 1811 UNK_277_11 "Raw; bit 277 rarely set on newborn tracks.";
-CM_ BO_ 1824 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 0, for plotting next to the raw fields.";
+CM_ BO_ 1824 "Derived values the ars510 interface computes for 0x80 slot 0, for plotting next to the raw fields.";
 CM_ SG_ 1824 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1824 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1824 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1824 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1824 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1824 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1825 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 1, for plotting next to the raw fields.";
+CM_ BO_ 1825 "Derived values the ars510 interface computes for 0x80 slot 1, for plotting next to the raw fields.";
 CM_ SG_ 1825 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1825 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1825 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1825 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1825 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1825 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1826 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 2, for plotting next to the raw fields.";
+CM_ BO_ 1826 "Derived values the ars510 interface computes for 0x80 slot 2, for plotting next to the raw fields.";
 CM_ SG_ 1826 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1826 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1826 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1826 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1826 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1826 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1827 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 3, for plotting next to the raw fields.";
+CM_ BO_ 1827 "Derived values the ars510 interface computes for 0x80 slot 3, for plotting next to the raw fields.";
 CM_ SG_ 1827 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1827 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1827 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1827 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1827 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1827 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1828 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 4, for plotting next to the raw fields.";
+CM_ BO_ 1828 "Derived values the ars510 interface computes for 0x80 slot 4, for plotting next to the raw fields.";
 CM_ SG_ 1828 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1828 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1828 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1828 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1828 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1828 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1829 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 5, for plotting next to the raw fields.";
+CM_ BO_ 1829 "Derived values the ars510 interface computes for 0x80 slot 5, for plotting next to the raw fields.";
 CM_ SG_ 1829 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1829 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1829 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1829 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1829 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1829 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1830 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 6, for plotting next to the raw fields.";
+CM_ BO_ 1830 "Derived values the ars510 interface computes for 0x80 slot 6, for plotting next to the raw fields.";
 CM_ SG_ 1830 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1830 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1830 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1830 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1830 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1830 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1831 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 7, for plotting next to the raw fields.";
+CM_ BO_ 1831 "Derived values the ars510 interface computes for 0x80 slot 7, for plotting next to the raw fields.";
 CM_ SG_ 1831 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1831 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1831 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1831 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1831 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1831 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1832 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 8, for plotting next to the raw fields.";
+CM_ BO_ 1832 "Derived values the ars510 interface computes for 0x80 slot 8, for plotting next to the raw fields.";
 CM_ SG_ 1832 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1832 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1832 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1832 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1832 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1832 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1833 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 9, for plotting next to the raw fields.";
+CM_ BO_ 1833 "Derived values the ars510 interface computes for 0x80 slot 9, for plotting next to the raw fields.";
 CM_ SG_ 1833 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1833 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1833 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1833 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1833 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1833 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1834 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 10, for plotting next to the raw fields.";
+CM_ BO_ 1834 "Derived values the ars510 interface computes for 0x80 slot 10, for plotting next to the raw fields.";
 CM_ SG_ 1834 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1834 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1834 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1834 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1834 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1834 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1835 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 11, for plotting next to the raw fields.";
+CM_ BO_ 1835 "Derived values the ars510 interface computes for 0x80 slot 11, for plotting next to the raw fields.";
 CM_ SG_ 1835 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1835 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1835 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1835 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1835 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1835 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1836 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 12, for plotting next to the raw fields.";
+CM_ BO_ 1836 "Derived values the ars510 interface computes for 0x80 slot 12, for plotting next to the raw fields.";
 CM_ SG_ 1836 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1836 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1836 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1836 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1836 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1836 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1837 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 13, for plotting next to the raw fields.";
+CM_ BO_ 1837 "Derived values the ars510 interface computes for 0x80 slot 13, for plotting next to the raw fields.";
 CM_ SG_ 1837 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1837 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1837 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1837 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1837 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1837 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1838 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 14, for plotting next to the raw fields.";
+CM_ BO_ 1838 "Derived values the ars510 interface computes for 0x80 slot 14, for plotting next to the raw fields.";
 CM_ SG_ 1838 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1838 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1838 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1838 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1838 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1838 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1839 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 15, for plotting next to the raw fields.";
+CM_ BO_ 1839 "Derived values the ars510 interface computes for 0x80 slot 15, for plotting next to the raw fields.";
 CM_ SG_ 1839 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1839 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1839 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1839 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1839 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1839 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1840 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 16, for plotting next to the raw fields.";
+CM_ BO_ 1840 "Derived values the ars510 interface computes for 0x80 slot 16, for plotting next to the raw fields.";
 CM_ SG_ 1840 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1840 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1840 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1840 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1840 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1840 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1841 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 17, for plotting next to the raw fields.";
+CM_ BO_ 1841 "Derived values the ars510 interface computes for 0x80 slot 17, for plotting next to the raw fields.";
 CM_ SG_ 1841 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1841 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1841 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1841 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1841 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1841 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1842 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 18, for plotting next to the raw fields.";
+CM_ BO_ 1842 "Derived values the ars510 interface computes for 0x80 slot 18, for plotting next to the raw fields.";
 CM_ SG_ 1842 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1842 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1842 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
 CM_ SG_ 1842 V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";
 CM_ SG_ 1842 DREL_FUSED "Velocity-aided range (range_fusion_gain 0.1, part of the fused profile); cuts short-term range walks by about a third.";
 CM_ SG_ 1842 VREL_KALMAN "vRel from the fused profile's Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";
-CM_ BO_ 1843 "NOT radar bytes: values the ars510 interface computes for 0x80 slot 19, for plotting next to the raw fields.";
+CM_ BO_ 1843 "Derived values the ars510 interface computes for 0x80 slot 19, for plotting next to the raw fields.";
 CM_ SG_ 1843 TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age 60, re-link within 3.5 s); 0 when not published.";
 CM_ SG_ 1843 TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";
 CM_ SG_ 1843 VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";
@@ -3294,7 +3214,7 @@ CM_ SG_ 1856 CONST_HDR72_32 "Constant in the captured data.";
 CM_ SG_ 1856 UNK_HDR104_3 "Timing-offset candidate (104|11 region): its change tracks the record's arrival-time offset at about 1 ms per count.";
 CM_ SG_ 1856 UNK_HDR107_4 "Timing-offset candidate (see UNK_HDR104_3).";
 CM_ SG_ 1856 UNK_HDR111_4 "Raw; usually 3.";
-CM_ SG_ 1856 OBJECT_COUNT "Number of allocated slots: those whose index field equals their position, which are the slots with age >= 1. Allocated slots need not be the first N.";
+CM_ SG_ 1856 OBJECT_COUNT "Number of allocated slots: those whose index field equals their position, which are the slots with age >= 1, at any of the 20 positions.";
 CM_ SG_ 1856 CONST_HDR120_16 "Constant in the captured data.";
 CM_ SG_ 1857 RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";
 CM_ BO_ 1888 "0x85 record bytes 0-20 (prefix). Byte 0 is the length-low byte 0x90; bytes 1-4 fine clock, 5-6 counter.";
@@ -3302,71 +3222,71 @@ CM_ SG_ 1889 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ
 CM_ SG_ 1889 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1889 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1889 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1889 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1889 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1889 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1889 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1889 "0x85 cell 0, record bytes 21-32. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1890 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1890 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1890 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1890 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1890 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1890 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1890 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1890 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1890 "0x85 cell 1, record bytes 33-44. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1891 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1891 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1891 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1891 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1891 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1891 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1891 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1891 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1891 "0x85 cell 2, record bytes 45-56. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1892 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1892 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1892 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1892 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1892 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1892 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1892 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1892 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1892 "0x85 cell 3, record bytes 57-68. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1893 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1893 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1893 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1893 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1893 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1893 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1893 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1893 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1893 "0x85 cell 4, record bytes 69-80. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1894 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1894 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1894 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1894 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1894 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1894 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1894 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1894 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1894 "0x85 cell 5, record bytes 81-92. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1895 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1895 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1895 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1895 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1895 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1895 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1895 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1895 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1895 "0x85 cell 6, record bytes 93-104. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1896 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1896 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1896 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1896 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1896 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1896 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1896 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1896 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1896 "0x85 cell 7, record bytes 105-116. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1897 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1897 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1897 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1897 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1897 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1897 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1897 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1897 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1897 "0x85 cell 8, record bytes 117-128. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ SG_ 1898 PARAMETERS_PRESENT "1 = the cell holds parameters (bytes 6-9 differ from the default 84 03 F4 01).";
 CM_ SG_ 1898 CURVE_OFFSET_M "c0: (32|12 - 2000) * 0.01 m, left positive. Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1898 CURVE_HEADING_RAD "c1: nominal -1.8e-5 rad per code from zero 31200, left-positive tangent (unit bounded to about 1.6-2.2e-5). Meaningful when PARAMETERS_PRESENT = 1.";
 CM_ SG_ 1898 CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1898 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";
-CM_ SG_ 1898 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";
+CM_ SG_ 1898 CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";
+CM_ SG_ 1898 CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";
 CM_ BO_ 1898 "0x85 cell 9, record bytes 129-140. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";
 CM_ BO_ 1899 "CRC at record[141:145] over record[1:141], followed by trailer[145:147]. Failing records are not exported.";
 VAL_ 1792 ONCOMING_FLAG 0 "clear" 1 "oncoming-like state" ;

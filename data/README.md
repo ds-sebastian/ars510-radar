@@ -21,7 +21,7 @@ dongle IDs, dates or GPS.
 
 | file | rows | content |
 |---|---|---|
-| `slots.parquet` | 174k | every occupied 0x80 slot with age ≥ 1: decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, `init_template`, and every raw field (`DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, …, `UNK_<start>_<len>`) |
+| `slots.parquet` | 174k | every occupied 0x80 slot with age ≥ 1: decoded `x` (dRel), `y` (yRel), `vrel`, `v_ground`, `v_ego` (0xB4), `track`, `slot`, `age`, `init_template`, and every raw field (`DREL`, `YREL_LEFT`, `VLONG_OVER_GROUND`, …, `UNK_<start>_<len>`) in the original survey's windows ([`slot_bit_map.json`](reference/slot_bit_map.json)); [docs/03](../docs/03_slot_fields.md) gives the current field widths, e.g. `256\|8` and `264\|8` |
 | `camera_pairs.parquet` | 90k | radar tracks paired by bearing with narrow-camera YOLO boxes (radar `y` here and in `ground_contact` is lateral code / 64; multiply by 0.96 for metres): box (`x1..y2`, `h`), box-growth closing speed over 2 / 4 / 6 s (`vcam2/4/6`), 1 s range derivative (`deriv1s`), 10 s range slope, ego speed from 0xB4 / carState / GPS, lead flag |
 | `ground_contact.parquet` | 50k | camera ground-contact distance (`cam_ground_x`, flat-road projection) against radar `x` |
 | `lateral_pairs.parquet` | 22k | camera lateral estimates against the raw lateral code |

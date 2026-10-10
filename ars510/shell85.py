@@ -1,7 +1,7 @@
 """CRC-checked ID85 record: prefix, ten 12-byte cells, CRC.
 
-The checksum boundary is verified. A populated cell is one lane / road-boundary curve (offset, heading, curvature; docs/04),
-not an object. Never interpret CRC/trailer as a cell.
+The checksum boundary is verified. A populated cell is one lane / road-boundary curve (offset, heading, curvature; docs/04).
+The CRC and trailer follow the ten cells.
 """
 from __future__ import annotations
 

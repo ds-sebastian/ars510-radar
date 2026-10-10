@@ -1,18 +1,21 @@
 {
- "description": "Provenance check of the driving docs (00, 07, 08, 10-13) on 2026-10-10: each claim's value found in a research-workspace result (by experiment ID) or recomputed from bundled data. 'corrected' rows were rewritten in the docs to the value given here; 'unsupported' rows were removed from the docs or replaced with sourced numbers.",
+ "description": "Provenance check of the driving docs (00, 07, 08, 10-13) on 2026-10-10: each claim's value found in a research-workspace result (by experiment ID) or recomputed from bundled data. 'corrected' rows were rewritten in the docs to the value given here; 'removed' rows name claims with no retained source, which the docs no longer carry.",
  "claims": [
   {
    "doc": "07:10",
    "claim": "excursions ramp up over ~1.5 s and decay over ~2 s",
-   "status": "unsupported",
-   "value": null,
-   "source": "research workspace SCR-115; earlier repo text only",
-   "note": "Contradicting retained wording: SCR-417 (data/derived/ars510_excursion_cause_20261003/result.md) 'ensemble onset/end shapes (25 events) ramp over ~1 s'; docs/07 waveform section itself says 'build up over 1-2 s'. Suggest '~1-2 s'."
+   "status": "corrected",
+   "value": {
+    "docs_now": "ramp up over about 1 s",
+    "ensemble_events": 25
+   },
+   "source": "research workspace SCR-417 (excursion cause): ensemble onset/end shapes of 25 events ramp over ~1 s",
+   "note": "The ~1.5 s / ~2 s shape had no retained source; the docs now carry the SCR-417 ensemble value."
   },
   {
    "doc": "07:11, 00:43",
    "claim": "~0.1 per 1,000 records below 20 m, 130 at 60-80 m",
-   "status": "unsupported",
+   "status": "removed",
    "value": {
     "discovery_text": "0.1 / 4 / 130 per 1000 at <20 / 20-40 / 60-80 m (ratio 31x)",
     "confirmation_json": {
@@ -22,7 +25,7 @@
     }
    },
    "source": "research workspace SCR-115; bundled signal_atlas_and_acc_crosscheck.json; earlier repo text only",
-   "note": "Discovery-half numbers not retained; confirmation gives ~10 and ~223 per 1000 (rate denominator not recorded; script not retained, likely clean-labelled ACC+vision-matched records, not all records). Only the ratio (31x / 22x) and false-closing share 0.84 / 0.875 are in JSON."
+   "note": "Discovery-half numbers not retained; confirmation gives ~10 and ~223 per 1000 (rate denominator not recorded; script not retained, likely clean-labelled ACC+vision-matched records, not all records). Only the ratio (31x / 22x) and false-closing share 0.84 / 0.875 are in JSON. The claim is no longer in the docs."
   },
   {
    "doc": "07:11",
@@ -35,26 +38,26 @@
   {
    "doc": "07:33",
    "claim": "gap to ACC ramps from about -1 to -3.4 m/s",
-   "status": "unsupported",
+   "status": "removed",
    "value": null,
    "source": "research workspace SCR-115; earlier repo text only",
-   "note": "No retained number or script; clean_labels.py/mech.py outputs lack it."
+   "note": "No retained number or script; clean_labels.py/mech.py outputs lack it. The claim is no longer in the docs."
   },
   {
    "doc": "07:34",
    "claim": "1.7% of record-to-record steps exceed 2 m/s",
-   "status": "unsupported",
+   "status": "removed",
    "value": null,
    "source": "research workspace SCR-115; earlier repo text only",
-   "note": "Not recomputable from public data (needs ACC target + vision labels)."
+   "note": "Not recomputable from public data (needs ACC target + vision labels). The claim is no longer in the docs."
   },
   {
    "doc": "07:35",
    "claim": "range confirms a drift after 2-4 s",
-   "status": "unsupported",
+   "status": "removed",
    "value": null,
    "source": "bundled figure_numbers.json, jitter_problem_figures.json",
-   "note": "An inference (a 2-3 m/s drift needs ~2-4 s to exceed the walk), not a measured onset delay. Wording 'range alone confirms ... only after 2-4 s' was in older text."
+   "note": "An inference (a 2-3 m/s drift needs ~2-4 s to exceed the walk), not a measured onset delay. Wording 'range alone confirms ... only after 2-4 s' was in older text. The claim is no longer in the docs."
   },
   {
    "doc": "07:76",
@@ -116,18 +119,18 @@
   {
    "doc": "08:46",
    "claim": "yvRel yaw rate (Toyota 0x24) matches phone gyro at 1.02x",
-   "status": "unsupported",
+   "status": "removed",
    "value": null,
    "source": "earlier repo text only",
-   "note": "Possible conflict: <path> says CAN 0x24 yaw is ~3-5% high vs device gyro (cites an older findings.md line no longer present). Not recomputable from public data (no yaw)."
+   "note": "Possible conflict: <path> says CAN 0x24 yaw is ~3-5% high vs device gyro (cites an older findings.md line no longer present). Not recomputable from public data (no yaw). The claim is no longer in the docs."
   },
   {
    "doc": "08:46",
    "claim": "yvRel follows d(yRel)/dt at r = 0.88, slope 0.86",
-   "status": "unsupported",
+   "status": "removed",
    "value": null,
    "source": "earlier repo text only",
-   "note": "No workspace record; not recomputable (no yaw in public data)."
+   "note": "No workspace record; not recomputable (no yaw in public data). The claim is no longer in the docs."
   },
   {
    "doc": "08:49",
@@ -286,7 +289,7 @@
     "extra_and_missed_s_identical": 23
    },
    "source": "research workspace SCR-494",
-   "note": "Bookmarks: sn-17 11, sn-20 6, sn-1f 5, sn-18 1. Four minima differ by 0.01-0.03 m/s^2 (sn-17 4:09.8, 9:38.3, 101:00.0; sn-1f 78:08.1); 'same requests' holds to 0.03 m/s^2."
+   "note": "Bookmarks: owner drive 1 11, owner drive 6 6, owner drive 5 5, owner drive 2 1. Four minima differ by 0.01-0.03 m/s^2 (owner drive 1 4:09.8, 9:38.3, 101:00.0; owner drive 5 78:08.1); 'same requests' holds to 0.03 m/s^2."
   },
   {
    "doc": "12:288",
@@ -303,7 +306,7 @@
     }
    },
    "source": "research workspace archive",
-   "note": "Episode lists are identical: sn-17 1, sn-1b 1, sn-1d 1, sn-1f 1, sn-20 3 (owner = 7) plus ot-c3 1 (second car) = 8. lead_choice_guards road_drives_replay.owner '2.3 fused' mild 7 = owner only; cases_2_4 '8 mild across owner and second car'. Both consistent."
+   "note": "Episode lists are identical: owner drive 1 1, owner drive 3 1, owner drive 4 1, owner drive 5 1, owner drive 6 3 (owner = 7) plus second-car drive 1 (second car) = 8. lead_choice_guards road_drives_replay.owner '2.3 fused' mild 7 = owner only; cases_2_4 '8 mild across owner and second car'. Both consistent."
   },
   {
    "doc": "12:295",

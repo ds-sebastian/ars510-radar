@@ -107,7 +107,7 @@ UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertaint
                          "lateral_speed_uncertainty_code": 0.37}
 
 AGE_SATURATION = 126
-# |lateral code - 2048| >= this is a sentinel, not a position.
+# |lateral code - 2048| >= this is a sentinel.
 LAT_INVALID_ABS_CODE = 2000
 
 NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156,
@@ -162,7 +162,7 @@ class NativeObject:
     vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
     v_lat_code: int = -1  # raw 74|10 code; 0 and 1023 are sentinels
     existence_pct: int | None = None  # 16|8 existence probability, percent
-    predicted: bool = False  # 107|1: the record is a prediction, not a measurement
+    predicted: bool = False  # 107|1: the record is the radar's prediction
     camera_assoc: int | None = None  # 112|3: 0 radar only, non-zero while the camera has the vehicle
     class_confidence_pct: int | None = None  # 115|5 x 5: confidence of the assigned class, percent
     object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
@@ -179,7 +179,7 @@ class NativeObject:
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
-    """Age-1 first output with zero size codes: its range / lateral codes are placeholders, not a position."""
+    """Age-1 first output with zero size codes: its range / lateral codes are placeholders."""
     return age == 1 and field_code(slot, LENGTH) == 0 and field_code(slot, WIDTH) == 0
 
 

@@ -9,7 +9,7 @@ radard gets the latest radar record completed before each model message. Planner
 carState, controlsState, selfdriveState, vehicleParameters and carControl.
 
 This is OPEN-LOOP: ego motion stays as recorded, so plans after the first divergence are what openpilot
-would have requested, not what the car would have done. It is a regression tool, not a safety proof.
+would have requested on the recorded motion. It is a regression tool for comparing profiles.
 
 Usage (openpilot venv; nothing is written into the checkout):
   PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$OP:$REPO $OP/.venv/bin/python tools/openpilot_replay/replay_radard.py \\
@@ -17,7 +17,7 @@ Usage (openpilot venv; nothing is written into the checkout):
 Pass consecutive segments of one drive in order. Radar-interface state (track IDs, re-link history) and consumer
 state (radard, planner, message state, latest radar record) carry across them, so the output matches one continuous
 pass over the drive. Everything resets when the CAN stream has a gap longer than MAX_CAN_GAP_S (a different drive
-or a missing segment). FakeSM bypasses messaging-health checks: numeric injection is not a timeout test.
+or a missing segment). FakeSM bypasses messaging-health checks, so this tests the numbers; check_integration.py tests timeouts.
 
 Outputs: <out>/ticks.csv.gz (one row per model tick and profile columns) and <out>/summary.json:
 FCW ticks per profile, and "native-only braking episodes" (profile aTarget <= -1 m/s^2 while vision-only

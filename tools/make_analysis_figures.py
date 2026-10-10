@@ -978,8 +978,8 @@ def lane_curve_cells():
     ax3.set_xlabel("curvature code (64|15)"); ax3.set_ylabel("camera lane curvature, left positive (1/m)")
     ax3.set_title("Curvature vs camera lane curvature"); ax3.legend(fontsize=6.5, ncol=2, loc="upper left")
     ch = info["camera_reference"]["heading"]; cc = info["camera_reference"]["curvature"]
-    save(fig, "lane_curve_cells", f"{len(L):,} camera-matched cell rows from three drives. Camera reference: quadratic fit of the matched lane line over 0–40 m. Units are "
-         f"bounded, not pinned (heading 1.6–2.2e-5 rad/code, curvature 2.0–2.7e-6 1/m per code). The camera lane slope has about half the gain of the ego-motion offset rate; dashed lines are the nominal conversions. Correlations with the camera: heading "
+    save(fig, "lane_curve_cells", f"{len(L):,} camera-matched cell rows from three drives. Camera reference: quadratic fit of the matched lane line over 0–40 m. Units "
+         f"fall within heading 1.6–2.2e-5 rad/code and curvature 2.0–2.7e-6 1/m per code. The camera lane slope has about half the gain of the ego-motion offset rate; dashed lines are the nominal conversions. Correlations with the camera: heading "
          f"{min(v['corr'] for v in ch.values()):.2f}…{max(v['corr'] for v in ch.values()):.2f}, curvature {min(v['corr'] for v in cc.values()):.2f}…{max(v['corr'] for v in cc.values()):.2f}.")
 
 
@@ -1040,7 +1040,7 @@ def kalman_response():
     ax.axvline(0, color=INK2, lw=1, ls=":")
     ax.set_xlim(-220, 245)
     ax.set_xlabel("Colored model − scalar model response lag (ms); negative = earlier")
-    ax.set_title("ACC-defined response: combined interval includes no difference")
+    ax.set_title("ACC-defined response: combined interval spans zero")
     fig.tight_layout()
     save(fig, "kalman_response", "252 windows, 33 routes; paired route-block bootstrap 95% intervals. Trackers hidden during estimation.\n"
          "The reference is the same radar's ACC target, so this compares the filters with each other.")

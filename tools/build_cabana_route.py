@@ -8,7 +8,7 @@ positions. The original log is copied unchanged; Cabana sorts events by time.
 
 Virtual bus messages (dbc/ars510_objects_vbus.dbc):
   0x700+slot  ARS510_OBJ_xx          raw slot bytes (36, padded to 48), decoded fields and raw fields
-  0x720+slot  ARS510_OBJ_xx_DERIVED  NOT radar bytes: values the interface computes (vRel, trackIds, flags)
+  0x720+slot  ARS510_OBJ_xx_DERIVED  derived values the interface computes (vRel, trackIds, flags)
   0x740       ARS510_REC_HEADER      0x80 record bytes 0-16
   0x741       ARS510_REC_TRAILER     CRC32 + byte 741
   0x760       ARS510_SHELL85_HDR     0x85 proposed prefix bytes 0-20
@@ -71,7 +71,7 @@ SIGNAL_COMMENTS = {
     "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
     "UNK_111_1": "Bit 2 of the motion code (see MOVE_STATE).",
     "UNK_112_3": "Camera-association state: 0 radar only, 1 (rarely 2-4) while the camera has the vehicle. By day non-zero on nearly all in-lane vehicles inside 40 m and almost never beyond 50 m; at night also at long range.",
-    "UNK_107_1": "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.",
+    "UNK_107_1": "Predicted record (the radar's own prediction), like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.",
     # slot: lane assignment
     "UNK_128_2": "Lane-assignment state, low bits (full = UNK_128_2 | UNK_130_1 << 2): 3 ego lane, 2 right lane, 4 left lane; 1, 5, 7 = no lane weights.",
     "UNK_130_1": "Lane-assignment state, bit 2 (see UNK_128_2).",
@@ -94,10 +94,8 @@ SIGNAL_COMMENTS = {
     "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
     "UNK_248_7": "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.",
     "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Keep all seven bits.",
-    "UNK_256_6": "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.",
-    "UNK_262_2": "Upper bits of the candidate sigma ax at 256.",
-    "UNK_264_5": "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.",
-    "UNK_269_3": "Upper bits of the candidate sigma ay at 264.",
+    "UNK_256_8": "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.",
+    "UNK_264_8": "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.",
     "UNK_183_7": "Bit 183 raw; bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows, 60-99 on young tracks).",
     "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 are zero.",
     "UNK_168_10": "All ones or all zeros (768 / 832 rare): a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 (far: always on).",
@@ -113,7 +111,7 @@ SIGNAL_COMMENTS = {
     "UNK_HDR104_3": "Timing-offset candidate (104|11 region): its change tracks the record's arrival-time offset at about 1 ms per count.",
     "UNK_HDR107_4": "Timing-offset candidate (see UNK_HDR104_3).",
     "UNK_HDR111_4": "Raw; usually 3.",
-    "OBJECT_COUNT": "Number of allocated slots: those whose index field equals their position, which are the slots with age >= 1. Allocated slots need not be the first N.",
+    "OBJECT_COUNT": "Number of allocated slots: those whose index field equals their position, which are the slots with age >= 1, at any of the 20 positions.",
 }
 
 
@@ -125,27 +123,25 @@ def signal_comment(name: str) -> str:
     return "Raw, unnamed."
 
 
-# Raw windows from the expanded captures that replace the historical bit-map split (data/reference/slot_bit_map.json).
+# Field windows (start, width) that replace the original survey's split (data/reference/slot_bit_map.json); an empty
+# list folds that survey field into the window before it. Readings are in SIGNAL_COMMENTS and docs/03.
 RAW_FIELD_CORRECTIONS = {
-    15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions.")],
-    63: [(63, 1, "Rare changing bit; only two rows in the expanded corpus.")],
-    136: [(136, 4, "Camera-association confidence: 15 without association; restarts at 3-9 when 112|3 becomes non-zero and climbs to 14."),
-          (140, 3, "Object class, second encoding of 163|3: codes 0, 5, 7, 1, 3, 4 = class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows).")],
-    111: [(111, 1, "Bit 2 of the motion code."), (112, 3, "Camera-association state.")],
-    115: [(115, 5, "Class confidence in 5 % steps."), (120, 3, "Rarely non-zero upper bits.")],
+    15: [(15, 1)],
+    63: [(63, 1)],
+    136: [(136, 4), (140, 3)],
+    111: [(111, 1), (112, 3)],
+    115: [(115, 5), (120, 3)],
     142: [],
-    163: [(163, 3, "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist / person associations), 6 two-wheeler.")],
-    165: [(166, 2, "Constant in the captured data.")],
-    182: [(182, 1, "Rare changing bit; observed in one short track episode.")],
-    190: [(190, 10, "Observed codes 0 and 1. Usually follows positive age, with three exceptions.")],
-    239: [(239, 1, "Changes within tracks; often active near birth. The former PER_TRACK label was too strong.")],
-    256: [(256, 6, "Expanded raw window: repeated 31-to-32 and reverse carries in discovery, confirmation and further drives. Full field width, units and meaning unresolved."),
-          (262, 2, "Remaining upper bits are not universally constant. May belong to the preceding quantity; boundary unresolved.")],
+    163: [(163, 3)],
+    165: [(166, 2)],
+    182: [(182, 1)],
+    190: [(190, 10)],
+    239: [(239, 1)],
+    256: [(256, 8)],  # sigma ax candidate, 256|8 (31 -> 32 carries in the captured drives)
     261: [],
-    264: [(264, 5, "Expanded raw window: repeated 15-to-16 and reverse carries. Full field width and scan/uncertainty semantics unresolved; old four-bit analyses used only its low bits."),
-          (269, 3, "Rare nonzero upper bits; may belong to the preceding quantity. Boundary unresolved.")],
+    264: [(264, 8)],  # sigma ay candidate, 264|8 (15 -> 16 carries in the captured drives)
     268: [],
-    277: [(277, 11, "Bit277 is set in four CRC-valid early-track samples in a further retained drive. This raw window is not constant. Its semantic boundary with272|5 and physical meaning remain unresolved.")],
+    277: [(277, 11)],
 }
 
 
@@ -165,20 +161,10 @@ def _named_sig(name):
     return _sig(name, f.bit_start, f.bit_len, f.scale, off, off, ((1 << f.bit_len) - 1) * f.scale + off, f.unit)
 
 
-def _heuristic(f: dict, start: int | None = None) -> tuple[str, str, str]:
-    s, n = (f["start"] if start is None else start), f["len"]
-    corr = f" Strongest correlation: {f['best_corr_with']} r={f['best_corr']:+.2f}." if f.get("best_corr_with") else ""
-    if f["kind"] == "constant" and f["distinct"] > 1:
-        nm = f["name"].replace("CONST_", "PER_TRACK_")
-        text = f"Constant within a track, differs between tracks ({f['distinct']} values {f['min']}..{f['max']}): object attribute candidate, unverified.{corr}"
-    elif f["kind"] == "constant":
-        nm = f["name"]
-        text = f"Constant {f['value']} (0x{f['value']:X}) in the original small-corpus survey; not proof of reserved/padding bits or universal constancy."
-    else:
-        nm = f["name"]
-        text = (f"Candidate from the carry-chain split, unverified: LSB flips {f['lsb_flip_rate']:.3f} per cycle, "
-                f"{f['distinct']} distinct values {f['min']}..{f['max']}.{corr}")
-    return _sig(nm, s, n, 1, 0, 0, (1 << n) - 1, "raw"), nm, text
+def _survey_sig(f: dict) -> tuple[str, str]:
+    """Raw signal for a field of the original bit-map survey; per-track constants get a PER_TRACK_ name."""
+    nm = f["name"].replace("CONST_", "PER_TRACK_") if f["kind"] == "constant" and f["distinct"] > 1 else f["name"]
+    return _sig(nm, f["start"], f["len"], 1, 0, 0, (1 << f["len"]) - 1, "raw"), nm
 
 
 def dbc_text() -> str:
@@ -192,7 +178,7 @@ def dbc_text() -> str:
         comments.append(f'CM_ BO_ {m} "Reassembled 0x80 object slot {s} (record bytes {ID80_OBJECT_START + 36 * s}-{ID80_OBJECT_START + 36 * s + 35}), sent only when occupied. Little-endian bit field: bit 0 = LSB of slot byte 0.";')
         for f in bm["slot_fields"]:
             if f["start"] in RAW_FIELD_CORRECTIONS:
-                for start, width, note in RAW_FIELD_CORRECTIONS[f["start"]]:
+                for start, width in RAW_FIELD_CORRECTIONS[f["start"]]:
                     name = f"UNK_{start}_{width}"
                     out.append(_sig(name, start, width, 1, 0, 0, (1 << width) - 1, "raw"))
                     comments.append(f'CM_ SG_ {m} {name} "{signal_comment(name)}";')
@@ -224,7 +210,7 @@ def dbc_text() -> str:
                 out.append(_named_sig(f["name"]))
                 comments.append(f'CM_ SG_ {m} {f["name"]} "{signal_comment(f["name"])}";')
             else:
-                line, nm, text = _heuristic(f)
+                line, nm = _survey_sig(f)
                 out.append(line)
                 comments.append(f'CM_ SG_ {m} {nm} "{signal_comment(nm)}";')
         out.append("")
@@ -238,7 +224,7 @@ def dbc_text() -> str:
                 _sig("VREL", 40, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), _sig("V_EGO_0xB4", 56, 16, 0.01, 0, 0, 655.35, "m/s"),
                 _sig("DREL_FUSED", 72, 16, 0.01, 0, 0, 655.35, "m"), _sig("VREL_KALMAN", 88, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), ""]
         comments += [
-            f'CM_ BO_ {m} "NOT radar bytes: values the ars510 interface computes for 0x80 slot {s}, for plotting next to the raw fields.";',
+            f'CM_ BO_ {m} "Derived values the ars510 interface computes for 0x80 slot {s}, for plotting next to the raw fields.";',
             f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
             f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
@@ -259,7 +245,7 @@ def dbc_text() -> str:
             out.append(_sig("OBJECT_COUNT", f["start"], f["len"], 1, 0, 0, 20, "slots"))
             comments.append(f'CM_ SG_ {HEADER_ADDR} OBJECT_COUNT "{signal_comment("OBJECT_COUNT")}";')
             continue
-        line, nm, text = _heuristic(f)
+        line, nm = _survey_sig(f)
         out.append(line)
         comments.append(f'CM_ SG_ {HEADER_ADDR} {nm} "{signal_comment(nm)}";')
     out += ["", f"BO_ {TRAILER_ADDR} ARS510_REC_TRAILER: {TRAILER_DLC} RADAR", _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, ""),
@@ -285,9 +271,9 @@ def dbc_text() -> str:
         out.append(_sig("CURVE_CURVATURE_PER_M", 64, 15, 2.5e-6, -0.04005, -0.0401, 0.0418, "1/m"))
         comments.append(f'CM_ SG_ {m} CURVE_CURVATURE_PER_M "c2: nominal 2.5e-6 1/m per code from zero 16020, left positive (unit bounded to about 2.0-2.7e-6). Meaningful when PARAMETERS_PRESENT = 1.";')
         out.append(_sig("CURVE_RATE_PER_M2", 10, 10, 4e-6, -0.002, -0.0021, 0.0020, "1/m^2"))
-        comments.append(f'CM_ SG_ {m} CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated; unit not pinned). Meaningful when PARAMETERS_PRESENT = 1.";')
+        comments.append(f'CM_ SG_ {m} CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";')
         out.append(_sig("CURVE_FLAG", 79, 1, 1, 0, 0, 1, "raw"))
-        comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3). Meaning unresolved.";')
+        comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
         comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";')

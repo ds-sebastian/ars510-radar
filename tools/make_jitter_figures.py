@@ -3,7 +3,7 @@
 
     python tools/make_jitter_figures.py
 
-The JSON holds provenance-labelled numbers from research-workspace replays (the rlogs are not bundled).
+The JSON holds provenance-labelled numbers from research-workspace replays (the rlogs stay in the research workspace).
 """
 from __future__ import annotations
 
