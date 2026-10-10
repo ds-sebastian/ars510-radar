@@ -1096,15 +1096,40 @@ def target_366_coding():
         ax.legend(fontsize=8)
     axes[0].set_ylabel("Pairs within discrepancy (%)")
     fig.tight_layout()
-    save(fig, "target_366_coding", "0x366 speed against the preceding 0x365 (nominal half-km/h coding). Both report the ACC target;\n"
-         "a few large differences remain unexplained")
+    save(fig, "target_366_coding", "0x366 against the preceding ACC-derived 0x365 (nominal unsigned coding).\n"
+         "Additional reports and the unqualified high-code domain contribute to the discrepancy tails.")
+
+
+def target_366_coverage():
+    """Owner-only report states, without treating a non-idle word as physical truth."""
+    info = summary("target_366_coverage")
+    fig, ax = plt.subplots(figsize=(9, 3.7))
+    categories = [("range_agrees", "ACC present, range agrees", S1),
+                  ("range_disagrees", "ACC present, range differs", INK2),
+                  ("without_ACC", "ACC absent", S2)]
+    for i, g in enumerate(info["groups"]):
+        left = 0
+        for key, label, color in categories:
+            width = g[key] / g["target_reports"] * 100
+            ax.barh(i, width, left=left, color=color, height=.5, label=label if i == 0 else None)
+            if width >= 4:
+                ax.text(left+width/2, i, f'{g[key]}', va="center", ha="center", color="white", fontsize=10)
+            left += width
+    ax.set_yticks([0, 1], [f'Owner {g["drive"]} (n={g["target_reports"]:,})' for g in info["groups"]])
+    ax.set_xlim(0, 100)
+    ax.set_xlabel("Share of non-idle 0x366 reports (%)")
+    ax.set_title("0x366 reports persist beyond ACC target coverage")
+    ax.legend(loc="upper center", bbox_to_anchor=(.5, -.2), ncol=3, fontsize=8)
+    fig.tight_layout()
+    save(fig, "target_366_coverage", "Fresh ACC pairs (both messages ≤60 ms); range agreement within 1.5 m.\n"
+         "These are report states, not physical object identity or measurement validity.")
 
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage)}
 
 
 if __name__ == "__main__":
