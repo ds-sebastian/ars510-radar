@@ -50,7 +50,7 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 
 | bits | field | coding |
 |---|---|---|
-| `16\|9` | relative speed | `(code − 155) × 0.5 km/h`, negative when closing |
+| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; high codes retain raw values and return `None` for speed |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = no target, −16 = invalid (mostly a target beyond ±5 m) |
 
@@ -60,6 +60,15 @@ Against the preceding 0x365 (two owner drives) 92 / 95 % of reports agree in dis
 0.28 m/s ([summary](../data/analysis/summaries/target_366_coding.json)); a few large speed differences remain unexplained.
 It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are undecoded speed / range-dependent flags,
 and the low three bits of byte 5 are constant. No profile reads this message.
+
+The speed conversion is qualified for the low-code domain. Eight target-present reports on the two owner drives
+have codes 442–506. Across five consecutive same-tail steps their reported distances decrease at 20–28 m/s,
+while the unsigned speed formula gives positive 40–49 m/s. Subtracting 512 counts gives a negative candidate
+(mean absolute difference from the range rate 2.93 m/s, versus 68.72 unsigned). This supports a wrapped branch
+within those examples; target identity and the sign/wrap boundary remain unqualified. The parser preserves
+distance, lateral and raw context while returning unavailable speed for codes ≥256.
+[Domain evidence](../data/analysis/summaries/target_366_speed_domain.json) describes the scope and limits.
+The comparison figure includes the unsigned hypothesis at high codes; its tails are not calibrated speed errors.
 
 ![0x366 against 0x365](img/analysis/target_366_coding.png)
 

@@ -35,6 +35,21 @@ def test_zero_payload_preserves_codes_without_inventing_a_sentinel():
     assert t.v_rel < 0 and t.d_rel == 0
 
 
+@pytest.mark.parametrize("raw,code", [("5000fd0f188200", 506), ("5000dd5a187a00", 442),
+                                     ("5000fc16688200", 504)])
+def test_observed_high_codes_preserve_range_but_do_not_invent_positive_speed(raw, code):
+    t = parse_0x366(bytes.fromhex(raw))
+    assert t.speed_code == code and t.v_rel is None
+    assert t.d_rel == pytest.approx((bytes.fromhex(raw)[3] & 127) * .8)
+    assert t.tail_raw == int(raw[8:], 16)
+
+
+def test_unobserved_high_domain_is_also_unqualified():
+    # The 256 boundary is an API qualification limit, not a claimed signed encoding.
+    assert parse_0x366(bytes.fromhex("50007f80000200")).v_rel == pytest.approx(100 * 5 / 36)
+    assert parse_0x366(bytes.fromhex("50008000000200")).v_rel is None
+
+
 def test_lateral_code_is_signed_five_bits_with_no_target_value():
     # byte 5 high five bits: 0 -> centre, 3 -> right 1 m, 29 (-3) -> left 1 m, 15 -> no target
     assert parse_0x366(bytes.fromhex("50003a30900200")).lateral_code == 0

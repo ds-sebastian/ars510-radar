@@ -1,0 +1,45 @@
+{
+  "status": "Nominal low-code conversion; high-code sign/wrap unqualified",
+  "message": "0x366",
+  "metric_velocity_available_for_codes_below": 256,
+  "qualification_boundary_is_not_a_decoded_sign_boundary": true,
+  "groups": [
+    {
+      "drive": "A",
+      "present": 1059,
+      "low_codes": 1053,
+      "high_codes": 6,
+      "low_min": 15,
+      "low_max": 247,
+      "high_values": [
+        442,
+        467,
+        483,
+        503,
+        505,
+        506
+      ]
+    },
+    {
+      "drive": "B",
+      "present": 467,
+      "low_codes": 465,
+      "high_codes": 2,
+      "low_min": 33,
+      "low_max": 190,
+      "high_values": [
+        503,
+        504
+      ]
+    }
+  ],
+  "same_tail_steps": 5,
+  "mean_abs_unsigned_range_rate_difference_mps": 68.72369437098556,
+  "mean_abs_wrapped_range_rate_difference_mps": 2.9294315116724396,
+  "native_geometry_matches": 0,
+  "limits": [
+    "Same tail is not verified target identity; range differences are internal consistency, not physical velocity.",
+    "Signed-nine-bit and biased modulo-512 models agree at observed high codes; their boundary is unidentified.",
+    "Video shows queued road traffic but cannot identify the reported high-code reflector."
+  ]
+}

@@ -264,9 +264,9 @@ class Target366:
         return None if self.lateral_code in (15, -16) else -0.34 * self.lateral_code
 
     @property
-    def v_rel(self) -> float:
-        """Likely relative speed: half-km/h codes centred on 155; negative closing."""
-        return (self.speed_code - 155) * 5 / 36
+    def v_rel(self) -> float | None:
+        """Nominal relative speed for low codes; high-code sign/wrap is unqualified (docs/13)."""
+        return (self.speed_code - 155) * 5 / 36 if self.speed_code < 256 else None
 
     @property
     def d_rel(self) -> float:
