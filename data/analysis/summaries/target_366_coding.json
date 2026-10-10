@@ -1,0 +1,138 @@
+{
+  "status": "likely fixed coding; dependent target comparison",
+  "message": "0x366",
+  "velocity": {
+    "msb_start": 16,
+    "bits": 9,
+    "zero_code": 155,
+    "nominal_mps_per_code": 0.1388888888888889
+  },
+  "distance": {
+    "msb_start": 25,
+    "bits": 7,
+    "nominal_m_per_code": 0.8,
+    "confidence": "approximate"
+  },
+  "selection": {
+    "preceding_365_max_age_s": 0.12,
+    "d365_min_m": 1,
+    "d365_max_m": 95,
+    "geometry_agreement_max_difference_m": 1.5,
+    "velocity_used_in_selection": false
+  },
+  "groups": [
+    {
+      "scope": "all",
+      "n": 790,
+      "speed_med": 0.0,
+      "speed_p95": 0.2777777777777777,
+      "speed_rms": 1.939993902065966,
+      "range_med": 0.3999999999999999,
+      "range_p95": 2.0,
+      "geometry_share": 0.920253164556962,
+      "speed_code_delta": {
+        "-208": 1,
+        "-206": 1,
+        "-133": 1,
+        "-124": 1,
+        "-122": 1,
+        "-100": 2,
+        "-3": 6,
+        "-2": 34,
+        "-1": 162,
+        "0": 488,
+        "1": 82,
+        "2": 10,
+        "3": 1
+      },
+      "drive": "A"
+    },
+    {
+      "scope": "geometry_agreement",
+      "coding_gate": true,
+      "n": 727,
+      "speed_med": 0.0,
+      "speed_p95": 0.2777777777777777,
+      "speed_rms": 0.10518851539474801,
+      "range_med": 0.3999999999999999,
+      "range_p95": 1.0,
+      "geometry_share": 1.0,
+      "speed_code_delta": {
+        "-3": 4,
+        "-2": 30,
+        "-1": 147,
+        "0": 467,
+        "1": 69,
+        "2": 9,
+        "3": 1
+      },
+      "drive": "A"
+    },
+    {
+      "scope": "all",
+      "n": 456,
+      "speed_med": 0.0,
+      "speed_p95": 1.1458333333333335,
+      "speed_rms": 4.602982829495816,
+      "range_med": 0.1999999999999993,
+      "range_p95": 1.3999999999999986,
+      "geometry_share": 0.9539473684210527,
+      "speed_code_delta": {
+        "-142": 1,
+        "-141": 1,
+        "-116": 1,
+        "-115": 1,
+        "-114": 2,
+        "-112": 1,
+        "-80": 2,
+        "-79": 4,
+        "-78": 1,
+        "-72": 1,
+        "-57": 1,
+        "-48": 2,
+        "-44": 1,
+        "-24": 1,
+        "-21": 1,
+        "-4": 1,
+        "-3": 9,
+        "-2": 25,
+        "-1": 110,
+        "0": 245,
+        "1": 39,
+        "2": 4,
+        "408": 1,
+        "411": 1
+      },
+      "drive": "B"
+    },
+    {
+      "scope": "geometry_agreement",
+      "coding_gate": true,
+      "n": 435,
+      "speed_med": 0.0,
+      "speed_p95": 0.2777777777777778,
+      "speed_rms": 1.0719470726044091,
+      "range_med": 0.1999999999999993,
+      "range_p95": 1.0,
+      "geometry_share": 1.0,
+      "speed_code_delta": {
+        "-115": 1,
+        "-79": 1,
+        "-78": 1,
+        "-4": 1,
+        "-3": 9,
+        "-2": 25,
+        "-1": 110,
+        "0": 244,
+        "1": 39,
+        "2": 4
+      },
+      "drive": "B"
+    }
+  ],
+  "limits": [
+    "Dependent radar trackers; physical accuracy and acquisition epochs are not calibrated.",
+    "Matching distance does not establish target identity; speed outliers remain.",
+    "This single target report is not a per-object Doppler channel."
+  ]
+}

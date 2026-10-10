@@ -1072,12 +1072,39 @@ def summary_owner_case():
          "Saved planner/lead output; captured vision is a comparison, not physical ground truth.")
 
 
+
+def target_366_coding():
+    """Owner-only fixed-code comparison, retaining all discrepancy tails."""
+    info = summary("target_366_coding")
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), sharey=True)
+    for ax, drive in zip(axes, ["A", "B"]):
+        for scope, label, color in [("all", "All eligible pairs", S2),
+                                    ("geometry_agreement", "Distance agreement only", S1)]:
+            group = next(g for g in info["groups"] if g["drive"] == drive and g["scope"] == scope)
+            hist = {}
+            for delta, count in group["speed_code_delta"].items():
+                error = abs(int(delta)) * 5 / 36
+                hist[error] = hist.get(error, 0) + count
+            x = sorted(hist)
+            ax.step(x, np.cumsum([hist[k] for k in x]) / group["n"] * 100,
+                    where="post", label=label, color=color)
+        ax.set_xscale("symlog", linthresh=.5)
+        ax.set_xlim(0, 25)
+        ax.set_ylim(0, 101)
+        ax.set_xlabel("Absolute fixed-map discrepancy (m/s)")
+        ax.set_title("Owner drive " + drive)
+        ax.legend(fontsize=8)
+    axes[0].set_ylabel("Pairs within discrepancy (%)")
+    fig.tight_layout()
+    save(fig, "target_366_coding", "0x366 versus the preceding 0x365; nominal half-km/h coding, no fitted speed selection.\n"
+         "Distance agreement is a dependent comparison; large tails and target-identity limits remain.")
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding)}
 
 
 if __name__ == "__main__":

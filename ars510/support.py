@@ -1,5 +1,5 @@
 """Support messages: the radar's ACC target (0x235 / 0x237 / 0x239 / 0x23B), the cycle header (0x190), the
-selected-target summaries (0x191-0x194) and the single-object stream (0x680); docs/05.
+selected-target summaries (0x191-0x194), the single-object stream (0x680), and car-bus target 0x366; docs/05 and 13.
 
 0x192 / 0x194 (4 bytes, ~radar cycle) each carry the position of one target of the radar's internal tracker in the
 object list's encoding: word 0 distance (code - 160) / 16 m, word 1 lateral (code - 2048) * LATERAL_M_PER_CODE m, left
@@ -247,3 +247,35 @@ def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
     if len(data) != 3:
         return None
     return (data[1] & 0x0F) << 8 | data[2], data[1] >> 4, crc_0x23b(data[2], data[1]) == data[0]
+
+
+@dataclass(frozen=True)
+class Target366:
+    """Car-bus target report; nominal coding only, with no object-list identity."""
+    speed_code: int
+    distance_code: int
+    header_raw: int
+    tail_raw: int
+
+    @property
+    def v_rel(self) -> float:
+        """Likely relative speed: half-km/h codes centred on 155; negative closing."""
+        return (self.speed_code - 155) * 5 / 36
+
+    @property
+    def d_rel(self) -> float:
+        """Approximate range in metres; .8 m/code is not a physical calibration."""
+        return self.distance_code * .8
+
+
+def parse_0x366(data: bytes) -> Target366 | None:
+    """Decode a seven-byte car-bus report, or None for the 7FFF no-target word.
+
+    0x366 arrives about 90 ms after 0x365. Correspondence with an ACC/native target must
+    be established separately; this is a target tracker report, not per-object Doppler.
+    Header/tail values remain raw. No driving profile consumes this parser.
+    """
+    if len(data) != 7 or data[2:4] == b"\x7f\xff":
+        return None
+    return Target366(data[2] * 2 + (data[3] >> 7), data[3] & 127,
+                     int.from_bytes(data[:2], "big"), int.from_bytes(data[4:], "big"))

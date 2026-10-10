@@ -44,14 +44,26 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
-### 0x366: lead relative speed (◐)
+### 0x366: target relative speed and approximate distance (◐)
 
-Bytes 2-3 read 0x7FFF without a target. Counting from the first payload bit, bits 16-24 (9 bits) carry the ACC
-target's relative speed at 0.140 m/s per code, zero near code 155 (U1 expressway: r 0.997, MAD 0.05 m/s). Bits 25-31
-follow its distance at ≈ 0.79 m per code (r 0.9994). The fit is looser in city traffic (O2: r 0.89 / 0.99), where the
-message can describe another target. Byte 0 is 0x50 or 0x52; bytes 4-5 take a few state values (`00 7A` without a
-target). The Toyota DBC names this message's fields `TGT_DIST`, `TGT_VGAP`, `PCSDISP`, `XPCSRDY` and `XREQ*`, but with a different
-layout.
+[Fixed coding evidence](../data/analysis/summaries/target_366_coding.json) supports MSB-first `16|9` as
+half-km/h relative-speed codes centred on 155: `vRel=(code−155)×5/36` m/s, negative when closing.
+`25|7` follows target distance at approximately .8 m/code. Bytes 2–3 equal `7FFF` for no target; the parser
+returns `None` for that word. `ars510.support.parse_0x366` preserves the raw codes and header/tail bytes
+and provides these nominal conversions.
+
+Compared with the preceding 0x365 report within 120 ms, 92.0% / 95.4% of eligible pairs on two owner drives
+agree in distance within 1.5 m (790/456 pairs). That distance-only subset contains 727/435 pairs; fixed-speed
+median discrepancy is 0 m/s and p95 is .278 m/s on both. All-pair median range discrepancy is .4/.2 m.
+The speed RMS in the second drive's distance-matched subset is still 1.072 m/s because a few large outliers
+remain. Distance agreement is therefore a comparison gate, not target identity or a physical accuracy bound.
+
+![Fixed coding and retained tails](img/analysis/target_366_coding.png)
+
+0x366 arrives about 90 ms after 0x365 on the observed publication schedule. Receipt spacing does not determine
+sensor latency. The report supplies one selected tracker target; a qualified association is needed before
+comparing it with an ACC target or object-list slot. It carries no per-object Doppler identity. The standalone
+parser has no profile consumer. Byte 0 is 0x50 or 0x52; header/tail values are preserved as raw context.
 
 ### 0x343 from the radar (●)
 
