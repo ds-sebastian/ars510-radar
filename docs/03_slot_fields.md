@@ -43,16 +43,15 @@ from this radar's own data.
   further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration.
 - **The heading output closely follows the clipped velocity angle.** It matches
   `floor(max(atan2(vy, vx), 0) × 64 / π)` on 98.2% of settled moving samples (99.6% within one code),
-  with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads near 63.
-  The output can also change while both transmitted velocity codes stay unchanged, so the formula is an
-  empirical comparison. Its exact inputs, precision, state updates and filtering remain provisional. Counts:
+  with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads near 63. The heading also
+  updates on its own while both velocity codes hold (three checked cases), so the radar keeps it as a separate state;
+  the formula is an empirical match. Counts:
   [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json),
   [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
 
   Against the road direction where ego later passes the target's position the output correlates at r = 0.89-0.93
-  (assumes the target follows that path). The heading can change while both velocity codes stay fixed (three checked
-  cases), so it is not purely derived from them
-  ([`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json)).
+  (assuming the target follows that path;
+  [`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json)).
   Reference assumptions and results:
   [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
@@ -72,30 +71,30 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 1 update-like, 2 prediction-like (coasting candidate); 0 rare. Measurement availability and accuracy are unproved | ◐ |
+| `0\|2` | **state** | 1 update-like, 2 prediction-like (coasting candidate); 0 rare | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
 | `16\|8` | **existence probability** | % (10-100); `20\|3` is its coded class; `NativeObject.existence_pct`, point metadata `existence_pct` | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
-| `107\|1` | **predicted (not measured)** | set on 45% of a track's last five records vs 2.6% elsewhere; never set during tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
+| `107\|1` | **predicted (not measured)** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
 
 **Score `16|8`.** Commonly sits at 100 on settled tracks and can decline in either state. In state 2 it steps
 down by **exactly 20 or 1 per cycle** (every one of 18,804 mature state-2 updates), and the slot is freed near 20.
 When the score is at most 40, the step is 20 and `107|1` is clear, the allocation is removed on the next record 82-86%
 of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2 → 1 during that countdown.
-Returning to state 1 does not guarantee score restoration. The byte behaves as an **existence probability in percent**:
+A track that returns to state 1 may keep its lowered score. The byte behaves as an **existence probability in percent**:
 `20|3` is a coded class of it with edges at 25, 50, 75, 90 and 99 % (class 6 = above 99 %), the coding Continental
 radars use for their existence probability, and the Tesla Model 3's Continental radar sends the same quantity as
 `ProbExist` ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). It reaches 100 % at
-about age 21 (p90 30), long before range and velocity converge, so it does not replace the age-60 publication gate.
+about age 21 (p90 30), long before range and velocity converge, so the age-60 publication gate stays.
 
 **Predicted records `107|1`.** Set on 45% of the last five records of a track's life against 2.6% elsewhere, with lower
 range noise while set (median 0.19 vs 0.41 m from the track's own trend) and lower existence: the record is a
-prediction, like the Tesla radar's `Meas = 0`. Velocity excursions are **not** predicted records: none of 144 tested
-excursions had it set, so a measured flag alone does not remove them.
+prediction, like the Tesla radar's `Meas = 0`. Velocity excursions arrive as measured records: all 144 tested
+excursions had `107|1` clear.
 
 **Startup code `8|5`** matches its formula on 134,217 / 134,217 birth samples across 24 drives: ages 1-4 read 30, then
 20, 13, 9, 6, 4, 2, 1, 1, 0. Once the motion code leaves 5 the field takes other, mature values.
@@ -134,7 +133,7 @@ for codes 1 / 5 / 7.
 
 The dominant weight sits one lane width apart: median yRel −3.7 m (right), −0.1 m (ego), +3.5 m (left). At the lane
 edges, weight moves smoothly from one lane to the next. The ego-lane weight is the radar's own **in-path** estimate,
-which openpilot's radard does not have (radard has no lateral gate; [08](08_openpilot_integration.md)).
+something radard itself lacks: it pairs leads by range ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
 
 The decoder exposes the triplet as `NativeObject.raw_weights148` (right, left, ego order as on the wire) and the state
 as `raw_weight_state128`.
@@ -145,20 +144,19 @@ as `raw_weight_state128`.
 |---|---|---|---|
 | `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
 | `136\|4` | association confidence | 15 without association; restarts at 3-9 when `112\|3` becomes non-zero and climbs to 14 | ◐ |
-| `181\|1` | daylight-only flag | set on a quarter of mature vehicle rows by day, never at night | ○ |
+| `181\|1` | daylight flag | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night | ○ |
 
 ![camera association by day and night](img/analysis/camera_association.png)
 
-Two slot fields follow what the camera can see, although no camera object frame is visible on this bus (the lane curves in
-0x85 reach the radar the same unseen way):
+Two slot fields follow what the camera can see. The camera's object data reach the radar over a path outside this bus,
+like the lane curves in 0x85:
 
 - **By day** `112|3` is non-zero on 99.7 % of in-lane vehicles at 5-40 m, on 62 % at 40-50 m and on 0.7 % at 50-80 m:
   a sharp range limit near 45 m, independent of ego speed. It is non-zero on 98 % within ±6° of boresight and falls off
   beyond ±20°, stays 0 for pedestrians, two-wheelers and class 5, and is set on only 5-21 % of oncoming vehicles.
 - **At night**, when the camera switches to light-source records ([05](05_acc_target_and_support.md#0x240-0x248-context-frames)),
   the range limit disappears: non-zero on 69 % at 5-40 m and on 85 % at 50-80 m (67 % and 99.6 % on a second set of drives).
-- The position does not step when the state changes (median lateral change 0.03 m, as on any other record), so it is not a
-  reference-point code.
+- The position stays continuous when the state changes (median lateral change 0.03 m, as on any other record).
 - `181|1` is set on 24.5 % of mature vehicle rows by day and on 2 of 59,988 at night (31.4 % and 0 of 12,136 on the second
   set; 29.8 % and 0 of 8,188 decoded from original logs). It occurs only for cars and large vehicles and more often at
   long range (22 % at 10-40 m, 43 % at 80-120 m).
@@ -211,9 +209,9 @@ class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
 with visible cyclists, including two that reach mature age. Two runs on another drive nominally follow visible
 walkers, including one with 31 mature rows. The camera review covers 21 episodes across 11 drives from a
 45-episode inventory, with ambiguous parked-vehicle, road and traffic-furniture scenes also represented.
-The radar's own kinematics point the same way: class-5 objects measure 1.2 × 0.7 m (between pedestrians at
-0.5 × 0.6 m and two-wheelers at 1.6 × 0.7 m) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
-a bicycle at walking-to-cycling speed. No class-5 sample has a camera association (`136|4` = 15 on all 968), and their
+The radar's own kinematics point the same way: class-5 objects measure 1.2 × 0.7 m (length × width, per-object
+medians; between pedestrians at 0.5 × 0.6 m and two-wheelers at 1.6 × 0.7 m) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
+a bicycle at walking-to-cycling speed. All 968 class-5 samples read `136|4` = 15, the value without camera association, and their
 height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
 [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
@@ -228,15 +226,15 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 | distance, lateral position | `d_rel`, `y_rel` | `32\|12`, `44\|12` |
 | speed over ground (minus ego speed = relative speed) | `v_long_ground`, `vel_code` | `64\|10` |
 | lateral speed | `v_lat_ground`, `v_lat_code` | `74\|10` |
-| acceleration (filtered, no calibrated unit) | `accel_like_code` | `84\|10` |
+| acceleration (filtered, raw code; about 0.04 m/s² per code) | `accel_like_code` | `84\|10` |
 | tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
 | existence probability | `existence_pct` | `16\|8` |
 | secondary score (obstacle-probability candidate) | `secondary_score_pct` | `184\|8` |
 | class, class confidence | `object_class`, `class_confidence_pct` | `163\|3`, `115\|5` |
-| size | `length_m`, `width_m`, `height_code` (not a height) | `56\|7`, `216\|6`, `272\|5` |
+| size | `length_m`, `width_m`, `height_code` (height-like size code) | `56\|7`, `216\|6`, `272\|5` |
 | uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|7`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
 
-There is no per-object relative-speed (Doppler) field. The ACC target's relative speed, acceleration and lateral speed are in
+Relative speed is the over-ground speed minus ego speed. The ACC target's relative speed, acceleration and lateral speed are in
 [05](05_acc_target_and_support.md); `UNCERTAINTY_PER_COUNT` holds the scales below.
 
 ## Uncertainty and quality
@@ -245,8 +243,8 @@ There is no per-object relative-speed (Doppler) field. The ACC target's relative
 |---|---|---|---|
 | `224\|7` | σ dRel (≈ 0.23 m per count, below 40 m) | grows with range, shrinks with track age, rises before deletion | ◐ |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
-| `240\|7` | longitudinal velocity error scale (≈ 0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
-| `248\|7` | σ vy (≈ 0.4 m/s per count, provisional) | grows with \|yRel\|, shrinks with age | ◐ |
+| `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
+| `248\|7` | σ vy (≈ 0.37 m/s per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others ≤ 0.03); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (11 at age 5-10, 2 from age 40) | ○ |
@@ -265,15 +263,15 @@ There is no per-object relative-speed (Doppler) field. The ACC target's relative
   [summary](../data/analysis/summaries/excursion_sigma_scale.json)). The `fused` profile uses it this way.
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (the same at every
-  range), `224|7` 0.23 m below 40 m (beyond, a 4-8 m error floor the code does not grade dominates), `248|7` 0.37 m/s. Relative units: the
+  range), `224|7` 0.23 m below 40 m (beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
   reference is the radar's own estimate.
 - **Axis check without a reference:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
-  codes describe slowly varying tracker error, not frame noise.
-- **It is a width, not a flag:** it separates excursion records below 40 m (AUC 0.95-0.97) but weakly beyond
-  (0.41-0.68), where excursions happen.
+  codes describe slowly varying tracker error.
+- **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95-0.97) and weakly beyond
+  (0.41-0.68), where excursions happen, so it weights readings rather than flagging them.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
-  over code deciles); that mixes both estimators' errors, so physical units remain provisional
+  over code deciles), which includes the camera's own error
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 **Reference scope.** The comparisons above are disagreements between two estimates of the same target:
@@ -286,23 +284,18 @@ empirical estimator weight; a raw measurement-noise covariance is not calibrated
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
 phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
 beyond 70 m are on in 98 % of cycles, those first seen at 40-70 m in 86 % and those first seen inside 40 m in 34-46 %, so the
-field records how the track was first detected (the far scan sets it) rather than its present state
+field records how the track was first detected (the far scan sets it)
 ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127. It appears in
 short runs on mature tracks at 34–97 m and often decays through 1022, 1014, 1006 over subsequent records. `raw`
 withholds it; in `fused` the speed filter's robust update absorbs it
-([07](12_kalman_filter.md)).
+([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 
 *Night, drive B: track #2 (a car about 61 m ahead in the left lane) jumps to 72 m and +55 to +61 m/s relative
 (76 m/s over ground, code 1023) in its last second before the radar drops it.*
-
-`8|6` is a candidate motion-context code (○). Its reported AUC is 0.92 / 0.90 for range-kinematics
-stationary/moving labels, but precision as a stationary flag is only 4–6%. Those labels do not independently
-establish physical stationarity or a graded-confidence enum. The raw code is unsuitable as a zero-speed rule
-([summary](../data/analysis/summaries/video_truth.json)).
 
 ## Raw and constant bits
 

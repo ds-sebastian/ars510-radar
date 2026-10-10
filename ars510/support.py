@@ -33,7 +33,7 @@ class Target192:
 
 
 def parse_0x192(data: bytes) -> Target192 | None:
-    """Decode raw summary words without assuming metric units or lane categories."""
+    """Raw 13-bit summary words; Target192.d_rel / .y_rel give metres in the object list's encoding."""
     if len(data) < 4 or bytes(data[:4]) == A192_SENTINEL:
         return None
     return Target192(int.from_bytes(data[0:2], "big") & 0x1FFF,
@@ -89,7 +89,7 @@ class Object680:
     y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit)
     v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
     flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving, bits 4-5 close standstill
-    lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.15 m/s per code (0 on stationary objects)
+    lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.18 m/s per code (0 on stationary objects)
 
     @property
     def stationary(self) -> bool:

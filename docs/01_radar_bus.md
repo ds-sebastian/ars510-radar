@@ -16,9 +16,9 @@ flowchart LR
     D --> P["RadarPoints<br/>dRel, yRel, vRel, trackId"]
 ```
 
-Stock opendbc parses TSS2 radar tracks at 0x180-0x19F with `toyota_tss2_adas.dbc`. That layout belongs to a
-different radar: on the ARS510 the object list is the segmented record on 0x80, and 0x191-0x194 carry paired
-target-summary codes requiring independent target association and calibration.
+Stock opendbc parses TSS2 radar tracks at 0x180-0x19F with `toyota_tss2_adas.dbc`, the track layout of other TSS2
+Toyotas. On the ARS510 the object list is the segmented record on 0x80, and 0x191-0x194 carry two target summaries from
+the radar's internal tracker ([05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)).
 
 ## Message map
 
@@ -53,7 +53,7 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 | 0.2 s | 0x235 / 0x237 (ACC target frames) start |
 | ≤ 0.9 s | 0x191 target summaries start |
 | ~4 s | openpilot's fingerprinting is done and it starts transmitting |
-| **5.83-5.92 s** | **0x80 / 0x85 object records start** (11 of 11 cold starts) |
+| **5.83-6.12 s** | **0x80 / 0x85 object records start** (27 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)) |
 
 - The object list starts after openpilot's fingerprinting has finished, so the openpilot integration detects the
   radar by its firmware version (`8821F0R03100` at 0x750 / 0x0f), with
@@ -86,5 +86,5 @@ request, are described in [13](13_car_bus_messages.md).
 ## Ego speed
 
 The object velocities are **over ground**, so the consumer subtracts ego speed. Toyota 0xB4 reads about 1.5% below
-GPS and wheel speed; `BASE_CONFIG` subtracts 0xB4 speed and applies `vground_scale = 0.149 / 0.15` to match
-([06](06_accuracy.md#velocity)).
+GPS and wheel speed; every driving profile reads the radar speed at 0.149 m/s per code (`vground_scale = 0.149 / 0.15`
+on the nominal 0.15) and subtracts 0xB4 speed ([06](06_accuracy.md#velocity)).

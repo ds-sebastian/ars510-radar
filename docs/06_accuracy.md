@@ -20,10 +20,10 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera, 99.3% against the vision model |
 | **yRel** scale | 0.015 m per code (66.7 codes/m): exactly 1.5 codes of the ACC target's centimetre lateral; gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
-| **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed; exact calibration remains bounded |
+| **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed |
 | **vRel** vs camera | far better than zero or range differencing at every range (table below) |
 | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |
-| **trackId** | no ID ever in two slots; 77 of 87 camera-checked tracks within 60 m keep one camera identity ≥ 95% of their life |
+| **trackId** | each ID in one slot only; 77 of 87 camera-checked tracks within 60 m keep one camera identity ≥ 95% of their life |
 
 ## Distance
 
@@ -41,8 +41,9 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
   short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2 %, 5 % and 8 %; cars
   more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 6-10 m at
-  60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m and is nearer
-  to it than to `dRel` on 71-79 % of samples. The ACC distance is therefore the better far range for that car, and any
+  60-100 m. openpilot's vision lead, which uses neither, reads within 1 % of the ACC distance from 20 to 80 m on the
+  700-segment set (3-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
+  beyond 30 m. The ACC distance is therefore the better far range for that car, and any
   position gate between the object list and the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, a
   second output of the same tracker that also covers other vehicles, shows the same: the object list is a median 2.5 m
@@ -72,7 +73,7 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 | camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |
 
   The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are
-  independent but wider. Replaying `fused` with these lateral units on 34 drives changes no braking count (held-out hard
+  independent but wider. Replaying `fused` with these lateral units on 27 drives changes no braking count (held-out hard
   radar-only ticks 30 → 30, target episodes 4 → 4, lead-source switches +0.7 %).
   Numbers: [`lateral_units.json`](../data/analysis/summaries/lateral_units.json).
 
@@ -81,11 +82,8 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 ## Velocity
 
 - **Over ground.** See [03](03_slot_fields.md#kinematics).
-- **Nominal zero 510.5.** While ego is stopped, the dominant object-code peak is at 510 and 511. Weighted means
-  of the four most frequent codes are 510.486 / 510.400 / 510.198. The collection selects host speed below
-  0.05 m/s and object age at least 10; it includes moving targets and does not independently select stationary
-  reflectors. The peak supports a zero near 510–511. Exact factory zero, bin centring and rounding remain
-  provisional; an integer-zero/floor encoding is one possible explanation for the half-code.
+- **Nominal zero 510.5.** While ego is stopped (below 0.05 m/s, objects of age 10 or more), the dominant object-code
+  peak is at 510 and 511; weighted means of the four most frequent codes are 510.486 / 510.400 / 510.198 on A / B / C.
 
   ![standstill codes](img/analysis/standstill_codes.png)
 
@@ -98,14 +96,13 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
   | B | .14869 | [.1463, .1514] |
   | C | .15304 | [.1508, .1550] |
 
-  A and B contain .15, C does not. These are consistency fits at the 1/16 m range scale, not a factory calibration
-  (a range-scale or ego-speed error moves them too). Against the ACC target's speed the slope is 0.99 / 1.02 at
-  40-80 m.
+  A and B contain .15. These fits rest on the 1/16 m range scale and the GPS ego speed, so an error in either moves
+  them too. Against the ACC target's speed the slope is 0.99 / 1.02 at 40-80 m.
 - **Ego reference.** Toyota 0xB4 reads about 1.5% below GPS and wheel speed in the measured comparisons. Steady
-  following against 0xB4 fits .149 m/s per code. The integration profiles use `vground_scale = .149 / .15`, a
-  **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed. This empirical alignment is
-  separate from the nominal wire scale and does not exactly invert the measured ego-speed discrepancy.
-  The best alignment between radar velocity and ego speed is +0.05-0.1 s.
+  following against 0xB4 fits .149 m/s per code. The driving profiles use `vground_scale = .149 / .15`, a
+  **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed (the openpilot file decodes at 0.149
+  directly). It is an empirical alignment to 0xB4 on top of the nominal wire scale. The best time alignment between
+  radar velocity and ego speed is +0.05-0.1 s.
 
 - **Against the camera** (closing speed from box growth over 2 s, all camera-paired samples):
 
@@ -133,15 +130,14 @@ wet or at night, hilly) and **C** (held out, 24 min highway). The references eac
 
 - **Wire steps:** `16 = 2⁴` gives 0.0625 m (range). The lateral step is 1.5 cm and the velocity step 0.15 m/s
   (0.54 km/h): ten lateral steps per velocity step-second. `2048 = 2¹¹` centres the lateral code and the 160-code range
-  bias gives a span of −10 to 245.9 m. Wire steps are not measurement accuracy.
+  bias gives a span of −10 to 245.9 m. These steps set the resolution; the accuracy is in the sections above.
 - **Frame:** velocity is over ground in the radar's rotating Cartesian axes ([03](03_slot_fields.md#kinematics)), a
-  processed object output, not raw Doppler. Lateral: `vy = dy/dt + ω·x`; in an ideal planar frame
-  `vx = dx/dt + v_ego − ω·y`. The radar's internal algorithm and elevation handling are unknown.
+  processed tracker output. Lateral: `vy = dy/dt + ω·x`; in an ideal planar frame `vx = dx/dt + v_ego − ω·y`.
 - **Optical consistency** ([07](07_velocity_excursions.md#compared-with-an-optical-reference), 791 near windows,
-  nominal 0.15 and carState ego speed): relative scale +0.3% (Theil-Sen) to −2.1% (OLS), interval −5.2% to +2.0%.
-  Physical calibration to 1% is not established ([summary](../data/analysis/summaries/video_truth.json)).
+  nominal 0.15 and carState ego speed): relative scale +0.3% (Theil-Sen) to −2.1% (OLS), interval −5.2% to +2.0%
+  ([summary](../data/analysis/summaries/video_truth.json)).
 - **Size of the constants' effect:** zero 510.5 → 512 shifts every speed by −0.225 m/s; 0.15 → 0.149 changes 30 m/s
-  by −0.2 m/s; a 3.4% road slope changes 30 m/s by ~0.017 m/s. None of these produces multi-m/s excursions
+  by −0.2 m/s; a 3.4% road slope changes 30 m/s by ~0.017 m/s, all far below the multi-m/s excursions
   ([`encoding_calibration.json`](../data/analysis/summaries/encoding_calibration.json)).
 
 ## Range walks
@@ -171,9 +167,9 @@ than the native velocity field.
 
 ## Track identity
 
-- **Within the radar:** a track ID is never live in two slots, and 98.3-98.9% of consecutive same-slot cycles continue
+- **Within the radar:** each track ID lives in one slot only, and 98.3-98.9% of consecutive same-slot cycles continue
   the same age run.
 - **Against the camera** (within 60 m, tracks with a long camera chain): the radar track keeps one camera identity for
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
-- **Re-link:** `BASE_CONFIG` re-links a track the radar re-initialises within 3.5 s near its predicted position,
-  so radard keeps its filter state across short losses.
+- **Re-link:** `raw` re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
+  its filter state across short losses; with `fused`'s speed filter the re-link changes nothing, so it is off there.

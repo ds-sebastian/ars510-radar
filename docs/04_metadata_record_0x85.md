@@ -35,7 +35,7 @@ neighbouring cycle about a third of the time, so pair by counter.
 
 ## Prefix bytes
 
-Bytes `[1:21]` of the record hold more than the clock and counter. Counts are over 677,115 records paired with 0x80 by counter and clock.
+Bytes `[1:21]` of the record hold more than the clock and counter. Counts are over 677,754 records paired with 0x80 by counter and clock.
 
 | record byte(s) | content | conf. |
 |---|---|---|
@@ -77,7 +77,7 @@ A populated cell is one boundary curve, `y(x) = c0 + c1·x + c2·x²/2 + c3·x³
 | `79\|1` | flag; identical in cells 2 and 3 on every row | set on 79-80 % of cells 2/3 and 43-44 % of 8/9, never in 0, 1, 4-7 | ○ |
 | `30\|1` | parameters present | above | ● |
 
-Unpopulated cells hold the defaults 900 at `48|16` and 500 at `64|16`; the conversions apply to populated cells only.
+Unpopulated cells hold the defaults 900 at `48|16` and 500 at `64|15`; the conversions apply to populated cells only.
 
 **Heading.** Three references that do not use the radar's own objects agree on sign and zero:
 * the ego-motion offset rate, `d(c0)/d(distance driven)` from consecutive records and carState speed, falls linearly with the code: binned correlation −0.985…−0.993 and slope −1.63…−1.80e-5 rad/code in cells 2, 3, 8 and 9;
@@ -85,7 +85,7 @@ Unpopulated cells hold the defaults 900 at `48|16` and 500 at `64|16`; the conve
 * the radar's own ego-lane assignment (slot `128|3` = 3) for objects at 45-90 m is predicted from the cell-2 / cell-3 curves with AUC .9967 on the offsets alone and .9992 once the heading term is added; the AUC is a plateau at 1.3-2.0e-5 rad/code and falls to .9937 at 4e-5.
 
 **Curvature.** Taking bit 79 out of the old 16-bit word is what makes it a clean quantity: the correlation with the camera lane curvature is +0.94 (cell 2/3, bit 79 clear) and +0.80…+0.91 otherwise, with a zero at 16,010-16,037; the best-correlated cells give 2.1-2.3e-6 (regressing the reference on the code) up to 2.4-2.8e-6 (inverting the regression of the code on the reference) 1/m per code.
-Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.45 for the whole word. The ego-lane assignment does not improve with an `x²/2` term, so the radar's lane state appears to use offset and heading only.
+Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.45 for the whole word. The ego-lane assignment is predicted as well from offset and heading alone as with an `x²/2` term, so the radar's lane state appears to use offset and heading.
 
 ![Raw word and measured future ego path](img/analysis/id85_direction_code_structure.png)
 
@@ -95,7 +95,7 @@ Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.45 for the 
 Replication: 114 further segments (binned heading correlation −0.93…−0.99 in every cell with enough samples, slopes −1.25…−1.85e-5; curvature +0.93…+0.99, slopes +1.9…+2.3e-6 on cells 2/3/8/9) and an independent decode of 14 original logs with this package
 ([`id85_lane_curve_cells.json`](../data/analysis/summaries/id85_lane_curve_cells.json), table [`lane_cells.parquet`](../data/analysis/lane_cells.parquet)).
 
-**Curvature rate.** `10|10` (the field near 500 on straight roads) tracks the rate of change of the cell's own curvature per metre driven: binned correlation +0.97…+0.99 in cells 2, 3, 8 and 9 (+0.92…+0.97 elsewhere), zero 497-501, 3.5-5.6e-6 1/m² per code in the lane cells; replicated on the fresh drives. It is not a heading.
+**Curvature rate.** `10|10` (the field near 500 on straight roads) tracks the rate of change of the cell's own curvature per metre driven: binned correlation +0.97…+0.99 in cells 2, 3, 8 and 9 (+0.92…+0.97 elsewhere), zero 497-501, 3.5-5.6e-6 1/m² per code in the lane cells; replicated on the fresh drives.
 
 **Which curve is which.** Against the camera's four lane lines (rows where all four have probability above 0.5), cells 0 and 1 follow the **left outer** line (median error 0.17 / 0.14 m), cells 2 and 8 the **left ego** line (0.04 m), cells 3 and 9 the **right ego** line (0.10 m) and cell 4 the **right outer** line (0.41 m); cells 6 and 7 follow the left outer line only 61-76 % of the time. Cells 8 / 9 hold a second estimate of the ego pair
 (offset correlation 0.98 / 0.99 with 2 / 3) and share the fields `20|4`, `24|4`, `28|1` and `44|4` on every row; cells 2 and 3 share bit 79. The camera-quality-like fields (`24|4` low bits = 1 and bit 27 set, `20|4` ≈ 5, `28|1` = 0, `44|4` = 2) go with a camera lane probability ≥ 0.99.
@@ -112,7 +112,7 @@ Against openpilot's lane model the median offset error is 3-10 cm:
 
 The assignment follows boundaries rather than being fixed to one: during a lane change or at a turn pocket a cell
 can keep describing the old or a different boundary for a while, and single-cycle spikes of a few metres occur.
-Treat a cell as "a nearby boundary", not "the ego lane's left edge". Cells 6 and 7 are candidates for road-edge curves (they follow openpilot's road-edge estimate within a drive).
+Treat a cell as "a nearby boundary" whose identity can change. Cells 6 and 7 are candidates for road-edge curves (they follow openpilot's road-edge estimate within a drive).
 
 The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` behaves like a distance (it falls about 4.1-4.4 codes per metre driven in monotone runs of cells 8 and 9); `80|6` is confidence-like (0-50; cells 1 and 4 take only 0, 15 and 50).
 

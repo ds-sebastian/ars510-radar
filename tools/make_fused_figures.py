@@ -3,10 +3,10 @@
 
     python tools/make_fused_figures.py      # writes docs/img/analysis/fused_*.png and profiles_vs_vision.png
 
-fused_how_it_works.png is computed from ars510 itself (FUSED_CONFIG on synthetic leads). fused_scenarios_*.png plot
-data/analysis/fused_scenarios.csv.gz: six real-drive moments replayed through the unchanged openpilot / sunnypilot
-planner (times relative to the moment, no route identifiers). profiles_vs_vision.png plots
-data/analysis/summaries/profiles_vs_vision.json; kalman_variants.png plots data/analysis/summaries/kalman_variants.json.
+fused_how_it_works.png and profile_layers.png are computed from ars510 itself (FUSED_CONFIG on synthetic leads, line
+counts from the source). profiles_vs_vision.png plots data/analysis/summaries/profiles_vs_vision.json; kalman_variants.png
+plots kalman_variants.json; kalman_ablation.png, kalman_combinations.png and kalman_justified.png plot fused_filter.json
+and hard_braking_review.json, measured on fused 2.0 / 2.1 (with the summaries), as their labels say.
 """
 from __future__ import annotations
 
@@ -19,7 +19,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
@@ -48,20 +47,12 @@ def frames_for_slot(slot: bytes, t: float) -> list:
 
 OUT = REPO / "docs" / "img" / "analysis"
 VIS, ANC, FUS, ACC, SUM = "#7a5fb0", S2, S3, INK, S4
-SCENARIOS = {
-    "S1": ("False closing rejected", "object list −4.8 m/s at 41 m; ACC target and summary −0.6"),
-    "S2": ("Slowing lead seen early", "the ACC target shows the slowdown before the object list"),
-    "S3": ("Over-estimated closing", "object list closing too fast; ACC target range ≈ −1.8 m/s"),
-    "S4": ("Fast real closing", "a car closing at ~10 m/s from 60 m"),
-    "S5": ("Far slot slide, no ACC target", "object list jumps to −13..−38 m/s at 80-110 m"),
-    "S6": ("Stopping behind a car", "stop-and-go at under 15 m"),
-}
 
 
 def how_it_works() -> None:
     fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13, 3.8))
     rng = np.arange(5, 121, 1.0)
-    code = np.clip(0.7 * rng, 1, 126)  # 240|7 ≈ 0.7 per metre of range (docs/07)
+    code = np.clip(0.7 * rng, 1, 126)  # illustrative: 240|7 grows by about 0.5-0.7 codes per metre of range (docs/12)
     sig = FUSED_CONFIG.speed_sigma_per_code * code
     a1.plot(rng, sig, color=GRAY, label="object-list speed (0.045 × 240|7)")
     a1.plot(rng, sig * FUSED_CONFIG.young_sigma_scale, color=GRAY, ls=":", label="… young track (× 1.8)")
@@ -96,35 +87,15 @@ def how_it_works() -> None:
     fig.tight_layout(); fig.savefig(OUT / "fused_how_it_works.png", dpi=130); plt.close(fig)
 
 
-def scenarios() -> None:
-    D = pd.read_csv(REPO / "data" / "analysis" / "fused_scenarios.csv.gz")
-    for part, ids in (("a", ("S1", "S2", "S3")), ("b", ("S4", "S5", "S6"))):
-        fig, axes = plt.subplots(2, 3, figsize=(13.5, 6.4), sharex="col", gridspec_kw={"height_ratios": [1.4, 1]})
-        for col, sid in enumerate(ids):
-            g = D[D.scenario == sid]; s = lambda name: g[g.series == name]
-            av, aa = axes[0, col], axes[1, col]
-            r = s("raw_vrel"); av.scatter(r.t, r.value, s=5, color=GRAY, label="object list (radar lead)", zorder=1)
-            sm = s("summary_vrel")
-            if len(sm) and len(r):
-                near = np.interp(sm.t, r.t, r.value)
-                sm = sm[np.abs(sm.value.to_numpy() - near) < 1.5]  # the parser's summary match (1.5 m/s)
-            if len(sm):
-                av.plot(sm.t, sm.value, color=SUM, lw=1.1, ls=":", label="radar summary (1 s slope)")
-            for name, color, lab, kw in (("acc_vrel", ACC, "radar ACC target", dict(lw=1.1, ls="--")),
-                                          ("vision_vrel", VIS, "vision lead", dict(lw=1.2)),
-                                          ("fused_vrel", FUS, "fused", dict(lw=1.8))):
-                x = s(name)
-                if len(x): av.plot(x.t, x.value, color=color, label=lab, **kw)
-            for name, color, lab in (("vision_a", VIS, "vision only"), ("fused_a", FUS, "fused")):
-                x = s(name); aa.plot(x.t, x.value, color=color, label=lab, lw=1.6)
-            title, sub = SCENARIOS[sid]
-            av.set_title(f"{title}\n{sub}", fontsize=9.5)
-            av.axvline(0, color=GRAY, lw=0.8); aa.axvline(0, color=GRAY, lw=0.8)
-            aa.set_xlabel("time (s)")
-            if col == 0:
-                av.set_ylabel("lead vRel (m/s)"); aa.set_ylabel("planner request (m/s²)")
-        axes[0, 0].legend(loc="lower left", fontsize=7.5); axes[1, 0].legend(loc="lower left", fontsize=7.5)
-        fig.tight_layout(); fig.savefig(OUT / f"fused_scenarios_{part}.png", dpi=130); plt.close(fig)
+def path_gate_lines() -> int:
+    """Source lines of the path-gate block inside Ars510NativeRadarInterface._payload."""
+    import inspect
+    from ars510.interface import Ars510NativeRadarInterface as I
+    src = inspect.getsource(I._payload).splitlines()
+    i = next(k for k, line in enumerate(src) if "cfg.path_gate_m > 0" in line)
+    ind = len(src[i]) - len(src[i].lstrip())
+    j = next(k for k in range(i + 1, len(src)) if len(src[k]) - len(src[k].lstrip()) <= ind)
+    return j - i
 
 
 def layers() -> None:
@@ -138,8 +109,9 @@ def layers() -> None:
             ("saturation guard", n(I._guard), (1, 0)),
             ("range fusion (gain 0.1)", n(I._fused_range), (0, 1)),
             ("ACC target: association", n(I._acc_target_match), (0, 1)),
-            ("summary: association", n(I._summary_update, I._summary_speed, I._summary_match), (0, 1)),
-            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1))]
+            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1)),
+            ("path gate (yaw rate)", path_gate_lines(), (0, 1)),
+            ("summaries (fork option, on in colored)", n(I._summary_update, I._summary_speed, I._summary_match), (0, 0))]
     prof = ["raw", "fused (default)"]; colors = [GRAY, FUS]
     fig, ax = plt.subplots(figsize=(8.5, 3.6))
     for i, (name, lines, on) in enumerate(rows):
@@ -159,7 +131,7 @@ def vs_vision() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())
     ev, req = S["heldout_events"], S["heldout_one_system_requests_and_overrides"]
     prof = ["raw", "fused_no_trackers", "fused"]; colors = [GRAY, "#8fd9bb", FUS]
-    names = ["raw", "fused,\nno ACC/summary", "fused\n(default)"]
+    names = ["raw", "fused,\nno ACC target", "fused\n(default)"]
     fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13.5, 4.0))
     m = [ev[p]["onset_diff_mean_s"] for p in prof]; ci = np.array([ev[p]["onset_diff_ci"] for p in prof]).T
     a1.bar(names, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
@@ -197,7 +169,7 @@ def kalman_variants() -> None:
     a2.plot(t, T["colored_vrel"], color=S4, lw=2, ls="--", label="colored noise (speed + bias state)")
     a2.set_xlabel("s"); a2.set_ylabel("vRel (m/s)")
     ax = a2.twinx(); ax.plot(t, T["d"], color=INK2, lw=0.8, ls=":"); ax.set_ylabel("range (m, dotted)", color=INK2)
-    a2.set_title("Why the bias state was not promoted: a far false closing that recovers")
+    a2.set_title("A far false closing that recovers: the bias state lets go slowly")
     a2.legend(loc="lower right", fontsize=8)
     fig.tight_layout(); fig.savefig(OUT / "kalman_variants.png", dpi=130); plt.close(fig)
 
@@ -256,9 +228,9 @@ def kalman_trace() -> None:
 
 
 def kalman_ablation() -> None:
-    """Hard radar-only braking ticks with each part of fused removed (34 replay drives)."""
+    """Hard radar-only braking ticks with each part of fused 2.0 removed (27 replay drives)."""
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["part_removed_34_drives"]
-    rows = [("fused (all parts)", "none"), ("− ACC target + summaries", "acc_target_and_summaries"),
+    rows = [("fused 2.0 (all parts)", "none"), ("− ACC target and summaries", "acc_target_and_summaries"),
             ("− young-track factor", "young_track_factor"), ("− speed-std gate", "speed_std_publication_gate"),
             ("− age-60 gate", "age_60_publication_gate"), ("− range fusion", "range_fusion"),
             ("− ego-speed alignment", "ego_speed_alignment"), ("− track-ID relink", "track_id_relink")]
@@ -271,14 +243,14 @@ def kalman_ablation() -> None:
     ax.axvline(S["none"]["heldout"], color=FUS, lw=0.8, ls=":"); ax.axvline(S["none"]["further"], color=S4, lw=0.8, ls=":")
     ax.set_yticks(y, [lab for lab, _ in rows]); ax.invert_yaxis()
     ax.set_xlabel("hard radar-only braking ticks (planner ≤ −2 m/s² while vision-only ≥ −0.5)")
-    ax.set_title("What each part of the Kalman filter is worth (34 replay drives, before the ACC unit fix)"); ax.legend(loc="lower right")
+    ax.set_title("What each part of the Kalman filter is worth (fused 2.0, 27 replay drives)"); ax.legend(loc="lower right")
     fig.tight_layout(); fig.savefig(OUT / "kalman_ablation.png", dpi=130); plt.close(fig)
 
 
 def kalman_combinations() -> None:
-    """Each tested version of the filter: lines in the openpilot file, its driving numbers, pass or fail (34 drives)."""
+    """Each tested version of the 2.0 filter: lines in the openpilot file of that time, driving numbers, pass or fail (27 drives)."""
     C = json.loads((REPO / "data" / "analysis" / "summaries" / "fused_filter.json").read_text())["combinations_34_drives"]
-    names = {"fused": "fused (all parts)", "no_L": "− track-ID relink", "no_S": "− summaries", "no_RL": "− range fusion − relink",
+    names = {"fused": "fused 2.0 (all parts)", "no_L": "− track-ID relink", "no_S": "− summaries", "no_RL": "− range fusion − relink",
              "no_SL": "− summaries − relink",
              "no_SR": "− summaries − range fusion", "no_SRL": "− summaries − relink − range fusion",
              "no_SRLYG": "all five removed (+ young factor, std gate)"}
@@ -293,11 +265,11 @@ def kalman_combinations() -> None:
         ax.text(r["openpilot_file_lines"] + 4, yi, f'{r["openpilot_file_lines"]} lines', va="center", fontsize=8.5, color=INK)
         ax.text(375, yi, f'unjustified hard braking {r["unjustified_ticks"]} ticks   lead switches {r["switches"]}', va="center",
                 fontsize=8.2, color=INK2)
-        ax.text(700, yi, ("passes: the openpilot version" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
+        ax.text(700, yi, ("passes: today's fused and openpilot version" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
                 color=FUS if r["passes"] else S4)
     ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
-    ax.set_xlabel("lines in the openpilot version (upstream/ars510_radar.py)")
-    ax.set_title("Fewest lines for the same driving: parts removed together (34 replay drives, before the ACC unit fix)")
+    ax.set_xlabel("total lines of the openpilot file at 2.0 (upstream/ars510_radar.py)")
+    ax.set_title("Fewest lines for the same driving: parts of fused 2.0 removed together (27 replay drives)")
     fig.tight_layout(); fig.savefig(OUT / "kalman_combinations.png", dpi=130); plt.close(fig)
 
 def kalman_justified() -> None:
@@ -306,12 +278,12 @@ def kalman_justified() -> None:
     order = ["fused, ACC/summary units corrected", "fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
              "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
              "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
-    names = {"fused, ACC/summary units corrected": "fused (default)", "fused": "fused, before the ACC unit fix",
-             "fused - S - L": "fused − summaries − relink (openpilot version)",
-             "fused - S - R - L": "fused − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
-             "fused - ACC (summaries kept)": "fused − ACC target", "fused - ACC - summaries": "fused − ACC target − summaries",
+    names = {"fused, ACC/summary units corrected": "fused 2.1 (with summaries)", "fused": "fused 2.0 (with summaries)",
+             "fused - S - L": "2.0 − summaries − relink (today's fused)",
+             "fused - S - R - L": "2.0 − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
+             "fused - ACC (summaries kept)": "2.0 − ACC target", "fused - ACC - summaries": "2.0 − ACC target − summaries",
              "colored": "colored (experimental)", "tuned (anchor)": "earlier tuned profile"}
-    rows = [(names.get(k, k.replace(" - ", " − ")), S[k]) for k in order if k in S]
+    rows = [(names.get(k, k.replace("fused - ", "2.0 − ").replace(" - ", " − ")), S[k]) for k in order if k in S]
     y = np.arange(len(rows))
     fig, ax = plt.subplots(figsize=(11, 0.42 * len(rows) + 1.5))
     left = np.zeros(len(rows))
@@ -322,7 +294,7 @@ def kalman_justified() -> None:
     for yi, (_, r) in zip(y, rows):
         ax.text(left[yi] + 0.6, yi, f'{r["unjustified"]["ticks"]} unjustified', va="center", fontsize=8, color=S4)
     ax.set_yticks(y, [n for n, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, max(left) + 14)
-    ax.set_xlabel("hard radar-only braking ticks, 34 replay drives (planner ≤ −2 m/s² while vision-only asks ≥ −0.5)")
+    ax.set_xlabel("hard radar-only braking ticks, 27 replay drives (planner ≤ −2 m/s² while vision-only asks ≥ −0.5)")
     ax.set_title("Were the radar's hard brakes real? Judged by the radar's raw range, the camera and the driver")
     ax.legend(loc="upper right", fontsize=8)
     fig.tight_layout(); fig.savefig(OUT / "kalman_justified.png", dpi=130); plt.close(fig)
@@ -330,5 +302,5 @@ def kalman_justified() -> None:
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    how_it_works(); scenarios(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations(); kalman_justified()
-    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "fused_scenarios_a.png", "fused_scenarios_b.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png", "kalman_justified.png")))
+    how_it_works(); layers(); vs_vision(); kalman_variants(); kalman_trace(); kalman_ablation(); kalman_combinations(); kalman_justified()
+    print("wrote", *(OUT / n for n in ("fused_how_it_works.png", "profile_layers.png", "profiles_vs_vision.png", "kalman_variants.png", "kalman_trace.png", "kalman_ablation.png", "kalman_combinations.png", "kalman_justified.png")))

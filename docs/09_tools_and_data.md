@@ -9,8 +9,8 @@
 | [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
 | [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several interface profiles side by side |
 | [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
-| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs each profile and filter layer on the bundled samples: the examples in [07](12_kalman_filter.md); a template for plotting your own idea |
-| [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild the other charts in `docs/` |
+| [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs the profiles on the bundled samples: the examples in [12](12_kalman_filter.md); a template for plotting your own idea |
+| [`tools/make_analysis_figures.py`](../tools/make_analysis_figures.py), [`make_fused_figures.py`](../tools/make_fused_figures.py), [`make_guide_figures.py`](../tools/make_guide_figures.py), [`make_jitter_figures.py`](../tools/make_jitter_figures.py), [`make_figures.py`](../tools/make_figures.py) | rebuild the other charts in `docs/` |
 | [`tools/compute_stats.py`](../tools/compute_stats.py) | descriptive statistics of the dataset → `data/analysis/stats.json` |
 
 ### Decode a log
@@ -24,8 +24,7 @@ python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile f
 
 ### Cabana
 
-The object list is a multi-frame record, so Cabana cannot decode it from 0x80 directly. `build_cabana_route.py`
-copies your log and appends each record's occupied slots as ordinary CAN messages on **virtual bus 10**, byte for
+The object list is a multi-frame record, so Cabana needs it reassembled first. `build_cabana_route.py` copies your log and appends each record's occupied slots as ordinary CAN messages on **virtual bus 10**, byte for
 byte, so the DBC bit positions are the real slot bit positions.
 
 ```bash
@@ -89,11 +88,11 @@ until the last.
    and plot your idea against the current profile; synthetic CAN for events the samples lack is built the same way.
 2. **Add it as an option, off by default.** A field in `NativeInterfaceConfig` ([`ars510/interface.py`](../ars510/interface.py))
    with a comment saying what it fixes, plus a test in `tests/test_interface.py` built from synthetic slots
-   (`encode_slot`), including a case where it must *not* act.
+   (`encode_slot`), including a case where it must leave the track alone.
 3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
-   Do not tune on the drive that motivated it.
+   Tune on other drives than the one that motivated it.
 4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the current
-   default profile and with yours, and report the gates used throughout [07](12_kalman_filter.md):
+   default profile and with yours, and report the gates used throughout [12](12_kalman_filter.md):
 
    | gate | meaning |
    |---|---|
@@ -103,23 +102,24 @@ until the last.
    | early braking | share of driver brakes where the planner reached ≤ −1 m/s² between 3 s before and 0.5 s after the driver started braking; must not drop |
    | per event | no single driver brake answered more than 0.15 s later, lost, or weaker when hard |
 
-5. **Open a PR with the numbers**, the figure, and the drives used (anonymised). A change that only looks better on
-   the drive that motivated it is not merged.
+5. **Open a PR with the numbers**, the figure, and the drives used (anonymised). Changes are merged on held-out
+   evidence.
 
 ## Data in this repo
 
 [`data/README.md`](../data/README.md) describes every file. In short:
 
-- **`data/sample/`**: two 25-30 s real CAN captures (radar frames plus wheel speed, times rebased to 0), used by the
-  tests: steady highway following, and the velocity excursion of [07](07_velocity_excursions.md).
+- **`data/sample/`**: three 24-30 s real CAN captures (radar frames plus wheel speed, times rebased to 0), used by the
+  tests: steady highway following, the velocity excursion of [07](07_velocity_excursions.md), and an excursion with
+  the radar's ACC target.
 - **`data/analysis/`**: an anonymised dataset from three drives (A, B, C; 88 minutes): every decoded object sample
   with all raw fields, 90k radar-camera pairs, ground-contact and lateral camera pairs, brake-event windows, fault
   injection results, and summary JSONs behind the numbers in these docs.
 - **`data/reference/slot_bit_map.json`**: per-bit statistics of the 0x80 slot, header and 0x85 record.
 
 The evidence comes from one owner's RAV4 (TSS2, 2022), logged with openpilot. Drives are named by role (A development,
-B city, C highway, D1-D4 closed-loop drives); route IDs, dongle IDs, GPS and full video are not included. A few
-camera stills are, with licence plates and place names blurred.
+B city, C highway, D1-D4 closed-loop drives); the repo carries no route IDs, dongle IDs, GPS or full video. A few
+camera stills are included, with licence plates and place names blurred.
 
 ## Testing on your own car
 
@@ -129,7 +129,7 @@ camera stills are, with licence plates and place names blurred.
 2. **Sanity checks:** stopped behind a car, dRel matches the gap and vRel ≈ 0; approaching a stopped car,
    `v_long_ground` ≈ 0; a car passing on your left has positive yRel and left-lane weight.
 3. **Replay** a few drives as above and look at the braking episodes only one run has.
-4. **Install** with [`openpilot/install.py`](../openpilot/README.md) and follow the on-car check list in
+4. **Install** with [`openpilot/install.py`](../openpilot/README.md#install-on-a-comma-device) and follow the on-car check list in
    [08](08_openpilot_integration.md#checking-a-new-install-on-the-car).
 
 ### What to send back
@@ -141,4 +141,4 @@ camera stills are, with licence plates and place names blurred.
 - Short CAN excerpts of interesting events (radar addresses plus bus-0 0xB4, times rebased to 0, like `data/sample/`):
   a clear velocity excursion, a stopped-car approach, a lane change.
 
-Please don't post route IDs, dongle IDs, GPS or video unless you mean to.
+Keep route IDs, dongle IDs, GPS and video private unless you mean to share them.

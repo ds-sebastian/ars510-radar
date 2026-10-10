@@ -17,7 +17,7 @@
 
 ## Checklist
 
-- [ ] `pytest`, `tools/check_structure.py` and `tools/check_privacy.py` pass
+- [ ] `pytest`, `tools/check_structure.py`, `tools/check_privacy.py` and `ruff check upstream/` pass
 - [ ] No route/dongle IDs, VINs, GPS, local paths or identifying video
 - [ ] Docs describe the current state (no dated notes); cited numbers come from `data/analysis/summaries/`
 - [ ] Written with an AI agent: say which (or "none")

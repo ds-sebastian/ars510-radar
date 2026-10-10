@@ -15,7 +15,7 @@ CELL_COUNT = 10
 CELL_LEN = 12
 CRC_START, CRC_END = 141, 145
 
-# Lane / road-curve polynomial carried by a populated cell: y(x) = c0 + c1 x + c2 x^2 / 2, left positive.
+# Lane / road-curve polynomial carried by a populated cell: y(x) = c0 + c1 x + c2 x^2 / 2 + c3 x^3 / 6, left positive.
 # Nominal conversions (heading and curvature units are bounded, not pinned: docs/04).
 CURVE_OFFSET_ZERO, CURVE_OFFSET_M = 2000, 0.01
 CURVE_HEADING_ZERO, CURVE_HEADING_RAD = 31200, -1.8e-5      # code up = lane pointing right

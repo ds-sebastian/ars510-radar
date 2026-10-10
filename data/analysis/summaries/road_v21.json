@@ -68,7 +68,12 @@
   "le_1p5_without_camera_or_acc_closing": 0,
   "episodes_le_1p0": 49,
   "radar_caused_without_closing_witness": 2,
-  "note": "both about -1.5 m/s2, lead beyond 95 m, no ACC target: one radard pairing with a radar object a lane over (curve), one far speed excursion on the right car (work-zone lane shift)"
+  "note": "both about -1.5 m/s2, lead beyond 95 m, no ACC target: one radard pairing with a radar object a lane over (curve), one far speed excursion on the right car (work-zone lane shift)",
+  "cases": {
+   "work_zone": "about -1.46 m/s2 at 95-120 m in a lane shift, lead is the camera's lead car; radar -5.5 m/s against camera -2 m/s: far speed excursion, no ACC target",
+   "curve_adjacent": "about -1.48 m/s2 on a right curve: radard matched the camera lead (about 6 m right) to a slower radar track 9 m right at 99-111 m; no ACC target; driver on the gas",
+   "late_brake": "-2.8 m/s2 engaged: pickup slowing in lane; radar object born at about 66 m reading 15-20 m short of the ACC target and camera, unmatched to the ACC target under 2.1's max(12 m, 0.25 x) match, published at age 60 16 m short; the deceleration needed at the true range was about 0.7 m/s2"
+  }
  },
  "replay_vs_vision": {
   "moving_hours": 5.83,
@@ -86,5 +91,12 @@
    -0.371
   ],
   "onset_note": "ego motion recorded under fused, which favours fused in the onset comparison"
+ },
+ "issue66_report": {
+  "car": "RAV4 2025 hybrid, TOYOTA_RAV4_TSS2_2023",
+  "radar_firmware": "8821F0R03100",
+  "fused_2_1_0_engaged_min": 21,
+  "fused_2_1_0_unprompted_braking": 0,
+  "note": "driver's own report in issue #66; their 2.1 drives replayed open loop are in lead_choice_guards.json (second_car_hard_radar_only)"
  }
 }

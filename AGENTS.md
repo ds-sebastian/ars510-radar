@@ -14,8 +14,8 @@ Start with [README.md](README.md), then the doc for your area:
 | transport, CRC, slot layout | `ars510/transport.py`, `record.py`, `constants.py` | `docs/02` |
 | field mapping (start bit, length, zero, scale) | `ars510/objects.py` | `docs/03` |
 | 0x85 metadata record, lane cells | `ars510/shell85.py` | `docs/04` |
-| ACC target, support messages | `ars510/support.py` | `docs/05` |
-| openpilot-facing interface, profiles, filters | `ars510/interface.py` | `docs/07`, `docs/08`, `docs/11` |
+| ACC target, support messages, car-bus 0x366 | `ars510/support.py` | `docs/05`, `docs/13` |
+| openpilot-facing interface, profiles, filters | `ars510/interface.py` | `docs/08`, `docs/11`, `docs/12` |
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
 
@@ -28,6 +28,7 @@ pip install -e .[dev]
 pytest                              # must pass
 python tools/check_structure.py     # CRC and layout evidence on the bundled samples; must pass
 python tools/check_privacy.py       # no route/dongle IDs, VINs, GPS, local paths; must pass
+ruff check upstream/                # the openpilot file follows opendbc's ruff rules (CI)
 ```
 
 ## Rules
@@ -39,7 +40,7 @@ python tools/check_privacy.py       # no route/dongle IDs, VINs, GPS, local path
   Drives are anonymous (A/B/C, D1-D4) with relative times. `tools/check_privacy.py` enforces the patterns.
 - **Decoder semantics** change only with a test and the matching doc row. Keep `ars510/` dependency-free.
 - **Driving behaviour** (anything that changes a profile's output, above all the default `FUSED_CONFIG`) needs an
-  openpilot replay against the current profile with the gates in `docs/07`, the vision-only comparison in `docs/11`,
+  openpilot replay against the current profile with the gates in `docs/09`, the vision-only comparison in `docs/11`,
   a review of the moments that change, and numbers in the PR. Do not tune on the drive that motivated the change.
 - **The openpilot file** (`upstream/ars510_radar.py`) is meant for upstream, where every line has to be defended. A PR
   that adds or removes lines there updates its row in the parts ledger (`docs/10`, "Parts of the openpilot file", and

@@ -37,18 +37,18 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 
 ## What to expect on the road
 
-From replaying 34 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
+From replaying 27 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
-  estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
+- **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
+  and speed.
 - **Braking starts slightly before vision-only would** on average (0.01 s), and the planner is already asking for
   ≥ 1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
-  the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
+  the driver also slowed (0 per hour with the driver on the gas). The requests are as smooth as vision-only.
 - **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
-  brakes unnecessarily for 5.4 s against 10.2 s for vision only (34 replay drives: 7.1 s against 31.9 s), and misses
+  brakes unnecessarily for 5.4 s against 10.2 s for vision only (27 replay drives: 7.1 s against 31.9 s), and misses
   less braking (7.2 s against 10.3 s; 3.0 s against 10.0 s)
   ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
@@ -56,7 +56,8 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 
 These are replay results on one owner's car. On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
 2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking; the two mild slowdowns had far leads beyond
-95 m without the radar's ACC target ([08](docs/08_openpilot_integration.md#on-the-road)).
+95 m without the radar's ACC target, and the next-lane pairing behind one of them is what the path gate now handles
+([08](docs/08_openpilot_integration.md#on-the-road), [12](docs/12_kalman_filter.md#path-gate)).
 
 ## How the filter works
 
@@ -85,21 +86,20 @@ The code comes in two versions that drive identically:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
 - **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 223 lines (183 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
-  It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build can still add the
-  radar's target summaries and the track-ID relink as options; neither improves the driving
-  ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
+  It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build also keeps the
+  radar's target summaries and the track-ID relink as options (`colored` uses the summaries); the default drives as
+  well or better without them ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and keeps cars in the next lane from becoming the lead | everyday driving: fewest false brakes, vision's smoothness |
-| `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
+| `raw` | `--profile raw` | the unfiltered radar decode, with only the validity rules radard needs | research and comparison only: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
-The earlier tuned profiles (`anchor`, `steady`) were outperformed by `fused` and removed; their names now install
-`fused`. How each profile works, each against vision only, pros and cons, assumptions and a comparison with openpilot's
+The names of the earlier tuned profiles (`anchor`, `steady`) install `fused`. How each profile works, each against vision only, pros and cons, assumptions and a comparison with openpilot's
 other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itself, with replay evidence for every part:
 [docs/12](docs/12_kalman_filter.md).
 
@@ -108,12 +108,12 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 | | state |
 |---|---|
 | **Object list** (0x80): transport, CRC, 20 slots, track IDs | ● decoded |
-| **Distance, lateral position, speed over ground** | ● field layout and motion; ◐ exact physical zero and scales ([06](docs/06_accuracy.md)) |
+| **Distance, lateral position, speed over ground** | ● field layout, range scale, lateral sign, speed over ground; ◐ range zero, lateral and speed scales ([06](docs/06_accuracy.md)) |
 | **Object attributes**: lane assignment, class and its confidence, size, heading, lateral speed and acceleration, existence, uncertainties, camera association | ◐ decoded; physical names and scales of some fields provisional ([03](docs/03_slot_fields.md)) |
-| **Radar's ACC target** (0x235 / 0x237 / 0x239 / 0x23B, 50 Hz) | ● mapped bit for bit: closing speed 0.125 m/s, relative acceleration 0.125 m/s², distance 0.025 m and lateral 0.01 m per code, class, cycle timestamp; ◐ lateral speed and acceleration, in-path state, width; ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
+| **Radar's ACC target** (0x235 / 0x237 / 0x239 / 0x23B, 50 Hz) | ● mapped bit for bit: closing speed 0.125 m/s, relative acceleration 0.125 m/s² and distance 0.025 m per code, class, cycle timestamp; ◐ lateral 0.01 m per code, lateral speed and acceleration, in-path state, width; ◐ sent by the radar itself ([05](docs/05_acc_target_and_support.md)) |
 | **Target summaries** (0x190-0x194) | ● 0x192 / 0x194 = position of one internal track, in the object list's encoding; ● 0x190 counts them; ◐ 0x191 / 0x193 carry the class template (car / truck size) ([05](docs/05_acc_target_and_support.md)) |
 | **Car-bus target report** (0x366, 5 Hz) | ◐ mostly the ACC target, also reports without one: relative speed 0.5 km/h, distance ≈ 0.8 m, lateral 0.34 m per code ([13](docs/13_car_bus_messages.md)) |
-| **Single-object stream** (0x680, 2 Hz) | ◐ one tracked object, mostly stationary roadside objects: range at 1/32 m, lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
+| **Single-object stream** (0x680, 2 Hz) | ● range at 1/32 m; ◐ one tracked object, mostly stationary roadside objects: lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; ○ remaining cell fields ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration** | installable on openpilot, sunnypilot and StarPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
@@ -122,21 +122,23 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 
 ## Known limitations
 
-- **One car so far.** Everything was measured on one RAV4 2022 with radar firmware `8821F0R03100`. Firmware
-  `8821F0R01100` is in openpilot's fingerprints but unconfirmed; the installer then relies on seeing the radar's
-  messages on bus 1.
+- **One owner's car.** The decode and the replays come from one RAV4 2022 with radar firmware `8821F0R03100`; a second
+  driver's 2025 RAV4 Hybrid with the same firmware reported the same road numbers ([08](docs/08_openpilot_integration.md#on-the-road)).
+  Firmware `8821F0R01100`, also in openpilot's fingerprints, is detected by its bus-1 messages only when the radar is
+  already running at fingerprinting (a warm restart); one capture from such a car adds it to the firmware list.
 - **Far-range speed excursions.** The radar's object list sometimes reports a far car closing several m/s faster than
-  it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The Kalman filter handles this by leaning on the
-  radar's own trackers, but its ACC target covers only about 57% of radar-lead time (5% beyond 80 m) and the summaries
-  are used up to 80 m, so the farthest leads rely on the object list alone.
+  it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The Kalman filter handles this by leaning on the radar's
+  ACC target, which is present for 99% of radar-lead time up to 80 m and 66% beyond, so the farthest leads rely more on
+  the object list alone.
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
-  range is smoothed but not part of the speed filter ([10](docs/10_research_directions.md#for-a-better-ride)). Beyond
-  50 m it also reads 5-8% short of the radar's own ACC distance ([06](docs/06_accuracy.md#distance)).
+  range is smoothed separately from the speed filter ([12](docs/12_kalman_filter.md#what-runs-before-and-around-the-filter)).
+  At 50-100 m it also reads 5-8% short of the radar's own ACC distance, which the followed car takes as its range
+  ([06](docs/06_accuracy.md#distance)).
 - **openpilot longitudinal needs no CAN filter.** openpilot's radar-disable request silences only the radar's
   car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
-  `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)). Other
-  firmware is unchecked.
-- **Not upstream.** This is a community integration installed on top of openpilot; comma has not reviewed it.
+  `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)).
+- **Community integration.** It installs on top of openpilot; the single-file openpilot version is the candidate for an
+  upstream PR ([10](docs/10_research_directions.md#towards-an-upstream-comma-interface)).
 
 ## How it fits into openpilot
 
@@ -180,7 +182,7 @@ bytes and a CRC32. Each slot is one little-endian bit field:
 | yRel (left +) | `44\|12` | `(code − 2048) × 0.015` m |
 | speed over ground | `64\|10` | `(code − 510.5) × 0.15` m/s; vRel = this − ego speed |
 | age | `24\|7` | radar cycles; a restart is a new track |
-| speed uncertainty | `240\|7` | about 0.045 m/s per count (calibrated against the radar's ACC target) |
+| speed uncertainty | `240\|7` | about 0.043-0.045 m/s per count against the radar's ACC target |
 | lane weights (right / left / ego) | `148\|4`, `152\|4`, `156\|4` | 0-15, summing to 15 or 16 |
 | class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler |
 
@@ -217,7 +219,7 @@ numbers and a glossary.
 | [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `BASE_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
 | [`upstream/`](upstream) | the single-file upstream candidate (`ars510_radar.py`), tested against the corresponding fork configuration on bundled CAN samples |
-| [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (parsing does not use them) |
+| [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (the decoder works from raw frames) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |
 | [`data/`](data) | three CAN samples, an anonymised analysis dataset (3 drives, 88 min) and the summary JSONs behind every number in the docs |
 | [`docs/`](docs) | the documentation above |
@@ -226,10 +228,10 @@ numbers and a glossary.
 ## Where the evidence comes from
 
 One owner's 2022 RAV4, logged with openpilot: three reference drives (A development, B city, C highway; 88 minutes)
-with camera and odometry references; 399 one-minute segments from 24 drives for field statistics; 34 drives replayed
-through openpilot against the driver (20 held-out routes, 4.6 h with the driver controlling speed); six later drives
-(1.9 h) held back for fresh checks; and closed-loop drives on FrogPilot, StarPilot and sunnypilot. Route IDs, dongle IDs, GPS
-and full video are not included.
+with camera and odometry references; 399 one-minute segments from 24 drives for field statistics; 27 drives replayed
+through openpilot against the driver (20 held-out routes with 4.6 h of driver-controlled speed, 4 further drives, 3
+owner sunnypilot drives); 8 later drives held back for fresh checks; and closed-loop drives on FrogPilot,
+StarPilot and sunnypilot. The repo carries anonymised drives only: no route IDs, dongle IDs, GPS or full video.
 
 ## Contributing
 

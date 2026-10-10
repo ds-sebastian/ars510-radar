@@ -46,7 +46,7 @@ OBJ_BASE, DERIVED_BASE, HEADER_ADDR, TRAILER_ADDR, SHELL_HDR, SHELL_BASE = 0x700
 OBJ_DLC, DERIVED_DLC, HEADER_DLC, TRAILER_DLC, SHELL_HDR_DLC, SHELL_DLC = 48, 16, 20, 8, 24, 12
 SHELL_CRC = 0x76B
 FUSED_CONFIG = replace(ALL_TRACKS_CONFIG, range_fusion_gain=0.1)
-KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0)
+KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0, summary_sigma_mps=0.0)
 SETTLED_AGE = 60
 BIT_MAP = REPO / "data" / "reference" / "slot_bit_map.json"
 DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"
@@ -57,43 +57,43 @@ SIGNAL_COMMENTS = {
     "DREL": "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m for openpilot's camera-referenced distance (radard does).",
     "YREL_LEFT": f"Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
     "VLONG_OVER_GROUND": "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.",
-    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.145 (0.15 used).",
+    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).",
     "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.",
     "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
-    "UNK_208_6": "Heading-like angle output, approximately pi/64 rad per code. Empirical clipped velocity-angle relation on settled moving tracks; can update while both published velocity codes remain unchanged. Exact inputs/filter/physical direction and timing remain provisional.",
+    "UNK_208_6": "Coarse heading over ground, left positive, about pi/64 rad per code: matches floor(max(atan2(vy, vx), 0) * 64 / pi) on 98 % of settled moving samples; can update while both velocity codes hold.",
     # slot: lifecycle and confidence
-    "STATE_CODE": "Track state: 1 update-like, 2 prediction-like/coasting candidate; 0 rare. State does not certify measurement availability or accuracy. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
+    "STATE_CODE": "Track state: 1 update-like, 2 prediction-like/coasting candidate; 0 rare. While 2, SCORE_CODE drops by 20 (or 1) per cycle.",
     "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",
     "UNK_8_6": "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.",
-    "ONCOMING_FLAG": "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends; a clear flag does not certify past target motion.",
-    "SCORE_CODE": "Existence-like score, 0-100: can decline in either state; drops by exactly 20 (or 1) per cycle in state 2. State 1 return does not guarantee recovery; not a calibrated probability. The slot is freed near 20.",
+    "ONCOMING_FLAG": "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.",
+    "SCORE_CODE": "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its coded class. The slot is freed near 20.",
     "AGE": "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.",
     "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
     "UNK_111_1": "Bit 2 of the motion code (see MOVE_STATE).",
     "UNK_112_3": "Camera-association state: 0 radar only, 1 (rarely 2-4) while the camera has the vehicle. By day non-zero on nearly all in-lane vehicles inside 40 m and almost never beyond 50 m; at night also at long range.",
-    "UNK_107_1": "Coasting-flag candidate: rarely set in settled life, often set just before deletion.",
+    "UNK_107_1": "Predicted (not measured) record, like Tesla's Meas = 0: set on 45 % of a track's last five records, 2.6 % elsewhere.",
     # slot: lane assignment
     "UNK_128_2": "Lane-assignment state, low bits (full = UNK_128_2 | UNK_130_1 << 2): 3 ego lane, 2 right lane, 4 left lane; 1, 5, 7 = no lane weights.",
     "UNK_130_1": "Lane-assignment state, bit 2 (see UNK_128_2).",
     "UNK_148_8": "Lane weights in 1/15 steps: low nibble (148|4) right lane, high nibble (152|4) left lane. With UNK_156_4 (ego lane) they sum to 15 or 16.",
     "UNK_156_4": "Ego-lane weight in 1/15 steps (see UNK_148_8).",
     # slot: class and size
-    "UNK_163_3": "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 rare (post-like), 6 two-wheeler.",
+    "UNK_163_3": "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist / person associations), 6 two-wheeler.",
     "UNK_140_3": "Object class, second encoding of UNK_163_3: 0, 5, 7, 1, 3, 4 = class 1, 2, 3, 4, 5, 6.",
     "UNK_136_4": "Camera-association confidence: 15 without association; restarts at 3-9 when UNK_112_3 becomes non-zero and climbs to 14.",
     "UNK_115_5": "Class confidence in 5 % steps: 0 while not yet classified, 4-20 otherwise (20 = 100 %); moves by one step per cycle. A large vehicle is re-classified as a car when it falls to 5.",
     "UNK_120_3": "Raw; non-zero on 0.2 % of rows (mature cars).",
     "UNK_131_4": "Dominant lane weight: the largest of the three lane weights or one less.",
-    "UNK_181_1": "Daylight-only flag: set on a quarter of mature vehicle rows by day and never while the camera reports light sources (night). Meaning open.",
+    "UNK_181_1": "Daylight flag: set on a quarter of mature vehicle rows by day (cars and large vehicles, more often far out) and on 2 of 59,988 night rows.",
     "UNK_56_7": "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.",
     "UNK_216_6": "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.",
     "UNK_272_5": "Height-like size code (candidate); larger for large vehicles.",
     # slot: uncertainty and quality
-    "UNK_224_7": "Range standard deviation (candidate sigma dRel): grows with range, shrinks with track age.",
-    "UNK_232_7": "Lateral standard deviation (candidate sigma yRel): grows with |yRel|.",
-    "UNK_240_7": "Longitudinal velocity standard deviation (candidate sigma vx): grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
-    "UNK_248_7": "Lateral velocity standard deviation (candidate sigma vy).",
-    "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Preserve all seven bits; not a universal invalidity flag.",
+    "UNK_224_7": "Range standard deviation (sigma dRel), about 0.23 m per count below 40 m: grows with range, shrinks with track age.",
+    "UNK_232_7": "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.",
+    "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
+    "UNK_248_7": "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.",
+    "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Keep all seven bits.",
     "UNK_256_6": "Longitudinal-acceleration standard deviation (candidate sigma ax), low bits of 256|8: grows with range and with track age.",
     "UNK_262_2": "Upper bits of the candidate sigma ax at 256.",
     "UNK_264_5": "Lateral-acceleration standard deviation (candidate sigma ay), low bits of 264|8: about 11 at age 5-10, 2 from age 40.",
@@ -113,7 +113,7 @@ SIGNAL_COMMENTS = {
     "UNK_HDR104_3": "Timing-offset candidate (104|11 region): its change tracks the record's arrival-time offset at about 1 ms per count.",
     "UNK_HDR107_4": "Timing-offset candidate (see UNK_HDR104_3).",
     "UNK_HDR111_4": "Raw; usually 3.",
-    "OBJECT_COUNT": "Number of allocated slots (slots whose index field equals their position, including retiring slots). Allocated slots need not be the first N.",
+    "OBJECT_COUNT": "Number of allocated slots: those whose index field equals their position, which are the slots with age >= 1. Allocated slots need not be the first N.",
 }
 
 
@@ -127,17 +127,17 @@ def signal_comment(name: str) -> str:
 
 # Raw windows from the expanded captures that replace the historical bit-map split (data/reference/slot_bit_map.json).
 RAW_FIELD_CORRECTIONS = {
-    15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions; not a validity gate.")],
+    15: [(15, 1, "Mostly set on newborn zero-range rows, with exceptions.")],
     63: [(63, 1, "Rare changing bit; only two rows in the expanded corpus.")],
-    136: [(136, 4, "Independent low nibble beside categorical140|3; units and confidence meaning unresolved."),
-          (140, 3, "Categorical raw view. Observed163|3 codes1,2,3,4,5,6 map exactly to0,5,7,1,3,4 here. Physical classes unknown; preserve unexpected pairs.")],
+    136: [(136, 4, "Camera-association confidence: 15 without association; restarts at 3-9 when 112|3 becomes non-zero and climbs to 14."),
+          (140, 3, "Object class, second encoding of 163|3: codes 0, 5, 7, 1, 3, 4 = class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows).")],
     111: [(111, 1, "Bit 2 of the motion code."), (112, 3, "Camera-association state.")],
     115: [(115, 5, "Class confidence in 5 % steps."), (120, 3, "Rarely non-zero upper bits.")],
     142: [],
-    163: [(163, 3, "Full categorical raw view, including former bit165. Exactly recodes140|3 on tested captures; no verified car/truck/pedestrian labels.")],
-    165: [(166, 2, "Remaining upper raw bits after full163|3; no assigned semantics.")],
+    163: [(163, 3, "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist / person associations), 6 two-wheeler.")],
+    165: [(166, 2, "Constant in the captured data.")],
     182: [(182, 1, "Rare changing bit; observed in one short track episode.")],
-    190: [(190, 10, "Observed codes 0 and 1. Usually follows positive age, with three exceptions; not a validity gate.")],
+    190: [(190, 10, "Observed codes 0 and 1. Usually follows positive age, with three exceptions.")],
     239: [(239, 1, "Changes within tracks; often active near birth. The former PER_TRACK label was too strong.")],
     256: [(256, 6, "Expanded raw window: repeated 31-to-32 and reverse carries in discovery, confirmation and further drives. Full field width, units and meaning unresolved."),
           (262, 2, "Remaining upper bits are not universally constant. May belong to the preceding quantity; boundary unresolved.")],
@@ -239,12 +239,12 @@ def dbc_text() -> str:
                 _sig("DREL_FUSED", 72, 16, 0.01, 0, 0, 655.35, "m"), _sig("VREL_KALMAN", 88, 16, 0.01, 0, -327.68, 327.67, "m/s", signed=True), ""]
         comments += [
             f'CM_ BO_ {m} "NOT radar bytes: values the ars510 interface computes for 0x80 slot {s}, for plotting next to the raw fields.";',
-            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
+            f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
             f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
             f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";',
             f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of the fused profile); halves short-term range walks.";',
-            f'CM_ SG_ {m} VREL_KALMAN "vRel from the Kalman speed filter of the fused profile (object list, ACC target and summaries weighted by their uncertainty).";',
+            f'CM_ SG_ {m} VREL_KALMAN "vRel from the fused profile\'s Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";',
         ]
         vals += [f'VAL_ {m} PUBLISHED_OP 0 "held back or absent" 1 "published" ;', f'VAL_ {m} SETTLED 0 "settling (age<60)" 1 "settled" ;']
 

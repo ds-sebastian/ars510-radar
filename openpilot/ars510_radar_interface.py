@@ -8,11 +8,11 @@ so the same install works on openpilot and its forks (sunnypilot, StarPilot, Fro
     fingerprinting, gets radarUnavailable = False (stock leaves radar-ACC Toyotas radar-unavailable);
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. No ToyotaFlags bit is added, so fork flag bits cannot collide.
-Worth knowing (docs/07, docs/08):
-  - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the "steady" profile halves their effect;
+Worth knowing (docs/07, docs/08, docs/12):
+  - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the default `fused` speed filter handles them;
   - the radar drops new stationary objects once ego is above ~2-3 m/s, so a car that was already stopped when it came
     into view comes from vision;
-  - radard has no lateral gate.
+  - radard pairs the vision lead with the radar track nearest in range; `fused` adds a yaw-rate path gate.
 
 Why there is no CANParser: the object list is ONE 742-byte record sent as 106 ISO-TP-style frames on 0x80 every
 ~60 ms. CANParser keeps only the latest value per address (or a per-call list in vl_all), and a DBC cannot say which
@@ -102,7 +102,7 @@ class Ars510RadarInterface(RadarInterfaceBase):
     ret = structs.RadarData()
     points = []
     # RadarPoint is trackId / dRel / yRel / vRel; forks that still carry the legacy aRel / yvRel / measured fields get
-    # them too. Both profiles never publish a NaN vRel, which would poison radard's per-track Kalman filter.
+    # them too. Every profile withholds points with a NaN vRel, which would poison radard's per-track Kalman filter.
     for p in latest["radarData"]["points"]:
       pt = structs.RadarData.RadarPoint()
       pt.trackId = p["trackId"]
