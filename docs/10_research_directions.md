@@ -126,10 +126,10 @@ Ways to keep AEB:
 
 ## What radard gets from other radars
 
-What other openpilot radar interfaces read from their radars, and the ARS510 counterpart
+What other radars in openpilot send (signals in their DBCs), and the ARS510 counterpart
 ([`opendbc/car/*/radar_interface.py`](https://github.com/commaai/opendbc/tree/master/opendbc/car)):
 
-| what radard gets elsewhere | examples | ARS510 today | what would close the gap |
+| what other radars send | examples | ARS510 today | what would close the gap |
 |---|---|---|---|
 | per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE`, Tesla `Meas` | `107\|1` = predicted (◐) and `16\|8` = existence probability (◐); the fork build publishes `measured = not predicted` for forks that carry the field; upstream openpilot has deprecated it | in place in the fork build; excursions arrive on measured records, so this is hygiene |
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (●) | in place |
@@ -141,8 +141,9 @@ What other openpilot radar interfaces read from their radars, and the ARS510 cou
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames | a reassembler of about 80 lines (`ars510/transport.py`) and a CRC check |
 
 The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`, 66 code lines at the opendbc used for the replays):
-- a pass-through of distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`,
-  existence and obstacle probabilities, class, size and uncertainty sigmas, plus a radar status message;
+- the radar sends distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`, existence
+  and obstacle probabilities, class, size and uncertainty sigmas; the interface publishes `dRel` / `yRel` / `vRel` of
+  tracked points plus the radar status as errors;
 - the ARS510 slot follows the same Continental pattern, which is how its existence, predicted-record and uncertainty
   fields were identified ([03](03_slot_fields.md#uncertainty-and-quality));
 - the two pieces a Tesla-sized interface would add: a **fault / blockage status**, and handling of the far-range speed

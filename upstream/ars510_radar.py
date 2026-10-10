@@ -4,8 +4,8 @@ The radar sends its object list on bus 1 as one 742-byte record split over 106 f
 numbers wrap every 16 frames, so a DBC cannot describe it and it is reassembled here). Each of its 20 slots holds one
 object; the radar keeps an object in its slot while the slot's age counts up, which gives the track IDs.
 
-The slot speed has slow, correlated errors at range (false closings of 1-10 s beyond ~40 m). The radar reports their
-size in 240|7. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own ACC target
+The slot speed has slow, correlated errors at range (false closings of 1-10 s beyond ~40 m). Their size follows the
+radar's 240|7 code. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own ACC target
 (0x235 / 0x237) for the track it describes. radard then filters as for any radar. radard's lead match weights
 lateral position only through the camera's uncertainty, so beyond 15 m a track a lane away from the yaw-predicted path
 is withheld.
@@ -168,7 +168,7 @@ class Ars510Radar:
       self.acc_assoc = None
       return None
     _, ax, ay = self.acc_pos
-    rs = max(12.0, 0.4 * ax)  # the object list reads far cars short of the ACC distance, a new car often by 15-20 m
+    rs = max(12.0, 0.4 * ax)  # the object list reads far cars short of the ACC distance; 10-20 % of new tracks by more than 10 m
     costs = sorted((abs(o["d"] - ax) / rs + abs(o["y"] - ay) / 0.5, tid, o["age"]) for tid, o in tracks.items())
     if self.acc_assoc is not None:
       tid0, ax0, ay0 = self.acc_assoc

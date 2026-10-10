@@ -17,7 +17,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | code | fork build: relink and saturation guard on the shared decode ([below](#how-each-profile-works)) | fork build: speed filter and range fusion | the openpilot version is 183 code lines in all ([10](10_research_directions.md#parts-of-the-openpilot-file)) |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
-| first braking request vs vision only, 167 driver brakes | −0.15 s | −0.03 s | −0.01 s |
+| first braking request vs vision only (148 paired driver brakes) | −0.15 s | −0.03 s | −0.01 s |
 | recommended for | research | diagnostic: the filter on the object list alone | everyday driving |
 
 `raw` is the unfiltered radar decode. The middle column is a diagnostic: `fused` with the ACC target ignored, which
@@ -125,7 +125,7 @@ What the radar adds, by profile:
 
 ## Compared with the other radar interfaces in openpilot
 
-| interface | code lines | what it does |
+| interface (opendbc at the openpilot used for the replays) | code lines | what it does |
 |---|---|---|
 | Toyota (older radars, 0x210-0x22F) | 70 | `VALID` flag plus a score / valid counter; pass-through |
 | Tesla (Continental, like the ARS510) | 66 | `Tracked`; publishes `Meas` as `measured`; radar status for faults |

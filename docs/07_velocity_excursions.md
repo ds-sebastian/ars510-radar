@@ -130,9 +130,8 @@ the variants tested are in [12 Kalman speed filter](12_kalman_filter.md).
 | signal | behaviour during an excursion |
 |---|---|
 | `240\|7` velocity-error scale | higher (≈ 0.045 m/s per count against the ACC target) |
-| `264\|8` uncertainty code (σ ay candidate) | more samples at code 1; codes 4-8 rise 3-6 s later |
+| `264\|8` uncertainty code (σ ay candidate) | code 1 carries a larger closing error (mean −0.75 m/s against −0.24 at code 2, [`excursion_sigma_scale.json`](../data/analysis/summaries/excursion_sigma_scale.json)) |
 | 0x235 ACC target | disagrees with the object's vRel (when present) |
-| lane state `128\|3` | changes more often, also on real closings |
 
 Together they give a soft prior ([10](10_research_directions.md#for-the-drift-discriminator)): a classifier on every
 slot field and its 1 s changes separates false-closing frames from real closings with a cross-validated AUC of 0.78

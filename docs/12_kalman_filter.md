@@ -109,7 +109,7 @@ The two filters run in series, so all replay numbers already include their combi
   `raw` withholds the track until the speed is back within 5 m/s (or 1 s), then continues under a new ID. Held-out
   hard ticks 117 → 93 (`saturation_guard_heldout` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). In `fused` the robust update absorbs the sentinel, so the guard is off.
 - **Track-ID relink (`raw` only):** a track lost and re-found within 3.5 s keeps its ID. With the filter on, the
-  driving is identical with or without it, so `fused` leaves it off.
+  driving is the same with or without it (same braking counts, lead switches 1,770 vs 1,772), so `fused` leaves it off.
 - **Range fusion (`fused`):** range walks by metres at 60-100 m (3% per frame). A fixed-gain predictor, separate from
   the speed filter:
 
@@ -227,7 +227,7 @@ the same hard braking on these drives (30 / 1 / 0, [above](#path-gate)). Counts 
 | the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
 | range fusion | 27 | 0 | 0 | braking neutral; lead switches +39%, target episodes 4 → 6: kept for lead stability |
 | the ego-speed alignment (× 0.149/0.15) | 31 | 2 | 0 | neutral (onset +12 ms); one measured constant, folded into the decode factor (no line) |
-| the track-ID relink | 30 | 2 | 0 | identical in every measure: off in `fused` |
+| the track-ID relink | 30 | 2 | 0 | same braking counts, lead switches 1,770 vs 1,772: off in `fused` |
 | the saturation guard | identical | identical | identical | off in `fused`: the robust update absorbs the sentinel |
 
 **Were those hard brakes real?** "Hard radar-only" means the radar planner braked hard where vision-only stayed below
@@ -253,7 +253,7 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
 
 ![fewest lines for the same driving](img/analysis/kalman_combinations.png)
 
-- **The track-ID relink is free:** the driving is identical with or without it.
+- **The track-ID relink is free:** the driving is the same with or without it (same braking counts, lead switches 1,770 vs 1,772).
 - **The summaries change little:** without them, unjustified braking and lead stability are the same (see below).
 - **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39%
   more often, with one real early brake fewer.

@@ -38,8 +38,8 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 3. **Decoding from raw frames.** The interface reads the raw `(address, data, src)` tuples card already passes,
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost: about 6-14 µs per 10 ms call on a desktop CPU.
-4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once their
-   speed is known to ±0.75 m/s), with the radar's own track IDs (`raw` also re-links them across short losses), and
+4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once the
+   filter's speed standard deviation is at most 0.75 m/s), with the radar's own track IDs (`raw` also re-links them across short losses), and
    only while a fresh ego speed gives a finite vRel. Forks whose RadarPoint still
    has the legacy fields (sunnypilot) also get:
    - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24; the radar
@@ -95,8 +95,8 @@ The middle column is `fused` with the ACC target readings ignored: the Kalman fi
 is what `fused` runs on a track without a matched ACC target.
 
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
-−0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier than `fused` before some driver brakes because of
-an over-closing bias, the same one behind its three times as frequent hard radar-only braking
+−0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier than `fused` before some driver brakes, partly from
+real head starts and partly from an over-closing bias, the bias behind its three times as frequent hard radar-only braking
 ([12](12_kalman_filter.md#the-model)). `fused` starts braking when vision does on average (−0.01 s, 95% CI −0.07 … +0.04).
 
 What each setting does (examples and plots in [12](12_kalman_filter.md)):
@@ -104,7 +104,7 @@ What each setting does (examples and plots in [12](12_kalman_filter.md)):
 | setting | profiles | effect |
 |---|---|---|
 | `min_publish_age=60` | all | a track is published after ~3.6 s, once range and velocity have converged |
-| `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter the output is identical on 27 drives, so `fused` leaves it off |
+| `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter the driving is the same on 27 drives (same braking counts; lead switches 1,770 vs 1,772), so `fused` leaves it off |
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: cuts 1.5 s range walks by about a third |
@@ -117,7 +117,7 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
 
 - **Kalman filter on vLead only.** One filter per track ID; a NaN vRel would stay in it for good, so the interface
   publishes finite values only. A new track ID resets it; `raw` therefore re-links IDs across short losses, while
-  `fused` hands radard an already filtered speed, so a reset leaves its output unchanged.
+  `fused` hands radard an already filtered speed, and the relink changes no braking count in the replays.
 - **Matching needs a vision lead.** radard matches a radar track to the vision lead while the lead probability is
   above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check. Matching runs afresh every tick,
   so the radar lead follows whichever car the camera currently selects.

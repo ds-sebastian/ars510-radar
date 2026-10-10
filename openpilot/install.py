@@ -10,6 +10,7 @@ The path may be the openpilot checkout or its opendbc_repo. The same install wor
 StarPilot and other forks: no fork file is patched in place. The installer
   - copies the decoder package to        opendbc/car/toyota/ars510/
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
+  - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
 An install made with an older, patch-based version of this installer is removed first.
@@ -168,7 +169,7 @@ def main() -> int:
         "). Reboot the device to activate.")
   if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
-          "reach the planner unfiltered and cause about three times the hard false braking of fused. Use it for research\n"
+          "reach the planner unfiltered and cause about three times the hard radar-only braking of fused. Use it for research\n"
           "and comparison only; install.py with no --profile installs the recommended fused profile.")
   return 0
 
