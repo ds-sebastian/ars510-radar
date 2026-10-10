@@ -223,10 +223,10 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 
 | bits | field | behaviour | conf. |
 |---|---|---|---|
-| `224\|7` | σ dRel | grows with range, shrinks with track age, rises before deletion | ◐ |
-| `232\|7` | σ yRel | grows with \|yRel\|, shrinks with age | ◐ |
+| `224\|7` | σ dRel (≈ 0.23 m per count against the ACC distance at 5-40 m) | grows with range, shrinks with track age, rises before deletion | ◐ |
+| `232\|7` | σ yRel (≈ 0.10 m per count against the ACC lateral) | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
-| `248\|7` | σ vy | grows with \|yRel\|, shrinks with age | ◐ |
+| `248\|7` | σ vy (≈ 0.4 m/s per count, provisional) | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others ≤ 0.03); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (11 at age 5-10, 2 from age 40) | ○ |
@@ -243,6 +243,11 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
   speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
   reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [summary](../data/analysis/summaries/excursion_sigma_scale.json)). The `fused` profile uses it this way.
+- **Units of the sigma codes** (483 segments, 65 k mature object / ACC pairs; sd² = floor² + (k · code)², 90 % bootstrap over segments;
+  [summary](../data/analysis/summaries/uncertainty_code_units.json)): k = 0.043 m/s per count for `240|7` [0.041, 0.045], 0.10 m for `232|7`
+  [0.098, 0.111] (constant across 5-40 / 40-80 / 80+ m), 0.23 m for `224|7` [0.22, 0.23] (but 0.15 at 40-80 m and 0.05 beyond, where a
+  4-8 m range bias against the ACC distance dominates) and 0.37 m/s for `248|7` [0.35, 0.38]. Split halves agree within 4 %. Because the
+  reference is the radar's own ACC estimate these are relative units; the fit is a Gaussian equivalent over heavy tails.
 - **It is a width, not a flag:** it separates excursion records below 40 m (AUC 0.95-0.97) but weakly beyond
   (0.41-0.68), where excursions happen.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
