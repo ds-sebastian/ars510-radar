@@ -226,8 +226,10 @@ class RadarInterface(RadarInterfaceBase):
       ret.errors.radarUnavailableTemporary = self.last_record_t is not None
       return ret
     ret = structs.RadarData()
+    pts = []
     for track_id, d_rel, y_rel, v_rel in points:
       pt = structs.RadarData.RadarPoint()
       pt.trackId, pt.dRel, pt.yRel, pt.vRel = track_id, d_rel, y_rel, v_rel
-      ret.points.append(pt)
+      pts.append(pt)
+    ret.points = pts  # assigned as a list: forks with capnp-backed structs (sunnypilot) have no append
     return ret
