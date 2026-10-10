@@ -88,7 +88,7 @@ publication gate, and the replays below are what justify the constants
 radard runs its own per-track Kalman filter on `[vLead, aLead]` with a fixed gain; its `aLeadK` is the lead
 acceleration the planner uses. This filter cleans only the speed it hands over, so radard and the planner run
 unchanged, and lead acceleration stays radard's job; one speed state scores better here than a speed + acceleration
-state ([below](#kalman-variants-tested)). Unfiltered (`raw`), an excursion reaches `aLeadK` as a −3 to −5 m/s² spike.
+state ([below](#kalman-variants-tested)). 
 
 The two filters run in series, so all replay numbers already include their combined effect. Measured directly on
 148,219 radar-lead ticks of the 20 held-out routes (fused 2.0, `radard_cascade` in
@@ -146,8 +146,8 @@ it describes. The summaries (a fork option) are matched the same way.
   tick to tick, and flips between a radar and a vision lead 30 % less often (1,764 → 1,231 on the 20 held-out drives,
   2.1 replays).
 - **New tracks can start far short.** About 10-20 % of new in-lane tracks the ACC target follows read more than 10 m
-  short of it, often for seconds; on the road one first read 47 m for a car at 64 m and drew a −2.4 m/s² request in
-  replay where the true range needed about −0.7. The match therefore allows 0.4 x in range (25 m at 64 m), so such a track still takes the ACC
+  short of it, often for seconds; on the road one first read 47 m for a car at 63 m and drew a −2.4 m/s² request in
+  replay where the true range needed about −0.7. The match therefore allows 0.4 x in range (25 m at 63 m), so such a track still takes the ACC
   distance; range fusion pulls it there within about a second. The margin to the next track keeps two cars apart.
 
 ![tracker range](img/analysis/tracker_range.png)
@@ -200,7 +200,7 @@ drops a lead the camera still follows (a lead turning out of the lane).
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
-Over 7.65 h of the owner's road drives, `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
+Over 7.65 h of road drives (the owner's and the second car's), `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
 5.4 s against 10.2 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (7.2 s,
 vision 10.3 s, 2.1 9.5 s). On the 27 replay drives (6.72 h scored), it is the best of all versions on
 both: 7.1 s unnecessary (vision 31.9 s, 2.1 9.4 s) and 3.0 s missed (vision 10.0 s, 2.1 4.1 s). Scoring covers moving
@@ -261,7 +261,7 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
 The smallest version with the same driving is 2.0 without the summaries and the relink; with 2.3's path gate and wider
 ACC match added, that is today's `fused`. The openpilot version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line
 costs are in [10](10_research_directions.md#parts-of-the-openpilot-file)) is the same filter in one file, and a test
-keeps the two equal point for point (`combinations_34_drives` in
+keeps the two equal point for point (`tests/test_upstream_candidate.py`; combinations in
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
 The rule fixed before these results also required zero target episodes on the owner drives; the version without
@@ -310,7 +310,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | ACC target trusted more (σ 0.13, its measured error, or 0.02 instead of 0.5) | – | 27 drives: held-out 30 → 26 / 25 hard ticks (the difference is over-braking after the driver released), same unjustified braking; fresh drives: two real slowdowns with openpilot driving got softer braking than both `fused` and vision. Mixed: default stays 0.5 (`acc_target_weight` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)) |
 
 The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
-0.95 per record, about 1.2 s per independent error. It rejects slow drift, but for the same reason it takes seconds to
+0.95 per record, an error time constant of about 1.2 s. It rejects slow drift, but for the same reason it takes seconds to
 let go of a large drift that recovers. Real driving rewards letting go quickly, so `fused` keeps one speed state.
 The fork build keeps it as the experimental `colored` profile (`COLORED_CONFIG`) for road tests.
 

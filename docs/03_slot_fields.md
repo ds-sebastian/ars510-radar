@@ -191,7 +191,7 @@ interface profile withholds them. Counts are in
 
 ![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
 
-The class code and the two size fields describe one consistent object box (all rows, 399 one-minute segments; the size figure below uses the bundled
+The class code and the two size fields describe one consistent object box (medians over all rows, 399 one-minute segments; the size figure below uses the bundled
 three-drive dataset):
 
 | class | share of rows | median speed | width | length |

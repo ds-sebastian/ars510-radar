@@ -24,7 +24,7 @@ python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile f
 
 ### Cabana
 
-The object list is a multi-frame record, so Cabana needs it reassembled first. `build_cabana_route.py` copies your log and appends each record's occupied slots as ordinary CAN messages on **virtual bus 10**, byte for
+The object list is a multi-frame record, so Cabana needs it reassembled first. `build_cabana_route.py` copies your log and appends each record's occupied slots as CAN-FD-sized messages on **virtual bus 10**, byte for
 byte, so the DBC bit positions are the real slot bit positions.
 
 ```bash

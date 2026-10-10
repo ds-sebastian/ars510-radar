@@ -69,7 +69,7 @@ Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units
 The ACC target is matched to an object by position (its 0.025 m distance and 0.01 m lateral against the track's `dRel`
 and `yRel`). When the object list's vRel and the ACC target's closing speed
 differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
-confirmation 86%, n = 421, route-bootstrap 79-99%). In the bundled drive-E sample the object's vRel falls to −5.8 m/s
+confirmation 86%, n = 421, route-bootstrap 79-99%). In the bundled drive-E sample the object's vRel falls to −5.9 m/s
 while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#the-model)).
 
 **Who sends it: the radar** (◐) ([summary](../data/analysis/summaries/acc_sender_clock.json)):

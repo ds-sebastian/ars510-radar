@@ -24,8 +24,8 @@ The most promising next steps, ordered by how directly they would improve the ra
    radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
    The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 2.0) is a related experiment.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
-   than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
-   and earlier, with less wobble. radard derives `aLeadK` from vRel for every car; a fork-side radard
+   than radard's derived `aLeadK` against a smoothed lead acceleration from the object-list speed (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
+   and earlier. radard derives `aLeadK` from vRel for every car; a fork-side radard
    change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would remove the brake-then-accelerate swing.
@@ -120,7 +120,7 @@ Ways to keep AEB:
   closed lot) shows whether it does.
 - **An openpilot AEB on 0x283 / 0x344.** This needs the actuation sequence from a recorded activation, an AEB decision in
   openpilot, and a panda safety change (0x283 is idle-only). It is a fork-level safety function.
-- **Name 0x320 bit 13** (the brake system's missing-PCS flag) by replaying the radar's idle 0x283 / 0x344 while it is
+- **Name 0x320 bit 13** (likely the brake system's missing-PCS flag, ◐) by replaying the radar's idle 0x283 / 0x344 while it is
   disabled. This shows which message the brake system checks. Show PCS as available while an AEB source is active.
 
 
@@ -133,12 +133,12 @@ What other openpilot radar interfaces read from their radars, and the ARS510 cou
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (●) | in place |
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | the ACC target carries a relative speed for the followed car |
 | relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` over-ground acceleration (◐, lags 0.5-1 s); the ACC target's relative acceleration (●) | calibrate `84\|10` against independent motion |
-| **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.98 against the gyro) | already published as `yvRel` where forks carry it |
+| **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.147-0.155 m/s per code against the gyro) | already published as `yvRel` where forks carry it |
 | radar **fault / blockage** status | Honda `RADAR_STATE`, Tesla `sensorBlocked` | "no record for 0.5 s" is reported; candidates: Toyota's car-bus 0x411 `PCS_HUD` alerts (`PCS_DUST2` sensor blocked, `PCS_INDICATOR` = 2 fault), the camera's object-list acknowledgement (0x101 byte 0, 0x197), and a long idle run of 0x680 while driving (longest 1.0 s in 7.8 h of normal driving) | a drive with a covered or dirty radar, or in heavy rain or snow, shows which of them reacts |
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, scaled against the radar's ACC target | physical units would let radard weight radar against vision |
 | plain **DBC** decode through `CANParser` | every upstream interface | a 742-byte record split over 106 frames | a reassembler of about 80 lines (`ars510/transport.py`) and a CRC check |
 
-The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`, 66 code lines):
+The closest relative in openpilot is the Tesla Model 3's Continental radar (`tesla_radar_continental`, 66 code lines at the opendbc used for the replays):
 - a pass-through of distance, relative speed and acceleration, lateral position and speed, `Tracked`, `Meas`,
   existence and obstacle probabilities, class, size and uncertainty sigmas, plus a radar status message;
 - the ARS510 slot follows the same Continental pattern, which is how its existence, predicted-record and uncertainty

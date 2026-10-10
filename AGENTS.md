@@ -37,7 +37,7 @@ ruff check upstream/                # the openpilot file follows opendbc's ruff 
   with `gh pr create`, and wait for CI. Merge only when the maintainer asked for the change and CI is green; otherwise
   leave the PR for review.
 - **Privacy.** Route IDs, dongle IDs, VINs, GPS, device IPs, local paths and identifying video stay out of commits and pastes.
-  Drives are anonymous (A/B/C, D1-D4) with relative times. `tools/check_privacy.py` enforces the patterns.
+  Drives are anonymous (A/B/C, D1-D4, E, O1-O3) with relative times. `tools/check_privacy.py` enforces the patterns.
 - **Decoder semantics** change only with a test and the matching doc row. Keep `ars510/` dependency-free.
 - **Driving behaviour** (anything that changes a profile's output, above all the default `FUSED_CONFIG`) needs an
   openpilot replay against the current profile with the gates in `docs/09`, the vision-only comparison in `docs/11`,
