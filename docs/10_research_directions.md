@@ -158,7 +158,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (224 lines, 184 of them code). It holds the reassembler, the slot
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (223 lines, 183 of them code). It holds the reassembler, the slot
 decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. Up to 2.1 it was the
 smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives,
 and every hard brake was checked against the radar's raw range, the camera and the driver
@@ -198,9 +198,9 @@ upstream PR.
 | Kalman speed filter (one state, 240|7-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
 | young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
 | speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
-| age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.8 -> 4.3 s) | keep |
+| age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
-| ego-speed alignment x 0.149/0.15 | 1 | 1.x | neutral (onset +12 ms) | droppable |
+| ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
 | path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
