@@ -5,7 +5,7 @@
 
 guide_pipeline.png and guide_lead_guards.png are schematics with numbers from the summaries. guide_cases.png plots
 data/analysis/lead_choice_cases.csv.gz: two road moments replayed through openpilot's planner with vision only, 2.1 and
-2.2 (relative time, no route identifiers). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
+2.3 (relative time, no route identifiers). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
 guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json.
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ from make_profile_figures import GRAY, GRID, INK, INK2, S1, S2, S3, S4, SURFACE 
 
 OUT = REPO / "docs" / "img" / "analysis"
 SUM = REPO / "data" / "analysis" / "summaries"
-VIS, V21, V22 = "#7a5fb0", S2, S1  # validated together (dataviz validator, light surface)
+VIS, V21, V23 = "#7a5fb0", S2, S1  # validated together (dataviz validator, light surface)
 
 
 def _box(ax, x, y, w, h, title, body, color):
@@ -39,7 +39,7 @@ def _box(ax, x, y, w, h, title, body, color):
 
 def pipeline() -> None:
   """CAN frames to radard, one box per stage with its key numbers."""
-  lv = json.loads((SUM / "lead_choice_guards.json").read_text())["off_path_radar_share_of_leads_beyond_60m"]
+  lv = json.loads((SUM / "lead_choice_guards.json").read_text())["radar_share_of_leads_beyond_60m"]
   stages = [
     ("1  Radar bus", "0x80 frames on bus 1\n106 frames = 1 record\nevery ~60 ms (16.7 Hz)", GRAY),
     ("2  Reassemble", "742-byte record\nCRC32 check\nbad records dropped", GRAY),
@@ -48,7 +48,7 @@ def pipeline() -> None:
     ("5  Radar's own trackers", "ACC target 0x235/0x237\nsummaries 0x192/0x194\nmatched to tracks by position", S4),
     ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.5 m/s", S3),
     ("7  Range", "velocity-aided, gain 0.1\nfollowed car: ACC distance", S3),
-    ("8  Publish", "age ≥ 60 (~3.6 s)\nspeed σ ≤ 0.75 m/s\nlead-choice guards", S1),
+    ("8  Publish", "age ≥ 60 (~3.6 s)\nspeed σ ≤ 0.75 m/s\npath gate beyond 15 m", S1),
     ("9  openpilot", "RadarPoint(dRel, yRel, vRel)\n→ radard pairs with vision\n→ planner", INK2),
   ]
   fig, ax = plt.subplots(figsize=(13.5, 4.6)); ax.set_xlim(0, 13.5); ax.set_ylim(0, 4.6); ax.axis("off"); ax.grid(False)
@@ -70,7 +70,7 @@ def pipeline() -> None:
     ax.add_patch(FancyArrowPatch((bot[i][0] + 0.42, 1.2), (bot[i + 1][0] + 0.45 + wb + 0.03, 1.2), arrowstyle="-|>", mutation_scale=14, color=INK2))
   ax.text(0.2, 4.62, "From CAN frames to openpilot: the parser's nine steps", fontsize=11.5, weight="bold", va="top")
   ax.text(0.2, 0.12, f"Grey: decode (no tuning).  Yellow: the radar's own tracker outputs.  Green: the filter.  Blue: what reaches openpilot. "
-          f"Radar provides {lv['2.1 fused']:.0%}→{lv['off path']:.0%} of leads beyond 60 m (2.1→2.2); vision covers the rest.",
+          f"Radar provides {lv['2.1 fused']:.0%}→{lv['2.3 fused']:.0%} of leads beyond 60 m (2.1→2.3); vision covers the rest.",
           fontsize=7.8, color=INK2)
   fig.savefig(OUT / "guide_pipeline.png", dpi=130, bbox_inches="tight"); plt.close(fig)
 
@@ -86,29 +86,27 @@ def _lanes(ax, d, center, color=GRAY):
 
 
 def lead_guards() -> None:
-  """Top-down: next-lane guard (straight road) and off-path guard (right curve). Lateral is left-positive, drawn left."""
+  """Top-down: the path gate on a straight road (next-lane car gated, close car kept) and on a right curve."""
   fig, axs = plt.subplots(1, 2, figsize=(12.5, 6.2))
   d = np.linspace(-6, 130, 300)
-  # next-lane guard, straight road
   ax = axs[0]; ax.set_xlim(9, -9); ax.set_ylim(-6, 62); ax.grid(False); _lanes(ax, d, 0 * d)
-  ax.axhspan(35, 45, color=S4, alpha=0.10, lw=0)
+  ax.fill_betweenx(d[d > 15], -2.5, 2.5, color=S1, alpha=0.10, lw=0); ax.axhline(15, color=INK2, lw=0.8, ls=":")
+  ax.text(8.6, 13.5, "15 m: the gate starts", fontsize=7.5, color=INK2, va="top")
   _car(ax, 0, -2, INK2); ax.annotate("ego", (0, -2), xytext=(-2.2, -2), va="center", fontsize=8.5)
-  _car(ax, 0, 40, S4); ax.annotate("ACC target\n(the car the radar's\nACC function follows)", (0, 40), xytext=(2.6, 52), fontsize=8,
+  _car(ax, 0, 40, S4); ax.annotate("lead (and ACC target):\nkept", (0, 40), xytext=(4.5, 50), fontsize=8,
                                    arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
   _car(ax, -3.6, 41, S2, kept=False); ax.annotate("car in the next lane:\nnot published", (-3.6, 41), xytext=(-6.0, 52), fontsize=8,
                                                   arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
+  _car(ax, -3.6, 9, S4); ax.annotate("closer than 15 m:\nkept (it may be cutting in)", (-3.6, 9), xytext=(-5.5, 24), fontsize=8,
+                                     arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
   ax.annotate("", xy=(-3.6, 33), xytext=(0, 33), arrowprops=dict(arrowstyle="<->", color=INK2, lw=1))
   ax.text(-1.8, 30.5, "> 2.5 m", ha="center", fontsize=8, color=INK2)
-  ax.text(8.6, 46, "same range as the ACC target\n(within max(5 m, 10 %))", fontsize=7.5, color=INK2, va="bottom")
-  ax.set_title("Next-lane guard (while the ACC target is present)", loc="left")
-  ax.set_xlabel("lateral (m, left +)"); ax.set_ylabel("ahead (m)")
-  # off-path guard: right curve; path from yaw rate and speed (constant curvature)
+  ax.set_title("Straight road", loc="left"); ax.set_xlabel("lateral (m, left +)"); ax.set_ylabel("ahead (m)")
   ax = axs[1]; v, yaw = 30.0, -0.025; path = yaw / v * d ** 2 / 2
   ax.set_xlim(6, -14); ax.set_ylim(-6, 125); ax.grid(False); _lanes(ax, d, path)
-  far = d > 60
-  ax.fill_betweenx(d[far], (path - 2.5)[far], (path + 2.5)[far], color=S1, alpha=0.10, lw=0)
+  g = d > 15
+  ax.fill_betweenx(d[g], (path - 2.5)[g], (path + 2.5)[g], color=S1, alpha=0.10, lw=0)
   ax.plot(path[d >= 0], d[d >= 0], color=S1, lw=1.8, ls="--")
-  ax.axhline(60, color=INK2, lw=0.8, ls=":"); ax.text(5.6, 57, "60 m: the guard starts", fontsize=7.5, color=INK2, va="top")
   ax.text(-9.5, 124, "path predicted from\nyaw rate and speed,\n± 2.5 m", fontsize=7.8, color=S1, va="top")
   _car(ax, 0, -2, INK2)
   k = np.searchsorted(d, 100)
@@ -116,18 +114,18 @@ def lead_guards() -> None:
                                           arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
   _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nnot published", (path[k] + 3.6, 98),
                                                        xytext=(4.5, 108), fontsize=8, arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
-  ax.set_title("Off-path guard (beyond 60 m, any track but the ACC target's)", loc="left"); ax.set_xlabel("lateral (m, left +)")
-  fig.suptitle("Why: radard pairs the camera's lead with the radar track nearest in range, and has no lateral gate", x=0.01, ha="left",
-               fontsize=10.5, color=INK, weight="bold")
+  ax.set_title("Right curve", loc="left"); ax.set_xlabel("lateral (m, left +)")
+  fig.suptitle("Path gate: radard pairs the camera's lead with the radar track nearest in range and has no lateral gate",
+               x=0.01, ha="left", fontsize=10.5, color=INK, weight="bold")
   fig.tight_layout(); fig.savefig(OUT / "guide_lead_guards.png", dpi=130); plt.close(fig)
 
 
 def cases() -> None:
-  """Two road moments: what vision only, 2.1 and 2.2 would have asked the planner for."""
+  """Two road moments: what vision only, 2.1 and 2.3 would have asked the planner for."""
   C = pd.read_csv(REPO / "data" / "analysis" / "lead_choice_cases.csv.gz")
   spec = {"late_brake": ("A slowing pickup first seen at ~66 m", (-6, 2)),
           "next_lane": ("A slower car two lanes over, on a right curve (no ACC target)", (-6, 3))}
-  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v22", V22, "2.2", 2.0, 1.0))
+  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3", 2.0, 1.0))
   fig, axs = plt.subplots(2, 2, figsize=(12.5, 6.6), sharex="col", gridspec_kw={"height_ratios": [1.15, 1]})
   for j, case in enumerate(spec):
     title, (lo, hi) = spec[case]
@@ -184,8 +182,8 @@ def road_stats() -> None:
 SHORT = {"transport": "decode: transport, CRC, slots, track IDs, wrapper", "state pruning": "state pruning",
          "ACC target": "ACC target decode + association", "Kalman": "Kalman speed filter", "range fusion": "range fusion + ACC distance",
          "young-track factor": "young-track factor", "speed-std": "speed-std publication gate", "age-60": "age-60 publication gate",
-         "fork compatibility": "fork compatibility", "off-path": "off-path guard (yaw rate)", "ego-speed": "ego-speed alignment",
-         "young-track ACC match": "young-track ACC match", "next-lane": "next-lane guard"}
+         "fork compatibility": "fork compatibility", "ego-speed": "ego-speed alignment",
+         "path gate": "path gate (yaw rate)"}
 
 
 def _short(part: str) -> str:

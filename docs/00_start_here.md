@@ -75,18 +75,20 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 ## 6. Choosing which tracks openpilot sees
 
 openpilot's radard pairs the camera's lead with the radar track nearest in range and has no lateral gate, so a car in
-the next lane can become the lead. Two guards withhold such tracks. The track the ACC target follows is never withheld.
+the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
+from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track the ACC target
+follows is never withheld.
 
-![lead-choice guards](img/analysis/guide_lead_guards.png)
+![path gate](img/analysis/guide_lead_guards.png)
 
 What that changes on the road, replayed through openpilot's planner:
 
 ![two road moments](img/analysis/guide_cases.png)
 
-*Left: a pickup first detected at 66 m read 15-20 m short in the object list; 2.2 publishes it at the ACC distance and
-asks for −1.47 m/s² instead of −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead with a slower car
-two lanes over; 2.1 asked for −1.54 m/s², 2.2 for −0.28 (vision −0.08).* More:
-[12](12_kalman_filter.md#lead-choice-guards).
+*Left: a pickup first detected at 66 m read 15-20 m short in the object list; 2.3 matches it to the ACC target and
+asks for −1.47 m/s² instead of −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead with a car a lane
+over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about −3 m/s; 2.1 asked
+for −1.54 m/s², 2.3 for −0.29 (vision −0.08).* More: [12](12_kalman_filter.md#path-gate).
 
 ## 7. What each part is worth
 
