@@ -42,14 +42,14 @@ the driver did ([11](docs/11_profiles_compared.md)), with the default `fused` pr
 
 - **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
   and speed.
-- **Braking starts at the same time as vision only** on average (−0.01 s, 95% CI −0.07 … +0.04), and the planner is already asking for
-  ≤ −1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+- **Braking starts at the same time as vision only** on average (−0.01 s, 95% CI −0.07 … +0.05), and the planner is already asking for
+  ≤ −1 m/s² before 43% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed (0 per hour with the driver on the gas). The requests are as smooth as vision-only.
 - **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
-  brakes unnecessarily for 5.4 s against 10.2 s for vision only (27 replay drives: 7.1 s against 31.9 s), and misses
-  less braking (7.2 s against 10.3 s; 27 replay drives: 3.0 s against 10.0 s)
+  brakes unnecessarily for 4.4 s against 10.2 s for vision only (27 replay drives: 3.0 s against 31.9 s), and misses
+  less braking (7.2 s against 10.3 s; 27 replay drives: 3.1 s against 10.0 s)
   ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
@@ -70,13 +70,13 @@ weighted by its own uncertainty, so the gain changes each cycle:
 ```text
 predict  v⁻ = v,  P⁻ = P + (1.5 m/s² · Δt)²
 update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P⁻ + σ²)),  P = (1 − K) P⁻
-σ:       object list 0.045 m/s × 240|7 (× 1.8 for young tracks, tapering to × 1 by age 100) · ACC target 0.5 m/s
+σ:       object list 0.045 m/s × 240|7 (× 1.8 for young tracks, tapering to × 1 by age 100) · ACC target 0.3 m/s
 ```
 
 ![the Kalman filter on one track](docs/img/analysis/kalman_trace.png)
 
-*During an excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by about 5%,
-each ACC target reading by about 15%, so the estimate (green) stays with the radar's tracker. radard then runs its
+*During an excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by about 4%,
+each ACC target reading by about 24%, so the estimate (green) stays with the radar's tracker. radard then runs its
 usual filter on top.* The car the radar's ACC function follows is also published at the radar's ACC distance, which
 agrees with the vision lead and is half as rough as the object-list range. Model, constants, how the trackers are
 matched to tracks, what each part is worth and the variants tested: [docs/12](docs/12_kalman_filter.md).

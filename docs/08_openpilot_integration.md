@@ -85,11 +85,11 @@ Replay against the driver, unchanged openpilot card → radard → planner on th
 
 | | `raw` | `fused` 2.0 without ACC target | `fused` |
 |---|---|---|---|
-| hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 48 | **30** |
-| radar-only target episodes, 20 held-out drives (whole drives) | 19 | 8 | **3** |
+| hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 48 | **29** |
+| radar-only target episodes, 20 held-out drives (whole drives) | 19 | 8 | **4** |
 | target episodes, 3 owner sunnypilot drives | – | 4 | **0** |
 | hard radar-only braking ticks, 4 further drives | – | 2 | **1** |
-| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.3% |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 42.5% |
 
 The middle column is `fused` with the ACC target readings ignored: the Kalman filter on the object list alone, which
 is what `fused` runs on a track without a matched ACC target.
@@ -97,7 +97,7 @@ is what `fused` runs on a track without a matched ACC target.
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
 −0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier than `fused` before some driver brakes, partly from
 real head starts and partly from an over-closing bias, the bias behind its three times as frequent hard radar-only braking
-([12](12_kalman_filter.md#the-model)). `fused` starts braking when vision does on average (−0.01 s, 95% CI −0.07 … +0.04).
+([12](12_kalman_filter.md#the-model)). `fused` starts braking when vision does on average (−0.01 s, 95% CI −0.07 … +0.05).
 
 What each setting does (examples and plots in [12](12_kalman_filter.md)):
 
@@ -144,11 +144,11 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 | | vision only | `raw` | `fused` 2.0 without ACC target | `fused` |
 |---|---|---|---|---|
 | first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.01 s |
-| already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after a brake press | 40.1% | 44.3% | 41.9% | 41.3% |
-| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 10 |
+| already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after a brake press | 40.1% | 44.3% | 41.9% | 42.5% |
+| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 9 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
-| request jerk, mean \|da/dt\| | 1.003 | 1.029 | 1.007 | 0.999 |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 497 |
+| request jerk, mean \|da/dt\| | 1.003 | 1.029 | 1.007 | 0.998 |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 494 |
 | forward-collision warnings | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and

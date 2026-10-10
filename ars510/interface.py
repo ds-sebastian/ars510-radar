@@ -146,12 +146,12 @@ BASE_CONFIG = NativeInterfaceConfig(
 )
 # The default install profile (docs/12, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
 # filter per track that fuses the object list and the radar's ACC target (matched by position, 0.4 x range scale; its
-# track takes the ACC distance as range). The track-ID relink and the saturation guard of the base decode are off:
+# track takes the ACC distance as range; the ACC speed is weighted at 0.3 m/s since 2.5). The track-ID relink and the saturation guard of the base decode are off:
 # with the filter on, the driving is the same with or without them (docs/12). Beyond 15 m, tracks other than the ACC target's that sit
 # more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate"). The summaries are off. The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
-                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0)
+                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0, acc_sigma_mps=0.3)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
@@ -159,7 +159,7 @@ FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0,
 COLORED_CONFIG = replace(FUSED_CONFIG, speed_sigma_per_code=0.001, speed_bias_tau_s=1.19, speed_bias_sigma_per_code=0.0096,
                          speed_sigma_ego_gain=0.48, speed_sigma_accel_gain=0.51, young_sigma_scale=1.0,
                          lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True,
-                         summary_sigma_mps=0.5)
+                         summary_sigma_mps=0.5, acc_sigma_mps=0.5)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"

@@ -64,7 +64,7 @@ More: [05 ACC target](05_acc_target_and_support.md), [12](12_kalman_filter.md#ma
 ## 5. The Kalman speed filter
 
 One small Kalman filter per track estimates the car's speed over ground. Each reading is weighted by its own
-uncertainty: the object list by 0.045 m/s × `240|7`, the ACC target by 0.5 m/s. A reading the radar itself calls
+uncertainty: the object list by 0.045 m/s × `240|7`, the ACC target by 0.3 m/s. A reading the radar itself calls
 uncertain moves the estimate only a little, so excursions are absorbed while real slowdowns, which the ACC target
 confirms, come through.
 
@@ -90,7 +90,7 @@ What that changes on the road, replayed through openpilot's planner:
 *Left: a pickup first detected at 66 m read 15-20 m short in the object list; the current filter matches it to the ACC
 target and asks for −1.47 m/s² instead of 2.1's −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead
 with a car a lane over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about
-−3 m/s; 2.1 asked for −1.54 m/s², the current filter for −0.29 (vision −0.08). 2.3 and 2.4 ask the same in both
+−3 m/s; 2.1 asked for −1.54 m/s², the current filter for −0.29 (vision −0.08). 2.3, 2.4 and 2.5 ask the same in both
 moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json)).* More:
 [12](12_kalman_filter.md#path-gate).
 
@@ -130,11 +130,11 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
 | braking only the radar asked for, per hour (20 held-out drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
-| hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 | `profiles_vs_vision.json` |
-| braking onset against vision only | −0.01 s (95 % CI −0.07 … +0.04) | `profiles_vs_vision.json` |
-| driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.3 %, vision 40.1 % | `profiles_vs_vision.json` |
+| hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 29 | `profiles_vs_vision.json` |
+| braking onset against vision only | −0.01 s (95 % CI −0.07 … +0.05) | `profiles_vs_vision.json` |
+| driver brakes already anticipated at ≤ −1 m/s² | `fused` 42.5 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion favours `fused`) | `road_v21.json` |
-| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 5.4 / 7.2 s, vision 10.2 / 10.3 s; 27 replay drives (6.72 h): `fused` 7.1 / 3.0 s, vision 31.9 / 10.0 s | `oracle_reference.json` |
+| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 4.4 / 7.2 s, vision 10.2 / 10.3 s; 27 replay drives (6.72 h): `fused` 3.0 / 3.1 s, vision 31.9 / 10.0 s | `oracle_reference.json` |
 | openpilot file | 183 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence

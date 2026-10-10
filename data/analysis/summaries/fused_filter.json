@@ -343,7 +343,8 @@
    }
   },
   "fresh_8_drives": "no hard ticks for any; mean gap to vision unchanged (0.086-0.087); harder windows mostly while the driver braked, but two system-driven windows softer than both fused and vision (-2.29 -> -1.94, vision -2.33; -1.40 -> -1.24, vision -1.42)",
-  "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default stays 0.5"
+  "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default then stayed 0.5",
+  "note": "measured with the ACC speed read at 0.1 m/s per code (before the unit correction in acc_summary_units.json), so heavier ACC weights also carried a 20 % smaller closing speed; the weight under the corrected unit is in acc_weight.json (0.3 m/s since 2.5)"
  },
  "upstream_equality_2_4_1": {
   "scope": "two full owner road drives (about 4.3 h, 258 segments), decode only: every bus-1 frame plus 0xB4 speed and 0x24 yaw fed to upstream/ars510_radar.py and FUSED_CONFIG",

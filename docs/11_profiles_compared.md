@@ -37,7 +37,7 @@ fork build (`ars510/`); the summaries are a fork option, on in `colored`.*
   on the lead's over-ground speed ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations
   with a process-noise scale of 1.5 m/s² (a lead-acceleration bound). Each reading updates it in turn, weighted by its model variance:
   object-list speed has σ = 0.045 m/s × max(`240|7`, 1), multiplied by 1.8 through age 60 and tapered to 1 at age 100.
-  The matched ACC target uses σ 0.5 m/s for the one track it describes. Innovations beyond 3 innovation standard deviations are clamped there (a robust Kalman update), and
+  The matched ACC target uses σ 0.3 m/s for the one track it describes. Innovations beyond 3 innovation standard deviations are clamped there (a robust Kalman update), and
   a track is first published once its modeled speed standard deviation is at most 0.75 m/s (and age at least 60).
   That standard deviation is a readiness measure for publication. radard then runs its own Kalman filter on the
   lead; `fused` feeds it one speed per track that already combines what the radar knows.
@@ -64,22 +64,22 @@ Held-out set (its historical name; the drives were used during development): 20 
 
 | driver brake presses (167) | vision only | `raw` | `fused` 2.0 w/o ACC target | `fused` |
 |---|---|---|---|---|
-| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.01 s [−0.07, +0.04] |
-| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.73 s |
-| already asking ≤ −0.5 m/s² from 3 s before to 0.5 s after | 80.8 % | 84.4 % | 83.8 % | 82.0 % |
-| already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after | 40.1 % | 44.3 % | 41.9 % | 41.3 % |
-| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 10 |
+| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.01 s [−0.07, +0.05] |
+| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.69 s |
+| already asking ≤ −0.5 m/s² from 3 s before to 0.5 s after | 80.8 % | 84.4 % | 83.8 % | 81.4 % |
+| already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after | 40.1 % | 44.3 % | 41.9 % | 42.5 % |
+| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 9 |
 
 | over 4.56 h of driver-controlled driving (jerk, error, lead share and flips: its 2.66 h moving) | vision only | `raw` | `fused` 2.0 w/o ACC target | `fused` |
 |---|---|---|---|---|
 | braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour (driver-controlled stretches only) | 0 | 1.75 | 0.88 | 0.22 |
 | … of which the driver was on the gas | — | 0.66 | 0.22 | 0 |
-| hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 30 |
+| hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 29 |
 | driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 4 / 1 |
-| request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.419 | 0.415 |
-| request jerk (mean \|da/dt\|) | 1.003 | 1.029 | 1.007 | 0.999 |
+| request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.419 | 0.414 |
+| request jerk (mean \|da/dt\|) | 1.003 | 1.029 | 1.007 | 0.998 |
 | share of lead time on a radar lead | 0 | 86.6 % | 86.8 % | 87.0 % |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 497 |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 494 |
 
 What the radar adds, by profile:
 
@@ -87,10 +87,10 @@ What the radar adds, by profile:
   start is real (the radar sees closings through curves and before the camera's distance estimate settles); part comes
   from an over-closing bias of the unfiltered object list. The same bias causes its radar-only braking.
 - **`fused` removes that over-closing bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
-  driver also slowed. It starts braking when vision does on average (−0.01 s, 95 % CI −0.07 … +0.04): 20 of 148 paired driver brakes
-  are answered earlier than vision and 13 later, and it is already asking for ≤ −1 m/s² before 41.3% of brake presses
-  (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
-  (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
+  driver also slowed. It starts braking when vision does on average (−0.01 s, 95 % CI −0.07 … +0.05): 23 of 149 paired driver brakes
+  are answered earlier than vision and 14 later, and it is already asking for ≤ −1 m/s² before 42.5% of brake presses
+  (vision 40.1%). In the 4 s before driver brakes, while its lead is a radar point, it shows on average 0.40 m/s less closing than the vision lead
+  (median 0.16; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
 - **The Kalman filter alone** (`fused` 2.0 without the ACC target) halves `raw`'s hard radar-only braking (93 → 48 hard ticks) with onset between
   `raw` and `fused`; the radar's ACC target supplies the rest of the drop in hard braking (`fused` 2.0 already reached 30 ticks).
 - **Every profile follows a radar lead about 87 % of the time a lead exists**, so radard uses the radar distance for

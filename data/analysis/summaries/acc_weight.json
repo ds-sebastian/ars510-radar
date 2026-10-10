@@ -1,0 +1,58 @@
+{
+ "description": "Weight of the radar's ACC target speed in fused's per-track speed filter: 2.4 (sigma 0.5 m/s), 2.5 (0.3 m/s) and the ACC target's values copied unblended for its track. Unchanged openpilot card -> radard -> planner replays: the 34 replay drives (gate counts as in docs/09) and the hindsight-lead oracle (oracle_reference.json), plus the road drives (owner 2.1 drives and a second car, open loop). Gates were fixed before the 0.3 result.",
+ "sigma_mps": {
+  "2.4": 0.5,
+  "2.5": 0.3
+ },
+ "replay_34_drives": {
+  "2.4": {
+   "hard_ticks_heldout_further_owner": [30, 1, 0],
+   "target_episodes_heldout_further": [3, 3],
+   "heldout_lead_source_switches": 1349,
+   "onset_vs_vision_s": -0.010,
+   "anticipated_at_minus_1": 0.413,
+   "radar_only_braking_per_h": 0.22,
+   "oracle_confident_unnecessary_s": 7.1,
+   "oracle_confident_missed_s": 3.0
+  },
+  "2.5": {
+   "hard_ticks_heldout_further_owner": [29, 1, 0],
+   "target_episodes_heldout_further": [4, 3],
+   "heldout_lead_source_switches": 1336,
+   "onset_vs_vision_s": -0.009,
+   "anticipated_at_minus_1": 0.425,
+   "radar_only_braking_per_h": 0.22,
+   "oracle_confident_unnecessary_s": 3.0,
+   "oracle_confident_missed_s": 3.1
+  },
+  "acc_values_unblended": {
+   "hard_ticks_heldout_further_owner": [28, 2, 0],
+   "target_episodes_heldout_further": [4, 4],
+   "onset_vs_vision_s": -0.036,
+   "note": "the extra further-drive hard tick is a moment where the radar's own ACC tracker slides off a real car at about 85 m (closing -10.6 m/s, 2.9 m sideways on a straight road) while the camera keeps the lead at ego speed: unblended -2.1 m/s2 (published lead -11.1 m/s), 2.4 -1.2 (-8.1), 2.5 -1.0 (-7.5): the blend keeps the published speed between the two radar estimates (2.5 keeps 2.4's further count)"
+  }
+ },
+ "road": {
+  "2.4": {
+   "owner_hard": 0,
+   "owner_mild": 7,
+   "lead_flips": 1622,
+   "second_car_hard": 0,
+   "oracle_confident_unnecessary_s": 5.4,
+   "oracle_confident_missed_s": 7.2
+  },
+  "2.5": {
+   "owner_hard": 0,
+   "owner_mild": 8,
+   "owner_mild_note": "the added mild request is judged real (driver or camera confirms the slowdown)",
+   "lead_flips": 1620,
+   "second_car_hard": 0,
+   "oracle_confident_unnecessary_s": 4.4,
+   "oracle_confident_missed_s": 7.2
+  },
+  "bookmarks_max_abs_difference_mps2": 0.06,
+  "bookmarks": 23
+ },
+ "caveat": "The oracle's reference takes its range from the ACC target where present, so it partly favours a heavier ACC weight; the hard-tick, onset, anticipation and road counts are independent of it and are equal or slightly better.",
+ "basis": "sigma 0.3 m/s is closer than 0.5 to a likelihood fit of the ACC target's noise near range (about 0.13 m/s; the fit is degenerate because errors persist, so it bounds rather than sets the value); earlier tests of a heavier ACC weight used the ACC speed at 0.1 m/s per code, 20 % small (acc_summary_units.json)."
+}

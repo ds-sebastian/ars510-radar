@@ -26,7 +26,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 | reading | σ | where the value comes from |
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
-| ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
+| ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.3 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)); blended, not copied ([below](#the-acc-targets-weight)) |
 | summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within max(5 m, 15 %), lateral within 1 m); not used on the ACC track ([below](#what-the-summaries-do)) |
 
 The ACC target's units are checked against the absolute `0x680` range ([05](05_acc_target_and_support.md#units-of-the-acc-target)).
@@ -60,13 +60,13 @@ object-list reading plus, for the one track the ACC target describes, the ACC re
 **The gain changes every cycle.** radard's filter uses one precomputed gain for every track. Here `K` follows the
 radar's own uncertainty code and whether the ACC target is present. A near car with a small `240|7` is followed
 almost directly. A far car with a large `240|7` moves only a few percent per reading. While the ACC target is
-present, it dominates from about 15 m on.
+present, it dominates from about 10 m on.
 
 ![the filter on one track](img/analysis/kalman_trace.png)
 
 *Bundled drive E. Top: the object-list readings (grey) dive to −6 m/s at 18 s while the ACC target stays near
 −0.9; the estimate follows the ACC target. Bottom: the gain on each reading. Each object-list reading moves the
-estimate by about 5%, each ACC target reading by about 15%. The dotted line is the object-list σ from `240|7`.*
+estimate by about 4%, each ACC target reading by about 24%. The dotted line is the object-list σ from `240|7`.*
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
 
@@ -173,7 +173,8 @@ leads beyond 60 m drops from 77 % to 73 % (vision covers the rest).
 | 27 drives | held-out hard ticks / episodes / target | further / owner hard ticks | owner target episodes | lead flips (held-out) | onset vs vision | driver brakes anticipated |
 |---|---|---|---|---|---|---|
 | 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s | 43.7 % |
-| 2.4 `fused` (0.4 x ACC match, path gate; = the openpilot version) | 30 / 11 / 3 | 1 / 0 | 0 | 1,349 | −0.010 s | 41.3 % |
+| 2.4 `fused` (0.4 x ACC match, path gate, no summaries) | 30 / 11 / 3 | 1 / 0 | 0 | 1,349 | −0.010 s | 41.3 % |
+| 2.5 `fused` (ACC σ 0.3; = the openpilot version) | 29 / 11 / 4 | 1 / 0 | 0 | 1,336 | −0.009 s | 42.5 % |
 
 On the owner's 5.8 moving hours of road drives (replayed open loop) the path gate and the 0.4 x match keep hard
 radar-only braking at 0 with every hard vision brake still answered. They cut radar-only requests of 1 m/s² or more
@@ -203,9 +204,11 @@ drops a lead the camera still follows (a lead turning out of the lane).
 ![against the oracle](img/analysis/guide_oracle.png)
 
 Over 7.65 h of road drives (the owner's and the second car's), `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
-5.4 s against 10.2 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (7.2 s,
-vision 10.3 s, 2.1 9.5 s). On the 27 replay drives (6.72 h scored), it is the best of all versions on
-both: 7.1 s unnecessary (vision 31.9 s, 2.1 9.4 s) and 3.0 s missed (vision 10.0 s, 2.1 4.1 s). Scoring covers moving
+4.4 s against 10.2 s for vision only and 11.5 s for 2.1 (2.4: 5.4 s), and misses less of the braking the oracle asked for (7.2 s,
+vision 10.3 s, 2.1 9.5 s; 2.4 the same). On the 27 replay drives (6.72 h scored): 3.0 s unnecessary (vision 31.9 s,
+2.1 9.4 s, 2.4 7.1 s) and 3.1 s missed (vision 10.0 s, 2.1 4.1 s, 2.4 3.0 s). The reference takes its range from the
+ACC target, so it favours versions that weigh the ACC target more; read 2.5's gain over 2.4 here with that in mind
+([below](#the-acc-targets-weight)). Scoring covers moving
 moments (above 1 m/s), where the lead signal decides; at standstill the planner's stop-and-go logic does. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 
@@ -292,6 +295,22 @@ bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and
 oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` has left
 them out since 2.4, and the fork default and the openpilot version drive identically. The code stays as a fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
 
+### The ACC target's weight
+
+The ACC target's speed enters with σ 0.3 m/s (since 2.5; 0.5 before). Against 2.4 on the 27 replay drives: held-out
+hard radar-only ticks 30 → 29, target episodes 3 → 4 (further drives 3 = 3), onset vs vision −0.009 s (−0.010), driver
+brakes anticipated at −1 m/s² 41.3 → 42.5 %, radar-only braking 0.22 per hour for both; against the oracle 3.0 s of
+unnecessary braking instead of 7.1 s and 3.1 s missed instead of 3.0 s. On the road drives: no hard radar-only braking,
+mild requests 7 → 8 (the added one a real slowdown), lead flips 1,622 → 1,620, against the oracle 4.4 s unnecessary
+instead of 5.4 s and 7.2 s missed for both; all 23 bookmarks within 0.06 m/s². Most of the gain shows against the
+oracle, whose reference takes its range from the ACC target; the counts that do not depend on it are equal or slightly
+better.
+
+The ACC target is blended, not copied. The radar's own ACC tracker can slide off a real car: on one further replay drive
+it read −10.6 m/s at about 85 m while drifting 2.9 m sideways on a straight road, with the camera holding the lead at
+ego speed. Publishing the ACC values unchanged asks for −2.1 m/s² there; the blend keeps the published speed between the
+radar's two estimates and asks for −1.0 m/s² (2.4: −1.2). Numbers: [`acc_weight.json`](../data/analysis/summaries/acc_weight.json).
+
 ## Kalman variants tested
 
 The single speed state of `fused` was compared with richer filters on an offline bench: every cycle of 8 drive groups,
@@ -306,8 +325,8 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state on held-out and owner drives, slightly better on fresh | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
 | object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
-| retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: the current constants are as good as any retuned set on every check |
-| ACC target trusted more (σ 0.13, its measured error, or 0.02 instead of 0.5) | – | 27 drives: held-out 30 → 26 / 25 hard ticks (the difference is over-braking after the driver released), same unjustified braking; fresh drives: two real slowdowns with openpilot driving got softer braking than both `fused` and vision. Mixed: default stays 0.5 (`acc_target_weight` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)) |
+| retuned `fused` constants (σ per count, lead accel) | – | 8 fresh drives: the current constants are as good as any retuned set on every check |
+| ACC target weight (σ 0.3, the default since 2.5; 0.5 before) | – | [above](#the-acc-targets-weight) |
 
 The colored-noise filter is the textbook fix for the object list's slow, correlated errors: lag-1 autocorrelation is
 0.95 per record, an error time constant of about 1.2 s. It rejects slow drift, but for the same reason it takes seconds to

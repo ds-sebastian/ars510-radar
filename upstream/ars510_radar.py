@@ -28,7 +28,7 @@ RANGE_GAIN = 0.1  # velocity-aided range: cuts 1.5 s range walks by about a thir
 # Kalman speed filter (one state: the lead's over-ground speed)
 SIGMA_PER_CODE = 0.045  # m/s per 240|7 count, against the radar's ACC target
 YOUNG_SCALE, YOUNG_AGE = 1.8, 100  # young tracks err more than 240|7 says
-ACC_SIGMA = 0.5  # m/s, the radar's ACC target speed
+ACC_SIGMA = 0.3  # m/s, the radar's ACC target speed (blended, not copied: the object list damps the ACC tracker's rare slides)
 LEAD_ACCEL = 1.5  # m/s^2, process noise
 GATE_SIGMA = 3.0  # innovations beyond 3 sigma count as 3 sigma
 PUBLISH_STD = 0.75  # m/s: a new track is published once its speed is this certain

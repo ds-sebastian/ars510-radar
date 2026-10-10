@@ -64,7 +64,7 @@ expanded 700-segment inventories, 20 held-out replay routes and closed-loop driv
 | [08 openpilot integration](../docs/08_openpilot_integration.md) | `road_v21` (fused 2.1.0 on the road and issue #66), `openpilot_integration_replay`, `driver_agreement_preregistered` (the pre-registered radar-vs-vision test), `radard_vision_fusion` (the optional radard patch) |
 | [10 Research directions](../docs/10_research_directions.md) | `openpilot_file_parts` (each part of the openpilot file: code lines, cost of removing it, upstream status) |
 | [11 Profiles compared](../docs/11_profiles_compared.md) | `profiles_vs_vision` (every profile against vision only on the 27 replay drives) |
-| [12 Kalman speed filter](../docs/12_kalman_filter.md) | `fused_filter` (parameters, ablations and combinations of fused 2.0, radard cascade, ACC weight), `hard_braking_review`, `tracker_association`, `lead_choice_guards` (the 0.4 x ACC match and the path gate; 2.3 and 2.4 replays), `oracle_reference`, `kalman_variants`, `kalman_response`, `summary_owner_case` |
+| [12 Kalman speed filter](../docs/12_kalman_filter.md) | `fused_filter` (parameters, ablations and combinations of fused 2.0, radard cascade, ACC weight under the old ACC unit), `acc_weight` (the ACC target's weight, 0.3 m/s since 2.5), `hard_braking_review`, `tracker_association`, `lead_choice_guards` (the 0.4 x ACC match and the path gate; 2.3 and 2.4 replays), `oracle_reference`, `kalman_variants`, `kalman_response`, `summary_owner_case` |
 | [13 Car-bus messages](../docs/13_car_bus_messages.md) | `radar_car_bus_messages`, `target_366_coding`, `target_366_coverage`, `target_366_speed_domain` |
 
 `figure_numbers.json` is written by `tools/make_analysis_figures.py` from the bundled tables; the others are aggregates
