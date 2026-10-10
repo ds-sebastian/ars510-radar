@@ -1,7 +1,7 @@
 # 12. The Kalman speed filter
 
 The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
-([07](07_velocity_excursions.md)). The radar reports their size in `240|7`, as a width: a per-reading error scale. The default
+([07](07_velocity_excursions.md)). Their size follows the radar's `240|7` code, a per-reading error width (◐). The default
 `fused` profile handles them with **one Kalman filter per track** on the lead's speed over ground. Every reading is
 weighted by its own uncertainty: the object list and the radar's ACC target. radard then runs its usual filter on what
 this one publishes.
@@ -27,7 +27,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
 | ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.5 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)) |
-| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within 15 %, lateral within 1 m); not used on the ACC track ([below](#what-the-summaries-do)) |
+| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within max(5 m, 15 %), lateral within 1 m); not used on the ACC track ([below](#what-the-summaries-do)) |
 
 The ACC target's units are checked against the absolute `0x680` range ([05](05_acc_target_and_support.md#units-of-the-acc-target)).
 
@@ -158,8 +158,9 @@ run; hard radar-only braking stayed at 30 held-out ticks throughout
 
 ## Path gate
 
-radard pairs the vision lead with the radar track nearest in range, whatever its lateral position, so a car in the next
-lane at the lead's range can become the lead. On 2.1 road drives this caused one of the two mild unprompted slowdowns
+radard picks the radar track that best matches the vision lead in distance, lateral position and speed (each weighted by
+the camera's uncertainty) and then checks only distance and speed, so far out a car in the next lane at the lead's
+range can become the lead. On 2.1 road drives this caused one of the two mild unprompted slowdowns
 (about 1.5 m/s², driver on the gas) and a hard brake in a second car's replay. Beyond 15 m, a track other than the ACC
 target's that is more than 2.5 m from the ego path predicted from yaw rate and speed (constant curvature,
 `y − yaw / v · d² / 2`) is withheld. Closer in it stays, so cars moving into the lane at 8-10 m keep their justified

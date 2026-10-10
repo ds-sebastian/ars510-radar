@@ -62,7 +62,7 @@ The docs describe the **current state only**: what each field is, how sure we ar
 - No dated banners, changelogs of claims, or "this didn't work" lists: history lives in git and PRs.
 - Numbers cited in the docs come from a summary JSON in `data/analysis/summaries/`, listed in `data/README.md`.
   Figures come from the `tools/make_*_figures.py` scripts.
-- Drives stay anonymous: drive letters (A/B/C, D1-D4, sample drive E, owner road drives O1-O3) and times relative to an event.
+- Drives stay anonymous: drive letters (A/B/C, D1-D4, sample drive E, owner road drives O1-O4, second-car drives U1-U2) and times relative to an event.
 - Research PRs: say what was tested, on which drives, what counts as a pass, and include negative results in the PR
   description. Only confident, reproducible results change the docs.
 

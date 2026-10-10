@@ -344,7 +344,7 @@ def fault_injection():
         ax.set_ylim(0, 1)
     np.atleast_1d(axes)[0].set_ylabel("share of ticks radard picks the ghost")
     np.atleast_1d(axes)[0].legend(fontsize=8)
-    fig.suptitle("radard pairs by range: with the real lead missing, a ghost at the lead's distance and speed becomes the lead at every offset tested", y=1.02)
+    fig.suptitle("With the real lead missing, a ghost at the lead's distance and speed becomes radard's lead at every offset tested", y=1.02)
     save(fig, "radard_lateral_gate")
 
 

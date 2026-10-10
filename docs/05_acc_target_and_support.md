@@ -160,7 +160,7 @@ class 2 with 22:23:120 in every frame, and the object list's own class for a cla
 Each summary is therefore the position of one target of the radar's internal tracker. Keep all 13 bits of the second
 word (it crosses 4096 continuously).
 
-**They come from the radar's smooth internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
+**They likely come from the radar's smooth internal tracker (◐).** The speed from a 1 s slope of the 0x192 range matches the radar's
 ACC speed when both describe the same car (correlation 0.98, median difference 0.18 m/s). During object-list velocity
 excursions it stays with the ACC speed in every tested cycle (490 of 490 for 0x192, 98 of 98 for 0x194), and against
 a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:

@@ -143,7 +143,7 @@ What the radar adds, by profile:
 
 - The other interfaces, except Ford's, pass the radar's tracks through with validity and lifecycle checks and leave
   speed filtering to radard.
-- The ARS510 reports the width of its far-range speed error (`240|7`) as a continuous per-reading scale, so `fused`
+- The ARS510's `240|7` code follows the width of its far-range speed error as a continuous per-reading scale (◐), so `fused`
   weights each reading in one scalar filter ([12](12_kalman_filter.md#the-model)); the replays above are its evidence.
 - Moving that weighting into radard (a per-point speed variance) would make this interface a pass-through like the
   others ([10](10_research_directions.md#towards-an-upstream-comma-interface)).

@@ -1,7 +1,7 @@
 {
  "description": "Every radar profile against vision only (stock openpilot leads on this car) on the same 34 replay drives, unchanged openpilot card -> radard -> planner, judged against the human driver with the pre-registered definitions: driver-brake events (anticipation within 3 s before the brake press, onset = first request <= -0.5 m/s2 in [-3, +2] s, hard slowdowns = driver <= -2 m/s2 or a stop), braking requests only one system made (<= -1 m/s2 for >= 0.3 s) with what the driver did, and driver overrides (whose request was closer to what the driver then did). fused: release 2.4.0 (no summaries).",
  "profiles": {
-  "raw": "OPENPILOT_CONFIG (formerly 'stock', the unfiltered radar decode)",
+  "raw": "BASE_CONFIG (formerly 'stock', the unfiltered radar decode)",
   "steady": "STEADY_CONFIG",
   "anchor": "ANCHOR_CONFIG",
   "fused": "FUSED_CONFIG",

@@ -6,9 +6,9 @@ object; the radar keeps an object in its slot while the slot's age counts up, wh
 
 The slot speed has slow, correlated errors at range (false closings of 1-10 s beyond ~40 m). The radar reports their
 size in 240|7. One Kalman filter per track fuses the slot speed, weighted by that code, with the radar's own ACC target
-(0x235 / 0x237) for the track it describes. radard then filters as for any radar. radard pairs the vision lead with
-the track nearest in range and has no lateral gate, so beyond 15 m a track a lane away from the yaw-predicted path
-is not published.
+(0x235 / 0x237) for the track it describes. radard then filters as for any radar. radard's lead match weights
+lateral position only through the camera's uncertainty, so beyond 15 m a track a lane away from the yaw-predicted path
+is withheld.
 Single-file candidate for upstream; ars510-radar docs/12 has the evidence for every constant and every omitted part.
 """
 import zlib

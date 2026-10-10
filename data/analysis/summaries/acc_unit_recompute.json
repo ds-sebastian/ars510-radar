@@ -488,7 +488,7 @@
      369
     ]
    },
-   "inputs": "SCR-117: atlas caches + clean_labels.py per_seg; confirmation_round2.json D5; captures/comma_cloud/20260907_5a/pre_test_drive_validation/signal_atlas_candidates.md (D5 definition)",
+   "inputs": "SCR-117: atlas caches + clean_labels.py per_seg; confirmation_round2.json D5; research captures (D5 definition)",
    "method": "Reconstructed D5 = np.polyfit(v_ground*0.149/0.15, acc_vrel + v_ego, 1) slope on clean-normal records with |native vRel|>1 per 20 m band; reproduces 0.9893/1.0218 (n 711/125) and 0.9914/1.0007 exactly at 0.1. Caveat: over-ground slope is dominated by ego speed and clean-normal records are pre-selected for |native-ACC|<0.7, so this test is nearly insensitive to the ACC unit by construction.",
    "status": "recomputed"
   },

@@ -85,7 +85,8 @@ class NativeInterfaceConfig:
     acc_match_min_age: int = 20
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
-    # Path gate (radard has no lateral gate and pairs the vision lead with the track nearest in range): beyond
+    # Path gate (radard weights lateral position only through the camera's uncertainty and checks only distance and
+    # speed, so far out it can pair the vision lead with a car a lane over): beyond
     # path_gate_min_range_m, a track other than the ACC target's that is more than path_gate_m from the ego path predicted
     # from yaw rate and speed (constant curvature: y - yaw / v * d^2 / 2) is withheld: a car a lane over, also on a
     # curve. Closer in, cars moving into the lane must stay visible.

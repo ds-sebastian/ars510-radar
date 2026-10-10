@@ -121,7 +121,8 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
 - **Matching needs a vision lead.** radard matches a radar track to the vision lead while the lead probability is
   above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check. Matching runs afresh every tick,
   so the radar lead follows whichever car the camera currently selects.
-- **Range-only pairing.** radard pairs by distance and speed. If the true lead is missing from the radar list, an
+- **Weak lateral weighting.** radard scores distance, lateral position and speed against the camera's lead, each
+  weighted by the camera's uncertainty, and checks only distance and speed afterwards. If the true lead is missing from the radar list, an
   adjacent-lane object at the right distance and speed becomes the lead 34-75% of the time, still 34-46% at 6 m
   offset. `fused`'s path gate withholds such tracks beyond 15 m ([12](12_kalman_filter.md#path-gate)); the radar's
   own lane weights ([03](03_slot_fields.md#lane-assignment)) could supply a gate inside radard.

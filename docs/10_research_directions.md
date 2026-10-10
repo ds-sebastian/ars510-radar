@@ -67,8 +67,8 @@ Proposed study:
 The goal: tell a velocity excursion from a real closing within about 1 s ([07](07_velocity_excursions.md)).
 
 1. **A far-range truth drive.** Following a second car that logs its own speed (a second comma device, or a 5-10 Hz GNSS
-   logger) at 40-120 m gives the lead's true velocity. The video-looming reference covers 40-110 m, with few windows
-   beyond 100 m, and shares the camera with the vision model.
+   logger) at 40-120 m gives the lead's true velocity. The video-looming reference spans 10-130 m, with 148 of its 2,657
+   windows beyond 90 m, and shares the camera with the vision model.
 2. **The first second of an excursion.** Velocity steps of a consistent size and sign at onset would point to
    wrong-branch Doppler measurements leaking into the tracker; ordinary-sized steps point to low-SNR tracking
    ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)).
@@ -134,7 +134,7 @@ What other openpilot radar interfaces read from their radars, and the ARS510 cou
 | per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE`, Tesla `Meas` | `107\|1` = predicted (◐) and `16\|8` = existence probability (◐); the fork build publishes `measured = not predicted` for forks that carry the field; upstream openpilot has deprecated it | in place in the fork build; excursions arrive on measured records, so this is hygiene |
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (●) | in place |
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | the ACC target carries a relative speed for the followed car |
-| relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` over-ground acceleration (◐, lags 0.5-1 s); the ACC target's relative acceleration (●) | calibrate `84\|10` against independent motion |
+| relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` over-ground acceleration (◐, lags about 0.5 s); the ACC target's relative acceleration (●) | calibrate `84\|10` against independent motion |
 | **lateral speed** | Tesla `LatSpeed` | `74\|10` (◐, 0.147-0.155 m/s per code against the gyro, `decode_references.json`) | already published as `yvRel` where forks carry it |
 | radar **fault / blockage** status | Honda `RADAR_STATE`, Tesla `sensorBlocked` | "no record for 0.5 s" is reported; candidates: Toyota's car-bus 0x411 `PCS_HUD` alerts (`PCS_DUST2` sensor blocked, `PCS_INDICATOR` = 2 fault), the camera's object-list acknowledgement (0x101 byte 0, 0x197), and a long idle run of 0x680 while driving (longest 1.0 s in 7.8 h of normal driving) | a drive with a covered or dirty radar, or in heavy rain or snow, shows which of them reacts |
 | measurement **uncertainty** | (rarely exposed) | `224/232/240/248\|7` family, scaled against the radar's ACC target | physical units would let radard weight radar against vision |
@@ -165,8 +165,8 @@ upstream). A test keeps it equal to `fused` point for point (bundled samples; on
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
 1. **A clear reason the filter belongs in the interface.** Every upstream radar interface except Ford's passes the radar's
-   tracks through. The ARS510's object list has slow, correlated speed errors whose width the radar reports (`240|7`) as a
-   continuous scale; the unfiltered decode asks for hard braking three times as often as `fused`
+   tracks through. The ARS510's object list has slow, correlated speed errors whose width the radar's `240|7` code
+   follows as a continuous scale (◐); the unfiltered decode asks for hard braking three times as often as `fused`
    ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). The candidate's test covers the filter
    (unfiltered, the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
    variance), leaving the interface a pass-through. Processing in the interface has precedent: openpilot's Ford
