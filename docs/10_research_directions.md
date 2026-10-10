@@ -24,8 +24,8 @@ The most promising next steps, ordered by how directly they would improve the ra
    radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
    The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 3-4) is a related experiment.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
-   than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.68 vs 0.80 m/s²)
-   and about 0.35 s earlier, with less wobble. radard derives `aLeadK` from vRel for every car; a fork-side radard
+   than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
+   and earlier, with less wobble. radard derives `aLeadK` from vRel for every car; a fork-side radard
    change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would remove the brake-then-accelerate swing.
@@ -42,7 +42,7 @@ a turning lane. Those are likely two different parts of its pipeline; openpilot 
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
   0.29 m inside that line (21 departures): the release fits the rule "keep the target until its centre reaches my lane
   line". On the fresh drives openpilot's model moved to the new lead first, 1.5 s and more than 6 s before the radar's
-  target did (n = 3); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
+  target did (the matched cut-ins); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
 - **The control law (to be fitted).** How Toyota turns distance, closing speed and relative acceleration into a braking
@@ -108,7 +108,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## Keeping AEB under openpilot longitudinal
 
-Without a radar CAN filter, openpilot longitudinal switches off the radar's car-bus output, including its PCS / AEB
+On an unfiltered radar line, openpilot longitudinal switches off the radar's car-bus output, including its PCS / AEB
 brake request, and the car flags the loss ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)).
 Ways to keep AEB:
 
@@ -158,7 +158,7 @@ checked against the radar's raw range, the camera and the driver ([12](12_kalman
 the wider ACC match and the path gate came from road drives ([12](12_kalman_filter.md#path-gate)). The ledger below
 says what each line buys and which parts an upstream PR would drop first. Constants are fixed in the file, it runs one
 configuration, and points carry `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated
-upstream). A test keeps it equal to `fused` point for point (bundled samples; two full drives checked once), and
+upstream). A test keeps it equal to `fused` point for point (bundled samples; two full drives checked with 2.1.0), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
 1. **A clear reason the filter belongs in the interface.** Every upstream radar interface except Ford's passes the radar's
@@ -167,14 +167,14 @@ upstream). A test keeps it equal to `fused` point for point (bundled samples; tw
    ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). The candidate's test covers the filter
    (unfiltered, the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
    variance), leaving the interface a pass-through. Processing in the interface has precedent: openpilot's Ford
-   interface (Delphi MRR, 268 lines, 194 of them code) clusters raw detections into tracks and associates them over time.
+   interface (Delphi MRR, 272 lines, 184 of them code) clusters raw detections into tracks and associates them over time.
 2. **Small, separable PRs.** Decode and points first (opendbc, decode only, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
 3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`), with a second car's road report on the
    same firmware. Drives on other cars, through `--profile openpilot`, are what upstream would weigh.
 4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
 5. **Alpha longitudinal compatibility.** Covered for `8821F0R03100`: after openpilot's UDS radar-disable request the
-   radar stops only its car-bus messages and keeps sending bus 1, without a CAN filter
+   radar stops only its car-bus messages and keeps sending bus 1 on an unfiltered radar line
    ([01](01_radar_bus.md#openpilots-radar-disable)).
 
 ### Parts of the openpilot file

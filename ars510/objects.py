@@ -67,7 +67,7 @@ RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structu
 # the native allocation ends (docs/03).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
-# Existence probability in percent (10-100); 20|3 is its coded class (docs/03). Reaches 100 % at about age 21.
+# Existence probability in percent (10-100); 20|3 is its bits 4-6, score // 16 (docs/03). Reaches 100 % at about age 21.
 EXISTENCE = NativeField("existence_pct", 16, 8, 0.0, 1.0, "%", "likely")
 # Predicted (not measured) record, the Continental "Meas = 0" state: common in a track's last records (docs/03).
 PREDICTED = NativeField("predicted", 107, 1, 0.0, 1.0, "flag", "likely")

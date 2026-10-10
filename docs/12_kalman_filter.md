@@ -101,7 +101,7 @@ The two filters run in series, so all replay numbers already include their combi
 - **Plain decode (every profile):**
   - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)). Age 40
     exposes young far false closings (further-drive hard ticks 1 → 9), and so does publishing the ACC target's track
-    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.0 → 3.7 s on 27 drives);
+    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.3 → 3.7 s on 27 drives, tested on 2.3);
   - read the object list's over-ground speed at 0.149 m/s per code (DBC 0.15; 0.149 matches 0xB4), then subtract 0xB4 ego speed;
   - publish a point only with a fresh ego speed, because a NaN would stay in radard's filter for good.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
@@ -117,7 +117,7 @@ The two filters run in series, so all replay numbers already include their combi
   output range    = predicted range + 0.1 × (object-list range − predicted range)
   ```
 
-  It halves 1.5 s range walks. The range residual stays out of the speed estimate: range rate and speed disagree by
+  It cuts 1.5 s range walks by about a third. The range residual stays out of the speed estimate: range rate and speed disagree by
   10-20%, and a coupled filter ran 2-5 m short. For the track the ACC target describes, the measurement is the radar's
   ACC distance instead of the object-list range ([below](#matching-the-radars-trackers-to-tracks)).
 
@@ -284,7 +284,8 @@ the gap was really closing.
 
 Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-done)) the version without them scores
 better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead of 3.3 s on the 27 replay drives
-(2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same requests on all 23 bookmarks,
+(2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same minimum request on 19 of 23 bookmarks (within 0.03 m/s² on the
+other 4),
 with 0 hard radar-only braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 7.2
 against 9.5 s missed. So `fused` leaves them out since 2.4, and the fork default and the openpilot version drive
 identically. The code stays as a
@@ -303,7 +304,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 | Student-t update instead of the 3σ clamp | same as the clamp | – |
 | speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
-| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **15% fewer false closings**; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
+| object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |
 | retuned `fused` constants (σ per count, ACC σ, lead accel) | – | 8 fresh drives: the current constants are as good as any retuned set on every check |
 | ACC target trusted more (σ 0.13, its measured error, or 0.02 instead of 0.5) | – | 27 drives: held-out 30 → 26 / 25 hard ticks (the difference is over-braking after the driver released), same unjustified braking; fresh drives: two real slowdowns with openpilot driving got softer braking than both `fused` and vision. Mixed: default stays 0.5 (`acc_target_weight` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)) |
 

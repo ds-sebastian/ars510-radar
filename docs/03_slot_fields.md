@@ -38,7 +38,7 @@ from this radar's own data.
 
 - **Lateral motion and acceleration live in the radar's rotating frame.** With yaw rate ω (left positive):
   `vy = dy/dt + ω·x` and `ay = dvy/dt + ω·vx`. With that correction, `74|10` fits 0.142-0.145 m/s per code on
-  three drive groups, and 0.147 (±3%) against the gyro in turns on all 700 segments. `96|10` tracks lateral
+  three drive groups, and 0.147-0.155 against the gyro in turns (three partitions, 700 segments). `96|10` tracks lateral
   acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
   further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration.
 - **The heading output closely follows the clipped velocity angle.** It matches
@@ -50,7 +50,8 @@ from this radar's own data.
   [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
 
   Against the road direction where ego later passes the target's position the output correlates at r = 0.89-0.93
-  (assuming the target follows that path;
+  (assuming the target follows that path; `heading_208` in
+  [`decode_references.json`](../data/analysis/summaries/decode_references.json); checked cases in
   [`heading_interpretation.json`](../data/analysis/summaries/heading_interpretation.json)).
   Reference assumptions and results:
   [`decode_references.json`](../data/analysis/summaries/decode_references.json).
@@ -76,19 +77,17 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
-| `16\|8` | **existence probability** | % (10-100); `20\|3` is its coded class; `NativeObject.existence_pct`, point metadata `existence_pct` | ◐ |
+| `16\|8` | **existence probability** | % (10-100); `20\|3` is its bits 4-6 (score // 16); `NativeObject.existence_pct`, point metadata `existence_pct` | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
 | `107\|1` | **predicted record** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
 
 **Score `16|8`.** Commonly sits at 100 on settled tracks and can decline in either state. In state 2 it steps
-down by **exactly 20 or 1 per cycle** (every one of 18,804 mature state-2 updates), and the slot is freed near 20.
+down by **exactly 20 or 1 per cycle** (every one of 6,330 mature state-2 updates), and the slot is freed near 20.
 When the score is at most 40, the step is 20 and `107|1` is clear, the allocation is removed on the next record 82-86%
-of the time. The upper three bits of this byte (`20|3`) read 6 → 5 → 3 → 2 → 1 during that countdown.
-A track that returns to state 1 may keep its lowered score. The byte behaves as an **existence probability in percent**:
-`20|3` is a coded class of it with edges at 25, 50, 75, 90 and 99 % (class 6 = above 99 %), the coding Continental
-radars use for their existence probability, and the Tesla Model 3's Continental radar sends the same quantity as
-`ProbExist` ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). It reaches 100 % at
+of the time. `20|3` is bits 4-6 of this byte (score // 16), so it reads 6 → 5 → 3 → 2 → 1 during that countdown.
+A track that returns to state 1 may keep its lowered score. The byte behaves as an **existence probability in percent**,
+the quantity the Tesla Model 3's Continental radar sends as `ProbExist` ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). It reaches 100 % at
 about age 21 (p90 30), long before range and velocity converge, so the age-60 publication gate stays.
 
 **Predicted records `107|1`.** Set on 45% of the last five records of a track's life against 2.6% elsewhere, with lower
@@ -192,7 +191,8 @@ interface profile withholds them. Counts are in
 
 ![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
 
-The class code and the two size fields describe one consistent object box (mature tracks, 399 one-minute segments):
+The class code and the two size fields describe one consistent object box (all rows, 399 one-minute segments; the size figure below uses the bundled
+three-drive dataset):
 
 | class | share of rows | median speed | width | length |
 |---|---|---|---|---|
@@ -217,7 +217,7 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 
 ![object size](img/analysis/object_size.png)
 
-## Pass-through: every field in `NativeObject`
+## Pass-through: the fields in `NativeObject`
 
 `decode_native_slot` returns each field as a raw code or in its nominal unit; confidence is that of the field's own row in this doc.
 
@@ -241,13 +241,13 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 
 | bits | field | behaviour | conf. |
 |---|---|---|---|
-| `224\|7` | σ dRel (≈ 0.23 m per count, below 40 m) | grows with range, shrinks with track age, rises before deletion | ◐ |
+| `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range, shrinks with track age, rises before deletion | ◐ |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
 | `248\|7` | σ vy (≈ 0.37 m/s per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
-| `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others ≤ 0.03); grows with range and with age | ○ |
-| `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (11 at age 5-10, 2 from age 40) | ○ |
+| `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others within ±0.06); grows with range and with age | ○ |
+| `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
 | `184\|8` | secondary score | percent: 100 on 98 % of rows, 60-99 on young tracks | ○ |
 | `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the range where the track was first seen | ○ |
 
@@ -263,12 +263,12 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   [summary](../data/analysis/summaries/excursion_sigma_scale.json)). The `fused` profile uses it this way.
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (the same at every
-  range), `224|7` 0.23 m below 40 m (beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
+  range), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
   reference is the radar's own estimate.
 - **Reference-free axis check:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
   codes describe slowly varying tracker error.
-- **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95-0.97) and weakly beyond
+- **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95) and barely beyond
   (0.41-0.68), where excursions happen, so it serves as a per-reading weight.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
   over code deciles), which includes the camera's own error
@@ -293,8 +293,8 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 
-*Night, drive B: track #2 (a car about 61 m ahead in the left lane) jumps to 72 m and +55 to +61 m/s relative
-(76 m/s over ground, code 1023) in its last second before the radar drops it.*
+*Night, drive B: track #2 (a car about 61 m ahead, several metres to the left) jumps to about 72 m and +55 m/s relative
+(code 1023, about 77 m/s over ground) in its last second before the radar drops it.*
 
 ## Raw and constant bits
 

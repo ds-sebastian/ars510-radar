@@ -33,7 +33,7 @@ Install with [`openpilot/README.md`](openpilot/README.md). The installer support
 1. Reboot, drive, and press the bookmark (flag) button whenever braking feels wrong or a lead seems stuck.
 2. Open a **Drive report** issue. Give the fork and version, `install.py --check` output, road type, and for each
    flagged moment the time into the drive and what happened.
-3. Never post route IDs, dongle IDs, VINs, GPS positions or video that identifies you or others. If a log would help,
+3. Keep route IDs, dongle IDs, VINs, GPS positions and video that identifies you or others out of public posts. If a log would help,
    say so in the issue and the maintainer will arrange a private transfer.
 
 Reports from a different car, radar firmware or fork are especially valuable: they show how far the layout and the

@@ -16,7 +16,7 @@
    "code_lines": 27,
    "since": "2.0 (range scale 0.4 x since 2.3)",
    "evidence": "hard_braking_review.json",
-   "without": "+24 unjustified hard ticks on 34 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2",
+   "without": "+24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2",
    "upstream": "keep"
   },
   {

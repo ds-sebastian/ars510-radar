@@ -44,7 +44,7 @@ def pipeline() -> None:
   stages = [
     ("1  Radar bus", "0x80 frames on bus 1\n106 frames = 1 record\nevery ~60 ms (16.7 Hz)", GRAY),
     ("2  Reassemble", "742-byte record\nCRC32 check\nbad records dropped", GRAY),
-    ("3  Decode slots", "20 slots, ~5 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
+    ("3  Decode slots", "20 slots, ~2 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
     ("4  Track IDs", "slot + age counting up\n= one radar track", GRAY),
     ("5  Radar's own tracker", "ACC target 0x235/0x237\nmatched to a track by position\n(range scale 0.4 x)", S4),
     ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.5 m/s", S3),
@@ -125,7 +125,7 @@ def cases() -> None:
   """Two road moments: what vision only, 2.1 and 2.3 would have asked the planner for."""
   C = pd.read_csv(REPO / "data" / "analysis" / "lead_choice_cases.csv.gz")
   spec = {"late_brake": ("A slowing pickup first seen at ~66 m", (-6, 2)),
-          "next_lane": ("A slower car two lanes over, on a right curve (no ACC target)", (-6, 3))}
+          "next_lane": ("A slower car a lane over from the lead, on a right curve (no ACC target)", (-6, 3))}
   series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3 / 2.4", 2.0, 1.0))
   fig, axs = plt.subplots(2, 2, figsize=(12.5, 6.6), sharex="col", gridspec_kw={"height_ratios": [1.15, 1]})
   for j, case in enumerate(spec):

@@ -50,9 +50,9 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 
 | time after the first CAN frame | event |
 |---|---|
-| 0.2 s | 0x235 / 0x237 (ACC target frames) start |
-| ≤ 0.9 s | 0x191 target summaries start |
-| ~4 s | openpilot's fingerprinting is done and it starts transmitting |
+| 0.2 s | 0x235 / 0x237 (ACC target frames), 0x191 target summaries and 0x680 frames start |
+| 0.8 s (median) | 0x680 reports its first tracked object |
+| 3.3-4.2 s | openpilot's fingerprinting is done and it starts transmitting (current openpilot) |
 | **5.83-6.12 s** | **0x80 / 0x85 object records start** (27 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)) |
 
 - The object list starts after openpilot's fingerprinting has finished, so the openpilot integration detects the
@@ -60,7 +60,7 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
   0x80 / 0x85 on bus 1 as a fallback ([08](08_openpilot_integration.md)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record and 0x197 bit 8 sets 60 ms later (27 of 27 cold
   starts, spread 7-14 ms): the camera's acknowledgement of the object list, a direct "radar running" signal.
-- 0x680 carries tracked objects from 1.2 s, before the object list starts.
+- 0x680 reports tracked objects well before the object list starts.
 - Several addresses send an all-ones or all-zeros first frame (for example 0x100 `FFFF…`, 0x192 `0FFF0FFF`).
 - Early object records contain placeholder tracks, some at exactly 0 m; the age gate removes them.
 
@@ -85,6 +85,6 @@ request, are described in [13](13_car_bus_messages.md).
 
 ## Ego speed
 
-The object velocities are **over ground**, so the consumer subtracts ego speed. Toyota 0xB4 reads about 1.5% below
+The object velocities are **over ground**, so the consumer subtracts ego speed. Toyota 0xB4 reads about 1-1.5% below
 GPS and wheel speed; every driving profile reads the radar speed at 0.149 m/s per code (`vground_scale = 0.149 / 0.15`
 on the nominal 0.15) and subtracts 0xB4 speed ([06](06_accuracy.md#velocity)).

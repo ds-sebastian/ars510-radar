@@ -183,5 +183,37 @@
       "summary_max_range_m": 80.0
     },
     "why_80m": "optical check: summary closer to the camera reference at 40-60 and 60-80 m, not beyond 80 m"
+  },
+  "current_units_recompute": {
+    "note": "Recomputed from the same SCR-426 / SCR-429 rows with the current units (summary range (code-160)/16 m, lateral 0.015 m, ACC speed 0.125 m/s per code); the blocks above used the earlier scales listed in scales_m_per_code.",
+    "speed_vs_acc_same_object": {
+      "corr": 0.984,
+      "median_abs_diff_mps": 0.176,
+      "slope": 0.983,
+      "n": 20558
+    },
+    "during_object_list_excursions_closer_to_acc": {
+      "0x192": "490 of 490",
+      "0x194": "98 of 98"
+    },
+    "optical_false_closings_gt_2p5_pct_object_list_to_summary": {
+      "40-60": "4.7 -> 2.6",
+      "60-80": "14.9 -> 10.1",
+      "80+": "11.5 -> 8.2",
+      "closer_share": 0.973,
+      "note": "approximate: window matching not redone"
+    },
+    "present_without_acc_target": {
+      "0x192": {
+        "median_m": 60.5,
+        "beyond_60_m": 0.502,
+        "n": 8058
+      },
+      "0x194": {
+        "median_m": 79.1,
+        "beyond_60_m": 0.646,
+        "n": 2323
+      }
+    }
   }
 }

@@ -211,7 +211,7 @@
     "2.3 fused": -0.29,
     "2.4 fused": -0.29
    },
-   "radar_only_episode_lists_2_3_vs_2_4": "identical (8 mild, 0 hard)"
+   "radar_only_episode_lists_2_3_vs_2_4": "identical (8 mild across the owner's and the second car's drives, 0 hard)"
   }
  },
  "sensitivity_independent_drives": {

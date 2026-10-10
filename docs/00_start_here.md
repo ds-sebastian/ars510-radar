@@ -9,7 +9,7 @@ the topic doc that has the detail. Read this first; docs 01-13 are the reference
 ## 1. What the radar sends
 
 The ARS510 sends its object list on the private radar bus (bus 1) as one 742-byte **record** every ~60 ms
-(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 5 hold objects.
+(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 2 hold objects on average (up to 4-5).
 
 ![raw records](img/analysis/record_raster.png)
 
@@ -40,8 +40,8 @@ second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ar
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
 The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while its range holds steady.
-84-88 % are false closings. They are rare close in (~0.1 per 1,000 records below 20 m) and common far out (130 per 1,000
-at 60-80 m). The radar's uncertainty code grows with them, which is what the filter uses.
+84-88 % are false closings. They are rare close in and common far out: on the closed-loop drives radar and vision
+disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with them, which is what the filter uses.
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
 
@@ -122,7 +122,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 
 | | value | source |
 |---|---|---|
-| object list | 16.7 Hz, 20 slots, ~5 objects on a highway | [02](02_object_list.md) |
+| object list | 16.7 Hz, 20 slots, ~2 objects per record on a highway (p95 4) | [02](02_object_list.md) |
 | radar − camera range, 20-70 m (same car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |

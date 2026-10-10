@@ -9,7 +9,7 @@ with points carrying dRel (m, forward), yRel (m, LEFT positive), vRel (m/s, over
 speed) and trackId (from the radar's own slot / age lifecycle).
 
 Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`. Without a fresh ego speed
-vRel is NaN, and BASE_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
+vRel is NaN, and BASE_CONFIG withholds such points (a NaN would stay in radard's per-track Kalman for good).
 
 Configs (docs/12 explains the filter, docs/11 compares the profiles with vision only):
   FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list and the radar's
@@ -53,7 +53,7 @@ class NativeInterfaceConfig:
     # Requires min_publish_age >= RELINK_MIN_PUBLISH_AGE so the lost ID has ended (no duplicate IDs).
     relink_max_gap_s: float = 0.0
     # Multiplies the decoded over-ground velocity. Against Toyota 0xB4, steady following reads 0.149 m/s/code
-    # instead of nominal 0.150: an empirical 0.667% alignment to 0xB4, which itself reads ~1.5% below GPS (docs/06).
+    # instead of nominal 0.150: an empirical 0.667% alignment to 0xB4, which itself reads ~1-1.5% below GPS (docs/06).
     # Use 1.0 with a carState.vEgo or GPS ego reference.
     vground_scale: float = 1.0
     # Withhold points whose vRel is unresolved (no fresh ego speed).

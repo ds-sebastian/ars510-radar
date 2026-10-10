@@ -66,7 +66,7 @@ SIGNAL_COMMENTS = {
     "SLOT_INDEX_CODE": "Physical slot index 0-19; 63 when the slot is unallocated.",
     "UNK_8_6": "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.",
     "ONCOMING_FLAG": "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.",
-    "SCORE_CODE": "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its coded class. The slot is freed near 20.",
+    "SCORE_CODE": "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.",
     "AGE": "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.",
     "MOVE_STATE": "Low two bits of the motion code. Full code = MOVE_STATE | (UNK_111_1 << 2): 0 moving forward, 1 slow or standing, 2 oncoming, 3 moving right, 4 moving left, 5 initializing, 7 stopped after moving.",
     "UNK_111_1": "Bit 2 of the motion code (see MOVE_STATE).",
@@ -242,8 +242,8 @@ def dbc_text() -> str:
             f'CM_ SG_ {m} TRACK_ID_OP "trackId openpilot would see under the raw profile, BASE_CONFIG (held until age {BASE_CONFIG.min_publish_age}, re-link within {BASE_CONFIG.relink_max_gap_s:g} s); 0 when not published.";',
             f'CM_ SG_ {m} TRACK_ID_RAW "trackId from the radar slot/age lifecycle alone (ALL_TRACKS_CONFIG).";',
             f'CM_ SG_ {m} VREL "VLONG_OVER_GROUND - Toyota 0xB4 speed, m/s.";',
-            f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1.5% below GPS / wheel speed).";',
-            f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of the fused profile); halves short-term range walks.";',
+            f'CM_ SG_ {m} V_EGO_0xB4 "Toyota 0xB4 SPEED used for VREL, m/s (reads ~1-1.5% below GPS / wheel speed).";',
+            f'CM_ SG_ {m} DREL_FUSED "Velocity-aided range (range_fusion_gain {FUSED_CONFIG.range_fusion_gain:g}, part of the fused profile); cuts short-term range walks by about a third.";',
             f'CM_ SG_ {m} VREL_KALMAN "vRel from the fused profile\'s Kalman speed filter (object list and ACC target weighted by their uncertainty), on every track from age 1 and at the nominal 0.15 m/s per code.";',
         ]
         vals += [f'VAL_ {m} PUBLISHED_OP 0 "held back or absent" 1 "published" ;', f'VAL_ {m} SETTLED 0 "settling (age<60)" 1 "settled" ;']
