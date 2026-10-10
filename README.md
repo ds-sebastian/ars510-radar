@@ -42,14 +42,14 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 
 - **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
-- **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
-  ≥ 1 m/s² before 42% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+- **Braking starts slightly before vision-only would** on average (0.01 s), and the planner is already asking for
+  ≥ 1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
 - **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
-  brakes unnecessarily for 4.9 s against 10.6 s for vision only (34 replay drives: 8.2 s against 32.6 s), and misses no
-  more braking
+  brakes unnecessarily for 5.4 s against 10.6 s for vision only (34 replay drives: 7.2 s against 32.6 s), and misses
+  less braking
   ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
@@ -61,14 +61,14 @@ These are replay results on one owner's car. On the road (7.4 h on the owner's c
 ## How the filter works
 
 The radar's object list is accurate in distance, but its speed at range sometimes drifts into a false closing for
-1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker outputs: the
-ACC target and target summaries. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
+1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
+car its ACC function follows: the ACC target. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
 weighted by its own uncertainty, so the gain changes each cycle:
 
 ```text
 predict  v⁻ = v,  P⁻ = P + (1.5 m/s² · Δt)²
 update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P⁻ + σ²)),  P = (1 − K) P⁻
-σ:       object list 0.045 m/s × 240|7 · ACC target 0.5 m/s · summary 0.5 m/s (≤ 80 m)
+σ:       object list 0.045 m/s × 240|7 · ACC target 0.5 m/s
 ```
 
 ![the Kalman filter on one track](docs/img/analysis/kalman_trace.png)
@@ -81,20 +81,19 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 
 ## Profiles
 
-The code comes in two versions that run the same filter:
+The code comes in two versions that drive identically:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
 - **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 224 lines (184 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
-  It is the smallest version that drives like `fused` on 34 replay drives: the same filter without the radar's
-  summaries and the track-ID relink, which change no unjustified braking
-  ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to that configuration point for
-  point.
+  It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build can still add the
+  radar's target summaries and the track-ID relink as options; neither improves the driving
+  ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
-| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list, the radar's ACC target and its target summaries by the radar's own uncertainty, and keeps cars in the next lane from becoming the lead | everyday driving: fewest false brakes, vision's smoothness |
+| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and keeps cars in the next lane from becoming the lead | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode (not vision only, not stock openpilot) | research and comparison only: speed excursions reach the planner |
-| `openpilot` | `--profile openpilot` | the openpilot version: `fused`'s filter without the summaries, from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
+| `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)

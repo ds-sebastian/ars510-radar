@@ -66,17 +66,14 @@ def how_it_works() -> None:
     a1.plot(rng, sig, color=GRAY, label="object-list speed (0.045 × 240|7)")
     a1.plot(rng, sig * FUSED_CONFIG.young_sigma_scale, color=GRAY, ls=":", label="… young track (× 1.8)")
     a1.axhline(FUSED_CONFIG.acc_sigma_mps, color=ACC, ls="--", lw=1.2, label="ACC target speed")
-    a1.plot([5, 80], [FUSED_CONFIG.summary_sigma_mps + 0.03] * 2, color=SUM, lw=1.2, label="summary speed (≤ 80 m)")
     a1.set_xlabel("range (m)"); a1.set_ylabel("reading std (m/s)"); a1.set_title("How much each reading is trusted")
     a1.legend(loc="upper left")
     # share of the estimate that comes from the radar's own trackers when they are present
     q = (FUSED_CONFIG.lead_accel_std_mps2 * 0.06) ** 2
     w_obj = 1 / sig ** 2; w_trk = 1 / FUSED_CONFIG.acc_sigma_mps ** 2
     a2.plot(rng, w_trk / (w_trk + w_obj), color=ACC, label="ACC target present")
-    w2 = np.where(rng <= 80, 2 * w_trk, w_trk)
-    a2.plot(rng, w2 / (w2 + w_obj), color=SUM, label="ACC target + summary")
-    a2.set_ylim(0, 1.02); a2.set_xlabel("range (m)"); a2.set_ylabel("weight of the radar's trackers")
-    a2.set_title("Near: object list. Far: the radar's trackers"); a2.legend(loc="lower right")
+    a2.set_ylim(0, 1.02); a2.set_xlabel("range (m)"); a2.set_ylabel("weight of the ACC target reading")
+    a2.set_title("Near: object list. Far: the ACC target"); a2.legend(loc="lower right")
     # speed std vs age for a constant lead at three ranges (the publication gate)
     for d, color in ((20, S1), (60, S4), (90, S2)):
         cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)

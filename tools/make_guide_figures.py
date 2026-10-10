@@ -46,7 +46,7 @@ def pipeline() -> None:
     ("2  Reassemble", "742-byte record\nCRC32 check\nbad records dropped", GRAY),
     ("3  Decode slots", "20 slots, ~5 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
     ("4  Track IDs", "slot + age counting up\n= one radar track", GRAY),
-    ("5  Radar's own trackers", "ACC target 0x235/0x237\nsummaries 0x192/0x194\nmatched to tracks by position", S4),
+    ("5  Radar's own tracker", "ACC target 0x235/0x237\nmatched to a track by position\n(range scale 0.4 x)", S4),
     ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.5 m/s", S3),
     ("7  Range", "velocity-aided, gain 0.1\nfollowed car: ACC distance", S3),
     ("8  Publish", "age ≥ 60 (~3.6 s)\nspeed σ ≤ 0.75 m/s\npath gate beyond 15 m", S1),
@@ -218,9 +218,9 @@ def parts_ledger() -> None:
 def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
-  sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.2", "2.3"]),
-          ("34 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3"]))
-  names = {"vision": "vision only", "2.1": "2.1", "2.2": "2.2", "2.3": "2.3 (default)"}; col = {"vision": VIS, "2.1": V21, "2.2": GRAY, "2.3": V23}
+  sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
+          ("34 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
+  names = {"vision": "vision only", "2.1": "2.1", "2.3": "2.3", "2.4": "2.4 (default)"}; col = {"vision": VIS, "2.1": V21, "2.3": GRAY, "2.4": V23}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))
   for r, (label, C, vers) in enumerate(sets):
     for c, (kind, title) in enumerate((("unnecessary", "braked > 0.5 m/s² harder than needed"), ("missed", "missed braking the oracle asked for"))):

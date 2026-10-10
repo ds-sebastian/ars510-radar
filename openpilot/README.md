@@ -31,9 +31,9 @@ while testing).
 
 | profile | config |
 |---|---|
-| `fused` (default) | `FUSED_CONFIG`: `raw` + range fusion + one Kalman speed filter fusing the object list, the ACC target (0x235) and the summaries (0x192/0x194) by the radar's own uncertainty. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
+| `fused` (default) | `FUSED_CONFIG`: `raw` + range fusion + one Kalman speed filter fusing the object list and the ACC target (0x235) by the radar's own uncertainty, and a path gate; it drives exactly like the `openpilot` version. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard false braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
-| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter minus the summaries, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
+| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list; road tests only ([docs/12](../docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,

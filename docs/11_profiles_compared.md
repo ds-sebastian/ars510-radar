@@ -12,12 +12,12 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 | | `raw` | `fused` without ACC / summary | `fused` (default) |
 |---|---|---|---|
-| what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target and summaries |
+| what it adds to the decode | nothing (validity, IDs, ego subtraction) | range fusion + one Kalman speed filter on the object list | the same filter, also fusing the radar's ACC target, plus a path gate |
 | filter settings | — | scalar process scale, robust update and readiness threshold | also tracker weights; [definitions and evidence](12_kalman_filter.md#the-model) |
-| code beyond the decode | ~60 (guard, relink; fork only) | +24 | +85 with the summaries (fork); +43 in the openpilot version |
+| code beyond the decode | ~60 (guard, relink; fork only) | +24 | the openpilot version is 184 code lines in all ([10](10_research_directions.md#parts-of-the-openpilot-file)) |
 | hard radar-only braking ticks, 20 held-out routes | 93 | 48 | **30** |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0.22 (0)** |
-| first braking request vs vision only, 167 driver brakes | −0.15 s | −0.03 s | −0.02 s |
+| first braking request vs vision only, 167 driver brakes | −0.15 s | −0.03 s | −0.01 s |
 | recommended for | research | object-only fallback when neither a matched ACC target nor summary is available | everyday driving |
 
 `raw` is the unfiltered radar decode, not vision only and not stock openpilot. The middle column is not a separate
@@ -39,15 +39,15 @@ fork build (`ars510/`).*
   on the lead's over-ground speed ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations
   with a chosen process-noise scale of 1.5 m/s². Each reading updates it in turn, weighted by its model variance:
   object-list speed has σ = 0.045 m/s × max(`240|7`, 1), multiplied by 1.8 through age 60 and tapered to 1 at age 100.
-  An available matched ACC target or summary uses σ 0.5 m/s; at most one tracker is applied to each native track. Innovations beyond 3σ count as 3σ (a robust Kalman update), and
+  The matched ACC target uses σ 0.5 m/s for the one track it describes. Innovations beyond 3σ count as 3σ (a robust Kalman update), and
   a track is first published once its modeled speed standard deviation is at most 0.75 m/s (and age at least 60).
   This is an operational readiness gate, not a calibrated physical error bound. radard then runs its own Kalman
   filter on the lead; `fused` feeds it one speed per track that already combines what the radar knows.
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
 
-*Left: how much `fused` trusts each reading by range. Middle: the share of the estimate coming from the radar's own
-trackers when they are present. Near, the object list dominates; beyond ~40 m the ACC target and summaries do. Right:
+*Left: how much `fused` trusts each reading by range. Middle: the share of the estimate coming from the radar's ACC
+target when it is present. Near, the object list dominates; beyond ~40 m the ACC target does. Right:
 speed standard deviation of a new track against age; the 0.75 m/s line is the publication gate, which holds young far
 tracks back without a range threshold.*
 
@@ -87,10 +87,10 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 
 | driver brake presses (167) | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
 |---|---|---|---|---|
-| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.02 s [−0.08, +0.04] |
-| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.78 s |
+| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.01 s [−0.07, +0.04] |
+| median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.73 s |
 | already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 82.0 % |
-| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.9 % |
+| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.3 % |
 | hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 
 | over 4.56 h of driver-controlled driving | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
@@ -112,7 +112,7 @@ What the radar adds, by profile:
   than the vision lead in the 4 s before driver brakes). The same bias causes its radar-only braking.
 - **`fused` removes that bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
   driver also slowed. It still brakes slightly earlier than vision on average (−0.02 s): 22 of 148 paired driver brakes
-  are answered earlier than vision and 13 later, and it is already asking for ≥ 1 m/s² before 41.9% of brake presses
+  are answered earlier than vision and 13 later, and it is already asking for ≥ 1 m/s² before 41.3% of brake presses
   (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
   (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
 - **The Kalman filter alone** (no ACC target or summary) halves `raw`'s false braking (93 → 48 hard ticks, as many as
@@ -160,7 +160,7 @@ What the radar adds, by profile:
 | Chrysler | 56 | pass-through |
 | GM | 71 | pass-through of the radar's targets |
 | Ford | 194 | clusters raw Delphi detections into tracks |
-| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 189 | `fused` without the summaries, in one file: |
+| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 184 | `fused`, in one file: |
 | … record reassembly, CRC, slot decode, track IDs, publication | 84 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
 | … ACC target association | 18 | match the radar's own ACC target to one track |
 | … Kalman speed filter and range fusion | 24 | the filter itself |
