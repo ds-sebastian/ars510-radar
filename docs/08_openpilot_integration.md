@@ -185,8 +185,22 @@ The owner has driven the integration on three forks:
   camera by 0.2-0.4 s on decelerating leads. Near a stopping queue, radar held a stopped lead at 3-4 m/s for about
   2 s once (24 of 894 ticks overall with radar > 2 m/s while the camera read stopped).
 - **sunnypilot with the earlier tuned profile** (2 drives): far fewer hard brakes than before and usable day to day,
-  with some brake-then-accelerate oscillation while following that vision-only shows less. `fused` is now the default
-  on this car; its drives have not been reviewed yet.
+  with some brake-then-accelerate oscillation while following that vision-only shows less.
+- **sunnypilot with `fused` 2.1.0** (9 drives, 7.4 h, 4.4 h with openpilot longitudinal; the logged radar tracks match
+  a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera and the radar's
+  ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
+  braking starts 0.4-1.0 s before vision on every drive. Two mild slowdowns (about 1.5 m/s², both
+  overridden with the gas) had a lead beyond 95 m and no ACC target: on a curve radard paired the camera's lead with a
+  radar object a lane over, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm brake (2.8 m/s²) came from a car first
+  detected at 66 m whose object-list range read 15-20 m short until it settled.
+- **A second driver's 2025 RAV4 Hybrid** (sunnypilot, `fused` 2.1.0, [issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)):
+  the same numbers as the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the
+  lead time (owner: 1.8%), 7.0% beyond 70 m (owner: 8.2%), and the ACC target is present 99 / 95 / 66% of the
+  radar-lead time at 15-40 / 40-80 / 80-200 m (owner: 99 / 99 / 66%). No unprompted braking in 21 minutes of
+  openpilot longitudinal, where an older profile had braked for far leads holding their distance; the one remaining
+  case was a lead taken from the next lane, the same radard pairing as above.
+
+Numbers: [`road_v21.json`](../data/analysis/summaries/road_v21.json).
 
 ## Checking a new install on the car
 
