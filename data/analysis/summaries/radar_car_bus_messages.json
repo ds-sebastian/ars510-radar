@@ -12,11 +12,11 @@
    "40 20 00 00 00 00 80 00": 27
   },
   "0x411_startup_payload_segments": 27,
-  "0x494": "82 00 00 00 00 00 00 00 (census.py, every owner and U1 frame)",
-  "0x4FF": "3F 00 00 00 00 00 00 00 (census.py)"
+  "0x494": "82 00 00 00 00 00 00 00 (research-workspace payload census, every owner and U1 frame)",
+  "0x4FF": "3F 00 00 00 00 00 00 00 (research-workspace payload census)"
  },
  "constant_payload_census": {
-  "source": "census.py over owner drives (O2 13 min, O4 29 min, a 3.1 h owner drive) and U1 21 min: one payload per message after power-up",
+  "source": "Research-workspace payload census over owner drives (O2 13 min, O4 29 min, a 3.1 h owner drive) and U1 21 min: one payload per message after power-up",
   "hours": 4.1,
   "messages": [
    "0x283",
@@ -240,7 +240,7 @@
     ]
    ]
   },
-  "0x320_bit13_other_segments": "set in every frame of segments 1-25 (route_bits.py: constant after the first 20 s)",
+  "0x320_bit13_other_segments": "set in every frame of segments 1-25 (research-workspace bit census: constant after the first 20 s)",
   "openpilot_0x411": {
    "40 20 00 00 10 01 00 00": 26
   },

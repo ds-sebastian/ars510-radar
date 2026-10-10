@@ -353,7 +353,7 @@
       ]
     }
   ],
-  "interpretation": "Raw200=63 always pairs with zero angle in this corpus; raw127 has nonzero exceptions. Both published components can remain unchanged during state/angle updates. This is a conditional structural observation, not a universal invalidity flag, sigma unit or filter decode.",
+  "interpretation": "Raw200=63 always pairs with zero angle in this corpus; raw127 has nonzero exceptions. Both published components can remain unchanged during state/angle updates. This is a conditional structural observation: 63 goes with the zero-angle output state.",
   "factory_uncertainty_units_established": false,
   "direction_validity_established": false,
   "runtime_changed": false

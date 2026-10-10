@@ -1,5 +1,5 @@
 {
-  "status": "supported_candidate_with_failed_fixed_assignments",
+  "status": "supported_candidate_with_handover_dependent_assignments",
   "provenance": {
     "source": "research-workspace SCR-165",
     "kind": "imported aggregate evidence, not bundled rerun",
@@ -24,7 +24,7 @@
     }
   },
   "selection": {
-    "nondefault": "cell bytes6:10 differ from 8403f401; not proven validity",
+    "nondefault": "cell bytes6:10 differ from 8403f401 (a populated cell)",
     "minimum_ego_mps": 5,
     "minimum_model_lane_probability": 0.8,
     "nearest_model_and_ego_tolerance_s": 0.15

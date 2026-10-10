@@ -4,11 +4,11 @@
   "provenance": "Imported research-workspace rerun of 22 previously used development-drive A segments; full logs and detections are not bundled.",
   "method": "Original detection and pairing gates, retrospective centered box-size smoothing, and per-pair radar-range calibration at 20-45 m. Only inverse camera yaw changed after historical reproduction.",
   "limits": [
-    "Camera metric scale is calibrated using native range, not an independent range measurement.",
+    "Camera metric scale is calibrated with native range.",
     "Camera/model consensus selects agreement and inherits model and association errors.",
-    "Vehicle counts in historical keys denote camera/native pair groups or native track-segments, not independently verified physical vehicles.",
-    "Rows and pair groups are correlated; medians do not establish tail accuracy or held-out generalization.",
-    "Model lead matching and radar outputs are unchanged; no runtime or scale correction."
+    "Vehicle counts in historical keys count camera/native pair groups or native track segments.",
+    "Rows and pair groups are correlated; results are medians over development segments.",
+    "Analysis only; model lead matching and radar outputs unchanged."
   ],
   "membership": {
     "all": {

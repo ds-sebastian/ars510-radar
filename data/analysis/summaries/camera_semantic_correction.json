@@ -606,10 +606,10 @@
     }
   },
   "limits": [
-    "Class and confidence mapping remains unvalidated; no new physical signal is promoted",
-    "Conditional variance assumes unproved independent errors, excludes bias and is not RMSE",
-    "Image size proxies share radar range; historical heavy indicator means non-car detector class, not independent vehicle truth",
-    "Historical narrower field cuts are retained for reproduction, not promoted as semantic boundaries",
-    "Identity, far-range calibration, occlusion and event-level braking classifications still need separate corrected reruns"
+    "Class and confidence mapping kept as candidates; no new physical signal promoted.",
+    "Conditional variance assumes independent errors and excludes bias (not RMSE).",
+    "Image size proxies share radar range; the historical heavy indicator is the detector's non-car class.",
+    "Historical narrower field cuts are kept for reproduction.",
+    "Identity, far-range calibration, occlusion and event-level braking classifications are outside this file."
   ]
 }

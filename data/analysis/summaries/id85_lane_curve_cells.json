@@ -3,7 +3,7 @@
  "confidence": {
   "heading_48_16": "likely (sign, zero, order of magnitude; unit bounded)",
   "curvature_64_15": "likely (sign, zero; unit bounded)",
-  "flag_79": "candidate (separate bit, meaning unresolved)",
+  "flag_79": "candidate (separate flag bit; set on 79-80 % of cells 2/3 and 43-44 % of 8/9, the same in cells 2 and 3 on 99 % of rows; docs/04)",
   "prefix_flag_copies": "confirmed within sampled scope"
  },
  "source_scope": {

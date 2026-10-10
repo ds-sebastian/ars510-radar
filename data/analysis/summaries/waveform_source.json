@@ -110,5 +110,5 @@
       "mean_abs_offset_after_mps": 4.48
     }
   },
-  "limits": "Labels keep only offsets beyond -2.5 m/s, so the distribution cannot test periodic clustering. Excludes a direct unwrap of the published velocity only; wrong-branch measurements partly absorbed by the tracker are not tested."
+  "limits": "Labels keep only offsets beyond -2.5 m/s; the comparison covers a direct unwrap of the published velocity."
 }

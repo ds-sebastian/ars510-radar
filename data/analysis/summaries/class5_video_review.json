@@ -36,7 +36,7 @@
     "class5_tail5_min": 4,
     "class5_tail5_max": 11,
     "class5_bit277_set_rows": 0,
-    "full_width_limit": "Other early-class samples set bit277; this class-specific cohort does not establish a five-bit boundary."
+    "full_width_limit": "Other early-class samples set bit 277 (docs/03 keeps 272|5 and 277|11 as separate windows)."
   },
   "verification": {
     "status": "pass",

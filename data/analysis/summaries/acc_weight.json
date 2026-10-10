@@ -56,5 +56,5 @@
   "bookmarks": 23
  },
  "caveat": "The oracle's reference takes its range from the ACC target where present, so it partly favours a heavier ACC weight; the hard-tick, onset and anticipation counts are independent of it and are equal or slightly better; held-out target episodes rose 3 -> 4 and road mild requests 7 -> 8 (judged real).",
- "basis": "sigma 0.3 m/s is closer than 0.5 to a likelihood fit of the ACC target's noise near range (about 0.13 m/s; the fit is degenerate because errors persist, so it bounds rather than sets the value); earlier tests of a heavier ACC weight used the ACC speed at 0.1 m/s per code, 20 % small (acc_summary_units.json)."
+ "basis": "sigma 0.3 m/s is closer than 0.5 to a likelihood fit of the ACC target's noise near range (about 0.13 m/s; the fit is degenerate because errors persist, so it bounds rather than sets the value); earlier tests of a heavier ACC weight used the ACC speed at 0.1 m/s per code, 20 % too small (acc_summary_units.json)."
 }

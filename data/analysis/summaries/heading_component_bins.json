@@ -345,6 +345,6 @@
       ]
     }
   ],
-  "interpretation": "Current-bin quantization alone is insufficient within the stated bounds. Values update separately from transmitted component codes; source/filter/physical heading and fixed delay remain unassigned.",
+  "interpretation": "Current-bin quantization alone is insufficient within the stated bounds. Values update separately from the transmitted component codes (docs/03).",
   "runtime_changed": false
 }

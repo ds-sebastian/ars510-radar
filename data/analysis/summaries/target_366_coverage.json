@@ -1,5 +1,5 @@
 {
-  "status": "Supported additional report coverage; physical source/identity unqualified",
+  "status": "Supported additional report coverage: reports also made without an ACC target (candidate PCS target, docs/13)",
   "message": "0x366",
   "selection": {
     "nonidle": "bytes 2:4 != 7FFF",

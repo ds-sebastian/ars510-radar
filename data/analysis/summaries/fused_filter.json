@@ -15,7 +15,8 @@
  },
  "calibration": {
   "240_7_as_speed_std": "within-range-band AUC for false closings 0.71-0.75 at 25-55 m, 0.67 at 55-85 m, 0.60 beyond 95 m, at or above the ceiling an exact Gaussian sigma allows (0.81 -> 0.55); z std 1.0 at 35-55 m, 0.8-0.9 beyond 55 m",
-  "young_tracks": "at 45-70 m, tracks younger than ~100 frames err 1.4-2x more than 240|7 says (z std 1.36-1.97 vs 0.85 mature), biased toward closing; 240|7 itself does not change with age"
+  "young_tracks": "at 45-70 m, tracks younger than ~100 frames err 1.4-2x more than 240|7 says (z std 1.36-1.97 vs 0.85 mature), biased toward closing; 240|7 itself does not change with age",
+  "units_note": "Measured (SCR-432) with the ACC speed at 0.1 m/s per code; at 0.125 the per-count RMS is 0.04-0.06 m/s (acc_unit_recompute.json, SCR-417 claim) and the filter keeps 0.045 m/s per count."
  },
  "replay_34_drives": {
   "anchor": {

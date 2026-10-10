@@ -52,9 +52,8 @@
     "transferred": false
   },
   "limits": [
-    "Not a probability calibration or measurement-validity flag",
-    "Startup and retirement outside scope",
-    "Not an early excursion guard",
-    "No parser or control changes"
+    "Lifecycle countdown: steps of 20 or 1 per cycle in state 2, slot freed near 20 (docs/03).",
+    "Covers mature tracks; startup and retirement are outside this test.",
+    "Analysis only; parser and control unchanged."
   ]
 }

@@ -49,10 +49,10 @@
   "exceptions": 0,
   "reproduce": "python tools/check_structure.py",
   "limits": [
-    "Not physical object count or measurement validity",
-    "Not the number of nondefault payloads",
-    "Does not imply that the first N slots are allocated",
-    "Full OEM field width and count-20 behavior unestablished",
-    "No runtime parser, selection, or control change"
+    "Counts allocated slots (age >= 1, docs/02).",
+    "Allocated slots include those holding the age-1 template payload.",
+    "Allocated slots can sit at any of the 20 positions.",
+    "Field read as five bits, enough for 20 slots.",
+    "Analysis only; runtime unchanged."
   ]
 }

@@ -1,5 +1,5 @@
 {
- "status": "Likely fixed low-code coding in matched ACC-target scope; additional report coverage unqualified",
+ "status": "Likely fixed low-code coding while the ACC target is present; reports without an ACC target are in target_366_coverage.json",
  "message": "0x366",
  "velocity": {
   "msb_start": 16,
