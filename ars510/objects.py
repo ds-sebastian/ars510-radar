@@ -90,9 +90,8 @@ MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward
 LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
 WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 
-# Pass-through of the remaining uncertainty, class and score codes, kept as raw codes (docs/03). Relative scales against the radar's own
-# ACC target (owner drives, docs/03 "Units of the sigma codes"): UNCERTAINTY_PER_COUNT. They are error widths of a slowly varying tracker
-# state, not calibrated physical standard deviations, and the reference is the radar's own estimate.
+# Remaining uncertainty, class, size and score codes, passed through raw (docs/03). UNCERTAINTY_PER_COUNT: scales against the radar's own
+# ACC target (docs/03, uncertainty section), relative units, not calibrated standard deviations.
 UNC_RANGE_224 = NativeField("range_uncertainty_code", 224, 7, 0.0, 1.0, "code", "candidate")
 UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "candidate")
 UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "code", "candidate")
@@ -102,7 +101,7 @@ UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "
 SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "unnamed_obstacle_probability_candidate")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
 HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "not_calibrated_height")
-# Fitted scale of each sigma code against the ACC target on the owner drives (65 k pairs; sd^2 = floor^2 + (k * code)^2): metres or m/s per count.
+# m or m/s per count; range_uncertainty_code below 40 m only.
 UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
                          "lateral_speed_uncertainty_code": 0.37}
 
@@ -169,7 +168,7 @@ class NativeObject:
     length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
     height_code: int | None = None  # 272|5, not a calibrated height
-    range_unc_code: int | None = None  # 224|7 (about 0.23 m per count against the ACC distance at 5-40 m)
+    range_unc_code: int | None = None  # 224|7 (about 0.23 m per count below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
     vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10; no error unit
