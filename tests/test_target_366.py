@@ -43,3 +43,4 @@ def test_lateral_code_is_signed_five_bits_with_no_target_value():
     assert right.lateral_code == 3 and right.y_rel == pytest.approx(-1.02)
     assert left.lateral_code == -3 and left.y_rel == pytest.approx(1.02)
     assert parse_0x366(bytes.fromhex("50003a30907a00")).y_rel is None
+    assert parse_0x366(bytes.fromhex("50003a30908200")).y_rel is None  # -16: beyond the field's range

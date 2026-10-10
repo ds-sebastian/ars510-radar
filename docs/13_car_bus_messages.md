@@ -52,7 +52,7 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 |---|---|---|
 | `16\|9` | relative speed | `(code − 155) × 0.5 km/h`, negative when closing |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
-| `40\|5` | lateral offset | signed, −0.34 m per code (right positive); 15 = no target |
+| `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = no target, −16 = beyond range |
 
 Against the latest `0x235`/`0x237` on an owner drive (820 frames, 0.6 % outside tolerance) the residuals are 0.06 m/s, 0.26 m
 and 0.14 m, about the quantization of both frames: this is the ACC target again, not a second measurement or a Doppler field.
