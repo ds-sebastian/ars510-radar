@@ -186,8 +186,12 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 
 ## Documentation
 
+New here? [00 Start here](docs/00_start_here.md) walks from CAN frames to openpilot's planner in pictures, with the key
+numbers and a glossary.
+
 | doc | contents |
 |---|---|
+| [00 Start here](docs/00_start_here.md) | the parser in pictures: nine steps, the numbers that matter, how to read the evidence, glossary |
 | [01 Radar bus](docs/01_radar_bus.md) | every message on the radar bus, power-up timeline |
 | [02 Object list](docs/02_object_list.md) | 0x80 transport, header, track IDs, an object's life, which objects the radar lists |
 | [03 Slot fields](docs/03_slot_fields.md) | every bit of an object: kinematics, lifecycle, lane assignment, class and size, uncertainty |
