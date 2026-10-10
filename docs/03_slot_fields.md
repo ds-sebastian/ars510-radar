@@ -223,8 +223,8 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 
 | bits | field | behaviour | conf. |
 |---|---|---|---|
-| `224\|7` | σ dRel (≈ 0.23 m per count against the ACC distance at 5-40 m) | grows with range, shrinks with track age, rises before deletion | ◐ |
-| `232\|7` | σ yRel (≈ 0.10 m per count against the ACC lateral) | grows with \|yRel\|, shrinks with age | ◐ |
+| `224\|7` | σ dRel (≈ 0.23 m per count, below 40 m) | grows with range, shrinks with track age, rises before deletion | ◐ |
+| `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
 | `248\|7` | σ vy (≈ 0.4 m/s per count, provisional) | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
@@ -243,15 +243,13 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
   speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
   reproduces the share of far-range excursions ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [summary](../data/analysis/summaries/excursion_sigma_scale.json)). The `fused` profile uses it this way.
-- **Units of the sigma codes** (483 segments, 65 k mature object / ACC pairs; sd² = floor² + (k · code)², 90 % bootstrap over segments;
-  [summary](../data/analysis/summaries/uncertainty_code_units.json)): k = 0.043 m/s per count for `240|7` [0.041, 0.045], 0.10 m for `232|7`
-  [0.098, 0.111] (constant across 5-40 / 40-80 / 80+ m), 0.23 m for `224|7` [0.22, 0.23] (but 0.15 at 40-80 m and 0.05 beyond, where a
-  4-8 m range bias against the ACC distance dominates) and 0.37 m/s for `248|7` [0.35, 0.38]. Split halves agree within 4 %. Because the
-  reference is the radar's own ACC estimate these are relative units; the fit is a Gaussian equivalent over heavy tails.
-- **Axis check without a reference:** the record-to-record scatter of each native quantity (second difference, 217 k mature runs) grows with the
-  code assigned to it: `232|7` with yRel, `248|7` and `264|8` with the lateral speed, `256|8` with `84|10` (0.006 m/s² per count of jitter, the only code
-  with a consistent link to it), `240|7` with the speed (≤ 25 m; ≈ 0 beyond 70 m); `224|7` grades range jitter only weakly. Jitter per count is about a
-  fifth of the error against the ACC target, so the codes describe slowly varying tracker error, not frame noise.
+- **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
+  [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (the same at every
+  range), `224|7` 0.23 m below 40 m (beyond, a 4-8 m error floor the code does not grade dominates), `248|7` 0.37 m/s. Relative units: the
+  reference is the radar's own estimate.
+- **Axis check without a reference:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
+  `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
+  codes describe slowly varying tracker error, not frame noise.
 - **It is a width, not a flag:** it separates excursion records below 40 m (AUC 0.95-0.97) but weakly beyond
   (0.41-0.68), where excursions happen.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
