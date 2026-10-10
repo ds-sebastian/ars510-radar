@@ -324,7 +324,7 @@ The labels require range agreement within 0.25 m for at least 1.5 s; they do not
 The quadratic fit passes the fixed aggregate error, tail and maneuver limits on both streams; individual drives have
 maneuver or tail regressions. A route-cluster interval for its squared-error difference includes zero on both streams.
 The Kalman model is an equally competitive, compact choice with constant-sized state; the regression instead retains
-recent samples. With this source inside fused, the complete parser passes the fixed gates on 27 reused driving chains:
+recent samples. With this source inside fused 2.1, the complete parser passes the fixed gates on 27 reused driving chains:
 hard radar-only ticks remain **30 / 2 / 0** on held-out / further / owner cohorts, with unchanged target-episode counts.
 Mean onset against vision is 3 ms earlier, while anticipation changes from 43.7% to 43.1%. An owner handover has a
 one-tick 1.56 m/s² stronger braking transient. This is comparable behavior, without evidence for changing the default
@@ -360,7 +360,7 @@ on 175,938 common finite rows from actual CAN. The source passes all aggregate l
 It uses no ego input, so it retains a few position samples dropped by the earlier ground-estimator bench; these actual
 source scores account for that history difference. The roughly 8 µs summary-update-and-derivative measurement excludes
 the rest of the parser. Clock pairing, metadata checks, bounded history and message forwarding add code beyond the
-small derivative kernel. The full parser with this source passes all eight fixed gates on 27 reused chains: hard radar-only ticks and target
+small derivative kernel. The full parser with this source passes all eight fixed gates against fused 2.1 on 27 reused chains: hard radar-only ticks and target
 episodes are unchanged, held-out switches are 1,228 versus 1,231, and further switches 300 versus 298. Mean response
 onset against vision is unchanged; anticipation is 43.1% versus 43.7%. On 84,659 owner ticks, 111 change braking by
 more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. These are competitive
@@ -371,7 +371,7 @@ in both comparisons ([numbers and limits](../data/analysis/summaries/summary_end
 
 On the same 175,938 common finite owner labels, the actual published linear summary derivative has **0.175 / 0.154 m/s**
 RMSE, versus **0.134 / 0.130** for clock/plain quadratic. That reduces conditional source discrepancy by 24% / 16%;
-most driving output remains governed by other sources, matching, range prediction and the unchanged consumers.
+paired route-bootstrap intervals put the reduction at 20–36% and 2–34%. All nine labelled first-summary drives improve; three of eight second-summary drives worsen. These are reused, dependent labels. Most driving output remains governed by other sources, matching, range prediction and the unchanged consumers.
 The published summary methods total 23 literal source lines, versus 44 for the clock/plain methods and derivative,
 before additional header state and forwarding. The alternative removes robust loops and ego integration, but earns
 its extra timing and curvature code as a competitive fork experiment, rather than reducing total production code.

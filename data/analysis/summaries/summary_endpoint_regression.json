@@ -915,6 +915,167 @@
       }
     ],
     "limits": "ten reused owner drives, range-selected dependent ACC labels; fullconsumer replay already recorded in NK-C8; no physical calibration or profile change",
-    "physical_accuracy_calibrated": false
+    "physical_accuracy_calibrated": false,
+    "route_bootstrap": {
+      "status": "exploratory fixed-source paired route bootstrap",
+      "resamples": 10000,
+      "seed": 20261009,
+      "scores": [
+        {
+          "addr": "0x192",
+          "labels": 127595,
+          "routes": 9,
+          "improved_routes": 9,
+          "mse_difference": -0.012798971029646172,
+          "mse_difference_95pct_interval": [
+            -0.02709634673491628,
+            -0.010382014576121305
+          ],
+          "rmse_relative_change_95pct_interval": [
+            -0.3607395093908142,
+            -0.19835416465082034
+          ],
+          "per_route": [
+            {
+              "n": 45676,
+              "published_sse": 1279.0577044580828,
+              "quadratic_sse": 875.1425254320595,
+              "mse_difference": -0.008843050596068465,
+              "drive": "A"
+            },
+            {
+              "n": 6030,
+              "published_sse": 258.1614935282796,
+              "quadratic_sse": 116.68026940083394,
+              "mse_difference": -0.023462889573374075,
+              "drive": "B"
+            },
+            {
+              "n": 926,
+              "published_sse": 36.58853984425151,
+              "quadratic_sse": 12.715524699383229,
+              "mse_difference": -0.025780793892946303,
+              "drive": "C"
+            },
+            {
+              "n": 3961,
+              "published_sse": 240.58274011903939,
+              "quadratic_sse": 145.2600770444426,
+              "mse_difference": -0.024065302467709365,
+              "drive": "D"
+            },
+            {
+              "n": 950,
+              "published_sse": 94.20779995635982,
+              "quadratic_sse": 10.348648176023325,
+              "mse_difference": -0.08827279134772263,
+              "drive": "E"
+            },
+            {
+              "n": 17,
+              "published_sse": 41.65553443405,
+              "quadratic_sse": 5.413632430245442,
+              "mse_difference": -2.1318765884590913,
+              "drive": "F"
+            },
+            {
+              "n": 1894,
+              "published_sse": 67.27253008472431,
+              "quadratic_sse": 15.278785801202703,
+              "mse_difference": -0.027451818523506658,
+              "drive": "G"
+            },
+            {
+              "n": 47925,
+              "published_sse": 1309.3712543875938,
+              "quadratic_sse": 830.0426464676875,
+              "mse_difference": -0.01000164022785407,
+              "drive": "H"
+            },
+            {
+              "n": 20216,
+              "published_sse": 598.83456529368,
+              "quadratic_sse": 281.76534412647976,
+              "mse_difference": -0.015684073069212517,
+              "drive": "I"
+            }
+          ]
+        },
+        {
+          "addr": "0x194",
+          "labels": 48343,
+          "routes": 8,
+          "improved_routes": 5,
+          "mse_difference": -0.006898428357546611,
+          "mse_difference_95pct_interval": [
+            -0.02631026065689016,
+            -0.0006873402729615643
+          ],
+          "rmse_relative_change_95pct_interval": [
+            -0.3424210336119049,
+            -0.020996381272247566
+          ],
+          "per_route": [
+            {
+              "n": 13080,
+              "published_sse": 278.3312978095566,
+              "quadratic_sse": 288.24846525422333,
+              "mse_difference": 0.000758193229714583,
+              "drive": "A"
+            },
+            {
+              "n": 4860,
+              "published_sse": 188.34675769285158,
+              "quadratic_sse": 91.58809200871885,
+              "mse_difference": -0.01990919046998616,
+              "drive": "B"
+            },
+            {
+              "n": 9,
+              "published_sse": 0.6170164997552542,
+              "quadratic_sse": 0.2074299430304509,
+              "mse_difference": -0.045509617413867026,
+              "drive": "C"
+            },
+            {
+              "n": 4001,
+              "published_sse": 257.4732027255872,
+              "quadratic_sse": 108.0277692596458,
+              "mse_difference": -0.037352020361395004,
+              "drive": "D"
+            },
+            {
+              "n": 11,
+              "published_sse": 21.40132006336694,
+              "quadratic_sse": 0.6773732602959353,
+              "mse_difference": -1.8839951639155457,
+              "drive": "E"
+            },
+            {
+              "n": 3,
+              "published_sse": 0.05616464902151204,
+              "quadratic_sse": 0.08135132563227149,
+              "mse_difference": 0.00839555887025315,
+              "drive": "G"
+            },
+            {
+              "n": 19429,
+              "published_sse": 234.5561699109159,
+              "quadratic_sse": 243.1323331050028,
+              "mse_difference": 0.0004414104274068088,
+              "drive": "H"
+            },
+            {
+              "n": 6950,
+              "published_sse": 167.45898403673831,
+              "quadratic_sse": 82.7873771423678,
+              "mse_difference": -0.012182965020772736,
+              "drive": "I"
+            }
+          ]
+        }
+      ],
+      "limits": "Ten reused owner drives, dependent range-selected ACC witness. Route resampling does not establish independent physical calibration or driving superiority."
+    }
   }
 }
