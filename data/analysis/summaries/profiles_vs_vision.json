@@ -302,7 +302,7 @@
    }
   }
  },
- "late_vs_vision_note": "fused answers 13 of the 148 paired brake presses more than 0.05 s later than vision and 22 earlier; 12 more than 0.15 s later",
+ "late_vs_vision_note": "fused answers 13 of the 148 paired brake presses more than 0.05 s later than vision and 20 earlier (earlier_share 0.135, later_share 0.088)",
  "heldout_driving_feel": {
   "vision": {
    "request_rmse_vs_driver_mps2": 0.409,
@@ -349,7 +349,7 @@
  },
  "heldout_driving_feel_note": "moving (> 1 m/s), driver-controlled ticks (2.66 h); request error = RMS(planner request - driver acceleration 0.5 s later); jerk = mean |d request / dt|; lead-source switches = radar/vision lead flips while moving",
  "code_lines": {
-  "note": "non-blank, non-comment lines in ars510/ (2026-10 main); upstream = opendbc car/*/radar_interface.py at the openpilot master used for the replays",
+  "note": "non-blank, non-comment lines in ars510/ (2026-10 main); upstream = opendbc car/*/radar_interface.py at the openpilot master used for the replays; ford recounted with the openpilot_file_parts.json rule (184 code of 272 lines)",
   "shared_decode": {
    "transport": 64,
    "record": 37,
@@ -374,7 +374,7 @@
   },
   "upstream_radar_interfaces": {
    "chrysler": 56,
-   "ford": 194,
+   "ford": 184,
    "gm": 71,
    "honda": 60,
    "hyundai": 55,
@@ -456,7 +456,7 @@
    "further_hard_ticks": 1
   }
  },
- "fused_note": "fused rows: corrected ACC / summary units (0x235 at 0.125 m/s per code; summaries (code - 160) / 16 m), lateral unit 0.015 m, ACC target and summaries matched by position, ACC distance as the followed car's range (tracker_association.json); its one owner target episode is an early reaction to a real slowdown (hard_braking_review.json)",
+ "fused_note": "fused rows: corrected ACC / summary units (0x235 at 0.125 m/s per code; summaries (code - 160) / 16 m), lateral unit 0.015 m, ACC target and summaries matched by position, ACC distance as the followed car's range (tracker_association.json); owner target episodes: 0 in 2.4",
  "fused_pre_brake_lead_speed_minus_vision_mps": {
   "events": 147,
   "mean": 0.443,

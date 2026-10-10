@@ -9,7 +9,7 @@
   },
   "groups": [
     {
-      "drive": "A",
+      "drive": "O2",
       "reports": 3748,
       "fresh_comparisons": 3748,
       "target_reports": 1059,
@@ -22,7 +22,7 @@
       "high_code_without_ACC": 6
     },
     {
-      "drive": "B",
+      "drive": "O3",
       "reports": 1200,
       "fresh_comparisons": 1200,
       "target_reports": 467,

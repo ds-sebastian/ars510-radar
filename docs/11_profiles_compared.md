@@ -134,7 +134,7 @@ What the radar adds, by profile:
 | Rivian | 54 | `STATE`; pass-through |
 | Chrysler | 56 | pass-through |
 | GM | 71 | pass-through of the radar's targets |
-| Ford | 194 (268 lines in all) | clusters raw Delphi detections into tracks |
+| Ford | 184 (272 lines in all) | clusters raw Delphi detections into tracks |
 | **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 183 | `fused` in one file; part by part in [10](10_research_directions.md#parts-of-the-openpilot-file): |
 | … transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
 | … ACC target decode and association | 27 | match the radar's own ACC target to one track |

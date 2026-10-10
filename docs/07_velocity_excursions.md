@@ -7,8 +7,9 @@ default `fused` profile handles it with one Kalman filter per track ([12](12_kal
 
 **In short**
 
-- 84-88% of excursions are false closings; they ramp up over ~1.5 s and decay over ~2 s.
-- Rare close in, common far out: ~0.1 per 1,000 records below 20 m, 130 at 60-80 m, ~18% of track time at 100 m.
+- 84-88% of excursions are false closings; they ramp up over about 1 s.
+- Rare close in, common far out: radar and vision disagree by ≥ 2 m/s for 1% of radar-lead time at 0-20 m and 49%
+  beyond 80 m ([below](#how-often-on-real-drives)).
 - Their size matches the speed uncertainty the radar reports itself (`240|7`); the radar's own ACC tracker follows the
   same car smoothly.
 - `fused` weights every reading by that uncertainty and leans on the radar's own ACC target: hard radar-only braking
@@ -24,15 +25,15 @@ warning and −3.5 m/s².*
 
 ![false closing sequence](img/shots/excursion_false_closing_sequence.jpg)
 
-*The same event on camera: the lead stays at 48-50 m and its box keeps its size, while vRel swings +2.4 → −6 → back.*
+*Four frames of the same event, 1 s apart: the lead sits at 41-51 m and its box keeps its size, while the radar lead's
+vRel reads +2.2 to +2.5 m/s and then −2.5 m/s; its −6 m/s low falls between the frames (plot above).*
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
 
 *A long one at ~85 km/h: vRel drifts to −12 m/s over ~9 s while the range stays at 85-110 m and vision holds steady.*
 
-- **Smooth drift:** the gap to the ACC target ramps from about −1 to −3.4 m/s; record-to-record steps stay
-  small (1.7% exceed 2 m/s).
-- **Range holds steady**, but range itself walks by metres at 60-100 m, so range confirms a drift after 2-4 s.
+- **Smooth drift:** the gap to the ACC target builds up over about 1 s in small record-to-record steps.
+- **Range holds steady**, but range itself walks by metres at 60-100 m, so range confirms a drift slowly, over seconds.
 - **The motion state moves with it:** the acceleration field `84|10` follows the drift.
 
 <details>
@@ -70,7 +71,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 ![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
 
 - Against the radar's own ACC target, the object-list speed error grows with the reported uncertainty `240|7`
-  ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.05 m/s per count (≈ 0.8 m/s at code 15, 1.4 m/s at code 30).
+  ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.05 m/s per count (≈ 0.8 m/s at code 15, 1.2-1.3 m/s at code 30).
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
 - A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.1% observed vs 6.4%
   predicted; 6.9% vs 5.5% on fresh drives). The error is low-pass (~0.3 Hz), so a 1-3σ deviation lasts seconds.
@@ -82,12 +83,12 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 - 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is ~0.027 m/s per count over codes 12-70, and heavy
   tails (kurtosis 1.3-8) lift the RMS. Above code ~40 the error grows less than proportionally. The ACC
   target has its own error (~0.6 m/s).
-- Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95-0.97) and weakly beyond (0.41-0.68)
+- Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.41-0.68)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 - A −0.3 m/s mean offset (native more closing than ACC) grows with range (−0.1 below 20 m, −0.6 at 80-110 m), is
   flat in ego speed and differs by drive (std 0.3 m/s). Across 13.6k candidate signals, the object's own state explains
   part of it: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
-  and 3 s history predict ~41-47% of the error variance on 114 held-out drives, spread over many fields
+  and 3 s history predict ~41-47% of the error variance on 40 fresh one-minute segments, spread over many fields
   ([`excursion_sigma_scale.json`](../data/analysis/summaries/excursion_sigma_scale.json)).
 
 </details>

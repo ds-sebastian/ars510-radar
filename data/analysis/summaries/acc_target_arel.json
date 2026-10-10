@@ -62,5 +62,6 @@
   "drifts_caught": "37/46",
   "real_closings_flagged": "11/26",
   "label": "vision-based, 0x235 possibly camera-fused"
- }
+ },
+ "units_note": "Binned values here were decoded at 0.1 m/s2 per code; multiply by 1.25 for the current 0.125 m/s2 unit. Rerun at 0.125 (SCR-424 rows): correlation with the reference lead acceleration 0.64 (radard aLeadK 0.56), RMS 0.69 vs 0.80 m/s2."
 }

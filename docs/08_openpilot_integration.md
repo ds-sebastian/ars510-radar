@@ -42,11 +42,10 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    speed is known to ±0.75 m/s), with the radar's own track IDs (`raw` also re-links them across short losses), and
    only while a fresh ego speed gives a finite vRel. Forks whose RadarPoint still
    has the legacy fields (sunnypilot) also get:
-   - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24
-     (matches the phone gyro at 1.02×). It follows d(yRel)/dt at r = 0.88 with slope 0.86, since the radar filters
-     it.
+   - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24; the radar
+     filters it.
    - `aRel`: the radar's filtered over-ground acceleration minus ego acceleration (from 0xB4). It is smoothed and
-     lags vRel by 0.5-1 s.
+     lags vRel by about 0.5 s.
 
    - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
 
@@ -108,7 +107,7 @@ What each setting does (examples and plots in [12](12_kalman_filter.md)):
 | `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter the output is identical on 27 drives, so `fused` leaves it off |
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
-| `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: halves 1.5 s range walks |
+| `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: cuts 1.5 s range walks by about a third |
 | `fused_speed_filter` (σ per reading from `240\|7`, ACC target; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([12](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding; the summaries are an option, on in `colored` |
 | `path_gate_m=2.5` | fused | beyond 15 m, withholds tracks other than the ACC target's that sit more than 2.5 m from the yaw-predicted path ([12](12_kalman_filter.md#path-gate)) |
 
@@ -171,7 +170,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera and the radar's
   ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
   braking starts 0.4-1.2 s before vision on every drive (the recorded motion is the one `fused` drove, which favours it
-  in this comparison). Two mild slowdowns (about 1.5 m/s², both overridden with the gas) had a lead beyond 95 m and no
+  in this comparison). Two mild slowdowns (about 1.5 m/s², one overridden with the gas) had a lead beyond 95 m and no
   ACC target: on a curve radard paired the camera's lead with a radar object a lane over, the case the path gate now
   handles, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm
   brake (2.8 m/s²) came from a car first detected at 66 m whose object-list range read 15-20 m short until it settled;
@@ -199,6 +198,6 @@ Numbers: [`road_v21.json`](../data/analysis/summaries/road_v21.json).
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
 3. **openpilot longitudinal:** alpha long sends the radar a UDS "disable transmit" (`28 01 01`) at startup. That stops
-   only the radar's car-bus messages; 0x80 keeps arriving on bus 1 without a CAN filter, so radar tracks continue
+   only the radar's car-bus messages; 0x80 keeps arriving on bus 1 on an unfiltered radar line, so radar tracks continue
    ([01](01_radar_bus.md#openpilots-radar-disable)). Check that the radar answers `68 01` and that `radarTracks` stay at
    ~16.7 Hz after it.

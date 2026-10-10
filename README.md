@@ -27,8 +27,8 @@ sudo reboot                                                          # required:
 2. **Drive normally.** Press the bookmark (flag) button whenever braking feels wrong, a lead looks stuck, or the car
    brakes late.
 3. **Tell us how it went** in a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml):
-   fork and version, the `--check` output, and the time and description of each flagged moment. Do not post route
-   IDs, dongle IDs, VINs, GPS or identifying video; say in the report if you can share logs privately.
+   fork and version, the `--check` output, and the time and description of each flagged moment. Keep route
+   IDs, dongle IDs, VINs, GPS and identifying video private; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
    `--profile raw` installs the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
    the installer again after an update.
@@ -37,7 +37,8 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 
 ## What to expect on the road
 
-From replaying 27 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
+From replaying recorded drives through openpilot's unchanged radard and planner (the 20 held-out drives), judged against
+what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
 - **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance

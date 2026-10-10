@@ -12,13 +12,7 @@
       "-1": 1037,
       "+2": 546
     },
-    "coded_class_20_3_edges_pct": [
-      25,
-      50,
-      75,
-      90,
-      99
-    ],
+    "bits_20_3": "bits 4-6 of the score byte: score // 16 (6, 5, 3, 2, 1 at 100, 80, 60, 40, 20 %)",
     "age_first_100_median": 21,
     "age_first_100_p10_p90": [
       20,

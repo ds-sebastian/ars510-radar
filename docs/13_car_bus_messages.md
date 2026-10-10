@@ -9,8 +9,7 @@ messages, which decides whether the car keeps its automatic emergency braking. N
 
 ## The nine messages
 
-All nine run on the radar's crystal (the same clock fingerprint as its bus-1 messages,
-[05](05_acc_target_and_support.md)). They stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots-radar-disable)).
+All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots-radar-disable)), so the radar sends them.
 
 | addr | name (opendbc / Toyota) | rate, DLC | idle payload | content | |
 |---|---|---|---|---|---|
@@ -22,11 +21,11 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**, mostly the ACC target: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
-| 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
+| 0x4FF | `FRD1N01` (front radar → gateway) | ~0.8 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
 
 Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x344 and 0x283 end in the Toyota
 checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
-(4.1 h of owner drives and U1; 0x411 over 773 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, for 0.2-3 s
+(4.1 h of owner drives and U1; 0x411 over 773 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
 after each of 27 cold starts).
 0x33E, 0x365 and 0x366 change with the lead.
 
@@ -58,15 +57,15 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 (820 frames) the residuals are 0.06 m/s, 0.26 m and 0.14 m, about the quantization of both frames, and 99 % agree in
 distance within 1.5 m ([summary](../data/analysis/summaries/target_366_coding.json)).
 
-**It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive A and 8 of 467 on B, with fresh
-ACC frames saying "no target" (one span of 32 reports over 6.2 s). On A these are mostly closing objects about 4 m to the
+**It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive O2 and 8 of 467 on O3, with fresh
+ACC frames saying "no target" (one span of 32 reports over 6.2 s). On O2 these are mostly closing objects about 4 m to the
 side while the car moves slowly (median ego 1.6 m/s, median relative speed −7 m/s); where they match an object-list track,
 the speeds correlate at 0.81; the target it picks then is likely a PCS candidate
 ([coverage](../data/analysis/summaries/target_366_coverage.json)).
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
 
-**High speed codes.** Eight reports have codes 442-506 while their distances fall at 20-28 m/s; subtracting 512 counts
+**High speed codes.** Eight reports have codes 442-506; the five that form consecutive pairs close at 20-28 m/s by their distances; subtracting 512 counts
 fits them (mean difference 2.9 m/s). The parser returns a speed for codes below 256, the domain the ACC target confirms
 ([domain](../data/analysis/summaries/target_366_speed_domain.json)).
 
@@ -85,7 +84,7 @@ presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` stay 0.
 ## openpilot longitudinal: filter or disable
 
 The radar's car-bus link runs to the gateway, which relays it onto the car bus. The comma harness sits at the camera,
-so the radar's 0x343 reaches the powertrain without passing through the panda. Two senders of 0x343 cannot share the
+so the radar's 0x343 reaches the powertrain on a path that bypasses the panda. Two senders of 0x343 cannot share the
 bus, so openpilot longitudinal needs one of two setups:
 
 | | radar CAN filter (smartDSU-style) | openpilot's radar disable (alpha long) |
@@ -121,4 +120,4 @@ openpilot's Toyota longitudinal TX list (DSU-unplugged TSS-P support) already co
 | 0x494, 0x4FF | outside the TX list |
 
 opendbc's `toyotacan.create_pcs_commands` builds 0x283 + 0x344. Ways to keep AEB under openpilot longitudinal
-without a filter are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).
+on an unfiltered radar line are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).

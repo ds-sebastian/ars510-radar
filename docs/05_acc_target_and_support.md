@@ -37,12 +37,12 @@ every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
   1.2 cm/s; 0.0125 m/s is the nominal value.
 - **Relative lateral acceleration.** Same width and zero code as the longitudinal field. It mirrors ego's own lateral
   acceleration (−8.2 codes per m/s² of yaw rate × speed: about −1.0 at 0.125 m/s² per code) and adds 3.8 codes per m/s of
-  the target's lateral speed. The two terms explain 76 % of its variance and 89 % in curves; it trails the gyro by about
-  half a second.
+  the target's lateral speed. The two terms explain 76 % of its variance and 89 % in curves; it lags the gyro.
 - **In-path state.** Confirmed on 94 % of target frames. Otherwise the target is a candidate at level 4, 3 or 2; the level
   moves to the neighbouring value only, and the median lateral offset grows from 0.3 m (level 5) to 0.7, 1.6 and 2.2 m.
 - **Tracker bytes.** The first sits at 35-36 on a steady target, 44-50 while the target accelerates harder than about
-  1.2 m/s² and 48-93 while it brakes; the second is about 88 for a stopped target, 97-139 for a steady mover, and climbs
+  1.2 m/s² and a median of 48-74 while it brakes (harder braking, higher value); the second is about 86 for a stopped
+  target, 128-135 for a steady mover, and climbs
   toward 240 within half a second of a maneuver. They follow the target's own acceleration (also when the relative speed
   is still zero because ego brakes with it) and are explained to 78-88 % by the target's kinematics: the tracker's
   maneuver terms.
@@ -138,11 +138,11 @@ internal tracker: 0x191 / 0x193 its lifecycle and class, 0x192 / 0x194 its posit
 | `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames |
 | `17\|7` | 100 while a target is present |
 | `34\|6`, `49\|7`, `56\|8` | **class template** in 0.1 m: width, a height-like size and length. 18:15:45 for cars, 22:23:120 for trucks |
-| `43\|5` | counter that grows with target age and saturates at 30 (about 18 at age 10-20) |
+| `43\|5` | counter that grows with target age and saturates at 30 (about 20 at age 10-20) |
 
 The template is the target's class: when the ACC target is this summary target, 0x239 reports class 1 with 18:15:45 and
-class 2 with 22:23:120 in every frame, and the object list's own class for a class-2 target is "large vehicle" on 90 % of
-9,106 matched frames. Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining 187 frames contain
+class 2 with 22:23:120 in every frame, and the object list's own class for a class-2 target is "large vehicle" on 92 % of
+20,394 matched frames. Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining 187 frames contain
 28 further tuples such as 25:15:20.
 `support.parse_0x191` returns score, age, code, the template in metres and the counter.
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
@@ -159,11 +159,11 @@ Each summary is therefore the position of one target of the radar's internal tra
 word (it crosses 4096 continuously).
 
 **They come from the radar's smooth internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
-ACC speed when both describe the same car (correlation 0.90, median difference 0.16 m/s). During object-list velocity
-excursions it stays with the ACC speed in every tested cycle (397 of 397 for 0x192, 21 of 21 for 0x194), and against
+ACC speed when both describe the same car (correlation 0.98, median difference 0.18 m/s). During object-list velocity
+excursions it stays with the ACC speed in every tested cycle (490 of 490 for 0x192, 98 of 98 for 0x194), and against
 a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:
-14.9 % → 6.5 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
-far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
+14.9 % → about 10 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
+far cars: present without an ACC target at a median 60 m, half of them beyond 60 m
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry position only, so a speed comes
 from the range slope and lags by about half a second.
 

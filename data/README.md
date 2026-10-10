@@ -6,7 +6,7 @@ Three short highway captures, used by the tests and figures:
 
 | file | length | content |
 |---|---|---|
-| `highway_following_30s.csv.gz` | 30 s | drive A: following a lead that closes from ~88 m to ~45 m; an adjacent-lane car at ~75 m |
+| `highway_following_30s.csv.gz` | 30 s | drive A: following a lead at ~75 m (55-86 m) while a left-lane car closes from ~88 m to ~45 m |
 | `highway_vrel_excursion_25s.csv.gz` | 25 s | drive A: a settled lead at 41-57 m whose over-ground speed dips ~8 m/s for ~1 s while its range opens ([docs/07](../docs/07_velocity_excursions.md)) |
 | `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.8 m/s and its range slides 46 → 33 m while the ACC target stays at −0.75 to −0.9 m/s ([docs/12](../docs/12_kalman_filter.md#the-model)) |
 
@@ -50,6 +50,7 @@ expanded 700-segment inventories, 20 held-out replay routes and closed-loop driv
 | doc | summaries |
 |---|---|
 | This dataset | `init_templates_dataset` (row counts and allocation-placeholder flags) |
+| Docs 01-06, 13 | `decode_claim_sources` (each decode claim with its value and the research-workspace experiment or bundled file behind it) |
 | [00 Start here](../docs/00_start_here.md) | the numbers of docs 08, 11 and 12; the two road moments in `analysis/lead_choice_cases.csv.gz` |
 | [01 Radar bus](../docs/01_radar_bus.md) | `radar_disable_unfiltered` (openpilot's UDS radar disable on an unfiltered car: the radar's car-bus messages before and after, bus 1 rates and record CRCs through 26 min of alpha long) |
 | [02 Object list](../docs/02_object_list.md) | `stationary_listing_rule` (which new objects survive the age-5 decision), `header_allocation_count`, `prefix_alignment` (0x80 / 0x85 pairing by clock and counter) |
