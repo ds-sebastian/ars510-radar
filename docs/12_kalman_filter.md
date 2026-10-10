@@ -107,7 +107,7 @@ The two filters run in series, so all replay numbers already include their combi
 - **Plain decode (every profile):**
   - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)). Age 40
     exposes young far false closings (further-drive hard ticks 1 → 9), and so does publishing the ACC target's track
-    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.8 → 4.3 s on 34 drives);
+    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.3 → 3.7 s on 34 drives);
   - multiply the object list's over-ground speed by 0.149/0.15, then subtract 0xB4 ego speed;
   - publish no point without a fresh ego speed, because one NaN poisons radard's filter.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
@@ -198,17 +198,19 @@ Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guar
 Vision only is an imperfect reference too. As a second one, a hindsight lead was built for each moment of the road
 drives: identity from the radar's in-path ACC target (else the camera's lead); range from the ACC target, else the raw
 object list within 1 m laterally, plus the camera when it is on the same car; smoothed forwards and backwards
-(Rauch-Tung-Striebel, constant acceleration). openpilot's unchanged radard and planner then ran on that lead alone,
+(Rauch-Tung-Striebel, constant acceleration) within each stretch of one car, which ends where the ACC target changes
+ID or the lead jumps sideways, so a switch between two cars never reads as a closing. openpilot's unchanged radard and planner then ran on that lead alone,
 through an interface that publishes only it. Each version is scored against that oracle's request on the moments
 where the reference comes from the radar and radar and camera agree. Camera-only moments are judged with video,
-because the model's lead range slides from one car to the next at cut-ins.
+because the model's lead range slides from one car to the next at cut-ins, and so are the 2 s after the ACC target
+drops a lead the camera still follows (a lead turning out of the lane).
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
 Over 7.65 h of the owner's road drives, `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
-5.4 s against 10.6 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (13.8 s,
-vision 16.9 s). On the 34 replay drives, which did not shape it (6.72 h scored), it is the best of all versions on
-both: 7.2 s unnecessary (vision 32.6 s, 2.1 8.4 s) and 3.6 s missed (vision 11.0 s, 2.1 5.1 s). Standstill is not scored: the
+5.4 s against 10.2 s for vision only and 11.5 s for 2.1, and misses less of the braking the oracle asked for (7.2 s,
+vision 10.3 s, 2.1 9.5 s). On the 34 replay drives, which did not shape it (6.72 h scored), it is the best of all versions on
+both: 7.1 s unnecessary (vision 31.9 s, 2.1 9.4 s) and 3.0 s missed (vision 10.0 s, 2.1 4.1 s). Standstill is not scored: the
 planner's stop-and-go logic dominates there. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 
@@ -293,9 +295,9 @@ Over the 34 replay drives (about 5 h), the summaries change the planner's reques
 while it was not. The summaries soften the response to far leads without an ACC target, half usefully and half not.
 
 Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-done)) they do not pay: without them 2.3
-brakes unnecessarily for 7.2 s instead of 8.2 s and misses 3.6 s instead of 3.8 s on the 34 independent drives (RMS
-0.244 against 0.245). On the owner's road drives the two are identical on all 23 bookmarks, with 0 hard radar-only
-braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 13.8 against 16.0 s missed.
+brakes unnecessarily for 7.1 s instead of 8.1 s and misses 3.0 s instead of 3.3 s on the 34 independent drives (RMS
+0.244 for both). On the owner's road drives the two are identical on all 23 bookmarks, with 0 hard radar-only
+braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed.
 Since 2.4 `fused` leaves them out, so the fork default and the openpilot version drive identically. The code stays as a
 fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
 

@@ -48,8 +48,8 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
 - **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
-  brakes unnecessarily for 5.4 s against 10.6 s for vision only (34 replay drives: 7.2 s against 32.6 s), and misses
-  less braking
+  brakes unnecessarily for 5.4 s against 10.2 s for vision only (34 replay drives: 7.1 s against 31.9 s), and misses
+  less braking (7.2 s against 10.3 s; 3.0 s against 10.0 s)
   ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
