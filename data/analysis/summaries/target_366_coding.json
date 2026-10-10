@@ -1,5 +1,5 @@
 {
- "status": "likely fixed coding; same target as the ACC frames",
+ "status": "Likely fixed low-code coding in matched ACC-target scope; additional report coverage unqualified",
  "message": "0x366",
  "velocity": {
   "msb_start": 16,
@@ -133,7 +133,8 @@
  "limits": [
   "Dependent radar trackers; physical accuracy and acquisition epochs are not calibrated.",
   "Matching distance does not establish target identity; speed outliers remain.",
-  "This single target report is not a per-object Doppler channel."
+  "This single target report is not a per-object Doppler channel.",
+  "The report also occurs while ACC is absent; matched-target fits do not identify those objects."
  ],
  "acc_target_identity": {
   "drive": "owner",

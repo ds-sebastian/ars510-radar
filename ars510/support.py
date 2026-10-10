@@ -251,7 +251,7 @@ def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
 
 @dataclass(frozen=True)
 class Target366:
-    """Car-bus 0x366: the radar's ACC target re-quantized (docs/13)."""
+    """Car-bus target report: matches ACC in some regimes and also reports other states (docs/13)."""
     speed_code: int
     distance_code: int
     header_raw: int
@@ -277,9 +277,9 @@ class Target366:
 def parse_0x366(data: bytes) -> Target366 | None:
     """Decode a seven-byte car-bus report, or None for the 7FFF no-target word.
 
-    0x366 arrives about 90 ms after 0x365 and reports the radar's ACC target again (same target as 0x235 / 0x237 in
-    99.4 % of frames on an owner drive, docs/13), re-quantized: it is not a second measurement or per-object Doppler.
-    Header/tail values remain raw. No driving profile consumes this parser.
+    0x366 arrives about 90 ms after 0x365. It agrees with ACC in matched mature-target comparisons, but also
+    reports while fresh ACC says no target. Neither physical identity nor per-object Doppler is established.
+    Raw context remains available even when metric speed or lateral position is unqualified. No profile uses it.
     """
     if len(data) != 7 or data[2:4] == b"\x7f\xff":
         return None

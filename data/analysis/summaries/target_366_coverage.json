@@ -1,0 +1,51 @@
+{
+  "status": "Supported additional report coverage; physical source/identity unqualified",
+  "message": "0x366",
+  "selection": {
+    "nonidle": "bytes 2:4 != 7FFF",
+    "max_ACC_frame_age_s": 0.06,
+    "max_range_difference_m": 1.5,
+    "nominal_range_m_per_code": 0.8
+  },
+  "groups": [
+    {
+      "drive": "A",
+      "reports": 3748,
+      "fresh_comparisons": 3748,
+      "target_reports": 1059,
+      "without_ACC": 224,
+      "with_ACC": 835,
+      "range_agrees": 826,
+      "range_disagrees": 9,
+      "absent_ACC_range_ge40": 102,
+      "high_code_present": 6,
+      "high_code_without_ACC": 6
+    },
+    {
+      "drive": "B",
+      "reports": 1200,
+      "fresh_comparisons": 1200,
+      "target_reports": 467,
+      "without_ACC": 8,
+      "with_ACC": 459,
+      "range_agrees": 438,
+      "range_disagrees": 21,
+      "absent_ACC_range_ge40": 2,
+      "high_code_present": 2,
+      "high_code_without_ACC": 0
+    }
+  ],
+  "original_CAN_witness": {
+    "drive": "A",
+    "consecutive_nonidle_reports": 32,
+    "duration_s": 6.200070188999689,
+    "ACC_state": 1,
+    "state_meaning": "no target",
+    "fresh_ACC_both": true
+  },
+  "limits": [
+    "Non-idle report is not proof of a physical object.",
+    "Matched mature-target coding does not establish every report as an ACC copy.",
+    "Additional coverage does not establish per-object Doppler or a PCS-specific source."
+  ]
+}
