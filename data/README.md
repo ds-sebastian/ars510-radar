@@ -11,7 +11,7 @@ Three short highway captures, used by the tests and figures:
 | `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.9 m/s and its range slides 46 → 33 m while the ACC target stays at −0.75 to −0.9 m/s ([docs/12](../docs/12_kalman_filter.md#the-model)) |
 
 Format `t_s,bus,address,data_hex`, times rebased to 0. Only bus 1 0x80 / 0x81 / 0x85 / 0x86 / 0x192 (and 0x235 / 0x237 in
-the drive E sample) and bus 0 0xB4 are included; no GPS, video, route or device identifier.
+the drive E sample) and bus 0 0xB4 are included; no GPS positions, video, route or device identifier.
 
 ## `analysis/`: anonymised analysis dataset
 

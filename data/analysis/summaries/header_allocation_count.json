@@ -1,6 +1,6 @@
 {
   "status": "bounded reconstructed-record allocation invariant",
-  "provenance": "Recomputed from both bundled CAN samples; not an imported whole-corpus result.",
+  "provenance": "Recomputed from the three bundled CAN samples (tools/check_structure.py); not an imported whole-corpus result.",
   "raw_view": {
     "record_start_bit": 115,
     "width": 5,
@@ -31,9 +31,21 @@
       "id85_records": 414,
       "id85_crc_failures": 0,
       "id85_cells": 4140
+    },
+    {
+      "sample": "highway_acc_anchor_24s.csv.gz",
+      "sha256": "b946d8bd9bfe7cf730be9b52fde04e537957b1630e469c1a247d204f0cc4dd3f",
+      "id80_records": 398,
+      "id80_crc_failures": 0,
+      "slots": 7960,
+      "slot_index_exceptions": 0,
+      "allocation_count_exceptions": 0,
+      "id85_records": 398,
+      "id85_crc_failures": 0,
+      "id85_cells": 3980
     }
   ],
-  "total_records": 911,
+  "total_records": 1309,
   "exceptions": 0,
   "reproduce": "python tools/check_structure.py",
   "limits": [

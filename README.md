@@ -64,14 +64,14 @@ the next-lane pairing the path gate now removes); the two mild slowdowns had far
 ## How the filter works
 
 The radar's object list measures distance and speed well up close, but at range its speed sometimes drifts into a
-false closing for 1-10 s while the radar's own ACC distance and the camera hold steady. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
+false closing for 1-10 s while the radar's own ACC distance and the camera hold steady. The radar reports a speed-error code for each object (`240|7`, ◐) and also sends its own, smoother tracker output for the
 car its ACC function follows: the ACC target. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
 weighted by its own uncertainty, so the gain changes each cycle:
 
 ```text
 predict  v⁻ = v,  P⁻ = P + (1.5 m/s² · Δt)²
 update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P⁻ + σ²)),  P = (1 − K) P⁻
-σ:       object list 0.045 m/s × 240|7 · ACC target 0.5 m/s
+σ:       object list 0.045 m/s × 240|7 (× 1.8 for young tracks, tapering to × 1 by age 100) · ACC target 0.5 m/s
 ```
 
 ![the Kalman filter on one track](docs/img/analysis/kalman_trace.png)
@@ -94,7 +94,7 @@ The code comes in two versions that drive identically:
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
-| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and keeps cars in the next lane from becoming the lead | everyday driving: fewest false brakes, vision's smoothness |
+| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | everyday driving: fewest false brakes, vision's smoothness |
 | `raw` | `--profile raw` | the unfiltered radar decode, with only the validity rules radard needs | research and comparison only: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
@@ -130,7 +130,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
   already running at fingerprinting (a warm restart); one capture from such a car adds it to the firmware list.
 - **Far-range speed excursions.** The radar's object list sometimes reports a far car closing several m/s faster than
   it is, for 1-10 s ([07](docs/07_velocity_excursions.md)). The Kalman filter handles this by leaning on the radar's
-  ACC target, which is present for 99% of radar-lead time up to 80 m and 66% beyond, so the farthest leads rely more on
+  ACC target, which is present for 99% of radar-lead time at 15-80 m and 66% beyond, so the farthest leads rely more on
   the object list alone.
 - **Range and speed disagree slightly.** The object list's range changes 10-20% more than its speed integrates to, so
   range is smoothed separately from the speed filter ([12](docs/12_kalman_filter.md#what-runs-before-and-around-the-filter)).
@@ -146,7 +146,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 
 ```mermaid
 flowchart LR
-    CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed"] --> card --> RI["Toyota RadarInterface"]
+    CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed, yaw rate"] --> card --> RI["Toyota RadarInterface"]
     RI -- "ARS510 detected<br/>(firmware or 0x80/0x85)" --> A["Ars510RadarInterface<br/>reassemble · CRC · decode · Kalman speed filter"]
     A -- "RadarPoints, 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
@@ -166,7 +166,7 @@ python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.cs
 from ars510 import FUSED_CONFIG, Ars510NativeRadarInterface
 
 radar = Ars510NativeRadarInterface(FUSED_CONFIG)
-for t, bus, addr, data in can_frames:            # all buses: bus 1 = radar (incl. 0x235 ACC target), bus 0 = car (0xB4 speed)
+for t, bus, addr, data in can_frames:            # all buses: bus 1 = radar (incl. 0x235 ACC target), bus 0 = car (0xB4 speed, 0x24 yaw rate)
     out = radar.update_frame(t, bus, addr, data)
     if out:                                       # one per radar cycle (60 ms)
         for p in out["radarData"]["points"]:
@@ -233,7 +233,7 @@ One owner's 2022 RAV4, logged with openpilot: three reference drives (A developm
 with camera and odometry references; 399 one-minute segments from 24 drives for field statistics; 27 drives replayed
 through openpilot against the driver (20 held-out routes with 4.6 h of driver-controlled speed, 4 further drives, 3
 owner sunnypilot drives); 8 later drives held back for fresh checks; and closed-loop drives on FrogPilot,
-StarPilot and sunnypilot. The repo carries anonymised drives only: no route IDs, dongle IDs, GPS or full video.
+StarPilot and sunnypilot. The repo carries anonymised drives only: no route IDs, dongle IDs, GPS positions or full video.
 
 ## Contributing
 

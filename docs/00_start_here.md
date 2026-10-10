@@ -30,17 +30,18 @@ More: [02](02_object_list.md#an-objects-life), [03 Slot fields](03_slot_fields.m
 ## 3. How good is each measurement?
 
 Distance and lateral position are steady; speed at range has excursions. On the owner's 2.1 drives (300,000 radar-lead ticks
-matched to the camera's lead) the radar reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
+matched to the camera's lead) the radar lead radard received, which takes the ACC distance for the car the ACC
+target follows, reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
 from 0.6 m to 4-6 m at range.
 
 ![road statistics](img/analysis/guide_road_stats.png)
 
-*Left: radar minus camera range for the same car (median ± robust spread). Middle and right: the owner's car and a
+*Left: published radar lead minus camera range for the same car (median ± robust spread). Middle and right: the owner's car and a
 second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)) give similar
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
 The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.
-84-88 % are false closings. They are rare close in and common far out: on the closed-loop drives radar and vision
+84-88 % are false closings (classified with the earlier ACC speed unit). They are rare close in and common far out: on the closed-loop drives radar and vision
 disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with them, which is what the filter uses.
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
@@ -53,7 +54,7 @@ disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m.
 Besides the object list, the radar publishes the car its own ACC function follows, the **ACC target**
 (0x235 / 0x237), with a smooth 0.025 m distance and a speed. Its speed is much steadier than the object list's. The
 parser matches it to a track by position. That track then gets the ACC speed as an extra reading and the ACC distance
-as its range. The ACC target is present for 99 % of the lead time up to 80 m and 66 % beyond.
+as its range. The ACC target is present for 99 % of the lead time at 15-80 m and 66 % beyond.
 
 ![tracker range](img/analysis/tracker_range.png)
 
@@ -122,8 +123,8 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 
 | | value | source |
 |---|---|---|
-| object list | 16.7 Hz, 20 slots, ~2 objects per record on a highway (p95 4) | [02](02_object_list.md) |
-| radar − camera range, 20-70 m (same car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
+| object list | 16.7 Hz, 20 slots, ~2 objects per record on a highway (p95 4) | `stats.json` |
+| published radar lead − camera range, 20-70 m (same car, 2.1) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
 | braking only the radar asked for, per hour (20 held-out drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |

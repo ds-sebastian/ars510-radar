@@ -69,7 +69,7 @@ Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units
 The ACC target is matched to an object by position (its 0.025 m distance and 0.01 m lateral against the track's `dRel`
 and `yRel`). When the object list's vRel and the ACC target's closing speed
 differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
-confirmation 86%, n = 421, route-bootstrap 79-99%). In the bundled drive-E sample the object's vRel falls to −5.9 m/s
+confirmation 86%, n = 421, route-bootstrap 79-99%; measured with the earlier 0.1 m/s ACC speed unit). In the bundled drive-E sample the object's vRel falls to −5.9 m/s
 while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#the-model)).
 
 **Who sends it: the radar** (◐) ([summary](../data/analysis/summaries/acc_sender_clock.json)):
@@ -91,14 +91,14 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
 **How good it is:**
 
 - During disagreements it stays smooth and consistent with the track's range while the object-list velocity drifts
-  (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s).
+  (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s;measured with the earlier 0.1 m/s ACC speed unit)).
 - It carries information beyond the object list: the object list's own fields and their recent history explain about
   41-47 % of its disagreement with the ACC target
   ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). The `fused` profile
   therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
   about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (error scales against that
-  reference). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
+  reference,measured with the earlier 0.1 m/s ACC speed unit)). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
@@ -176,7 +176,7 @@ measurement up to 80 m: an option, off in `fused` and on in `colored`
 ## 0x190: cycle header
 
 - Byte 0 = count << 2 | 2: the **number of target summaries** in this cycle (0, 1 or 2). It equals the number of
-  non-sentinel 0x191 / 0x193 frames in 681,864 of 681,864 cycles; with one summary it is always the 0x191 / 0x192 pair.
+  non-sentinel 0x191 / 0x193 frames in 681,864 of 681,879 cycles (the rest are startup frames); with one summary it is always the 0x191 / 0x192 pair.
 - Bytes 2-5: big-endian **microsecond timestamp** (`support.parse_0x190`).
 - Byte 6 high nibble: **cycle counter** mod 16, +3 per cycle on more than 99.996% of cycles. Use it to detect dropped
   cycles.

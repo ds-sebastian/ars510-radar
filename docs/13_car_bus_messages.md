@@ -60,12 +60,12 @@ distance within 1.5 m ([summary](../data/analysis/summaries/target_366_coding.js
 **It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive O2 and 8 of 467 on O3, with fresh
 ACC frames saying "no target" (one span of 32 reports over 6.2 s). On O2 these are mostly closing objects about 4 m to the
 side while the car moves slowly (median ego 1.6 m/s, median relative speed −7 m/s); where they match an object-list track,
-the speeds correlate at 0.81; the target it picks then is likely a PCS candidate
+the speeds correlate at 0.81; the target it picks then is possibly a PCS candidate (○)
 ([coverage](../data/analysis/summaries/target_366_coverage.json)).
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
 
-**High speed codes.** Eight reports have codes 442-506; the five that form consecutive pairs close at 20-28 m/s by their distances; subtracting 512 counts
+**High speed codes.** Eight reports have codes 442-506; five same-tail steps among them close at 20-28 m/s by their distances; subtracting 512 counts
 fits them (mean difference 2.9 m/s). The parser returns a speed for codes below 256, the domain the ACC target confirms
 ([domain](../data/analysis/summaries/target_366_speed_domain.json)).
 
@@ -105,7 +105,7 @@ messages begin. It behaves as the brake system's flag for a missing driving-supp
 **The event pair keeps running while the radar is disabled (◐).** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target
 time to collision 3.6-7.5 s). That state stays on bus 1. On U1 (stock ACC) the 5 comparable short states
-left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that precedes PCS action (◐), and the brake request
+left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that occurs without PCS action on the car bus (◐), and the brake request
 travels on the car bus.
 
 ## What panda allows openpilot to send
