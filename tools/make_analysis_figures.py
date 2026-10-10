@@ -1096,8 +1096,8 @@ def target_366_coding():
         ax.legend(fontsize=8)
     axes[0].set_ylabel("Pairs within discrepancy (%)")
     fig.tight_layout()
-    save(fig, "target_366_coding", "0x366 versus the preceding 0x365; nominal half-km/h coding, no fitted speed selection.\n"
-         "Distance agreement is a dependent comparison; large tails and target-identity limits remain.")
+    save(fig, "target_366_coding", "0x366 speed against the preceding 0x365 (nominal half-km/h coding). Both report the ACC target;\n"
+         "a few large differences remain unexplained")
 
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,

@@ -19,7 +19,7 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking) | ● idle, ◐ fields |
 | 0x33E | none | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
-| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **ACC lead relative speed (≈ 0.5 km/h per code)** and a distance-like field | ◐ |
+| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **the ACC target again**: relative speed (0.5 km/h), distance (≈ 0.8 m) and lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
 | 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
@@ -44,30 +44,24 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
-### 0x366: target relative speed and approximate distance (◐)
+### 0x366: the ACC target, re-quantized (◐)
 
-[Fixed coding evidence](../data/analysis/summaries/target_366_coding.json) supports MSB-first `16|9` as
-half-km/h relative-speed codes centred on 155: `vRel=(code−155)×5/36` m/s, negative when closing.
-`25|7` follows target distance at approximately .8 m/code. Bytes 2–3 equal `7FFF` for no target; the parser
-returns `None` for that word. `ars510.support.parse_0x366` preserves the raw codes and header/tail bytes
-and provides these nominal conversions.
+Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` returns them (`None` for the `7FFF` no-target word).
 
-Compared with the preceding 0x365 report within 120 ms, 92.0% / 95.4% of eligible pairs on two owner drives
-agree in distance within 1.5 m (790/456 pairs). That distance-only subset contains 727/435 pairs; fixed-speed
-median discrepancy is 0 m/s and p95 is .278 m/s on both. All-pair median range discrepancy is .4/.2 m.
-The speed RMS in the second drive's distance-matched subset is still 1.072 m/s because a few large outliers
-remain. Distance agreement is therefore a comparison gate, not target identity or a physical accuracy bound.
+| bits | field | coding |
+|---|---|---|
+| `16\|9` | relative speed | `(code − 155) × 0.5 km/h`, negative when closing |
+| `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
+| `40\|5` | lateral offset | signed, −0.34 m per code (right positive); 15 = no target |
 
-![Fixed coding and retained tails](img/analysis/target_366_coding.png)
+Against the latest `0x235`/`0x237` on an owner drive (820 frames, 0.6 % outside tolerance) the residuals are 0.06 m/s, 0.26 m
+and 0.14 m, about the quantization of both frames: this is the ACC target again, not a second measurement or a Doppler field.
+Against the preceding 0x365 (two owner drives) 92 / 95 % of reports agree in distance within 1.5 m, with a speed p95 of
+0.28 m/s ([summary](../data/analysis/summaries/target_366_coding.json)); a few large speed differences remain unexplained.
+It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are undecoded speed / range-dependent flags,
+and the low three bits of byte 5 are constant. No profile reads this message.
 
-0x366 arrives about 90 ms after 0x365 on the observed publication schedule. Receipt spacing does not determine
-sensor latency. The report is the radar's ACC target again: against the latest `0x235`/`0x237` on an owner drive
-(820 frames with a mature target, 0.6 % outside tolerance) `16|9` follows the ACC relative speed at 0.140 m/s per code
-with zero code 154.7 (residual sd 0.06 m/s, about the quantization of both frames), `25|7` follows its distance at
-0.79 m per code (sd 0.26 m), and MSB-first `40|5`, a signed five-bit field, its lateral offset at −0.34 m per code, right
-positive (sd 0.14 m, r −0.995; code 15 means no target). So it is not a second measurement, an independent speed or a
-per-object Doppler. Byte 4 bits 3–7 are speed- and range-dependent flags (undecoded); the three low bits of byte 5 are
-constant. The standalone parser has no profile consumer. Byte 0 is 0x50 or 0x52; header/tail values are preserved as raw context.
+![0x366 against 0x365](img/analysis/target_366_coding.png)
 
 ### 0x343 from the radar (●)
 

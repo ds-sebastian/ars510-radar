@@ -251,7 +251,7 @@ def parse_0x23b(data: bytes) -> tuple[int, int, bool] | None:
 
 @dataclass(frozen=True)
 class Target366:
-    """Car-bus target report; nominal coding only, with no object-list identity."""
+    """Car-bus 0x366: the radar's ACC target re-quantized (docs/13)."""
     speed_code: int
     distance_code: int
     header_raw: int
