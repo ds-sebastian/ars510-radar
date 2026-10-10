@@ -7,7 +7,7 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 ## The radar's ACC target (0x235 / 0x237)
 
 At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows.
-The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and with no target
+The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and while idle
 every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
 
 ![ACC target frames](img/analysis/acc_frame_map.png)
@@ -28,8 +28,8 @@ every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
 `support.parse_acc_target(data235, data237)` returns all of them as one `AccTarget`; the single-field helpers
 (`parse_acc_target_vrel`, `_arel`, `_position`, `_range_code`) read the same bits.
 
-- **Lateral position.** The twelfth bit is the real least-significant bit: it flips more often than the eleventh, never
-  carries into the next field, and against the 0x192 lateral of the same target the residual is half a code with it and a
+- **Lateral position.** The twelfth bit is the real least-significant bit: it flips more often than the eleventh, its
+  carries stay inside the field, and against the 0x192 lateral of the same target the residual is half a code with it and a
   full code with it inverted. One summary (or object-list) lateral code is exactly 1.500 of these codes (344 k rows,
   correlation 0.9999), which ties the two lateral units together ([06](06_accuracy.md#lateral-position)).
 - **Lateral speed.** Over two-second windows the lateral position changes by 1.21 codes per code-second of this field
@@ -45,7 +45,7 @@ every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
   1.2 m/s² and 48-93 while it brakes; the second is about 88 for a stopped target, 97-139 for a steady mover, and climbs
   toward 240 within half a second of a maneuver. They follow the target's own acceleration (also when the relative speed
   is still zero because ego brakes with it) and are explained to 78-88 % by the target's kinematics: the tracker's
-  maneuver terms, not a size or class.
+  maneuver terms.
 
 ### Units of the ACC target
 
@@ -69,17 +69,18 @@ Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units
 The ACC target is matched to an object by position (its 0.025 m distance and 0.01 m lateral against the track's `dRel`
 and `yRel`). When the object list's vRel and the ACC target's closing speed
 differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
-confirmation 86%, n = 421, route-bootstrap 79-99%). Through the drive-A false closing ([07](07_velocity_excursions.md)),
-the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
+confirmation 86%, n = 421, route-bootstrap 79-99%). In the bundled drive-E sample the object's vRel falls to −5.8 m/s
+while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#the-model)).
 
 **Who sends it: the radar** (◐) ([summary](../data/analysis/summaries/acc_sender_clock.json)):
 
-- It starts 0.2 s after power-up, before openpilot transmits, and stays with cruise disengaged.
-- openpilot never transmits on the radar bus and never sends 0x235 / 0x237.
+- It starts 0.2 s after power-up, while openpilot first transmits at about 4 s ([01](01_radar_bus.md#power-up)), and
+  stays with cruise disengaged.
 - Every ECU's periodic messages carry its own crystal error. On four drives the radar link splits into two clocks:
-  - **radar:** 0x100/0x103, 0x190-0x198, 0x202, 0x24F, 0x680, and **0x235/0x237**, which keep a fixed phase to the
-    radar's 0x190 like its own 0x191 and change content every 60 ms radar cycle;
-  - **camera:** 0x101/0x102, 0x180, 0x197, 0x210, 0x240-0x248, 0x24D, 0x500/0x501, drifting ~15 ms per 30 min.
+  - **radar:** 0x100/0x103, 0x190-0x196, 0x198, 0x202, 0x24F, 0x680, and **0x235/0x237**, which keep a fixed phase to
+    the radar's 0x190 like its own 0x191 and change content every 60 ms radar cycle;
+  - **camera:** 0x101/0x102, 0x180, 0x197, 0x210, 0x240-0x248, 0x24D, 0x500/0x501, drifting 16-57 ms per 30 min against
+    the radar.
 - The camera feeds the radar lane-like data, so camera input to the radar's target choice is possible. Treat it as the
   radar's own filtered ACC target, associated with an object-list track by position.
 
@@ -91,12 +92,13 @@ the object's vRel swung to −6 m/s while the ACC target stayed at +1.3 m/s.
 
 - During disagreements it stays smooth and consistent with the track's range while the object-list velocity drifts
   (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s).
-- The object list alone, even weighted by its uncertainty codes, does not reproduce it: the radar's ACC tracker uses
-  information the object list does not expose. The `fused` profile therefore feeds it in as a speed measurement
-  ([07](12_kalman_filter.md#the-model)).
+- It carries information beyond the object list: the object list's own fields and their recent history explain about
+  41-47 % of its disagreement with the ACC target
+  ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). The `fused` profile
+  therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
-  about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (model outputs, not sensor
-  precision). It is present in 38% of 40-130 m windows and 11% beyond 80 m
+  about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (error scales against that
+  reference). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
@@ -124,8 +126,8 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 
 ## 0x191-0x194: selected-target summaries
 
-Two target-summary pairs: 0x191 with 0x192, and 0x193 with 0x194. Their age and code fields describe a pair-local
-lifecycle; association with a physical target or a published 0x80 object requires an independent witness.
+Two target-summary pairs: 0x191 with 0x192, and 0x193 with 0x194. Each pair describes one target of the radar's
+internal tracker: 0x191 / 0x193 its lifecycle and class, 0x192 / 0x194 its position.
 
 **0x191 / 0x193** (8 bytes, sentinel `FE FE FE FC FC FF FE FF`):
 
@@ -141,8 +143,7 @@ lifecycle; association with a physical target or a published 0x80 object require
 The template is the target's class: when the ACC target is this summary target, 0x239 reports class 1 with 18:15:45 and
 class 2 with 22:23:120 in every frame, and the object list's own class for a class-2 target is "large vehicle" on 90 % of
 9,106 matched frames. Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining 187 frames contain
-28 further tuples such as 25:15:20. Code continuity describes a coded run; physical target identity needs an independent
-association.
+28 further tuples such as 25:15:20.
 `support.parse_0x191` returns score, age, code, the template in metres and the counter.
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
 [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
@@ -157,19 +158,20 @@ association.
 Each summary is therefore the position of one target of the radar's internal tracker. Keep all 13 bits of the second
 word (it crosses 4096 continuously).
 
-**They come from the radar's good internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
+**They come from the radar's smooth internal tracker.** The speed from a 1 s slope of the 0x192 range matches the radar's
 ACC speed when both describe the same car (correlation 0.90, median difference 0.16 m/s). During object-list velocity
 excursions it stays with the ACC speed in every tested cycle (397 of 397 for 0x192, 21 of 21 for 0x194), and against
 a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:
 14.9 % → 6.5 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
 far cars: present without an ACC target at a median 53 m, 46 % beyond 60 m
-([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry position only (no speed field), so
-speed needs a slope and lags by about half a second.
+([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry position only, so a speed comes
+from the range slope and lags by about half a second.
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
-layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `fused` profile attaches each
-summary to the object-list track at its position (range within 15 %, lateral within 1 m) and uses its range slope as a
-speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. The fork build can attach each summary
+to the object-list track at its position (range within 15 %, lateral within 1 m) and use its range slope as a speed
+measurement up to 80 m: an option, off in `fused` and on in `colored`
+([12](12_kalman_filter.md#what-the-summaries-do)).
 
 ## 0x190: cycle header
 
@@ -181,24 +183,18 @@ speed measurement up to 80 m ([07](12_kalman_filter.md#the-model)).
 
 ## 0x195 / 0x196: event pair
 
-Exact idle payloads account for **99.67% of recorded frames** in a 700-segment census: 1,365,236 frames across
-34 route groups, with 169 segment-local groups of non-idle paired frames, including initialization. 0x195
-bits 18-27 (MSB-first) provide a contiguous 10-bit raw view:
+Exact idle payloads account for **99.67% of recorded frames** in a 700-segment census (1,365,236 frames; 169 groups
+of non-idle paired frames, including initialization). 0x195 bits 18-27 (MSB-first) form one 10-bit code:
 
 ```python
 q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 ```
 
-Of 60 changes where the historical seven-bit part moves by more than 64 codes, 59 have the opposite unit change
-in the high prefix. One larger step goes **436 → 510** within the same prefix. This supports using the adjacent
-bits together while keeping abrupt steps and state changes distinct from ordinary carries. The matched non-idle
-codes span 391–558. Use this 10-bit view for raw diagnostics; field boundaries and physical units need independent
-validation.
+In 59 of 60 changes where the low seven bits move by more than 64 codes, the high bits move by one in the opposite
+direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
+non-idle samples, so recognise idle frames by the whole payload. The DBC keeps the remaining sub-fields as raw codes.
 
-Code **510 also occurs in 1,202 of 2,215 non-idle, uniquely paired, non-initialization samples**; use the whole
-payload to recognise idle bodies. The DBC retains the remaining sub-fields as raw codes.
-
-**The event pair is a short-time-to-collision state.** Across 700 segments, compared with matched moving moments:
+**The event pair behaves like a short-time-to-collision state (◐).** Across 700 segments, compared with matched moving moments:
 
 | | non-idle 0x195 frames | matched moving moments |
 |---|---|---|
@@ -220,8 +216,7 @@ By day their bodies hold a default payload (`00 10 01 00 10 01 00`). **At night 
 records**: they leave the default in every drive that starts after dark and in none that ends before dusk (71 of 698
 one-minute segments; 35 of 114 on a second set, ramping in over three minutes at dusk). Each frame holds two records of
 {type nibble, 3 flag bits, 13-bit signed value, 8-bit value}; the two records of 0x244 share the 8-bit value. One record
-kind sweeps from small to large values while its byte falls from 255, as an approaching light does. The record units are
-open. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
+kind sweeps from small to large values while its byte falls from 255, as an approaching light does. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
 
 The night mode matters for the object list: two slot fields change with it ([03](03_slot_fields.md#camera-association)).
 
@@ -270,8 +265,8 @@ ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start
   short at 60-110 m and 14 m short at 110-170 m ([06](06_accuracy.md#distance), [07](07_velocity_excursions.md)). The
   fixes are sparse (about one a minute on tracks that have neither the ACC target nor a summary).
 - **Content while driving:** a stationary roadside object in 83% of frames (typically 8 m to the side), a
-  same-direction vehicle in 13%, an oncoming one in 3%. The 0x80 object list does not carry new stationary objects
-  while driving ([02](02_object_list.md)); 0x680 does, one at a time.
+  same-direction vehicle in 13%, an oncoming one in 3%. While driving the 0x80 object list drops most new stationary objects
+  ([02](02_object_list.md#what-the-radar-lists)); 0x680 reports them, one at a time.
 - **Idle** payload `00 00 08 00 80 00 80 0A` appears in 0.12% of frames above 5 m/s and never for longer than 1.0 s
   in 7.8 h, so a long idle run while driving is a candidate "radar sees nothing" indicator
   ([10](10_research_directions.md)).
@@ -281,15 +276,13 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
 ## Other frames
 
 - **0x202:** counter in byte 1 high nibble (+1 per frame); byte 0 is a fixed function of the counter (map in the DBC): a CRC-8 with
-  polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the other bytes are constant, so only the counter
-  dependence is identified).
+  polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the fit identifies the counter dependence; the other
+  bytes are constant).
 - **0x23B (50 Hz, 3 bytes, in received order):** byte 0 = **CRC-8** (polynomial 0x1D, MSB first, init 0, xor 0x59) over the
   bit stream [counter 4 bits][0000][low nibble][byte 2]; byte 1 = rolling counter in the high nibble; the low nibble and
   byte 2 are the ACC target width ([above](#class-width-and-timestamp-0x239--0x23b)). 3,615 of 3,616 distinct payloads over
   2.05 M frames pass, and 30,056 of 30,058 frames on fresh drives (the exceptions are the startup frame `00 0f ff`).
-- **0x240 / 0x244 (camera-sent, 16.7 Hz):** default payload by day. At night each frame carries two records of
-  {type nibble, 3 flag bits, 13-bit signed value, 8-bit value}: light sources the camera reports (one kind sweeps outward
-  while its byte falls from 255, an approaching light). 0x248 byte 2 is 1 by day and 0, 2 or 3 at night.
+- **0x240 / 0x244 / 0x248:** camera-sent context frames ([above](#0x240-0x248-context-frames)).
 - **0x210:** copy of Toyota road-sign-assist data (speed-sign presence, `RSA1.SPDVAL1`, `RSA3.TSRMSW`).
 - **0x500 / 0x502:** unit-specific constants (redacted in the shared DBC; compare yours) and two slowly drifting codes
   in 0x502 (temperature-like behaviour).

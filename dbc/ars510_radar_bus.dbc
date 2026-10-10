@@ -335,7 +335,7 @@ CM_ BO_ 401 "Selected-target companion A (with 0x192): score, age and track code
 CM_ BO_ 402 "Selected-target summary A (4 bytes): distance and lateral position of one target of the radar's internal tracker, in the object list's encoding. Sentinel 00 FF 00 FF = no target.";
 CM_ BO_ 403 "Selected-target companion B (with 0x194); same layout as 0x191.";
 CM_ BO_ 404 "Selected-target summary B; same layout as 0x192.";
-CM_ BO_ 405 "Event frame, paired with 0x196: idle 99.97% of the time, active during rare events.";
+CM_ BO_ 405 "Event frame, paired with 0x196: exact idle payload on 99.67% of frames; non-idle in a short-time-to-collision state (docs/05).";
 CM_ BO_ 406 "Event frame, paired with 0x195.";
 CM_ BO_ 407 "Startup phase: bit 8 sets once the radar is running and stays set.";
 CM_ BO_ 408 "Constant 0x10.";

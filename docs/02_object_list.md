@@ -26,9 +26,10 @@ flowchart LR
 - **First frame:** bytes 0-1 are `12 E4`, an ISO-TP first frame of length 0x2E4.
 - **Following frames:** byte 0 is `2x`, where x is a sequence nibble that wraps every 16 frames.
 - **Reassembly:** append bytes 1..7 of every frame, the first included, until 106 frames have arrived. Record byte 0 is `E4`.
-- **CRC:** `zlib.crc32(record[1:737])`, stored little-endian at `record[737:741]`. Zero failures on every logged drive.
-- `ars510/transport.py` does this in about 60 lines. A DBC cannot: the sequence nibble wraps, so a single frame does
-  not say which part of the record it carries.
+- **CRC:** `zlib.crc32(record[1:737])`, stored little-endian at `record[737:741]`. Every record of every logged drive
+  passes.
+- `ars510/transport.py` does this in 78 lines. Reassembly has to happen in code: the sequence nibble wraps every
+  16 frames, so a frame's place in the record comes from counting frames since the first.
 
 ![raw records](img/analysis/record_raster.png)
 
@@ -57,24 +58,25 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 | clock code | record bytes 1-4, little-endian | equals the 0x85 fine clock `// 100` in the same cycle |
 | record counter | `int.from_bytes(record[5:7], "little") >> 1` | equals the 0x85 counter in the same cycle |
 | timing offset (candidate) | header bits 104-114 | its change follows the record's arrival-time offset at about 1 ms per count |
-| allocation count | `record[14] >> 3` | number of allocated slots (slots whose index field equals their position, retiring slots included) |
+| allocation count | `record[14] >> 3` | number of allocated slots: those whose index field equals their position, which are the slots with age ≥ 1 ([`header_allocation_count.json`](../data/analysis/summaries/header_allocation_count.json)) |
 
 Pairing 0x80 and 0x85 by clock and counter is exact. Pairing by arrival time picks the neighbouring cycle about a
 third of the time, so use the counters.
 
 ## Slots and track IDs
 
-Each slot is one object. The radar fills the **lowest free slot first**: in 88 minutes it never used more than 10 of
+Each slot is one object. The radar fills the **lowest free slot first**: in 88 minutes it used at most 10 of
 the 20 slots, and 94-99% of samples sit in slots 0-4. An object keeps its slot for its whole life, and the slot's
 **age** field (`24|7`) counts its radar cycles.
 
 The decoder builds `trackId` from **slot + continuous age run** (`ars510/tracks.py`):
 - age restarts (usually through 0) → new ID;
 - a slot quiet for more than 0.3 s → new ID;
-- a new occupant of a reused slot always gets a new ID, and no ID is ever live in two slots.
+- a new occupant of a reused slot always gets a new ID, and each ID lives in one slot only.
 
-`BASE_CONFIG` also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near its predicted
-position, so radard's per-track filter is not reset.
+The `raw` profile (`BASE_CONFIG`) also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near
+its predicted position, so radard keeps its per-track filter; `fused` leaves this off because its own speed filter
+makes it redundant ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 
 ![slot occupancy](img/analysis/slot_occupancy_and_tracks.png)
 
@@ -90,13 +92,10 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
    30, 30, 30, 30, 20, 13, 9, 6, 4, 2, 1, 1, 0 while the motion code stays 5.
 2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `BASE_CONFIG` publishes from age 60.
 3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
-   100 but can decline. These fields do not certify measurement availability or accuracy.
+   100 and can decline.
 4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 (occasionally 1) per cycle.
 5. **Deletion.** The allocation can return to state 1, with or without score recovery, or be freed near score 20:
    age goes to 0 for one cycle with the previous geometry, then the slot returns to the idle template.
-
-These are transmitted lifecycle relationships; they do not establish physical target continuity or which raw
-measurements reached the tracker ([`excursion_mechanism_scope.json`](../data/analysis/summaries/excursion_mechanism_scope.json)).
 
 ![lifetimes](img/analysis/track_lifetimes.png)
 
@@ -144,7 +143,8 @@ Tracks younger than about 50-60 cycles carry unconverged range and velocity:
 
 ![age convergence](img/analysis/age_convergence.png)
 
-Hence `min_publish_age = 60` in `BASE_CONFIG`. Radard falls back to vision for a new car's first ~3.6 s.
+Hence every driving profile publishes from age 60 (`min_publish_age = 60`). Radard uses vision for a new car's first
+~3.6 s.
 
 ## Worked example
 
@@ -157,6 +157,6 @@ vrel_native = o.v_long_ground - v_ego                         # nominal velocity
 vrel_b4 = o.v_long_ground * (0.149 / 0.15) - v_ego_b4          # all driving profiles; Toyota 0xB4
 ```
 
-The profile factor multiplies radar ground velocity before subtracting ego speed;
-the Toyota 0xB4 speed is not multiplied by that factor. The nominal decode and
-the empirical profile alignment are described in [06](06_accuracy.md#velocity).
+The profile factor multiplies the radar's ground velocity before the Toyota 0xB4 ego speed is subtracted as read
+(the openpilot file folds it into the decode as 0.149 m/s per code). The nominal decode and the alignment are in
+[06](06_accuracy.md#velocity).

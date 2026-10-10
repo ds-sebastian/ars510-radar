@@ -9,7 +9,7 @@ Inputs:
 Examples:
   python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o tracks.csv
   python tools/decode_log.py /path/to/rlog.zst --profile all-tracks -o tracks.csv
-  python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile anchor -o tracks.csv
+  python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile fused -o tracks.csv
 """
 from __future__ import annotations
 

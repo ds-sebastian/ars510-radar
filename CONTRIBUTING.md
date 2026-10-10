@@ -11,7 +11,7 @@ Thanks for helping. There are three ways in, from least to most involved:
 
 - `main` only changes through pull requests. Branch from `main` (or fork the repo), one topic per branch, and open a
   PR. Branch names: `fix/…`, `feat/…`, `docs/…`, `research/…`, `integration/…`.
-- CI runs on every PR: `pytest`, `tools/check_structure.py` and `tools/check_privacy.py`. A PR merges when CI is
+- CI runs on every PR: `pytest`, `tools/check_structure.py`, `tools/check_privacy.py` and `ruff check upstream/`. A PR merges when CI is
   green and the maintainer (@ds-sebastian) has reviewed it. PRs are squash-merged.
 - Keep PRs small and self-contained: code, tests and the docs that describe the change travel together.
 
@@ -25,8 +25,8 @@ pytest && python tools/check_structure.py && python tools/check_privacy.py
 ## Testing on your car
 
 The confirmed radar firmware is `8821F0R03100` at 0x750 / 0x0f on the Toyota ARS510 (RAV4 2022 / 2023).
-`8821F0R01100` is listed in openpilot fingerprints but its layout and integration remain unconfirmed; detection
-currently depends on observing both 0x80 and 0x85 on bus 1. See [firmware validation](docs/10_research_directions.md#for-the-integration).
+`8821F0R01100` is listed in openpilot fingerprints; for it, detection relies on seeing both 0x80 and 0x85 on bus 1 at
+fingerprinting, and one capture adds it to the firmware list. See [firmware validation](docs/10_research_directions.md#for-the-integration).
 Install with [`openpilot/README.md`](openpilot/README.md). The installer supports openpilot and forks, and the
 `fused` profile is the default (`--profile raw` for comparison). Then:
 
@@ -36,8 +36,8 @@ Install with [`openpilot/README.md`](openpilot/README.md). The installer support
 3. Never post route IDs, dongle IDs, VINs, GPS positions or video that identifies you or others. If a log would help,
    say so in the issue and the maintainer will arrange a private transfer.
 
-Reports from a different car, radar firmware or fork are especially valuable: they are the only way to learn whether
-the layout and the smoothing hold beyond one car.
+Reports from a different car, radar firmware or fork are especially valuable: they show how far the layout and the
+filter carry beyond the owner's car (a second RAV4 has reported so far).
 
 ## Code changes
 
@@ -45,9 +45,9 @@ the layout and the smoothing hold beyond one car.
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
 - **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `fused`):
   state the expected effect before running it, replay it through openpilot against the current profile with the gates
-  in [docs/07](docs/12_kalman_filter.md) and the vision-only comparison in
+  in [docs/09](docs/09_tools_and_data.md#developing-and-testing-a-change) and the vision-only comparison in
   [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that
-  change, not just the counts. Changes that only look better on the drive that motivated them are not merged.
+  change, not just the counts. Changes are merged on held-out evidence, beyond the drive that motivated them.
 - **Integration** (`openpilot/`): run `openpilot/check_integration.py` against every fork you can
   ([`openpilot/README.md`](openpilot/README.md#test-on-a-pc-first)) and list the results in the PR. The installer
   must stay fork-agnostic: no in-place edits of fork files, no new `ToyotaFlags` bits.
@@ -61,7 +61,7 @@ The docs describe the **current state only**: what each field is, how sure we ar
 - Rewrite sentences in place when understanding changes.
 - No dated banners, changelogs of claims, or "this didn't work" lists: history lives in git and PRs.
 - Numbers cited in the docs come from a summary JSON in `data/analysis/summaries/`, listed in `data/README.md`.
-  Figures come from `tools/make_analysis_figures.py`.
+  Figures come from the `tools/make_*_figures.py` scripts.
 - Drives stay anonymous: drive letters (A/B/C, D1-D4) and times relative to an event.
 - Research PRs: say what was tested, on which drives, what counts as a pass, and include negative results in the PR
   description. Only confident, reproducible results change the docs.

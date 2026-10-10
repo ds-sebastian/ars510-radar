@@ -43,8 +43,9 @@ def occupied_slots(record: bytes) -> Iterator[tuple[int, bytes]]:
 
 
 def live_object_count(record: bytes) -> int:
-    """Header field (record bits 115..119, little-endian): number of live objects (slots with age >= 1).
+    """Header field (record bits 115..119, little-endian): number of allocated slots: slots whose index field equals
+    their position, which are the slots with age >= 1.
 
-    Exact against the decoded slots on 384,144 records; usable as an integrity cross-check (docs/02).
+    Exact on every record of the bundled samples (header_allocation_count.json); an integrity cross-check (docs/02).
     """
     return (int.from_bytes(record[14:16], "little") >> 3) & 0x1F

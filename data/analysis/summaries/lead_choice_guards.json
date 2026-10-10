@@ -1,5 +1,5 @@
 {
- "description": "2.3 lead handling: the ACC match range scale max(12 m, 0.4 x) for every track, and the path gate (beyond 15 m, a track other than the ACC target's more than 2.5 m from the yaw-predicted ego path is not published). 34-drive replays against 2.1 fused (same harness and limits fixed before the runs), then the owner's 2.1 road drives and a second car's two drives replayed open loop against vision only.",
+ "description": "2.3 lead handling (unchanged in 2.4, which only drops the summaries): the ACC match range scale max(12 m, 0.4 x) for every track, and the path gate (beyond 15 m, a track other than the ACC target's more than 2.5 m from the yaw-predicted ego path is not published). 34-drive replays against 2.1 fused (same harness and limits fixed before the runs), then the owner's 2.1 road drives and a second car's two drives replayed open loop against vision only.",
  "replay_34_drives": {
   "2.1 fused": {
    "heldout": {
@@ -196,7 +196,23 @@
    },
    "note": "real lead slowing to turn off closed at about -3 m/s (optical looming); 2.1 braked for a car a lane over whose radar speed read a false -7 m/s"
   },
-  "onset_change_per_drive_max_s": 0.015
+  "onset_change_per_drive_max_s": 0.015,
+  "cases_2_4": {
+   "note": "minimum planner request within 3 s of each case in the open-loop road replays; 2.4 = the openpilot version 2.3 (no summaries, replay label CL_op23), 2.3 fused = CL_P15S",
+   "late_brake_case": {
+    "vision only": -1.61,
+    "2.1 fused": -2.36,
+    "2.3 fused": -1.47,
+    "2.4 fused": -1.47
+   },
+   "turning_lead_case": {
+    "vision only": -0.08,
+    "2.1 fused": -1.54,
+    "2.3 fused": -0.29,
+    "2.4 fused": -0.29
+   },
+   "radar_only_episode_lists_2_3_vs_2_4": "identical (8 mild, 0 hard)"
+  }
  },
  "sensitivity_independent_drives": {
   "note": "34-drive counts and oracle seconds (confident moments, independent drives)",

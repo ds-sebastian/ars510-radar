@@ -9,8 +9,7 @@ the topic doc that has the detail. Read this first; docs 01-13 are the reference
 ## 1. What the radar sends
 
 The ARS510 sends its object list on the private radar bus (bus 1) as one 742-byte **record** every ~60 ms
-(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32. A DBC cannot describe it, so the parser reassembles
-it. Each record has 20 **slots**; on a highway about 5 hold objects.
+(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 5 hold objects.
 
 ![raw records](img/analysis/record_raster.png)
 
@@ -30,7 +29,7 @@ More: [02](02_object_list.md#an-objects-life), [03 Slot fields](03_slot_fields.m
 
 ## 3. How good is each measurement?
 
-Distance and lateral position are good; speed is the problem. On the owner's 2.1 drives (300,000 radar-lead ticks
+Distance and lateral position are steady; speed at range has excursions. On the owner's 2.1 drives (300,000 radar-lead ticks
 matched to the camera's lead) the radar reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
 from 0.6 m to 4-6 m at range.
 
@@ -40,7 +39,7 @@ from 0.6 m to 4-6 m at range.
 second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)) give the same
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
-The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while its range does not change.
+The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while its range holds steady.
 84-88 % are false closings. They are rare close in (~0.1 per 1,000 records below 20 m) and common far out (130 per 1,000
 at 60-80 m). The radar's uncertainty code grows with them, which is what the filter uses.
 
@@ -74,10 +73,10 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 
 ## 6. Choosing which tracks openpilot sees
 
-openpilot's radard pairs the camera's lead with the radar track nearest in range and has no lateral gate, so a car in
-the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
+openpilot's radard pairs the camera's lead with the radar track nearest in range, whatever its lateral position, so a
+car in the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
 from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track the ACC target
-follows is never withheld.
+follows always stays visible.
 
 ![path gate](img/analysis/guide_lead_guards.png)
 
@@ -85,16 +84,18 @@ What that changes on the road, replayed through openpilot's planner:
 
 ![two road moments](img/analysis/guide_cases.png)
 
-*Left: a pickup first detected at 66 m read 15-20 m short in the object list; 2.3 matches it to the ACC target and
-asks for −1.47 m/s² instead of −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead with a car a lane
-over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about −3 m/s; 2.1 asked
-for −1.54 m/s², 2.3 for −0.29 (vision −0.08).* More: [12](12_kalman_filter.md#path-gate).
+*Left: a pickup first detected at 66 m read 15-20 m short in the object list; the current filter matches it to the ACC
+target and asks for −1.47 m/s² instead of 2.1's −2.36 (vision −1.61). Right: on a curve, radard paired the camera's lead
+with a car a lane over whose radar speed read a false −7 m/s, while the real lead, slowing to turn off, closed at about
+−3 m/s; 2.1 asked for −1.54 m/s², the current filter for −0.29 (vision −0.08). 2.3 and 2.4 ask the same in both
+moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json)).* More:
+[12](12_kalman_filter.md#path-gate).
 
 ## 7. What each part is worth
 
-Every part was removed on its own and in combination, then replayed on 34 drives. Every hard brake was judged
-against the radar's raw range, the camera and the driver. A part stays only if removing it adds unjustified braking or
-destabilises the lead.
+Every part was removed on its own and in combination, then replayed on 27 drives. Every hard brake was judged
+against the radar's raw range, the camera and the driver. Each part kept earns its place: removing it adds unjustified
+braking or destabilises the lead.
 
 ![what each part is worth](img/analysis/kalman_ablation.png)
 
@@ -109,9 +110,9 @@ More: [12](12_kalman_filter.md#what-each-part-is-worth), [10](10_research_direct
 
 ![profiles against vision only](img/analysis/profiles_vs_vision.png)
 
-Vision only is not the truth either. Against openpilot's own planner fed a hindsight lead (the radar's ACC target and
-smoothed range, checked with the camera), the default brakes unnecessarily half as long as vision only and misses no
-more:
+Vision only has its own errors, so a second reference helps. Against openpilot's own planner fed a hindsight lead (the
+radar's ACC target and smoothed range, checked with the camera), the default brakes unnecessarily half as long as vision
+only and misses less braking:
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
@@ -125,22 +126,22 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | radar − camera range, 20-70 m (same car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
-| braking only the radar asked for, per hour (34 drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
-| hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 (27 of 32 hard ticks judged real) | `hard_braking_review.json` |
+| braking only the radar asked for, per hour (20 held-out drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
+| hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 | `profiles_vs_vision.json` |
 | braking onset against vision only | −0.01 s (95 % CI −0.07 … +0.04) | `profiles_vs_vision.json` |
 | driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.3 %, vision 40.1 % | `profiles_vs_vision.json` |
-| owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
-| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 5.4 / 7.2 s, vision 10.2 / 10.3 s; 34 replay drives (6.72 h): `fused` 7.1 / 3.0 s, vision 31.9 / 10.0 s | `oracle_reference.json` |
+| owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion favours `fused`) | `road_v21.json` |
+| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 5.4 / 7.2 s, vision 10.2 / 10.3 s; 27 replay drives (6.72 h): `fused` 7.1 / 3.0 s, vision 31.9 / 10.0 s | `oracle_reference.json` |
 | openpilot file | 183 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence
 
-- **Replay, not simulation.** Recorded drives run through openpilot's own card → radard → planner, once with vision
+- **Replay of recorded drives.** Recorded drives run through openpilot's own card → radard → planner, once with vision
   only and once with the radar ([09](09_tools_and_data.md)). The car's motion stays as recorded (open loop), so a
   replay shows what openpilot would have *asked for*.
-- **The 34 drives.** 20 held-out drives, 4 further drives and the owner's sunnypilot drives. Limits for a change are
-  written down before it is replayed, and a change is not tuned on the drive that motivated it.
-- **Judging a brake.** A radar-only brake is checked against what does not depend on the radar's speed: its raw
+- **The 27 drives.** 20 held-out drives, 4 further drives and 3 owner sunnypilot drives. Limits for a change are
+  written down before it is replayed, and a change is tuned on other drives than the one that motivated it.
+- **Judging a brake.** A radar-only brake is checked against references independent of the radar's speed: its raw
   range, the camera, and whether the driver slowed too ([12](12_kalman_filter.md#what-each-part-is-worth)).
 - **Confidence marks.** ● confirmed, ◐ likely, ○ candidate, used throughout the topic docs.
 
@@ -155,7 +156,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **uncertainty `240\|7`** | the radar's own speed-error code per object; the filter weights the speed by it |
 | **excursion** | a 1-10 s stretch where the object list's speed is wrong, mostly a false closing on a far car |
 | **ACC target** | the car the radar's own ACC function follows (0x235 / 0x237): smooth distance and speed |
-| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; tested, off by default |
+| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; a fork option, on in `colored` |
 | **radard** | openpilot's process that turns radar points and the camera's lead into the lead the planner follows |
 | **hard radar-only tick** | a 20 Hz tick where the radar planner asks for ≤ −2 m/s² while vision only asks for ≥ −0.5 |
 | **target episode** | the radar planner asks for ≤ −1 m/s² while vision only asks for ≥ −0.3, for ≥ 0.3 s while moving |

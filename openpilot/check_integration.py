@@ -130,8 +130,8 @@ def main() -> int:
     import math
     check(p.measured and math.isnan(p.aRel) and math.isnan(p.yvRel),
           "legacy RadarPoint fields carried (NaN aRel / yvRel: the synthetic log has no yaw rate or speed change)")
-  # The synthetic object keeps a fixed range while its vRel is non-zero; the steady profile's velocity-aided range
-  # (range_fusion_gain) then settles a little away from the raw range, so only the default profile is exact.
+  # The synthetic object keeps a fixed range while its vRel is non-zero; velocity-aided range (range_fusion_gain, in
+  # fused, colored and the openpilot version) then settles a little away from the raw range; raw is exact.
   gain = 0.1 if PROFILE is None else PROFILE.range_fusion_gain  # None: the upstream candidate (fused's filter)
   d_tol = 1e-3 if gain == 0 else 2.5
   check(abs(p.dRel - 40.0) < d_tol and abs(p.yRel - 1.5) < 1e-3,

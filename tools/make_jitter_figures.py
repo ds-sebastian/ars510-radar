@@ -95,52 +95,6 @@ def roughness_by_state() -> None:
          "roughness energy; steady radar following adds only +0.005 m/s².")
 
 
-def tradeoff() -> None:
-    c = {k: v for k, v in DATA["candidates_heldout"].items() if k not in ("H",)}
-    base = c["ars510"]
-    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.4), sharex=True)
-    for ax, key, title in ((axes[0], "e4_excess_vs_vision", "agreement with the driver:\nshare of radar's excess error removed"),
-                           (axes[1], "roughness_excess_vs_vision", "jitter:\nshare of radar's excess roughness removed")):
-        pts = []
-        for k, v in c.items():
-            x = v["lag_vs_baseline_s"]
-            y = 100 * (1 - v[key] / base[key])
-            hi = k in ("K4", "AT0")
-            ax.scatter(x, y, s=46 if hi else 30, color=RADAR if k != "ars510" else INK2, edgecolor=SURFACE, linewidth=1.5, zorder=3)
-            if k != "ars510":
-                pts.append([x, y, [k]])
-        # hand-placed labels: (text, anchor key, offset in points); points near the origin share one label
-        near = [k for k in ("K1", "K5", "MA2", "MA3") if k in c]
-        if key == "e4_excess_vs_vision":
-            place = [(" / ".join(near), "MA2", (-6, -14)), ("R2", "R2", (-6, 7)), ("AT3", "AT3", (5, 5)),
-                     ("K6", "K6", (5, -12)), ("K3", "K3", (5, 4)), ("K4", "K4", (5, 4)), ("K2", "K2", (5, 4)),
-                     ("R1", "R1", (5, 4)), ("K7 / K8", "K7", (5, 4)), ("RC", "RC", (5, -10)), ("AT0", "AT0", (5, 4))]
-        else:
-            place = [(" / ".join(near), "MA2", (-6, -14)), ("AT3", "AT3", (5, -2)), ("R2", "R2", (5, 4)),
-                     ("K3", "K3", (5, 4)), ("K6", "K6", (5, -4)), ("K4", "K4", (5, 4)), ("K2", "K2", (5, 4)),
-                     ("R1", "R1", (5, 4)), ("K8", "K8", (5, 3)), ("K7", "K7", (5, -8)), ("RC", "RC", (5, 4)),
-                     ("AT0", "AT0", (5, 4))]
-        for text, k, off in place:
-            if k not in c:
-                continue
-            x, y = c[k]["lag_vs_baseline_s"], 100 * (1 - c[k][key] / base[key])
-            ax.annotate(text, (x, y), xytext=off, textcoords="offset points", fontsize=8, color=INK,
-                        fontweight="bold" if k in ("K4", "AT0") else "normal")
-        ax.axhline(0, color="#b9b8b2", lw=0.8)
-        ax.axvline(0, color="#b9b8b2", lw=0.8)
-        ax.axhline(100, color=S3, lw=1, ls="--")
-        ax.text(0.165, 103, "matches vision-only", ha="right", fontsize=7.5, color=INK2)
-        ax.set_title(title, loc="left", fontsize=10)
-        ax.set_ylim(-80, 110)
-        ax.set_xlabel("reaction time given up vs baseline (s)")
-    axes[0].set_ylabel("% of the gap to vision-only closed")
-    axes[0].text(-0.02, -74, "no candidate reaches the top-left", fontsize=8, color=INK2)
-    fig.suptitle("Every interface-only fix tested sits on one trade-off", x=0.01, y=1.07, ha="left", fontsize=11, color=INK)
-    names = "; ".join(f"{k} {v['name']}" for k, v in c.items() if k != "ars510")
-    save(fig, "jitter_tradeoff", f"Held-out routes, one scorer for all rows. At baseline radar starts braking ~0.22 s before "
-         f"vision-only around the driver's brake presses. {names}.")
-
-
 def real_gallery() -> None:
     g = DATA["real_drives"]["gallery"]
     fig, axes = plt.subplots(3, len(g), figsize=(4.0 * len(g), 8.4), sharex="col")
@@ -218,5 +172,5 @@ def real_census() -> None:
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    for f in (event, roughness_by_state, tradeoff, real_gallery, real_census):
+    for f in (event, roughness_by_state, real_gallery, real_census):
         f()

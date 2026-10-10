@@ -35,12 +35,13 @@ LONG_DIST = NativeField("long_dist", 32, 12, 160.0, 1.0 / 16.0, "m", "validated"
 # ACC-target lateral (cm), ten codes per lateral-velocity code-second, 69 codes/m [65, 74.5] under ego rotation (docs/06).
 LATERAL_M_PER_CODE = 0.015
 LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, LATERAL_M_PER_CODE, "m", "validated_sign_likely_scale")
-# Longitudinal velocity OVER GROUND (not relative). Nominal 0.15 m/s/code and zero 510.5.
-# Exact factory zero, scale and rounding rule remain provisional (docs/06).
+# Longitudinal velocity OVER GROUND. Nominal 0.15 m/s/code and zero 510.5; the driving profiles read 0.149 against
+# Toyota 0xB4 ego speed (docs/06).
 # vRel = this - ego speed.
 LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s", "validated_with_caveats")
 # Lateral velocity over ground, left positive. With the rotating-frame correction (vy = dy/dt + yaw_rate * x) it fits
-# 0.142-0.145 m/s per code; 0.15 is used here (docs/03). openpilot does not use it (yvRel stays NaN).
+# 0.142-0.147 m/s per code; 0.15 is used here (docs/03). Published as yvRel (minus yaw rate x range) to forks that
+# still carry that RadarPoint field (docs/08).
 LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "scale_not_pinned")
 # Longitudinal acceleration over ground, filtered: zero code 511, about 0.04 m/s^2 per code, follows the velocity by
 # 0.5-1 s. Kept in centred codes (docs/03).
@@ -63,7 +64,7 @@ RAW_WEIGHT_148 = NativeField("raw_weight148", 148, 4, 0.0, 1.0, "code", "structu
 RAW_WEIGHT_152 = NativeField("raw_weight152", 152, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 RAW_WEIGHT_156 = NativeField("raw_weight156", 156, 4, 0.0, 1.0, "code", "structure_semantics_unresolved")
 # Oncoming-like motion state (passed the original motion test). It can persist after slowing and reset before
-# the native allocation ends; it is not a latched physical-target history (docs/03).
+# the native allocation ends (docs/03).
 ONCOMING_FLAG = NativeField("oncoming_flag", 14, 1, 0.0, 1.0, "flag", "tested_semantics")
 
 # Existence probability in percent (10-100); 20|3 is its coded class (docs/03). Reaches 100 % at about age 21.
@@ -78,9 +79,9 @@ CAMERA_ASSOC = NativeField("camera_assoc", 112, 3, 0.0, 1.0, "state", "likely")
 # vehicle is re-classified as a car when it has fallen to 5 (docs/03).
 CLASS_CONFIDENCE = NativeField("class_confidence", 115, 5, 0.0, 5.0, "%", "likely")
 
-# Velocity standard deviation (sigma vx) candidate: grows with range and during velocity excursions, higher when the
-# velocity disagrees with the camera by > 2 m/s. Relative confidence; unit not pinned (docs/03).
-VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "candidate")
+# Velocity standard deviation (sigma vx): grows with range and during velocity excursions, higher when the velocity
+# disagrees with the camera by > 2 m/s; about 0.043-0.045 m/s per count against the radar's ACC target (docs/03).
+VEL_UNC_240 = NativeField("vel_uncertainty_candidate", 240, 7, 0.0, 1.0, "code", "likely")
 
 # Historical labels only; full code 3 is rightward-like while full code 7 is stopped-like.
 MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward", 3: "not_clearly_moving_3"}
@@ -91,7 +92,7 @@ LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
 WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 
 # Remaining uncertainty, class, size and score codes, passed through raw (docs/03). UNCERTAINTY_PER_COUNT: scales against the radar's own
-# ACC target (docs/03, uncertainty section), relative units, not calibrated standard deviations.
+# ACC target (docs/03, uncertainty section), relative to that reference.
 UNC_RANGE_224 = NativeField("range_uncertainty_code", 224, 7, 0.0, 1.0, "code", "candidate")
 UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "candidate")
 UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "code", "candidate")
@@ -145,19 +146,19 @@ class NativeObject:
     age: int
     d_rel: float  # m, forward of the radar
     y_rel: float  # m, left positive
-    v_long_ground: float  # m/s over ground (NOT relative)
+    v_long_ground: float  # m/s over ground (minus ego speed = vRel)
     v_lat_ground: float  # m/s, provisional
     accel_like_code: int  # centred code, unscaled
     move_state: int  # legacy low two bits; see movement_code for distinct full states
     oncoming_flag: bool  # raw oncoming-like state; can reset within the allocation
-    vel_unc_code: int  # candidate velocity-uncertainty code (240|7), relative confidence only
+    vel_unc_code: int  # velocity-uncertainty code (240|7), about 0.045 m/s per count
     geometry_valid: bool  # age >= 1 (age 0 carries stale geometry) and not the age-1 initialization template
     lateral_valid: bool  # lateral code is not the sentinel
     movement_code: int | None = None  # full 109|3; None for legacy manually constructed objects
-    raw8_low5: int | None = None  # startup decay code; mature semantics unknown
-    raw13_bit: int | None = None  # separately changing raw bit; meaning unknown
-    raw_weights148: tuple[int, int, int] | None = None  # 148/152/156|4; outcomes and units unknown
-    raw_weight_state128: int | None = None  # 128|3; availability/category association, not validity
+    raw8_low5: int | None = None  # 8|5 startup countdown while the motion code is 5
+    raw13_bit: int | None = None  # 13|1 raw flag next to the startup code
+    raw_weights148: tuple[int, int, int] | None = None  # 148/152/156|4 lane weights (right, left, ego) in 1/15 steps
+    raw_weight_state128: int | None = None  # 128|3 lane state: 3 ego, 2 right, 4 left lane; 1/5/7 no lane weights
     vel_code: int = -1  # raw 64|10 code; 1023 is a saturated (invalid) reading
     v_lat_code: int = -1  # raw 74|10 code; 0 and 1023 are sentinels
     existence_pct: int | None = None  # 16|8 existence probability, percent
@@ -167,7 +168,7 @@ class NativeObject:
     object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
     length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
-    height_code: int | None = None  # 272|5, not a calibrated height
+    height_code: int | None = None  # 272|5, height-like size code (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
     vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Figures for the install profiles, decoded from the bundled CAN samples.
 
-    python tools/make_profile_figures.py      # writes docs/img/analysis/profile_comparison.png, layer_staircase.png, acc_sender_clock.png
+    python tools/make_profile_figures.py      # writes docs/img/analysis/profile_comparison.png, acc_sender_clock.png
 
 Every panel runs ars510.Ars510NativeRadarInterface on data/sample/*.csv.gz and plots the in-lane lead (|yRel| < 1.8 m,
 nearest) as published, so the figures can be regenerated from the repository alone.
@@ -83,26 +83,6 @@ def profiles_figure() -> None:
     fig.tight_layout(); fig.savefig(OUT / "profile_comparison.png", dpi=130); plt.close(fig)
 
 
-def staircase_figure() -> None:
-    import json
-    d = json.loads((REPO / "data/analysis/summaries/layer_ablation.json").read_text())["cumulative_heldout"]
-    import textwrap
-    fused = json.loads((REPO / "data/analysis/summaries/fused_filter.json").read_text())["replay_34_drives"]["fused"]
-    labels = [textwrap.fill(x["step"], 18) for x in d] + [textwrap.fill("raw + range fusion + one Kalman filter (= fused, default)", 18)]
-    vals = [x["hard_ticks"] for x in d] + [fused["heldout_hard_ticks"]]
-    colors = [GRAY, GRAY, S1, S1, S1, S1, S2, S3]
-    fig, ax = plt.subplots(figsize=(11, 4.2))
-    xs = list(range(len(vals) - 1)) + [len(vals) - 0.4]  # the fused bar stands apart: it replaces steps 3-7
-    bars = ax.bar(xs, vals, color=colors)
-    ax.axvline(len(vals) - 1.2, color=GRID, lw=1.2)
-    for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width() / 2, v + 2, str(v), ha="center", fontsize=9, color=INK)
-    ax.set_xticks(xs, labels, fontsize=8)
-    ax.set_ylabel("hard radar-only braking ticks")
-    ax.set_title("Each layer added in turn, and fused instead of the layers: 20 held-out routes, 4.6 h")
-    fig.tight_layout(); fig.savefig(OUT / "layer_staircase.png", dpi=130); plt.close(fig)
-
-
 def clock_figure() -> None:
     import json
     d = json.loads((REPO / "data/analysis/summaries/acc_sender_clock.json").read_text())["drive_E_minute_phase_vs_radar_0x190_ms"]
@@ -121,6 +101,5 @@ def clock_figure() -> None:
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     profiles_figure()
-    staircase_figure()
     clock_figure()
-    print("wrote", OUT / "profile_comparison.png", OUT / "layer_staircase.png", OUT / "acc_sender_clock.png")
+    print("wrote", OUT / "profile_comparison.png", OUT / "acc_sender_clock.png")

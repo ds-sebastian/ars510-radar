@@ -4,9 +4,7 @@
 For every logged modelV2 message (radard's cadence), one pipeline per profile steps side by side. Each is an
 unmodified `RadarD` feeding an unmodified `LongitudinalPlanner`:
   - vision:     empty radar points (what a radarless car runs)
-  - raw:        ars510 ALL_TRACKS_CONFIG
-  - openpilot:  ars510 BASE_CONFIG
-  - plus any candidate profile from PROFILES below
+  - one pipeline per entry of PROFILES below (all-tracks, raw, fused, fused without the radar's trackers)
 radard gets the latest radar record completed before each model message. Planner inputs are the logged
 carState, controlsState, selfdriveState, vehicleParameters and carControl.
 
@@ -46,7 +44,7 @@ PROFILES = {
     "all-tracks": ALL_TRACKS_CONFIG,
     "raw": BASE_CONFIG,
     "fused": FUSED_CONFIG,
-    # without the radar's own trackers: the Kalman filter on the object list alone (docs/07)
+    # without the radar's own trackers: the Kalman filter on the object list alone (docs/12 "What each part is worth")
     "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4, summary_sigma_mps=1e4),
 }
 SM_KEYS = ("carState", "controlsState", "selfdriveState", "vehicleParameters", "carControl")

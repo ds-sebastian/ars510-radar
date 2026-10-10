@@ -5,7 +5,7 @@
 
 guide_pipeline.png and guide_lead_guards.png are schematics with numbers from the summaries. guide_cases.png plots
 data/analysis/lead_choice_cases.csv.gz: two road moments replayed through openpilot's planner with vision only, 2.1 and
-2.3 (relative time, no route identifiers). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
+2.3 (relative time, no route identifiers; 2.4 asks the same as 2.3 in both, lead_choice_guards.json). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
 guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_oracle.png plots
 data/analysis/summaries/oracle_reference.json.
 """
@@ -71,7 +71,7 @@ def pipeline() -> None:
     ax.add_patch(FancyArrowPatch((bot[i][0] + 0.42, 1.2), (bot[i + 1][0] + 0.45 + wb + 0.03, 1.2), arrowstyle="-|>", mutation_scale=14, color=INK2))
   ax.text(0.2, 4.62, "From CAN frames to openpilot: the parser's nine steps", fontsize=11.5, weight="bold", va="top")
   ax.text(0.2, 0.12, f"Grey: decode (no tuning).  Yellow: the radar's own tracker outputs.  Green: the filter.  Blue: what reaches openpilot. "
-          f"Radar provides {lv['2.1 fused']:.0%}→{lv['2.3 fused']:.0%} of leads beyond 60 m (2.1→2.3); vision covers the rest.",
+          f"Radar provides {lv['2.3 fused']:.0%} of leads beyond 60 m with the path gate ({lv['2.1 fused']:.0%} without); vision covers the rest.",
           fontsize=7.8, color=INK2)
   fig.savefig(OUT / "guide_pipeline.png", dpi=130, bbox_inches="tight"); plt.close(fig)
 
@@ -96,7 +96,7 @@ def lead_guards() -> None:
   _car(ax, 0, -2, INK2); ax.annotate("ego", (0, -2), xytext=(-2.2, -2), va="center", fontsize=8.5)
   _car(ax, 0, 40, S4); ax.annotate("lead (and ACC target):\nkept", (0, 40), xytext=(4.5, 50), fontsize=8,
                                    arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
-  _car(ax, -3.6, 41, S2, kept=False); ax.annotate("car in the next lane:\nnot published", (-3.6, 41), xytext=(-6.0, 52), fontsize=8,
+  _car(ax, -3.6, 41, S2, kept=False); ax.annotate("car in the next lane:\nwithheld", (-3.6, 41), xytext=(-6.0, 52), fontsize=8,
                                                   arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
   _car(ax, -3.6, 9, S4); ax.annotate("closer than 15 m:\nkept (it may be cutting in)", (-3.6, 9), xytext=(-5.5, 24), fontsize=8,
                                      arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
@@ -113,10 +113,10 @@ def lead_guards() -> None:
   k = np.searchsorted(d, 100)
   _car(ax, path[k], 100, S4); ax.annotate("lead on the path: kept", (path[k], 100), xytext=(-9.0, 88), fontsize=8,
                                           arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
-  _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nnot published", (path[k] + 3.6, 98),
+  _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nwithheld", (path[k] + 3.6, 98),
                                                        xytext=(4.5, 108), fontsize=8, arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
   ax.set_title("Right curve", loc="left"); ax.set_xlabel("lateral (m, left +)")
-  fig.suptitle("Path gate: radard pairs the camera's lead with the radar track nearest in range and has no lateral gate",
+  fig.suptitle("Path gate: radard pairs the camera's lead with the radar track nearest in range, whatever its lateral position",
                x=0.01, ha="left", fontsize=10.5, color=INK, weight="bold")
   fig.tight_layout(); fig.savefig(OUT / "guide_lead_guards.png", dpi=130); plt.close(fig)
 
@@ -126,7 +126,7 @@ def cases() -> None:
   C = pd.read_csv(REPO / "data" / "analysis" / "lead_choice_cases.csv.gz")
   spec = {"late_brake": ("A slowing pickup first seen at ~66 m", (-6, 2)),
           "next_lane": ("A slower car two lanes over, on a right curve (no ACC target)", (-6, 3))}
-  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3", 2.0, 1.0))
+  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3 / 2.4", 2.0, 1.0))
   fig, axs = plt.subplots(2, 2, figsize=(12.5, 6.6), sharex="col", gridspec_kw={"height_ratios": [1.15, 1]})
   for j, case in enumerate(spec):
     title, (lo, hi) = spec[case]
@@ -219,7 +219,7 @@ def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
   sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
-          ("34 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
+          ("27 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
   names = {"vision": "vision only", "2.1": "2.1", "2.3": "2.3", "2.4": "2.4 (default)"}; col = {"vision": VIS, "2.1": V21, "2.3": GRAY, "2.4": V23}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))
   for r, (label, C, vers) in enumerate(sets):
