@@ -175,7 +175,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 | `272\|5` | height-like size code | larger for large vehicles | ○ |
 
 **Class confidence `115|5`.** The only values are 0 and 4-20, so 20 is 100 %. It is 0 on 83 % of unclassified rows and
-never on a car, starts near 55 % for a new car and settles at 80-90 % (median 16-18 from age 25), and moves by exactly one
+4-20 on every car row, starts near 55 % for a new car and settles at 80-90 % (median 16-18 from age 25), and moves by exactly one
 step per cycle on 95-96 % of its changes. The class follows it: when a large vehicle is re-classified as a car, the value
 has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-5 before and 14-15 after on the middle
 80 %). A newly classified car typically starts at 15, a large vehicle at 12. The decoder exposes it as

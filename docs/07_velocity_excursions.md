@@ -7,7 +7,7 @@ default `fused` profile handles it with one Kalman filter per track ([12](12_kal
 
 **In short**
 
-- 84-88% of excursions are false closings (measured with the earlier 0.1 m/s ACC speed unit); they ramp up over about 1 s.
+- 80-87% of excursions are false closings ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)); they ramp up over about 1 s.
 - Rare close in, common far out: radar and vision disagree by ≥ 2 m/s for 1% of radar-lead time at 0-20 m and 49%
   beyond 80 m ([below](#how-often-on-real-drives)).
 - Their size matches the speed-error code the radar reports (`240|7`, ◐); the radar's own ACC tracker follows the
@@ -74,8 +74,8 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 - Against the radar's own ACC target, the object-list speed error grows with the reported uncertainty `240|7`
   ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.05 m/s per count (≈ 0.8 m/s at code 15, 1.2-1.3 m/s at code 30).
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
-- A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (measured with the earlier 0.1 m/s ACC speed unit: 5.1% observed vs 6.4%
-  predicted; 6.9% vs 5.5% on fresh drives). The error is low-pass (~0.3 Hz), so a 1-3σ deviation lasts seconds.
+- A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.3% observed vs 6.5%
+  predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). The error is low-pass (~0.3 Hz), so a 1-3σ deviation lasts seconds.
 - `240|7` (◐) scales with the width of far errors, which is why `fused` uses it to weight readings.
 
 <details>
@@ -86,8 +86,8 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
   target has its own error (~0.6 m/s).
 - Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
-- Across 13.6k candidate signals (measured with the earlier 0.1 m/s ACC speed unit), the object's own state explains part of the object-list error: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
-  and 3 s history predict ~41-47% of the error variance on 40 fresh one-minute segments, spread over many fields
+- Across 13.6k candidate signals, the object's own state explains part of the object-list error: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
+  and 3 s history predict ~37-43% of the error variance on 40 fresh one-minute segments ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)), spread over many fields
   ([`excursion_sigma_scale.json`](../data/analysis/summaries/excursion_sigma_scale.json)).
 
 </details>

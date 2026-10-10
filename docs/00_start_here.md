@@ -41,7 +41,7 @@ second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ar
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
 The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.
-84-88 % are false closings (classified with the earlier ACC speed unit). They are rare close in and common far out: on the closed-loop drives radar and vision
+80-87 % are false closings. They are rare close in and common far out: on the closed-loop drives radar and vision
 disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with them, which is what the filter uses.
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
