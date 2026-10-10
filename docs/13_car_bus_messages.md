@@ -61,9 +61,13 @@ remain. Distance agreement is therefore a comparison gate, not target identity o
 ![Fixed coding and retained tails](img/analysis/target_366_coding.png)
 
 0x366 arrives about 90 ms after 0x365 on the observed publication schedule. Receipt spacing does not determine
-sensor latency. The report supplies one selected tracker target; a qualified association is needed before
-comparing it with an ACC target or object-list slot. It carries no per-object Doppler identity. The standalone
-parser has no profile consumer. Byte 0 is 0x50 or 0x52; header/tail values are preserved as raw context.
+sensor latency. The report is the radar's ACC target again: against the latest `0x235`/`0x237` on an owner drive
+(820 frames with a mature target, 0.6 % outside tolerance) `16|9` follows the ACC relative speed at 0.140 m/s per code
+with zero code 154.7 (residual sd 0.06 m/s, about the quantization of both frames), `25|7` follows its distance at
+0.79 m per code (sd 0.26 m), and MSB-first `40|5`, a signed five-bit field, its lateral offset at −0.34 m per code, right
+positive (sd 0.14 m, r −0.995; code 15 means no target). So it is not a second measurement, an independent speed or a
+per-object Doppler. Byte 4 bits 3–7 are speed- and range-dependent flags (undecoded); the three low bits of byte 5 are
+constant. The standalone parser has no profile consumer. Byte 0 is 0x50 or 0x52; header/tail values are preserved as raw context.
 
 ### 0x343 from the radar (●)
 

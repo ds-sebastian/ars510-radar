@@ -256,6 +256,12 @@ class Target366:
     distance_code: int
     header_raw: int
     tail_raw: int
+    lateral_code: int = 15  # signed five bits at MSB-first 40|5; 15 is the no-target value
+
+    @property
+    def y_rel(self) -> float | None:
+        """Lateral offset in metres, left positive, -0.34 m per code against the ACC target; None at the no-target code."""
+        return None if self.lateral_code == 15 else -0.34 * self.lateral_code
 
     @property
     def v_rel(self) -> float:
@@ -271,11 +277,12 @@ class Target366:
 def parse_0x366(data: bytes) -> Target366 | None:
     """Decode a seven-byte car-bus report, or None for the 7FFF no-target word.
 
-    0x366 arrives about 90 ms after 0x365. Correspondence with an ACC/native target must
-    be established separately; this is a target tracker report, not per-object Doppler.
+    0x366 arrives about 90 ms after 0x365 and reports the radar's ACC target again (same target as 0x235 / 0x237 in
+    99.4 % of frames on an owner drive, docs/13), re-quantized: it is not a second measurement or per-object Doppler.
     Header/tail values remain raw. No driving profile consumes this parser.
     """
     if len(data) != 7 or data[2:4] == b"\x7f\xff":
         return None
+    lateral = data[5] >> 3
     return Target366(data[2] * 2 + (data[3] >> 7), data[3] & 127,
-                     int.from_bytes(data[:2], "big"), int.from_bytes(data[4:], "big"))
+                     int.from_bytes(data[:2], "big"), int.from_bytes(data[4:], "big"), lateral - 32 if lateral >= 16 else lateral)

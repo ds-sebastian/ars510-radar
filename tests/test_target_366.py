@@ -33,3 +33,13 @@ def test_zero_payload_preserves_codes_without_inventing_a_sentinel():
     t = parse_0x366(bytes(7))
     assert t.speed_code == t.distance_code == 0
     assert t.v_rel < 0 and t.d_rel == 0
+
+
+def test_lateral_code_is_signed_five_bits_with_no_target_value():
+    # byte 5 high five bits: 0 -> centre, 3 -> right 1 m, 29 (-3) -> left 1 m, 15 -> no target
+    assert parse_0x366(bytes.fromhex("50003a30900200")).lateral_code == 0
+    right = parse_0x366(bytes.fromhex("50003a30901a00"))
+    left = parse_0x366(bytes.fromhex("50003a3090ea00"))
+    assert right.lateral_code == 3 and right.y_rel == pytest.approx(-1.02)
+    assert left.lateral_code == -3 and left.y_rel == pytest.approx(1.02)
+    assert parse_0x366(bytes.fromhex("50003a30907a00")).y_rel is None
