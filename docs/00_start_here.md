@@ -124,11 +124,11 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | object list | 16.7 Hz, 20 slots, ~5 objects on a highway | [02](02_object_list.md) |
 | radar − camera range, 20-70 m (same car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
-| leads from the radar when a lead exists | about 89 % | [11](11_profiles_compared.md) |
+| leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
 | braking only the radar asked for, per hour (34 drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
 | hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 (27 of 32 hard ticks judged real) | `hard_braking_review.json` |
 | braking onset against vision only | −0.02 s (95 % CI −0.08 … +0.04) | `profiles_vs_vision.json` |
-| driver brakes already anticipated at ≤ −1 m/s² | `fused` 43.7 %, vision 40.1 % | `profiles_vs_vision.json` |
+| driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.9 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
 | unnecessary / missed braking against a hindsight oracle (7.65 h road drives) | `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s, 2.1 11.5 / 16.1 s | `oracle_reference.json` |
 | openpilot file | 184 code lines | `openpilot_file_parts.json` |

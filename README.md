@@ -40,7 +40,7 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 From replaying 34 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 89% of the time a lead exists, so the gap to the car ahead is measured, not
+- **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
 - **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
   ≥ 1 m/s² before 42% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
