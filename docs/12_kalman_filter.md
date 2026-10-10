@@ -363,7 +363,11 @@ the rest of the parser. Clock pairing, metadata checks, bounded history and mess
 small derivative kernel. The full parser with this source passes all eight fixed gates against fused 2.1 on 27 reused chains: hard radar-only ticks and target
 episodes are unchanged, held-out switches are 1,228 versus 1,231, and further switches 300 versus 298. Mean response
 onset against vision is unchanged; anticipation is 43.1% versus 43.7%. On 84,659 owner ticks, 111 change braking by
-more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. These are competitive
+more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. Against the current default, fused 2.2 (young-track ACC match, next-lane and off-path guards), the same source passes the same
+eight gates on the 27 reused chains: hard radar-only ticks 30 / 2 (held-out / further) and target episodes 3 / 3 are identical,
+switches are 1,367 versus 1,370 and 299 versus 297, mean onset against vision is −0.018 s for both, and the 84,659 owner ticks
+keep 0 hard ticks and 0 target episodes in both. Of 353,947 held-out ticks 320 change braking by more than 0.05 m/s² (largest
+stronger request 0.60 m/s², softer 0.81). These are competitive
 source and consumer comparisons, without evidence for changing the default. Scalar Kalman speed fusion remains
 in both comparisons ([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
 
