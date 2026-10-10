@@ -205,8 +205,8 @@ class Ars510Radar:
 
 
 class RadarInterface(RadarInterfaceBase):
-  def __init__(self, CP):
-    super().__init__(CP)
+  def __init__(self, CP, *args):  # forks pass more (sunnypilot: CP_SP)
+    super().__init__(CP, *args)
     self.radar = Ars510Radar()
     self.last_record_t = None
 
