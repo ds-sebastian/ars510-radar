@@ -353,14 +353,17 @@ Curvature earns its place: a straight-line ground-position fit has 0.294 / 0.264
 reused transfer, versus quadratic 0.178 / 0.169 and 0.006 / 0.009 s. Huber fitting and ego integration add little average
 benefit on this scope. If ego speed is locally affine, its integral is quadratic, so subtracting endpoint ego speed
 from the ground fit equals fitting relative range directly. Ego jerk breaks that equivalence. These ablations support
-simplification candidates; only the robust ground-position source has completed driving replay. Combining clock timing with the plain relative fit gives **0.134 / 0.130 m/s**, versus clock Kalman 0.133 / 0.132,
+simplification candidates. Combining clock timing with the plain relative fit gives **0.134 / 0.130 m/s**, versus clock Kalman 0.133 / 0.132,
 on 175,938 common finite rows from actual CAN. The source passes all aggregate limits; 151 labelled rows are unavailable.
 It uses no ego input, so it retains a few position samples dropped by the earlier ground-estimator bench; these actual
 source scores account for that history difference. The roughly 8 µs summary-update-and-derivative measurement excludes
 the rest of the parser. Clock pairing, metadata checks, bounded history and message forwarding add code beyond the
-small derivative kernel. Its independent original-history checks and source results support a separate consumer test,
-which is running. The clock and plain fits remain competitive source comparisons, with no profile or default change
-([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
+small derivative kernel. The full parser with this source passes all eight fixed gates on 27 reused chains: hard radar-only ticks and target
+episodes are unchanged, held-out switches are 1,228 versus 1,231, and further switches 300 versus 298. Mean response
+onset against vision is unchanged; anticipation is 43.1% versus 43.7%. On 84,659 owner ticks, 111 change braking by
+more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. These are competitive
+source and consumer comparisons, without evidence for changing the default. Scalar Kalman speed fusion remains
+in both comparisons ([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
 
 ## Other approaches tested
 

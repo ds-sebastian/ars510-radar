@@ -1148,7 +1148,7 @@ def summary_timing_slimming() -> None:
     fig.suptitle("Summary velocity: improve the observations, retain only useful estimator parts", fontsize=12, y=.98)
     save(fig, "summary_timing_slimming", "Ten reused owner drives. Clock: 176,089 common samples; slimming: 178,187. Different supports.\n"
          "ACC is a dependent range-matched witness. Ego jerk and individual-drive failures limit simplification.\n"
-         "Only the robust ground-position source has completed driving replay; these ablations do not change a profile.")
+         "The clock + plain relative source passes all eight replay gates; scalar speed fusion and the default remain unchanged.")
 
 
 NUMBERS: dict = {}

@@ -538,7 +538,7 @@
     "limits": "removing robust fit and ego integration is competitive here, not a universal equivalence; ego jerk and individual-route failures remain"
   },
   "clock_plain_combination": {
-    "status": "supported source comparison; consumer replay running, no profile change",
+    "status": "supported source and frozen consumer comparison; all eight replay gates pass, no profile change",
     "input_scope": "actual original CAN header/metadata/summary in order on ten reused owner drives",
     "labelled_rows": 176089,
     "finite_rows": 175938,
@@ -745,6 +745,86 @@
         "routes": 8
       }
     ],
-    "limits": "Reused conditional witness agreement; individual-route failures and route-cluster intervals including zero; no physical accuracy, acquisition time, whole-parser or default superiority claim"
+    "limits": "Reused conditional witness agreement; individual-route failures and route-cluster intervals including zero; no physical accuracy, acquisition time, whole-parser or default superiority claim",
+    "driving_replay": {
+      "scope": "27 reused chains, 514069 ticks; published fused2.1 comparator; scalar speed fusion and consumers unchanged",
+      "comparison": {
+        "fused": {
+          "heldout": {
+            "hard": 30,
+            "eps": 11,
+            "tgt": 4,
+            "radar_added": 1,
+            "sw": 1231
+          },
+          "further": {
+            "hard": 2,
+            "eps": 2,
+            "tgt": 3,
+            "radar_added": 0,
+            "sw": 298
+          },
+          "owner": {
+            "hard": 0,
+            "eps": 0,
+            "tgt": 1,
+            "radar_added": 0,
+            "sw": 0
+          },
+          "onset_vs_vision_s": -0.022,
+          "ant10": 0.437,
+          "events": 167,
+          "radar_only_per_h": 0.22,
+          "radar_only_on_gas_per_h": 0.0
+        },
+        "polynomial": {
+          "heldout": {
+            "hard": 30,
+            "eps": 11,
+            "tgt": 4,
+            "radar_added": 1,
+            "sw": 1228
+          },
+          "further": {
+            "hard": 2,
+            "eps": 2,
+            "tgt": 3,
+            "radar_added": 0,
+            "sw": 300
+          },
+          "owner": {
+            "hard": 0,
+            "eps": 0,
+            "tgt": 1,
+            "radar_added": 0,
+            "sw": 0
+          },
+          "onset_vs_vision_s": -0.022,
+          "ant10": 0.431,
+          "events": 167,
+          "radar_only_per_h": 0.22,
+          "radar_only_on_gas_per_h": 0.0,
+          "gates_vs_fused": {
+            "heldout_hard": true,
+            "further_hard": true,
+            "owner_hard_zero": true,
+            "owner_target_eps": true,
+            "heldout_target_eps": true,
+            "radar_added_eps": true,
+            "switches": true,
+            "onset": true
+          },
+          "all_gates_pass": true
+        }
+      },
+      "independent_scalar_checks": 447,
+      "independent_reaction_rows": 364,
+      "owner_ticks": 84659,
+      "owner_changed_ticks_a_gt_005": 111,
+      "owner_largest_stronger_a_delta_mps2": -0.3787,
+      "owner_largest_stronger_case": "same radar primary lead; speed -5.884 to -6.862 m/s, range 79.979 to 79.419 m, a_target -1.0068 to -1.3855 m/s2",
+      "owner_other_same_track_a_delta_mps2": -0.3156,
+      "interpretation": "competitive source; aggregate braking and onset unchanged, no physical or driver improvement established"
+    }
   }
 }
