@@ -156,7 +156,7 @@ when vision does on average and keeps the radar's measured distance.
 
 ![radar sees the closing first](img/shots/curve_early_closing.jpg)
 
-*Brake event E3: the lead is in a left curve (lateral offset about +6 m). The radar lead reads a closing speed of
+*Brake event E3: the lead is in a left curve (lateral offset about +3.5 m). The radar lead reads a closing speed of
 −5 to −8 m/s while vision reads about −1; the driver braked about 2 s later.*
 
 ![brake events](img/analysis/brake_events.png)

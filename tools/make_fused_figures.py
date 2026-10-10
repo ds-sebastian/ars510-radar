@@ -265,7 +265,7 @@ def kalman_combinations() -> None:
         ax.text(r["openpilot_file_lines"] + 4, yi, f'{r["openpilot_file_lines"]} lines', va="center", fontsize=8.5, color=INK)
         ax.text(375, yi, f'unjustified hard braking {r["unjustified_ticks"]} ticks   lead switches {r["switches"]}', va="center",
                 fontsize=8.2, color=INK2)
-        ax.text(700, yi, ("passes: today's fused and openpilot version" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
+        ax.text(700, yi, ("passes: base of today's fused" if key == "no_SL" else "passes") if r["passes"] else why.get(key, "fails"), va="center", fontsize=8.2,
                 color=FUS if r["passes"] else S4)
     ax.set_yticks(y, [n for n, _, _ in rows]); ax.invert_yaxis(); ax.set_xlim(0, 960); ax.set_xticks([0, 100, 200, 300])
     ax.set_xlabel("total lines of the openpilot file at 2.0 (upstream/ars510_radar.py)")
@@ -279,7 +279,7 @@ def kalman_justified() -> None:
              "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
              "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
     names = {"fused, ACC/summary units corrected": "fused 2.1 (with summaries)", "fused": "fused 2.0 (with summaries)",
-             "fused - S - L": "2.0 − summaries − relink (today's fused)",
+             "fused - S - L": "2.0 − summaries − relink (base of today's fused)",
              "fused - S - R - L": "2.0 − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
              "fused - ACC (summaries kept)": "2.0 − ACC target", "fused - ACC - summaries": "2.0 − ACC target − summaries",
              "colored": "colored (experimental)", "tuned (anchor)": "earlier tuned profile"}

@@ -141,7 +141,7 @@ def standstill_codes():
         w = (g.vel_code[(g.vel_code >= 505) & (g.vel_code <= 516)]).mean()
         ax.set_title(f"drive {DRIVE_NAME[d]}")
         ax.set_xlabel("64|10 code, ego and object stopped")
-        ax.text(0.02, 0.92, f"mean {w:.2f}", transform=ax.transAxes, fontsize=8.5, color=INK2)
+        ax.text(0.02, 0.92, f"mean of codes 505-516: {w:.2f}", transform=ax.transAxes, fontsize=8.5, color=INK2)
     axes[0].set_ylabel("samples")
     save(fig, "standstill_codes", "Stopped objects behind a stopped ego pile up on codes 510/511: zero point 510.5 (dashed).")
 
@@ -450,7 +450,7 @@ def range_walk():
     axes[0].legend(fontsize=7.5, loc="upper left")
     NUMBERS["range_walk"] = out
     save(fig, "range_walk_vs_integrated_vrel", "The camera box-height ratio over 1.5 s needs no calibration. "
-                                               "Integrating the radar's velocity tracks it 2-4x better than the radar's own range change.")
+                                               "Integrating the radar's velocity tracks it 1.4-3.7x better than the radar's own range change.")
 
 
 # ---------------------------------------------------------------- slot field roles -----------------------------------
@@ -727,7 +727,7 @@ def tracker_range():
     a1.axhline(0, color=INK, lw=1)
     a1.set_xlabel("vision lead distance (m)")
     a1.set_ylabel("published radar lead − vision lead (m)")
-    a1.set_title("Lead distance radard receives")
+    a1.set_title("Lead distance radard receives (matching steps up to fused 2.1)")
     a1.legend(loc="lower left")
     for key, col, lab in (("before", S2, "before"), ("after", S1, "after")):
         a2.plot(xs, [B[k][f"mean_abs_tick_step_m_{key}"] for k in B], color=col, marker="o", markersize=4.5, label=lab)
@@ -899,7 +899,7 @@ def initial_attribute_zeros():
     fig.tight_layout()
     save(fig, "initial_attribute_zeros", "Example A, original-CAN checked. The initial tuple occurs on 5,774 "
          "of 22,501 age-1 rows; its position is a placeholder. "
-         "Full byte272 is a structural view, not a calibrated height measurement.")
+         "Full byte 272 is shown as a raw height-like code.")
 
 
 def id85_direction_code_structure():
@@ -1077,7 +1077,7 @@ def target_366_coding():
     """Owner-only fixed-code comparison, retaining all discrepancy tails."""
     info = summary("target_366_coding")
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), sharey=True)
-    for ax, drive in zip(axes, ["A", "B"]):
+    for ax, drive in zip(axes, ["O2", "O3"]):
         for scope, label, color in [("all", "All eligible pairs", S2),
                                     ("geometry_agreement", "Distance agreement only", S1)]:
             group = next(g for g in info["groups"] if g["drive"] == drive and g["scope"] == scope)

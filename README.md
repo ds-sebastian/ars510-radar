@@ -43,7 +43,7 @@ what the driver did
 
 - **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
   and speed.
-- **Braking starts when vision-only's would** on average (−0.01 s, 95% CI −0.07 … +0.04), and the planner is already asking for
+- **Braking starts at the same time as vision only** on average (−0.01 s, 95% CI −0.07 … +0.04), and the planner is already asking for
   ≤ −1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while

@@ -25,7 +25,7 @@ warning and −3.5 m/s².*
 
 ![false closing sequence](img/shots/excursion_false_closing_sequence.jpg)
 
-*Four frames of the same event, 1 s apart: the lead sits at 41-51 m and its box keeps its size, while the radar lead's
+*Four frames of the same event over 4 s: the lead sits at 41-51 m and its box keeps its size, while the radar lead's
 vRel reads +2.2 to +2.5 m/s and then −2.5 m/s; its −6 m/s low falls between the frames (plot above).*
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
@@ -82,7 +82,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 <summary>Caveats and the residual error</summary>
 
 - 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is ~0.027 m/s per count over codes 12-70, and heavy
-  tails (kurtosis 1.3-8) lift the RMS. Above code ~40 the error grows less than proportionally. The ACC
+  tails (kurtosis 1.3-8) lift the RMS. Above code ~60 the main set's error grows faster than proportionally (figure). The ACC
   target has its own error (~0.6 m/s).
 - Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).

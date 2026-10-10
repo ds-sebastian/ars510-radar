@@ -83,7 +83,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 
 - **Over ground.** See [03](03_slot_fields.md#kinematics).
 - **Nominal zero 510.5.** While ego is stopped (below 0.05 m/s, objects of age 10 or more), the dominant object-code
-  peak is at 510 and 511; weighted means of the four most frequent codes are 510.486 / 510.400 / 510.198 on A / B / C.
+  peak is at 510 and 511; weighted means of the four most frequent codes are 510.486 / 510.400 / 510.198 on A / B / C (full
+  drives; the figure shows the bundled sample's mean over codes 505-516).
 
   ![standstill codes](img/analysis/standstill_codes.png)
 

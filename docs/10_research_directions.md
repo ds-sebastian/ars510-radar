@@ -156,7 +156,7 @@ opendbc's ruff rules (`upstream/ruff.toml`, checked in CI) and its `ty` type che
 same driving as the full filter: parts were removed alone and together on 27 replay drives, and every hard brake was
 checked against the radar's raw range, the camera and the driver ([12](12_kalman_filter.md#removing-parts-together));
 the wider ACC match and the path gate came from road drives ([12](12_kalman_filter.md#path-gate)). The ledger below
-says what each line buys and which parts an upstream PR would drop first. Constants are fixed in the file, it runs one
+says what each line buys and which parts an upstream PR could drop. Constants are fixed in the file, it runs one
 configuration, and points carry `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated
 upstream). A test keeps it equal to `fused` point for point (bundled samples; two full drives checked with 2.1.0), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:

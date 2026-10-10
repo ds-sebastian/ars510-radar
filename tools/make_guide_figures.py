@@ -207,8 +207,9 @@ def parts_ledger() -> None:
     ax.text(p["code_lines"] + 1.2, yi, f"{p['code_lines']}  ·  {p['without']}", va="center", fontsize=7.6, color=INK2)
   ax.set_yticks(y, [f"{_short(p['part'])}  [{p['since'].split(' ')[0]}]" for p in parts], fontsize=8.5)
   ax.set_xlim(0, 215); ax.set_xlabel("code lines in upstream/ars510_radar.py (comments, docstrings and blank lines excluded)")
+  used = {status(p["upstream"]) for p in parts}
   for s, c in colors.items():
-    ax.barh(np.nan, 0, color=c, label=s)
+    if s in used: ax.barh(np.nan, 0, color=c, label=s)
   ax.legend(loc="upper right", title="for an upstream PR", title_fontsize=8)
   ax.set_title(f"What each of the openpilot file's {L['file_code_lines']} code lines buys (label: lines · cost of removing it)", loc="left")
   ax.grid(axis="y", visible=False)
@@ -219,7 +220,7 @@ def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
   sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
-          ("27 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
+          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
   names = {"vision": "vision only", "2.1": "2.1", "2.3": "2.3", "2.4": "2.4 (default)"}; col = {"vision": VIS, "2.1": V21, "2.3": GRAY, "2.4": V23}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))
   for r, (label, C, vers) in enumerate(sets):

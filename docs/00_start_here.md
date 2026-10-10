@@ -100,7 +100,7 @@ braking, destabilises the lead, or (for the ego-speed alignment) costs no line.
 ![what each part is worth](img/analysis/kalman_ablation.png)
 
 The single-file openpilot version carries the same parts; this is what each of its lines buys and which ones an
-upstream PR would drop first:
+upstream PR could drop:
 
 ![parts ledger](img/analysis/guide_parts_ledger.png)
 
