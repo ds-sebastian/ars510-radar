@@ -248,6 +248,10 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
   [0.098, 0.111] (constant across 5-40 / 40-80 / 80+ m), 0.23 m for `224|7` [0.22, 0.23] (but 0.15 at 40-80 m and 0.05 beyond, where a
   4-8 m range bias against the ACC distance dominates) and 0.37 m/s for `248|7` [0.35, 0.38]. Split halves agree within 4 %. Because the
   reference is the radar's own ACC estimate these are relative units; the fit is a Gaussian equivalent over heavy tails.
+- **Axis check without a reference:** the record-to-record scatter of each native quantity (second difference, 217 k mature runs) grows with the
+  code assigned to it: `232|7` with yRel, `248|7` and `264|8` with the lateral speed, `256|8` with `84|10` (0.006 m/s² per count of jitter, the only code
+  with a consistent link to it), `240|7` with the speed (≤ 25 m; ≈ 0 beyond 70 m); `224|7` grades range jitter only weakly. Jitter per count is about a
+  fifth of the error against the ACC target, so the codes describe slowly varying tracker error, not frame noise.
 - **It is a width, not a flag:** it separates excursion records below 40 m (AUC 0.95-0.97) but weakly beyond
   (0.41-0.68), where excursions happen.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81

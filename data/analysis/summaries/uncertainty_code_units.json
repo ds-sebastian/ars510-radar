@@ -96,7 +96,67 @@
   "240|7": "likely: .043 m/s per count, same as the earlier excursion_sigma_scale fit (.045); a fitted Gaussian-equivalent over heavy tails, not a decoded unit",
   "232|7": "likely: .10 m per count and constant across range bands (.10-.12); codes run only 0-9, so it is coarse near 0",
   "224|7": "candidate: .23 m per count at 5-40 m, falling to .15 (40-80 m) and .05 (80+ m) while the floor rises to 4-8 m: range bias against the ACC distance dominates beyond 40 m",
-  "248|7": "candidate: .37 m/s per count; the reference mixes ground lateral speed with the ACC's relative lateral speed"
+  "248|7": "candidate: .37 m/s per count; the reference mixes ground lateral speed with the ACC's relative lateral speed",
+  "256|8": "candidate: follows the frame scatter of 84|10 (.0062 m/s^2 per count, plus a .045 floor); no reference acceleration exists, so no error unit; it does not predict the 2 s error of 84|10"
  },
- "limits": "The reference is the radar's own ACC estimate: these are relative units (an upper bound on sensor error plus ACC error and slot-vs-ACC bias), not physical truth. 256|8, 264|8 and 200|7 are not calibrated; 256|8 does not predict the 2 s error of 84|10 (Spearman 0.05 on 636 windows of a second drive set)."
+ "limits": "The reference is the radar's own ACC estimate: these are relative units (an upper bound on sensor error plus ACC error and slot-vs-ACC bias), not physical truth. 256|8, 264|8 and 200|7 are not calibrated; 256|8 does not predict the 2 s error of 84|10 (Spearman 0.05 on 636 windows of a second drive set).",
+ "frame_scatter_k_per_count": {
+  "description": "Self-referenced check: white-noise-equivalent frame-to-frame scatter (second difference / sqrt 6) of each native quantity on 217,031 mature continuous slot-run triples (drive set A), sd^2 = floor^2 + (k*code)^2; 90 % bootstrap over segments.",
+  "232|7 vs yRel (m)": {
+   "n": 72344,
+   "floor": 0.0306,
+   "k": 0.0207,
+   "k_ci90": [
+    0.0199,
+    0.0216
+   ]
+  },
+  "240|7 vs vRel (m/s)": {
+   "n": 72344,
+   "floor": 0.1279,
+   "k": 0.008,
+   "k_ci90": [
+    0.006,
+    0.0106
+   ]
+  },
+  "248|7 vs lateral speed (m/s)": {
+   "n": 72344,
+   "floor": 0.0479,
+   "k": 0.0114,
+   "k_ci90": [
+    0.0085,
+    0.0152
+   ]
+  },
+  "224|7 vs dRel (m)": {
+   "n": 72344,
+   "floor": 0.2517,
+   "k": 0.0633,
+   "k_ci90": [
+    0.062,
+    0.0645
+   ]
+  },
+  "256|8 vs 84|10 acceleration (m/s^2)": {
+   "n": 72344,
+   "floor": 0.0448,
+   "k": 0.0062,
+   "k_ci90": [
+    0.005,
+    0.0074
+   ]
+  },
+  "264|8 vs lateral speed (m/s)": {
+   "n": 72344,
+   "floor": 0.045,
+   "k": 0.0128,
+   "k_ci90": [
+    0.0091,
+    0.0176
+   ]
+  }
+ },
+ "frame_scatter_axis_spearman": "|scatter| against the code within range bands: yRel~232|7 .19-.27, lateral speed~248|7 .16-.19, 84|10~256|8 .13-.23 (the only consistent link), vRel~240|7 .29 at <=25 m falling to ~0 beyond 70 m, dRel~224|7 weak (.28 at <=25 m, negative beyond 70 m); 264|8 follows lateral speed (.08-.18), not 84|10 or yRel.",
+ "scatter_to_error_ratio": "Per-count frame scatter is about 20 % of the ACC-referenced error (232|7 .021 vs .104; 240|7 .008 vs .043; 224|7 .063 vs .227): the codes describe temporally correlated tracker error, of which record-to-record jitter is a fifth."
 }
