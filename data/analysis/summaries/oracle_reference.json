@@ -1,0 +1,58 @@
+{
+ "description": "Each version's planner request against an oracle: openpilot's unchanged radard + planner fed a hindsight reference lead (identity from the in-path ACC target, else the camera; range from the ACC target, else the raw object list within 1 m lateral, plus the camera when on the same car; Rauch-Tung-Striebel smoothing), through an interface that publishes only that lead. Owner 2.1 road drives and a second car's two drives, open loop.",
+ "hours": 7.65,
+ "definitions": {
+  "unnecessary": "request below the oracle's by > 0.5 m/s2 for >= 0.3 s",
+  "missed": "oracle <= -1 m/s2 while the version > -0.5 for >= 0.3 s",
+  "confident": "reference from the radar (ACC target or object list), radar and camera agree; camera-only moments are judged with video, not scored"
+ },
+ "confident": {
+  "vision": {
+   "unnecessary": {
+    "episodes": 12,
+    "seconds": 10.6
+   },
+   "missed": {
+    "episodes": 14,
+    "seconds": 16.9
+   }
+  },
+  "2.1": {
+   "unnecessary": {
+    "episodes": 11,
+    "seconds": 11.5
+   },
+   "missed": {
+    "episodes": 13,
+    "seconds": 16.1
+   }
+  },
+  "2.2": {
+   "unnecessary": {
+    "episodes": 6,
+    "seconds": 4.9
+   },
+   "missed": {
+    "episodes": 13,
+    "seconds": 16.1
+   }
+  },
+  "2.3": {
+   "unnecessary": {
+    "episodes": 6,
+    "seconds": 4.9
+   },
+   "missed": {
+    "episodes": 13,
+    "seconds": 16.1
+   }
+  }
+ },
+ "rms_vs_oracle_while_braking": {
+  "vision": 0.273,
+  "2.1": 0.268,
+  "2.2": 0.267,
+  "2.3": 0.266
+ },
+ "turning_lead_case": "video and optical looming: the in-lane lead slowed to turn off (about -3 m/s at 105-115 m) then left the lane; 2.1 braked -1.54 m/s2 for a car a lane over whose radar speed read a false -7 m/s; 2.3 -0.29; vision -0.08"
+}

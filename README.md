@@ -43,10 +43,13 @@ From replaying 34 recorded drives through openpilot's unchanged radard and plann
 - **Leads come from the radar** about 89% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
 - **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
-  ≥ 1 m/s² before 44% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  ≥ 1 m/s² before 42% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
+- **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
+  brakes unnecessarily for 4.9 s against 10.6 s for vision only, and misses no more braking
+  ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
 
@@ -80,7 +83,7 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 The code comes in two versions that run the same filter:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 236 lines (196 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 224 lines (184 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is the smallest version that drives like `fused` on 34 replay drives: the same filter without the radar's
   summaries and the track-ID relink, which change no unjustified braking
   ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to that configuration point for

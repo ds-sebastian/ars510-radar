@@ -190,6 +190,22 @@ a slightly lower share of driver brakes anticipated at −1 m/s² (41.9 against 
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 
+## Against what the car should have done
+
+Vision only is an imperfect reference too. As a second one, a hindsight lead was built for each moment of the road
+drives: identity from the radar's in-path ACC target (else the camera's lead); range from the ACC target, else the raw
+object list within 1 m laterally, plus the camera when it is on the same car; smoothed forwards and backwards
+(Rauch-Tung-Striebel, constant acceleration). openpilot's unchanged radard and planner then ran on that lead alone,
+through an interface that publishes only it. Each version is scored against that oracle's request on the moments
+where the reference comes from the radar and radar and camera agree. Camera-only moments are judged with video,
+because the model's lead range slides from one car to the next at cut-ins.
+
+![against the oracle](img/analysis/guide_oracle.png)
+
+Over 7.65 h, 2.3 brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for 4.9 s against 10.6 s for vision
+only and 11.5 s for 2.1. It misses no more of the braking the oracle asked for (16.1 s, vision 16.9 s). Numbers:
+[`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
+
 ## What each part is worth
 
 Each part removed from `fused` on its own, 34 replay drives (measured before the ACC / summary unit correction, which

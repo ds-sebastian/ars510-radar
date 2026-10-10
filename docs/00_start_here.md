@@ -109,7 +109,13 @@ More: [12](12_kalman_filter.md#what-each-part-is-worth), [10](10_research_direct
 
 ![profiles against vision only](img/analysis/profiles_vs_vision.png)
 
-More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integration.md#on-the-road).
+Vision only is not the truth either. Against openpilot's own planner fed a hindsight lead (the radar's ACC target and
+smoothed range, checked with the camera), the default brakes unnecessarily half as long as vision only and misses no
+more:
+
+![against the oracle](img/analysis/guide_oracle.png)
+
+More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integration.md#on-the-road), [12](12_kalman_filter.md#against-what-the-car-should-have-done).
 
 ## By the numbers
 
@@ -124,7 +130,8 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | braking onset against vision only | −0.02 s (95 % CI −0.08 … +0.04) | `profiles_vs_vision.json` |
 | driver brakes already anticipated at ≤ −1 m/s² | `fused` 43.7 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
-| openpilot file | 196 code lines | `openpilot_file_parts.json` |
+| unnecessary / missed braking against a hindsight oracle (7.65 h road drives) | `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s, 2.1 11.5 / 16.1 s | `oracle_reference.json` |
+| openpilot file | 184 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence
 

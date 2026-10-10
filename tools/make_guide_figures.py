@@ -6,7 +6,8 @@
 guide_pipeline.png and guide_lead_guards.png are schematics with numbers from the summaries. guide_cases.png plots
 data/analysis/lead_choice_cases.csv.gz: two road moments replayed through openpilot's planner with vision only, 2.1 and
 2.3 (relative time, no route identifiers). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
-guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json.
+guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_oracle.png plots
+data/analysis/summaries/oracle_reference.json.
 """
 from __future__ import annotations
 
@@ -214,6 +215,23 @@ def parts_ledger() -> None:
   fig.tight_layout(); fig.savefig(OUT / "guide_parts_ledger.png", dpi=130); plt.close(fig)
 
 
+def oracle() -> None:
+  """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments)."""
+  O = json.loads((SUM / "oracle_reference.json").read_text()); vers = ["vision", "2.1", "2.2", "2.3"]
+  names = {"vision": "vision only", "2.1": "2.1", "2.2": "2.2", "2.3": "2.3 (default)"}
+  fig, axs = plt.subplots(1, 2, figsize=(11.5, 3.6), sharey=True)
+  for ax, kind, title in ((axs[0], "unnecessary", "Braked > 0.5 m/s² harder than needed"), (axs[1], "missed", "Missed braking the oracle asked for")):
+    v = [O["confident"][k][kind]["seconds"] for k in vers]; n = [O["confident"][k][kind]["episodes"] for k in vers]
+    b = ax.barh(range(len(vers))[::-1], v, 0.62, color=[VIS, V21, GRAY, V23])
+    for bi, vi, ni in zip(b, v, n):
+      ax.text(vi + 0.3, bi.get_y() + bi.get_height() / 2, f"{vi:.1f} s · {ni} episodes", va="center", fontsize=8, color=INK)
+    ax.set_title(title, loc="left"); ax.set_xlabel("seconds over 7.65 h (confident moments)"); ax.set_xlim(0, 22); ax.grid(axis="y", visible=False)
+  axs[0].set_yticks(range(len(vers))[::-1], [names[k] for k in vers])
+  fig.suptitle("What should the car have done? openpilot's own planner on a hindsight lead, as the reference", x=0.01, ha="left",
+               fontsize=10.5, weight="bold")
+  fig.tight_layout(); fig.savefig(OUT / "guide_oracle.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
-  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger()
+  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger(); oracle()
   print("wrote", ", ".join(sorted(p.name for p in OUT.glob("guide_*.png"))))
