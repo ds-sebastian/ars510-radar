@@ -105,8 +105,9 @@ The two filters run in series, so all replay numbers already include their combi
 ## What runs before and around the filter
 
 - **Plain decode (every profile):**
-  - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)); publishing
-    the ACC target's track earlier exposes young far tracks before their speed settles, so it waits too;
+  - publish from age 60 (~3.6 s): young tracks have unconverged range and speed ([02](02_object_list.md)). Age 40
+    exposes young far false closings (further-drive hard ticks 1 → 9), and so does publishing the ACC target's track
+    early; age 80 delays real braking (missed braking against the hindsight-lead oracle 3.8 → 4.3 s on 34 drives);
   - multiply the object list's over-ground speed by 0.149/0.15, then subtract 0xB4 ego speed;
   - publish no point without a fresh ego speed, because one NaN poisons radard's filter.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
