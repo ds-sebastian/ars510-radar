@@ -1,7 +1,7 @@
 # 07. Velocity excursions (the false-closing issue)
 
 The radar's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
-velocity sometimes **drifts for 1-10 s while the range holds steady**, mostly as a **false closing beyond 40 m**.
+velocity sometimes **drifts for 1-10 s while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
 In openpilot that shows up as extra jitter in the plan and, rarely, a braking request only the radar makes. The
 default `fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)).
 
@@ -33,7 +33,8 @@ vRel reads +2.2 to +2.5 m/s and then −2.5 m/s; its −6 m/s low falls between 
 *A long one at ~85 km/h: vRel drifts to −12 m/s over ~9 s while the range stays at 85-110 m and vision holds steady.*
 
 - **Smooth drift:** the gap to the ACC target builds up over about 1 s in small record-to-record steps.
-- **Range holds steady**, but range itself walks by metres at 60-100 m, so range confirms a drift slowly, over seconds.
+- **The object-list range walks** by metres at 60-100 m and can drift with the speed (the drive-E sample slides 46 → 33 m),
+  so the ACC distance and the camera are the steady references.
 - **The motion state moves with it:** the acceleration field `84|10` follows the drift.
 
 <details>
@@ -83,7 +84,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 - 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is ~0.027 m/s per count over codes 12-70, and heavy
   tails (kurtosis 1.3-8) lift the RMS. Above code ~40 the error grows less than proportionally. The ACC
   target has its own error (~0.6 m/s).
-- Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.41-0.68)
+- Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 - A −0.3 m/s mean offset (native more closing than ACC) grows with range (−0.1 below 20 m, −0.6 at 80-110 m), is
   flat in ego speed and differs by drive (std 0.3 m/s). Across 13.6k candidate signals, the object's own state explains
@@ -111,7 +112,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 ## What openpilot does with it
 
 - radard's per-track Kalman filter smooths **vRel only** and passes a drift into `vLeadK` and `aLeadK` (−3 to −5 m/s²).
-- The 25% distance gate keeps the drifting track matched to the vision lead (at 110 m about 28 m wide).
+- The 25% distance gate keeps the drifting track matched to the vision lead (±28 m at 110 m).
 - The planner projects `aLeadK` forward with a 1.5 s decay.
 
 ![roughness by state](img/analysis/jitter_roughness_by_state.png)

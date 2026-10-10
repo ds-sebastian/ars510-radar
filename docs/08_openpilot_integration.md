@@ -97,7 +97,7 @@ is what `fused` runs on a track without a matched ACC target.
 "Hard radar-only" means the planner asks for ≤ −2 m/s² while the same drive without radar asks for no more than
 −0.5 m/s²: braking that only the radar wanted. `raw` reacts earlier than `fused` before some driver brakes because of
 an over-closing bias, the same one behind its three times as frequent hard radar-only braking
-([12](12_kalman_filter.md#the-model)). `fused` still asks for braking slightly before vision on average (−0.01 s).
+([12](12_kalman_filter.md#the-model)). `fused` starts braking when vision does on average (−0.01 s, 95% CI −0.07 … +0.04).
 
 What each setting does (examples and plots in [12](12_kalman_filter.md)):
 
@@ -122,7 +122,7 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
   above 0.5, with a distance gate of max(5 m, 25%) and a permissive velocity check. Matching runs afresh every tick,
   so the radar lead follows whichever car the camera currently selects.
 - **Range-only pairing.** radard pairs by distance and speed. If the true lead is missing from the radar list, an
-  adjacent-lane object at the right distance and speed becomes the lead 34-78% of the time, still 35-50% at 6 m
+  adjacent-lane object at the right distance and speed becomes the lead 34-75% of the time, still 34-46% at 6 m
   offset. `fused`'s path gate withholds such tracks beyond 15 m ([12](12_kalman_filter.md#path-gate)); the radar's
   own lane weights ([03](03_slot_fields.md#lane-assignment)) could supply a gate inside radard.
 
@@ -151,8 +151,8 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 | forward-collision warnings | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and
-partly from an over-closing bias that also causes its radar-only braking; `fused` removes the bias, still asks for
-braking slightly before vision on average, and keeps nearly all of radar's distance accuracy.
+partly from an over-closing bias that also causes its radar-only braking; `fused` removes the bias, starts braking
+when vision does on average and keeps the radar's measured distance.
 
 ![radar sees the closing first](img/shots/curve_early_closing.jpg)
 
@@ -167,7 +167,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 ## On the road
 
 - **sunnypilot with `fused` 2.1.0** (9 drives, 7.4 h, 4.4 h with openpilot longitudinal; the logged radar tracks match
-  a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera and the radar's
+  a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera or the radar's
   ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
   braking starts 0.4-1.2 s before vision on every drive (the recorded motion is the one `fused` drove, which favours it
   in this comparison). Two mild slowdowns (about 1.5 m/s², one overridden with the gas) had a lead beyond 95 m and no
@@ -176,7 +176,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
   brake (2.8 m/s²) came from a car first detected at 66 m whose object-list range read 15-20 m short until it settled;
   the current ACC match answers that moment with −1.47 m/s² ([12](12_kalman_filter.md#path-gate)).
 - **A second driver's 2025 RAV4 Hybrid** (sunnypilot, `fused` 2.1.0, [issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)):
-  the same numbers as the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the
+  similar numbers to the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the
   lead time (owner: 1.8%), 7.0% beyond 70 m (owner: 8.2%), and the ACC target is present 99 / 95 / 66% of the
   radar-lead time at 15-40 / 40-80 / 80-200 m (owner: 99 / 99 / 66%). The driver reports every braking in 21 engaged minutes on
   2.1.0 as having a cause; replayed open loop, that car's one hard radar-only brake was a lead taken from the next

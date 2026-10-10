@@ -9,7 +9,7 @@ the topic doc that has the detail. Read this first; docs 01-13 are the reference
 ## 1. What the radar sends
 
 The ARS510 sends its object list on the private radar bus (bus 1) as one 742-byte **record** every ~60 ms
-(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 2 hold objects on average (up to 4-5).
+(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 2 hold objects on average (p95 4, up to 7).
 
 ![raw records](img/analysis/record_raster.png)
 
@@ -39,7 +39,7 @@ from 0.6 m to 4-6 m at range.
 second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)) give the same
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
-The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while its range holds steady.
+The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.
 84-88 % are false closings. They are rare close in and common far out: on the closed-loop drives radar and vision
 disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with them, which is what the filter uses.
 
@@ -95,7 +95,7 @@ moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guar
 
 Every part was removed on its own and in combination, then replayed on 27 drives. Every hard brake was judged
 against the radar's raw range, the camera and the driver. Each part kept earns its place: removing it adds unjustified
-braking or destabilises the lead.
+braking, destabilises the lead, or (for the ego-speed alignment) costs no line.
 
 ![what each part is worth](img/analysis/kalman_ablation.png)
 

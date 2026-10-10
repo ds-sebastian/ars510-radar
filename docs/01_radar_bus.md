@@ -59,7 +59,7 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
   radar by its firmware version (`8821F0R03100` at 0x750 / 0x0f), with
   0x80 / 0x85 on bus 1 as a fallback ([08](08_openpilot_integration.md)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record and 0x197 bit 8 sets 60 ms later (27 of 27 cold
-  starts, spread 7-14 ms): the camera's acknowledgement of the object list, a direct "radar running" signal.
+  starts, spread 7-14 ms): behaving as the camera's acknowledgement of the object list (◐): a direct "radar running" signal.
 - 0x680 reports tracked objects well before the object list starts.
 - Several addresses send an all-ones or all-zeros first frame (for example 0x100 `FFFF…`, 0x192 `0FFF0FFF`).
 - Early object records contain placeholder tracks, some at exactly 0 m; the age gate removes them.

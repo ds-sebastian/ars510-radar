@@ -70,7 +70,7 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 | already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.3 % |
 | hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 
-| over 4.56 h of driver-controlled driving | vision only | `raw` | `fused` w/o ACC target | `fused` |
+| over 4.56 h of driver-controlled driving (jerk, error, lead share and flips: its 2.66 h moving) | vision only | `raw` | `fused` w/o ACC target | `fused` |
 |---|---|---|---|---|
 | braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour | 0 | 1.75 | 0.88 | 0.22 |
 | … of which the driver was on the gas | — | 0.66 | 0.22 | 0 |
@@ -87,7 +87,7 @@ What the radar adds, by profile:
   start is real (the radar sees closings through curves and before the camera's distance estimate settles); part comes
   from an over-closing bias of the unfiltered object list. The same bias causes its radar-only braking.
 - **`fused` removes that over-closing bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
-  driver also slowed. It still brakes slightly earlier than vision on average (−0.01 s): 20 of 148 paired driver brakes
+  driver also slowed. It starts braking when vision does on average (−0.01 s, 95 % CI −0.07 … +0.04): 20 of 148 paired driver brakes
   are answered earlier than vision and 13 later, and it is already asking for ≤ −1 m/s² before 41.3% of brake presses
   (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
   (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
@@ -95,8 +95,8 @@ What the radar adds, by profile:
   `raw` and `fused`; the radar's ACC target supplies the rest of `fused`'s gain.
 - **Every profile follows a radar lead about 87 % of the time a lead exists**, so radard uses the radar distance for
   those leads. In `fused` the car the radar's ACC function follows is published at the radar's
-  ACC distance, which agrees with the vision lead within a metre up to 90 m and cuts the flips between a radar and a
-  vision lead by 30 % ([12](12_kalman_filter.md#matching-the-radars-trackers-to-tracks)); other tracks keep the
+  ACC distance, which agrees with the vision lead within a metre up to 90 m and, when it was added in 2.1, cut the flips between a
+  radar and a vision lead by 30 % ([12](12_kalman_filter.md#matching-the-radars-trackers-to-tracks)); other tracks keep the
   object-list range (6 cm resolution; frame-to-frame jitter about 3 % of range far out).
 
 ## Driving experience: pros and cons
@@ -115,7 +115,7 @@ What the radar adds, by profile:
   brake; braking before the driver can be right or early, which is why hard brakes are also judged one by one
   ([12](12_kalman_filter.md#what-each-part-is-worth)).
 - **Vision only is stock openpilot's own lead model** on the same recorded camera frames; its lead speed is noisy and
-  serves as a comparison. The radar's ACC target is the radar's own estimate (sent by the radar,
+  serves as a comparison. The radar's ACC target is the radar's own estimate (sent by the radar ◐,
   [05](05_acc_target_and_support.md)), so it shares the radar's view of the scene.
 - **Scope.** One car (RAV4 2022, firmware `8821F0R03100`), 27 replay drives (20 held-out routes, 4.56 h of
   driver-controlled time; 4 further drives; 3 owner sunnypilot drives) used during development, plus 8 fresh drives.

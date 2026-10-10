@@ -230,12 +230,12 @@ The night mode matters for the object list: two slot fields change with it ([03]
 
 All three switch once and stay, so they are a direct "radar running" signal and a radar-reboot detector. 0x101 and
 0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread
-7 and 14 ms): they acknowledge the object list.
+7 and 14 ms): they behave as the camera's acknowledgement of the object list (◐).
 
 ## 0x680: single-object stream
 
-Every 0.5 s the radar reports **one object from its function-level tracker**, the same smooth tracker that feeds the
-ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
+Every 0.5 s the radar reports **one object from its function-level tracker**, likely the same smooth tracker that feeds
+the ACC target (◐). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 
 | field | reading | conf. |
 |---|---|---|
@@ -248,8 +248,8 @@ ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start
 
 - **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
   held-out segments).
-- **Speed:** on 1,872 frames where 0x680 and the ACC target are on the same vehicle, the two speeds differ by 0.21 m/s
-  (median absolute). When the object list is more than 2 m/s away from the ACC target, 0x680 stays within 1 m/s of
+- **Speed:** on 1,872 frames of the 672-segment corpus where 0x680 and the ACC target are on the same vehicle, the two
+  speeds differ by 0.21 m/s (median absolute). When the object list is more than 2 m/s away from the ACC target, 0x680 stays within 1 m/s of
   the ACC target in 50 of 51 frames.
 - **Motion flags:** bit 0 is set on 99 % of objects slower than 0.5 m/s over ground and on 1 % of moving ones; bit 1 on
   98 % of objects approaching faster than 3 m/s and on 1 % of the others; bit 3 on 86 % of same-direction movers and on
@@ -259,7 +259,8 @@ ACC target. `support.parse_0x680` decodes it (big-endian fields, MSB-first start
   object list.
 - **Which vehicles it reports:** of its moving-vehicle frames (13 % of frames while driving), 30 % are the ACC target,
   28 % a summary target and 42 % another vehicle of the radar's internal tracker (median range 105 m, mostly outside the
-  ego lane). On the ACC target its speed equals the ACC speed (median difference 0.09 m/s on 2,004 frames).
+  ego lane). On the ACC target its speed equals the ACC speed (median difference 0.09 m/s on the 2,004 frames of the
+  vehicle-witness set).
 - **A witness for far tracks:** against it, the object-list track at the same position reads more than 2.5 m/s too closing
   on 1 % of frames below 40 m, 5 % at 40-60 m, 17-19 % at 60-110 m and 44 % at 110-170 m, and its range is a median 3 m
   short at 60-110 m and 14 m short at 110-170 m ([06](06_accuracy.md#distance), [07](07_velocity_excursions.md)). The

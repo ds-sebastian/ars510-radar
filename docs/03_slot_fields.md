@@ -91,8 +91,8 @@ the quantity the Tesla Model 3's Continental radar sends as `ProbExist` ([`conti
 about age 21 (p90 30), long before range and velocity converge, so the age-60 publication gate stays.
 
 **Predicted records `107|1`.** Set on 45% of the last five records of a track's life against 2.6% elsewhere, with lower
-range noise while set (median 0.19 vs 0.41 m from the track's own trend) and lower existence: the record is a
-prediction, like the Tesla radar's `Meas = 0`. Velocity excursions arrive as measured records: all 144 tested
+range noise while set (median 0.19 vs 0.41 m from the track's own trend) and lower existence: the record behaves as a
+prediction (◐), like the Tesla radar's `Meas = 0`. Velocity excursions arrive as measured records: all 144 tested
 excursions had `107|1` clear.
 
 **Startup code `8|5`** matches its formula on 134,217 / 134,217 birth samples across 24 drives: ages 1-4 read 30, then
@@ -122,7 +122,7 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 | `148\|4` | **right-lane weight** | 0-15 | ◐ |
 | `152\|4` | **left-lane weight** | 0-15 | ◐ |
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
-| `131\|4` | dominant lane weight | the largest of the three weights or one less (99.7 % of samples) | ● derived |
+| `131\|4` | dominant lane weight | the largest of the three weights or one less (99.7 % of samples with a nonzero weight) | ● derived |
 
 The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples): a lane-assignment
 probability in 1/15 steps. The lane state matches the dominant weight on 99.6% of samples and is exactly zero-weight
@@ -131,7 +131,7 @@ for codes 1 / 5 / 7.
 ![lane weights](img/analysis/lane_weights.png)
 
 The dominant weight sits one lane width apart: median yRel −3.7 m (right), −0.1 m (ego), +3.5 m (left). At the lane
-edges, weight moves smoothly from one lane to the next. The ego-lane weight is the radar's own **in-path** estimate;
+edges, weight moves smoothly from one lane to the next. The ego-lane weight behaves as the radar's own **in-path** estimate (◐);
 radard pairs leads by range ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
 
 The decoder exposes the triplet as `NativeObject.raw_weights148` (right, left, ego order as on the wire) and the state
@@ -147,8 +147,8 @@ as `raw_weight_state128`.
 
 ![camera association by day and night](img/analysis/camera_association.png)
 
-Two slot fields follow what the camera can see. The camera's object data reach the radar over a path outside this bus,
-like the lane curves in 0x85:
+Two slot fields follow what the camera can see. The camera's object data likely reach the radar over a path outside this
+bus, as the lane curves in 0x85 appear to:
 
 - **By day** `112|3` is non-zero on 99.7 % of in-lane vehicles at 5-40 m, on 62 % at 40-50 m and on 0.7 % at 50-80 m:
   a sharp range limit near 45 m, independent of ego speed. It is non-zero on 98 % within ±6° of boresight and falls off
@@ -166,7 +166,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `163\|3` | **class** | 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist/person associations), 6 two-wheeler | ◐; 5 ○ |
+| `163\|3` | **class** | 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 cyclist / person (○), 6 two-wheeler | ◐; 5 ○ |
 | `140\|3` | class, second encoding | 0, 5, 7, 1, 3, 4 ↔ class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows) | ● |
 | `115\|5` | **class confidence** | `code × 5` %: 0 while not yet classified, 4-20 otherwise | ◐ |
 | `216\|6` | **width** | `(code + 1) × 0.1` m | ◐ |
@@ -202,7 +202,7 @@ three-drive dataset):
 | 4 pedestrian | 1% | 0.7 m/s | 0.5 m | 0.4 m |
 | 6 two-wheeler | rare | 9.4 m/s | 0.7 m | 1.7 m |
 
-Width also matches camera-measured vehicle width to about 0.05-0.07 m in the per-track median. Video review shows
+On 43 strict camera pairs, width agrees with the camera's vehicle width to about 0.05-0.07 m (per-track median, ○). Video review shows
 class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
 
 **Class 5 has candidate cyclist and person associations.** Four reviewed lifecycles across three drives align
@@ -243,7 +243,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 |---|---|---|---|
 | `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range, shrinks with track age, rises before deletion | ◐ |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
-| `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.70 at 30-60 m) and during velocity excursions | ◐ |
+| `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions | ◐ |
 | `248\|7` | σ vy (≈ 0.37 m/s per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | the only code that follows the frame scatter of ax (Spearman 0.15, others within ±0.06); grows with range and with age | ○ |
@@ -269,7 +269,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). Jitter is about a fifth of the error per count, so the
   codes describe slowly varying tracker error.
 - **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95) and barely beyond
-  (0.41-0.68), where excursions happen, so it serves as a per-reading weight.
+  (0.42-0.55), where excursions happen; its size follows the error width ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)), so it serves as a per-reading weight.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
   over code deciles), which includes the camera's own error
   ([summary](../data/analysis/summaries/video_truth.json)).
@@ -283,7 +283,7 @@ replays justify ([12](12_kalman_filter.md#what-each-part-is-worth)).
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
 phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
 beyond 70 m are on in 98 % of cycles, those first seen at 40-70 m in 86 % and those first seen inside 40 m in 34-46 %, so the
-field records how the track was first detected (the far scan sets it)
+field records how the track was first detected (likely the far scan)
 ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127. It appears in
