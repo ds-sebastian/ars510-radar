@@ -52,6 +52,7 @@ expanded 700-segment inventories, 20 held-out replay routes and closed-loop driv
 | This dataset | `init_templates_dataset` (row counts and allocation-placeholder flags) |
 | Docs 01-06, 13 | `decode_claim_sources` (each decode claim with its value and the research-workspace experiment or bundled file behind it) |
 | Docs 00, 07, 08, 10-13 | `driving_claim_sources` (the same for the driving claims) |
+| Docs 00, 05, 07, 10 | `acc_unit_recompute` (results first measured with the 0.1 m/s ACC unit, recomputed at 0.125 m/s per code) |
 | [00 Start here](../docs/00_start_here.md) | the numbers of docs 08, 11 and 12; the two road moments in `analysis/lead_choice_cases.csv.gz` |
 | [01 Radar bus](../docs/01_radar_bus.md) | `radar_disable_unfiltered` (openpilot's UDS radar disable on an unfiltered car: the radar's car-bus messages before and after, bus 1 rates and record CRCs through 26 min of alpha long) |
 | [02 Object list](../docs/02_object_list.md) | `stationary_listing_rule` (which new objects survive the age-5 decision), `header_allocation_count`, `prefix_alignment` (0x80 / 0x85 pairing by clock and counter) |

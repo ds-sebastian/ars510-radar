@@ -68,7 +68,7 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 | median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.73 s |
 | already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 82.0 % |
 | already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.3 % |
-| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
+| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 10 |
 
 | over 4.56 h of driver-controlled driving (jerk, error, lead share and flips: its 2.66 h moving) | vision only | `raw` | `fused` w/o ACC target | `fused` |
 |---|---|---|---|---|

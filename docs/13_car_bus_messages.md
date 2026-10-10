@@ -84,8 +84,8 @@ presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` stay 0.
 ## openpilot longitudinal: filter or disable
 
 The radar's car-bus link runs to the gateway, which relays it onto the car bus. The comma harness sits at the camera,
-so the radar's 0x343 reaches the powertrain on a path that bypasses the panda. Two senders of 0x343 cannot share the
-bus, so openpilot longitudinal needs one of two setups:
+so the radar's 0x343 reaches the powertrain on a path that bypasses the panda. With one 0x343 sender allowed on the
+bus, openpilot longitudinal needs one of two setups:
 
 | | radar CAN filter (smartDSU-style) | openpilot's radar disable (alpha long) |
 |---|---|---|

@@ -344,5 +344,19 @@
   },
   "fresh_8_drives": "no hard ticks for any; mean gap to vision unchanged (0.086-0.087); harder windows mostly while the driver braked, but two system-driven windows softer than both fused and vision (-2.29 -> -1.94, vision -2.33; -1.40 -> -1.24, vision -1.42)",
   "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default stays 0.5"
+ },
+ "upstream_equality_2_4_1": {
+  "scope": "two full owner road drives (about 4.3 h, 258 segments), decode only: every bus-1 frame plus 0xB4 speed and 0x24 yaw fed to upstream/ars510_radar.py and FUSED_CONFIG",
+  "radar_cycles": 256039,
+  "points": 200209,
+  "cycles_published_by_one_only": 0,
+  "point_count_mismatches": 0,
+  "track_id_mismatches": 0,
+  "max_abs_diff": {
+   "dRel_m": 5.7e-14,
+   "yRel_m": 0.0,
+   "vRel_mps": 7.1e-15
+  },
+  "control": "BASE_CONFIG as reference on a short drive gives 1,454 trackId mismatches and dRel differences up to 2.5 m, so the comparison detects differences"
  }
 }

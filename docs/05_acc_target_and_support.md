@@ -68,8 +68,8 @@ Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units
 
 The ACC target is matched to an object by position (its 0.025 m distance and 0.01 m lateral against the track's `dRel`
 and `yRel`). When the object list's vRel and the ACC target's closing speed
-differ by more than 3 m/s, **the vision lead sides with the ACC target 86-90% of the time** (discovery 90%, n = 715;
-confirmation 86%, n = 421, route-bootstrap 79-99%; measured with the earlier 0.1 m/s ACC speed unit). In the bundled drive-E sample the object's vRel falls to −5.9 m/s
+differ by more than 3 m/s, **the vision lead sides with the ACC target 76-81% of the time** (discovery 81%, n = 738;
+confirmation 76%, n = 484, route-bootstrap 68-93%; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). In the bundled drive-E sample the object's vRel falls to −5.9 m/s
 while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#the-model)).
 
 **Who sends it: the radar** (◐) ([summary](../data/analysis/summaries/acc_sender_clock.json)):
@@ -91,14 +91,14 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
 **How good it is:**
 
 - During disagreements it stays smooth and consistent with the track's range while the object-list velocity drifts
-  (closer to the range slope in 76% of 51 episodes; median error 1.2 vs 3.3 m/s;measured with the earlier 0.1 m/s ACC speed unit)).
+  (closer to the range slope in 76% of 62 episodes; median error 1.2 vs 2.5 m/s; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)).
 - It carries information beyond the object list: the object list's own fields and their recent history explain about
-  41-47 % of its disagreement with the ACC target
+  37-43 % of its disagreement with the ACC target
   ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). The `fused` profile
   therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
-  about 0.31 / 0.54 m/s at 10-40 / 40-70 m, against 0.55 / 1.07 for the object list (error scales against that
-  reference,measured with the earlier 0.1 m/s ACC speed unit)). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
+  close to zero at 10-40 m and 0.54 m/s at 40-70 m, against 0.55 / 1.07 m/s for the object list (error scales against that
+  reference; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
   ([summary](../data/analysis/summaries/video_truth.json)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
@@ -264,11 +264,11 @@ the ACC target (◐). `support.parse_0x680` decodes it (big-endian fields, MSB-f
 - **A witness for far tracks:** against it, the object-list track at the same position reads more than 2.5 m/s too closing
   on 1 % of frames below 40 m, 5 % at 40-60 m, 17-19 % at 60-110 m and 44 % at 110-170 m, and its range is a median 3 m
   short at 60-110 m and 14 m short at 110-170 m ([06](06_accuracy.md#distance), [07](07_velocity_excursions.md)). The
-  fixes are sparse (about one a minute on tracks that have neither the ACC target nor a summary).
+  fixes are sparse (about one a minute on tracks without the ACC target or a summary).
 - **Content while driving:** a stationary roadside object in 83% of frames (typically 8 m to the side), a
   same-direction vehicle in 13%, an oncoming one in 3%. While driving the 0x80 object list drops most new stationary objects
   ([02](02_object_list.md#what-the-radar-lists)); 0x680 reports them, one at a time.
-- **Idle** payload `00 00 08 00 80 00 80 0A` appears in 0.12% of frames above 5 m/s and never for longer than 1.0 s
+- **Idle** payload `00 00 08 00 80 00 80 0A` appears in 0.12% of frames above 5 m/s and at most 1.0 s at a time
   in 7.8 h, so a long idle run while driving is a candidate "radar sees nothing" indicator
   ([10](10_research_directions.md)).
 

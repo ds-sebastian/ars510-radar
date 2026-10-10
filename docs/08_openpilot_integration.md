@@ -144,7 +144,7 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 |---|---|---|---|---|
 | first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.01 s |
 | already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.3% |
-| hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
+| hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 10 | 10 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
 | request jerk, mean \|da/dt\| | 1.003 | 1.029 | 1.007 | 0.999 |
 | flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 497 |

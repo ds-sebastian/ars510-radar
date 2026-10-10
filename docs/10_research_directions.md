@@ -25,7 +25,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 2.0) is a related experiment.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
    than radard's derived `aLeadK` against a smoothed lead acceleration from the object-list speed (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
-   and earlier. radard derives `aLeadK` from vRel for every car; a fork-side radard
+   with less wobble (0.13 vs 0.15; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). radard derives `aLeadK` from vRel for every car; a fork-side radard
    change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would remove the brake-then-accelerate swing.
@@ -158,7 +158,8 @@ checked against the radar's raw range, the camera and the driver ([12](12_kalman
 the wider ACC match and the path gate came from road drives ([12](12_kalman_filter.md#path-gate)). The ledger below
 says what each line buys and which parts an upstream PR could drop. Constants are fixed in the file, it runs one
 configuration, and points carry `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated
-upstream). A test keeps it equal to `fused` point for point (bundled samples; two full drives checked with 2.1.0), and
+upstream). A test keeps it equal to `fused` point for point (bundled samples; on 2.4.1 also two full road drives, 200,209 points, identical; `upstream_equality_2_4_1` in
+[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
 1. **A clear reason the filter belongs in the interface.** Every upstream radar interface except Ford's passes the radar's

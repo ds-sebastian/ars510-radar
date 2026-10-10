@@ -1,0 +1,496 @@
+{
+ "description": "Results first measured with the ACC target speed at 0.1 m/s per code, recomputed with the current 0.125 m/s per code (SCR-463) from the same research-workspace tables and selections; old values reproduced at 0.1 first as a check. Docs cite the 'new' values.",
+ "claims": [
+  {
+   "id": 1,
+   "doc": "05",
+   "claim": "When object-list vRel and ACC closing speed differ by > 3 m/s, vision sides with the ACC target 86-90% (discovery 90%, n=715; confirmation 86%, n=421, route-bootstrap 79-99%)",
+   "old": {
+    "discovery": {
+     "share": 0.897,
+     "n": 715
+    },
+    "confirmation": {
+     "share": 0.862,
+     "n": 421,
+     "route_boot_ci": [
+      0.791,
+      0.985
+     ]
+    },
+    "median_abs_err_acc_vs_native_conf": [
+     1.0,
+     3.56
+    ]
+   },
+   "new": {
+    "discovery": {
+     "share": 0.808,
+     "n": 738,
+     "route_boot_ci": [
+      0.777,
+      0.848
+     ]
+    },
+    "confirmation": {
+     "share": 0.764,
+     "n": 484,
+     "route_boot_ci": [
+      0.676,
+      0.927
+     ]
+    },
+    "median_abs_err_acc_vs_native_conf": [
+     1.27,
+     3.18
+    ],
+    "median_abs_err_acc_vs_native_disc": [
+     1.29,
+     3.24
+    ]
+   },
+   "n": {
+    "discovery": 738,
+    "confirmation": 484
+   },
+   "inputs": "SCR-115: data/derived/ars510_signal_atlas/seg/* (split.json discovery 256 / confirmation 143 segments), exploration/acc_target.py per_seg + confirm.py C1/C1b logic; old values reproduced exactly (0.8965 n715; 0.8622 n421 CI 0.791-0.985)",
+   "method": "Re-ran acc_target.per_seg on the atlas caches, re-decoded 0x235 code exactly (code = acc_vrel/0.1, x0.125); same association (cost<1, margin>1, age>=60, vision prob>0.8, distance within max(25%,5 m)), same |native-ACC|>3 gate, same route bootstrap (seed 7, 2000). Discovery CI is new (original reported none). Selection changes with the unit (n 715->738, 421->484).",
+   "status": "recomputed"
+  },
+  {
+   "id": 2,
+   "doc": "05",
+   "claim": "ACC closer to the native range slope in 76% of 51 tail episodes; median error 1.2 vs 3.3 m/s",
+   "old": {
+    "share": 0.765,
+    "episodes": 51,
+    "median_err_acc": 1.17,
+    "median_err_native": 3.3,
+    "native_more_closing_share": 0.706
+   },
+   "new": {
+    "share": 0.758,
+    "episodes": 62,
+    "drives": 12,
+    "median_err_acc": 1.2,
+    "median_err_native": 2.45,
+    "native_more_closing_share": 0.645,
+    "by_range": {
+     "range_0_40": {
+      "n": 16,
+      "acc_closer": 0.875,
+      "native_more_closing": 0.625
+     },
+     "range_40_70": {
+      "n": 40,
+      "acc_closer": 0.675,
+      "native_more_closing": 0.625
+     },
+     "range_70_200": {
+      "n": 6,
+      "acc_closer": 1.0,
+      "native_more_closing": 0.8333333333333334
+     }
+    }
+   },
+   "n": 62,
+   "inputs": "SCR-411: data/derived/ars510_acc_kinematic_filter_20261003/tails.py on data/derived/ars510_acc_continuous_teacher_20261002/dataset.parquet (payload235 column); old reproduced exactly",
+   "method": "tails.py verbatim with oem_vrel decoded from raw payload235 (BE bits 29-39 - 1024) x 0.125 (asserted code x 0.1 == stored oem_vrel). Episodes = |ACC-native|>2 for >=0.5 s, so the episode set changes (51 -> 62).",
+   "status": "recomputed"
+  },
+  {
+   "id": 3,
+   "doc": "05",
+   "claim": "Optical-reference error scale of ACC target 0.31 / 0.54 m/s at 10-40 / 40-70 m vs 0.55 / 1.07 for the object list; ACC present in 38% of 40-130 m windows and 11% beyond 80 m",
+   "old": {
+    "sigma_acc_10_40": 0.31,
+    "sigma_acc_40_70": 0.54,
+    "sigma_native_10_40": 0.55,
+    "sigma_native_40_70": 1.07,
+    "var_ratio_O_M_10_40_40_70": [
+     0.77,
+     0.63
+    ],
+    "var_ratio_O_L": [
+     1.08,
+     1.37
+    ],
+    "corr_OL_ML": 0.74,
+    "coverage_40_130": 0.376,
+    "coverage_beyond_80": 0.109
+   },
+   "new": {
+    "sigma_acc_10_40": 0.01,
+    "sigma_acc_40_70": 0.54,
+    "sigma_native_10_40": 0.55,
+    "sigma_native_40_70": 1.07,
+    "hat_var_acc_10_40_by_triple": {
+     "N,O,L(original)": 0.0001,
+     "N,O,M": 0.134,
+     "O,M,L": -0.008
+    },
+    "var_acc_minus_loom_10_40_40_70": [
+     0.189,
+     0.764
+    ],
+    "old_var_acc_minus_loom": [
+     0.401,
+     0.85
+    ],
+    "var_ratio_O_M_10_40_40_70": [
+     1.28,
+     0.95
+    ],
+    "var_ratio_O_L": [
+     0.41,
+     0.78
+    ],
+    "corr_OL_ML": 0.56,
+    "coverage_40_130": 0.376,
+    "coverage_beyond_80": 0.109
+   },
+   "n": {
+    "windows": 350,
+    "segments": 64,
+    "10-40": 151,
+    "40-70": 146,
+    "coverage_windows": 1187
+   },
+   "inputs": "VID-6 addendum 2: data/derived/ars510_wheel_cell_mechanism_20261002/acc_independence.py (teacher dataset.parquet, ars510_video_looming_20261002/steps.parquet, ars510_native_quality_fields/slots_*.parquet, ars510_drift_mechanism/samples_{discovery,confirmation}.parquet); coverage: VID-7 data/derived/ars510_chain_interface_20261002 (decoder copy source/ars510/interface.py _acc_target_match); public summary video_truth.json acc_target_velocity",
+   "method": "acc_independence.py verbatim with O = stored oem_vrel x 1.25; three-cornered hat (N,O,L) as original. Old reproduced exactly. At 0.125 the 10-40 m ACC hat variance is ~1e-4 (sigma ~0.01): the ACC is no longer resolvable from zero there, var(ACC-loom) halves 0.40 -> 0.19; 40-70 m unchanged at 0.54. The vision-model shared-error signal disappears (var(O-M) ratio 0.77/0.63 -> 1.28/0.95). Coverage is unit-invariant: the fusion gate is position/age/presence only (cost<1, margin>1, age>=60), so 38% / 11% stand without recomputation.",
+   "status": "recomputed"
+  },
+  {
+   "id": 4,
+   "doc": "07, 00",
+   "claim": "84-88% of excursions are false closings (SCR-117 clean-label D4: false_closing_share 0.84 discovery / 0.875 confirmation)",
+   "old": {
+    "discovery": {
+     "share": 0.835,
+     "episodes": 79,
+     "rate_ratio_60_80_vs_20_40": 30.1
+    },
+    "confirmation": {
+     "share": 0.875,
+     "episodes": 32,
+     "rate_ratio_60_80_vs_20_40": 21.7
+    }
+   },
+   "new": {
+    "discovery": {
+     "share": 0.8,
+     "episodes": 70,
+     "false_closing_episodes": 56,
+     "glitch_records": 294,
+     "rate_ratio_60_80_vs_20_40": 23.0
+    },
+    "confirmation": {
+     "share": 0.871,
+     "episodes": 31,
+     "false_closing_episodes": 27,
+     "glitch_records": 201,
+     "rate_ratio_60_80_vs_20_40": 26.0,
+     "rate_20_40": 0.01,
+     "rate_60_80": 0.2597
+    }
+   },
+   "n": {
+    "discovery_episodes": 70,
+    "confirmation_episodes": 31
+   },
+   "inputs": "SCR-117: atlas caches + exploration/clean_labels.py per_seg/labels (no age filter); data/derived/ars510_signal_atlas/confirmation_round2.json; D4 producer not saved",
+   "method": "Clean labels verbatim (|nat-ACC|>3 & |nat-vis|>3 & |ACC-vis|<1.5; normal |nat-ACC|<0.7 & |nat-vis|<1). D4 definition reconstructed and verified to reproduce the saved values exactly at 0.1 (344/37,790 and 230/16,228 records; 79 / 32 episodes; 0.835 / 0.875; confirmation ratio 21.73x, rates 0.01026 / 0.22287): episodes = (seg, slot) runs split at > 0.5 s gaps; false closing = episode median(native-ACC) < 0; rate = glitch/normal records by native range. Discovery ratio reproduces as 30.1x (protocol quoted 31x). Labels change with the unit.",
+   "status": "recomputed"
+  },
+  {
+   "id": 5,
+   "doc": "07",
+   "claim": "SCR-417 excursion sigma scale: RMS(native - ACC) 0.04-0.05 m/s per 240|7 count; Gaussian sigma=0.045*code predicts far excursion incidence (5.1% obs vs 6.4% pred; fresh 6.9% vs 5.5%); state model predicts ~41-47% of error variance on 40 fresh segments; R2 0.11 for 84|10; mean offset native-ACC -0.3 m/s (-0.1 below 20 m, -0.6 at 80-110 m)",
+   "old": {
+    "rms_per_code_codes_12_75": [
+     0.039,
+     0.0552
+    ],
+    "rms_per_code_bins": {
+     "(12, 16]": 0.0552,
+     "(16, 20]": 0.0492,
+     "(20, 25]": 0.047,
+     "(25, 30]": 0.041,
+     "(30, 40]": 0.039,
+     "(40, 50]": 0.0398,
+     "(50, 60]": 0.0401,
+     "(60, 75]": 0.0487
+    },
+    "incidence_corpus": {
+     "observed": 0.0515,
+     "predicted": 0.0645
+    },
+    "incidence_fresh": {
+     "observed": 0.0691,
+     "predicted": 0.0552
+    },
+    "K_matching_incidence": {
+     "corpus": 0.0411,
+     "fresh": 0.0493
+    },
+    "gbm_fresh_r2_reported": {
+     "state_no_level": 0.4083,
+     "state_plus_past_no_range_history": 0.4689,
+     "state_plus_past_full": 0.4654,
+     "ax_range_code": 0.1052,
+     "shrink_vrel_ego": 0.3562
+    },
+    "gbm_fresh_r2_reproduced_here": {
+     "state_no_level": 0.4244,
+     "state_plus_past_no_range_history": 0.4759,
+     "state_plus_past_full": 0.4703,
+     "ax_range_code": 0.1107,
+     "shrink_vrel_ego": 0.3536
+    },
+    "r2_84_10_crosshalf_offset": 0.11373,
+    "ols_dv_per_ax_s": 0.933,
+    "offset_by_range_mean": {
+     "(3, 20]": -0.082,
+     "(20, 40]": -0.285,
+     "(40, 60]": -0.366,
+     "(60, 80]": -0.261,
+     "(80, 110]": -0.619
+    },
+    "per_segment_median_mean": -0.289,
+    "far_mean_40plus": -0.358
+   },
+   "new": {
+    "rms_per_code_codes_12_75": [
+     0.0395,
+     0.0584
+    ],
+    "rms_per_code_bins": {
+     "(12, 16]": 0.0584,
+     "(16, 20]": 0.0523,
+     "(20, 25]": 0.049,
+     "(25, 30]": 0.0429,
+     "(30, 40]": 0.0395,
+     "(40, 50]": 0.0405,
+     "(50, 60]": 0.0404,
+     "(60, 75]": 0.0491
+    },
+    "incidence_corpus": {
+     "observed": 0.0525,
+     "predicted": 0.0645
+    },
+    "incidence_fresh": {
+     "observed": 0.0767,
+     "predicted": 0.0552
+    },
+    "K_matching_incidence": {
+     "corpus": 0.0414,
+     "fresh": 0.0516
+    },
+    "gbm_fresh_r2": {
+     "state_no_level": 0.3252,
+     "state_plus_past_no_range_history": 0.4342,
+     "state_plus_past_full": 0.3667,
+     "ax_range_code": 0.0071,
+     "shrink_vrel_ego": 0.1029
+    },
+    "gbm_far_excursion_rate_fresh_before_after": {
+     "state_no_level": [
+      0.0767,
+      0.0265
+     ],
+     "state_plus_past_full": [
+      0.0767,
+      0.0209
+     ]
+    },
+    "r2_84_10_crosshalf_offset": 0.10713,
+    "ols_dv_per_ax_s": 0.686,
+    "offset_by_range_mean": {
+     "(3, 20]": -0.089,
+     "(20, 40]": -0.229,
+     "(40, 60]": -0.339,
+     "(60, 80]": -0.226,
+     "(80, 110]": -0.593
+    },
+    "per_segment_median_mean": -0.292,
+    "far_mean_40plus": -0.328,
+    "robust_mad_sigma_per_code_codes_12_70": [
+     0.0246,
+     0.0419
+    ]
+   },
+   "n": {
+    "corpus_matched_rows": 227388,
+    "corpus_far_rows": 138416,
+    "fresh_matched_rows": 13257,
+    "fresh_far_rows": 4109,
+    "scan_rows": 177163,
+    "scan_segments": 457,
+    "gbm_fresh_rows": 7198,
+    "gbm_fresh_segments": 40
+   },
+   "inputs": "SCR-417: data/derived/ars510_excursion_cause_20261003/{m30_prep_tables.py, m25_bias_scale_decode_check.py, m26_full_signal_scan.py, m34_gbm_fresh_validation.py}, code/reproduce/excursion_sigma_calibration.py; caches rebuilt from data/derived/ars510_signal_atlas/seg (700 segs) and ars510_unknown_signal_census_20261003/fresh_tables (114 segs) with a lean copy of build_unknown_signal_cache.py (aux limited to 0x235/0x237)",
+   "method": "m30 prep with vacc = (BE29|11-1024) x unit (only change), then the calibration, m25 and m26 (84|10 only) code verbatim and m34 GBM unchanged. K=0.045 and mu=-0.3 kept fixed. Old values reproduced exactly (227,388 / 13,257 rows; 5.15/6.45%, 6.91/5.52%; 84|10 R2 0.11373) except the GBM fresh R2 (0.424/0.470 here vs reported 0.408/0.465; small fit-level difference). Note the predicted incidence does not depend on the ACC unit.",
+   "status": "recomputed"
+  },
+  {
+   "id": 6,
+   "doc": "10",
+   "claim": "0x235 byte-2 relative acceleration vs radard aLeadK: less wobble (0.12 vs 0.152); corr .64 vs .56, RMS .68 vs .80, lag .48 vs .84 s against the native-speed reference",
+   "old": {
+    "wobble_b2": 0.12,
+    "wobble_aLeadK": 0.152,
+    "ref_nat": {
+     "b2": {
+      "n": 15226,
+      "corr": 0.64,
+      "rms": 0.683,
+      "wobble_std": 0.12,
+      "lag_s": 0.48
+     },
+     "aLeadK": {
+      "n": 15226,
+      "corr": 0.56,
+      "rms": 0.795,
+      "wobble_std": 0.152,
+      "lag_s": 0.84
+     }
+    },
+    "ref_acc": {
+     "b2": {
+      "n": 15226,
+      "corr": 0.968,
+      "rms": 0.164,
+      "wobble_std": 0.12,
+      "lag_s": 0.12
+     },
+     "aLeadK": {
+      "n": 15226,
+      "corr": 0.726,
+      "rms": 0.555,
+      "wobble_std": 0.152,
+      "lag_s": 0.3
+     }
+    },
+    "scale_slope": 0.942
+   },
+   "new": {
+    "wobble_b2": 0.132,
+    "wobble_aLeadK": 0.152,
+    "ref_nat": {
+     "b2": {
+      "n": 15226,
+      "corr": 0.636,
+      "rms": 0.691,
+      "wobble_std": 0.132,
+      "lag_s": 0.0
+     },
+     "aLeadK": {
+      "n": 15226,
+      "corr": 0.56,
+      "rms": 0.795,
+      "wobble_std": 0.152,
+      "lag_s": 0.84
+     }
+    },
+    "ref_acc": {
+     "b2": {
+      "n": 15226,
+      "corr": 0.959,
+      "rms": 0.194,
+      "wobble_std": 0.132,
+      "lag_s": 0.18
+     },
+     "aLeadK": {
+      "n": 15226,
+      "corr": 0.676,
+      "rms": 0.598,
+      "wobble_std": 0.152,
+      "lag_s": 0.78
+     }
+    },
+    "scale_slope": 0.954,
+    "lag_curve_b2_vs_ref_nat_corr": {
+     "0.0": 0.6359,
+     "0.12": 0.6345,
+     "0.24": 0.6328,
+     "0.36": 0.6303,
+     "0.48": 0.6273,
+     "0.6": 0.6231,
+     "0.72": 0.6177,
+     "0.84": 0.6116,
+     "0.96": 0.6041,
+     "1.08": 0.594,
+     "1.2": 0.5804,
+     "1.32": 0.5628,
+     "1.44": 0.5414
+    },
+    "old_lag_curve_b2_vs_ref_nat_corr": {
+     "0.0": 0.6401,
+     "0.12": 0.6409,
+     "0.24": 0.6418,
+     "0.36": 0.6426,
+     "0.48": 0.6432,
+     "0.6": 0.6431,
+     "0.72": 0.6423,
+     "0.84": 0.6411,
+     "0.96": 0.6392,
+     "1.08": 0.6349,
+     "1.2": 0.6273,
+     "1.32": 0.6157,
+     "1.44": 0.6005
+    }
+   },
+   "n": 15226,
+   "inputs": "SCR-424: data/derived/ars510_acc_fields_calibration_20261004/accel_byte.py on rows.parquet (156 segments)",
+   "method": "accel_byte.py verbatim with acc_v re-decoded from h235 at 0.125 (asserted x0.1 matches stored) and byte 2 (code-100) x 0.125; old json reproduced byte-for-byte. Wobble = std of 17-record detrended signal (ego-accel term unchanged, so not exactly x1.25). The b2 lag vs the native reference is weakly identified (corr curve flat 0.636-0.643 over 0-0.6 s at both units), so 0.48 s -> 0.0 s is not a meaningful timing change.",
+   "status": "recomputed"
+  },
+  {
+   "id": 7,
+   "doc": "06",
+   "claim": "Object-list speed vs ACC speed slope at 40-80 m 0.99 / 1.02 (SCR-117 D5)",
+   "old": {
+    "confirmation": {
+     "40_60": 0.989,
+     "60_80": 1.022
+    },
+    "discovery": {
+     "40_60": 0.991,
+     "60_80": 1.001
+    }
+   },
+   "new": {
+    "confirmation": {
+     "40_60": 1.002,
+     "60_80": 1.02
+    },
+    "discovery": {
+     "40_60": 1.007,
+     "60_80": 1.005
+    }
+   },
+   "n": {
+    "confirmation": [
+     708,
+     99
+    ],
+    "discovery": [
+     1280,
+     374
+    ],
+    "old_confirmation": [
+     711,
+     125
+    ],
+    "old_discovery": [
+     1381,
+     369
+    ]
+   },
+   "inputs": "SCR-117: atlas caches + clean_labels.py per_seg; confirmation_round2.json D5; captures/comma_cloud/20260907_5a/pre_test_drive_validation/signal_atlas_candidates.md (D5 definition)",
+   "method": "Reconstructed D5 = np.polyfit(v_ground*0.149/0.15, acc_vrel + v_ego, 1) slope on clean-normal records with |native vRel|>1 per 20 m band; reproduces 0.9893/1.0218 (n 711/125) and 0.9914/1.0007 exactly at 0.1. Caveat: over-ground slope is dominated by ego speed and clean-normal records are pre-selected for |native-ACC|<0.7, so this test is nearly insensitive to the ACC unit by construction.",
+   "status": "recomputed"
+  }
+ ]
+}

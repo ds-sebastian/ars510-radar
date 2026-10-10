@@ -107,7 +107,7 @@ The object list is built for ACC: it lists **moving objects** and objects it saw
   0.2-0.4 m/s is deleted then, once ego is faster than about 2-3 m/s.
 - **Objects first seen moving keep their track after they stop.** Stopped leads in a queue are tracked through the stop.
 - Slow movers (0.7-3 m/s: pedestrians, cyclists, creeping cars) are mostly kept at every ego speed.
-- While ego is stopped, the radar also lists never-moving objects.
+- While ego is stopped, the radar also lists objects that have stayed stationary.
 
 | ego speed | new object < 0.2 m/s kept | 0.2-0.4 m/s kept | ≥ 0.8 m/s kept |
 |---|---|---|---|
