@@ -76,7 +76,10 @@ def test_candidate_equals_its_fork_config_on_real_samples(candidate, sample):
     assert (a is None) == (b is None)
     if a is not None:
       records += 1
-      assert b == [(p["trackId"], p["dRel"], p["yRel"], p["vRel"]) for p in a["radarData"]["points"]]
+      # equal up to float rounding (the candidate folds the 0.149/0.15 speed alignment into one decode factor)
+      want = [(p["trackId"], p["dRel"], p["yRel"], p["vRel"]) for p in a["radarData"]["points"]]
+      assert [r[0] for r in b] == [r[0] for r in want]
+      assert [x for r in b for x in r[1:]] == pytest.approx([x for r in want for x in r[1:]], abs=1e-9)
   assert records > 300
 
 

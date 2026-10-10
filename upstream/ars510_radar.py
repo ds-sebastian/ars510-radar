@@ -22,7 +22,6 @@ SPEED_ADDR, YAW_ADDR, OBJECTS_ADDR, ACC_SPEED_ADDR, ACC_POS_ADDR = 0xB4, 0x24, 0
 RECORD_FRAMES, RECORD_LEN, SLOT_START, SLOT_LEN, SLOTS = 106, 742, 17, 36, 20
 IDLE_SLOT = bytes.fromhex("FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000")
 
-VGROUND_SCALE = 0.149 / 0.15  # slot over-ground speed aligned to 0xB4 ego speed
 EGO_MAX_AGE_S = 0.5
 PUBLISH_AGE = 60  # ~3.6 s: young tracks have unconverged range and speed
 RANGE_GAIN = 0.1  # velocity-aided range: halves the far-range walk
@@ -111,8 +110,9 @@ class Ars510Radar:
         continue
       age, lat = bits(s, 24, 7), bits(s, 44, 12) - 2048
       init_template = age == 1 and bits(s, 56, 7) == 0 and bits(s, 216, 6) == 0
+      # over-ground speed: 0.149 m/s per code against 0xB4 ego speed (DBC factor 0.15)
       objs.append(dict(tid=self.track_id(t, slot, age), age=age, d=(bits(s, 32, 12) - 160) / 16, y=lat * 0.015,
-                       vg=(bits(s, 64, 10) - 510.5) * 0.15 * VGROUND_SCALE, unc=bits(s, 240, 7),
+                       vg=(bits(s, 64, 10) - 510.5) * 0.149, unc=bits(s, 240, 7),
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}
     acc_tid = self.acc_match(t, tracks)
