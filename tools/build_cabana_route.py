@@ -54,10 +54,10 @@ DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"
 # One line per signal: the current reading of each field (docs/03_slot_fields.md has the evidence).
 SIGNAL_COMMENTS = {
     # slot: kinematics
-    "DREL": "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m for openpilot's camera-referenced distance (radard does).",
+    "DREL": "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.",
     "YREL_LEFT": f"Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
     "VLONG_OVER_GROUND": "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.",
-    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).",
+    "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).",
     "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.",
     "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
     "UNK_208_6": "Coarse heading over ground, left positive, about pi/64 rad per code: matches floor(max(atan2(vy, vx), 0) * 64 / pi) on 98 % of settled moving samples; can update while both velocity codes hold.",
@@ -75,7 +75,7 @@ SIGNAL_COMMENTS = {
     # slot: lane assignment
     "UNK_128_2": "Lane-assignment state, low bits (full = UNK_128_2 | UNK_130_1 << 2): 3 ego lane, 2 right lane, 4 left lane; 1, 5, 7 = no lane weights.",
     "UNK_130_1": "Lane-assignment state, bit 2 (see UNK_128_2).",
-    "UNK_148_8": "Lane weights in 1/15 steps: low nibble (148|4) right lane, high nibble (152|4) left lane. With UNK_156_4 (ego lane) they sum to 15 or 16.",
+    "UNK_148_8": "Lane weights in 1/15 steps: low nibble (148|4) right lane, high nibble (152|4) left lane. With UNK_156_4 (ego lane) they sum to 15 or 16 whenever any is nonzero.",
     "UNK_156_4": "Ego-lane weight in 1/15 steps (see UNK_148_8).",
     # slot: class and size
     "UNK_163_3": "Object class: 1 not yet classified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional (cyclist / person associations), 6 two-wheeler.",
@@ -83,20 +83,20 @@ SIGNAL_COMMENTS = {
     "UNK_136_4": "Camera-association confidence: 15 without association; restarts at 3-9 when UNK_112_3 becomes non-zero and climbs to 14.",
     "UNK_115_5": "Class confidence in 5 % steps: 0 while not yet classified, 4-20 otherwise (20 = 100 %); moves by one step per cycle. A large vehicle is re-classified as a car when it falls to 5.",
     "UNK_120_3": "Raw; non-zero on 0.2 % of rows (mature cars).",
-    "UNK_131_4": "Dominant lane weight: the largest of the three lane weights or one less.",
+    "UNK_131_4": "Dominant lane weight: the largest of the three lane weights or one less (99.6 % of rows with a nonzero weight).",
     "UNK_181_1": "Daylight flag: set on a quarter of mature vehicle rows by day (cars and large vehicles, more often far out) and on 2 of 59,988 night rows.",
     "UNK_56_7": "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.",
     "UNK_216_6": "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.",
     "UNK_272_5": "Height-like size code (candidate); larger for large vehicles.",
     # slot: uncertainty and quality
-    "UNK_224_7": "Range standard deviation (sigma dRel), about 0.23 m per count below 40 m: grows with range, shrinks with track age.",
+    "UNK_224_7": "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.",
     "UNK_232_7": "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.",
-    "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions. 127 accompanies saturated velocity.",
+    "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.",
     "UNK_248_7": "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.",
     "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Keep all seven bits.",
     "UNK_256_8": "Longitudinal-acceleration standard deviation (candidate sigma ax): grows with range and with track age.",
     "UNK_264_8": "Lateral-acceleration standard deviation (candidate sigma ay): about 11 at age 5-10, 2 from age 60.",
-    "UNK_183_7": "Bit 183 raw; bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows, 60-99 on young tracks).",
+    "UNK_183_7": "Bit 183 raw; bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows; lower mostly on young tracks, far lateral objects and stationary large vehicles / pedestrians).",
     "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 are zero.",
     "UNK_168_10": "All ones or all zeros (768 / 832 rare): a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 (far: always on).",
     "UNK_15_1": "Raw; mostly set on newborn zero-range rows.",
@@ -250,7 +250,7 @@ def dbc_text() -> str:
         comments.append(f'CM_ SG_ {HEADER_ADDR} {nm} "{signal_comment(nm)}";')
     out += ["", f"BO_ {TRAILER_ADDR} ARS510_REC_TRAILER: {TRAILER_DLC} RADAR", _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, ""),
             _sig("RECORD_B741", 32, 8, 1, 0, 0, 255, "raw"), ""]
-    comments.append(f'CM_ SG_ {TRAILER_ADDR} RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; failing records are not exported.";')
+    comments.append(f'CM_ SG_ {TRAILER_ADDR} RECORD_CRC32 "zlib CRC32 over record bytes 1-736, little-endian; only CRC-valid records are exported.";')
 
     out += [f"BO_ {SHELL_HDR} ARS510_SHELL85_HDR: {SHELL_HDR_DLC} RADAR"]
     for b in range(HEADER_LEN):
@@ -273,14 +273,14 @@ def dbc_text() -> str:
         out.append(_sig("CURVE_RATE_PER_M2", 10, 10, 4e-6, -0.002, -0.0021, 0.0020, "1/m^2"))
         comments.append(f'CM_ SG_ {m} CURVE_RATE_PER_M2 "c3: curvature rate d(kappa)/ds, offset binary around code 500, nominal 4e-6 1/m^2 per code (sign and zero replicated). Meaningful when PARAMETERS_PRESENT = 1.";')
         out.append(_sig("CURVE_FLAG", 79, 1, 1, 0, 0, 1, "raw"))
-        comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (identical in cells 2 and 3).";')
+        comments.append(f'CM_ SG_ {m} CURVE_FLAG "Bit 79, separate from the curvature value; set on 79-80 % of populated cells 2/3 and 43-44 % of 8/9 (the same in cells 2 and 3 on 99 % of rows).";')
         out.append("")
         o = HEADER_LEN + CELL_LEN * k
         comments.append(f'CM_ BO_ {m} "0x85 cell {k}, record bytes {o}-{o + 11}. Each populated cell is one lane / road-boundary curve y(x) = c0 + c1 x + c2 x^2 / 2 (docs/04); cells 2/3 and 8/9 are two estimates of the ego-lane pair.";')
     out += [f"BO_ {SHELL_CRC} ARS510_SHELL85_CRC: 8 RADAR",
             _sig("RECORD_CRC32", 0, 32, 1, 0, 0, 4294967295, "raw"),
             _sig("TRAILER_BYTES", 32, 16, 1, 0, 0, 65535, "raw"), ""]
-    comments.append(f'CM_ BO_ {SHELL_CRC} "CRC at record[141:145] over record[1:141], followed by trailer[145:147]. Failing records are not exported.";')
+    comments.append(f'CM_ BO_ {SHELL_CRC} "CRC at record[141:145] over record[1:141], followed by trailer[145:147]. Only CRC-valid records are exported.";')
 
     first = ["CM_ " + '"Virtual-bus view of the ARS510 0x80 / 0x85 records. Only valid for logs produced by tools/build_cabana_route.py.";']
     return "\n".join(out + [""] + first + comments + vals) + "\n"

@@ -23,7 +23,7 @@ every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `A237_IN_PATH_*` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `A235_ACC_TARGET_ALAT` |
 | tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `A237_TRACKER_A8`, `_B8` |
-| target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`); 0x237 bit 10 | ● | `A235_STATUS_MUX4` |
+| target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `A235_STATUS_MUX4` |
 
 `support.parse_acc_target(data235, data237)` returns all of them as one `AccTarget`; the single-field helpers
 (`parse_acc_target_vrel`, `_arel`, `_position`, `_range_code`) read the same bits.

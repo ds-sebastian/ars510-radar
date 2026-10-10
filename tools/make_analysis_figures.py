@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Regenerate docs/img/analysis/*.png from the shipped dataset in data/analysis (needs pandas, pyarrow, matplotlib).
 
-Every analysis chart in docs/ comes from this script, so anyone can reproduce or re-slice them.
+Most analysis charts in docs/ come from this script (the others from make_fused/jitter/guide/profile_figures.py), so
+anyone can reproduce or re-slice them.
   python tools/make_analysis_figures.py            # all figures
-  python tools/make_analysis_figures.py vrel_hexbin excursion_gallery   # a subset
+  python tools/make_analysis_figures.py vrel_hexbin excursion_sigma_scale   # a subset
 """
 from __future__ import annotations
 
@@ -1001,7 +1002,8 @@ def excursion_sigma_scale():
     b.set_xlabel("predicted excursion rate (%), Gaussian σ = 0.045 × code"); b.set_ylabel("observed rate (%)"); b.set_title("Excursion incidence per range band and code quartile"); b.legend(loc="upper left")
     fig.tight_layout()
     save(fig, "excursion_sigma_scale", "Matched to the radar's own ACC target (227 k development/held-out records, 13 k fresh). Excursion = 9-record median of native − ACC below −2.5 m/s. "
-         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian.")
+         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian. "
+         "ACC speed at 0.1 m/s per code; at the decoded 0.125 the per-count RMS is 0-6 % higher (acc_unit_recompute.json).")
 
 
 def video_truth_excursions():

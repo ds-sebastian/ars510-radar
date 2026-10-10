@@ -167,4 +167,5 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **anticipation** | share of driver brake presses the planner was already braking for at ≤ −1 m/s² |
 | **`fused` / `openpilot` / `raw`** | the default fork profile / the single-file upstream version / the unfiltered decode |
 
-Figures: `tools/make_guide_figures.py` (guide_*.png), `tools/make_fused_figures.py`, `tools/make_analysis_figures.py`.
+Figures: `tools/make_guide_figures.py` (guide_*.png), `tools/make_fused_figures.py`, `tools/make_analysis_figures.py`,
+`tools/make_jitter_figures.py` (jitter_*.png).

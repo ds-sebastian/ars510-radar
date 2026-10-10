@@ -3,8 +3,8 @@ selected-target summaries (0x191-0x194), the single-object stream (0x680), and c
 
 0x192 / 0x194 (4 bytes, ~radar cycle) each carry the position of one target of the radar's internal tracker in the
 object list's encoding: word 0 distance (code - 160) / 16 m, word 1 lateral (code - 2048) * LATERAL_M_PER_CODE m, left
-positive. The whole-frame sentinel is 00 FF 00 FF. Parsing a non-sentinel does not certify target availability or
-association.
+positive. The whole-frame sentinel is 00 FF 00 FF. Use a parsed position together with the ACC target's availability
+and association (docs/05).
 """
 from __future__ import annotations
 
@@ -74,8 +74,8 @@ class Target191:
 def parse_0x191(data: bytes) -> Target191 | None:
     """0x191 / 0x193 (8 bytes): companion of the 0x192 / 0x194 target summary, or None for the sentinel (docs/05).
 
-    The three size fields are a class template in 0.1 m (18:15:45 for cars, 22:23:120 for trucks on 99.98 % of
-    frames), the same class the ACC target reports on 0x239 when it is this target."""
+    The three size fields are a class template in 0.1 m (18:15:45 for cars, 22:23:120 for trucks on 99.97 % of
+    active frames, 607,999 of 608,186), the same class the ACC target reports on 0x239 when it is this target."""
     if len(data) != 8 or bytes(data) == A191_SENTINEL or data[0] >> 1 == 127:
         return None
     return Target191(data[0] >> 1, data[1] >> 1, data[3] >> 2, (data[4] >> 2) * 0.1, (data[6] >> 1) * 0.1, data[7] * 0.1,
@@ -88,7 +88,7 @@ class Object680:
     d_rel: float         # m, longitudinal distance, 1/32 m per code
     y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit)
     v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
-    flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving, bits 4-5 close standstill
+    flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving; bits 2, 4, 5 raw
     lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.18 m/s per code (0 on stationary objects)
 
     @property
@@ -110,9 +110,9 @@ class Object680:
 def parse_0x680(data: bytes) -> Object680 | None:
     """0x680 (8 bytes, 2 Hz): one object from the radar's function-level tracker, or None when idle (docs/05).
 
-    Mostly a stationary roadside object, which the 0x80 object list does not carry while driving; sometimes a vehicle.
+    Mostly a stationary roadside object, which the 0x80 object list mostly drops while driving; sometimes a vehicle.
     Distance scale is fixed by stationary objects closing at ego speed; the speed unit agrees with the ACC target
-    (0.2 m/s median absolute difference on shared targets). The driving interface does not use this helper."""
+    (0.09 m/s median absolute difference on shared targets). An analysis helper; the driving interface reads 0x235 / 0x237."""
     if len(data) != 8:
         return None
     rng, lat = _be_field(data, 43, 13), _be_field(data, 32, 11)
@@ -165,8 +165,8 @@ def parse_acc_target_position(data: bytes) -> tuple[float, float] | None:
 def parse_acc_target_range_code(data: bytes) -> int | None:
     """0x237 BE39|13 distance code of the radar's ACC target: distance = 0.025 m x code, zero offset.
 
-    Against the 0x680 object range the fit is 0.02500 m per code, +0.01 m, 0.02 m median residual (docs/05). Callers
-    must establish target availability first. The default radar interface does not consume this field.
+    Against the 0x680 object range the fit is 0.02500 m per code, +0.01 m, 0.02 m median residual (docs/05). Read it
+    after checking target availability (0x235 state 5); `parse_acc_target` returns the full target.
     """
     if len(data) < 8:
         return None
@@ -175,7 +175,7 @@ def parse_acc_target_range_code(data: bytes) -> int | None:
 
 @dataclass(frozen=True)
 class AccTarget:
-    target_id: int        # 0x235 bits 59-63: constant while the radar follows one target
+    target_id: int        # 0x235 bits 0-4: constant while the radar follows one target
     d_rel: float          # m, 0.025 m per code
     y_rel: float          # m, left positive, 12-bit (code - 2000) * 0.01
     v_rel: float          # m/s, negative = closing
@@ -265,7 +265,7 @@ class Target366:
 
     @property
     def v_rel(self) -> float | None:
-        """Nominal relative speed for low codes; high-code sign/wrap is unqualified (docs/13)."""
+        """Nominal relative speed for codes below 256 (0.5 km/h per code, zero 155); None from 256 (docs/13)."""
         return (self.speed_code - 155) * 5 / 36 if self.speed_code < 256 else None
 
     @property
@@ -277,9 +277,8 @@ class Target366:
 def parse_0x366(data: bytes) -> Target366 | None:
     """Decode a seven-byte car-bus report, or None for the 7FFF no-target word.
 
-    0x366 arrives about 90 ms after 0x365. It agrees with ACC in matched mature-target comparisons, but also
-    reports while fresh ACC says no target. Neither physical identity nor per-object Doppler is established.
-    Raw context remains available even when metric speed or lateral position is unqualified. No profile uses it.
+    0x366 arrives about 90 ms after 0x365. It agrees with the ACC target in matched mature-target comparisons and
+    also reports while the ACC target is idle (docs/13). An analysis helper; the profiles read the ACC target frames.
     """
     if len(data) != 7 or data[2:4] == b"\x7f\xff":
         return None

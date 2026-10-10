@@ -219,7 +219,7 @@ def parts_ledger() -> None:
 def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
-  sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
+  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
           ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
   names = {"vision": "vision only", "2.1": "2.1", "2.3": "2.3", "2.4": "2.4 (default)"}; col = {"vision": VIS, "2.1": V21, "2.3": GRAY, "2.4": V23}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))

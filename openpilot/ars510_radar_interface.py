@@ -10,8 +10,8 @@ so the same install works on openpilot and its forks (sunnypilot, StarPilot, Fro
     and the fork's own RadarInterface otherwise. No ToyotaFlags bit is added, so fork flag bits cannot collide.
 Worth knowing (docs/07, docs/08, docs/12):
   - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the default `fused` speed filter handles them;
-  - the radar drops new stationary objects once ego is above ~2-3 m/s, so a car that was already stopped when it came
-    into view comes from vision;
+  - the radar deletes most new stationary objects at age 5, more often the faster ego drives (7 % kept above 10 m/s),
+    so a car that was already stopped when it came into view comes mostly from vision;
   - radard weights lateral position only through the camera's uncertainty when it picks the lead; `fused` adds a
     yaw-rate path gate.
 

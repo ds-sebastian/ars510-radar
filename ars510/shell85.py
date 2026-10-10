@@ -16,11 +16,11 @@ CELL_LEN = 12
 CRC_START, CRC_END = 141, 145
 
 # Lane / road-curve polynomial carried by a populated cell: y(x) = c0 + c1 x + c2 x^2 / 2 + c3 x^3 / 6, left positive.
-# Nominal conversions (heading and curvature units are bounded, not pinned: docs/04).
+# Nominal conversions; heading 1.6-2.2e-5 rad and curvature 2.0-2.7e-6 1/m per code bound the units (docs/04).
 CURVE_OFFSET_ZERO, CURVE_OFFSET_M = 2000, 0.01
 CURVE_HEADING_ZERO, CURVE_HEADING_RAD = 31200, -1.8e-5      # code up = lane pointing right
 CURVE_CURVATURE_ZERO, CURVE_CURVATURE_PER_M = 16020, 2.5e-6  # code up = lane curving left
-CURVE_RATE_ZERO, CURVE_RATE_PER_M2 = 500, 4e-6               # c3, d(curvature)/ds; unit order of magnitude only
+CURVE_RATE_ZERO, CURVE_RATE_PER_M2 = 500, 4e-6               # c3, d(curvature)/ds; nominal unit (docs/04)
 
 # Bits of prefix bytes 17-19 that copy a cell's "not populated" flag (1 when bit 30 of that cell is 0). Cells 6-9 have no copy.
 PREFIX_UNPOPULATED_COPIES = {
@@ -36,11 +36,7 @@ class ShellCell:
 
     @property
     def parameters_present(self) -> bool:
-        """Observed nondefault-parameter marker (bit30), NOT physical validity.
-
-        It does not guarantee fresh/accurate geometry, a fixed ego-lane role,
-        a radar reflection, or a particular originating ECU.
-        """
+        """Cell bit 30: 1 when the cell holds curve parameters instead of the default block 84 03 F4 01 (docs/04)."""
         if len(self.payload) != CELL_LEN:
             raise ValueError(f"0x85 cell must be {CELL_LEN} bytes")
         return bool(self.payload[3] & 0x40)
@@ -67,7 +63,7 @@ class ShellCell:
 
     @property
     def curve_flag(self) -> int:
-        """Raw `79|1`; the former sign-like bit of the `64|16` word. Meaning unresolved (shared by cells 2 and 3)."""
+        """Raw `79|1` flag next to the curvature: the same in cells 2 and 3 on 99 % of rows; set on 79-80 % of cells 2/3 (docs/04)."""
         return self._field(79, 1)
 
     @property
@@ -92,7 +88,7 @@ class ShellCell:
 
     @property
     def curvature_rate_per_m2(self) -> float | None:
-        """Nominal c3 in 1/m^2 (about 4e-6 per code, sign and zero replicated, unit not pinned); None when unpopulated."""
+        """Nominal c3 in 1/m^2 (about 4e-6 per code, sign and zero replicated); None when unpopulated."""
         return (self.rate_code - CURVE_RATE_ZERO) * CURVE_RATE_PER_M2 if self.parameters_present else None
 
 

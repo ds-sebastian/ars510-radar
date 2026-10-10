@@ -119,7 +119,7 @@ What the radar adds, by profile:
   [05](05_acc_target_and_support.md)), so it shares the radar's view of the scene.
 - **Scope.** One car (RAV4 2022, firmware `8821F0R03100`), 27 replay drives (20 held-out routes, 4.56 h of
   driver-controlled time; 4 further drives; 3 owner sunnypilot drives) used during development, plus 8 fresh drives.
-  At most 7 events separate the columns in every event-count row above.
+  In the driver-brake table, at most 7 brake presses separate the columns in each row.
 - **Definitions.** Hard radar-only tick: planner ≤ −2 m/s² while vision only asks ≥ −0.5. Driver-brake metrics use
   [−3, +0.5] s (anticipation), [−3, +2] s (first request) and [−3, +1] s (missed hard slowdown) around the brake press.
 

@@ -61,7 +61,8 @@ The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 The install leaves `ToyotaFlags` as the fork defines it.
 
 Fork notes:
-- **StarPilot** runs its own radard (lateral gate when matching, match hysteresis, faster lead-acceleration decay) and
+- **StarPilot** runs its own radard (lateral gate when matching, match hysteresis, a lead-acceleration
+  extrapolation that holds `aLeadK` unchanged above 35 mph) and
   enables its radar extras (adjacent-lane leads, "Force Stop" hint, radar UI) once radar is available.
 - **sunnypilot** carries `aRel` and `yvRel`: the radar's filtered acceleration and its lateral velocity, the latter
   using the Toyota 0x24 yaw rate.

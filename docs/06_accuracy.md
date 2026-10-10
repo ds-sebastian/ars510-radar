@@ -74,8 +74,9 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 | camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |
 
   The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are
-  independent but wider. Replaying `fused` with these lateral units on 27 drives keeps every braking count (held-out hard
-  radar-only ticks 30 → 30, target episodes 4 → 4 on `fused` 2.1, lead-source switches +0.7 %).
+  independent but wider. Replaying `fused` with these lateral units on 27 drives keeps the braking counts (held-out hard
+  radar-only ticks 30 → 30, target episodes 4 → 4 on `fused` 2.1; anticipation 0.449 → 0.443, one of 167 driver
+  brakes; lead-source switches +0.7 %).
   Numbers: [`lateral_units.json`](../data/analysis/summaries/lateral_units.json).
 
 ![lateral scale](img/analysis/lateral_scale_camera.png)

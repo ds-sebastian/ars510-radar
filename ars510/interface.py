@@ -147,7 +147,7 @@ BASE_CONFIG = NativeInterfaceConfig(
 # The default install profile (docs/12, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
 # filter per track that fuses the object list and the radar's ACC target (matched by position, 0.4 x range scale; its
 # track takes the ACC distance as range). The track-ID relink and the saturation guard of the base decode are off:
-# neither changes the driving with the filter on (docs/12). Beyond 15 m, tracks other than the ACC target's that sit
+# with the filter on, the driving is the same with or without them (docs/12). Beyond 15 m, tracks other than the ACC target's that sit
 # more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate"). The summaries are off. The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
@@ -588,7 +588,7 @@ class Ars510NativeRadarInterface:
                 "vRel": vrel,
                 "aRel": self._a_rel(obj, v_ego),
                 "yvRel": self._yv_rel(obj, time_s),
-                "measured": not obj.predicted,  # 107|1, like Tesla's Meas; radard stores but does not weight it
+                "measured": not obj.predicted,  # 107|1, like Tesla's Meas; older radard versions store it with the track
             }
             if cfg.include_metadata:
                 point.update(slot=slot, age=obj.age, v_long_ground=float(v_ground), native_id=tid, existence_pct=obj.existence_pct,

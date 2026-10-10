@@ -30,7 +30,7 @@ byte, so the DBC bit positions are the real slot bit positions.
 ```bash
 OP=/path/to/openpilot
 PYTHONPATH=$OP:$OP/opendbc_repo $OP/.venv/bin/python tools/build_cabana_route.py /path/to/<route>--12 /path/to/<route>--13 --out cabana_out
-$OP/tools/cabana/cabana --data_dir cabana_out/route "<route>" --dbc dbc/ars510_objects_vbus.dbc
+$OP/openpilot/tools/cabana/cabana --data_dir cabana_out/route "<route>" --dbc dbc/ars510_objects_vbus.dbc
 ```
 
 | bus-10 address | message | content |

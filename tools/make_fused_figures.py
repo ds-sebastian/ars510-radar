@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Figures for the fused speed filter and the profile comparison against vision only.
 
-    python tools/make_fused_figures.py      # writes docs/img/analysis/fused_*.png and profiles_vs_vision.png
+    python tools/make_fused_figures.py      # writes fused_how_it_works, profile_layers, profiles_vs_vision and kalman_*.png in docs/img/analysis/
 
 fused_how_it_works.png and profile_layers.png are computed from ars510 itself (FUSED_CONFIG on synthetic leads, line
 counts from the source). profiles_vs_vision.png plots data/analysis/summaries/profiles_vs_vision.json; kalman_variants.png

@@ -347,6 +347,8 @@ CM_ SG_ 565 A235_ACC_TARGET_AREL "Relative acceleration of the ACC target (posit
 CM_ SG_ 565 A235_ACC_TARGET_VLAT "Lateral speed of the ACC target, left positive, about 0.0125 m/s per code (the lateral position changes by 1.2 cm per code-second).";
 CM_ SG_ 565 A235_ACC_TARGET_ALAT "Relative lateral acceleration of the ACC target, left positive: (code - 100) * 0.125 m/s^2 (nominal unit, as the longitudinal field). Mostly minus the ego lateral acceleration (-8.2 codes per m/s^2), plus a lateral-speed term; lags the yaw rate.";
 CM_ SG_ 565 A235_TARGET_ID5 "Target identity: constant while the radar follows one target; 31 with the idle payload.";
+CM_ SG_ 565 A235_B7 "Byte 7: bits 0-4 the target identity (A235_TARGET_ID5); bits 5-7 = 0 with an ACC target, 7 idle.";
+CM_ SG_ 569 A239_B2 "Byte 2: bits 6-7 = 1 with an ACC target, 2 idle.";
 CM_ BO_ 567 "The radar's ACC target, 50 Hz: distance, lateral position, in-path state and two tracker bytes (see 0x235).";
 CM_ SG_ 567 A237_ACC_TARGET_LAT "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is exactly 1.5 of these codes.";
 CM_ SG_ 567 A237_TRACKER_A8 "Raw tracker byte: 35-36 on a steady target, 44-50 while it accelerates, a median of 48-74 while it brakes.";
@@ -466,7 +468,6 @@ CM_ SG_ 528 A210_RSA_MASTER_SWITCH1 "Road-sign-assist switch (copy of Toyota RSA
 CM_ SG_ 528 A210_B5_STATUS_BIT7 "Startup / status bit.";
 CM_ SG_ 528 A210_B6 "Raw.";
 CM_ SG_ 514 A202_COUNTER4 "Counter mod 16, +1 per frame.";
-CM_ SG_ 514 A202_B1_LOW4 "Low nibble of byte 1 (zero).";
 CM_ SG_ 400 A190_TIMESTAMP_US "Radar cycle timestamp, microseconds (big-endian).";
 CM_ SG_ 400 A190_COUNTER_RESERVED0 "Always zero.";
 CM_ SG_ 400 A190_COUNTER4 "Cycle counter mod 16, +3 per cycle; use it to detect dropped cycles.";
@@ -568,7 +569,7 @@ CM_ SG_ 571 A23B_B0_CHECK_BYTE "Check byte: CRC8 (poly 0x1D, init 0, MSB first) 
 CM_ SG_ 571 A23B_STATUS_MUX4 "Byte-1 low nibble: high bits of the target width (1 for widths of 256 cm and more).";
 CM_ SG_ 571 A23B_TARGET_WIDTH_CM "Width of the ACC target, cm: 0 without a target, 140-220 for the car class (median 171), 200-280 for the truck class.";
 CM_ SG_ 571 A23B_COUNTER4 "Rolling counter.";
-VAL_ 257 A101_STARTUP_STATE8 29 "startup_0x1D" 17 "post_startup_base_0x11" 33 "transient_0x21_unresolved" ;
+VAL_ 257 A101_STARTUP_STATE8 29 "startup_0x1D" 17 "post_startup_base_0x11" 33 "transient_0x21" ;
 VAL_ 258 A102_CONTEXT_BIT11 0 "STATE_0x0" 1 "STATE_0x1" ;
 VAL_ 258 A102_CONTEXT_BIT14 0 "STATE_0x0" 1 "STATE_0x1" ;
 VAL_ 258 A102_CONTEXT_BIT21 0 "STATE_0x0" 1 "STATE_0x1" ;

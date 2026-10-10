@@ -248,7 +248,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
-| `184\|8` | secondary score | percent: 100 on 98-99 % of rows; lower (72-99 in the bundled samples) only on tracks younger than about 12 cycles | ○ |
+| `184\|8` | secondary score | percent: 100 on 98-99 % of rows; lower mostly on young tracks (12 % of rows at age ≤ 5, 0.2 % beyond age 120), on far lateral objects and on stationary large vehicles and pedestrians | ○ |
 | `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
@@ -293,8 +293,8 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 
-*Night, drive B: track #2 (a car about 61 m ahead, several metres to the left) jumps to about 72 m and +55 m/s relative
-(code 1023, about 77 m/s over ground) in its last second before the radar drops it.*
+*Night, drive B: track #2 (a car about 61 m ahead, several metres to the left) jumps to +61 m/s relative
+(code 1023, about 77 m/s over ground) and walks out to about 72 m, decaying to +55 m/s, in its last second before the radar drops it.*
 
 ## Raw and constant bits
 
