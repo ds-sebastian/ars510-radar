@@ -41,6 +41,9 @@ python tools/check_privacy.py       # no route/dongle IDs, VINs, GPS, local path
 - **Driving behaviour** (anything that changes a profile's output, above all the default `FUSED_CONFIG`) needs an
   openpilot replay against the current profile with the gates in `docs/07`, the vision-only comparison in `docs/11`,
   a review of the moments that change, and numbers in the PR. Do not tune on the drive that motivated the change.
+- **The openpilot file** (`upstream/ars510_radar.py`) is meant for upstream, where every line has to be defended. A PR
+  that adds or removes lines there updates its row in the parts ledger (`docs/10`, "Parts of the openpilot file", and
+  `data/analysis/summaries/openpilot_file_parts.json`): code lines, evidence, what removing it costs, upstream status.
 - **Installer** stays fork-agnostic: append-only hook in `toyota/interface.py`, no in-place fork edits, no new
   `ToyotaFlags` bits. Run `openpilot/check_integration.py` against every fork available.
 - **Docs** state the current state only (● / ◐ / ○), rewritten in place; numbers come from
