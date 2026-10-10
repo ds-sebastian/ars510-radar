@@ -99,7 +99,7 @@
   "248|7": "candidate: .37 m/s per count; the reference mixes ground lateral speed with the ACC's relative lateral speed",
   "256|8": "candidate: follows the frame scatter of 84|10 (.0062 m/s^2 per count, plus a .045 floor); no reference acceleration exists, so no error unit"
  },
- "limits": "The reference is the radar's own ACC estimate: these are relative units (an upper bound on sensor error plus ACC error and slot-vs-ACC bias), not physical truth. 256|8, 264|8 and 200|7 have no error unit.",
+ "limits": "The reference is the radar's own ACC estimate: these are relative units of a disagreement, not a bound on the sensor's physical error: shared errors cancel and the covariance is unknown (docs/03, reference scope). 256|8, 264|8 and 200|7 have no error unit.",
  "frame_scatter_k_per_count": {
   "description": "Self-referenced check: white-noise-equivalent frame-to-frame scatter (second difference / sqrt 6) of each native quantity on 217,031 mature continuous slot-run triples (drive set A), sd^2 = floor^2 + (k*code)^2; 90 % bootstrap over segments.",
   "232|7 vs yRel (m)": {
