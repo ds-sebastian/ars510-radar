@@ -159,7 +159,8 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
 candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (223 lines, 183 of them code). It holds the reassembler, the slot
-decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. Up to 2.1 it was the
+decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style: it passes opendbc's ruff
+rules (`upstream/ruff.toml`, checked in CI) and its `ty` type check. Up to 2.1 it was the
 smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives,
 and every hard brake was checked against the radar's raw range, the camera and the driver
 ([12](12_kalman_filter.md#removing-parts-together)). 2.2 added three parts for cases found on the road; 2.3 replaced
