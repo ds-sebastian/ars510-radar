@@ -101,6 +101,6 @@ replay your own drives stock vs installed, see
 [`radard_vision_fusion.patch`](radard_vision_fusion.patch) is a separate radard change for forks that want it; apply it
 from an openpilot checkout with `git apply` (`install.py` leaves radard as shipped). It rewrites radard's track filter
 in covariance form (identical output for radar-only tracks) and fuses the vision lead's speed into the matched radar
-track. Replayed on the 20 held-out drives with the unfiltered decode, it made the planner's requests smoother (a
-pre-registered roughness test, −0.004) at a mean 0.085 s later reaction
+track. Replayed on the 20 held-out drives with the unfiltered decode, it brought the planner's requests closer to the
+driver's acceleration (pre-registered driver-agreement error −0.004) at a mean 0.085 s later reaction
 ([`radard_vision_fusion.json`](../data/analysis/summaries/radard_vision_fusion.json)).

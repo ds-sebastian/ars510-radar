@@ -111,7 +111,8 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 
 - radard's per-track Kalman filter smooths **vRel only** and passes a drift into `vLeadK` and `aLeadK` (the bundled drive-A excursion drew a −3.5 m/s² request).
 - The 25% distance gate keeps the drifting track matched to the vision lead (±28 m at 110 m).
-- The planner projects `aLeadK` forward with a 1.5 s decay.
+- The planner projects `aLeadK` forward as a·exp(−τ·t²/2), with τ = 1.5 while |aLeadK| stays below 0.5 m/s² and τ
+  falling toward 0 while it is larger, so a large drift-driven `aLeadK` is held over the plan.
 
 ![roughness by state](img/analysis/jitter_roughness_by_state.png)
 

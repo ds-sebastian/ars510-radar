@@ -1854,7 +1854,7 @@ CM_ SG_ 1792 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1792 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1792 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1792 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1792 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1792 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1792 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1792 UNK_106_1 "Raw, unnamed.";
@@ -1919,7 +1919,7 @@ CM_ SG_ 1793 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1793 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1793 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1793 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1793 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1793 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1793 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1793 UNK_106_1 "Raw, unnamed.";
@@ -1984,7 +1984,7 @@ CM_ SG_ 1794 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1794 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1794 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1794 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1794 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1794 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1794 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1794 UNK_106_1 "Raw, unnamed.";
@@ -2049,7 +2049,7 @@ CM_ SG_ 1795 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1795 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1795 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1795 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1795 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1795 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1795 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1795 UNK_106_1 "Raw, unnamed.";
@@ -2114,7 +2114,7 @@ CM_ SG_ 1796 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1796 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1796 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1796 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1796 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1796 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1796 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1796 UNK_106_1 "Raw, unnamed.";
@@ -2179,7 +2179,7 @@ CM_ SG_ 1797 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1797 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1797 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1797 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1797 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1797 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1797 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1797 UNK_106_1 "Raw, unnamed.";
@@ -2244,7 +2244,7 @@ CM_ SG_ 1798 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1798 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1798 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1798 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1798 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1798 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1798 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1798 UNK_106_1 "Raw, unnamed.";
@@ -2309,7 +2309,7 @@ CM_ SG_ 1799 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1799 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1799 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1799 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1799 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1799 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1799 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1799 UNK_106_1 "Raw, unnamed.";
@@ -2374,7 +2374,7 @@ CM_ SG_ 1800 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1800 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1800 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1800 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1800 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1800 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1800 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1800 UNK_106_1 "Raw, unnamed.";
@@ -2439,7 +2439,7 @@ CM_ SG_ 1801 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1801 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1801 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1801 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1801 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1801 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1801 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1801 UNK_106_1 "Raw, unnamed.";
@@ -2504,7 +2504,7 @@ CM_ SG_ 1802 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1802 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1802 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1802 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1802 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1802 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1802 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1802 UNK_106_1 "Raw, unnamed.";
@@ -2569,7 +2569,7 @@ CM_ SG_ 1803 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1803 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1803 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1803 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1803 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1803 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1803 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1803 UNK_106_1 "Raw, unnamed.";
@@ -2634,7 +2634,7 @@ CM_ SG_ 1804 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1804 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1804 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1804 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1804 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1804 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1804 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1804 UNK_106_1 "Raw, unnamed.";
@@ -2699,7 +2699,7 @@ CM_ SG_ 1805 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1805 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1805 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1805 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1805 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1805 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1805 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1805 UNK_106_1 "Raw, unnamed.";
@@ -2764,7 +2764,7 @@ CM_ SG_ 1806 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1806 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1806 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1806 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1806 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1806 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1806 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1806 UNK_106_1 "Raw, unnamed.";
@@ -2829,7 +2829,7 @@ CM_ SG_ 1807 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1807 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1807 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1807 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1807 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1807 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1807 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1807 UNK_106_1 "Raw, unnamed.";
@@ -2894,7 +2894,7 @@ CM_ SG_ 1808 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1808 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1808 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1808 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1808 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1808 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1808 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1808 UNK_106_1 "Raw, unnamed.";
@@ -2959,7 +2959,7 @@ CM_ SG_ 1809 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1809 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1809 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1809 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1809 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1809 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1809 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1809 UNK_106_1 "Raw, unnamed.";
@@ -3024,7 +3024,7 @@ CM_ SG_ 1810 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1810 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1810 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1810 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1810 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1810 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1810 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1810 UNK_106_1 "Raw, unnamed.";
@@ -3089,7 +3089,7 @@ CM_ SG_ 1811 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large ve
 CM_ SG_ 1811 UNK_63_1 "Raw, unnamed.";
 CM_ SG_ 1811 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1811 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).";
-CM_ SG_ 1811 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.";
+CM_ SG_ 1811 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.";
 CM_ SG_ 1811 CONST_94_2 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_96 "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.";
 CM_ SG_ 1811 UNK_106_1 "Raw, unnamed.";

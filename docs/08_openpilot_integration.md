@@ -49,8 +49,8 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 
    - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
 
-   `aRel` and `yvRel` are NaN without fresh yaw rate or ego speed. openpilot's and sunnypilot's radard choose leads
-   from `dRel`, `yRel` and `vRel`; they store `measured` as point metadata.
+   `aRel` and `yvRel` are NaN without fresh yaw rate or ego speed. radard chooses leads from `dRel`, `yRel` and
+   `vRel`; current openpilot reads only those three, and older radard versions also store `measured` as metadata.
 
 | situation | RadarData | effect in openpilot |
 |---|---|---|
@@ -185,7 +185,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 - **Earlier tuned profiles** were driven on a FrogPilot 0.9.7 port (4 drives, 1.05 h; the disagreement census in
   [07](07_velocity_excursions.md#how-often-on-real-drives)), StarPilot (2 drives) and sunnypilot (2 drives).
   StarPilot's planner extrapolates lead acceleration unchanged above 35 mph, which turns radar's early `aLeadK` into
-  brake-then-accelerate swings; stock openpilot's planner decays it ([10](10_research_directions.md#for-a-better-ride)).
+  brake-then-accelerate swings; stock openpilot's planner decays it while |aLeadK| stays below 0.5 m/s² ([10](10_research_directions.md#for-a-better-ride)).
   When stopped close behind a car, the UI's lead chevron can sit on the hood, because the UI places it from dRel in
   the camera frame.
 

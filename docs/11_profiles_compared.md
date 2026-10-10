@@ -35,7 +35,7 @@ fork build (`ars510/`); the summaries are a fork option, on in `colored`.*
   withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
 - **`fused`** adds range fusion and **one Kalman filter per track**
   on the lead's over-ground speed ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations
-  with a chosen process-noise scale of 1.5 m/s². Each reading updates it in turn, weighted by its model variance:
+  with a process-noise scale of 1.5 m/s² (a lead-acceleration bound). Each reading updates it in turn, weighted by its model variance:
   object-list speed has σ = 0.045 m/s × max(`240|7`, 1), multiplied by 1.8 through age 60 and tapered to 1 at age 100.
   The matched ACC target uses σ 0.5 m/s for the one track it describes. Innovations beyond 3 innovation standard deviations are clamped there (a robust Kalman update), and
   a track is first published once its modeled speed standard deviation is at most 0.75 m/s (and age at least 60).

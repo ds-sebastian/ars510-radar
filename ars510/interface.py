@@ -525,7 +525,7 @@ class Ars510NativeRadarInterface:
         return float(obj.v_lat_ground - w * obj.d_rel)
 
     def _a_rel(self, obj: NativeObject, v_ego: float | None) -> float:
-        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by 0.5-1 s)."""
+        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by about 0.5 s)."""
         if v_ego is None or self._a_ego is None or obj.accel_like_code in (-511, 512):
             return nan
         return float(obj.accel_like_code * ACCEL_SCALE - self._a_ego)

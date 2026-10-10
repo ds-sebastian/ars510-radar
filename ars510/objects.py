@@ -43,8 +43,8 @@ LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s"
 # 0.142-0.147 m/s per code; 0.15 is used here (docs/03). Published as yvRel (minus yaw rate x range) to forks that
 # still carry that RadarPoint field (docs/08).
 LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "scale_not_pinned")
-# Longitudinal acceleration over ground, filtered: zero code 511, about 0.04 m/s^2 per code, follows the velocity by
-# 0.5-1 s. Kept in centred codes (docs/03).
+# Longitudinal acceleration over ground, filtered: zero code 511, about 0.04 m/s^2 per code, follows the velocity by about
+# 0.5 s. Kept in centred codes (docs/03).
 ACCEL_LIKE = NativeField("accel_like_84", 84, 10, 511.0, 1.0, "code", "unnamed")
 # Track age in radar cycles (~60 ms): 1 at birth, saturates at 126, 0 = slot being retired.
 AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")

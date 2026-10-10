@@ -28,7 +28,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    with less wobble (0.13 vs 0.15; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). radard derives `aLeadK` from vRel for every car; a fork-side radard
    change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
-   extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would test whether the brake-then-accelerate swing goes away.
+   extrapolation or an `aLeadTau` floor for radar leads would test whether the brake-then-accelerate swing goes away.
 8. **Road miles with `fused`.** The replay results ([11](11_profiles_compared.md)) need closed-loop confirmation:
    drives with flagged moments, ideally from a second car, driver or radar firmware.
 

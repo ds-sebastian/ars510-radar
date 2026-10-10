@@ -131,7 +131,7 @@
   },
   {
    "doc": "08:49",
-   "claim": "aRel lags vRel by 0.5-1 s",
+   "claim": "aRel lags vRel by about 0.5 s (best lag 0.48 s)",
    "status": "supported",
    "value": {
     "best_lag_s": 0.48,

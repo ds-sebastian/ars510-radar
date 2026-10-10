@@ -58,7 +58,7 @@ SIGNAL_COMMENTS = {
     "YREL_LEFT": f"Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= {LAT_INVALID_ABS_CODE} is a sentinel.",
     "VLONG_OVER_GROUND": "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.",
     "VLAT_OVER_GROUND_PROV": "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.147 (0.15 used).",
-    "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by 0.5-1 s.",
+    "ALONG_LIKE_84": "Longitudinal acceleration over ground, filtered: (code - 511) * about 0.04 m/s^2; follows velocity by about 0.5 s.",
     "UNK_96": "Lateral acceleration over ground, filtered: (code - 511) * 0.05 m/s^2; follows the kinematic value by about 0.5 s.",
     "UNK_208_6": "Coarse heading over ground, left positive, about pi/64 rad per code: matches floor(max(atan2(vy, vx), 0) * 64 / pi) on 98 % of settled moving samples; can update while both velocity codes hold.",
     # slot: lifecycle and confidence
