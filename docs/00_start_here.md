@@ -130,7 +130,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | braking onset against vision only | −0.02 s (95 % CI −0.08 … +0.04) | `profiles_vs_vision.json` |
 | driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.9 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
-| unnecessary / missed braking against a hindsight oracle (7.65 h road drives) | `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s, 2.1 11.5 / 16.1 s | `oracle_reference.json` |
+| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s; 34 replay drives (6.72 h): `fused` 8.2 / 3.9 s, vision 32.6 / 11.0 s | `oracle_reference.json` |
 | openpilot file | 184 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence

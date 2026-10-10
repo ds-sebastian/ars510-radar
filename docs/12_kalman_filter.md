@@ -203,8 +203,11 @@ because the model's lead range slides from one car to the next at cut-ins.
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
-Over 7.65 h, 2.3 brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for 4.9 s against 10.6 s for vision
-only and 11.5 s for 2.1. It misses no more of the braking the oracle asked for (16.1 s, vision 16.9 s). Numbers:
+Over 7.65 h of the owner's road drives, 2.3 brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
+4.9 s against 10.6 s for vision only and 11.5 s for 2.1, and misses no more of the braking the oracle asked for (16.1 s,
+vision 16.9 s). On the 34 replay drives, which did not shape 2.3 (6.72 h scored), it is the best of the three on both:
+8.2 s unnecessary (vision 32.6 s, 2.1 8.4 s) and 3.9 s missed (vision 11.0 s, 2.1 5.1 s). Standstill is not scored: the
+planner's stop-and-go logic dominates there. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 
 ## What each part is worth
