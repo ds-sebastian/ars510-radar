@@ -175,4 +175,4 @@ of the native velocity field.
 - **Against the camera** (within 60 m, tracks with a long camera chain): the radar track keeps one camera identity for
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
 - **Re-link:** `raw` re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
-  its filter state across short losses; with `fused`'s speed filter the output is identical with or without it, so `fused` runs without it.
+  its filter state across short losses; with `fused`'s speed filter the replays brake the same with or without it (lead-source switches 1,770 vs 1,772), so `fused` runs without it.

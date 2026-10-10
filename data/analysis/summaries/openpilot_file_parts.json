@@ -1,5 +1,5 @@
 {
- "description": "Parts of upstream/ars510_radar.py (2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 27 replay drives, and its status for an upstream openpilot PR.",
+ "description": "Parts of upstream/ars510_radar.py (2.5; line counts unchanged since 2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 27 replay drives, and its status for an upstream openpilot PR.",
  "file_code_lines": 183,
  "file_total_lines": 223,
  "parts": [

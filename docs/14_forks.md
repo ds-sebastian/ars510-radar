@@ -47,7 +47,8 @@ planner are readable), StarPilot `StarPilot` 2a12dbd.
 ## What that does with this radar (◐)
 
 **A radar speed error, with the truth known.** A lead pace-matched to the ego car at 30 m/s; the radar's closing speed
-reads too fast (it ramps up over 1.5 s, holds 1 s, decays over 2 s, the shape in [07](07_velocity_excursions.md)).
+reads too fast (a synthetic profile: it ramps up over 1.5 s, holds 1 s and decays over 2 s; the measured excursions in
+[07](07_velocity_excursions.md) ramp up over about 1 s).
 Extra braking demand (m/s², proxy) over the same fork without the error, gap 45 m:
 
 | error | sunnypilot | FrogPilot, Human Following off | StarPilot | FrogPilot, default |

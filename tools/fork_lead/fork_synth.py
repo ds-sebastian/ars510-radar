@@ -8,8 +8,8 @@ A tick from a prepared drive supplies lane lines and the vision model's uncertai
 Ego drives at a constant 30 m/s (open loop). Demand is the proxy of forksim.py (m/s^2).
 
   E1  A lead pace-matched to the ego, with a false closing speed in the radar's vRel: ramps up over 1.5 s, holds 1 s,
-      decays over 2 s (the shape of the radar's far-range excursions, docs/07). Reported: the extra demand over the
-      same fork without the error. StarPilot's lead filters start warm (at the lead's speed).
+      decays over 2 s (a synthetic stand-in for the far-range excursions of docs/07, which ramp up over about 1 s).
+      Reported: the extra demand over the same fork without the error. StarPilot's lead filters start warm (at the lead's speed).
   E2  A radar-only, in-lane, moving object slower than the ego, with no vision lead (the camera sees nothing):
       does the fork take it as the lead?
 """

@@ -60,6 +60,7 @@
       "accel_res": 0.246
     }
   },
+  "excursion_auc_units_note": "Measured with the ACC speed at 0.1 m/s per code (SCR-420); computed at that unit.",
   "excursion_auc_by_range": {
     "0-40m": {
       "n_exc": 53,

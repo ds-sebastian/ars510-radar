@@ -75,8 +75,8 @@ The decoder builds `trackId` from **slot + continuous age run** (`ars510/tracks.
 - a new occupant of a reused slot always gets a new ID, and each ID lives in one slot only.
 
 The `raw` profile (`BASE_CONFIG`) also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near
-its predicted position, so radard keeps its per-track filter; `fused` leaves this off: replays drive identically with or
-without it ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
+its predicted position, so radard keeps its per-track filter; `fused` leaves this off: replays give the same braking counts
+with or without it ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 
 ![slot occupancy](img/analysis/slot_occupancy_and_tracks.png)
 

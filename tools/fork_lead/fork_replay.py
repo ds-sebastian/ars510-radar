@@ -7,7 +7,7 @@
 Per route, fork configuration and profile it writes <out>/<route>__<config>__<profile>.npz with one row per model
 tick (20 Hz). Configurations: sunnypilot, frogpilot-hf (FrogPilot with Human Following on, its default),
 frogpilot (Human Following off), starpilot. Profiles: vision (no radar points), raw, fused, acc (the radar's ACC
-target alone: the clean reference). Forks you do not pass are skipped. At most two jobs run at once (--jobs).
+target alone: the reference, the radar's own ACC tracker). Forks you do not pass are skipped. At most two jobs run at once (--jobs).
 
 This is open loop and uses a proxy for the planner (see forksim.py). Read the numbers as comparisons between forks
 and profiles, not as what the planner would request.

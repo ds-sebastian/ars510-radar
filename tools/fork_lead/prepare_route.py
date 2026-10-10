@@ -4,7 +4,7 @@
   ticks.pkl      per modelV2 message: time, carState, both vision leads, lane lines (pickle: use only your own files)
   pts_raw.csv    radar points of the `raw` profile (time_s, trackId, dRel, yRel, vRel)
   pts_fused.csv  the same for `fused`
-  pts_acc.csv    the radar's own ACC target (0x235 / 0x237) as one point per sample: the clean reference
+  pts_acc.csv    the radar's own ACC target (0x235 / 0x237) as one point per sample: the reference (the radar's own ACC tracker)
 
 Needs openpilot's `LogReader` importable (run from an openpilot checkout's venv, or PYTHONPATH=checkout), like
 decode_log.py. Pass consecutive segments of one drive in order.

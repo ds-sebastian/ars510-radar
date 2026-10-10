@@ -1,5 +1,5 @@
 {
- "description": "How the radar's lead is consumed by the radard and MPC lead handling of sunnypilot, FrogPilot and StarPilot, and what that does with this radar. Each fork's own source is executed unmodified on recorded drives U1 (stock ACC, 21 min) and U2 (openpilot alpha longitudinal, 26 min) and on synthetic scenarios (tools/fork_lead). Radar profiles: raw and fused as of ars510 2.5.0, 'acc' = the radar's own ACC target (0x235 / 0x237) as the only radar point, the clean reference. 'Demand' is a proxy, not the planner: the constant deceleration that keeps the MPC's lead-based safety distance over 10 s, applied to the lead trajectory each fork hands its MPC; 'nominal' starts the ego at the desired spacing so it isolates what the lead's predicted speed and acceleration ask for, independent of the gap the driver kept. Open loop; the MPC solver and the rest of each planner are not run. Section keys: A lead supplier, B added by radar noise against the ACC-target reference, C braking added or removed against the same fork on vision only, D StarPilot lead paths, E leads only FrogPilot accepts, F first braking request in 10 lead-braking events (a hint: one proxy, 10 events; on the openpilot path it contradicts the real-planner replay of docs/08), E1 / E2 synthetic.",
+ "description": "How the radar's lead is consumed by the radard and MPC lead handling of sunnypilot, FrogPilot and StarPilot, and what that does with this radar. Each fork's own source is executed unmodified on recorded drives U1 (stock ACC, 21 min) and U2 (openpilot alpha longitudinal, 26 min) and on synthetic scenarios (tools/fork_lead). Radar profiles: raw and fused as of ars510 2.5.0, 'acc' = the radar's own ACC target (0x235 / 0x237) as the only radar point, the reference (the radar's own ACC tracker). 'Demand' is a proxy, not the planner: the constant deceleration that keeps the MPC's lead-based safety distance over 10 s, applied to the lead trajectory each fork hands its MPC; 'nominal' starts the ego at the desired spacing so it isolates what the lead's predicted speed and acceleration ask for, independent of the gap the driver kept. Open loop; the MPC solver and the rest of each planner are not run. Section keys: A lead supplier, B added by radar noise against the ACC-target reference, C braking added or removed against the same fork on vision only, D StarPilot lead paths, E leads only FrogPilot accepts, F first braking request in 10 lead-braking events (a hint: one proxy, 10 events; on the openpilot path it contradicts the real-planner replay of docs/08), E1 / E2 synthetic.",
  "fork_sources": {
   "sunnypilot": {
    "branch": "master",
@@ -439,7 +439,7 @@
  },
  "scenario_setup": {
   "ego_speed_m_s": 30,
-  "E1_error_shape": "ramps 1.5 s, holds 1 s, decays 2 s from t=10 s",
+  "E1_error_shape": "synthetic: ramps 1.5 s, holds 1 s, decays 2 s from t=10 s",
   "E1_gaps_m": [
    45,
    70
