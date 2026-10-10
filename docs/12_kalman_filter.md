@@ -181,6 +181,7 @@ leads beyond 60 m drops from 77 % to 73 % (vision covers the rest).
 |---|---|---|---|---|---|---|
 | 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s | 43.7 % |
 | 2.3 `fused` (0.4 x ACC match, path gate) | 30 / 11 / 3 | 1 / 0 | 0 | 1,342 | −0.018 s | 41.9 % |
+| openpilot version (no summaries): 2.1 → 2.3 | 30 / 11 / 4 → 30 / 11 / 3 | 2 / 0 → 1 / 0 | 1 → 0 | 1,242 → 1,349 | −0.015 → −0.010 s | 43.1 → 41.3 % |
 
 On the owner's 5.8 h of 2.1 road drives (replayed open loop) 2.3 keeps hard radar-only braking at 0 and misses no hard
 vision brake. It cuts radar-only requests of 1 m/s² or more from 10 to 7, starts braking within 0.015 s of 2.1 on every

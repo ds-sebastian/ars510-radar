@@ -78,6 +78,58 @@
    "onset_vs_vision_s": -0.018,
    "ant10": 0.419,
    "radar_only_per_h": 0.22
+  },
+  "openpilot version 2.1": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1242
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.015,
+   "ant10": 0.431,
+   "radar_only_per_h": 0.22
+  },
+  "openpilot version 2.3": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 3,
+    "radar_added": 1,
+    "sw": 1349
+   },
+   "further": {
+    "hard": 1,
+    "eps": 1,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 302
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.01,
+   "ant10": 0.413,
+   "radar_only_per_h": 0.22
   }
  },
  "path_gate_from_0m_removed_justified_hard_episodes": {
