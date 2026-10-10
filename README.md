@@ -54,7 +54,7 @@ the driver did ([11](docs/11_profiles_compared.md)), with the default `fused` pr
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
 
-These are replay results on one owner's car. On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
+These are replay results on the owner's car (the hindsight-lead numbers also include a second car's two drives). On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
 2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking on the owner's car (the second car's one replayed hard brake was
 the next-lane pairing the path gate now removes); the two mild slowdowns had far leads beyond
 95 m without the radar's ACC target, and the next-lane pairing behind one of them is what the path gate now handles
@@ -123,7 +123,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 
 ## Known limitations
 
-- **One owner's car.** The decode and the replays come from one RAV4 2022 with radar firmware `8821F0R03100`; a second
+- **One owner's car.** The decode and the 27-drive replays come from one RAV4 2022 with radar firmware `8821F0R03100`; a second
   driver's 2025 RAV4 Hybrid with the same firmware reported similar road numbers ([08](docs/08_openpilot_integration.md#on-the-road)).
   Firmware `8821F0R01100`, also in openpilot's fingerprints, is detected by its bus-1 messages when the radar is
   already running at fingerprinting (a warm restart); one capture from such a car adds it to the firmware list.

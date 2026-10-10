@@ -115,7 +115,7 @@ Each cell follows a nearby boundary, and that boundary can change: during a lane
 can keep describing the old or a different boundary for a while, and single-cycle spikes of a few metres occur.
 Treat a cell as "a nearby boundary" whose identity can change.
 
-The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` behaves like a distance (it falls about 4.1-4.4 codes per metre driven in monotone runs of cells 8 and 9); `80|6` is confidence-like (0-50; cells 1 and 4 take only 0, 15 and 50).
+The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` behaves like a distance (it falls about 4.1-4.4 codes per metre driven in monotone runs of cells 8 and 9); `80|6` is confidence-like (0-50; cell 1 takes only 0, 15 and 50, cell 4 almost only).
 
 **For in-path decisions, use the yaw-rate path.** To decide whether an object 30-100 m ahead is in the ego lane,
 the car's own curvature, y(x) = (yaw rate / v) · x² / 2 with the yaw rate from Toyota 0x24, is scored against the path

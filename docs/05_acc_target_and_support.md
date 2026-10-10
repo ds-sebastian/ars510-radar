@@ -180,7 +180,7 @@ measurement up to 80 m: an option, off in `fused` and on in `colored`
 - Byte 0 = count << 2 | 2: the **number of target summaries** in this cycle (0, 1 or 2). It equals the number of
   non-sentinel 0x191 / 0x193 frames in 681,864 of 681,879 cycles (the rest are startup frames); with one summary it is always the 0x191 / 0x192 pair.
 - Bytes 2-5: big-endian **microsecond timestamp** (`support.parse_0x190`).
-- Byte 6 high nibble: **cycle counter** mod 16, +3 per cycle on more than 99.996% of cycles. Use it to detect dropped
+- Byte 6 high nibble: **cycle counter** mod 16, +3 per cycle on 99.996% of cycles. Use it to detect dropped
   cycles.
 
 ## 0x195 / 0x196: event pair

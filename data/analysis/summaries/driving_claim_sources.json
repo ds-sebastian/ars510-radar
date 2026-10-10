@@ -584,7 +584,7 @@
    "claim": "0x366 coverage drives A / B",
    "status": "supported",
    "value": {
-    "A": "O2 (route 1e7a8dbd06, 13 segments, 3,748 0x366 frames)",
+    "A": "O2 (13 segments, 3,748 0x366 frames)",
     "B": "O3 (4 segments, 1,200 frames)"
    },
    "source": "bundled radar_car_bus_messages.json",

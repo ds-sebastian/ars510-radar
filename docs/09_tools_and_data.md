@@ -19,7 +19,7 @@
 python tools/decode_log.py data/sample/highway_following_30s.csv.gz -o points.csv
 python tools/decode_log.py rlog.zst -o points.csv            # needs openpilot's LogReader on PYTHONPATH
 python tools/decode_log.py rlog.zst --profile all-tracks     # every track, no age gate; reports CRC failures
-python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile fused    # any install profile
+python tools/decode_log.py data/sample/highway_acc_anchor_24s.csv.gz --profile fused    # fused, raw or all-tracks
 ```
 
 ### Cabana

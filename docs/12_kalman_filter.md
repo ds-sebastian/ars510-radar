@@ -60,7 +60,7 @@ object-list reading plus, for the one track the ACC target describes, the ACC re
 **The gain changes every cycle.** radard's filter uses one precomputed gain for every track. Here `K` follows the
 radar's own uncertainty code and whether the ACC target is present. A near car with a small `240|7` is followed
 almost directly. A far car with a large `240|7` moves only a few percent per reading. While the ACC target is
-present, it dominates.
+present, it dominates from about 15 m on.
 
 ![the filter on one track](img/analysis/kalman_trace.png)
 
