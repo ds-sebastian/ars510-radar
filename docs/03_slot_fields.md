@@ -274,12 +274,11 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   over code deciles), which includes the camera's own error
   ([summary](../data/analysis/summaries/video_truth.json)).
 
-**Reference scope.** The comparisons above are disagreements between two estimates of the same target:
-`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels (if both
-are off by `b`, they disagree by zero for any `b`), so a disagreement width is not a bound on the physical error without
-limits on the reference's error and the covariance. Nor do published-state scatter or the predicted-record flag show whether
-these codes are raw measurement noise, tracker uncertainty or another quality estimate. In `fused` the conversion is an
-empirical estimator weight; a raw measurement-noise covariance is not calibrated.
+**Reference scope.** The units above measure the disagreement between two estimates of the same target:
+`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels in it, so
+the physical error per count needs a reference with its own known error, such as a second car that logs its speed
+([10](10_research_directions.md#for-a-better-ride)). In `fused` the codes set an empirical weight per reading, which the
+replays justify ([12](12_kalman_filter.md#what-each-part-is-worth)).
 
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
 phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
