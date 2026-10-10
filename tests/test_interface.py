@@ -221,7 +221,7 @@ FUSED_ACC = replace(FUSED_CONFIG, min_publish_age=1, relink_max_gap_s=0.0, range
 
 def test_acc_target_reading_pulls_only_the_matched_object() -> None:
     from ars510.objects import encode_slot
-    cfg = replace(FUSED_ACC, young_sigma_scale=1.0)
+    cfg = replace(FUSED_ACC, young_sigma_scale=1.0, acc_lateral_withhold_m=0.0)  # keep the side car published
     iface = Ars510NativeRadarInterface(cfg)
     # lead at 40 m in lane with a native vRel glitch (-6 m/s); a second car 3.6 m to the left with the same glitch
     # 240|7 = 40: object-list sigma 1.8 m/s, so the ACC target (0.5 m/s) dominates once the filter has run a few cycles
@@ -288,7 +288,7 @@ def _lead_and_side(iface, acc_x: float, lead_x: float, n: int = 60) -> dict:
 
 
 def test_acc_associated_track_takes_the_acc_distance_as_its_range() -> None:
-    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0, acc_lateral_withhold_m=0.0, far_path_offset_m=0.0)
     pts = _lead_and_side(Ars510NativeRadarInterface(cfg), acc_x=66.0, lead_x=60.0)
     assert pts[0]["dRel"] == pytest.approx(66.0, abs=0.3)     # the radar's own distance for the car it follows
     assert pts[4]["dRel"] == pytest.approx(60.0, abs=0.3)     # every other track keeps the object-list range
@@ -482,3 +482,54 @@ def test_colored_filter_follows_the_summary_and_still_tracks_a_lasting_speed_cha
     step = _fused_run(cfg, 40.0, 30, lambda k: 10.0 if k < 20 else 7.0, n=140)
     assert -3.0 < step[-1][1] < -2.0                         # without trackers a lasting change is followed, but slowly
     assert COLORED_CONFIG.fused_speed_filter and COLORED_CONFIG.speed_bias_tau_s > 0
+
+
+def _yaw_frame(t: float, yaw_rad_s: float):
+    raw = round((yaw_rad_s * 180.0 / math.pi + 125.0) / 0.244)
+    return (t, 0, 0x24, bytes([(raw >> 8) & 0x03, raw & 0xFF, 0, 0, 0, 0, 0, 0]))
+
+
+def test_next_lane_car_at_the_acc_targets_range_is_withheld() -> None:
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    pts = _lead_and_side(Ars510NativeRadarInterface(cfg), acc_x=40.0, lead_x=40.0)
+    assert 0 in pts and 4 not in pts  # the car 3.6 m to the side of the ACC target is not offered to radard
+    off = _lead_and_side(Ars510NativeRadarInterface(replace(cfg, acc_lateral_withhold_m=0.0)), acc_x=40.0, lead_x=40.0)
+    assert 4 in off
+
+
+def test_far_track_off_the_yaw_predicted_path_is_withheld() -> None:
+    from ars510.objects import encode_slot
+    # 30 m/s on a left curve of 0.02 rad/s: the path is 0.02 / 30 * 100^2 / 2 = 3.3 m left at 100 m
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+
+    def run(c):
+        iface, out = Ars510NativeRadarInterface(c), []
+        for k in range(20):
+            t = 0.06 * k
+            on_path, off_path, near = (encode_slot(long_dist=round(160 + d * 16), lat_dist_left=round(2048 + y / 0.015),
+                                                   long_vel_over_ground=round(510.5 + 30.0 / 0.15), age_cycles=126, vel_uncertainty_candidate=10)
+                                       for d, y in ((100.0, 3.3), (100.0, -0.5), (40.0, -0.5)))
+            out = iface.update_many([speed_frame(t, 30.0), _yaw_frame(t, 0.02)] + frames_(record({0: on_path, 1: off_path, 2: near}), t + 0.01))
+        return {(round(p["dRel"]), round(p["yRel"])): p for p in out[-1]["radarData"]["points"]}
+    pts = run(cfg)
+    assert (100, 3) in pts and (100, 0) not in pts and (40, 0) in pts  # straight-ahead at 100 m is a lane over on this curve
+    assert (100, 0) in run(replace(cfg, far_path_offset_m=0.0))
+
+
+def test_young_track_short_of_the_acc_distance_matches_and_takes_it() -> None:
+    from ars510.objects import encode_slot
+    # a new track reads 45 m while the ACC target (same speed within 5 m/s) says 64 m: 19 m, beyond max(12, 0.25 x) = 16 m
+    def run(c):
+        iface = Ars510NativeRadarInterface(c)
+        for k in range(40):
+            t = 0.06 * k
+            young = encode_slot(long_dist=160 + 45 * 16, lat_dist_left=2048, long_vel_over_ground=round(510.5 + 17.0 / 0.15),
+                                age_cycles=21 + k, vel_uncertainty_candidate=20)  # reads -3 m/s, the ACC target 0: holding distance
+            out = iface.update_many([speed_frame(t, 20.0)] + _acc_frames(t + 0.005, 0.0, 64.0, 0.0) + frames_(record({0: young}), t + 0.01))
+        return iface, out
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    iface, out = run(cfg)
+    assert iface._acc_assoc is not None
+    assert out[-1]["radarData"]["points"][0]["dRel"] == pytest.approx(64.0, abs=1.0)
+    iface, out = run(replace(cfg, acc_young_match_frac=0.0))
+    assert iface._acc_assoc is None and out[-1]["radarData"]["points"][0]["dRel"] < 50.0  # stays on the short object-list range

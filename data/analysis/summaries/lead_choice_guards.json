@@ -1,0 +1,200 @@
+{
+ "description": "Young-track ACC match and two lead-choice guards (next lane at the ACC target's range; off the yaw-predicted path beyond 60 m), added to fused in 2.2.0. 34-drive replays per part against 2.1 fused (same harness and limits fixed before the runs), then all three on the owner's 2.1 road drives and a second car's two drives against the 2.1 replays of the same drives.",
+ "parts": {
+  "young_match": {
+   "range_scale": "max(12 m, 0.25 x, 0.4 x) for tracks younger than 100 cycles whose relative speed is within 5 m/s of the ACC target's",
+   "range_restart": "an unpublished track that becomes the ACC track starts its range at the ACC distance"
+  },
+  "next_lane": {
+   "rule": "while the ACC target is present, a non-ACC track within max(5 m, 10 %) of its range and more than 2.5 m from it laterally is not published"
+  },
+  "off_path": {
+   "rule": "beyond 60 m, a non-ACC track more than 2.5 m from the yaw-predicted ego path y - yaw/v d^2/2 is not published"
+  }
+ },
+ "replay_34_drives": {
+  "2.1 fused": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1231
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.022,
+   "ant10": 0.437,
+   "radar_only_per_h": 0.22
+  },
+  "young match + next lane": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1229
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.024,
+   "ant10": 0.431,
+   "radar_only_per_h": 0.22
+  },
+  "off path": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 3,
+    "radar_added": 1,
+    "sw": 1372
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 297
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.016,
+   "ant10": 0.431,
+   "radar_only_per_h": 0.22
+  },
+  "openpilot version 2.1": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 4,
+    "radar_added": 1,
+    "sw": 1242
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 298
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 1,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.015,
+   "ant10": 0.431,
+   "radar_only_per_h": 0.22
+  },
+  "openpilot version 2.2 (all three)": {
+   "heldout": {
+    "hard": 30,
+    "eps": 11,
+    "tgt": 3,
+    "radar_added": 1,
+    "sw": 1382
+   },
+   "further": {
+    "hard": 2,
+    "eps": 2,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 297
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.01,
+   "ant10": 0.419,
+   "radar_only_per_h": 0.22
+  }
+ },
+ "off_path_radar_share_of_leads_beyond_60m": {
+  "2.1 fused": 0.769,
+  "off path": 0.735
+ },
+ "young_track_range_gap": {
+  "scope": "owner 2.1 drives, new in-lane tracks the ACC target followed (no other track at its position)",
+  "tracks_about": 40,
+  "share_over_10m_short_ages_20_120": [
+   0.1,
+   0.21
+  ]
+ },
+ "road_drives_replay": {
+  "moving_hours": 5.83,
+  "owner": {
+   "2.1 fused": {
+    "hard": 0,
+    "mild": 10,
+    "vision_added": 0,
+    "flips_per_moving_h": 257.0
+   },
+   "2.2 fused": {
+    "hard": 0,
+    "mild": 8,
+    "vision_added": 0,
+    "flips_per_moving_h": 292.0
+   }
+  },
+  "second_car_hard_radar_only": {
+   "2.1 fused": 1,
+   "2.2 fused": 0
+  },
+  "second_car_mild_radar_only": {
+   "2.1 fused": 2,
+   "2.2 fused": 1
+  },
+  "late_brake_case": {
+   "first_radar_lead_m": {
+    "2.1 fused": 46.6,
+    "2.2 fused": 64.2
+   },
+   "min_request_mps2": {
+    "vision only": -1.61,
+    "2.1 fused": -2.36,
+    "2.2 fused": -1.47
+   },
+   "braking_start_vs_vision_s": {
+    "2.1 fused": -0.6,
+    "2.2 fused": -0.45
+   }
+  },
+  "onset_change_per_drive_max_s": 0.015
+ }
+}
