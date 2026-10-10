@@ -53,7 +53,7 @@ record in Python, so the device needs only the package.
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 - **detection** in `_get_params`: a radar-ACC Toyota whose radar firmware is `8821F0R03100`, or whose fingerprint saw
-  0x80 and 0x85 on bus 1, gets `radarUnavailable = False`;
+  0x80 and 0x85 on bus 1 (when the radar is already running, e.g. a warm restart), gets `radarUnavailable = False`;
 - **tracks** through `CarInterface.RadarInterface`: `Ars510RadarInterface` for that car, the fork's own
   RadarInterface for every other car. Extra constructor arguments (sunnypilot's `CP_SP`) pass through, and forks
   whose RadarPoint still has `aRel` / `yvRel` / `measured` get those fields filled.

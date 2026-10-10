@@ -26,7 +26,7 @@ pytest && python tools/check_structure.py && python tools/check_privacy.py
 
 The confirmed radar firmware is `8821F0R03100` at 0x750 / 0x0f on the Toyota ARS510 (RAV4 2022 / 2023).
 `8821F0R01100` is listed in openpilot fingerprints; for it, detection relies on seeing both 0x80 and 0x85 on bus 1 at
-fingerprinting, and one capture adds it to the firmware list. See [firmware validation](docs/10_research_directions.md#for-the-integration).
+fingerprinting (a warm restart), and one capture adds it to the firmware list. See [firmware validation](docs/10_research_directions.md#for-the-integration).
 Install with [`openpilot/README.md`](openpilot/README.md). The installer supports openpilot and forks, and the
 `fused` profile is the default (`--profile raw` for comparison). Then:
 

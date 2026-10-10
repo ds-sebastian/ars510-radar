@@ -17,7 +17,7 @@ each of 21 frames gives **147 bytes**. A fixed marker follows on 0x86.
 crc_ok = int.from_bytes(record[141:145], "little") == zlib.crc32(record[1:141])
 ```
 
-911 / 911 bundled records and 6,967 / 6,967 records across seven full logs pass. `python tools/check_structure.py`
+1,309 / 1,309 bundled records and 6,967 / 6,967 records across seven full logs pass. `python tools/check_structure.py`
 reproduces the check on the bundled samples. `ars510/shell85.py` returns the prefix and the ten raw cells.
 
 ## Pairing with the object list
@@ -93,7 +93,7 @@ Against the gyro curvature (yaw rate / speed) it is ρ 0.70 versus 0.44 for the 
 *A cell-2 high-bit transition checked against original CRC-valid records: the signed-view jump is bit 79 toggling while the lower 15 bits change by tens of codes. Counts, limits and the relative-time example:
 [`id85_direction_code_structure.json`](../data/analysis/summaries/id85_direction_code_structure.json).*
 
-Replication: 114 further segments (binned heading correlation −0.93…−0.99 in every cell with enough samples, slopes −1.25…−1.85e-5; curvature +0.93…+0.99, slopes +1.9…+2.3e-6 on cells 2/3/8/9) and an independent decode of 14 original logs with this package
+Replication: 114 further segments (binned heading correlation −0.93…−0.99 in every cell with enough samples, slopes −1.25…−1.85e-5; curvature +0.98…+0.99, slopes +1.9…+2.3e-6 on cells 2/3/8/9) and an independent decode of 14 original logs with this package
 ([`id85_lane_curve_cells.json`](../data/analysis/summaries/id85_lane_curve_cells.json), table [`lane_cells.parquet`](../data/analysis/lane_cells.parquet)).
 
 **Curvature rate.** `10|10` (the field near 500 on straight roads) tracks the rate of change of the cell's own curvature per metre driven: binned correlation +0.96…+0.98 in cells 2, 3, 8 and 9 (+0.92…+0.97 elsewhere), zero 497-501, 3.5-5.7e-6 1/m² per code in the lane cells; replicated on the fresh drives.

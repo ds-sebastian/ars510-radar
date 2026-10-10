@@ -51,7 +51,7 @@ a turning lane. Those are likely two different parts of its pipeline; openpilot 
 Proposed study:
 
 1. **Record stock ACC.** 20-30 minutes of mixed traffic with Toyota's ACC in control and the comma device logging
-   (openpilot longitudinal off). The camera's `ACC_CONTROL` (0x343) command then appears next to the radar's target.
+   (openpilot longitudinal off). The radar's own `ACC_CONTROL` (0x343) command then appears next to its target.
 2. **Fit Toyota's law.** Model the requested acceleration from the radar's ACC target (distance, closing speed,
    relative acceleration), ego speed and the following-distance setting; compare it with openpilot's planner on the
    same moments (replayed with each radar profile).
@@ -72,7 +72,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 2. **The first second of an excursion.** Velocity steps of a consistent size and sign at onset would point to
    wrong-branch Doppler measurements leaking into the tracker; ordinary-sized steps point to low-SNR tracking
    ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)).
-3. **Ego-speed waveform modes.** The data sheet's three ego-speed bandwidths predict steps in the range noise floor
+3. **Ego-speed waveform modes.** The handbook table's three ego-speed bandwidths predict steps in the range noise floor
    at fixed ego speeds. Finding them, and the excursion rate in each mode, ties drift risk to a radar setting.
 
 ## For the decode
@@ -194,7 +194,7 @@ upstream PR.
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
 | ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
-| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | 2.1 → 2.3 together with the 0.4 x match: held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
 
 Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for

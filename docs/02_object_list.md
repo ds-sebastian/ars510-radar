@@ -75,8 +75,8 @@ The decoder builds `trackId` from **slot + continuous age run** (`ars510/tracks.
 - a new occupant of a reused slot always gets a new ID, and each ID lives in one slot only.
 
 The `raw` profile (`BASE_CONFIG`) also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near
-its predicted position, so radard keeps its per-track filter; `fused` leaves this off because its own speed filter
-makes it redundant ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
+its predicted position, so radard keeps its per-track filter; `fused` leaves this off: replays drive identically with or
+without it ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 
 ![slot occupancy](img/analysis/slot_occupancy_and_tracks.png)
 
@@ -93,9 +93,9 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `BASE_CONFIG` publishes from age 60.
 3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
    100 and can decline.
-4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 (occasionally 1) per cycle.
+4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 or 1 per cycle (20 on about three quarters).
 5. **Deletion.** The allocation can return to state 1, with or without score recovery, or be freed near score 20:
-   age goes to 0 for one cycle with the previous geometry, then the slot returns to the idle template.
+   age can go to 0 for one cycle with the previous geometry, or the slot returns directly to the idle template.
 
 ![lifetimes](img/analysis/track_lifetimes.png)
 
@@ -106,7 +106,7 @@ The object list is built for ACC: it lists **moving objects** and objects it saw
 - Every new object is decided at about **age 5 (0.3 s)**. A new object whose over-ground speed is below about
   0.2-0.4 m/s is deleted then, once ego is faster than about 2-3 m/s.
 - **Objects first seen moving keep their track after they stop.** Stopped leads in a queue are tracked through the stop.
-- Slow movers (0.7-3 m/s: pedestrians, cyclists, creeping cars) are kept at every ego speed.
+- Slow movers (0.7-3 m/s: pedestrians, cyclists, creeping cars) are mostly kept at every ego speed.
 - While ego is stopped, the radar also lists never-moving objects.
 
 | ego speed | new object < 0.2 m/s kept | 0.2-0.4 m/s kept | ≥ 0.8 m/s kept |
@@ -116,7 +116,7 @@ The object list is built for ACC: it lists **moving objects** and objects it saw
 | 5-10 m/s | 12% | 46% | 71-88% |
 | > 10 m/s | 6-7% | 27-30% | 47-100% |
 
-*Share of 4,051 new tracks surviving the age-5 decision
+*Share of new tracks (2,971 of 4,051 in these speed bins) surviving the age-5 decision
 ([summary](../data/analysis/summaries/stationary_listing_rule.json)).*
 
 ![rain, stopped queue](img/shots/rain_stopped_queue.jpg)

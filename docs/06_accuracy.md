@@ -15,7 +15,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 
 | quantity | result |
 |---|---|
-| **dRel** scale and zero, 5-25 m | slope 1.001 / 0.992 / 0.993 against camera ground contact; zero within 0.2 m on flat roads |
+| **dRel** scale and zero, 5-25 m | slope 1.001 / 0.992 / 0.993 against camera ground contact; zero within about 0.2 m on flat roads |
 | **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus; 5-8 % short of the radar's own ACC distance at 50-100 m |
 | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera |
@@ -35,15 +35,16 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   originally fitted against a vision reference. Camera ground contact is consistent within about 0.2 m on A and C;
   hilly drive B reads +0.7 m, consistent with a 0.25° camera-pitch error. That comparison assumes openpilot's
   `RADAR_TO_CAMERA = 1.52 m`; a tape-measured radar-to-camera gap pins the physical zero and origin.
-- **Far range** (drive A, camera box scale averaged with the vision model where they agree): median absolute residual
-  3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at 100-150 m (ratio 0.979).
+- **Far range** (drive A, camera box scale averaged with the vision model where they agree; the camera scale is anchored
+  to the radar's own range at 20-45 m): median absolute residual 3.7 m at 60-100 m (distance ratio 1.017) and 5.1 m at
+  100-150 m (ratio 0.979).
 - **Against the radar's own ACC distance** (◐). For the car the radar's ACC function follows, `dRel` agrees with the ACC
   distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
-  short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2 %, 5 % and 8 %; cars
+  short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2-3 %, 5 %, 5-6 % and 8 %; cars
   more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 8-11 m at
-  60-100 m. openpilot's vision lead, an independent camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
+  60-100 m. openpilot's vision lead, a camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
-  beyond 30 m. The ACC distance is therefore the better far range for that car, and any
+  at 30-100 m. The ACC distance is therefore the better far range for that car, and any
   position gate between the object list and the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, likely a
   second output of the same tracker (◐) that also covers other vehicles, shows the same: the object list is a median 2.5 m
@@ -98,7 +99,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   | C | .15304 | [.1508, .1550] |
 
   A and B contain .15. These fits rest on the 1/16 m range scale and the GPS ego speed, so an error in either moves
-  them too. Against the ACC target's speed the slope is 0.99 / 1.02 at 40-80 m.
+  them too. Against the ACC target's distance slope, the object-list relative speed is 0.87 (IQR 0.77-0.96;
+  [05](05_acc_target_and_support.md#units-of-the-acc-target)).
 - **Ego reference.** Toyota 0xB4 reads about 1-1.5% below GPS and wheel speed in the measured comparisons. Steady
   following against 0xB4 fits .149 m/s per code. The driving profiles use `vground_scale = .149 / .15`, a
   **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed (the openpilot file decodes at 0.149
@@ -158,7 +160,7 @@ better** than the radar's range change does:
 
 ![range walk on a real closing](img/shots/range_walk_brake_event.jpg)
 
-*A real closing: the radar lead reads 24.7 m against the vision model's 36.8 m while the camera box grows only 26 % over the 2 s.
+*A real closing: the radar lead reads 24.7 m against the vision model's 36.8 m while the camera box grows only 27 % over the 2 s.
 The radar's velocity was right; its range walked. radard's 25% distance gate rejects the radar lead here.*
 
 So from record to record velocity is the radar's steady channel and range the jittery one; over seconds at range,

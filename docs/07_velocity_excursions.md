@@ -7,10 +7,10 @@ default `fused` profile handles it with one Kalman filter per track ([12](12_kal
 
 **In short**
 
-- 84-88% of excursions are false closings; they ramp up over about 1 s.
+- 84-88% of excursions are false closings (measured with the earlier 0.1 m/s ACC speed unit); they ramp up over about 1 s.
 - Rare close in, common far out: radar and vision disagree by ≥ 2 m/s for 1% of radar-lead time at 0-20 m and 49%
   beyond 80 m ([below](#how-often-on-real-drives)).
-- Their size matches the speed uncertainty the radar reports itself (`240|7`); the radar's own ACC tracker follows the
+- Their size matches the speed-error code the radar reports (`240|7`, ◐); the radar's own ACC tracker follows the
   same car smoothly.
 - `fused` weights every reading by that uncertainty and leans on the radar's own ACC target: hard radar-only braking
   93 (`raw`) → 30 ticks on 20 held-out routes.
@@ -42,12 +42,12 @@ vRel reads +2.2 to +2.5 m/s and then −2.5 m/s; its −6 m/s low falls between 
 
 ### What the radar's waveform allows
 
-The published ARS510 data sheet (Winner and Waldschmidt, *Automotive Radar*, 2026, Table 15.3) gives 256 ramps at
-104 µs, a 19 m/s single-cycle unambiguous radial-velocity span resolved over two cycles, 0.074 m/s resolution, 0.15 m/s
+A published handbook table for the ARS510 (Winner and Waldschmidt, *Automotive Radar*, 2026, Table 15.3) gives 256
+ramps (104 µs repetition), a 19 m/s single-cycle unambiguous radial-velocity span resolved over two cycles, 0.074 m/s resolution, 0.15 m/s
 separability (the step of `64|10`) and three bandwidths by ego speed (range resolution 0.4 / 0.7 / 0.98 m); generic
 product values (○ for this firmware). Excursion offsets sit well inside that span (median −4.0 m/s against vision,
 −3.1 below 40 m to −4.8 at 80-100 m); unwrapping by ±19 m/s changes 57 of 900 labelled samples. Excursions therefore
-sit inside the unambiguous span (◐) and build up over 1-2 s, which fits low-SNR measurements at range
+sit inside the unambiguous span (◐) and build up over about 1 s, which fits low-SNR measurements at range
 ([`waveform_source.json`](../data/analysis/summaries/waveform_source.json)).
 
 </details>
@@ -74,9 +74,9 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 - Against the radar's own ACC target, the object-list speed error grows with the reported uncertainty `240|7`
   ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.05 m/s per count (≈ 0.8 m/s at code 15, 1.2-1.3 m/s at code 30).
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
-- A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.1% observed vs 6.4%
+- A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (measured with the earlier 0.1 m/s ACC speed unit: 5.1% observed vs 6.4%
   predicted; 6.9% vs 5.5% on fresh drives). The error is low-pass (~0.3 Hz), so a 1-3σ deviation lasts seconds.
-- `240|7` tells **how large** far errors can be: it is a width, which is why `fused` uses it to weight readings.
+- `240|7` (◐) scales with the width of far errors, which is why `fused` uses it to weight readings.
 
 <details>
 <summary>Caveats and the residual error</summary>
@@ -86,9 +86,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
   target has its own error (~0.6 m/s).
 - Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
-- A −0.3 m/s mean offset (native more closing than ACC) grows with range (−0.1 below 20 m, −0.6 at 80-110 m), is
-  flat in ego speed and differs by drive (std 0.3 m/s). Across 13.6k candidate signals, the object's own state explains
-  part of it: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
+- Across 13.6k candidate signals (measured with the earlier 0.1 m/s ACC speed unit), the object's own state explains part of the object-list error: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state
   and 3 s history predict ~41-47% of the error variance on 40 fresh one-minute segments, spread over many fields
   ([`excursion_sigma_scale.json`](../data/analysis/summaries/excursion_sigma_scale.json)).
 
@@ -111,7 +109,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 
 ## What openpilot does with it
 
-- radard's per-track Kalman filter smooths **vRel only** and passes a drift into `vLeadK` and `aLeadK` (−3 to −5 m/s²).
+- radard's per-track Kalman filter smooths **vRel only** and passes a drift into `vLeadK` and `aLeadK` (the bundled drive-A excursion drew a −3.5 m/s² request).
 - The 25% distance gate keeps the drifting track matched to the vision lead (±28 m at 110 m).
 - The planner projects `aLeadK` forward with a 1.5 s decay.
 

@@ -37,7 +37,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
    shipped.
 3. **Decoding from raw frames.** The interface reads the raw `(address, data, src)` tuples card already passes,
    reassembles 0x80 records, checks the CRC32 and decodes the 20 slots. Ego speed for vRel comes from 0xB4 on bus 0 in
-   the same packets. Cost: about 9 µs per call on a desktop CPU.
+   the same packets. Cost: about 6-14 µs per 10 ms call on a desktop CPU.
 4. **Output.** `RadarPoint(trackId, dRel, yRel, vRel)` for tracks aged ≥ 60 cycles (with `fused`, also once their
    speed is known to ±0.75 m/s), with the radar's own track IDs (`raw` also re-links them across short losses), and
    only while a fresh ego speed gives a finite vRel. Forks whose RadarPoint still
@@ -169,7 +169,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 - **sunnypilot with `fused` 2.1.0** (9 drives, 7.4 h, 4.4 h with openpilot longitudinal; the logged radar tracks match
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera or the radar's
   ACC target closing too. Replayed open loop against vision only: no hard radar-only braking in 5.8 moving hours, and
-  braking starts 0.4-1.2 s before vision on every drive (the recorded motion is the one `fused` drove, which favours it
+  braking starts 0.4-1.2 s before vision on every drive with a brake event (8 of 9; the recorded motion is the one `fused` drove, which favours it
   in this comparison). Two mild slowdowns (about 1.5 m/s², one overridden with the gas) had a lead beyond 95 m and no
   ACC target: on a curve radard paired the camera's lead with a radar object a lane over, the case the path gate now
   handles, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm

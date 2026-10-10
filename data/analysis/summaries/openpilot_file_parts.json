@@ -80,7 +80,7 @@
    "code_lines": 6,
    "since": "2.3 (2.2 from 60 m)",
    "evidence": "lead_choice_guards.json",
-   "without": "held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
+   "without": "2.1 → 2.3 together with the 0.4 x match: held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
    "upstream": "candidate: keep, or move into radard as a lateral gate"
   },
   {

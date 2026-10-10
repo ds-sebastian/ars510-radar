@@ -39,7 +39,7 @@ the radar's internal tracker ([05](05_acc_target_and_support.md#0x191-0x194-sele
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
 | **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (sent by the radar, ◐): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
 | 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | ACC target companions: 0x239 = class, object-list flag, µs timestamp; 0x23B = width in cm + counter + CRC-8; 0x23D all zero | [05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b) |
-| 0x240-0x245, 0x248 | 8 | 16.7 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
+| 0x240 / 0x241 / 0x244 / 0x245 / 0x248 | 8 | 16.7 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
 | 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
 | 0x680 | 8 | 2 Hz | one tracked object: distance, lateral position, over-ground speed; mostly a stationary roadside object | [05](05_acc_target_and_support.md#0x680-single-object-stream) |
@@ -59,14 +59,14 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
   radar by its firmware version (`8821F0R03100` at 0x750 / 0x0f), with
   0x80 / 0x85 on bus 1 as a fallback ([08](08_openpilot_integration.md)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record and 0x197 bit 8 sets 60 ms later (27 of 27 cold
-  starts, spread 7-14 ms): behaving as the camera's acknowledgement of the object list (◐): a direct "radar running" signal.
+  starts, spread 7-14 ms): behaving as the camera's acknowledgement of the object list (◐), so it serves as a "radar running" signal.
 - 0x680 reports tracked objects well before the object list starts.
 - Several addresses send an all-ones or all-zeros first frame (for example 0x100 `FFFF…`, 0x192 `0FFF0FFF`).
 - Early object records contain placeholder tracks, some at exactly 0 m; the age gate removes them.
 
 ## openpilot's radar disable
 
-On the RAV4 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
+On the RAV4 2022 / 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
 longitudinal (alpha long) switches the radar's car-bus output off with UDS CommunicationControl `28 01 01` (receive
 on, transmit off) to 0x750 / 0x0F, then keeps it off with tester-present `3E 00` every ~0.2 s. That request only
 covers bus 0; **bus 1 keeps running unchanged** (●, one unfiltered drive with no CAN filter or other bus-1

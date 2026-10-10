@@ -47,9 +47,9 @@ flowchart LR
   G --> P["RadarPoint to radard (unchanged)"]
 ```
 
-The object-list σ also tracks the error on other cars, which runs 1.1-1.5× the filter's σ: against the 2 Hz object
+The object-list σ also tracks the error seen by a second tracker output, which runs 1.1-1.5× the filter's σ: against the 2 Hz object
 stream 0x680, a tracker-quality
-witness for vehicles without an ACC target, the object-list speed error is 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
+witness for vehicles (half of its matched frames are the ACC target, the rest other cars), the object-list speed error is 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
 0-40 / 40-60 / 60-80 / 80-110 / 110-170 m, where 0.045 m/s × `240|7` gives 0.6 / 1.1 / 1.6 / 2.6 / 3.4 m/s, and 1-4 % of
 frames lie beyond 3 σ. The error leans toward closing (median −0.2 to −0.7 m/s up to 110 m, −1.9 m/s beyond), which the
 ACC target corrects where it is present ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
@@ -287,7 +287,8 @@ Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-don
 better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead of 3.3 s on the 27 replay drives
 (2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same minimum request on 19 of 23 bookmarks (within 0.03 m/s² on the
 other 4),
-with 0 hard radar-only braking and 7 mild requests each; against the oracle 5.4 against 4.9 s unnecessary and 7.2
+with 0 hard radar-only braking and 7 mild requests each; against the oracle (owner and second car, 7.65 h) 5.4 against
+4.9 s unnecessary and 7.2
 against 9.5 s missed. So `fused` leaves them out since 2.4, and the fork default and the openpilot version drive
 identically. The code stays as a
 fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
