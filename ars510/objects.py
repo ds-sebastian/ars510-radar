@@ -90,12 +90,29 @@ MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward
 LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
 WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 
+# Pass-through of the remaining uncertainty, class and score codes, kept as raw codes (docs/03). Relative scales against the radar's own
+# ACC target (owner drives, docs/03 "Units of the sigma codes"): UNCERTAINTY_PER_COUNT. They are error widths of a slowly varying tracker
+# state, not calibrated physical standard deviations, and the reference is the radar's own estimate.
+UNC_RANGE_224 = NativeField("range_uncertainty_code", 224, 7, 0.0, 1.0, "code", "candidate")
+UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "candidate")
+UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "code", "candidate")
+UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
+UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
+UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "candidate")
+SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "unnamed_obstacle_probability_candidate")
+OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
+HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "not_calibrated_height")
+# Fitted scale of each sigma code against the ACC target on the owner drives (65 k pairs; sd^2 = floor^2 + (k * code)^2): metres or m/s per count.
+UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
+                         "lateral_speed_uncertainty_code": 0.37}
+
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel, not a position.
 LAT_INVALID_ABS_CODE = 2000
 
 NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156,
-                CAMERA_ASSOC, CLASS_CONFIDENCE)
+                CAMERA_ASSOC, CLASS_CONFIDENCE, LENGTH, WIDTH, UNC_RANGE_224, UNC_LATERAL_232, UNC_VLAT_248, UNC_AX_256, UNC_AY_264, UNC_ORIENT_200,
+                SECONDARY_SCORE_184, OBJECT_CLASS, HEIGHT_LIKE_272)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -148,6 +165,17 @@ class NativeObject:
     predicted: bool = False  # 107|1: the record is a prediction, not a measurement
     camera_assoc: int | None = None  # 112|3: 0 radar only, non-zero while the camera has the vehicle
     class_confidence_pct: int | None = None  # 115|5 x 5: confidence of the assigned class, percent
+    object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
+    length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
+    width_m: float | None = None  # (216|6 + 1) x 0.1 m
+    height_code: int | None = None  # 272|5, not a calibrated height
+    range_unc_code: int | None = None  # 224|7 (about 0.23 m per count against the ACC distance at 5-40 m)
+    lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
+    vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)
+    accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10; no error unit
+    lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
+    orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
+    secondary_score_pct: int | None = None  # 184|8, percent-like, 100 on 98 % of rows; unnamed (obstacle-probability candidate)
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
@@ -184,6 +212,17 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         predicted=bool(field_code(slot, PREDICTED)),
         camera_assoc=int(field_code(slot, CAMERA_ASSOC)),
         class_confidence_pct=int(field_code(slot, CLASS_CONFIDENCE)) * 5,
+        object_class=int(field_code(slot, OBJECT_CLASS)),
+        length_m=field_value(slot, LENGTH),
+        width_m=(field_code(slot, WIDTH) + 1) * WIDTH.scale,
+        height_code=int(field_code(slot, HEIGHT_LIKE_272)),
+        range_unc_code=int(field_code(slot, UNC_RANGE_224)),
+        lateral_unc_code=int(field_code(slot, UNC_LATERAL_232)),
+        vlat_unc_code=int(field_code(slot, UNC_VLAT_248)),
+        accel_unc_code=int(field_code(slot, UNC_AX_256)),
+        lateral_accel_unc_code=int(field_code(slot, UNC_AY_264)),
+        orientation_unc_code=int(field_code(slot, UNC_ORIENT_200)),
+        secondary_score_pct=int(field_code(slot, SECONDARY_SCORE_184)),
     )
 
 

@@ -219,6 +219,27 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 
 ![object size](img/analysis/object_size.png)
 
+## Pass-through: every decoded object field in `NativeObject`
+
+`decode_native_slot` returns each field below as a raw code or in its nominal unit, so a consumer can use them without re-decoding.
+Confidence is that of the field's own row in this doc.
+
+| output | `NativeObject` attribute | bits |
+|---|---|---|
+| distance, lateral position | `d_rel`, `y_rel` | `32\|12`, `44\|12` |
+| speed over ground (relative speed = minus ego speed) | `v_long_ground`, `vel_code` | `64\|10` |
+| lateral speed | `v_lat_ground`, `v_lat_code` | `74\|10` |
+| acceleration (filtered, ground-like, no calibrated unit) | `accel_like_code` | `84\|10` |
+| tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
+| existence probability | `existence_pct` | `16\|8` |
+| obstacle probability (candidate, unnamed) | `secondary_score_pct` | `184\|8` |
+| class, class confidence | `object_class`, `class_confidence_pct` | `163\|3`, `115\|5` |
+| size | `length_m`, `width_m`, `height_code` (not a height) | `56\|7`, `216\|6`, `272\|5` |
+| uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|7`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
+
+The radar has no per-object relative-speed (Doppler) field and no status message on the bus; the ACC target's own relative speed, acceleration
+and lateral speed are in [05](05_acc_target_and_support.md). `UNCERTAINTY_PER_COUNT` holds the fitted scales of the next section.
+
 ## Uncertainty and quality
 
 | bits | field | behaviour | conf. |
