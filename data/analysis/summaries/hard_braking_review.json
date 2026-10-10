@@ -1,5 +1,5 @@
 {
- "description": "Were the hard radar-only braking requests real? Every hard episode (planner <= -2 m/s2 while the vision-only replay of the same drive asks >= -0.5) in each 27-drive replay, judged without the radar speed.",
+ "description": "Were the hard radar-only braking requests real? Every hard episode (planner <= -2 m/s2 while the vision-only replay of the same drive asks >= -0.5) in each 27-drive replay, judged without the radar speed. Runs: fused 2.0 and its variants (docs/12).",
  "method": {
   "justified": "the driver braked or slowed at <= -1 m/s2 within [-1, +4] s, and the gap was really closing (< -1 m/s): radar raw range of the same object decoded from the original CAN, else the camera lead distance of the vision-only replay",
   "unjustified": "the driver did not slow, and the real closing needed less than 0.5 m/s2 of braking (closing^2 / 2 (gap - 4 m)) or the gap was opening",

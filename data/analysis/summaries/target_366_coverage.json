@@ -44,9 +44,9 @@
     "fresh_ACC_both": true
   },
   "limits": [
-    "Non-idle report is not proof of a physical object.",
-    "Matched mature-target coding does not establish every report as an ACC copy.",
-    "Additional coverage does not establish per-object Doppler or a PCS-specific source."
+    "Non-idle reports include objects without an ACC target.",
+    "Matched mature-target coding covers the reports made while the ACC target is present.",
+    "One target report per message (no per-object speeds)."
   ],
   "absent_ACC_context_drive_O2": {
     "reports": 224,

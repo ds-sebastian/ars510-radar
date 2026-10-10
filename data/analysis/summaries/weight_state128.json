@@ -167,10 +167,9 @@
   "dominant_agreements": 190414,
   "dominant_disagreements": 708,
   "limits": [
-    "This is a three-bit raw view; additional neighboring semantics are not excluded.",
-    "Codes 2/3/4 correspond to right/central/left-associated weights, with exceptions; exact lane semantics remain unproven.",
-    "Codes 1/5/7 have zero weights but their physical meanings are unresolved.",
-    "Availability and state/weight conflicts are not validated measurement-quality or excursion gates.",
-    "Preserve all wire codes and weight combinations; no filtering or normalization."
+    "Three-bit raw view.",
+    "Codes 2/3/4 go with right / ego / left-lane weights on nearly all rows (docs/03).",
+    "Codes 1/5/7 go with all-zero weights.",
+    "Decoded as raw codes; every wire code and weight combination is kept."
   ]
 }

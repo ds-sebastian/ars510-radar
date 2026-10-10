@@ -1,5 +1,5 @@
 {
-  "status": "supported_lateral_association_exact_lane_semantics_unresolved",
+  "status": "supported lateral association (right / ego / left lane)",
   "provenance": "Imported aggregate research results, SCR-178; full-route reruns and private camera frames are not bundled.",
   "fields": {
     "148|4": "right-associated",
@@ -139,9 +139,9 @@
   ],
   "reviewed_examples": 9,
   "limitations": [
-    "Camera bearing uses radar range and an azimuth-gated identity join; not independent metric ground truth.",
-    "Position bands do not establish lane-relative coordinates, exact lane identity or curved-road behavior.",
-    "All-zero meaning, quantizer and probability calibration remain unresolved.",
-    "No early excursion discriminator or control policy is introduced; all drive groups have prior research use."
+    "Camera bearing uses radar range and an azimuth-gated identity join.",
+    "Position bands are lateral offsets in the radar frame.",
+    "All-zero rows go with lane states 1 / 5 / 7 (docs/03).",
+    "Analysis only; all drive groups have prior research use."
   ]
 }

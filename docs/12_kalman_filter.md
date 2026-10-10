@@ -303,8 +303,9 @@ brakes anticipated at −1 m/s² 41.3 → 42.5 %, radar-only braking 0.22 per ho
 unnecessary braking instead of 7.1 s and 3.1 s missed instead of 3.0 s. On the road drives: no hard radar-only braking,
 mild requests 7 → 8 (the added one a real slowdown), lead flips 1,622 → 1,620, against the oracle 4.4 s unnecessary
 instead of 5.4 s and 7.2 s missed for both; all 23 bookmarks within 0.06 m/s². Most of the gain shows against the
-oracle, whose reference takes its range from the ACC target; the counts that do not depend on it are equal or slightly
-better.
+oracle, whose reference takes its range from the ACC target; the hard-tick, onset and anticipation counts, which do not
+depend on it, are equal or slightly better; held-out target episodes rose by one (3 → 4) and road mild requests by
+one, judged real.
 
 The ACC target is blended, not copied. The radar's own ACC tracker can slide off a real car: on one further replay drive
 it read −10.6 m/s at about 85 m while drifting 2.9 m sideways on a straight road, with the camera holding the lead at

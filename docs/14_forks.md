@@ -42,7 +42,7 @@ planner are readable), StarPilot `StarPilot` 2a12dbd.
 | lead acceleration decay (`aLeadTau`) | 1.5 s | 1.5 s | 0.6 s |
 | lead path given to the MPC | openpilot's: radar `dRel`, `vLead`, `aLeadK`, decaying | Human Following on (default, model v9): radar `dRel` and `vLead` at t = 0, the model's deltas after; `aLeadK` unused. Off: openpilot's | the same vision-model path (radar sets the start, the model the deltas) while the lead brakes under 0.5 m/s² and does not close within TTC 7 s; otherwise openpilot's, through `lead_v_filter` / `lead_a_filter` |
 | smoothing in the planner | none | none | lead speed and acceleration filters: 0 s below 47 mph, 1.2 s at 65 mph and above |
-| radar extras | none | adjacent-lane leads (setting) and lane-change matching (default on with a radar) | adjacent-lane leads (setting), lane-change matching, a stopped-neighbour hint ("Force Stop"), and 11 vision-lead comfort caps that do not apply to radar leads |
+| radar extras | none | adjacent-lane leads (setting) and lane-change matching (default on with a radar) | adjacent-lane leads (setting), lane-change matching, a stopped-neighbour hint ("Force Stop"), a taper on its legacy path that scales down a far radar lead's deceleration (gap more than max(8 m, 0.25 s × v) beyond the desired distance, closing under 2.5 m/s), and 11 comfort caps for vision leads |
 
 ## What that does with this radar (◐)
 

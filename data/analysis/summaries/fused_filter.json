@@ -155,7 +155,7 @@
    "target_episodes": 4,
    "owner_target_episodes": 0,
    "switches": 1770,
-   "verdict": "identical: removed from the openpilot version",
+   "verdict": "same braking counts (lead switches 1770 vs 1772): removed from the openpilot version",
    "openpilot_file_lines": 261,
    "passes": true,
    "unjustified_ticks": 3

@@ -1,6 +1,6 @@
 {
   "provenance": "Imported aggregate evidence from research workspace SCR-177; full captures are not bundled reruns. Fixed grouping selected on development; all groups have prior research use.",
-  "status": "supported nearly normalized raw triplet; physical outcomes and probability calibration unresolved",
+  "status": "supported nearly normalized raw triplet (lane-association shares)",
   "fields": [
     {
       "start": 148,
@@ -189,9 +189,8 @@
   ],
   "event_scope": "Any active or mixed triplet in [-3,+1) seconds around existing disagreement trigger; no tuned component/cutoff or proven physical-onset timing.",
   "limits": [
-    "All-zero meaning unknown",
-    "No named probability, SNR, scan source or merge semantics",
-    "No normalization, invalidation or control use",
-    "All possible wire triplets retained"
+    "All-zero triplets go with lane states 1 / 5 / 7 (docs/03).",
+    "Weights are read as lane-association shares in 1/15 steps.",
+    "Decoded as raw codes; every wire triplet is kept."
   ]
 }

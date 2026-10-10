@@ -1,5 +1,6 @@
 {
  "what": "SCR-115 exhaustive signal exploration (discovery/confirmation split fixed in advance) and SCR-116 consumer test of the ACC-target cross-check against the driver",
+ "units_note": "Measured with the ACC speed at 0.1 m/s per code. At 0.125 (acc_unit_recompute.json claims 1, 4, 7): C1 share 0.808 discovery (n 738) / 0.764 confirmation (n 484, route CI 0.676-0.927); D4 false-closing share 0.80 / 0.871; D5 slopes 1.007 / 1.005 discovery, 1.002 / 1.02 confirmation (40-60 / 60-80 m).",
  "provenance": "research-workspace run 2026-09-24, pre-registered; provenance-labelled, not a bundled rerun",
  "split": {
   "discovery": "drives A, B, C + 10 held-out routes (256 segments, 4.12 h)",

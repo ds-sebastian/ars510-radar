@@ -42,7 +42,7 @@
  },
  "equivalence_without_fusion": {
   "synthetic_max_abs_diff": 2.7e-08,
-  "replay_ticks": "identical on 4 development drives (one 0.001 rounding difference)"
+  "replay_ticks": "equal on 4 development drives to 0.001 (one rounding difference)"
  },
  "cost_us_per_update": {
   "upstream_KF1D": 0.6,

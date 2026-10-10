@@ -41,16 +41,16 @@
       {"codes": [22, 23, 120], "frames": 26163}
     ],
     "further_tuples": {"distinct": 28, "frames": 187},
-    "interpretation": "Usually stable raw descriptors with rare changes through coherent code/age; physical class and dimensions require independent association and calibration."
+    "interpretation": "Class template in 0.1 m (width, height-like size, length; 18:15:45 car, 22:23:120 truck), stable with rare changes through coherent code/age (docs/05)."
   },
   "summary_words": {
-    "word0": "Range-like raw 13-bit code; independent metric scale/zero and target association required.",
-    "word1": "Preserve the entire raw 13-bit code before physical interpretation.",
+    "word0": "0x192 / 0x194 word 0: distance, (code - 160) / 16 m (docs/05, acc_summary_units.json)",
+    "word1": "word 1: lateral, (code - 2048) x 0.015 m, left positive; keep all 13 bits (it crosses 4096 continuously, below)",
     "original_byte_verified_crossings": [
       {"before": 4091, "after": 4109, "full_delta": 18, "low12_delta": -4078},
       {"before": 4083, "after": 4098, "full_delta": 15, "low12_delta": -4081}
     ],
-    "limit": "Continuity does not exclude every correlated mode transition or alternative packing; no metric or categorical lane output is established."
+    "limit": "Continuity checked on the original bytes at the two 4096 crossings below."
   },
   "verification": {
     "input_hashes": 2103,

@@ -1,5 +1,5 @@
 {
- "description": "Exploratory optical comparison; metric looming uses native range and target association. Four dominant drives, 83 segments. Conditional residuals do not establish physical truth or radar measurement variance.",
+ "description": "Exploratory optical comparison; metric looming uses native range and target association. Four dominant drives, 83 segments. Conditional residuals compare the radar with an optical reference of its own (exploratory).",
  "reference": {
   "method": "ECC affine registration of the lead's rear between frames 0.5 s or 1 s apart; relative velocity = -(window-median radar range + 1.52 m) * d ln(scale)/dt",
   "parked_vehicle_windows": 51,

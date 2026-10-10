@@ -122,7 +122,7 @@
    "status": "removed",
    "value": null,
    "source": "earlier repo text only",
-   "note": "Possible conflict: <path> says CAN 0x24 yaw is ~3-5% high vs device gyro (cites an older findings.md line no longer present). Not recomputable from public data (no yaw). The claim is no longer in the docs."
+   "note": "Possible conflict: an older workspace record says CAN 0x24 yaw is ~3-5% high vs device gyro (cites an older findings.md line no longer present). Not recomputable from public data (no yaw). The claim is no longer in the docs."
   },
   {
    "doc": "08:46",
@@ -464,7 +464,7 @@
     }
    },
    "source": "research workspace SCR-424",
-   "note": "The numbers come from SCR-424, not acc_target_arel.json. At the current 0.125: corr 0.64, RMS 0.69 vs 0.80 (barely changes) but the best-lag shift becomes 0.0 s, so 'about 0.35 s earlier' is fragile (0.36 s at 0.1, 0.84 s at 0.125). acc_target_arel.json (SCR-129) also decodes at 0.1: its binned medians should be x1.25; correlations unaffected, it has no RMS."
+   "note": "The numbers come from SCR-424, not acc_target_arel.json. At the current 0.125: corr 0.64, RMS 0.69 vs 0.80 (barely changes), but byte 2's best lag becomes 0.0 s (weakly identified), so 'about 0.35 s earlier' is fragile (0.36 s at 0.1, 0.84 s at 0.125). acc_target_arel.json (SCR-129) decodes at 0.1; its units_note gives the 0.125 values."
   },
   {
    "doc": "10:161",
@@ -477,7 +477,7 @@
     "bundled_points": 1823
    },
    "source": "research workspace SCR-476",
-   "note": "The 2-drive check was for 2.1.0; for 2.4 only the bundled-sample test (tests/test_upstream_candidate.py) covers equality. Note findings.md uses SCR-476 for two different rows (also ars510_slim_norange_20261005)."
+   "note": "The 2-drive check ran for 2.1.0 and again on 2.4.1 (fused_filter.json upstream_equality_2_4_1: 200,209 points, no mismatches); tests/test_upstream_candidate.py covers each release on the bundled samples. findings.md uses SCR-476 for two different rows (also ars510_slim_norange_20261005)."
   },
   {
    "doc": "10:170, 11:139",

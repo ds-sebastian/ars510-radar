@@ -1,5 +1,5 @@
 {
-  "scope": "FUSED_CONFIG, three bundled samples only. All applied non-reset scalar summary updates; constant-acceleration geometric effective time, receipt clock rather than OEM acquisition clock.",
+  "scope": "fused before 2.4 (summaries on, sigma 0.5; a fork option since 2.4), three bundled samples only. All applied non-reset scalar summary updates; constant-acceleration geometric effective time, receipt clock rather than OEM acquisition clock.",
   "config": {
     "summary_window_s": 1.0,
     "summary_sigma_mps": 0.5,

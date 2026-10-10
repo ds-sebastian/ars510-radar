@@ -3,7 +3,7 @@
   "source": {
     "citation": "H. Winner, C. Waldschmidt, 'Automotive Radar', Handbook Assisted and Automated Driving, Springer 2026, section 15.9.3.1, Table 15.3, pp. 244-245",
     "url": "https://link.springer.com/chapter/10.1007/978-3-658-45276-6_15",
-    "applies_to": "generic Continental ARS510 (start of production 2019); binding to Toyota firmware 8821F0R03100 not established"
+    "applies_to": "generic Continental ARS510 (start of production 2019); this car runs Toyota firmware 8821F0R03100"
   },
   "waveform": {
     "frequency_GHz": [

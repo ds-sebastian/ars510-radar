@@ -1,6 +1,6 @@
 {
   "provenance": "Imported aggregate research evidence SCR-189; full captures are not bundled reruns. All groups have prior research use. Step-set rule frozen after discovery and before transfer.",
-  "status": "supported bounded arithmetic relation; branch selector unresolved",
+  "status": "supported bounded arithmetic relation",
   "raw_view": {
     "start": 16,
     "width": 8

@@ -1,5 +1,6 @@
 {
  "description": "Kalman filter variants for the lead speed: offline bench (false closings vs the hidden ACC target, object list only) and openpilot replays (27 drives).",
+ "units_note": "Bench reference: the ACC target speed read at 0.1 m/s per code (before the 0.125 correction in acc_summary_units.json), computed at that unit; replay_34_drives.fused is fused 2.0.",
  "bench_false_closing_pct": {
   "fused (random walk)": {
    "heldout": 5.9,

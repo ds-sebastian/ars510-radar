@@ -454,7 +454,7 @@
     }
    },
    "source": "research workspace SCR-463",
-   "note": "Fit done at 1/64 m on both sides (same code family as 0x680), unit-change invariant to ~4 %. More precise: 0.005 m (0x192) / 0.012 m (0x194). Public acc_summary_units.json should carry it if cited."
+   "note": "Fit done at 1/64 m on both sides (same code family as 0x680), unit-change invariant to ~4 %. More precise: 0.005 m (0x192) / 0.012 m (0x194)."
   },
   {
    "doc": "05",
@@ -575,7 +575,7 @@
     "0x248_byte2": "1 day; 0/2/3 night"
    },
    "source": "research workspace SCR-466",
-   "note": "Text-only in result.md; public context_24x.json should be checked for these counts."
+   "note": "Counts from the workspace result.md (SCR context census); context_24x.json carries the frame layout."
   },
   {
    "doc": "05",

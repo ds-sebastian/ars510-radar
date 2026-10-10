@@ -377,12 +377,11 @@
     }
   ],
   "limits": [
-    "Availability is not accuracy, freshness or physical validity.",
-    "Fixed left and right ego-boundary assignments can fail.",
-    "Camera-model agreement is not surveyed metric truth.",
-    "The entire record is not proven lane-only.",
-    "Source ECU, raw reflection, Doppler, elevation and scan-source meanings remain unknown.",
-    "Repeated samples are not independent physical observations.",
-    "Transition proximity uses past and future transitions, not a causal warning."
+    "Availability marks a populated cell; accuracy and freshness come from the curve comparisons in docs/04.",
+    "Left and right ego-boundary assignments are fixed per cell and swap during lane handovers.",
+    "Agreement is measured against openpilot's camera model.",
+    "The record carries lane / road-boundary curves (docs/04); its source ECU and scan meaning are outside this test.",
+    "Repeated samples come from continuous drives and are correlated.",
+    "Transition proximity uses past and future transitions (an offline label)."
   ]
 }
