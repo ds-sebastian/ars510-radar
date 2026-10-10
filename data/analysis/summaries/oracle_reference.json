@@ -1,19 +1,19 @@
 {
- "description": "Each version's planner request against an oracle: openpilot's unchanged radard + planner fed a hindsight reference lead (identity from the in-path ACC target, else the camera; range from the ACC target, else the raw object list within 1 m lateral, plus the camera when on the same car; Rauch-Tung-Striebel smoothing), through an interface that publishes only that lead. Owner 2.1 road drives and a second car's two drives, open loop.",
+ "description": "Each version's planner request against an oracle: openpilot's unchanged radard + planner fed a hindsight reference lead (identity from the in-path ACC target, else the camera; range from the ACC target, else the raw object list within 1 m lateral, plus the camera when on the same car; Rauch-Tung-Striebel smoothing within each stretch of one car, split at range jumps, ACC-target ID changes and lateral jumps > 1.5 m), through an interface that publishes only that lead. Owner 2.1 road drives and a second car's two drives, open loop.",
  "definitions": {
   "unnecessary": "request below the oracle's by > 0.5 m/s2 for >= 0.3 s",
   "missed": "oracle <= -1 m/s2 while the version > -0.5 for >= 0.3 s",
-  "confident": "reference from the radar (ACC target or object list), radar and camera agree; camera-only moments are judged with video, not scored; the car moving (>= 1 m/s): at standstill the planner's stop-and-go logic dominates and an object seen only by the ACC target may be a car or a wall"
+  "confident": "reference from the radar (ACC target or object list), radar and camera agree, and not within 2 s after the ACC target dropped a lead the camera still follows (a lead turning out of the lane); camera-only moments are judged with video, not scored; the car moving (>= 1 m/s): at standstill the planner's stop-and-go logic dominates and an object seen only by the ACC target may be a car or a wall"
  },
  "confident": {
   "vision": {
    "unnecessary": {
-    "episodes": 12,
-    "seconds": 10.6
+    "episodes": 11,
+    "seconds": 10.2
    },
    "missed": {
-    "episodes": 14,
-    "seconds": 16.9
+    "episodes": 9,
+    "seconds": 10.3
    }
   },
   "2.1": {
@@ -22,8 +22,8 @@
     "seconds": 11.5
    },
    "missed": {
-    "episodes": 13,
-    "seconds": 16.1
+    "episodes": 8,
+    "seconds": 9.5
    }
   },
   "2.2": {
@@ -32,8 +32,8 @@
     "seconds": 4.9
    },
    "missed": {
-    "episodes": 13,
-    "seconds": 16.1
+    "episodes": 8,
+    "seconds": 9.5
    }
   },
   "2.3": {
@@ -42,8 +42,8 @@
     "seconds": 4.9
    },
    "missed": {
-    "episodes": 13,
-    "seconds": 16.1
+    "episodes": 8,
+    "seconds": 9.5
    }
   },
   "2.4": {
@@ -52,17 +52,17 @@
     "seconds": 5.4
    },
    "missed": {
-    "episodes": 12,
-    "seconds": 13.8
+    "episodes": 7,
+    "seconds": 7.2
    }
   }
  },
  "rms_vs_oracle_while_braking": {
-  "vision": 0.273,
-  "2.1": 0.268,
-  "2.2": 0.267,
-  "2.3": 0.266,
-  "2.4": 0.266
+  "vision": 0.257,
+  "2.1": 0.25,
+  "2.2": 0.249,
+  "2.3": 0.248,
+  "2.4": 0.249
  },
  "turning_lead_case": "video and optical looming: the in-lane lead slowed to turn off (about -3 m/s at 105-115 m) then left the lane; 2.1 braked -1.54 m/s2 for a car a lane over whose radar speed read a false -7 m/s; 2.3 -0.29; vision -0.08",
  "suite_34_drives": {
@@ -72,48 +72,48 @@
    "vision": {
     "unnecessary": {
      "episodes": 27,
-     "seconds": 32.6
+     "seconds": 31.9
     },
     "missed": {
      "episodes": 12,
-     "seconds": 11.0
+     "seconds": 10.0
     }
    },
    "2.1": {
     "unnecessary": {
-     "episodes": 13,
-     "seconds": 8.4
+     "episodes": 14,
+     "seconds": 9.4
     },
     "missed": {
-     "episodes": 7,
-     "seconds": 5.1
+     "episodes": 6,
+     "seconds": 4.1
     }
    },
    "2.3": {
     "unnecessary": {
      "episodes": 10,
-     "seconds": 8.2
+     "seconds": 8.1
     },
     "missed": {
      "episodes": 6,
-     "seconds": 3.9
+     "seconds": 3.3
     }
    },
    "2.4": {
     "unnecessary": {
      "episodes": 8,
-     "seconds": 7.2
+     "seconds": 7.1
     },
     "missed": {
      "episodes": 5,
-     "seconds": 3.6
+     "seconds": 3.0
     }
    }
   },
   "rms_vs_oracle_while_braking": {
-   "vision": 0.246,
+   "vision": 0.245,
    "2.1": 0.248,
-   "2.3": 0.245,
+   "2.3": 0.244,
    "2.4": 0.244
   }
  },

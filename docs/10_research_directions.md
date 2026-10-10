@@ -198,7 +198,7 @@ upstream PR.
 | Kalman speed filter (one state, 240|7-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
 | young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
 | speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
-| age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.8 -> 4.3 s) | keep |
+| age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
 | ego-speed alignment x 0.149/0.15 | 1 | 1.x | neutral (onset +12 ms) | droppable |
 | state pruning | 7 | 2.0 | unbounded state | required |
