@@ -84,7 +84,7 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 The code comes in two versions that drive identically:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 224 lines (184 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 223 lines (183 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build can still add the
   radar's target summaries and the track-ID relink as options; neither improves the driving
   ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
