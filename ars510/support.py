@@ -260,7 +260,7 @@ class Target366:
 
     @property
     def y_rel(self) -> float | None:
-        """Lateral offset in metres, left positive, -0.34 m per code; None for 15 (no target) and -16 (beyond the field's range)."""
+        """Lateral offset in metres, left positive, -0.34 m per code; None for 15 (no target) and -16 (invalid, mostly beyond +-5 m)."""
         return None if self.lateral_code in (15, -16) else -0.34 * self.lateral_code
 
     @property
