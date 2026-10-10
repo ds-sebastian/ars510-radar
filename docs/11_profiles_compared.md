@@ -72,7 +72,7 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 
 | over 4.56 h of driver-controlled driving (jerk, error, lead share and flips: its 2.66 h moving) | vision only | `raw` | `fused` w/o ACC target | `fused` |
 |---|---|---|---|---|
-| braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour | 0 | 1.75 | 0.88 | 0.22 |
+| braking (≤ −1 m/s², ≥ 0.3 s) only this system asked for, per hour (driver-controlled stretches only) | 0 | 1.75 | 0.88 | 0.22 |
 | … of which the driver was on the gas | — | 0.66 | 0.22 | 0 |
 | hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 30 |
 | driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 4 / 1 |
@@ -91,7 +91,7 @@ What the radar adds, by profile:
   are answered earlier than vision and 13 later, and it is already asking for ≤ −1 m/s² before 41.3% of brake presses
   (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
   (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
-- **The Kalman filter alone** (no ACC target) halves `raw`'s false braking (93 → 48 hard ticks) with onset between
+- **The Kalman filter alone** (no ACC target) halves `raw`'s hard radar-only braking (93 → 48 hard ticks) with onset between
   `raw` and `fused`; the radar's ACC target supplies the rest of `fused`'s gain.
 - **Every profile follows a radar lead about 87 % of the time a lead exists**, so radard uses the radar distance for
   those leads. In `fused` the car the radar's ACC function follows is published at the radar's
@@ -105,7 +105,7 @@ What the radar adds, by profile:
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away seen later than the radar sees them |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
-| `fused` | closest to vision in feel (lowest jerk; smallest error vs the driver among the radar profiles), radar-only braking almost gone, slightly earlier than vision on average, one speed state | the head start over vision is small on average; road miles from two cars so far |
+| `fused` | closest to vision in feel (lowest jerk; smallest error vs the driver among the radar profiles), radar-only braking almost gone, as early as vision on average, one speed state | the head start over vision is small on average; road miles from two cars so far |
 
 ## Assumptions and limits
 

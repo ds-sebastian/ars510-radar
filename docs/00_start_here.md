@@ -36,7 +36,7 @@ from 0.6 m to 4-6 m at range.
 ![road statistics](img/analysis/guide_road_stats.png)
 
 *Left: radar minus camera range for the same car (median ± robust spread). Middle and right: the owner's car and a
-second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)) give the same
+second driver's 2025 RAV4 Hybrid ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)) give similar
 numbers.* More: [06 Accuracy](06_accuracy.md).
 
 The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.

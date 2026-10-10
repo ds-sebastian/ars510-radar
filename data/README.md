@@ -8,7 +8,7 @@ Three short highway captures, used by the tests and figures:
 |---|---|---|
 | `highway_following_30s.csv.gz` | 30 s | drive A: following a lead at ~75 m (55-86 m) while a left-lane car closes from ~88 m to ~45 m |
 | `highway_vrel_excursion_25s.csv.gz` | 25 s | drive A: a settled lead at 41-57 m whose over-ground speed dips ~8 m/s for ~1 s while its range opens ([docs/07](../docs/07_velocity_excursions.md)) |
-| `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.8 m/s and its range slides 46 → 33 m while the ACC target stays at −0.75 to −0.9 m/s ([docs/12](../docs/12_kalman_filter.md#the-model)) |
+| `highway_acc_anchor_24s.csv.gz` | 24 s | drive E: includes the radar's ACC target (0x235 / 0x237); at ~18 s the lead's object-list speed falls to −5.9 m/s and its range slides 46 → 33 m while the ACC target stays at −0.75 to −0.9 m/s ([docs/12](../docs/12_kalman_filter.md#the-model)) |
 
 Format `t_s,bus,address,data_hex`, times rebased to 0. Only bus 1 0x80 / 0x81 / 0x85 / 0x86 / 0x192 (and 0x235 / 0x237 in
 the drive E sample) and bus 0 0xB4 are included; no GPS, video, route or device identifier.
@@ -28,8 +28,8 @@ dongle IDs, dates or GPS.
 | `lane_cells.parquet` | 48k | camera-matched 0x85 lane-curve cell rows (cells 2/3/8/9): offset, heading, curvature codes and bit 79, camera lane slope and curvature, ego-motion offset rate; segment labels are an index within this sample |
 | `standstill_codes.parquet` | 15k | `64\|10` codes while ego is stopped; includes moving targets, with a dominant low-speed peak |
 | `brake_events/E*_*.csv` | | drive-A brake-event windows: replay ticks, radar lead track, camera pair |
-| `fault_injection.csv` | 81 | ghost / fault scenarios through radard and the planner |
-| `summary_owner_case.csv` | 39k | relative-time owner-drive O1 comparison under fused 2.0: summaries off / on, and captured vision; saved planner and lead outputs, anonymous lead T1 |
+| `fault_injection.csv` | 82 | ghost / fault scenarios through radard and the planner |
+| `summary_owner_case.csv` | 476 | relative-time owner-drive O1 comparison under fused 2.0: summaries off / on, and captured vision; saved planner and lead outputs, anonymous lead T1 |
 | `lead_choice_cases.csv.gz` | 500 | two road moments for [docs/00](../docs/00_start_here.md#6-choosing-which-tracks-openpilot-sees) (`case`, relative `t`): planner request and published lead (range, radar flag) under vision only, 2.1 and 2.3 (2.4 asks the same), plus the camera lead range, the radar's ACC target range and ego speed; owner drives, no identifiers |
 | `stats.json`, `STATS.md` | | descriptive statistics from `tools/compute_stats.py` |
 

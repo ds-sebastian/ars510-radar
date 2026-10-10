@@ -86,7 +86,7 @@ Replay against the driver, unchanged openpilot card → radard → planner on th
 | | `raw` | `fused` without ACC target | `fused` |
 |---|---|---|---|
 | hard radar-only braking ticks, 20 held-out routes (4.6 h) | 93 | 48 | **30** |
-| radar-only target episodes, held-out | 19 | 8 | **3** |
+| radar-only target episodes, 20 held-out drives (whole drives) | 19 | 8 | **3** |
 | target episodes, 3 owner sunnypilot drives | – | 4 | **0** |
 | hard radar-only braking ticks, 4 further drives | – | 2 | **1** |
 | driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.3% |

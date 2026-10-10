@@ -24,7 +24,7 @@ IDLE_SLOT = bytes.fromhex("FCE00000A0F07F00FFFDF71FFFA100F807000F000800000000000
 
 EGO_MAX_AGE_S = 0.5
 PUBLISH_AGE = 60  # ~3.6 s: young tracks have unconverged range and speed
-RANGE_GAIN = 0.1  # velocity-aided range: halves the far-range walk
+RANGE_GAIN = 0.1  # velocity-aided range: cuts the far-range walk by about a third
 # Kalman speed filter (one state: the lead's over-ground speed)
 SIGMA_PER_CODE = 0.045  # m/s per 240|7 count, against the radar's ACC target
 YOUNG_SCALE, YOUNG_AGE = 1.8, 100  # young tracks err more than 240|7 says
