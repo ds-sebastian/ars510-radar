@@ -276,6 +276,14 @@ There is no per-object relative-speed (Doppler) field. The ACC target's relative
   over code deciles); that mixes both estimators' errors, so physical units remain provisional
   ([summary](../data/analysis/summaries/video_truth.json)).
 
+**Reference scope.** For aligned estimates of the same target,
+`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`.
+Shared errors can cancel: if both estimates have error `b`, their disagreement is zero for any `b`.
+Disagreement widths therefore provide no physical sensor-error bound without constraints on the reference
+error and cross-covariance. Published-state scatter and the predicted-record flag also do not identify whether
+these codes describe raw measurement noise, tracker uncertainty or another quality estimate. The `fused`
+conversion is an empirical estimator weight; raw measurement-noise covariance remains uncalibrated.
+
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
 phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
 beyond 70 m are on in 98 % of cycles, those first seen at 40-70 m in 86 % and those first seen inside 40 m in 34-46 %, so the
