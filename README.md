@@ -40,13 +40,17 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 From replaying 34 recorded drives through openpilot's unchanged radard and planner, judged against what the driver did
 ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 89% of the time a lead exists, so the gap to the car ahead is measured, not
+- **Leads come from the radar** about 87% of the time a lead exists, so the gap to the car ahead is measured, not
   estimated from the camera. Stops end about 1 m closer to the lead than with vision (vision reads the gap short).
 - **Braking starts slightly before vision-only would** on average (0.02 s), and the planner is already asking for
-  ≥ 1 m/s² before 44% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
+  ≥ 1 m/s² before 42% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
   the driver also slowed, never while the driver was on the gas. The requests are as smooth as vision-only.
+- **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
+  brakes unnecessarily for 4.9 s against 10.6 s for vision only (34 replay drives: 8.2 s against 32.6 s), and misses no
+  more braking
+  ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
 - **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
   speed can still cause a short, mild slowdown.
 
@@ -80,7 +84,7 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 The code comes in two versions that run the same filter:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of about 210 lines in opendbc style.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 224 lines (184 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is the smallest version that drives like `fused` on 34 replay drives: the same filter without the radar's
   summaries and the track-ID relink, which change no unjustified braking
   ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to that configuration point for
@@ -186,8 +190,12 @@ profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 
 
 ## Documentation
 
+New here? [00 Start here](docs/00_start_here.md) walks from CAN frames to openpilot's planner in pictures, with the key
+numbers and a glossary.
+
 | doc | contents |
 |---|---|
+| [00 Start here](docs/00_start_here.md) | the parser in pictures: nine steps, the numbers that matter, how to read the evidence, glossary |
 | [01 Radar bus](docs/01_radar_bus.md) | every message on the radar bus, power-up timeline |
 | [02 Object list](docs/02_object_list.md) | 0x80 transport, header, track IDs, an object's life, which objects the radar lists |
 | [03 Slot fields](docs/03_slot_fields.md) | every bit of an object: kinematics, lifecycle, lane assignment, class and size, uncertainty |

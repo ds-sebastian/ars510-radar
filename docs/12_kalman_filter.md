@@ -133,7 +133,7 @@ object-list track each one describes.
 
 | tracker | match | kept while |
 |---|---|---|
-| ACC target (0x235 / 0x237) | cost = \|dRel − x\| / max(12 m, 0.25 x) + \|yRel − y\| / 0.5 m below 1, at least 1 better than the next track, track age ≥ 20; x is the 0.025 m ACC distance, y its 0.01 m lateral. A track younger than 100 cycles whose relative speed is within 5 m/s of the target's uses max(12 m, 0.4 x) | the track's cost stays below 4 and the ACC position moves at most 8 m / 1 m per update |
+| ACC target (0x235 / 0x237) | cost = \|dRel − x\| / max(12 m, 0.4 x) + \|yRel − y\| / 0.5 m below 1, at least 1 better than the next track, track age ≥ 20; x is the 0.025 m ACC distance, y its 0.01 m lateral | the track's cost stays below 4 and the ACC position moves at most 8 m / 1 m per update |
 | summary (0x192 / 0x194) | the track within max(5 m, 15 %) in range and 1 m laterally of the summary position, unambiguous (alone or 3 m nearer than the next), track age ≥ 20 | the track stays within max(8 m, 25 %) in range and 2 m laterally |
 
 - **Position, not speed.** Both matches use the tracker's own position. A summary used to need the object-list speed to
@@ -151,8 +151,8 @@ object-list track each one describes.
   tick to tick, and flips between a radar and a vision lead 30 % less often (1,764 → 1,231 on the 20 held-out drives).
 - **New tracks can start far short.** About 10-20 % of new in-lane tracks the ACC target follows read more than 10 m
   short of it, often for seconds; on the road one first read 47 m for a car at 64 m and drew a −2.4 m/s² brake where
-  −0.7 would have done. Young tracks therefore get the wider range scale when their speed agrees with the target's, and
-  a track that becomes the ACC track before it is published starts its range at the ACC distance.
+  −0.7 would have done. The match therefore allows 0.4 x in range (25 m at 64 m), so such a track still takes the ACC
+  distance; range fusion pulls it there within about a second. The margin to the next track keeps two cars apart.
 
 ![tracker range](img/analysis/tracker_range.png)
 
@@ -164,32 +164,51 @@ episodes; braking onset against vision stays at −0.02 s and the share of drive
 hard braking (30 / 2 / 0 ticks, 11 hard and 4 target episodes), 1,242 lead flips, onset −0.015 s and 43.1 % anticipated.
 Numbers: [`tracker_association.json`](../data/analysis/summaries/tracker_association.json).
 
-## Lead-choice guards
+## Path gate
 
 radard pairs the vision lead with the radar track nearest in range and has no lateral gate, so a car in the next lane
-at the lead's range can become the lead. On the road this caused the only unprompted braking of the default profile
-(about 1.5 m/s², driver on the gas) and a hard brake in a second car's replay. Two guards withhold such tracks; the
-track the ACC target follows is never withheld:
+at the lead's range can become the lead. On the road this caused the default profile's only unprompted braking (about
+1.5 m/s², driver on the gas) and a hard brake in a second car's replay. Beyond 15 m, a track other than the ACC
+target's that is more than 2.5 m from the ego path predicted from yaw rate and speed (constant curvature,
+`y − yaw / v · d² / 2`) is not published. Closer in it stays: a gate down to 0 m also removed two justified hard brakes
+on cars moving into the lane at 8-10 m. For radar leads beyond 60 m the gate removes 67 % of the cycles where the
+camera places the lead more than 2.5 m to the side, and 2.3 % of those where the camera agrees; the radar's share of
+leads beyond 60 m drops from 77 % to 73 % (vision covers the rest).
 
-- **Next lane at the ACC target's range:** while the ACC target is present, a track within max(5 m, 10 %) of its range
-  and more than 2.5 m from it laterally is not published.
-- **Off the predicted path at range:** beyond 60 m, a track more than 2.5 m from the ego path predicted from yaw rate and
-  speed (constant curvature, `y − yaw / v · d² / 2`) is not published. For radar leads beyond 60 m it removes 67 % of the
-  cycles where the camera places the lead more than 2.5 m to the side, and 2.3 % of those where the camera agrees; the
-  radar's share of leads beyond 60 m drops from 77 % to 74 % (vision covers the rest).
+![path gate](img/analysis/guide_lead_guards.png)
 
-| 34 drives | held-out hard ticks / episodes / target | further / owner hard ticks | owner target episodes | lead flips (held-out) | onset vs vision |
-|---|---|---|---|---|---|
-| 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s |
-| + young match, next-lane guard | 30 / 11 / 4 | 2 / 0 | 1 | 1,229 | −0.024 s |
-| + off-path guard | 30 / 11 / 3 | 2 / 0 | 0 | 1,372 | −0.016 s |
-| openpilot version (no summaries): 2.1 → with all three | 30 / 11 / 4 → 30 / 11 / 3 | 2 / 0 → 2 / 0 | 1 → 0 | 1,242 → 1,382 | −0.015 → −0.010 s |
+| 34 drives | held-out hard ticks / episodes / target | further / owner hard ticks | owner target episodes | lead flips (held-out) | onset vs vision | driver brakes anticipated |
+|---|---|---|---|---|---|---|
+| 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s | 43.7 % |
+| 2.3 `fused` (0.4 x ACC match, path gate) | 30 / 11 / 3 | 1 / 0 | 0 | 1,342 | −0.018 s | 41.9 % |
+| openpilot version (no summaries): 2.1 → 2.3 | 30 / 11 / 4 → 30 / 11 / 3 | 2 / 0 → 1 / 0 | 1 → 0 | 1,242 → 1,349 | −0.015 → −0.010 s | 43.1 → 41.3 % |
 
-On the owner's 5.8 h of 2.1 road drives (replayed open loop) all three together keep hard radar-only braking at 0 and
-miss no hard vision brake. They cut radar-only requests of 1 m/s² or more from 10 to 7, start braking within 0.015 s of
-2.1 on every drive, and raise lead flips by 14 %. They also remove the second car's hard false brake. In the late-brake
-case above, the first radar lead is at 64 m instead of 47 m and the request −1.47 instead of −2.36 m/s² (vision −1.61).
+On the owner's 5.8 h of 2.1 road drives (replayed open loop) 2.3 keeps hard radar-only braking at 0 and misses no hard
+vision brake. It cuts radar-only requests of 1 m/s² or more from 10 to 7, starts braking within 0.015 s of 2.1 on every
+drive, and raises lead flips by 8 %. It also removes the second car's hard false brake. In the late-brake case above,
+the first radar lead is at 63 m instead of 47 m and the request −1.47 instead of −2.36 m/s² (vision −1.61). The cost is
+a slightly lower share of driver brakes anticipated at −1 m/s² (41.9 against 43.7 %). The openpilot file's parts and
+their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
+
+## Against what the car should have done
+
+Vision only is an imperfect reference too. As a second one, a hindsight lead was built for each moment of the road
+drives: identity from the radar's in-path ACC target (else the camera's lead); range from the ACC target, else the raw
+object list within 1 m laterally, plus the camera when it is on the same car; smoothed forwards and backwards
+(Rauch-Tung-Striebel, constant acceleration). openpilot's unchanged radard and planner then ran on that lead alone,
+through an interface that publishes only it. Each version is scored against that oracle's request on the moments
+where the reference comes from the radar and radar and camera agree. Camera-only moments are judged with video,
+because the model's lead range slides from one car to the next at cut-ins.
+
+![against the oracle](img/analysis/guide_oracle.png)
+
+Over 7.65 h of the owner's road drives, 2.3 brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
+4.9 s against 10.6 s for vision only and 11.5 s for 2.1, and misses no more of the braking the oracle asked for (16.1 s,
+vision 16.9 s). On the 34 replay drives, which did not shape 2.3 (6.72 h scored), it is the best of the three on both:
+8.2 s unnecessary (vision 32.6 s, 2.1 8.4 s) and 3.9 s missed (vision 11.0 s, 2.1 5.1 s). Standstill is not scored: the
+planner's stop-and-go logic dominates there. Numbers:
+[`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 
 ## What each part is worth
 
@@ -248,7 +267,7 @@ combination on the same 34 drives. A version drives the same as `fused` when its
   braking on a far lead (12 and 9 ticks).
 
 The smallest version with the same driving is `fused` without the summaries and the relink. That is the openpilot
-version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py), about 210 lines; a test keeps it equal to this
+version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file); a test keeps it equal to this
 configuration point for point). The fork's default `fused` keeps the summaries for the smoother response described
 below (`combinations_34_drives` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 

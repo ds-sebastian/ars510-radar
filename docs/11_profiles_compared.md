@@ -90,7 +90,7 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 | first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s [−0.26, −0.05] | −0.03 s [−0.11, +0.04] | −0.02 s [−0.08, +0.04] |
 | median first request vs the brake press | −0.61 s | −0.87 s | −0.74 s | −0.78 s |
 | already asking ≤ −0.5 m/s² within 3 s before | 80.8 % | 84.4 % | 83.8 % | 82.0 % |
-| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 43.7 % |
+| already asking ≤ −1.0 m/s² within 3 s before | 40.1 % | 44.3 % | 41.9 % | 41.9 % |
 | hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 
 | over 4.56 h of driver-controlled driving | vision only | `raw` | `fused` w/o ACC / summary | `fused` |
@@ -100,8 +100,8 @@ Held-out set: 20 routes, 4.56 h with the driver controlling speed, 167 driver br
 | hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5) | — | 93 | 48 | 30 |
 | driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 2 | 6 / 1 | 4 / 1 |
 | request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.422 | 0.419 | 0.415 |
-| request jerk (mean \|da/dt\|) | 1.029 | 1.009 | 1.007 | 1.001 |
-| share of lead time on a radar lead | 0 | 86.6 % | 86.8 % | 88.6 % |
+| request jerk (mean \|da/dt\|) | 1.029 | 1.009 | 1.007 | 0.999 |
+| share of lead time on a radar lead | 0 | 86.6 % | 86.8 % | 87.0 % |
 | flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 480 |
 
 What the radar adds, by profile:
@@ -112,7 +112,7 @@ What the radar adds, by profile:
   than the vision lead in the 4 s before driver brakes). The same bias causes its radar-only braking.
 - **`fused` removes that bias** and, with it, almost all radar-only braking: 0.22 per hour, every one while the
   driver also slowed. It still brakes slightly earlier than vision on average (−0.02 s): 22 of 148 paired driver brakes
-  are answered earlier than vision and 13 later, and it is already asking for ≥ 1 m/s² before 43.7% of brake presses
+  are answered earlier than vision and 13 later, and it is already asking for ≥ 1 m/s² before 41.9% of brake presses
   (vision 40.1%). In the 4 s before driver brakes its lead shows on average 0.44 m/s less closing than the vision lead
   (median 0.26; [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)).
 - **The Kalman filter alone** (no ACC target or summary) halves `raw`'s false braking (93 → 48 hard ticks, as many as

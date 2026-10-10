@@ -1,17 +1,5 @@
 {
- "description": "Young-track ACC match and two lead-choice guards (next lane at the ACC target's range; off the yaw-predicted path beyond 60 m), added to fused in 2.2.0. 34-drive replays per part against 2.1 fused (same harness and limits fixed before the runs), then all three on the owner's 2.1 road drives and a second car's two drives against the 2.1 replays of the same drives.",
- "parts": {
-  "young_match": {
-   "range_scale": "max(12 m, 0.25 x, 0.4 x) for tracks younger than 100 cycles whose relative speed is within 5 m/s of the ACC target's",
-   "range_restart": "an unpublished track that becomes the ACC track starts its range at the ACC distance"
-  },
-  "next_lane": {
-   "rule": "while the ACC target is present, a non-ACC track within max(5 m, 10 %) of its range and more than 2.5 m from it laterally is not published"
-  },
-  "off_path": {
-   "rule": "beyond 60 m, a non-ACC track more than 2.5 m from the yaw-predicted ego path y - yaw/v d^2/2 is not published"
-  }
- },
+ "description": "2.3 lead handling: the ACC match range scale max(12 m, 0.4 x) for every track, and the path gate (beyond 15 m, a track other than the ACC target's more than 2.5 m from the yaw-predicted ego path is not published). 34-drive replays against 2.1 fused (same harness and limits fixed before the runs), then the owner's 2.1 road drives and a second car's two drives replayed open loop against vision only.",
  "replay_34_drives": {
   "2.1 fused": {
    "heldout": {
@@ -39,46 +27,20 @@
    "ant10": 0.437,
    "radar_only_per_h": 0.22
   },
-  "young match + next lane": {
-   "heldout": {
-    "hard": 30,
-    "eps": 11,
-    "tgt": 4,
-    "radar_added": 1,
-    "sw": 1229
-   },
-   "further": {
-    "hard": 2,
-    "eps": 2,
-    "tgt": 3,
-    "radar_added": 0,
-    "sw": 298
-   },
-   "owner": {
-    "hard": 0,
-    "eps": 0,
-    "tgt": 1,
-    "radar_added": 0,
-    "sw": 0
-   },
-   "onset_vs_vision_s": -0.024,
-   "ant10": 0.431,
-   "radar_only_per_h": 0.22
-  },
-  "off path": {
+  "2.3 fused": {
    "heldout": {
     "hard": 30,
     "eps": 11,
     "tgt": 3,
     "radar_added": 1,
-    "sw": 1372
+    "sw": 1342
    },
    "further": {
-    "hard": 2,
-    "eps": 2,
+    "hard": 1,
+    "eps": 1,
     "tgt": 3,
     "radar_added": 0,
-    "sw": 297
+    "sw": 302
    },
    "owner": {
     "hard": 0,
@@ -87,8 +49,34 @@
     "radar_added": 0,
     "sw": 0
    },
-   "onset_vs_vision_s": -0.016,
-   "ant10": 0.431,
+   "onset_vs_vision_s": -0.018,
+   "ant10": 0.419,
+   "radar_only_per_h": 0.22
+  },
+  "path gate from 0 m (rejected)": {
+   "heldout": {
+    "hard": 22,
+    "eps": 8,
+    "tgt": 3,
+    "radar_added": 1,
+    "sw": 1317
+   },
+   "further": {
+    "hard": 1,
+    "eps": 1,
+    "tgt": 3,
+    "radar_added": 0,
+    "sw": 309
+   },
+   "owner": {
+    "hard": 0,
+    "eps": 0,
+    "tgt": 0,
+    "radar_added": 0,
+    "sw": 0
+   },
+   "onset_vs_vision_s": -0.018,
+   "ant10": 0.419,
    "radar_only_per_h": 0.22
   },
   "openpilot version 2.1": {
@@ -117,20 +105,20 @@
    "ant10": 0.431,
    "radar_only_per_h": 0.22
   },
-  "openpilot version 2.2 (all three)": {
+  "openpilot version 2.3": {
    "heldout": {
     "hard": 30,
     "eps": 11,
     "tgt": 3,
     "radar_added": 1,
-    "sw": 1382
+    "sw": 1349
    },
    "further": {
-    "hard": 2,
-    "eps": 2,
+    "hard": 1,
+    "eps": 1,
     "tgt": 3,
     "radar_added": 0,
-    "sw": 297
+    "sw": 302
    },
    "owner": {
     "hard": 0,
@@ -140,13 +128,26 @@
     "sw": 0
    },
    "onset_vs_vision_s": -0.01,
-   "ant10": 0.419,
+   "ant10": 0.413,
    "radar_only_per_h": 0.22
   }
  },
- "off_path_radar_share_of_leads_beyond_60m": {
+ "path_gate_from_0m_removed_justified_hard_episodes": {
+  "count": 2,
+  "ranges_m": [
+   7.6,
+   9.9
+  ],
+  "note": "real closing cars moving into the lane; hence the 15 m start"
+ },
+ "radar_share_of_leads_beyond_60m": {
   "2.1 fused": 0.769,
-  "off path": 0.735
+  "2.3 fused": 0.734
+ },
+ "path_gate_offline": {
+  "scope": "owner 2.1 drives, radar leads beyond 60 m",
+  "cut_when_camera_places_lead_beyond_2p5m": 0.67,
+  "cut_when_camera_agrees": 0.023
  },
  "young_track_range_gap": {
   "scope": "owner 2.1 drives, new in-lane tracks the ACC target followed (no other track at its position)",
@@ -165,35 +166,35 @@
     "vision_added": 0,
     "flips_per_moving_h": 257.0
    },
-   "2.2 fused": {
+   "2.3 fused": {
     "hard": 0,
-    "mild": 8,
+    "mild": 7,
     "vision_added": 0,
-    "flips_per_moving_h": 292.0
+    "flips_per_moving_h": 277.0
    }
   },
   "second_car_hard_radar_only": {
    "2.1 fused": 1,
-   "2.2 fused": 0
-  },
-  "second_car_mild_radar_only": {
-   "2.1 fused": 2,
-   "2.2 fused": 1
+   "2.3 fused": 0
   },
   "late_brake_case": {
    "first_radar_lead_m": {
     "2.1 fused": 46.6,
-    "2.2 fused": 64.2
+    "2.3 fused": 63.2
    },
    "min_request_mps2": {
     "vision only": -1.61,
     "2.1 fused": -2.36,
-    "2.2 fused": -1.47
-   },
-   "braking_start_vs_vision_s": {
-    "2.1 fused": -0.6,
-    "2.2 fused": -0.45
+    "2.3 fused": -1.47
    }
+  },
+  "turning_lead_case": {
+   "min_request_mps2": {
+    "vision only": -0.08,
+    "2.1 fused": -1.54,
+    "2.3 fused": -0.29
+   },
+   "note": "real lead slowing to turn off closed at about -3 m/s (optical looming); 2.1 braked for a car a lane over whose radar speed read a false -7 m/s"
   },
   "onset_change_per_drive_max_s": 0.015
  }

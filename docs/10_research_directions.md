@@ -158,11 +158,13 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 210 lines). It holds the reassembler, the slot
-decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. It is the smallest
-version with the same driving as the full filter: parts were removed alone and together on 34 replay drives, and every
-hard brake was checked against the radar's raw range, the camera and the driver
-([12](12_kalman_filter.md#removing-parts-together)). Constants are fixed in the file, there are no profiles, and points
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (224 lines, 184 of them code). It holds the reassembler, the slot
+decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. Up to 2.1 it was the
+smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives,
+and every hard brake was checked against the radar's raw range, the camera and the driver
+([12](12_kalman_filter.md#removing-parts-together)). 2.2 added three parts for cases found on the road; 2.3 replaced
+them with a wider ACC match (a constant) and one lateral path gate, which keep the same road fixes. Every line has to
+earn its place, and the ledger below says which parts an upstream PR would drop first. Constants are fixed in the file, there are no profiles, and points
 carry only `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it
 equal to `fused` with the summaries off, point for point (bundled samples; two full drives checked once), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
@@ -172,7 +174,8 @@ equal to `fused` with the summaries off, point for point (bundled samples; two f
    flag per moment; without the filter it asks for hard braking three times as often as `fused`
    ([`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). The candidate's test fails without the filter
    (the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
-   variance), leaving the interface a pass-through.
+   variance), leaving the interface a pass-through. Processing in the interface has precedent: openpilot's Ford
+   interface (Delphi MRR, 268 lines) clusters raw detections into tracks and associates them over time.
 2. **Small, separable PRs.** Decode and points first (opendbc, without the filter, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
 3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`; `8821F0R01100` unconfirmed). Drives on
@@ -181,3 +184,26 @@ equal to `fused` with the summaries off, point for point (bundled samples; two f
 5. **Alpha longitudinal compatibility.** Covered for `8821F0R03100`: after openpilot's UDS radar-disable request the
    radar stops only its car-bus messages and keeps sending bus 1, without a CAN filter
    ([01](01_radar_bus.md#openpilots-radar-disable)).
+
+### Parts of the openpilot file
+
+Each part of [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), its code lines (no comments, docstrings or
+blank lines; shared constants counted once), what removing it costs on the 34 replay drives, and its status for an
+upstream PR.
+
+| part | code lines | since | without it | for upstream |
+|---|---|---|---|---|
+| transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
+| ACC target decode and association | 27 | 2.0 (range scale 0.4 x since 2.3) | +24 unjustified hard ticks on 34 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2 | keep |
+| Kalman speed filter (one state, 240|7-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
+| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
+| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
+| age-60 publication gate | 2 | 1.0 | radar-only braking x3; publishing the ACC track early: further 2 -> 7 | keep |
+| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
+| ego-speed alignment x 0.149/0.15 | 1 | 1.x | neutral (onset +12 ms) | droppable |
+| state pruning | 7 | 2.0 | unbounded state | required |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
+| fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
+
+Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for
+each part.

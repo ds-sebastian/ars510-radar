@@ -92,7 +92,7 @@ and ID continuity also depend on the profile.
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([12](12_kalman_filter.md#the-model)), with guards against next-lane leads ([12](12_kalman_filter.md#lead-choice-guards)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
+| **`fused`** (default) | `FUSED_CONFIG` = `raw` + range fusion + one Kalman speed filter that weights the object list, the radar's ACC target and its summaries by their own uncertainty ([12](12_kalman_filter.md#the-model)), with a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)) | everyday driving: the fewest false brakes, unbiased closing speed, vision's timing ([11](11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter minus the summaries, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
@@ -114,7 +114,7 @@ Replay against the driver, unchanged openpilot card → radard → planner
 | hard radar-only braking ticks / target episodes, owner sunnypilot drives | 17 / – | **0** / 4 | **0** / 1 (an early reaction to a real slowdown) |
 | hard radar-only braking ticks, fresh owner drives (1.9 h) | 16 | – | **0** |
 | mean braking onset vs the driver, 167 held-out events | −1.170 s | −1.090 s | −1.085 s |
-| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 43.7% |
+| driver brakes the planner anticipated (≤ −1 m/s² from 3 s before to 0.5 s after) | 44.3% | 41.9% | 41.9% |
 
 The middle column is `fused` with the ACC target and summary readings ignored: the Kalman filter on the object list
 alone, which is the fallback when neither a matched ACC target nor a summary update is available.
@@ -172,11 +172,11 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 | | vision only | `raw` | `fused` without ACC / summary | `fused` |
 |---|---|---|---|---|
 | first braking request vs vision, mean | — | −0.15 s | −0.03 s | −0.02 s |
-| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 43.7% |
+| already asking ≤ −1.0 m/s² within 3 s before a brake press | 40.1% | 44.3% | 41.9% | 41.9% |
 | hard slowdowns never asked ≤ −1 m/s² (of 47) | 10 | 9 | 10 | 10 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 1.75 (0.66) | 0.88 (0.22) | 0.22 (0) |
-| request jerk, mean \|da/dt\| | 1.029 | 1.009 | 1.007 | 1.001 |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 480 |
+| request jerk, mean \|da/dt\| | 1.029 | 1.009 | 1.007 | 0.999 |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 703 | 494 |
 | forward-collision warnings | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and
