@@ -276,13 +276,12 @@ There is no per-object relative-speed (Doppler) field. The ACC target's relative
   over code deciles); that mixes both estimators' errors, so physical units remain provisional
   ([summary](../data/analysis/summaries/video_truth.json)).
 
-**Reference scope.** For aligned estimates of the same target,
-`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`.
-Shared errors can cancel: if both estimates have error `b`, their disagreement is zero for any `b`.
-Disagreement widths therefore provide no physical sensor-error bound without constraints on the reference
-error and cross-covariance. Published-state scatter and the predicted-record flag also do not identify whether
-these codes describe raw measurement noise, tracker uncertainty or another quality estimate. The `fused`
-conversion is an empirical estimator weight; raw measurement-noise covariance remains uncalibrated.
+**Reference scope.** The comparisons above are disagreements between two estimates of the same target:
+`Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels (if both
+are off by `b`, they disagree by zero for any `b`), so a disagreement width is not a bound on the physical error without
+limits on the reference's error and the covariance. Nor do published-state scatter or the predicted-record flag show whether
+these codes are raw measurement noise, tracker uncertainty or another quality estimate. In `fused` the conversion is an
+empirical estimator weight; a raw measurement-noise covariance is not calibrated.
 
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
 phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
