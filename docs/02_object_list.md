@@ -125,7 +125,7 @@ The object list is built for ACC: it lists **moving objects** and objects it saw
 with vRel ≈ −v_ego.*
 
 **For openpilot:** radar backs up vision on leads it watched slow down and stop. A vehicle that was already stopped
-when it came into view (a stalled car, the tail of a queue that stopped out of range) comes from vision alone.
+when it came into view (a stalled car, the tail of a queue that stopped out of range) comes mostly from vision.
 
 ![where objects are reported](img/analysis/bev_density.png)
 

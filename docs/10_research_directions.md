@@ -14,7 +14,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    80 m and 66% beyond ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
    and its wide error alone, which is where `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
    drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
-3. **Is the radar's ACC target camera-assisted?** The radar sends it ([05](05_acc_target_and_support.md)), but it
+3. **Is the radar's ACC target camera-assisted?** The radar sends it (◐, [05](05_acc_target_and_support.md)), and it
    receives lane-like camera data. Moments when the camera's messages to the radar go stale (glare, tunnels,
    startup), or one drive with the camera covered, show whether its velocity depends on the camera.
 4. **Physical units for the uncertainty fields.** `240|7`, `232|7`, `224|7` and `248|7` are scaled against the radar's ACC
@@ -22,7 +22,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    or a known far target) would give them physical units and test `fused`'s weights directly.
 5. **Do the weighting in radard.** A radard that accepts a per-point speed variance would let this interface pass the
    radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
-   The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 3-4) is a related experiment.
+   The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 2.0) is a related experiment.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
    than radard's derived `aLeadK` against an independent reference (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
    and earlier, with less wobble. radard derives `aLeadK` from vRel for every car; a fork-side radard
@@ -41,8 +41,8 @@ a turning lane. Those are likely two different parts of its pipeline; openpilot 
   keeps a departing car until its centre is a median 1.64 m off-axis (middle half 0.67-2.16 m; 22 departures). Measured
   against the radar's own lane boundary from the 0x85 curve cells, the release comes when the car's centre is a median
   0.29 m inside that line (21 departures): the release fits the rule "keep the target until its centre reaches my lane
-  line". On the fresh drives openpilot's model moved to the new lead first, 1.5 s and more than 6 s before the radar's
-  target did (the matched cut-ins); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
+  line". On two matched cut-ins on the fresh drives, openpilot's model moved to the new lead first (1.5 s and ≥ 6 s
+  earlier); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
 - **The control law (to be fitted).** How Toyota turns distance, closing speed and relative acceleration into a braking
@@ -114,7 +114,7 @@ Ways to keep AEB:
 
 - **A filter in the radar's line** (smartDSU-style) drops only the radar's 0x343 and passes its AEB. This works today and
   needs hardware at the radar, because the radar's link to the gateway bypasses the comma harness.
-- **Relay the radar's own decision.** A disabled radar keeps running its threat assessment on bus 1 (0x195 / 0x196).
+- **Relay the radar's own decision.** A disabled radar keeps sending its short-time-to-collision event pair (◐) on bus 1 (0x195 / 0x196).
   If its brake request also appears on bus 1, openpilot can forward it as 0x283 / 0x344, keeping Toyota's decision
   logic. One recorded stock AEB activation with bus 1 logged (for example against an inflatable PCS test target on a
   closed lot) shows whether it does.

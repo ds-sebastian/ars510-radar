@@ -1,0 +1,594 @@
+{
+ "description": "Provenance check of the driving docs (00, 07, 08, 10-13) on 2026-10-10: each claim's value found in a research-workspace result (by experiment ID) or recomputed from bundled data. 'corrected' rows were rewritten in the docs to the value given here; 'unsupported' rows were removed from the docs or replaced with sourced numbers.",
+ "claims": [
+  {
+   "doc": "07:10",
+   "claim": "excursions ramp up over ~1.5 s and decay over ~2 s",
+   "status": "unsupported",
+   "value": null,
+   "source": "research workspace SCR-115; earlier repo text only",
+   "note": "Contradicting retained wording: SCR-417 (data/derived/ars510_excursion_cause_20261003/result.md) 'ensemble onset/end shapes (25 events) ramp over ~1 s'; docs/07 waveform section itself says 'build up over 1-2 s'. Suggest '~1-2 s'."
+  },
+  {
+   "doc": "07:11, 00:43",
+   "claim": "~0.1 per 1,000 records below 20 m, 130 at 60-80 m",
+   "status": "unsupported",
+   "value": {
+    "discovery_text": "0.1 / 4 / 130 per 1000 at <20 / 20-40 / 60-80 m (ratio 31x)",
+    "confirmation_json": {
+     "rate_20_40": 0.0103,
+     "rate_60_80": 0.223,
+     "ratio": 21.7
+    }
+   },
+   "source": "research workspace SCR-115; bundled signal_atlas_and_acc_crosscheck.json; earlier repo text only",
+   "note": "Discovery-half numbers not retained; confirmation gives ~10 and ~223 per 1000 (rate denominator not recorded; script not retained, likely clean-labelled ACC+vision-matched records, not all records). Only the ratio (31x / 22x) and false-closing share 0.84 / 0.875 are in JSON."
+  },
+  {
+   "doc": "07:11",
+   "claim": "~18% of track time at 100 m",
+   "status": "supported",
+   "value": 0.18,
+   "source": "research workspace SCR-129",
+   "note": "Different label than the per-1000 rates in the same sentence (SCR-129 double-witness drift samples: range-closure residual and vision); sample share, i.e. ~track time."
+  },
+  {
+   "doc": "07:33",
+   "claim": "gap to ACC ramps from about -1 to -3.4 m/s",
+   "status": "unsupported",
+   "value": null,
+   "source": "research workspace SCR-115; earlier repo text only",
+   "note": "No retained number or script; clean_labels.py/mech.py outputs lack it."
+  },
+  {
+   "doc": "07:34",
+   "claim": "1.7% of record-to-record steps exceed 2 m/s",
+   "status": "unsupported",
+   "value": null,
+   "source": "research workspace SCR-115; earlier repo text only",
+   "note": "Not recomputable from public data (needs ACC target + vision labels)."
+  },
+  {
+   "doc": "07:35",
+   "claim": "range confirms a drift after 2-4 s",
+   "status": "unsupported",
+   "value": null,
+   "source": "bundled figure_numbers.json, jitter_problem_figures.json",
+   "note": "An inference (a 2-3 m/s drift needs ~2-4 s to exceed the walk), not a measured onset delay. Wording 'range alone confirms ... only after 2-4 s' was in older text."
+  },
+  {
+   "doc": "07:76",
+   "claim": "error is low-pass (~0.3 Hz)",
+   "status": "supported",
+   "value": "corner 0.2-0.3 Hz",
+   "source": "research workspace SCR-417",
+   "note": ""
+  },
+  {
+   "doc": "07:73",
+   "claim": "1.4 m/s at code 30 (0.8 at code 15)",
+   "status": "corrected",
+   "value": {
+    "measured_rms": {
+     "code_14.8": 0.816,
+     "code_28.0": 1.147,
+     "code_34.4": 1.34
+    },
+    "interp_code_30": 1.21,
+    "model_0.045x30": 1.35
+   },
+   "source": "bundled excursion_sigma_scale.json",
+   "note": "0.8 at code 15 is the measured RMS; 1.4 at 30 is the K=0.045 model. Measured at code 30 is ~1.2 m/s. Use '1.2 m/s at code 30' or say both are K x code."
+  },
+  {
+   "doc": "00:12",
+   "claim": "on a highway about 5 slots hold objects",
+   "status": "corrected",
+   "value": {
+    "drive_C_highway_mean_per_nonempty_record": 2.2,
+    "p95": 4,
+    "max": 7,
+    "settled_age_ge_60_mean": 1.49
+   },
+   "source": "bundled stats.json",
+   "note": "'about 5' matches neither mean nor p95; suggest 'about 2 (up to 7)'."
+  },
+  {
+   "doc": "07:118-119",
+   "claim": "roughness +0.005 (steady following) / +0.032 (switch windows) m/s^2 RMS; switch windows 20% of time",
+   "status": "supported",
+   "value": {
+    "steady_diff": 0.0055,
+    "switch_diff": 0.0315,
+    "switch_tick_share": 0.2002
+   },
+   "source": "research workspace SCR-119; bundled jitter_problem_figures.json, jitter_source_and_interface_limit.json",
+   "note": ""
+  },
+  {
+   "doc": "07:119",
+   "claim": "about 70% of the extra roughness",
+   "status": "supported",
+   "value": 0.693,
+   "source": "recomputed from the research captures",
+   "note": ""
+  },
+  {
+   "doc": "08:46",
+   "claim": "yvRel yaw rate (Toyota 0x24) matches phone gyro at 1.02x",
+   "status": "unsupported",
+   "value": null,
+   "source": "earlier repo text only",
+   "note": "Possible conflict: <path> says CAN 0x24 yaw is ~3-5% high vs device gyro (cites an older findings.md line no longer present). Not recomputable from public data (no yaw)."
+  },
+  {
+   "doc": "08:46",
+   "claim": "yvRel follows d(yRel)/dt at r = 0.88, slope 0.86",
+   "status": "unsupported",
+   "value": null,
+   "source": "earlier repo text only",
+   "note": "No workspace record; not recomputable (no yaw in public data)."
+  },
+  {
+   "doc": "08:49",
+   "claim": "aRel lags vRel by 0.5-1 s",
+   "status": "supported",
+   "value": {
+    "best_lag_s": 0.48,
+    "corr_at_best": 0.222,
+    "corr_0.3_to_0.9s": [
+     0.218,
+     0.219,
+     0.202
+    ]
+   },
+   "source": "bundled slots.parquet",
+   "note": "Only weakly coupled (r~0.22) with a broad peak 0.3-0.9 s; original claim from commit 5159253 had no saved source."
+  },
+  {
+   "doc": "08:134-135",
+   "claim": "17.5% of radard ticks repeat the previous vRel; adds ~1% to aLeadK roughness",
+   "status": "supported",
+   "value": {
+    "stale_share": 0.175,
+    "roughness_hold": 0.263,
+    "roughness_fresh": 0.26
+   },
+   "source": "research workspace archive",
+   "note": "0.263 vs 0.260 = +1.2%."
+  },
+  {
+   "doc": "08:186",
+   "claim": "StarPilot 2 drives / 18 min",
+   "status": "supported",
+   "value": {
+    "drives": 2,
+    "op_long_min": [
+     8.0,
+     9.7
+    ],
+    "drive_len_min": [
+     25,
+     20
+    ]
+   },
+   "source": "research workspace SCR-136",
+   "note": "18 min = openpilot-longitudinal time (17.7 min); drives were ~45 min in total. Current doc line only says '(2 drives)'."
+  },
+  {
+   "doc": "08:186",
+   "claim": "sunnypilot 2 drives with the earlier profile",
+   "status": "supported",
+   "value": {
+    "routes": [
+     "3",
+     "4"
+    ],
+    "op_long_min": [
+     11,
+     8
+    ]
+   },
+   "source": "research workspace SCR-274",
+   "note": "Old default profile, ARS510 active (flags 5465); route 2 drove vision-only, route 5 parked. The 09-28 first drives (ars510_sunnypilot_drive_check_20260928) ran without the radar."
+  },
+  {
+   "doc": "08:187",
+   "claim": "StarPilot extrapolates lead acceleration unchanged above 35 mph",
+   "status": "supported",
+   "value": "35 mph (blend 20-35 mph)",
+   "source": "research workspace SCR-136",
+   "note": ""
+  },
+  {
+   "doc": "08:40",
+   "claim": "about 9 us per call",
+   "status": "supported",
+   "value": {
+    "openpilot_file_us_per_10ms_card_call": [
+     5.7,
+     6.5
+    ],
+    "fork_native_interface_us_per_10ms": [
+     12.7,
+     13.9
+    ],
+    "per_frame_us": 0.6
+   },
+   "source": "recomputed from the research captures",
+   "note": "Order of magnitude holds; samples carry only bus-1 radar + 0xB4 frames, so real calls with all bus-0 traffic cost a bit more. Suggest '~6-15 us per 10 ms call'."
+  },
+  {
+   "doc": "openpilot/README:84",
+   "claim": "check_integration passes 21-22 checks",
+   "status": "supported",
+   "value": {
+    "current_openpilot_afa4703": 21,
+    "pinned_replay_base": 21,
+    "older_local_openpilot_c001f3c9b": 22,
+    "sunnypilot_v2026.002.002": 22
+   },
+   "source": "research workspace archive",
+   "note": "Sunnypilot counts are from 2026-09-28/30 builds; the 2026-10-04 release check could not complete sunnypilot (sparse source snapshot)."
+  },
+  {
+   "doc": "08:111, 12:120, 06:166",
+   "claim": "range fusion halves 1.5 s range walks",
+   "status": "corrected",
+   "value": {
+    "median_ratio_fused_to_raw": 0.68,
+    "by_band": {
+     "5-40": 0.67,
+     "40-80": 0.67,
+     "80-160": 0.78
+    },
+    "p90": {
+     "40-80": [
+      10.01,
+      7.29
+     ],
+     "80-160": [
+      17.78,
+      15.4
+     ]
+    }
+   },
+   "source": "bundled camera_pairs.parquet",
+   "note": "Only source: first-commit (cee331d) summary 'opt-in fusion halves them ... H1 failed beyond 80 m on B'. Recompute: about one third less (x0.67-0.78), less beyond 80 m. fused uses filtered vRel, which may do better; not testable with public data. Suggest 'cuts 1.5 s range walks by about a third'."
+  },
+  {
+   "doc": "12:97",
+   "claim": "aLeadK cascade lag 0 ticks on 14 of 15 routes, 1 tick on one",
+   "status": "supported",
+   "value": "14/15",
+   "source": "research workspace SCR-457; bundled fused_filter.json",
+   "note": ""
+  },
+  {
+   "doc": "12:109",
+   "claim": "saturation guard: held-out hard ticks 117 -> 93",
+   "status": "supported",
+   "value": {
+    "default": 117,
+    "default_plus_saturation_guard": 93
+   },
+   "source": "research workspace SCR-113",
+   "note": "velocity_guards.json is no longer in the public repo; 93 also appears as raw's hard ticks in profiles_vs_vision.json. Add the summary back or cite it in fused_filter.json."
+  },
+  {
+   "doc": "12:287",
+   "claim": "23 bookmarks give the same requests for 2.3 and 2.4 (SCR-494)",
+   "status": "supported",
+   "value": {
+    "bookmarks": 23,
+    "identical_min_request": 19,
+    "max_diff_mps2": 0.03,
+    "extra_and_missed_s_identical": 23
+   },
+   "source": "research workspace SCR-494",
+   "note": "Bookmarks: sn-17 11, sn-20 6, sn-1f 5, sn-18 1. Four minima differ by 0.01-0.03 m/s^2 (sn-17 4:09.8, 9:38.3, 101:00.0; sn-1f 78:08.1); 'same requests' holds to 0.03 m/s^2."
+  },
+  {
+   "doc": "12:288",
+   "claim": "road mild requests 2.3 vs 2.4: 7 each",
+   "status": "supported",
+   "value": {
+    "owner_only": {
+     "2.3_P15S": 7,
+     "2.4_op23": 7
+    },
+    "owner_plus_second_car": {
+     "2.3": 8,
+     "2.4": 8
+    }
+   },
+   "source": "research workspace archive",
+   "note": "Episode lists are identical: sn-17 1, sn-1b 1, sn-1d 1, sn-1f 1, sn-20 3 (owner = 7) plus ot-c3 1 (second car) = 8. lead_choice_guards road_drives_replay.owner '2.3 fused' mild 7 = owner only; cases_2_4 '8 mild across owner and second car'. Both consistent."
+  },
+  {
+   "doc": "12:295",
+   "claim": "Kalman bench on 8 drive groups",
+   "status": "supported",
+   "value": 8,
+   "source": "research workspace archive",
+   "note": "Tuned on 3 groups, scored on held-out / fresh / owner (public kalman_variants.json bench_definition)."
+  },
+  {
+   "doc": "12:307",
+   "claim": "retuned fused constants are as good as any on 8 fresh drives",
+   "status": "supported",
+   "value": null,
+   "source": "research workspace SCR-444",
+   "note": "Sweep sigma/code 0.033, ACC sigma 0.3, lead accel 1.0/2.0: only lead accel 2.0 passes every gate and is not better; current constants at a flat optimum."
+  },
+  {
+   "doc": "12:306",
+   "claim": "colored filter 15% fewer false closings",
+   "status": "supported",
+   "value": {
+    "heldout": [
+     5.9,
+     5.1,
+     -0.136
+    ],
+    "fresh": [
+     5.7,
+     4.8,
+     -0.158
+    ],
+    "owner": [
+     5.8,
+     5.8,
+     0.0
+    ]
+   },
+   "source": "bundled kalman_variants.json",
+   "note": "14-16% on held-out and fresh drives, 0% on owner drives; say 'on held-out and fresh drives'."
+  },
+  {
+   "doc": "12:306",
+   "claim": "colored: 2 -> 30 hard ticks on the further drives",
+   "status": "supported",
+   "value": {
+    "fused": 2,
+    "colored": 30
+   },
+   "source": "bundled kalman_variants.json",
+   "note": ""
+  },
+  {
+   "doc": "12:103",
+   "claim": "age 40: further-drive hard ticks 1 -> 9",
+   "status": "supported",
+   "value": {
+    "baseline_2.3": 1,
+    "A40": 9
+   },
+   "source": "research workspace SCR-492",
+   "note": "Baseline is 2.3 (CL_P15S)."
+  },
+  {
+   "doc": "12:104",
+   "claim": "age 80: missed braking vs oracle 3.0 -> 3.7 s on 27 drives",
+   "status": "supported",
+   "value": {
+    "corrected_oracle": {
+     "2.4": 3.0,
+     "2.3": 3.3,
+     "A80": 3.7
+    },
+    "before_SCR-496": {
+     "2.3": 3.8,
+     "A80": 4.3
+    }
+   },
+   "source": "research workspace SCR-496",
+   "note": "Baseline 3.0 = 2.4 (corrected oracle). A80 was built on 2.3's config, whose corrected value is 3.3, so like-for-like it is 3.3 -> 3.7. SCR-492's original numbers (3.8 -> 4.3) predate the oracle fix."
+  },
+  {
+   "doc": "10:41",
+   "claim": "Toyota ACC releases a departing car at |y| median 1.64 m (IQR 0.67-2.16, 22 departures)",
+   "status": "supported",
+   "value": {
+    "median": 1.64,
+    "iqr": [
+     0.67,
+     2.16
+    ],
+    "n": 22
+   },
+   "source": "research workspace SCR-418; bundled acc_target_choice.json",
+   "note": ""
+  },
+  {
+   "doc": "10:43",
+   "claim": "0.29 m inside the radar's lane line (21 departures)",
+   "status": "supported",
+   "value": {
+    "centre_minus_boundary_median": -0.29,
+    "iqr": [
+     -1.26,
+     0.42
+    ],
+    "n": 21
+   },
+   "source": "research workspace SCR-418; bundled acc_target_choice.json",
+   "note": "IQR is wide (-1.26 to +0.42 m)."
+  },
+  {
+   "doc": "10:44",
+   "claim": "openpilot's model moved first, 1.5 s and > 6 s (n = 3)",
+   "status": "supported",
+   "value": {
+    "switches": 3,
+    "matched": 2,
+    "leads_s": [
+     1.5,
+     ">=6"
+    ]
+   },
+   "source": "research workspace SCR-413",
+   "note": "Source says '>= 6 s' and only 2 of the 3 cut-in-like ACC switches (1.9 h, fresh routes 08/09/0a) were matched; these were cut-ins, not departures. Source calls it inconclusive."
+  },
+  {
+   "doc": "10:27",
+   "claim": "0x235 byte 2 vs radard aLeadK: corr 0.64 vs 0.56, RMS 0.68 vs 0.80, ~0.35 s earlier",
+   "status": "corrected",
+   "value": {
+    "at_0.1_per_code": {
+     "b2": {
+      "corr": 0.64,
+      "rms": 0.683,
+      "lag_s": 0.48
+     },
+     "aLeadK": {
+      "corr": 0.56,
+      "rms": 0.795,
+      "lag_s": 0.84
+     }
+    },
+    "at_0.125_per_code": {
+     "b2": {
+      "corr": 0.636,
+      "rms": 0.691,
+      "lag_s": 0.0
+     },
+     "aLeadK": {
+      "corr": 0.56,
+      "rms": 0.795,
+      "lag_s": 0.84
+     }
+    }
+   },
+   "source": "research workspace SCR-424",
+   "note": "The numbers come from SCR-424, not acc_target_arel.json. At the current 0.125: corr 0.64, RMS 0.69 vs 0.80 (barely changes) but the best-lag shift becomes 0.0 s, so 'about 0.35 s earlier' is fragile (0.36 s at 0.1, 0.84 s at 0.125). acc_target_arel.json (SCR-129) also decodes at 0.1: its binned medians should be x1.25; correlations unaffected, it has no RMS."
+  },
+  {
+   "doc": "10:161",
+   "claim": "upstream file equal to fused point for point; two full drives checked once",
+   "status": "supported",
+   "value": {
+    "full_drives": 2,
+    "diffs": 0,
+    "bundled_records": 1309,
+    "bundled_points": 1823
+   },
+   "source": "research workspace SCR-476",
+   "note": "The 2-drive check was for 2.1.0; for 2.4 only the bundled-sample test (tests/test_upstream_candidate.py) covers equality. Note findings.md uses SCR-476 for two different rows (also ars510_slim_norange_20261005)."
+  },
+  {
+   "doc": "10:170, 11:139",
+   "claim": "Ford radar_interface 268 lines, 194 code lines",
+   "status": "corrected",
+   "value": {
+    "opendbc_6123dde9 (table's other rows)": {
+     "total": 272,
+     "code": 184
+    },
+    "opendbc_4134c0d (current)": {
+     "total": 268,
+     "code": 180
+    }
+   },
+   "source": "bundled openpilot_file_parts.json",
+   "note": "194 matches neither checkout (195 = non-blank non-comment incl. docstrings on 6123dde9). Use 184 (272 lines) to match the table's other rows, or 180 (268) for current opendbc."
+  },
+  {
+   "doc": "10:141, 11:131",
+   "claim": "Tesla radar_interface 66 code lines",
+   "status": "supported",
+   "value": {
+    "opendbc_6123dde9": 66,
+    "opendbc_4134c0d": 62
+   },
+   "source": "research workspace archive",
+   "note": "Table rows (Toyota 70, Honda 60, Hyundai 55, Rivian 54, Chrysler 56, GM 71) all match 6123dde9; current opendbc has Tesla 62, Toyota 69."
+  },
+  {
+   "doc": "10:137",
+   "claim": "0x680 idle while driving: longest 1.0 s in 7.8 h",
+   "status": "supported",
+   "value": {
+    "longest_s": 1.01,
+    "moving_h": [
+     7.25,
+     0.55
+    ]
+   },
+   "source": "bundled object_stream_0x680.json",
+   "note": "7.8 h = 7.25 + 0.55 moving hours; held-out longest 0.5 s."
+  },
+  {
+   "doc": "11:124",
+   "claim": "missed hard slowdown window [-3, +1] s; anticipation [-3, +0.5]; first request [-3, +2]",
+   "status": "supported",
+   "value": null,
+   "source": "research workspace SCR-112",
+   "note": "Table rows 'within 3 s before' (docs 08:147, 11:69-70) and profiles_vs_vision.json description ('within 3 s before the brake press') are shorthand; the window runs to +0.5 s."
+  },
+  {
+   "doc": "11:122",
+   "claim": "Fewer than 10 events separate several rows",
+   "status": "supported",
+   "value": {
+    "ant05_events": {
+     "vision": 135,
+     "raw": 141,
+     "fused": 137
+    },
+    "ant10_events": {
+     "vision": 67,
+     "raw": 74,
+     "fused": 69
+    },
+    "hard_missed": [
+     10,
+     9,
+     10,
+     10
+    ],
+    "overrides": [
+     "7/2",
+     "6/1",
+     "4/1"
+    ]
+   },
+   "source": "bundled profiles_vs_vision.json",
+   "note": "Every event-count row differs by at most 7 events between columns; 'several' understates it."
+  },
+  {
+   "doc": "13:25",
+   "claim": "0x4FF ~0.77 Hz",
+   "status": "supported",
+   "value": {
+    "frames_per_60s_segment": 46,
+    "hz": 0.77
+   },
+   "source": "recomputed from the research captures",
+   "note": "census prints 0.8 because it rounds to one decimal."
+  },
+  {
+   "doc": "13:29",
+   "claim": "0x411 over 773 owner segments (JSON counts 752 + 27 = 779)",
+   "status": "corrected",
+   "value": {
+    "segments_searched": 773,
+    "segments_with_0x411_payload_census": 752,
+    "of_which_startup_40_20": 27
+   },
+   "source": "research workspace SCR-459",
+   "note": "752 and 27 overlap (the 27 also carry 00 20), so 779 is not a count. The payload census covers 752 segments; 773 is the event/alert scan. JSON key 'payloads_773_segments' should be 752 or the text should say 752."
+  },
+  {
+   "doc": "13:61",
+   "claim": "0x366 coverage drives A / B",
+   "status": "supported",
+   "value": {
+    "A": "O2 (route 1e7a8dbd06, 13 segments, 3,748 0x366 frames)",
+    "B": "O3 (4 segments, 1,200 frames)"
+   },
+   "source": "bundled radar_car_bus_messages.json",
+   "note": "Relabel A/B as O2/O3 to match the 0x365 table in the same doc."
+  }
+ ]
+}

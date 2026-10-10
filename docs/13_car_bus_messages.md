@@ -25,7 +25,7 @@ All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots
 
 Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x344 and 0x283 end in the Toyota
 checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
-(4.1 h of owner drives and U1; 0x411 over 773 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
+(4.1 h of owner drives and U1; 0x411 over 752 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
 after each of 27 cold starts).
 0x33E, 0x365 and 0x366 change with the lead.
 
@@ -91,7 +91,7 @@ bus, so openpilot longitudinal needs one of two setups:
 |---|---|---|
 | how | a board in the radar's line drops only the radar's 0x343 while openpilot sends its own; status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
-| PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: no AEB source |
+| PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: the radar's PCS / AEB request is off with its car-bus output |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
 | car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
@@ -102,9 +102,9 @@ right after the disable request and it stays set for all 26 minutes. It stays 0 
 switch) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
 messages begin. It behaves as the brake system's flag for a missing driving-support / PCS link.
 
-**The radar keeps assessing threats while disabled.** On U2 the bus-1 event pair 0x195 / 0x196
+**The event pair keeps running while the radar is disabled (◐).** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target
-time to collision 3.6-7.5 s). Its decisions stay on bus 1 while it is disabled. On U1 (stock ACC) the 5 comparable short states
+time to collision 3.6-7.5 s). That state stays on bus 1. On U1 (stock ACC) the 5 comparable short states
 left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that precedes PCS action (◐), and the brake request
 travels on the car bus.
 

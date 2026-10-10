@@ -47,7 +47,8 @@ flowchart LR
   G --> P["RadarPoint to radard (unchanged)"]
 ```
 
-The object-list σ also holds on cars outside its calibration: against the 2 Hz object stream 0x680, a tracker-quality
+The object-list σ also tracks the error on other cars, which runs 1.1-1.5× the filter's σ: against the 2 Hz object
+stream 0x680, a tracker-quality
 witness for vehicles without an ACC target, the object-list speed error is 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
 0-40 / 40-60 / 60-80 / 80-110 / 110-170 m, where 0.045 m/s × `240|7` gives 0.6 / 1.1 / 1.6 / 2.6 / 3.4 m/s, and 1-4 % of
 frames lie beyond 3 σ. The error leans toward closing (median −0.2 to −0.7 m/s up to 110 m, −1.9 m/s beyond), which the
@@ -230,7 +231,7 @@ the same hard braking on these drives (30 / 1 / 0, [above](#path-gate)). Counts 
 **Were those hard brakes real?** "Hard radar-only" means the radar planner braked hard where vision-only stayed below
 −0.5 m/s²; the radar may simply have seen a real slowdown first. Every hard episode in every run was therefore judged
 against references independent of the radar speed:
-- **the radar's raw range** of the same object, decoded from the original CAN (range holds steady through speed excursions, [07](07_velocity_excursions.md)), else the
+- **the radar's raw range** of the same object, decoded from the original CAN, else the
   camera's lead distance from the vision-only replay;
 - **the braking the real closing needed:** closing² / 2(gap − 4 m);
 - **the driver:** did they brake or slow down too?
@@ -255,7 +256,7 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
 - **Range fusion keeps the lead stable:** every version without it flips between radar and vision leads about 39%
   more often, with one real early brake fewer.
 - **The young-track factor and the std gate cost about 5 lines.** With range fusion kept they prevent unjustified
-  braking on a far lead (12 and 9 ticks).
+  braking on a far lead (+9 and +6 unjustified ticks).
 
 The smallest version with the same driving is 2.0 without the summaries and the relink; with 2.3's path gate and wider
 ACC match added, that is today's `fused`. The openpilot version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line
@@ -277,7 +278,7 @@ both fell from about 104 to 80 m and vision-only asked for −1.37 m/s²: the sl
 summaries reacted about 4 s earlier ([`summary_owner_case.json`](../data/analysis/summaries/summary_owner_case.json),
 [`hard_braking_review.json`](../data/analysis/summaries/hard_braking_review.json)).*
 
-Over the 27 replay drives (about 5 h, `fused` 2.0), the summaries change the planner's request by 0.3 m/s² or more on 198 ticks
+Over the 27 replay drives (`fused` 2.0), the summaries change the planner's request by 0.3 m/s² or more on 198 ticks
 (about 10 s). Without them the planner brakes harder on 143 of those ticks: 107 while the gap really was closing, 36
 while it held or opened (camera range). The summaries soften the response to far leads without an ACC target, mostly while
 the gap was really closing.

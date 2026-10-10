@@ -45,8 +45,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
   beyond 30 m. The ACC distance is therefore the better far range for that car, and any
   position gate between the object list and the radar's own trackers needs room for this difference
-  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, a
-  second output of the same tracker that also covers other vehicles, shows the same: the object list is a median 2.5 m
+  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, likely a
+  second output of the same tracker (◐) that also covers other vehicles, shows the same: the object list is a median 2.5 m
   short at 40-60 m, 3 m at 60-110 m and 14 m at 110-170 m
   ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
 
@@ -74,7 +74,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 
   The first two rows tie the unit to the radar's own centimetre and velocity fields; the gyro, camera and lane rows are
   independent but wider. Replaying `fused` with these lateral units on 27 drives keeps every braking count (held-out hard
-  radar-only ticks 30 → 30, target episodes 4 → 4, lead-source switches +0.7 %).
+  radar-only ticks 30 → 30, target episodes 4 → 4 on `fused` 2.1, lead-source switches +0.7 %).
   Numbers: [`lateral_units.json`](../data/analysis/summaries/lateral_units.json).
 
 ![lateral scale](img/analysis/lateral_scale_camera.png)

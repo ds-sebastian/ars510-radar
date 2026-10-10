@@ -99,7 +99,7 @@ Replication: 114 further segments (binned heading correlation −0.93…−0.99 
 **Curvature rate.** `10|10` (the field near 500 on straight roads) tracks the rate of change of the cell's own curvature per metre driven: binned correlation +0.96…+0.98 in cells 2, 3, 8 and 9 (+0.92…+0.97 elsewhere), zero 497-501, 3.5-5.7e-6 1/m² per code in the lane cells; replicated on the fresh drives.
 
 **Which curve is which.** Against the camera's four lane lines (rows where all four have probability above 0.5), cells 0 and 1 follow the **left outer** line (median error 0.17 / 0.14 m), cells 2 and 8 the **left ego** line (0.04 m), cells 3 and 9 the **right ego** line (0.10 m) and cell 4 the **right outer** line (0.41 m); cells 6 and 7 follow the left outer line only 61-76 % of the time. Cells 8 / 9 hold a second estimate of the ego pair
-(offset correlation 0.98 / 0.99 with 2 / 3) and share the fields `20|4`, `24|4`, `28|1` and `44|4` on every row; cells 2 and 3 share bit 79 on 99 % of rows. The camera-quality-like fields (`24|4` low bits = 1 and bit 27 set, `20|4` ≈ 5, `28|1` = 0, `44|4` = 2) go with a camera lane probability ≥ 0.99.
+(offset correlation 0.98 / 0.99 with 2 / 3) and share the fields `20|4`, `24|4`, `28|1` and `44|4` on every row where both are populated; cells 2 and 3 share bit 79 on 99 % of rows. The camera-quality-like fields (`24|4` low bits = 1 and bit 27 set, `20|4` ≈ 5, `28|1` = 0, `44|4` = 2) go with a camera lane probability ≥ 0.99.
 Against openpilot's lane model the median offset error is 3-10 cm:
 
 | drive group | cell 2 | cell 3 | cell 8 | cell 9 |

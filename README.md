@@ -43,7 +43,7 @@ what the driver did
 
 - **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
   and speed.
-- **Braking starts slightly before vision-only would** on average (0.01 s), and the planner is already asking for
+- **Braking starts when vision-only's would** on average (−0.01 s, 95% CI −0.07 … +0.04), and the planner is already asking for
   ≤ −1 m/s² before 41% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
 - **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
@@ -56,14 +56,15 @@ what the driver did
   speed can still cause a short, mild slowdown.
 
 These are replay results on one owner's car. On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
-2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking; the two mild slowdowns had far leads beyond
+2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking on the owner's car (the second car's one replayed hard brake was
+the next-lane pairing the path gate now removes); the two mild slowdowns had far leads beyond
 95 m without the radar's ACC target, and the next-lane pairing behind one of them is what the path gate now handles
 ([08](docs/08_openpilot_integration.md#on-the-road), [12](docs/12_kalman_filter.md#path-gate)).
 
 ## How the filter works
 
-The radar's object list reads distance steadily from moment to moment, but its speed at range sometimes drifts into
-a false closing for 1-10 s. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
+The radar's object list measures distance and speed well up close, but at range its speed sometimes drifts into a
+false closing for 1-10 s while the radar's own ACC distance and the camera hold steady. The radar reports how uncertain each speed is (`240|7`) and also sends its own, smoother tracker output for the
 car its ACC function follows: the ACC target. `fused` runs **one Kalman filter per track** on the lead's speed. Every reading is
 weighted by its own uncertainty, so the gain changes each cycle:
 
