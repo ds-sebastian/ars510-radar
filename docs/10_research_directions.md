@@ -158,11 +158,13 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration works on every fork without changing openpilot. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (about 210 lines). It holds the reassembler, the slot
-decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. It is the smallest
-version with the same driving as the full filter: parts were removed alone and together on 34 replay drives, and every
-hard brake was checked against the radar's raw range, the camera and the driver
-([12](12_kalman_filter.md#removing-parts-together)). Constants are fixed in the file, there are no profiles, and points
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (236 lines, 196 of them code). It holds the reassembler, the slot
+decode, track IDs, the ACC target association and the Kalman speed filter, in opendbc's style. Up to 2.1 it was the
+smallest version with the same driving as the full filter: parts were removed alone and together on 34 replay drives,
+and every hard brake was checked against the radar's raw range, the camera and the driver
+([12](12_kalman_filter.md#removing-parts-together)). 2.2 added three parts for cases found on the road; two of them
+change nothing on the 34 drives. Every line therefore has to earn its place, and the ledger below says which parts an
+upstream PR would drop first. Constants are fixed in the file, there are no profiles, and points
 carry only `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated upstream). A test keeps it
 equal to `fused` with the summaries off, point for point (bundled samples; two full drives checked once), and
 `install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
@@ -181,3 +183,28 @@ equal to `fused` with the summaries off, point for point (bundled samples; two f
 5. **Alpha longitudinal compatibility.** Covered for `8821F0R03100`: after openpilot's UDS radar-disable request the
    radar stops only its car-bus messages and keeps sending bus 1, without a CAN filter
    ([01](01_radar_bus.md#openpilots-radar-disable)).
+
+### Parts of the openpilot file
+
+Each part of [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), its code lines (no comments, docstrings or
+blank lines; shared constants counted once), what removing it costs on the 34 replay drives, and its status for an
+upstream PR. "First to drop" parts were added for single road cases; an upstream PR would start without them.
+
+| part | code lines | since | without it | for upstream |
+|---|---|---|---|---|
+| transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
+| ACC target decode and association | 27 | 2.0 | +24 unjustified hard ticks on 34 drives | keep |
+| Kalman speed filter (one state, 240|7-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
+| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
+| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
+| age-60 publication gate | 2 | 1.0 | radar-only braking x3; publishing the ACC track early: further 2 -> 7 | keep |
+| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
+| ego-speed alignment x 0.149/0.15 | 1 | 1.x | neutral (onset +12 ms) | droppable |
+| state pruning | 7 | 2.0 | unbounded state | required |
+| young-track ACC match + range restart | 7 | 2.2 | neutral on 34 drives; one road late brake -1.47 -> -2.36 m/s2 (constants chosen on that drive) | first to drop |
+| next-lane guard (ACC target) | 5 | 2.2 | neutral on 34 drives; one 0.15 s false hard brake on a second car | first to drop (lead selection is radard's job) |
+| off-path guard (yaw rate) | 6 | 2.2 | target episodes 3 -> 4, owner 0 -> 1; one road slowdown; lead flips -11 % | candidate to drop or move to radard as a lateral gate |
+| fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
+
+Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for
+each part.

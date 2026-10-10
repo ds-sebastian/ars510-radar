@@ -1,0 +1,111 @@
+{
+ "description": "Parts of upstream/ars510_radar.py (2.2.0): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 34 replay drives, and its status for an upstream openpilot PR.",
+ "file_code_lines": 196,
+ "file_total_lines": 236,
+ "parts": [
+  {
+   "part": "transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper",
+   "code_lines": 103,
+   "since": "1.0",
+   "evidence": "docs/02, docs/03; the decode itself",
+   "without": "no radar",
+   "upstream": "required"
+  },
+  {
+   "part": "ACC target decode and association",
+   "code_lines": 27,
+   "since": "2.0",
+   "evidence": "hard_braking_review.json",
+   "without": "+24 unjustified hard ticks on 34 drives",
+   "upstream": "keep"
+  },
+  {
+   "part": "Kalman speed filter (one state, 240|7-weighted)",
+   "code_lines": 22,
+   "since": "2.0",
+   "evidence": "fused_filter.json",
+   "without": "hard radar-only braking about 3x (raw)",
+   "upstream": "keep"
+  },
+  {
+   "part": "young-track factor",
+   "code_lines": 3,
+   "since": "2.0",
+   "evidence": "fused_filter.json part_removed_34_drives",
+   "without": "further-drive hard ticks 2 -> 11",
+   "upstream": "keep"
+  },
+  {
+   "part": "speed-std publication gate",
+   "code_lines": 2,
+   "since": "2.0",
+   "evidence": "fused_filter.json part_removed_34_drives",
+   "without": "further-drive hard ticks 2 -> 8",
+   "upstream": "keep"
+  },
+  {
+   "part": "age-60 publication gate",
+   "code_lines": 2,
+   "since": "1.0",
+   "evidence": "fused_filter.json part_removed_34_drives",
+   "without": "radar-only braking x3; publishing the ACC track early: further 2 -> 7",
+   "upstream": "keep"
+  },
+  {
+   "part": "range fusion (incl. ACC distance as the followed car's range)",
+   "code_lines": 9,
+   "since": "2.0 (ACC distance 2.1)",
+   "evidence": "fused_filter.json, tracker_association.json",
+   "without": "braking neutral; lead flips +39 %, target episodes 4 -> 6",
+   "upstream": "keep for lead stability; droppable at that cost"
+  },
+  {
+   "part": "ego-speed alignment x 0.149/0.15",
+   "code_lines": 1,
+   "since": "1.x",
+   "evidence": "fused_filter.json part_removed_34_drives",
+   "without": "neutral (onset +12 ms)",
+   "upstream": "droppable"
+  },
+  {
+   "part": "state pruning",
+   "code_lines": 7,
+   "since": "2.0",
+   "evidence": "test_upstream_candidate churn tests",
+   "without": "unbounded state",
+   "upstream": "required"
+  },
+  {
+   "part": "young-track ACC match + range restart",
+   "code_lines": 7,
+   "since": "2.2",
+   "evidence": "lead_choice_guards.json",
+   "without": "neutral on 34 drives; one road late brake -1.47 -> -2.36 m/s2 (constants chosen on that drive)",
+   "upstream": "first to drop"
+  },
+  {
+   "part": "next-lane guard (ACC target)",
+   "code_lines": 5,
+   "since": "2.2",
+   "evidence": "lead_choice_guards.json",
+   "without": "neutral on 34 drives; one 0.15 s false hard brake on a second car",
+   "upstream": "first to drop (lead selection is radard's job)"
+  },
+  {
+   "part": "off-path guard (yaw rate)",
+   "code_lines": 6,
+   "since": "2.2",
+   "evidence": "lead_choice_guards.json",
+   "without": "target episodes 3 -> 4, owner 0 -> 1; one road slowdown; lead flips -11 %",
+   "upstream": "candidate to drop or move to radard as a lateral gate"
+  },
+  {
+   "part": "fork compatibility (CP_SP argument, points assigned as a list)",
+   "code_lines": 2,
+   "since": "2.2",
+   "evidence": "sunnypilot RadarInterface check",
+   "without": "crashes on sunnypilot",
+   "upstream": "keep (harmless upstream)"
+  }
+ ]
+}

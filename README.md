@@ -80,7 +80,7 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 The code comes in two versions that run the same filter:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of about 210 lines in opendbc style.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 236 lines (196 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is the smallest version that drives like `fused` on 34 replay drives: the same filter without the radar's
   summaries and the track-ID relink, which change no unjustified braking
   ([docs/12](docs/12_kalman_filter.md#removing-parts-together)). A test keeps it equal to that configuration point for

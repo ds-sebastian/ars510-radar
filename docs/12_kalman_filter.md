@@ -189,6 +189,9 @@ On the owner's 5.8 h of 2.1 road drives (replayed open loop) all three together 
 miss no hard vision brake. They cut radar-only requests of 1 m/s² or more from 10 to 7, start braking within 0.015 s of
 2.1 on every drive, and raise lead flips by 14 %. They also remove the second car's hard false brake. In the late-brake
 case above, the first radar lead is at 64 m instead of 47 m and the request −1.47 instead of −2.36 m/s² (vision −1.61).
+The young-match constants (0.4, 5 m/s) were set on that late-brake drive. The young match and the next-lane guard
+change nothing on the 34 drives, and each fixes one road case; the off-path guard is the only one with a measured effect
+there. The openpilot file's parts and their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 
 ## What each part is worth
@@ -248,7 +251,7 @@ combination on the same 34 drives. A version drives the same as `fused` when its
   braking on a far lead (12 and 9 ticks).
 
 The smallest version with the same driving is `fused` without the summaries and the relink. That is the openpilot
-version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py), about 210 lines; a test keeps it equal to this
+version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file); a test keeps it equal to this
 configuration point for point). The fork's default `fused` keeps the summaries for the smoother response described
 below (`combinations_34_drives` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
