@@ -19,7 +19,7 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking) | ● idle, ◐ fields |
 | 0x33E | none | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
-| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**: nominal relative speed (0.5 km/h), distance (≈ 0.8 m) and lateral offset (0.34 m per code); reports beyond ACC coverage | ◐ |
+| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**, mostly the ACC target: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
 | 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
@@ -44,41 +44,34 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
-### 0x366: target report with additional coverage (◐)
+### 0x366: target report, mostly the ACC target (◐)
 
 Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` returns them (`None` for the `7FFF` no-target word).
 
 | bits | field | coding |
 |---|---|---|
-| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; high codes retain raw values and return `None` for speed |
+| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; higher codes (seen: 442-506) return `None` |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = no target, −16 = invalid (mostly a target beyond ±5 m) |
 
-Against the latest `0x235`/`0x237` on an owner drive (820 frames, 0.6 % outside tolerance) the residuals are 0.06 m/s, 0.26 m
-and 0.14 m, about the quantization of both frames. Those matched mature-target comparisons support an ACC copy;
-they do not establish every report's source or physical identity.
-Against the preceding 0x365 (two owner drives) 92 / 95 % of reports agree in distance within 1.5 m, with a speed p95 of
-0.28 m/s ([summary](../data/analysis/summaries/target_366_coding.json)); a few large speed differences remain unexplained.
-It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are undecoded speed / range-dependent flags,
-and the low three bits of byte 5 are constant. No profile reads this message.
+**While the radar has an ACC target, 0x366 reports that target.** Against the latest `0x235`/`0x237` on an owner drive
+(820 frames) the residuals are 0.06 m/s, 0.26 m and 0.14 m, about the quantization of both frames, and 99 % agree in
+distance within 1.5 m ([summary](../data/analysis/summaries/target_366_coding.json)).
 
-The report also remains non-idle while fresh `0x235`/`0x237` says no ACC target: 224 of 1,059 reports on owner drive A
-and 8 of 467 on B (both ACC frames no older than 60 ms). On A, 102 of those reports have nominal range ≥40 m.
-Original CAN confirms one 6.2 s span of 32 consecutive reports with ACC state 1 (no target).
-Other reports have active ACC but disagree in distance by more than 1.5 m (9 on A, 21 on B).
-The additional reports are a distinct coverage surface; per-object identity, physical accuracy, Doppler basis and
-a PCS-specific source remain unqualified. [Coverage counts](../data/analysis/summaries/target_366_coverage.json).
+**It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive A and 8 of 467 on B, with fresh
+ACC frames saying "no target" (one span of 32 reports over 6.2 s). On A these are mostly closing objects about 4 m to the
+side while the car moves slowly (median ego 1.6 m/s, median relative speed −7 m/s); where they match an object-list track,
+the speeds correlate at 0.81. Which target the radar picks then (a PCS candidate is likely) is not established
+([coverage](../data/analysis/summaries/target_366_coverage.json)).
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
 
-The speed conversion is qualified for the low-code domain. Eight target-present reports on the two owner drives
-have codes 442–506. Across five consecutive same-tail steps their reported distances decrease at 20–28 m/s,
-while the unsigned speed formula gives positive 40–49 m/s. Subtracting 512 counts gives a negative candidate
-(mean absolute difference from the range rate 2.93 m/s, versus 68.72 unsigned). This supports a wrapped branch
-within those examples; target identity and the sign/wrap boundary remain unqualified. The parser preserves
-distance, lateral and raw context while returning unavailable speed for codes ≥256.
-[Domain evidence](../data/analysis/summaries/target_366_speed_domain.json) describes the scope and limits.
-The comparison figure includes the unsigned hypothesis at high codes; its tails are not calibrated speed errors.
+**High speed codes.** Eight reports have codes 442-506. Their distances fall at 20-28 m/s, so the unsigned formula
+(+40 to +49 m/s) is wrong there; subtracting 512 counts fits (mean difference 2.9 m/s), but the boundary is not known, so
+the parser returns no speed for codes ≥ 256 ([domain](../data/analysis/summaries/target_366_speed_domain.json)).
+
+It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are undecoded speed / range-dependent flags,
+and the low three bits of byte 5 are constant. No profile reads this message; it is not a per-object Doppler field.
 
 ![0x366 against 0x365](img/analysis/target_366_coding.png)
 

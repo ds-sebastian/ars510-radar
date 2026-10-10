@@ -47,5 +47,27 @@
     "Non-idle report is not proof of a physical object.",
     "Matched mature-target coding does not establish every report as an ACC copy.",
     "Additional coverage does not establish per-object Doppler or a PCS-specific source."
-  ]
+  ],
+  "absent_ACC_context_drive_A": {
+    "reports": 224,
+    "median_ego_mps": 1.6,
+    "median_nominal_vrel_mps": -7.36,
+    "nominal_vrel_range_mps": [
+      -31.25,
+      0.0
+    ],
+    "range_m": [
+      0.0,
+      84.8
+    ],
+    "matched_to_object_list_track_within_2_5_m": 61,
+    "matched_median_abs_lateral_m": 4.0,
+    "matched_speed_correlation": 0.812,
+    "matched_classes": {
+      "car": 45,
+      "large_vehicle": 12,
+      "unclassified": 4
+    },
+    "note": "speed of high codes wrapped by -512 for this description only; matching by range only"
+  }
 }
