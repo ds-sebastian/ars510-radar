@@ -116,7 +116,7 @@ def lead_guards() -> None:
   _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nwithheld", (path[k] + 3.6, 98),
                                                        xytext=(4.5, 108), fontsize=8, arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
   ax.set_title("Right curve", loc="left"); ax.set_xlabel("lateral (m, left +)")
-  fig.suptitle("Path gate: radard pairs the camera's lead with the radar track nearest in range, whatever its lateral position",
+  fig.suptitle("Path gate: far out, radard can pair the camera's lead with a radar track a lane over",
                x=0.01, ha="left", fontsize=10.5, color=INK, weight="bold")
   fig.tight_layout(); fig.savefig(OUT / "guide_lead_guards.png", dpi=130); plt.close(fig)
 

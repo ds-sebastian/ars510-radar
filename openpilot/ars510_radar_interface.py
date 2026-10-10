@@ -12,7 +12,8 @@ Worth knowing (docs/07, docs/08, docs/12):
   - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the default `fused` speed filter handles them;
   - the radar drops new stationary objects once ego is above ~2-3 m/s, so a car that was already stopped when it came
     into view comes from vision;
-  - radard pairs the vision lead with the radar track nearest in range; `fused` adds a yaw-rate path gate.
+  - radard weights lateral position only through the camera's uncertainty when it picks the lead; `fused` adds a
+    yaw-rate path gate.
 
 Why there is no CANParser: the object list is ONE 742-byte record sent as 106 ISO-TP-style frames on 0x80 every
 ~60 ms. CANParser keeps only the latest value per address (or a per-call list in vl_all), and a DBC cannot say which

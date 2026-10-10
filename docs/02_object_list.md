@@ -103,22 +103,21 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 
 The object list behaves like an ACC list: it lists **moving objects** and objects it saw moving.
 
-- Every new object is decided at about **age 5 (0.3 s)**. A new object whose over-ground speed is below about
-  0.2-0.4 m/s is mostly deleted then, more often the faster ego drives.
+- Every new object is decided at about **age 5 (0.3 s)**. A slow new object is deleted then more often the
+  faster ego drives: below 0.2 m/s over ground, 44 % survive with ego at most 2 m/s and 7 % above 10 m/s.
 - **Objects first seen moving keep their track after they stop.** Stopped leads in a queue are tracked through the stop.
-- Slow movers (0.7-3 m/s: pedestrians, cyclists, creeping cars) are mostly kept at every ego speed.
+- Objects moving faster than 0.8 m/s over ground are kept 78-85 % at every ego speed.
 - While ego is stopped, the radar also lists objects that have stayed stationary.
 
-| ego speed | new object < 0.2 m/s kept | 0.2-0.4 m/s kept | ≥ 0.8 m/s kept |
-|---|---|---|---|
-| ≤ 2 m/s | 41-56% | 58-71% | 60-100% |
-| 2-5 m/s | 34% | 67% | 57-100% |
-| 5-10 m/s | 12% | 46% | 71-88% |
-| > 10 m/s | 6-7% | 27-30% | 47-100% |
+| ego speed | new object < 0.2 m/s kept | 0.2-0.4 m/s | 0.4-0.8 m/s | > 0.8 m/s |
+|---|---|---|---|---|
+| ≤ 2 m/s | 44% (296) | 65% (117) | 60% (52) | 85% (296) |
+| 2-5 m/s | 34% (32) | 67% (21) | 88% (8) | 80% (101) |
+| 5-10 m/s | 12% (51) | 46% (46) | 48% (31) | 78% (417) |
+| > 10 m/s | 7% (86) | 29% (51) | 52% (31) | 83% (1,335) |
 
-*Share of new tracks (2,849 of 4,051 in these speed bins) surviving the age-5 decision; ranges span the drive groups
-([summary](../data/analysis/summaries/stationary_listing_rule.json), ranges in
-[`decode_claim_sources.json`](../data/analysis/summaries/decode_claim_sources.json)).*
+*Share of new objects surviving the age-5 decision (object count in brackets; 2,971 of 4,051 tracks fall in these bins;
+[summary](../data/analysis/summaries/stationary_listing_rule.json)).*
 
 ![rain, stopped queue](img/shots/rain_stopped_queue.jpg)
 

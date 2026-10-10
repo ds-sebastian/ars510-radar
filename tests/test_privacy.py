@@ -13,6 +13,7 @@ CASES = [
   ("local home path", "/" + "home" + "/sample"),
   ("device recording path", "/data" + "/media/0" + "/realdata"),
   ("private IP address", ".".join(("172", "16", "0", "1"))),
+  ("openpilot route fragment", "route " + "1a2b3c4d" + "5e"),
 ]
 
 

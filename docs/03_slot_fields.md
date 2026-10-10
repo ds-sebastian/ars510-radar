@@ -131,7 +131,7 @@ for codes 1 / 5 / 7.
 
 The dominant weight sits one lane width apart: median yRel −3.7 m (right), −0.1 m (ego), +3.5 m (left). At the lane
 edges, weight moves smoothly from one lane to the next. The ego-lane weight behaves as the radar's own **in-path** estimate (◐);
-radard pairs leads by range ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
+radard weights lateral position only through the camera's uncertainty ([08](08_openpilot_integration.md#what-radard-does-with-radar-points)).
 
 The decoder exposes the triplet as `NativeObject.raw_weights148` (right, left, ego order as on the wire) and the state
 as `raw_weight_state128`.

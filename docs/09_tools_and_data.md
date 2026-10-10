@@ -118,7 +118,8 @@ until the last.
 - **`data/reference/slot_bit_map.json`**: per-bit statistics of the 0x80 slot, header and 0x85 record.
 
 The evidence comes from one owner's RAV4 (TSS2, 2022), logged with openpilot. Drives are named by role (A development,
-B city, C highway, D1-D4 closed-loop drives, E the ACC sample, O1-O3 owner road drives); the repo carries no route IDs, dongle IDs, GPS positions or full video. A few
+B city, C highway, D1-D4 closed-loop drives, E the ACC sample, O1-O4 owner road drives, U1-U2 a second
+unfiltered RAV4); the repo carries no route IDs, dongle IDs, GPS positions or full video. A few
 camera stills are included, with licence plates and place names blurred.
 
 ## Testing on your own car
