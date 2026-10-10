@@ -45,13 +45,24 @@
     "episodes": 13,
     "seconds": 16.1
    }
+  },
+  "2.4": {
+   "unnecessary": {
+    "episodes": 7,
+    "seconds": 5.4
+   },
+   "missed": {
+    "episodes": 12,
+    "seconds": 13.8
+   }
   }
  },
  "rms_vs_oracle_while_braking": {
   "vision": 0.273,
   "2.1": 0.268,
   "2.2": 0.267,
-  "2.3": 0.266
+  "2.3": 0.266,
+  "2.4": 0.266
  },
  "turning_lead_case": "video and optical looming: the in-lane lead slowed to turn off (about -3 m/s at 105-115 m) then left the lane; 2.1 braked -1.54 m/s2 for a car a lane over whose radar speed read a false -7 m/s; 2.3 -0.29; vision -0.08",
  "suite_34_drives": {
@@ -87,13 +98,25 @@
      "episodes": 6,
      "seconds": 3.9
     }
+   },
+   "2.4": {
+    "unnecessary": {
+     "episodes": 8,
+     "seconds": 7.2
+    },
+    "missed": {
+     "episodes": 5,
+     "seconds": 3.6
+    }
    }
   },
   "rms_vs_oracle_while_braking": {
    "vision": 0.246,
    "2.1": 0.248,
-   "2.3": 0.245
+   "2.3": 0.245,
+   "2.4": 0.244
   }
  },
- "hours_road": 7.65
+ "hours_road": 7.65,
+ "note_2_4": "2.4 = 2.3 without the radar's target summaries (the openpilot version's filter)"
 }

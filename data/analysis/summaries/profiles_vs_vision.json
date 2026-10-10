@@ -1,5 +1,5 @@
 {
- "description": "Every radar profile against vision only (stock openpilot leads on this car) on the same 34 replay drives, unchanged openpilot card -> radard -> planner, judged against the human driver with the pre-registered definitions: driver-brake events (anticipation within 3 s before the brake press, onset = first request <= -0.5 m/s2 in [-3, +2] s, hard slowdowns = driver <= -2 m/s2 or a stop), braking requests only one system made (<= -1 m/s2 for >= 0.3 s) with what the driver did, and driver overrides (whose request was closer to what the driver then did). fused: release 2.3.0.",
+ "description": "Every radar profile against vision only (stock openpilot leads on this car) on the same 34 replay drives, unchanged openpilot card -> radard -> planner, judged against the human driver with the pre-registered definitions: driver-brake events (anticipation within 3 s before the brake press, onset = first request <= -0.5 m/s2 in [-3, +2] s, hard slowdowns = driver <= -2 m/s2 or a stop), braking requests only one system made (<= -1 m/s2 for >= 0.3 s) with what the driver did, and driver overrides (whose request was closer to what the driver then did). fused: release 2.4.0 (no summaries).",
  "profiles": {
   "raw": "OPENPILOT_CONFIG (formerly 'stock', the unfiltered radar decode)",
   "steady": "STEADY_CONFIG",
@@ -33,17 +33,17 @@
    "vision_ant05": 0.8084,
    "radar_ant05": 0.8204,
    "vision_ant10": 0.4012,
-   "radar_ant10": 0.4192,
-   "onset_diff_mean_s": -0.018,
+   "radar_ant10": 0.4132,
+   "onset_diff_mean_s": -0.01,
    "onset_diff_ci": [
-    -0.075,
-    0.035
+    -0.066,
+    0.042
    ],
-   "earlier_share": 0.149,
+   "earlier_share": 0.135,
    "later_share": 0.088,
    "paired": 148,
    "median_onset_vision_s": -0.607,
-   "median_onset_radar_s": -0.779,
+   "median_onset_radar_s": -0.732,
    "hard_slowdowns": 47,
    "hard_missed_vision": 10,
    "hard_missed_radar": 10
@@ -336,7 +336,7 @@
    "request_rmse_vs_driver_mps2": 0.415,
    "mean_abs_jerk_mps3": 0.999,
    "radar_lead_share_of_lead_time": 0.87,
-   "lead_source_switches_per_h": 493.9,
+   "lead_source_switches_per_h": 496.9,
    "hours": 2.66
   },
   "fused_no_trackers": {

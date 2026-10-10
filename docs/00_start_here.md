@@ -127,10 +127,10 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | leads from the radar when a lead exists | about 87 % | [11](11_profiles_compared.md) |
 | braking only the radar asked for, per hour (34 drives) | `raw` 1.75, `fused` 0.22 | `profiles_vs_vision.json` |
 | hard radar-only braking ticks, 20 held-out drives | `raw` 93, `fused` 30 (27 of 32 hard ticks judged real) | `hard_braking_review.json` |
-| braking onset against vision only | −0.02 s (95 % CI −0.08 … +0.04) | `profiles_vs_vision.json` |
-| driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.9 %, vision 40.1 % | `profiles_vs_vision.json` |
+| braking onset against vision only | −0.01 s (95 % CI −0.07 … +0.04) | `profiles_vs_vision.json` |
+| driver brakes already anticipated at ≤ −1 m/s² | `fused` 41.3 %, vision 40.1 % | `profiles_vs_vision.json` |
 | owner road drives with 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.0 s before vision | `road_v21.json` |
-| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 4.9 / 16.1 s, vision 10.6 / 16.9 s; 34 replay drives (6.72 h): `fused` 8.2 / 3.9 s, vision 32.6 / 11.0 s | `oracle_reference.json` |
+| unnecessary / missed braking against a hindsight oracle | road drives (7.65 h): `fused` 5.4 / 13.8 s, vision 10.6 / 16.9 s; 34 replay drives (6.72 h): `fused` 7.2 / 3.6 s, vision 32.6 / 11.0 s | `oracle_reference.json` |
 | openpilot file | 184 code lines | `openpilot_file_parts.json` |
 
 ## How to read the evidence
@@ -155,7 +155,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **uncertainty `240\|7`** | the radar's own speed-error code per object; the filter weights the speed by it |
 | **excursion** | a 1-10 s stretch where the object list's speed is wrong, mostly a false closing on a far car |
 | **ACC target** | the car the radar's own ACC function follows (0x235 / 0x237): smooth distance and speed |
-| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output used by the fork profile |
+| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; tested, off by default |
 | **radard** | openpilot's process that turns radar points and the camera's lead into the lead the planner follows |
 | **hard radar-only tick** | a 20 Hz tick where the radar planner asks for ≤ −2 m/s² while vision only asks for ≥ −0.5 |
 | **target episode** | the radar planner asks for ≤ −1 m/s² while vision only asks for ≥ −0.3, for ≥ 0.3 s while moving |

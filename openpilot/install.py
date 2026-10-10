@@ -16,7 +16,7 @@ An install made with an older, patch-based version of this installer is removed 
 
 Profiles (docs/08 has the details and replay numbers):
   fused     FUSED_CONFIG (default): the radar decode + range fusion + one Kalman speed filter per track that weights
-            the object list, the radar's ACC target and its summaries by their own uncertainty
+            the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version)
   raw       BASE_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
