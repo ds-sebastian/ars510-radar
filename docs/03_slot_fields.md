@@ -123,8 +123,8 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
 | `131\|4` | dominant lane weight | the largest of the three weights or one less (99.7 % of samples with a nonzero weight) | ● derived |
 
-The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples): a lane-assignment
-probability in 1/15 steps. The lane state matches the dominant weight on 99.8% of samples (bundled `slots.parquet`) and is exactly zero-weight
+The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples): they behave like a
+lane-assignment probability in 1/15 steps (◐). The lane state matches the dominant weight on 99.8% of samples (bundled `slots.parquet`) and is exactly zero-weight
 for codes 1 / 5 / 7.
 
 ![lane weights](img/analysis/lane_weights.png)
@@ -249,7 +249,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
 | `184\|8` | secondary score | percent: 100 on 98-99 % of rows; lower (72-99 in the bundled samples) only on tracks younger than about 12 cycles | ○ |
-| `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the range where the track was first seen | ○ |
+| `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
   (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
@@ -281,9 +281,9 @@ reference with its own known error, such as a second car that logs its speed, gi
 replays justify ([12](12_kalman_filter.md#what-each-part-is-worth)).
 
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
-phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks first seen
-beyond 70 m are on in 98 % of cycles, those first seen at 40-70 m in 86 % and those first seen inside 40 m in 34-46 %, so the
-field records how the track was first detected (likely the far scan)
+phase tied to its age (the value equals the one 5 cycles earlier on 97.9 % of rows of mixed tracks). Tracks at
+more than 70 m at age 10 are on in 98 % of cycles, those at 40-70 m in 86 % and those inside 40 m in 34-46 %, so the
+field likely records how the track was first detected (the far scan)
 ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) always comes with `240|7` = 127. It appears in

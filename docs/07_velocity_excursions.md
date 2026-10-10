@@ -82,7 +82,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 <details>
 <summary>Caveats and the residual error</summary>
 
-- 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is ~0.027 m/s per count over codes 12-70, and heavy
+- 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is about 0.025-0.04 m/s per count over codes 12-70, and heavy
   tails (kurtosis 1.3-8) lift the RMS. Above code ~60 the main set's error grows faster than proportionally (figure).
 - Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).

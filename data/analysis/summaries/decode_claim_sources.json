@@ -653,10 +653,10 @@
    "claim": "15.93 / 16.01 codes per metre (closing rate over relative speed, two calibration routes)",
    "status": "supported",
    "value": {
-    "route_0021": 15.933,
-    "n_0021": 6010,
-    "route_004f": 16.007,
-    "n_004f": 9268
+    "route_2": 15.933,
+    "n_route_2": 6010,
+    "route_1": 16.007,
+    "n_route_1": 9268
    },
    "source": "research workspace CLM-027, SCR-289",
    "note": "Velocity side uses 0xB4 ego; the 1/16 scale inherits 0xB4's ~1.2-1.5% low bias."
@@ -680,17 +680,17 @@
    "claim": "ego-lane objects stay within 0.1 m of centre from 15 to 130 m on straight road",
    "status": "corrected",
    "value": {
-    "route_004f": {
+    "route_1": {
      "offset_m": -0.002,
      "mount_yaw_deg": 0.042
     },
-    "route_0021": {
+    "route_2": {
      "offset_m": 0.285,
      "mount_yaw_deg": -0.068
     }
    },
    "source": "research workspace CLM-027",
-   "note": "Holds on one calibration route only (004f: <=0.1 m to 130 m); the other route (0021) has a +0.29 m offset. Fitted at the old 1/64 m scale (x0.96 at 0.015 m, negligible). Bundled slots.parquet has no yaw, so not recomputable; exploratory ego-lane medians there range -0.47..+0.29 m without a straight-road filter."
+   "note": "Holds on one calibration route only (<=0.1 m to 130 m); the other route has a +0.29 m offset. Fitted at the old 1/64 m scale (x0.96 at 0.015 m, negligible). Bundled slots.parquet has no yaw, so not recomputable; exploratory ego-lane medians there range -0.47..+0.29 m without a straight-road filter."
   },
   {
    "doc": "06",
@@ -781,8 +781,8 @@
    "claim": "98.3-98.9% of consecutive same-slot cycles continue the same age run",
    "status": "supported",
    "value": {
-    "route_0021": 0.983,
-    "route_004f": 0.989
+    "route_2": 0.983,
+    "route_1": 0.989
    },
    "source": "research workspace CLM-027",
    "note": "Archive text only (report.md lists only top-4 step counts). Bundled slots.parquet excludes age-0 rows, so it gives 99.85-99.93% and cannot reproduce the figure; it does confirm 0 of 3,375 tracks use more than one slot per segment."
@@ -870,6 +870,19 @@
    },
    "source": "research workspace SCR-466, SCR-481; recomputed from the research captures",
    "note": "Bit numbering is LSB-within-byte (byte 4 = (b>>3) varies). 0x52 seen only on owner drive A."
+  },
+  {
+   "doc": "01",
+   "claim": "message rates 0x24D 1 Hz, 0x24F 33 Hz, 0x210 5 Hz",
+   "status": "supported",
+   "value": {
+    "0x24D_hz": 1.0,
+    "0x24F_hz": 33.34,
+    "0x210_hz": 5.0,
+    "segments": 39
+   },
+   "source": "recomputed from one full owner road drive (bus-1 frames, per one-minute segment median)",
+   "note": "range over segments: 0x24F 33.32-33.36 Hz, 0x210 4.98-5.0 Hz"
   }
  ]
 }

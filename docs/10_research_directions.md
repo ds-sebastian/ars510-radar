@@ -12,7 +12,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    disagree by 10-20%, [12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 2. **More of the lead covered by the radar's own trackers.** The ACC target is present for 99% of radar-lead time at
    15-80 m and 66% beyond on the owner's car ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
-   and its wide error alone, which is where `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
+   and its wide error alone, which is where much of `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
    drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
 3. **Is the radar's ACC target camera-assisted?** The radar sends it (◐, [05](05_acc_target_and_support.md)), and it
    receives lane-like camera data. Moments when the camera's messages to the radar go stale (glare, tunnels,
@@ -28,7 +28,7 @@ The most promising next steps, ordered by how directly they would improve the ra
    with less wobble (0.13 vs 0.15; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). radard derives `aLeadK` from vRel for every car; a fork-side radard
    change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
-   extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would remove the brake-then-accelerate swing.
+   extrapolation or an `aLeadTau` floor for radar leads (as in stock openpilot) would test whether the brake-then-accelerate swing goes away.
 8. **Road miles with `fused`.** The replay results ([11](11_profiles_compared.md)) need closed-loop confirmation:
    drives with flagged moments, ideally from a second car, driver or radar firmware.
 
@@ -131,7 +131,7 @@ What other openpilot radar interfaces read from their radars, and the ARS510 cou
 
 | what radard gets elsewhere | examples | ARS510 today | what would close the gap |
 |---|---|---|---|
-| per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE`, Tesla `Meas` | `107\|1` = predicted (◐) and `16\|8` = existence probability (◐); the fork build publishes `measured = not predicted`, the openpilot version `measured=True` | the openpilot version could do the same; excursions arrive on measured records, so this is hygiene |
+| per-track **measured vs predicted** state (`RadarPoint.measured`) | Toyota `VALID` + `SCORE`, Rivian `STATE`, Tesla `Meas` | `107\|1` = predicted (◐) and `16\|8` = existence probability (◐); the fork build publishes `measured = not predicted` for forks that carry the field; upstream openpilot has deprecated it | in place in the fork build; excursions arrive on measured records, so this is hygiene |
 | **new-track** flag | Toyota `NEW_TRACK`, Rivian new states | derived from the age field (●) | in place |
 | the radar's own **relative** speed | `REL_SPEED` on Toyota, Honda, Hyundai, Chrysler | over-ground speed (`64\|10`) minus 0xB4 ego speed | the ACC target carries a relative speed for the followed car |
 | relative **acceleration** | Hyundai `REL_ACCEL`, Tesla `LongAccel` | `84\|10` over-ground acceleration (◐, lags 0.5-1 s); the ACC target's relative acceleration (●) | calibrate `84\|10` against independent motion |
@@ -190,7 +190,7 @@ upstream PR.
 |---|---|---|---|---|
 | transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
 | ACC target decode and association | 27 | 2.0 (range scale 0.4 x since 2.3) | +24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2 | keep |
-| Kalman speed filter (one state, 240|7-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
+| Kalman speed filter (one state, uncertainty-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
 | young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 | keep |
 | speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 | keep |
 | age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |

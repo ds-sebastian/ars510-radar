@@ -100,7 +100,7 @@ SIGNAL_COMMENTS = {
     "UNK_269_3": "Upper bits of the candidate sigma ay at 264.",
     "UNK_183_7": "Bit 183 raw; bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows, 60-99 on young tracks).",
     "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 are zero.",
-    "UNK_168_10": "All ones or all zeros (768 / 832 rare): a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the range where the track was first seen (far: always on).",
+    "UNK_168_10": "All ones or all zeros (768 / 832 rare): a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 (far: always on).",
     "UNK_15_1": "Raw; mostly set on newborn zero-range rows.",
     "UNK_239_1": "Raw; often set near track birth.",
     "UNK_277_11": "Raw; bit 277 rarely set on newborn tracks.",
