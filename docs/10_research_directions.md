@@ -14,10 +14,10 @@ The most promising next steps, ordered by how directly they would improve the ra
    15-80 m and 66% beyond on the owner's car ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
    and its wide error alone, which is where much of `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
    drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
-3. **A drive with the camera covered.** The ACC target's distance and speed show no camera input where the camera's
+3. **A drive with the camera covered.** The ACC target's distance and speed hold steady where the camera's
    association changes, and the radar takes far targets without it ([05](05_acc_target_and_support.md)). The camera's
-   messages to the radar never drop out in the logs, so one drive with the camera covered shows whether camera input the
-   association state does not reveal (lane curves, objects) reaches the ACC target or its choice of target.
+   messages to the radar never drop out in the logs, so one drive with the camera covered shows whether camera input beyond the
+   association state (lane curves, objects) reaches the ACC target or its choice of target.
 4. **Physical units for the uncertainty fields.** `240|7`, `232|7`, `224|7` and `248|7` are scaled against the radar's ACC
    target, the radar's own estimate ([03](03_slot_fields.md#uncertainty-and-quality)). An independent reference (a second car with a GPS logger,
    or a known far target) would give them physical units and test `fused`'s weights directly.

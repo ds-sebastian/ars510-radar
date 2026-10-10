@@ -107,11 +107,11 @@ percentile +0.91, at least 1.0 in 14 of 159 runs); with `raw` +0.67 (+1.25, 74 o
   car state, and the radar points of the profile being tested. U1 is a drive with stock ACC, U2 one with openpilot
   longitudinal ([09](09_tools_and_data.md#data-in-this-repo)).
 - **Demand** is the constant deceleration that keeps the MPC's own safety distance over 10 s along the lead path a fork
-  hands its MPC, with the ego started at the desired spacing so the gap the driver kept does not count. It compares forks
-  and profiles; it is not what the planner requests. The MPC, jerk limits, cruise, personalities and each fork's other
-  features are not run.
-- Defaults are assumed (the rows above); user settings change them. StarPilot's model-uncertainty inputs to its filter
-  time are not replayed. The braking-onset comparison above has 10 events and one proxy, and is a hint only.
+  hands its MPC, with the ego started at the desired spacing, so it measures the lead path alone. It compares forks and profiles
+  through radard and the lead path; the MPC, jerk limits, cruise, personalities and each fork's other features stay
+  outside it.
+- Defaults are assumed (the rows above); user settings change them. StarPilot's filter time runs with its default
+  model-uncertainty input. The braking-onset comparison above rests on 10 events and one proxy (○).
 - Versions move: the older fork notes in [08](08_openpilot_integration.md#on-the-road) describe earlier builds
   (FrogPilot 0.9.7, an early StarPilot profile). StarPilot's constant lead-acceleration extrapolation above 35 mph is
   still in its legacy path.
