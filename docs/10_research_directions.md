@@ -14,19 +14,28 @@ The most promising next steps, ordered by how directly they would improve the ra
    15-80 m and 66% beyond on the owner's car ([08](08_openpilot_integration.md#on-the-road)). Far leads without it depend on the object list
    and its wide error alone, which is where much of `fused`'s remaining mild radar-only braking comes from. Finding when and why the radar
    drops or delays its target (range, speed, curve, camera state) tells whether coverage can grow.
-3. **Is the radar's ACC target camera-assisted?** The radar sends it (◐, [05](05_acc_target_and_support.md)), and it
-   receives lane-like camera data. Moments when the camera's messages to the radar go stale (glare, tunnels,
-   startup), or one drive with the camera covered, show whether its velocity depends on the camera.
+3. **A drive with the camera covered.** The ACC target's distance and speed show no camera input where the camera's
+   association changes, and the radar takes far targets without it ([05](05_acc_target_and_support.md)). The camera's
+   messages to the radar never drop out in the logs, so one drive with the camera covered shows whether camera input the
+   association state does not reveal (lane curves, objects) reaches the ACC target or its choice of target.
 4. **Physical units for the uncertainty fields.** `240|7`, `232|7`, `224|7` and `248|7` are scaled against the radar's ACC
    target, the radar's own estimate ([03](03_slot_fields.md#uncertainty-and-quality)). An independent reference (a second car with a GPS logger,
    or a known far target) would give them physical units and test `fused`'s weights directly.
-5. **Do the weighting in radard.** A radard that accepts a per-point speed variance would let this interface pass the
-   radar's values through like the other radar interfaces, and would help every radar with a reported uncertainty.
-   The optional radard patch (vision fusion, `VISION_V_STD_SCALE` 2.0) is a related experiment.
+5. **Where the weighting lives.** radard's per-track filter is built for radars with a clean relative speed, so the
+   ARS510's weighting stays in the interface. In replay, a pass-through interface that hands radard each reading's
+   variance (radard also fusing the vision lead's speed) asks for hard radar-only braking about twice as often as
+   `fused` (57 against 30 held-out ticks); radard's vision fusion (`VISION_V_STD_SCALE` 2.0) on top of `fused` lowers
+   unnecessary braking against the hindsight oracle but misses more of it on the road drives (8.4 against 7.2 s)
+   ([`radard_side_options.json`](../data/analysis/summaries/radard_side_options.json)). A radard that weighs every
+   radar by its reported uncertainty needs its own filter design.
 6. **Use the radar's own lead acceleration.** 0x235 byte 2 (relative acceleration) tracks lead acceleration better
    than radard's derived `aLeadK` against a smoothed lead acceleration from the object-list speed (correlation 0.64 vs 0.56, RMS 0.69 vs 0.80 m/s²)
-   with less wobble (0.13 vs 0.15; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). radard derives `aLeadK` from vRel for every car; a fork-side radard
-   change that uses the radar's `aRel` would test whether the brake-release-brake feel while following eases.
+   with less wobble (0.13 vs 0.15; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). radard derives `aLeadK` from vRel for every car. Used as
+   `aLeadK` for the ACC target's track (fork-side radard, replay) it starts braking 0.02 s earlier with fewer hard ticks,
+   but a newly acquired target's acceleration starts near zero and replaces the deceleration radard has already built
+   up, so more braking comes late on the road drives (7.2 → 10.8 s against the oracle,
+   [`radard_side_options.json`](../data/analysis/summaries/radard_side_options.json)). A use needs a hand-over rule
+   for new targets.
 7. **Lead acceleration in fork planners.** StarPilot extrapolates `aLeadK` unchanged above 35 mph; a decaying
    extrapolation or an `aLeadTau` floor for radar leads would test whether the brake-then-accelerate swing goes away.
 8. **Road miles with `fused`.** The replay results ([11](11_profiles_compared.md)) need closed-loop confirmation:
@@ -169,8 +178,8 @@ upstream). A test keeps it equal to `fused` point for point (bundled samples; on
    tracks through. The ARS510's object list has slow, correlated speed errors whose width the radar's `240|7` code
    follows as a continuous scale (◐); the unfiltered decode asks for hard braking three times as often as `fused`
    ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). The candidate's test covers the filter
-   (unfiltered, the bundled excursion dives to −6 m/s). The same weighting could live in radard instead (a per-point speed
-   variance), leaving the interface a pass-through. Processing in the interface has precedent: openpilot's Ford
+   (unfiltered, the bundled excursion dives to −6 m/s). Handing radard a per-point speed variance instead, with the
+   interface a pass-through, does not reproduce it in replay (hard radar-only ticks about twice `fused`'s; [item 5 above](#for-a-better-ride)). Processing in the interface has precedent: openpilot's Ford
    interface (Delphi MRR, 272 lines, 184 of them code) clusters raw detections into tracks and associates them over time.
 2. **Small, separable PRs.** Decode and points first (opendbc, decode only, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
