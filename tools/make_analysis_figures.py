@@ -1072,11 +1072,122 @@ def summary_owner_case():
          "Saved planner/lead output; captured vision is a comparison, not physical ground truth.")
 
 
+def summary_endpoint_regression() -> None:
+    """Anonymous frozen owner comparison of a nonrecursive summary velocity source."""
+    info = summary("summary_endpoint_regression")
+    fig = plt.figure(figsize=(10.2, 5.3))
+    grid = fig.add_gridspec(2, 2, height_ratios=[2.2, 1.1])
+    axes = [fig.add_subplot(grid[0, i]) for i in range(2)]
+    addresses = ["0x192", "0x194"]
+    x = np.arange(2)
+    for index, (key, label, factor) in enumerate([
+        ("rmse", "ACC speed discrepancy RMSE (m/s)", 1),
+        ("lag_proxy_s", "Acceleration-linked lag proxy (ms)", 1000),
+    ]):
+        ax = axes[index]
+        for j, (method, title, color) in enumerate([
+            ("baseline", "Ground-speed Kalman", S1),
+            ("candidate", "Quadratic Huber fit", S2),
+        ]):
+            values = [info["new_owner"][address][method][key] * factor for address in addresses]
+            bars = ax.bar(x + (j - .5) * .34, values, .34, label=title, color=color)
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x() + bar.get_width()/2, value, f"{value:.3f}" if index == 0 else f"{value:.1f}",
+                        ha="center", va="bottom", fontsize=8)
+        ax.set_xticks(x, addresses)
+        ax.set_ylabel(label)
+        ax.set_ylim(0, .19 if index == 0 else 52)
+    axes[0].legend(loc="upper left", fontsize=8)
+    ax = fig.add_subplot(grid[1, :]); ax.axis("off")
+    boxes = [(.01, .02, .25, .80, "Summary range +\nintegrated ego displacement\nGround-position observations"),
+             (.36, .02, .28, .80, "Last 1.2 s: quadratic Huber fit\nEndpoint speed + acceleration"),
+             (.74, .02, .25, .80, "Current ground speed\nSubtract ego for vRel")]
+    for bx, by, bw, bh, text in boxes:
+        ax.add_patch(plt.Rectangle((bx, by), bw, bh, facecolor="#eaf1f8", edgecolor=S1, lw=1))
+        ax.text(bx+bw/2, by+bh/2, text, ha="center", va="center", fontsize=9)
+    for start, end in [(.26, .36), (.64, .74)]:
+        ax.annotate("", xy=(end, .42), xytext=(start, .42), arrowprops={"arrowstyle": "->", "color": INK2})
+    fig.suptitle("Summary velocity: competitive error with a finite-history estimator", fontsize=12)
+    fig.tight_layout()
+    save(fig, "summary_endpoint_regression", "Ten owner drives excluded from tuning; 178,187 range-matched samples. ACC is a dependent radar witness.\n"
+         "The lag proxy is a regression diagnostic, not measured latency; neither estimator establishes physical accuracy.")
+
+
+def summary_timing_slimming() -> None:
+    """Timing controls and complexity ablation, each on its own common support."""
+    info = summary("summary_endpoint_regression")
+    fig = plt.figure(figsize=(11, 7.6))
+    grid = fig.add_gridspec(2, 2, height_ratios=[2, 1.6], hspace=.55)
+    addresses = ["0x192", "0x194"]
+    controls = [
+        ("cycle_clock", "Cycle timing improves both estimators", [
+            ("KF_receipt", "Kalman · receipt", S1), ("poly_receipt", "Quadratic · receipt", S2),
+            ("KF_cycle_clock", "Kalman · cycle", "#788b9d"), ("poly_cycle_clock", "Quadratic · cycle", "#73ac91")]),
+        ("slimming", "A plain quadratic keeps comparable error", [
+            ("KF", "Kalman", S1), ("Huber_ground", "Huber · ground", S2),
+            ("OLS_ground", "Plain · ground", "#788b9d"), ("OLS_relative", "Plain · relative", "#73ac91")]),
+    ]
+    for i, (section, title, methods) in enumerate(controls):
+        ax = fig.add_subplot(grid[0, i]); x = np.arange(2)
+        for j, (method, label, color) in enumerate(methods):
+            values = [info[section]["scores"][addr][method]["rmse"] for addr in addresses]
+            bars = ax.bar(x+(j-1.5)*.19, values, .19, label=label, color=color)
+            for bar, value in zip(bars, values):
+                ax.text(bar.get_x()+bar.get_width()/2, value+.0015, f"{value:.3f}", ha="center", fontsize=7)
+        ax.set_xticks(x, addresses); ax.set_ylim(0, .21); ax.set_ylabel("ACC speed discrepancy RMSE (m/s)")
+        ax.set_title(title, fontsize=10); ax.legend(fontsize=8, loc="upper center", ncol=2)
+    ax = fig.add_subplot(grid[1, :]); ax.axis("off")
+    parts = [(.01,.10,.26,.80,"Timing and target continuity\nUse causal cycle observations\nReset incompatible histories"),
+             (.37,.10,.26,.80,"Curvature is needed\nLast 1.2 s: quadratic fit\nEndpoint slope → vRel"),
+             (.73,.10,.26,.80,"Optional complexity here\nHuber loops: little average gain\nEgo integral: locally redundant")]
+    for bx, by, bw, bh, label in parts:
+        ax.add_patch(plt.Rectangle((bx,by),bw,bh, facecolor="#eaf1f8", edgecolor=S1, lw=1))
+        ax.text(bx+bw/2,by+bh/2,label,ha="center",va="center",fontsize=9)
+    for start,end in [(.27,.37),(.63,.73)]:
+        ax.annotate("",xy=(end,.5),xytext=(start,.5),arrowprops={"arrowstyle":"->","color":INK2})
+    fig.suptitle("Summary velocity: improve the observations, retain only useful estimator parts", fontsize=12, y=.98)
+    save(fig, "summary_timing_slimming", "Ten reused owner drives. Clock: 176,089 common samples; slimming: 178,187. Different supports.\n"
+         "ACC is a dependent range-matched witness. Ego jerk and individual-drive failures limit simplification.\n"
+         "The clock + plain relative source passes all eight replay gates; scalar speed fusion and the default remain unchanged.")
+
+
+def summary_source_replay() -> None:
+    """Actual published summary source and unchanged complete-parser consumer outcomes."""
+    info = summary("summary_endpoint_regression")
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.8))
+    x = np.arange(2)
+    for j, (name, label, color) in enumerate([
+        ("published_linear", "Published linear", S1),
+        ("runtime_relative", "Clock + quadratic", S2),
+        ("KF_clock", "Offline clock KF", "#788b9d")]):
+        values = [next(r["rmse"] for r in info["published_summary_control"]["scores"]
+                       if r["addr"] == addr and r["candidate"] == name) for addr in ["0x192", "0x194"]]
+        bars = axes[0].bar(x+(j-1)*.25, values, .25, label=label, color=color)
+        for bar, value in zip(bars, values):
+            axes[0].text(bar.get_x()+bar.get_width()/2, value+.003, f"{value:.3f}", ha="center", fontsize=8)
+    axes[0].set_xticks(x, ["0x192", "0x194"]); axes[0].set_ylim(0, .23)
+    axes[0].set_ylabel("ACC speed discrepancy RMSE (m/s)")
+    axes[0].set_title("Better conditional summary speed", fontsize=11); axes[0].legend(fontsize=8)
+    comparison = info["clock_plain_combination"]["driving_replay"]["comparison"]
+    x = np.arange(3)
+    for j, (name, label, color) in enumerate([("fused", "Published fused", S1), ("polynomial", "Clock + quadratic source", S2)]):
+        values = [comparison[name][cohort]["hard"] for cohort in ["heldout", "further", "owner"]]
+        bars = axes[1].bar(x+(j-.5)*.3, values, .3, label=label, color=color)
+        for bar, value in zip(bars, values):
+            axes[1].text(bar.get_x()+bar.get_width()/2, value+.5, str(value), ha="center", fontsize=9)
+    axes[1].set_xticks(x, ["Held-out", "Further", "Owner"]); axes[1].set_ylim(0, 40)
+    axes[1].set_ylabel("Hard radar-only replay ticks")
+    axes[1].set_title("Comparable complete-parser behavior", fontsize=11); axes[1].legend(fontsize=8)
+    fig.suptitle("Source precision gains do not establish a better driving default", fontsize=12)
+    save(fig, "summary_source_replay", "175,938 common conditional labels on ten reused owner drives; ACC is a dependent radar witness.\n"
+         "27 reused consumer chains, eight gates pass. Scalar speed fusion remains Kalman; default unchanged.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
-                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
+                                   event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case, summary_endpoint_regression, summary_timing_slimming, summary_source_replay,
                                    acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
 
 

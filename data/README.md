@@ -73,3 +73,5 @@ from the research workspace.
 Per-bit statistics of the 0x80 slot (288 bits), the 0x80 header and the 0x85 record from 13 one-minute segments of
 drive A: flip rates, one-rates and the automatic carry-chain field split. `tools/build_cabana_route.py` builds the
 Cabana DBC's slot layout from it.
+
+- [`summary_endpoint_regression.json`](analysis/summaries/summary_endpoint_regression.json): causal endpoint regression versus the ground-speed Kalman summary estimator, with owner confirmation, completed consumer replay, cycle-clock controls and reused-owner slimming ablations.

@@ -319,6 +319,84 @@ cover half the drop, relative to the ACC target. One speed state 0.438 s, colore
 −44 ms, 95% route-bootstrap interval [−101, +13] ms. The ACC target is the same radar's tracker, so this compares the
 filters, not physical braking ([`kalman_response.json`](../data/analysis/summaries/kalman_response.json)).*
 
+### A finite-history alternative for summary speed
+
+A summary position plus the integrated ego displacement is the target's displacement over ground. A quadratic fit to
+its last 1.2 s gives **current ground speed** from the endpoint derivative; Huber loss limits the influence of a bad
+position sample. This estimates speed and acceleration with bounded history and no covariance recursion. It is a
+candidate velocity source for fusion; the recommended profile remains `fused`. Its current summary source is a
+one-second straight-line relative-range derivative. The ground-speed Kalman below is an offline comparison model,
+not the published summary implementation.
+
+![summary endpoint regression compared with Kalman](img/analysis/summary_endpoint_regression.png)
+
+On ten owner drives excluded from estimator tuning, against ACC speed during sustained range agreement, the quadratic estimate and a
+constant-velocity ground-speed Kalman give almost equal error: **0.153 versus 0.151 m/s RMSE** for `0x192`, and **0.145
+versus 0.144 m/s** for `0x194`. The acceleration-linked lag proxy is 2 versus 40 ms and 17 versus 42 ms. This proxy is
+`−Σ((v_est−v_ACC)·a_ACC)/Σ(a_ACC²)`; it also includes acceleration-correlated error and is not a latency measurement.
+The ACC speed is a dependent radar witness, so these are tracker discrepancies, not calibrated physical errors.
+
+The labels require range agreement within 0.25 m for at least 1.5 s; they do not independently establish physical identity.
+The quadratic fit passes the fixed aggregate error, tail and maneuver limits on both streams; individual drives have
+maneuver or tail regressions. A route-cluster interval for its squared-error difference includes zero on both streams.
+The Kalman model is an equally competitive, compact choice with constant-sized state; the regression instead retains
+recent samples. With this source inside fused 2.1, the complete parser passes the fixed gates on 27 reused driving chains:
+hard radar-only ticks remain **30 / 2 / 0** on held-out / further / owner cohorts, with unchanged target-episode counts.
+Mean onset against vision is 3 ms earlier, while anticipation changes from 43.7% to 43.1%. An owner handover has a
+one-tick 1.56 m/s² stronger braking transient. This is comparable behavior, without evidence for changing the default
+([`summary_endpoint_regression.json`](../data/analysis/summaries/summary_endpoint_regression.json)). The model follows
+[local polynomial regression](https://www3.stat.sinica.edu.tw/statistica/j6n1/j6n17/j6n17.htm); robust finite-horizon
+estimation supplies a related [outlier-resistant formulation](https://arxiv.org/abs/2210.02166).
+
+### Which parts earn their code?
+
+![summary timing and necessary complexity](img/analysis/summary_timing_slimming.png)
+
+On the ten owner drives reused for these ablations, the existing `0x190` cycle clock reduces the quadratic estimate's
+RMSE from **0.153 / 0.145 to 0.133 / 0.130 m/s** on 176,089 common range-matched samples. Kalman with the same clock
+gives **0.133 / 0.132 m/s**. Timing improves both estimators: p95 receipt-minus-cycle interval disagreement is about
+11.5 ms on the transfer corpus, against a nominal 60 ms cycle. The encoded clock is nominal microseconds, with no
+independent acquisition-time calibration. Pairing is causal to a preceding header within 70 ms; repeated cycles are
+coalesced only when the complete summary and target metadata repeat exactly. A same-clock conflict or missing metadata resets
+history. This use of the summary's clock does not associate the header with the native object list.
+
+A fixed-window **plain quadratic fit of relative range** gives 0.154 / 0.144 m/s RMSE, versus robust ground-position
+0.153 / 0.145 on 178,187 receipt-time samples. It passes the aggregate error, tail, maneuver and lag-proxy limits, with
+individual-drive failures. The derivative kernel uses five time moments, three position moments and an analytic 3×3
+solve: about 16 executable lines, without a robust loop or ego integral. History management, association, confidence
+and the rest of the parser add code. Five thousand original windows match an independent polynomial fit within
+3.2×10⁻¹³ m/s; the roughly 10 µs source-kernel measurement is not full-parser throughput.
+
+Curvature earns its place: a straight-line ground-position fit has 0.294 / 0.264 m/s RMSE and about 0.25 s lag proxy on
+reused transfer, versus quadratic 0.178 / 0.169 and 0.006 / 0.009 s. Huber fitting and ego integration add little average
+benefit on this scope. If ego speed is locally affine, its integral is quadratic, so subtracting endpoint ego speed
+from the ground fit equals fitting relative range directly. Ego jerk breaks that equivalence. These ablations support
+simplification candidates. Combining clock timing with the plain relative fit gives **0.134 / 0.130 m/s**, versus clock Kalman 0.133 / 0.132,
+on 175,938 common finite rows from actual CAN. The source passes all aggregate limits; 151 labelled rows are unavailable.
+It uses no ego input, so it retains a few position samples dropped by the earlier ground-estimator bench; these actual
+source scores account for that history difference. The roughly 8 µs summary-update-and-derivative measurement excludes
+the rest of the parser. Clock pairing, metadata checks, bounded history and message forwarding add code beyond the
+small derivative kernel. The full parser with this source passes all eight fixed gates against fused 2.1 on 27 reused chains: hard radar-only ticks and target
+episodes are unchanged, held-out switches are 1,228 versus 1,231, and further switches 300 versus 298. Mean response
+onset against vision is unchanged; anticipation is 43.1% versus 43.7%. On 84,659 owner ticks, 111 change braking by
+more than 0.05 m/s²; the largest stronger request is 0.379 m/s² on the same tracked lead. Against the current default, fused 2.2 (young-track ACC match, next-lane and off-path guards), the same source passes the same
+eight gates on the 27 reused chains: hard radar-only ticks 30 / 2 (held-out / further) and target episodes 3 / 3 are identical,
+switches are 1,367 versus 1,370 and 299 versus 297, mean onset against vision is −0.018 s for both, and the 84,659 owner ticks
+keep 0 hard ticks and 0 target episodes in both. Of 353,947 held-out ticks 320 change braking by more than 0.05 m/s² (largest
+stronger request 0.60 m/s², softer 0.81). These are competitive
+source and consumer comparisons, without evidence for changing the default. Scalar Kalman speed fusion remains
+in both comparisons ([numbers and limits](../data/analysis/summaries/summary_endpoint_regression.json)).
+
+![published source comparison and complete-parser replay](img/analysis/summary_source_replay.png)
+
+On the same 175,938 common finite owner labels, the actual published linear summary derivative has **0.175 / 0.154 m/s**
+RMSE, versus **0.134 / 0.130** for clock/plain quadratic. That reduces conditional source discrepancy by 24% / 16%;
+paired route-bootstrap intervals put the reduction at 20–36% and 2–34%. All nine labelled first-summary drives improve; three of eight second-summary drives worsen. These are reused, dependent labels. Most driving output remains governed by other sources, matching, range prediction and the unchanged consumers.
+The published summary methods total 23 literal source lines, versus 44 for the clock/plain methods and derivative,
+before additional header state and forwarding. The alternative removes robust loops and ego integration, but earns
+its extra timing and curvature code as a competitive fork experiment, rather than reducing total production code.
+The best-supported installation default remains `fused`.
+
 ## Other approaches tested
 
 None is in a profile.
