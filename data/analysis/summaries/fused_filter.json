@@ -358,5 +358,16 @@
    "vRel_mps": 7.1e-15
   },
   "control": "BASE_CONFIG as reference on a short drive gives 1,454 trackId mismatches and dRel differences up to 2.5 m, so the comparison detects differences"
+ },
+ "saturation_guard_heldout": {
+  "note": "raw decode without and with the saturation guard, 20 held-out routes (research-workspace velocity-guard run)",
+  "without_guard": {
+   "hard_ticks": 117,
+   "hard_episodes": 16
+  },
+  "with_guard_raw": {
+   "hard_ticks": 93,
+   "hard_episodes": 15
+  }
  }
 }

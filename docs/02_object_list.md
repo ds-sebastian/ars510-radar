@@ -57,7 +57,7 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 |---|---|---|
 | clock code | record bytes 1-4, little-endian | equals the 0x85 fine clock `// 100` in the same cycle |
 | record counter | `int.from_bytes(record[5:7], "little") >> 1` | equals the 0x85 counter in the same cycle |
-| timing offset (candidate) | header bits 104-114 | its change follows the record's arrival-time offset at about 1 ms per count |
+| timing offset (candidate) | record bits 104-114 (bytes 13-14) | its change follows the record's arrival-time offset at about 1 ms per count |
 | allocation count | `record[14] >> 3` | number of allocated slots: those whose index field equals their position, which are the slots with age ≥ 1 ([`header_allocation_count.json`](../data/analysis/summaries/header_allocation_count.json)) |
 
 Pairing 0x80 and 0x85 by clock and counter is exact. Pairing by arrival time picks the neighbouring cycle about a
@@ -101,10 +101,10 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 
 ## What the radar lists
 
-The object list is built for ACC: it lists **moving objects** and objects it saw moving.
+The object list behaves like an ACC list: it lists **moving objects** and objects it saw moving.
 
 - Every new object is decided at about **age 5 (0.3 s)**. A new object whose over-ground speed is below about
-  0.2-0.4 m/s is deleted then, once ego is faster than about 2-3 m/s.
+  0.2-0.4 m/s is mostly deleted then, more often the faster ego drives.
 - **Objects first seen moving keep their track after they stop.** Stopped leads in a queue are tracked through the stop.
 - Slow movers (0.7-3 m/s: pedestrians, cyclists, creeping cars) are mostly kept at every ego speed.
 - While ego is stopped, the radar also lists objects that have stayed stationary.
@@ -116,8 +116,9 @@ The object list is built for ACC: it lists **moving objects** and objects it saw
 | 5-10 m/s | 12% | 46% | 71-88% |
 | > 10 m/s | 6-7% | 27-30% | 47-100% |
 
-*Share of new tracks (2,971 of 4,051 in these speed bins) surviving the age-5 decision
-([summary](../data/analysis/summaries/stationary_listing_rule.json)).*
+*Share of new tracks (2,849 of 4,051 in these speed bins) surviving the age-5 decision; ranges span the drive groups
+([summary](../data/analysis/summaries/stationary_listing_rule.json), ranges in
+[`decode_claim_sources.json`](../data/analysis/summaries/decode_claim_sources.json)).*
 
 ![rain, stopped queue](img/shots/rain_stopped_queue.jpg)
 
@@ -136,11 +137,11 @@ Tracks younger than about 50-60 cycles carry unconverged range and velocity:
   age 11; figure below);
 - about a quarter of age-1 samples (26% over 700 segments) are an initialization template with a placeholder
   position at 0 m; the decoder withholds them ([03](03_slot_fields.md#class-and-size));
-- a newborn track can start tens of metres off (one read about 39 m for a car at about 100 m and walked out within about 5 s of its birth).
+- a newborn track can start tens of metres off (one read about 39 m for a car about 100 m ahead and walked out within about 5 s of its birth).
 
 ![young track](img/shots/young_track_convergence.jpg)
 
-*A newborn track (gray, dashed) reads about 40 m for cars about 100 m ahead and walks out to about 107 m within 5 s.*
+*A newborn track (gray, dashed) reads about 39 m for a car about 100 m ahead and walks out to about 107 m within 5 s.*
 
 ![age convergence](img/analysis/age_convergence.png)
 

@@ -47,9 +47,9 @@ flowchart LR
   G --> P["RadarPoint to radard (unchanged)"]
 ```
 
-The object-list σ also tracks the error seen by a second tracker output, which runs 1.1-1.5× the filter's σ: against the 2 Hz object
-stream 0x680, a tracker-quality
-witness for vehicles (half of its matched frames are the ACC target, the rest other cars), the object-list speed error is 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
+The object-list σ also tracks the error seen by a second tracker output. Against the 2 Hz object stream 0x680, a
+tracker-quality witness for vehicles (half of its matched frames are the ACC target, the rest other cars), the
+object-list speed error is 1.1-1.5× the filter's σ: 0.8 / 1.3 / 2.4 / 2.9 / 4.4 m/s RMS at
 0-40 / 40-60 / 60-80 / 80-110 / 110-170 m, where 0.045 m/s × `240|7` gives 0.6 / 1.1 / 1.6 / 2.6 / 3.4 m/s, and 1-4 % of
 frames lie beyond 3 σ. The error leans toward closing (median −0.2 to −0.7 m/s up to 110 m, −1.9 m/s beyond), which the
 ACC target corrects where it is present ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
@@ -88,7 +88,7 @@ publication gate, and the replays below are what justify the constants
 radard runs its own per-track Kalman filter on `[vLead, aLead]` with a fixed gain; its `aLeadK` is the lead
 acceleration the planner uses. This filter cleans only the speed it hands over, so radard and the planner run
 unchanged, and lead acceleration stays radard's job; one speed state scores better here than a speed + acceleration
-state ([below](#kalman-variants-tested)). 
+state ([below](#kalman-variants-tested)).
 
 The two filters run in series, so all replay numbers already include their combined effect. Measured directly on
 148,219 radar-lead ticks of the 20 held-out routes (fused 2.0, `radard_cascade` in
@@ -107,7 +107,7 @@ The two filters run in series, so all replay numbers already include their combi
   - publish a point only with a fresh ego speed, because a NaN would stay in radard's filter for good.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
   `raw` withholds the track until the speed is back within 5 m/s (or 1 s), then continues under a new ID. Held-out
-  hard ticks 117 → 93. In `fused` the robust update absorbs the sentinel, so the guard is off.
+  hard ticks 117 → 93 (`saturation_guard_heldout` in [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)). In `fused` the robust update absorbs the sentinel, so the guard is off.
 - **Track-ID relink (`raw` only):** a track lost and re-found within 3.5 s keeps its ID. With the filter on, the
   driving is identical with or without it, so `fused` leaves it off.
 - **Range fusion (`fused`):** range walks by metres at 60-100 m (3% per frame). A fixed-gain predictor, separate from
@@ -134,7 +134,7 @@ it describes. The summaries (a fork option) are matched the same way.
 
 - **Matched by position.** Both matches use the tracker's own position, so they keep holding while the object-list
   speed is wrong: replayed over the logged frames, a summary matched by position sits on its track on 99.5-100 % of cycles,
-  also during object-list speed excursions, where a speed-agreement rule kept only 18-45 %.
+  also during object-list speed excursions, where a speed-agreement rule kept only 17-56 %.
 - **Room for the object list's short far range.** The object list reads the followed car several metres short of the ACC
   distance beyond 50 m ([06](06_accuracy.md#distance)), so the ACC cost scales its range term with range. Already with
   2.1's 0.25 x scale the ACC target sat on the in-lane lead on 92.7 / 74.0 / 37.6 % of lead records at 60-80 / 80-100 /
@@ -179,7 +179,8 @@ radar-only braking at 0 with every hard vision brake still answered. They cut ra
 from 10 to 7, start braking within 0.015 s of 2.1 on every drive, and raise lead flips by 8 %. They also remove the
 second car's hard false brake. In the late-brake case above, the first radar lead is at 63 m instead of 47 m and the
 request −1.47 instead of −2.36 m/s² (vision −1.61); 2.4 asks the same as 2.3 in that moment. The cost is a slightly
-lower share of driver brakes anticipated at −1 m/s² (41.3 against 43.7 %). Both constants sit in a flat region: an ACC
+lower share of driver brakes anticipated at −1 m/s²: 43.7 → 41.9 % from the path gate and 0.4 x match, and 41.3 % after
+dropping the summaries in 2.4. Both constants sit in a flat region: an ACC
 match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard ticks at 30 (target episodes 2-3) and
 stay within 0.4 s of the chosen values against the hindsight-lead oracle below. The openpilot file's parts and
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
@@ -285,13 +286,10 @@ the gap was really closing.
 
 Against the hindsight-lead oracle ([above](#against-what-the-car-should-have-done)) the version without them scores
 better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead of 3.3 s on the 27 replay drives
-(2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same minimum request on 19 of 23 bookmarks (within 0.03 m/s² on the
-other 4),
-with 0 hard radar-only braking and 7 mild requests each; against the oracle (owner and second car, 7.65 h) 5.4 against
-4.9 s unnecessary and 7.2
-against 9.5 s missed. So `fused` leaves them out since 2.4, and the fork default and the openpilot version drive
-identically. The code stays as a
-fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
+(2.4 against 2.3; RMS 0.244 for both). On the owner's road drives the two give the same minimum request on 19 of 23
+bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and 7 mild requests each; against the
+oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` has left
+them out since 2.4, and the fork default and the openpilot version drive identically. The code stays as a fork option (`summary_sigma_mps`), and the experimental `colored` profile, which was tested with them, keeps them.
 
 ## Kalman variants tested
 
@@ -303,7 +301,7 @@ replayed through openpilot ([`kalman_variants.json`](../data/analysis/summaries/
 
 | variant | bench | openpilot replays |
 |---|---|---|
-| Student-t update instead of the 3σ clamp | same as the clamp | – |
+| Student-t update instead of the 3σ clamp | about the same as the clamp (up to 0.2 points more false closings) | – |
 | speed + acceleration state, with the ACC target's acceleration as a reading | worse than one speed state on held-out and owner drives, slightly better on fresh | – |
 | noise learned from all slot fields (gradient boosting) | small gain; it relearns `240\|7`, ego speed and `84\|10` | – |
 | object-list error as its own state (colored noise, τ 1.2 s), noise scaled by ego speed and `84\|10` | **14-16% fewer false closings** on held-out and fresh drives; responds as fast to ACC-defined drops (below) | 27 drives: held-out 30 → 29 hard ticks, one far false closing held for seconds (2 → 30 on the further drives) |

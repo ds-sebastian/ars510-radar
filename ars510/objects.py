@@ -102,7 +102,7 @@ UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "
 SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "unnamed_obstacle_probability_candidate")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
 HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "not_calibrated_height")
-# m or m/s per count; range_uncertainty_code below 40 m only.
+# m or m/s per count; range_uncertainty_code is the overall 0.23 (0.24 below 40 m).
 UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
                          "lateral_speed_uncertainty_code": 0.37}
 
@@ -169,7 +169,7 @@ class NativeObject:
     length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
     height_code: int | None = None  # 272|5, height-like size code (raw)
-    range_unc_code: int | None = None  # 224|7 (about 0.23 m per count below 40 m)
+    range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
     vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10; no error unit

@@ -99,7 +99,7 @@ until the last.
    | hard radar-only ticks | planner ≤ −2 m/s² while the vision-only replay asks ≥ −0.5 m/s²; must not rise |
    | radar-only episodes | ≥ 0.3 s at ≤ −1 m/s² while vision-only asks ≥ −0.3; must not rise |
    | braking onset | mean time of the first ≤ −0.5 m/s² request relative to each driver brake; must not get later by more than 0.03 s |
-   | early braking | share of driver brakes where the planner reached ≤ −1 m/s² between 3 s before and 0.5 s after the driver started braking; must not drop without a stated reason (the path gate cost 2.4 points, [12](12_kalman_filter.md#path-gate)) |
+   | early braking | share of driver brakes where the planner reached ≤ −1 m/s² between 3 s before and 0.5 s after the driver started braking; must not drop without a stated reason (the path gate and 0.4 x match cost 1.8 points, [12](12_kalman_filter.md#path-gate)) |
    | per event | no single driver brake answered more than 0.15 s later, lost, or weaker when hard |
 
 5. **Open a PR with the numbers**, the figure, and the drives used (anonymised). Changes are merged on held-out
@@ -109,7 +109,7 @@ until the last.
 
 [`data/README.md`](../data/README.md) describes every file. In short:
 
-- **`data/sample/`**: three 24-30 s real CAN captures (radar frames plus wheel speed, times rebased to 0), used by the
+- **`data/sample/`**: three 24-30 s real CAN captures (radar frames plus 0xB4 ego speed, times rebased to 0), used by the
   tests: steady highway following, the velocity excursion of [07](07_velocity_excursions.md), and an excursion with
   the radar's ACC target.
 - **`data/analysis/`**: an anonymised dataset from three drives (A, B, C; 88 minutes): every decoded object sample
@@ -118,7 +118,7 @@ until the last.
 - **`data/reference/slot_bit_map.json`**: per-bit statistics of the 0x80 slot, header and 0x85 record.
 
 The evidence comes from one owner's RAV4 (TSS2, 2022), logged with openpilot. Drives are named by role (A development,
-B city, C highway, D1-D4 closed-loop drives); the repo carries no route IDs, dongle IDs, GPS positions or full video. A few
+B city, C highway, D1-D4 closed-loop drives, E the ACC sample, O1-O3 owner road drives); the repo carries no route IDs, dongle IDs, GPS positions or full video. A few
 camera stills are included, with licence plates and place names blurred.
 
 ## Testing on your own car

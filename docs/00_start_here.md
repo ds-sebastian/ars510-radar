@@ -19,8 +19,8 @@ More: [02 Object list](02_object_list.md), [01 Radar bus](01_radar_bus.md).
 ## 2. Objects and tracks
 
 Each slot holds one object: distance (**dRel**), lateral position (**yRel**), speed over ground, an age counter and the
-radar's own speed **uncertainty** code `240|7`. The radar keeps an object in its slot while the age counts up, so slot
-+ age gives a **track**. New tracks are held back for 60 records (~3.6 s) until their range and speed settle.
+radar's own speed **uncertainty** code `240|7`. The radar keeps an object in its slot while the age counts up, so
+slot + age gives a **track**. New tracks are held back for 60 records (~3.6 s) until their range and speed settle.
 
 ![slot occupancy](img/analysis/slot_occupancy_and_tracks.png)
 
@@ -30,8 +30,8 @@ More: [02](02_object_list.md#an-objects-life), [03 Slot fields](03_slot_fields.m
 ## 3. How good is each measurement?
 
 Distance and lateral position are steady; speed at range has excursions. On the owner's 2.1 drives (300,000 radar-lead ticks
-matched to the camera's lead) the radar lead radard received, which takes the ACC distance for the car the ACC
-target follows, reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
+matched to the camera's lead) the radar lead radard received, which takes the ACC distance for the track matched to
+the ACC target, reads 0.5-1.4 m shorter than the camera up to 90 m, with a spread that grows
 from 0.6 m to 4-6 m at range.
 
 ![road statistics](img/analysis/guide_road_stats.png)
@@ -42,7 +42,8 @@ numbers.* More: [06 Accuracy](06_accuracy.md).
 
 The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.
 80-87 % are false closings. They are rare close in and common far out: on the closed-loop drives radar and vision
-disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with them, which is what the filter uses.
+disagree by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m. The radar's uncertainty code grows with the width of the speed error at that range and age, which is what the
+filter uses.
 
 ![false closing on a real drive](img/analysis/jitter_false_closing_event.png)
 
@@ -76,8 +77,8 @@ More: [12 Kalman speed filter](12_kalman_filter.md).
 
 openpilot's radard pairs the camera's lead with the radar track nearest in range, whatever its lateral position, so a
 car in the next lane can become the lead. Beyond 15 m, a track more than 2.5 m from the path the car is driving (predicted
-from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track the ACC target
-follows always stays visible.
+from yaw rate and speed) is withheld; closer in, cars moving into the lane stay visible. The track matched to the ACC
+target always stays visible.
 
 ![path gate](img/analysis/guide_lead_guards.png)
 
@@ -96,7 +97,7 @@ moments ([`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guar
 
 Every part was removed on its own and in combination, then replayed on 27 drives. Every hard brake was judged
 against the radar's raw range, the camera and the driver. Each part kept earns its place: removing it adds unjustified
-braking, destabilises the lead, or (for the ego-speed alignment) costs no line.
+braking or destabilises the lead; the ego-speed alignment is braking-neutral and costs no line.
 
 ![what each part is worth](img/analysis/kalman_ablation.png)
 

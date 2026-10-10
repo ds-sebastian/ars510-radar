@@ -72,7 +72,8 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 ![excursion sigma scale](img/analysis/excursion_sigma_scale.png)
 
 - Against the radar's own ACC target, the object-list speed error grows with the reported uncertainty `240|7`
-  ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.05 m/s per count (≈ 0.8 m/s at code 15, 1.2-1.3 m/s at code 30).
+  ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.06 m/s per count (≈ 0.9 m/s at code 15, 1.2-1.3 m/s at code 30;
+  [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)).
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
 - A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.3% observed vs 6.5%
   predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). The error is low-pass (~0.3 Hz), so a 1-3σ deviation lasts seconds.
@@ -82,8 +83,7 @@ Four closed-loop drives with the radar feeding radard (1.05 h, 0.31 h following 
 <summary>Caveats and the residual error</summary>
 
 - 0.045 is a fitted Gaussian-equivalent: the robust (MAD) core is ~0.027 m/s per count over codes 12-70, and heavy
-  tails (kurtosis 1.3-8) lift the RMS. Above code ~60 the main set's error grows faster than proportionally (figure). The ACC
-  target has its own error (~0.6 m/s).
+  tails (kurtosis 1.3-8) lift the RMS. Above code ~60 the main set's error grows faster than proportionally (figure).
 - Within a range band, `240|7` separates excursion records below 40 m (AUC 0.95) and barely beyond (0.42-0.55)
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)).
 - Across 13.6k candidate signals, the object's own state explains part of the object-list error: `84|10` acceleration (R² 0.11), the uncertainty code `264|8`, width `216|6`. Together the object's state

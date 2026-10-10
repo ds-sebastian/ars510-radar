@@ -58,9 +58,8 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 distance within 1.5 m ([summary](../data/analysis/summaries/target_366_coding.json)).
 
 **It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive O2 and 8 of 467 on O3, with fresh
-ACC frames saying "no target" (one span of 32 reports over 6.2 s). On O2 these are mostly closing objects about 4 m to the
-side while the car moves slowly (median ego 1.6 m/s, median relative speed −7 m/s); where they match an object-list track,
-the speeds correlate at 0.81; the target it picks then is possibly a PCS candidate (○)
+ACC frames saying "no target" (one span of 32 reports over 6.2 s). On O2 the car moves slowly during them (median ego 1.6 m/s, median relative speed −7 m/s); the 61 that match an
+object-list track sit a median 4 m to the side, and their speeds correlate at 0.81; the target it picks then is possibly a PCS candidate (○)
 ([coverage](../data/analysis/summaries/target_366_coverage.json)).
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
@@ -98,15 +97,15 @@ bus, openpilot longitudinal needs one of two setups:
 
 **0x320 bit 13 (◐).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the driving-support ECU. On U2,
 bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) goes 0 → 1 at 12.69 s. That is 0.17 s after the radar's last car-bus frame,
-right after the disable request and it stays set for all 26 minutes. It stays 0 on U1 at the same moment (the harness relay
-switch) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
+right after the disable request, and it stays set for all 26 minutes. It stays 0 through U1's first segment (stock ACC,
+no disable request) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
 messages begin. It behaves as the brake system's flag for a missing driving-support / PCS link.
 
 **The event pair keeps running while the radar is disabled (◐).** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target
 time to collision 3.6-7.5 s). That state stays on bus 1. On U1 (stock ACC) the 5 comparable short states
-left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that occurs without PCS action on the car bus (◐), and the brake request
-travels on the car bus.
+left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that occurs without PCS action on the car bus (◐); the PCS brake request
+itself travels on the car bus.
 
 ## What panda allows openpilot to send
 

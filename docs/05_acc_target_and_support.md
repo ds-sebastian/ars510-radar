@@ -97,9 +97,11 @@ while the ACC target stays at −0.75 to −0.9 m/s ([12](12_kalman_filter.md#th
   ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). The `fused` profile
   therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 - Against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference) its error scale is
-  close to zero at 10-40 m and 0.54 m/s at 40-70 m, against 0.55 / 1.07 m/s for the object list (error scales against that
-  reference; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). It is present in 38% of the optical-reference windows at 40-130 m and 11% of those beyond 80 m
-  ([summary](../data/analysis/summaries/video_truth.json)).
+  too small to separate from zero at 10-40 m (at most about 0.4 m/s, depending on the reference set) and
+  0.54 m/s at 40-70 m, against 0.55 / 1.07 m/s for the object list (error scales against that
+  reference; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json),
+  [`video_truth.json`](../data/analysis/summaries/video_truth.json)). It is present for 99 % of radar-lead time at
+  15-80 m and 66 % beyond on the owner's road drives ([08](08_openpilot_integration.md#on-the-road)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
 
@@ -162,14 +164,14 @@ word (it crosses 4096 continuously).
 ACC speed when both describe the same car (correlation 0.98, median difference 0.18 m/s). During object-list velocity
 excursions it stays with the ACC speed in every tested cycle (490 of 490 for 0x192, 98 of 98 for 0x194), and against
 a camera optical reference it is closer than the object list out to about 80 m (false closings > 2.5 m/s at 60-80 m:
-14.9 % → about 10 %; closer in 97 % of object-list false closings). Unlike the ACC target, the summaries often describe
-far cars: present without an ACC target at a median 60 m, half of them beyond 60 m
+14.9 % → about 10 %; closer in 97 % of object-list false closings). The summaries also describe far cars: present without an
+ACC target at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json)). They carry position only, so a speed comes
 from the range slope and lags by about half a second.
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. The fork build can attach each summary
-to the object-list track at its position (range within 15 %, lateral within 1 m) and use its range slope as a speed
+to the object-list track at its position (range within max(5 m, 15 %), lateral within 1 m) and use its range slope as a speed
 measurement up to 80 m: an option, off in `fused` and on in `colored`
 ([12](12_kalman_filter.md#what-the-summaries-do)).
 
@@ -249,8 +251,8 @@ the ACC target (◐). `support.parse_0x680` decodes it (big-endian fields, MSB-f
 - **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
   held-out segments).
 - **Speed:** on 1,872 frames of the 672-segment corpus where 0x680 and the ACC target are on the same vehicle, the two
-  speeds differ by 0.21 m/s (median absolute). When the object list is more than 2 m/s away from the ACC target, 0x680 stays within 1 m/s of
-  the ACC target in 50 of 51 frames.
+  speeds differ by 0.09 m/s (median absolute). When the object list is more than 2 m/s away from the ACC target, 0x680 stays within 1 m/s of
+  the ACC target in 64 of 64 frames ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)).
 - **Motion flags:** bit 0 is set on 99 % of objects slower than 0.5 m/s over ground and on 1 % of moving ones; bit 1 on
   98 % of objects approaching faster than 3 m/s and on 1 % of the others; bit 3 on 86 % of same-direction movers and on
   10 % of stationary objects, the stopped vehicles (on other drives the three shares are 98 %, 97 % and 72 %).
