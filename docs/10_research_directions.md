@@ -125,11 +125,11 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## Keeping AEB under openpilot longitudinal
 
-Without a radar CAN filter, openpilot longitudinal disables the radar and its AEB. Two routes could bring AEB back:
-relaying the radar's own decision from bus 1, or an openpilot AEB. Both send the PCS messages in the radar's place,
-keep 0x344 running for the brake system's link check, and show PCS on the dash only while the AEB source is healthy.
-The design, the dash rule and what is needed first (above all, one recorded stock AEB activation with bus 0 and bus 1
-logged) are in [13](13_car_bus_messages.md#aeb-without-a-can-filter).
+Without a radar CAN filter, openpilot longitudinal disables the radar and its AEB. A relay could bring AEB back: the
+disabled radar keeps assessing threats on bus 1, and openpilot would pass its brake decision to the car as 0x283 / 0x344,
+keep 0x344 running for the brake system's link check, and show PCS on the dash only while the relay is healthy. How it
+would work, and what is needed first (above all, one recorded stock AEB activation with bus 0 and bus 1 logged), are in
+[13](13_car_bus_messages.md#aeb-without-a-can-filter).
 
 ## What radard gets from other radars
 

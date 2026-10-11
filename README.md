@@ -145,7 +145,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
   car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
   `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)).
 - **AEB needs a radar CAN filter under openpilot longitudinal.** Without one, openpilot disables the radar and the
-  car's AEB with it; stock ACC keeps AEB. Routes to AEB without a filter, and the one recording they need, are in
+  car's AEB with it; stock ACC keeps AEB. How a relay of the radar's own decision could restore it, and the one recording it needs, are in
   [13](docs/13_car_bus_messages.md#aeb-without-a-can-filter).
 - **Community integration.** It installs on top of openpilot; the single-file openpilot version is the candidate for an
   upstream PR ([10](docs/10_research_directions.md#towards-an-upstream-comma-interface)).

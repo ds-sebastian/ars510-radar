@@ -159,27 +159,34 @@ radar's normal car-bus messages at once; there is no per-message mute that would
 Startup order makes no difference: whatever openpilot sends before, during or after the disable, no brake request
 leaves the radar afterwards.
 
-### Two ways to bring it back
+### Relaying the radar's decision (○ theoretical)
 
-Both keep the radar disabled and have openpilot send the PCS messages in its place.
+The disable silences only the radar's car-bus side. On bus 1, which the comma reads, the radar keeps sending its object
+list, ACC target and threat states at full rate ([01](01_radar_bus.md#openpilots-radar-disable)). On U2 its short
+time-to-collision event pair (0x195 / 0x196, [05](05_acc_target_and_support.md#0x195--0x196-event-pair)) kept firing
+while it was disabled. The radar's PCS logic appears to keep running; only its output to the car is cut. A relay would
+reconnect that output through openpilot, so Toyota's own tuned decision logic still decides when to brake.
 
-| | A. relay the radar's decision | B. openpilot AEB |
-|---|---|---|
-| who decides | the radar, which keeps assessing threats on bus 1 while disabled (its 0x195 / 0x196 event pair, [05](05_acc_target_and_support.md#0x195--0x196-event-pair)) | openpilot, from the radar's tracks on bus 1 and the camera model |
-| openpilot's job | translate the radar's bus-1 brake state into 0x283 / 0x344 | run a collision decision and build 0x283 / 0x344 itself |
-| strength | Toyota's tuned, validated decision logic stays in charge | needs nothing more from the radar than the object list |
-| needs first | the radar's brake request (or its stages) visible on bus 1 | a decision with a validated false-trigger rate; a large safety project |
+How it would work:
 
-What openpilot sends is the same in both:
-
-1. **0x344 without a gap** (20 Hz, idle `00 00 01 00 00 00 00 50` or with `PCSOPR` 0). The brake system checks for
-   it: 0x320 bit 13 sets 0.15 s after it stops (above).
-2. **0x283 idle** (33 Hz), so an activation changes the content of a running stream.
-3. **The activation sequence.** The reference names describe the stages: alarm (`PCSALM`, `PCSWAR`, FCW in 0x411),
-   brake pre-fill (`PREFILL`), brake assist, autonomous braking (0x283 `FORCE` and `STATE` 3, `PRECOLLISION_ACTIVE`; 0x344
-   `DSS1GDRV` deceleration). Order, timing and values come from a recorded stock activation.
-4. **A panda safety mode that allows it.** Upstream panda passes 0x283 only with bytes 0-5 zero. A fork needs limits
-   of its own: force, duration, only while moving, and AEB only while its source is healthy.
+1. **Listen on bus 1.** Each cycle openpilot reads the radar's PCS state from bus 1: alarm, pre-fill, brake assist,
+   autonomous braking, and the requested deceleration. This only works if the radar puts its brake decision on bus 1.
+   The event pair seen so far is a threat state: on U1 its short states left 0x283 / 0x344 / 0x411 idle (above). A
+   brake request has not been seen on bus 1, because no AEB activation has been recorded.
+2. **Translate to the car bus.** openpilot sends the 0x283 / 0x344 / 0x411 frames the radar would have sent for that
+   state. The mapping is learned from a car with a radar CAN filter, where both buses are visible at once during a stock
+   activation: each bus-1 state lines up with the car-bus frames the radar sent at the same moment.
+3. **Keep the streams running.**
+   - **0x344 without a gap** (20 Hz, idle `00 00 01 00 00 00 00 50`). The brake system checks for it: 0x320 bit 13
+     sets 0.15 s after it stops (above).
+   - **0x283 idle** (33 Hz), so an activation only changes the content of a running stream.
+   - The stages carry the reference names: alarm (`PCSALM`, `PCSWAR`, FCW in 0x411), brake pre-fill (`PREFILL`),
+     brake assist, autonomous braking (0x283 `FORCE` and `STATE` 3, `PRECOLLISION_ACTIVE`; 0x344 `DSS1GDRV`
+     deceleration).
+4. **Fail safe.** If bus 1 goes stale, a record fails its CRC, or openpilot stops, the relay drops to idle frames, and
+   the dash shows PCS off (below). The relay adds one openpilot cycle of delay (10-30 ms) to the radar's own timing.
+5. **A panda safety mode that allows it.** Upstream panda passes 0x283 only with bytes 0-5 zero. A fork would allow
+   the radar's brake request with limits: force, duration, only while moving, and only while bus 1 is healthy.
 
 ### The dash: PCS shows what is true
 
@@ -188,8 +195,8 @@ candidate. The rule for any implementation:
 
 | situation | dash | 0x411 |
 |---|---|---|
-| AEB source healthy (radar records arriving, openpilot running, panda in its AEB mode) | PCS on | as the radar's idle frame, `PCS_OFF` 0 |
-| any part unhealthy, or the AEB path not yet validated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
+| relay healthy (radar records arriving, openpilot running, panda in its AEB mode) | PCS on | as the radar's idle frame, `PCS_OFF` 0 |
+| any part unhealthy, or the relay not yet validated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
 | openpilot not running | malfunction | nothing sent; the car's own check reports it |
 
 "PCS on" also has to carry the radar's real alerts. The radar's own 0x411 reports a blocked or dirty sensor
@@ -201,16 +208,16 @@ a drive with a covered or dirty radar shows which candidate reacts), "PCS on" ca
 
 1. **One recorded stock AEB activation with bus 0 and bus 1 logged.** A car with a radar CAN filter keeps the radar
    enabled and can record it. Use an inflatable PCS test target on a closed lot at low speed. Bus 0 gives the activation
-   sequence (0x283 / 0x344 / 0x411); bus 1 shows whether the radar announces its decision there first (route A). Share
+   sequence (0x283 / 0x344 / 0x411); bus 1 shows whether the radar announces its decision there, and how. Share
    it through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
 2. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
 3. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
-   road. Neither route fits upstream openpilot; both are fork-only safety functions.
+   road. A relay does not fit upstream openpilot; it is a fork-only safety function.
 
 ### Advanced: a radar setting that drops only 0x343 (○ unexplored)
 
-A third route would make both of the above unnecessary: a Toyota-specific setting, if one exists, that stops only the
+Another route would make the relay unnecessary: a Toyota-specific setting, if one exists, that stops only the
 radar's ACC command (0x343) while its PCS messages keep running. Standard communication control cannot do this, and no
 such setting is known. Someone with Toyota's dealer tool (Techstream) or service information could check whether the
 radar offers one. Explore it **only on a spare radar on the bench**: changing a radar's configuration can leave it
