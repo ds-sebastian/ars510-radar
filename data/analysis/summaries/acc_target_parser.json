@@ -324,6 +324,105 @@
    "onset_vs_vision_s": 0.069
   }
  },
+ "one_model_over_every_object": {
+  "description": "every object-list track and the ACC target through one gate-free Kalman model (research profiles shared_speed / shared_range); same replays",
+  "shared_speed": {
+   "model": "speed state, traffic prior 0 +- 2.0 m/s, random acceleration 1.5 m/s2, object speed sigma 0.045 per 240|7 count, ACC 0.13 m/s",
+   "file": {
+    "code_lines": 86,
+    "constants": 18,
+    "state_attributes": 8,
+    "conditions": 39,
+    "functions": 7
+   },
+   "unnecessary_s": 141.7,
+   "missed_s": 15.5,
+   "onset_vs_vision_s": -0.032,
+   "flips_per_h": 602.0,
+   "hard_moving": 59,
+   "mild_moving": 205
+  },
+  "shared_range": {
+   "model": "range and range-rate state, range sigma 0.03 x range, ACC distance 0.025 m and speed 0.13 m/s, object speed not used",
+   "file": {
+    "code_lines": 89,
+    "constants": 17,
+    "state_attributes": 7,
+    "conditions": 34,
+    "functions": 7
+   },
+   "unnecessary_s": 542.1,
+   "missed_s": 16.0,
+   "onset_vs_vision_s": -0.148,
+   "flips_per_h": 532.0,
+   "hard_moving": 168,
+   "mild_moving": 381
+  },
+  "object_list_range_noise_per_frame": {
+   "(0, 10]": {
+    "median_range": 4.1,
+    "sd": 0.099,
+    "n": 777
+   },
+   "(10, 20]": {
+    "median_range": 14.8,
+    "sd": 0.292,
+    "n": 2833
+   },
+   "(20, 40]": {
+    "median_range": 31.5,
+    "sd": 0.772,
+    "n": 4411
+   },
+   "(40, 60]": {
+    "median_range": 47.2,
+    "sd": 1.601,
+    "n": 10208
+   },
+   "(60, 80]": {
+    "median_range": 68.6,
+    "sd": 2.129,
+    "n": 2620
+   },
+   "(80, 120]": {
+    "median_range": 95.8,
+    "sd": 2.763,
+    "n": 4855
+   }
+  },
+  "acc_target_distance_noise_per_frame": {
+   "(0, 10]": {
+    "median_range": 4.0,
+    "sd": 0.002,
+    "n": 573
+   },
+   "(10, 20]": {
+    "median_range": 17.0,
+    "sd": 0.003,
+    "n": 1384
+   },
+   "(20, 40]": {
+    "median_range": 32.6,
+    "sd": 0.012,
+    "n": 1609
+   },
+   "(40, 60]": {
+    "median_range": 47.3,
+    "sd": 0.013,
+    "n": 7381
+   },
+   "(60, 80]": {
+    "median_range": 70.2,
+    "sd": 0.025,
+    "n": 436
+   },
+   "(80, 120]": {
+    "median_range": 94.4,
+    "sd": 0.035,
+    "n": 133
+   }
+  }
+ },
  "ablations": {
   "what": "all sets, against ACC target only (hard 13 / mild 30 / unnecessary 19.2 s / flips 302 per h); moving = ego >= 0.5 m/s at the episode start",
   "constant track id": {
@@ -354,39 +453,5 @@
    "mild_moving": 24
   },
   "report on every update (100 Hz)": "no change in replay (simulation mode); on the car radard accepts radarTracks only at 8-24 Hz"
- },
- "stock_acc_span_second_car_S2": {
-  "scoreable_s": 139.7,
-  "vision": {
-   "bias": -0.343,
-   "rms": 0.376,
-   "r": 0.678,
-   "jerk_p99": 0.308,
-   "lead_is_acc_target_share": 0.951,
-   "lead_v_vs_acc_rms": 0.92
-  },
-  "2.6": {
-   "bias": -0.353,
-   "rms": 0.381,
-   "r": 0.755,
-   "jerk_p99": 0.347,
-   "lead_is_acc_target_share": 0.983,
-   "lead_v_vs_acc_rms": 0.086
-  },
-  "N1": {
-   "bias": -0.353,
-   "rms": 0.381,
-   "r": 0.758,
-   "jerk_p99": 0.348,
-   "lead_is_acc_target_share": 0.986,
-   "lead_v_vs_acc_rms": 0.039
-  },
-  "rms_N1_vs_2.6": 0.007
- },
- "acc_target_speed_vs_its_own_range": {
-  "best_lag_s_median": -0.06,
-  "gain_median": 1.0,
-  "runs": 483,
-  "note": "0x235 speed against the slope of 0x237 distance (2 s local-linear fit): it does not lag its own range, so a filter could only add delay"
  }
 }

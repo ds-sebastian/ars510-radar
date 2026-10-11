@@ -98,9 +98,10 @@ filtered and how its ID continues.
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list, the summaries on and the ACC target at 0.5 m/s ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
 | `acc` | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py), 33 code lines): the car Toyota's own ACC follows; no object list, filter or gates; every other car comes from the camera ([10](10_research_directions.md#the-acc-target-alone--candidate)) | road tests of the candidate replacement for `fused`: same braking in replay, 0.21 % of moving time differs |
+| `shared_speed`, `shared_range` | research files ([`openpilot/standalone/`](../openpilot/standalone)): every object and the ACC target through one gate-free Kalman model, over speed with a traffic prior or over range and range rate ([10](10_research_directions.md#the-acc-target-alone--candidate)) | research only: replays ask for hard radar-only braking 7-21 times as often as `fused` |
 
-`--profile acc` hands the whole update to `ars510_acc_target.py` (its own 20 Hz reporting and stale flag), with the
-legacy point fields for forks that carry them.
+`--profile acc`, `shared_speed` and `shared_range` hand the whole update to their standalone file (its own reporting
+cadence and stale flag), with the legacy point fields for forks that carry them.
 `--profile openpilot` runs the same `Ars510Radar` core as the standalone file through the fork adapter (fork
 constructor arguments, legacy point fields); its `trackId` / `dRel` / `yRel` / `vRel` match `fused` exactly
 ([12](12_kalman_filter.md#removing-parts-together)).

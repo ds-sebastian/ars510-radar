@@ -15,7 +15,7 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["fused"]') == 1
-  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, "acc": ACC_TARGET}' in src
+  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -56,6 +56,11 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert _install(tmp_path, "--profile", "acc").returncode == 0
   assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert (toyota / "ars510_acc_target.py").read_text() == (REPO / "upstream" / "ars510_acc_target.py").read_text()
+  for name in ("shared_speed", "shared_range"):  # research profiles: installed with a warning
+    r = _install(tmp_path, "--profile", name)
+    assert r.returncode == 0 and "research profile" in r.stdout
+    assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
+    assert (toyota / f"ars510_{name}.py").read_text() == (REPO / "openpilot" / "standalone" / f"ars510_{name}.py").read_text()
   r = _install(tmp_path, "--profile", "raw")
   assert r.returncode == 0 and "warning" in r.stdout
   assert 'PROFILE = PROFILES["raw"]' in (toyota / "ars510_radar_interface.py").read_text()
@@ -63,7 +68,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
-  assert not (toyota / "ars510_upstream.py").exists() and not (toyota / "ars510_acc_target.py").exists()
+  assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_acc_target.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
 
 
 def test_legacy_patches_are_kept_for_upgrades():

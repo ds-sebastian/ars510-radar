@@ -102,6 +102,7 @@ The code comes in two versions that drive identically:
 | `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
 | `acc` | `--profile acc` | the radar's ACC target alone as one point (33 lines, the car Toyota's own ACC follows); every other car from the camera | road tests of the candidate replacement for `fused` ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
+| `shared_speed`, `shared_range` | `--profile shared_speed` / `shared_range` | research: every object and the ACC target through one gate-free Kalman model (speed, or range and range rate) | research only: the object list's correlated errors reach the planner ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
