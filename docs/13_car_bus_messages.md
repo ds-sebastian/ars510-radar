@@ -97,14 +97,36 @@ bus, openpilot longitudinal needs one of two setups:
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
 | PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: the radar's PCS / AEB request is off with its car-bus output |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
-| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
+| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (0x344 missing, below); dash "Pre-Collision System Malfunction" and PCS OFF lamp |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
 
-**0x320 bit 13 (◐).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the driving-support ECU. On U2,
-bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) goes 0 → 1 at 12.69 s. That is 0.17 s after the radar's last car-bus frame,
-right after the disable request, and it stays set for all 26 minutes. It stays 0 through U1's first segment (stock ACC,
-no disable request) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
-messages begin. It behaves as the brake system's flag for a missing driving-support / PCS link.
+**0x320 bit 13 = "0x344 missing" (●).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the
+driving-support ECU. Its bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) sets about 0.15 s after the radar's 0x344
+(`ACC1F01`) stops and clears on the next 0x320 frame (20 Hz) once 0x344 is back. 0x283 does not affect it, and neither does
+0x344's `PCSOPR` bit (16, "PCS operational", 1 in the radar's idle frame).
+
+![0x320 bit 13 during the O5 replay test](img/analysis/pcs_flag_0x344.png)
+
+The test was run on O5, the owner's car, parked in P. Toyota's interface disabled the radar with openpilot's UDS request,
+then replayed the radar's idle frames from openpilot in 15 s phases:
+
+| on the car bus (O5) | 0x320 frames with bit 13 clear / set |
+|---|---|
+| radar's own messages | 2,713 / 1 |
+| radar silent, nothing replayed | 0 / 1,906 |
+| idle 0x283 only | 0 / 307 |
+| idle 0x344 (`PCSOPR` 1) | 306 / 0 |
+| idle 0x344 with `PCSOPR` 0 | 305 / 1 |
+| 0x283 + 0x344, `PCSOPR` 1 / 0 | 305 / 1, 305 / 1 |
+
+The single set frames are each the last frame of a phase, 0.15 s after 0x344 stopped. On U2 (unfiltered, alpha long)
+the bit sets 0.17 s after the disable and stays set for the whole drive; on U1 and on filtered cars it is clear.
+
+**The dash warning does not follow bit 13 (●, O5).** From about 7 s after the radar fell silent, the dash showed
+"Pre-Collision System Malfunction – Visit Your Dealer" with the PCS OFF lamp. It stayed on in every replay phase. It cleared
+by itself, with no restart, once the radar's messages (including its 0x411) were back. Replaying idle 0x344 therefore
+keeps the brake system's link check satisfied without hiding from the driver that PCS is off. It does not restore
+AEB: the radar's PCS brake request is still off.
 
 **The event pair keeps running while the radar is disabled (◐).** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target

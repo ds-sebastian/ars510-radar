@@ -1126,12 +1126,41 @@ def target_366_coverage():
     save(fig, "target_366_coverage", "Fresh ACC pairs (both messages ≤60 ms); range agreement within 1.5 m.\n"
          "Report states of 0x366 against the ACC target frames.")
 
+
+def pcs_flag_0x344():
+    """0x320 bit 13 against the radar's / replayed car-bus frames on O5 (pcs_flag_0x344.json)."""
+    D = summary("pcs_flag_0x344")
+    colors = {"radar": S1, "none": "#d6d4ce", "283": S2, "344opr1": S3, "344opr0": S3, "283+344opr1": S4, "283+344opr0": S4}
+    names = {"radar": "radar", "none": "silent", "283": "0x283", "344opr1": "0x344\nPCSOPR 1", "344opr0": "0x344\nPCSOPR 0",
+             "283+344opr1": "0x283 +\n0x344 (1)", "283+344opr0": "0x283 +\n0x344 (0)"}
+    t_end = D["radar_silent_s"][1] + 20
+    fig, ax = plt.subplots(figsize=(10, 3.0))
+    for p in D["phases"]:
+        a, b = p["start_s"], min(p["end_s"], t_end)
+        ax.axvspan(a, b, ymin=0.0, ymax=0.62, color=colors[p["label"]], alpha=0.35 if p["label"] != "none" else 0.6, lw=0)
+        ax.text((a + b) / 2, -0.32, names[p["label"]], ha="center", va="center", fontsize=7.5, color=INK2)
+    ts, bs = [0.0], [D["bit13_transitions"][0]["bit13"]]
+    for tr in D["bit13_transitions"]:
+        ts += [tr["t_s"], tr["t_s"]]; bs += [bs[-1], tr["bit13"]]
+    ts.append(t_end); bs.append(bs[-1])
+    ax.plot(ts, bs, color=INK, lw=1.8, drawstyle="default")
+    ax.set_xlim(0, t_end)
+    ax.set_ylim(-0.6, 1.25)
+    ax.set_yticks([0, 1], ["0 (link ok)", "1 (0x344 missing)"])
+    ax.set_xlabel("seconds from the start of the log (O5, parked)")
+    ax.set_title("0x320 bit 13 follows 0x344 alone: set while the radar is silent, clear whenever 0x344 is replayed")
+    ax.grid(axis="y", visible=False)
+    fig.subplots_adjust(bottom=0.2)
+    save(fig, "pcs_flag_0x344", "\nBands: what was on the car bus (the radar's own frames, nothing, or openpilot's replay of the radar's idle frames). "
+         "The dash PCS malfunction warning stayed on through every replay phase.\nNumbers: data/analysis/summaries/pcs_flag_0x344.json.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344)}
 
 
 if __name__ == "__main__":

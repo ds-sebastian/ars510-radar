@@ -138,7 +138,7 @@ until the last.
 
 The evidence comes mainly from the owner's RAV4 (TSS2, 2022), logged with openpilot, with drives U1-U2 from a second,
 unfiltered RAV4. Drives are named by role (A development,
-B city, C highway, D1-D4 closed-loop drives, E the ACC sample, O1-O4 owner road drives, U1-U2 a second
+B city, C highway, D1-D4 closed-loop drives, E the ACC sample, O1-O4 owner road drives, O5 a parked owner test, U1-U2 a second
 unfiltered RAV4); the repo carries no route IDs, dongle IDs, GPS positions or full video. A few
 camera stills are included, with licence plates and place names blurred.
 

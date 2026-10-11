@@ -137,8 +137,9 @@ Ways to keep AEB:
   closed lot) shows whether it does.
 - **An openpilot AEB on 0x283 / 0x344.** This needs the actuation sequence from a recorded activation, an AEB decision in
   openpilot, and a panda safety change (0x283 is idle-only). It is a fork-level safety function.
-- **Name 0x320 bit 13** (likely the brake system's missing-PCS flag, ◐) by replaying the radar's idle 0x283 / 0x344 while it is
-  disabled. This shows which message the brake system checks. Show PCS as available while an AEB source is active.
+- **Keep the brake link healthy honestly.** 0x320 bit 13 is "0x344 missing" ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)).
+  A fork that disables the radar can replay idle 0x344 with `PCSOPR` 0 to clear it, while the dash keeps showing PCS off.
+  Show PCS as available (0x411, `PCSOPR` 1) only while a real AEB source is active.
 
 ## What radard gets from other radars
 

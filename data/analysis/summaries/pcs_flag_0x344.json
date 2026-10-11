@@ -1,0 +1,170 @@
+{
+ "description": "O5: owner's RAV4 (radar CAN filter), parked in P. Toyota's interface disabled the radar with openpilot's UDS request (10 03, 28 01 01 to 0x750 / 0x0F, tester present every 0.2 s) and openpilot replayed the radar's idle car-bus frames in 15 s phases. Labels: what was on the car bus in the 200 ms before each 0x320 frame (radar = the radar's own 0x283 / 0x344; 344opr1 = idle 0x344 '00 00 01 00 00 00 00 50'; 344opr0 = the same with PCSOPR (bit 16) 0, '\u2026 00 4f'; 283 = idle 0x283 '00 \u2026 8c'). Counts skip 0.4 s after each label change. Times: seconds from the start of the log.",
+ "bit13_clear_set_by_label": {
+  "283": {
+   "clear": 0,
+   "set": 307
+  },
+  "283+344opr0": {
+   "clear": 305,
+   "set": 1
+  },
+  "283+344opr1": {
+   "clear": 305,
+   "set": 1
+  },
+  "344opr0": {
+   "clear": 305,
+   "set": 1
+  },
+  "344opr1": {
+   "clear": 306,
+   "set": 0
+  },
+  "none": {
+   "clear": 0,
+   "set": 1906
+  },
+  "radar": {
+   "clear": 2713,
+   "set": 1
+  }
+ },
+ "phases": [
+  {
+   "label": "radar",
+   "start_s": 0.44,
+   "end_s": 7.21
+  },
+  {
+   "label": "none",
+   "start_s": 7.26,
+   "end_s": 22.04
+  },
+  {
+   "label": "283",
+   "start_s": 22.09,
+   "end_s": 37.21
+  },
+  {
+   "label": "none",
+   "start_s": 37.26,
+   "end_s": 52.1
+  },
+  {
+   "label": "344opr1",
+   "start_s": 52.15,
+   "end_s": 67.22
+  },
+  {
+   "label": "none",
+   "start_s": 67.27,
+   "end_s": 82.1
+  },
+  {
+   "label": "344opr0",
+   "start_s": 82.15,
+   "end_s": 97.22
+  },
+  {
+   "label": "none",
+   "start_s": 97.27,
+   "end_s": 112.06
+  },
+  {
+   "label": "283+344opr1",
+   "start_s": 112.15,
+   "end_s": 127.23
+  },
+  {
+   "label": "none",
+   "start_s": 127.28,
+   "end_s": 142.06
+  },
+  {
+   "label": "283+344opr0",
+   "start_s": 142.16,
+   "end_s": 157.23
+  },
+  {
+   "label": "none",
+   "start_s": 157.28,
+   "end_s": 177.06
+  },
+  {
+   "label": "radar",
+   "start_s": 177.1,
+   "end_s": 301.43
+  }
+ ],
+ "bit13_transitions": [
+  {
+   "t_s": 0.15,
+   "label": "none",
+   "bit13": 1
+  },
+  {
+   "t_s": 0.487,
+   "label": "radar",
+   "bit13": 0
+  },
+  {
+   "t_s": 7.211,
+   "label": "radar",
+   "bit13": 1
+  },
+  {
+   "t_s": 52.15,
+   "label": "344opr1",
+   "bit13": 0
+  },
+  {
+   "t_s": 67.27,
+   "label": "none",
+   "bit13": 1
+  },
+  {
+   "t_s": 82.15,
+   "label": "344opr0",
+   "bit13": 0
+  },
+  {
+   "t_s": 97.22,
+   "label": "344opr0",
+   "bit13": 1
+  },
+  {
+   "t_s": 112.15,
+   "label": "283+344opr1",
+   "bit13": 0
+  },
+  {
+   "t_s": 127.231,
+   "label": "283+344opr1",
+   "bit13": 1
+  },
+  {
+   "t_s": 142.16,
+   "label": "283+344opr0",
+   "bit13": 0
+  },
+  {
+   "t_s": 157.231,
+   "label": "283+344opr0",
+   "bit13": 1
+  },
+  {
+   "t_s": 177.151,
+   "label": "radar",
+   "bit13": 0
+  }
+ ],
+ "radar_silent_s": [
+  7.057,
+  177.08
+ ],
+ "bit13_set_after_radar_silent_s": 0.154,
+ "bit13_clear_after_radar_back_s": 0.071,
+ "radar_0x411_back_after_radar_back_s": 0.49,
+ "dash_observed_by_driver": "'Pre-Collision System Malfunction - Visit Your Dealer' and the PCS OFF lamp about 7 s after the radar fell silent; on through every replay phase; cleared without a restart once the radar's messages, including 0x411, were back."
+}
