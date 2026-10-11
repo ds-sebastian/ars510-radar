@@ -47,7 +47,7 @@ def pipeline() -> None:
     ("3  Decode slots", "20 slots, ~2 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
     ("4  Track IDs", "slot + age counting up\n= one radar track", GRAY),
     ("5  Radar's own tracker", "ACC target 0x235/0x237\nmatched to a track by position\n(range scale 0.4 x)", S4),
-    ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.3 m/s", S3),
+    ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.13 m/s", S3),
     ("7  Range", "velocity-aided, gain 0.1\nfollowed car: ACC distance", S3),
     ("8  Publish", "age ≥ 60, speed σ ≤ 0.75 m/s\npath gate beyond 15 m\nbeyond 60 m: ACC target only", S1),
     ("9  openpilot", "RadarPoint(dRel, yRel, vRel)\n→ radard pairs with vision\n→ planner", INK2),

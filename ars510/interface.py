@@ -96,6 +96,11 @@ class NativeInterfaceConfig:
     # published, as Toyota's own ACC acts only on its ACC target. Far non-ACC tracks carry the object list's false
     # closings; radard uses the camera for those cars. 0 = off (fused: 60)
     far_acc_only_m: float = 0.0
+    # Stationary tracks (|over-ground speed| < path_gate_stationary_mps) are path-gated at every range, within
+    # path_gate_stationary_m of the path curved with max(v_ego, 2 m/s): parked cars and roadside objects do not cut in,
+    # and radard's low-speed rule otherwise stops for them where the path curves away. 0 = off (fused: 0.5 m/s, 1.5 m)
+    path_gate_stationary_mps: float = 0.0
+    path_gate_stationary_m: float = 1.5
     # Summaries (0x192 / 0x194): the positions of the radar's selected targets. Their range slope over summary_window_s
     # gives a relative speed; a summary attaches to the track at its position (range within max(5 m, 15 %), lateral within
     # summary_match_lat_m, unambiguous) and stays attached while the track stays within 25 % in range and twice that
@@ -155,7 +160,8 @@ BASE_CONFIG = NativeInterfaceConfig(
 # more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate"). The summaries are off. The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
-                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0, acc_sigma_mps=0.3, far_acc_only_m=60.0)
+                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0, acc_sigma_mps=0.13, far_acc_only_m=60.0,
+                       path_gate_stationary_mps=0.5)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
@@ -575,9 +581,11 @@ class Ars510NativeRadarInterface:
             if cfg.far_acc_only_m > 0 and tid != acc_tid and d_rel > cfg.far_acc_only_m:
                 self.path_gated += 1
                 continue
-            if cfg.path_gate_m > 0 and tid != acc_tid and d_rel > cfg.path_gate_min_range_m and v_ego is not None:
+            still = cfg.path_gate_stationary_mps > 0 and abs(v_ground) < cfg.path_gate_stationary_mps and d_rel <= cfg.path_gate_min_range_m
+            if cfg.path_gate_m > 0 and tid != acc_tid and (d_rel > cfg.path_gate_min_range_m or still) and v_ego is not None:
                 yaw = self._fresh_yaw_rate(time_s)
-                if yaw is not None and abs(obj.y_rel - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > cfg.path_gate_m:
+                width, v_curve = (cfg.path_gate_stationary_m, max(v_ego, 2.0)) if still else (cfg.path_gate_m, max(v_ego, 5.0))
+                if yaw is not None and abs(obj.y_rel - yaw / v_curve * d_rel * d_rel / 2) > width:
                     self.path_gated += 1
                     continue
             if tid not in self._out_id and speed_std > cfg.publish_speed_std_mps and cfg.fused_speed_filter:

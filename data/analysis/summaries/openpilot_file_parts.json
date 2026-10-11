@@ -1,6 +1,6 @@
 {
  "description": "Parts of upstream/ars510_radar.py (2.5; line counts unchanged since 2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 27 replay drives, and its status for an upstream openpilot PR.",
- "file_code_lines": 185,
+ "file_code_lines": 187,
  "file_total_lines": 223,
  "parts": [
   {
@@ -89,6 +89,14 @@
    "since": "2.6",
    "evidence": "far_acc_only.json",
    "without": "2.5 over all four drive sets (16.9 moving h): oracle unnecessary braking 21.6 -> 28.5 s, lead flips 334 -> 418 /h, second car 0 -> 1 hard; with it a fast far closing waits ~1 s for the radar to make the car its ACC target",
+   "upstream": "keep"
+  },
+  {
+   "part": "stationary tracks path-gated close in too",
+   "code_lines": 2,
+   "since": "2.6",
+   "evidence": "far_acc_only.json",
+   "without": "all four drive sets: hard radar-only episodes 12 -> 8 (ticks 30 -> 16), mild 49 -> 26 with it; missed braking unchanged (parked cars at the curb while turning, a parked car alongside)",
    "upstream": "keep"
   },
   {

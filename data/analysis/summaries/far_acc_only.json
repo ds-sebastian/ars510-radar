@@ -1,5 +1,5 @@
 {
- "description": "Beyond 60 m only the ACC target's track (2.6) against 2.5, 2.4 and vision only. Unchanged openpilot card -> radard -> planner replays in 6-segment chunks of every replay drive set (first 30 s of each chunk dropped); hard = request <= -2 m/s2 while vision only >= -0.5; mild = <= -1 while vision >= -0.3; unnecessary / missed = confident seconds against the hindsight-lead oracle (oracle_reference.json); onset = first request <= -0.5 m/s2 minus vision's on the oracle's confident braking episodes (negative = earlier).",
+ "description": "2.6 (beyond 60 m only the ACC target's track; stationary tracks path-gated close in too; ACC sigma 0.13 m/s) and its steps against 2.5, 2.4 and vision only. Unchanged openpilot card -> radard -> planner replays in 6-segment chunks of every replay drive set (first 30 s of each chunk dropped); hard = request <= -2 m/s2 while vision only >= -0.5; mild = <= -1 while vision >= -0.3; unnecessary / missed = confident seconds against the hindsight-lead oracle (oracle_reference.json); onset = first request <= -0.5 m/s2 minus vision's on the oracle's confident braking episodes (negative = earlier).",
  "by_version_and_set": {
   "vision only": {
    "27 replay drives": {
@@ -157,7 +157,7 @@
     "onset_vs_vision_s": 0.019
    }
   },
-  "2.6": {
+  "2.5 + far rule": {
    "27 replay drives": {
     "moving_h": 4.18,
     "hard": 12,
@@ -207,6 +207,110 @@
     "unnecessary_s": 21.6,
     "missed_s": 16.3,
     "onset_vs_vision_s": 0.014
+   }
+  },
+  "2.5 + far rule + stationary gate": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 11,
+    "flips_per_h": 383.0,
+    "unnecessary_s": 1.7,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.043
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 4,
+    "flips_per_h": 211.0,
+    "unnecessary_s": 3.2,
+    "missed_s": 8.1,
+    "onset_vs_vision_s": 0.001
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 10,
+    "flips_per_h": 414.0,
+    "unnecessary_s": 16.7,
+    "missed_s": 5.2,
+    "onset_vs_vision_s": 0.086
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 352.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 26,
+    "flips_per_h": 332.0,
+    "unnecessary_s": 21.6,
+    "missed_s": 16.3,
+    "onset_vs_vision_s": 0.014
+   }
+  },
+  "2.6": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 10,
+    "flips_per_h": 383.0,
+    "unnecessary_s": 2.2,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.062
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 4,
+    "flips_per_h": 212.0,
+    "unnecessary_s": 3.3,
+    "missed_s": 8.3,
+    "onset_vs_vision_s": -0.01
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 12,
+    "flips_per_h": 413.0,
+    "unnecessary_s": 15.5,
+    "missed_s": 5.1,
+    "onset_vs_vision_s": 0.044
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 347.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 27,
+    "flips_per_h": 332.0,
+    "unnecessary_s": 21.0,
+    "missed_s": 16.4,
+    "onset_vs_vision_s": -0.01
    }
   }
  },
@@ -274,7 +378,7 @@
   "note": "[episodes, seconds] where the request differs by > 0.3 m/s2 for >= 0.3 s; the costs are <= 0.5 m/s2 and never make later braking harder"
  },
  "cost": "a fast real closing far ahead without an ACC target waits for the radar to make the car its ACC target: about 1 s later on one owner drive (95 m, closing 4.5 m/s) and 0.8 s on the second car (86 m, closing 8.8 m/s); vision only did not brake earlier in either, and Toyota's own ACC holds for several seconds on a far closing car (it first braked at 66 m on a car acquired at 94 m)",
- "held_out_driver_agreement": "20 held-out drives: anticipation at -1 m/s2 42.5 % (= 2.5), onset vs vision -0.012 s, radar-only braking 0 /h (2.5 0.22), lead flips 354 /h (494), radar share of lead time 83 % (87 %)",
+ "held_out_driver_agreement": "20 held-out drives (2.6): anticipation at -1 m/s2 44.9 % (2.5 42.5 %), onset vs vision -0.013 s, radar-only braking 0 /h (2.5 0.22), driver overrides radar closer / further 7 / 0 (2.5 4 / 1), lead flips 347 /h (494), radar share of lead time 83 % (87 %); 34-drive hard ticks held-out / further / owner 16 / 0 / 0 (2.5 29 / 1 / 0)",
  "far_false_closing_share": {
   "definition": "published 2.3 vRel more than 2 m/s more closing than the range-based hindsight reference, lead beyond 40 m",
   "acc_target_track": [
@@ -286,5 +390,44 @@
    0.28
   ],
   "note": "[road, replay drives]; the other tracks are 4-6 % of far lead time and carry 31-39 % real closings too, and no per-track field separates the two"
- }
+ },
+ "stationary_gate": "stationary tracks (|over-ground speed| < 0.5 m/s) path-gated at every range (1.5 m from the path curved with max(v, 2 m/s)): on video the hard radar-only episodes it removes are parked cars at the curb while turning and a parked car alongside, picked up by radard's low-speed rule; hard 12 -> 8 (ticks 30 -> 16), mild 49 -> 26, unnecessary and missed unchanged",
+ "route_bootstrap_2_6_vs_2_5_per_moving_h": {
+  "mild": [
+   -1.951,
+   [
+    -2.939,
+    -1.197
+   ]
+  ],
+  "unnecessary_s": [
+   -0.445,
+   [
+    -0.843,
+    -0.118
+   ]
+  ],
+  "missed_s": [
+   0.059,
+   [
+    -0.009,
+    0.173
+   ]
+  ],
+  "hard": [
+   -0.296,
+   [
+    -0.708,
+    0.0
+   ]
+  ],
+  "flips": [
+   -86.0,
+   [
+    -106.4,
+    -67.7
+   ]
+  ]
+ },
+ "remaining_hard_2_6": "8 episodes, all on the 27 replay drives (none on road, second car, fresh); 2 last longer than one 50 ms tick (7 and 3 ticks) and both are real closings the oracle also brakes for (-2.9, -1.7 m/s2); the rest are single-tick requests (crossing truck, a work-zone truck, lead switches)"
 }

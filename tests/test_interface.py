@@ -546,3 +546,20 @@ def test_track_far_short_of_the_acc_distance_matches_and_takes_it() -> None:
     assert out[-1]["radarData"]["points"][0]["dRel"] == pytest.approx(64.0, abs=4.0)  # pulled to the ACC distance by range fusion
     iface, out = run(replace(cfg, acc_match_range_frac=0.25))
     assert iface._acc_assoc is None and out[-1]["radarData"]["points"][0]["dRel"] < 50.0  # stays on the short object-list range
+
+
+def test_stationary_track_off_the_curved_path_is_withheld_close_in() -> None:
+    from ars510.objects import encode_slot
+    # 3 m/s turning left at 0.3 rad/s: the path at 8 m is 0.3 / 3 * 8^2 / 2 = 3.2 m left. A parked car straight ahead
+    # (0 m/s over ground) is withheld; a car moving at ego speed at the same spot (a cut-in) stays.
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+
+    def run(vg):
+        iface, out = Ars510NativeRadarInterface(cfg), []
+        for k in range(20):
+            t = 0.06 * k
+            obj = encode_slot(long_dist=round(160 + 8.0 * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
+                              age_cycles=126, vel_uncertainty_candidate=10)
+            out = iface.update_many([speed_frame(t, 3.0), _yaw_frame(t, 0.3)] + frames_(record({0: obj}), t + 0.01))
+        return out[-1]["radarData"]["points"]
+    assert run(0.0) == [] and len(run(3.0)) == 1
