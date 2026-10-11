@@ -577,5 +577,73 @@
    "fused_2_6": -0.008
   },
   "note": "unn = oracle unnecessary braking seconds; diff = ACC target minus fused 2.6 per moving hour, route-block bootstrap 95 % CI"
+ },
+ "every_drive": {
+  "unn": {
+   "N1": 28.4,
+   "fused_2_6": 35.0,
+   "diff_per_moving_h": -0.31,
+   "ci95": [
+    -0.72,
+    0.06
+   ]
+  },
+  "mis": {
+   "N1": 22.9,
+   "fused_2_6": 20.3,
+   "diff_per_moving_h": 0.13,
+   "ci95": [
+    -0.12,
+    0.41
+   ]
+  },
+  "hard": {
+   "N1": 14.0,
+   "fused_2_6": 8.0,
+   "diff_per_moving_h": 0.28,
+   "ci95": [
+    -0.26,
+    0.96
+   ]
+  },
+  "mild": {
+   "N1": 40.0,
+   "fused_2_6": 36.0,
+   "diff_per_moving_h": 0.19,
+   "ci95": [
+    -0.52,
+    1.06
+   ]
+  },
+  "hard_moving": {
+   "N1": 5.0,
+   "fused_2_6": 8.0,
+   "diff_per_moving_h": -0.14,
+   "ci95": [
+    -0.46,
+    0.11
+   ]
+  },
+  "mild_moving": {
+   "N1": 31.0,
+   "fused_2_6": 36.0,
+   "diff_per_moving_h": -0.23,
+   "ci95": [
+    -0.78,
+    0.27
+   ]
+  },
+  "flips": {
+   "N1": 6872.0,
+   "fused_2_6": 7349.0,
+   "diff_per_moving_h": -22.23,
+   "ci95": [
+    -35.93,
+    -7.35
+   ]
+  },
+  "moving_h": 21.45,
+  "routes": 94,
+  "note": "fast suite (four sets) + never-fitted owner routes + confirmation set; ACC target minus fused 2.6 per moving hour, route-block bootstrap 95 % CI; hard/mild_moving = episodes starting at ego >= 0.5 m/s"
  }
 }

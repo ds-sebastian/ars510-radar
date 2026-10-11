@@ -267,6 +267,10 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
   than 2.6: 9.2 against 13.0 oracle seconds (−0.84 s per moving hour, route bootstrap −1.72…−0.13). Hard and mild
   radar-only braking are equal (1 against 0, a correct hold at 0.3 m/s 1.3 m from an object; 10 against 9), and braking
   starts earlier on real closings (−0.020 against −0.008 s vs vision).
+- **Over every drive** (94 routes, 21.45 moving h; it has no fitted constant, while 2.6 was tuned on most of them) it is
+  never significantly worse than 2.6 and has fewer lead flips (−22 per moving hour, −36…−7). While moving it has 5 hard
+  and 31 mild radar-only episodes against 8 and 36, 28.4 against 35.0 s of unnecessary and 22.9 against 20.3 s of missed
+  braking (all route-bootstrap intervals include zero).
 - **On 26 owner routes held out from every replay** (2.56 moving h):
   - unnecessary braking 7.7 against 2.6's 11.4 s, and lead flips 323 against 345 per hour (both route-bootstrap CIs
     exclude zero);
