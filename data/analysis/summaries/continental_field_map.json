@@ -12,13 +12,7 @@
       "-1": 1037,
       "+2": 546
     },
-    "coded_class_20_3_edges_pct": [
-      25,
-      50,
-      75,
-      90,
-      99
-    ],
+    "bits_20_3": "bits 4-6 of the score byte: score // 16 (6, 5, 3, 2, 1 at 100, 80, 60, 40, 20 %)",
     "age_first_100_median": 21,
     "age_first_100_p10_p90": [
       20,
@@ -66,6 +60,7 @@
       "accel_res": 0.246
     }
   },
+  "excursion_auc_units_note": "Measured with the ACC speed at 0.1 m/s per code (SCR-420); computed at that unit.",
   "excursion_auc_by_range": {
     "0-40m": {
       "n_exc": 53,

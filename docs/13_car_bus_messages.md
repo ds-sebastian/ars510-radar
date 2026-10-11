@@ -9,8 +9,7 @@ messages, which decides whether the car keeps its automatic emergency braking. N
 
 ## The nine messages
 
-All nine run on the radar's crystal (the same clock fingerprint as its bus-1 messages,
-[05](05_acc_target_and_support.md)). They stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots-radar-disable)).
+All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots-radar-disable)), so the radar sends them.
 
 | addr | name (opendbc / Toyota) | rate, DLC | idle payload | content | |
 |---|---|---|---|---|---|
@@ -19,14 +18,14 @@ All nine run on the radar's crystal (the same clock fingerprint as its bus-1 mes
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking) | ● idle, ◐ fields |
 | 0x33E | none | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
-| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **ACC lead relative speed (≈ 0.5 km/h per code)** and a distance-like field | ◐ |
+| 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**, mostly the ACC target: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
-| 0x4FF | `FRD1N01` (front radar → gateway) | ~0.77 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
+| 0x4FF | `FRD1N01` (front radar → gateway) | ~0.8 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
 
 Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x344 and 0x283 end in the Toyota
-checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF never change
-(4.1 h of owner drives and U1; 0x411 over 773 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, for 0.2-3 s
+checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
+(4.1 h of owner drives and U1; 0x411 over 752 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
 after each of 27 cold starts).
 0x33E, 0x365 and 0x366 change with the lead.
 
@@ -44,14 +43,35 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
-### 0x366: lead relative speed (◐)
+### 0x366: target report, mostly the ACC target (◐)
 
-Bytes 2-3 read 0x7FFF without a target. Counting from the first payload bit, bits 16-24 (9 bits) carry the ACC
-target's relative speed at 0.140 m/s per code, zero near code 155 (U1 expressway: r 0.997, MAD 0.05 m/s). Bits 25-31
-follow its distance at ≈ 0.79 m per code (r 0.9994). The fit is looser in city traffic (O2: r 0.89 / 0.99), where the
-message can describe another target. Byte 0 is 0x50 or 0x52; bytes 4-5 take a few state values (`00 7A` without a
-target). The Toyota DBC names this message's fields `TGT_DIST`, `TGT_VGAP`, `PCSDISP`, `XPCSRDY` and `XREQ*`, but with a different
-layout.
+Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` returns them (`None` for the `7FFF` no-target word).
+
+| bits | field | coding |
+|---|---|---|
+| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; higher codes (seen: 442-506) return `None` |
+| `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = no target |
+| `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = no target, −16 = invalid (mostly a target beyond ±5 m) |
+
+**While the radar has an ACC target, 0x366 reports that target.** Against the latest `0x235`/`0x237` on an owner drive
+(820 frames) the residuals are 0.06 m/s, 0.26 m and 0.14 m, about the quantization of both frames, and 99 % agree in
+distance within 1.5 m ([summary](../data/analysis/summaries/target_366_coding.json)).
+
+**It also reports while there is no ACC target**: 224 of 1,059 reports on owner drive O2 and 8 of 467 on O3, with fresh
+ACC frames saying "no target" (one span of 32 reports over 6.2 s). On O2 the car moves slowly during them (median ego 1.6 m/s, median relative speed −7 m/s); the 61 that match an
+object-list track sit a median 4 m to the side, and their speeds correlate at 0.81; the target it picks then is possibly a PCS candidate (○)
+([coverage](../data/analysis/summaries/target_366_coverage.json)).
+
+![0x366 report coverage](img/analysis/target_366_coverage.png)
+
+**High speed codes.** Eight reports have codes 442-506; five same-tail steps among them close at 20-28 m/s by their distances; subtracting 512 counts
+fits them (mean difference 2.9 m/s). The parser returns a speed for codes below 256, the domain the ACC target confirms
+([domain](../data/analysis/summaries/target_366_speed_domain.json)).
+
+It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are raw speed / range-dependent flags, and
+the low three bits of byte 5 are constant. The profiles take the same target from the 50 Hz ACC target frames.
+
+![0x366 against 0x365](img/analysis/target_366_coding.png)
 
 ### 0x343 from the radar (●)
 
@@ -63,29 +83,29 @@ presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` stay 0.
 ## openpilot longitudinal: filter or disable
 
 The radar's car-bus link runs to the gateway, which relays it onto the car bus. The comma harness sits at the camera,
-so the radar's 0x343 reaches the powertrain without passing through the panda. Two senders of 0x343 cannot share the
-bus, so openpilot longitudinal needs one of two setups:
+so the radar's 0x343 reaches the powertrain on a path that bypasses the panda. With one 0x343 sender allowed on the
+bus, openpilot longitudinal needs one of two setups:
 
 | | radar CAN filter (smartDSU-style) | openpilot's radar disable (alpha long) |
 |---|---|---|
 | how | a board in the radar's line drops only the radar's 0x343 while openpilot sends its own; status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
-| PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: no AEB source |
+| PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: the radar's PCS / AEB request is off with its car-bus output |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
-| car's reaction | none | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
+| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (below); drivers report a PCS warning lamp |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
 
 **0x320 bit 13 (◐).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the driving-support ECU. On U2,
-bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) goes 0 → 1 at 12.69 s. That is 0.17 s after the radar's last car-bus frame
-(disable request 12.50 s) and it stays set for all 26 minutes. It stays 0 on U1 at the same moment (the harness relay
-switch) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
-messages begin. It is the brake system's flag for a missing driving-support / PCS link.
+bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) goes 0 → 1 at 12.69 s. That is 0.17 s after the radar's last car-bus frame,
+right after the disable request, and it stays set for all 26 minutes. It stays 0 through U1's first segment (stock ACC,
+no disable request) and on the owner's filtered car, which sets it only in the first 0.28 s after power-up, before the radar's
+messages begin. It behaves as the brake system's flag for a missing driving-support / PCS link.
 
-**The radar keeps assessing threats while disabled.** On U2 the bus-1 event pair 0x195 / 0x196
+**The event pair keeps running while the radar is disabled (◐).** On U2 the bus-1 event pair 0x195 / 0x196
 ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)) became active 6 times (0.1-1.3 s, 4-7 m/s, ACC-target
-time to collision 3.6-7.5 s). Its decisions have no car-bus output. On U1 (stock ACC) the 5 comparable short states
-left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that precedes PCS action, not the brake request
-itself.
+time to collision 3.6-7.5 s). That state stays on bus 1. On U1 (stock ACC) the 5 comparable short states
+left 0x283 / 0x344 / 0x411 idle: the event pair is a threat state that occurs without PCS action on the car bus (◐); the PCS brake request
+itself travels on the car bus.
 
 ## What panda allows openpilot to send
 
@@ -96,7 +116,7 @@ openpilot's Toyota longitudinal TX list (DSU-unplugged TSS-P support) already co
 | 0x343 | allowed, `ACCEL_CMD` −3.5..+2.0 m/s² |
 | 0x344, 0x33E, 0x365, 0x366, 0x411 | allowed |
 | 0x283 | allowed only with bytes 0-5 zero (the idle frame) |
-| 0x494, 0x4FF | not in the list |
+| 0x494, 0x4FF | outside the TX list |
 
 opendbc's `toyotacan.create_pcs_commands` builds 0x283 + 0x344. Ways to keep AEB under openpilot longitudinal
-without a filter are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).
+on an unfiltered radar line are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).

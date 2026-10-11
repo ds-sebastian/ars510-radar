@@ -1,6 +1,6 @@
 {
   "provenance": "Imported aggregate research evidence SCR-192; full captures are not bundled reruns. All groups have prior research use. Outcome hypotheses frozen before scoring; removal clue selected on development data in SCR-191.",
-  "status": "supported bounded next-record allocation-removal association; score-independent effect unestablished",
+  "status": "supported bounded next-record allocation-removal association (confounded with lifecycle state)",
   "condition": {
     "current_state_0_2": 2,
     "previous_score_16_8_max": 40,

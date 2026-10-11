@@ -37,8 +37,8 @@
     "max": 150.2
    },
    "settled_abs_lateral_m": {
-    "p50": 2.41,
-    "p90": 5.88
+    "p50": 2.31,
+    "p90": 5.64
    },
    "settled_motion_share": {
     "same_direction": 0.876,
@@ -146,8 +146,8 @@
     "max": 132.8
    },
    "settled_abs_lateral_m": {
-    "p50": 3.33,
-    "p90": 5.95
+    "p50": 3.19,
+    "p90": 5.71
    },
    "settled_motion_share": {
     "same_direction": 0.8,
@@ -255,8 +255,8 @@
     "max": 154.0
    },
    "settled_abs_lateral_m": {
-    "p50": 1.61,
-    "p90": 6.23
+    "p50": 1.54,
+    "p90": 5.98
    },
    "settled_motion_share": {
     "same_direction": 0.873,

@@ -84,5 +84,6 @@
     "fresh_window_gate": "fails once (route brakes -1.95 -> -2.40)",
     "max_dRel_change_m": 12.1,
     "decision": "option, off"
-  }
+  },
+  "units_note": "Acceleration-byte figures here were decoded at 0.1 m/s2 per code; the 0.125 values (RMS 0.69, wobble 0.13) are in acc_unit_recompute.json."
 }

@@ -6,7 +6,7 @@ body:
     id: claim
     attributes:
       label: Claim or question
-      placeholder: 0x85 cells 2/3 bits 64-79 follow road curvature ahead
+      placeholder: 0x85 cells 2/3 field 64|15 follows road curvature ahead
     validations:
       required: true
   - type: textarea

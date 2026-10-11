@@ -1,5 +1,5 @@
 {
-  "status": "supported raw recoding; physical semantics unresolved",
+  "status": "supported raw recoding",
   "provenance": "Imported research-workspace SCR-205 aggregates. Full captures are not bundled reruns. All groups had prior research use. Discovery selected the dictionary; other groups tested it unchanged.",
   "mapping_163_to_140": {
     "1": 0,

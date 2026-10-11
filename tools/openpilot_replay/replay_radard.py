@@ -4,14 +4,12 @@
 For every logged modelV2 message (radard's cadence), one pipeline per profile steps side by side. Each is an
 unmodified `RadarD` feeding an unmodified `LongitudinalPlanner`:
   - vision:     empty radar points (what a radarless car runs)
-  - raw:        ars510 ALL_TRACKS_CONFIG
-  - openpilot:  ars510 BASE_CONFIG
-  - plus any candidate profile from PROFILES below
+  - one pipeline per entry of PROFILES below (all-tracks, raw, fused, fused without the radar's trackers)
 radard gets the latest radar record completed before each model message. Planner inputs are the logged
 carState, controlsState, selfdriveState, vehicleParameters and carControl.
 
 This is OPEN-LOOP: ego motion stays as recorded, so plans after the first divergence are what openpilot
-would have requested, not what the car would have done. It is a regression tool, not a safety proof.
+would have requested on the recorded motion. It is a regression tool for comparing profiles.
 
 Usage (openpilot venv; nothing is written into the checkout):
   PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$OP:$REPO $OP/.venv/bin/python tools/openpilot_replay/replay_radard.py \\
@@ -19,7 +17,7 @@ Usage (openpilot venv; nothing is written into the checkout):
 Pass consecutive segments of one drive in order. Radar-interface state (track IDs, re-link history) and consumer
 state (radard, planner, message state, latest radar record) carry across them, so the output matches one continuous
 pass over the drive. Everything resets when the CAN stream has a gap longer than MAX_CAN_GAP_S (a different drive
-or a missing segment). FakeSM bypasses messaging-health checks: numeric injection is not a timeout test.
+or a missing segment). FakeSM bypasses messaging-health checks, so this tests the numbers; check_integration.py tests timeouts.
 
 Outputs: <out>/ticks.csv.gz (one row per model tick and profile columns) and <out>/summary.json:
 FCW ticks per profile, and "native-only braking episodes" (profile aTarget <= -1 m/s^2 while vision-only
@@ -46,7 +44,7 @@ PROFILES = {
     "all-tracks": ALL_TRACKS_CONFIG,
     "raw": BASE_CONFIG,
     "fused": FUSED_CONFIG,
-    # without the radar's own trackers: the Kalman filter on the object list alone (docs/07)
+    # without the radar's own trackers: the Kalman filter on the object list alone (docs/12 "What each part is worth")
     "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4, summary_sigma_mps=1e4),
 }
 SM_KEYS = ("carState", "controlsState", "selfdriveState", "vehicleParameters", "carControl")

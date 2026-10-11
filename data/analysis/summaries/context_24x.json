@@ -162,11 +162,11 @@
     "sendcan_family_frames": 0
   },
   "limits": [
-    "Local source ECU remains unproved",
-    "No Doppler, SNR, physical unit or object validity decode",
-    "Rolling phase does not establish payload multiplexing",
-    "BE24 groupings are historical raw containers",
-    "No runtime change"
+    "Sent by the camera (acc_sender_clock.json, docs/05).",
+    "Fields kept as raw codes; this file maps their structure.",
+    "The rolling phase 1-7 in byte 0 runs on default and changing bodies alike.",
+    "BE24 groupings are historical raw containers.",
+    "Analysis only; runtime unchanged."
   ],
   "sources": [
     {

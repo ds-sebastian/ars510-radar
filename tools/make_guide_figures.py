@@ -5,8 +5,8 @@
 
 guide_pipeline.png and guide_lead_guards.png are schematics with numbers from the summaries. guide_cases.png plots
 data/analysis/lead_choice_cases.csv.gz: two road moments replayed through openpilot's planner with vision only, 2.1 and
-2.3 (relative time, no route identifiers). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
-guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_oracle.png plots
+2.3 (relative time, no route identifiers; 2.4 asks the same as 2.3 in both, lead_choice_guards.json). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
+guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_far_rule.png plots far_acc_only.json; guide_oracle.png plots
 data/analysis/summaries/oracle_reference.json.
 """
 from __future__ import annotations
@@ -44,12 +44,12 @@ def pipeline() -> None:
   stages = [
     ("1  Radar bus", "0x80 frames on bus 1\n106 frames = 1 record\nevery ~60 ms (16.7 Hz)", GRAY),
     ("2  Reassemble", "742-byte record\nCRC32 check\nbad records dropped", GRAY),
-    ("3  Decode slots", "20 slots, ~5 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
+    ("3  Decode slots", "20 slots, ~2 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
     ("4  Track IDs", "slot + age counting up\n= one radar track", GRAY),
     ("5  Radar's own tracker", "ACC target 0x235/0x237\nmatched to a track by position\n(range scale 0.4 x)", S4),
-    ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.5 m/s", S3),
+    ("6  Kalman speed filter", "one per track, 1 state\nσ = 0.045 m/s × 240|7\nACC target σ = 0.13 m/s", S3),
     ("7  Range", "velocity-aided, gain 0.1\nfollowed car: ACC distance", S3),
-    ("8  Publish", "age ≥ 60 (~3.6 s)\nspeed σ ≤ 0.75 m/s\npath gate beyond 15 m", S1),
+    ("8  Publish", "age ≥ 60, speed σ ≤ 0.75 m/s\npath gate beyond 15 m\nbeyond 60 m: ACC target only", S1),
     ("9  openpilot", "RadarPoint(dRel, yRel, vRel)\n→ radard pairs with vision\n→ planner", INK2),
   ]
   fig, ax = plt.subplots(figsize=(13.5, 4.6)); ax.set_xlim(0, 13.5); ax.set_ylim(0, 4.6); ax.axis("off"); ax.grid(False)
@@ -71,7 +71,7 @@ def pipeline() -> None:
     ax.add_patch(FancyArrowPatch((bot[i][0] + 0.42, 1.2), (bot[i + 1][0] + 0.45 + wb + 0.03, 1.2), arrowstyle="-|>", mutation_scale=14, color=INK2))
   ax.text(0.2, 4.62, "From CAN frames to openpilot: the parser's nine steps", fontsize=11.5, weight="bold", va="top")
   ax.text(0.2, 0.12, f"Grey: decode (no tuning).  Yellow: the radar's own tracker outputs.  Green: the filter.  Blue: what reaches openpilot. "
-          f"Radar provides {lv['2.1 fused']:.0%}→{lv['2.3 fused']:.0%} of leads beyond 60 m (2.1→2.3); vision covers the rest.",
+          f"Radar provides {lv['2.3 fused']:.0%} of leads beyond 60 m with the path gate ({lv['2.1 fused']:.0%} without); vision covers the rest.",
           fontsize=7.8, color=INK2)
   fig.savefig(OUT / "guide_pipeline.png", dpi=130, bbox_inches="tight"); plt.close(fig)
 
@@ -96,7 +96,7 @@ def lead_guards() -> None:
   _car(ax, 0, -2, INK2); ax.annotate("ego", (0, -2), xytext=(-2.2, -2), va="center", fontsize=8.5)
   _car(ax, 0, 40, S4); ax.annotate("lead (and ACC target):\nkept", (0, 40), xytext=(4.5, 50), fontsize=8,
                                    arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
-  _car(ax, -3.6, 41, S2, kept=False); ax.annotate("car in the next lane:\nnot published", (-3.6, 41), xytext=(-6.0, 52), fontsize=8,
+  _car(ax, -3.6, 41, S2, kept=False); ax.annotate("car in the next lane:\nwithheld", (-3.6, 41), xytext=(-6.0, 52), fontsize=8,
                                                   arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
   _car(ax, -3.6, 9, S4); ax.annotate("closer than 15 m:\nkept (it may be cutting in)", (-3.6, 9), xytext=(-5.5, 24), fontsize=8,
                                      arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8), ha="center")
@@ -113,10 +113,10 @@ def lead_guards() -> None:
   k = np.searchsorted(d, 100)
   _car(ax, path[k], 100, S4); ax.annotate("lead on the path: kept", (path[k], 100), xytext=(-9.0, 88), fontsize=8,
                                           arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
-  _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nnot published", (path[k] + 3.6, 98),
+  _car(ax, path[k] + 3.6, 98, S2, kept=False); ax.annotate("car a lane over\n(straight ahead of ego!):\nwithheld", (path[k] + 3.6, 98),
                                                        xytext=(4.5, 108), fontsize=8, arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
   ax.set_title("Right curve", loc="left"); ax.set_xlabel("lateral (m, left +)")
-  fig.suptitle("Path gate: radard pairs the camera's lead with the radar track nearest in range and has no lateral gate",
+  fig.suptitle("Path gate: far out, radard can pair the camera's lead with a radar track a lane over",
                x=0.01, ha="left", fontsize=10.5, color=INK, weight="bold")
   fig.tight_layout(); fig.savefig(OUT / "guide_lead_guards.png", dpi=130); plt.close(fig)
 
@@ -125,8 +125,8 @@ def cases() -> None:
   """Two road moments: what vision only, 2.1 and 2.3 would have asked the planner for."""
   C = pd.read_csv(REPO / "data" / "analysis" / "lead_choice_cases.csv.gz")
   spec = {"late_brake": ("A slowing pickup first seen at ~66 m", (-6, 2)),
-          "next_lane": ("A slower car two lanes over, on a right curve (no ACC target)", (-6, 3))}
-  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3", 2.0, 1.0))
+          "next_lane": ("A slower car a lane over from the lead, on a right curve (no ACC target)", (-6, 3))}
+  series = (("vision", VIS, "vision only", 4.0, 0.45), ("v21", V21, "2.1", 2.0, 1.0), ("v23", V23, "2.3 / 2.4", 2.0, 1.0))
   fig, axs = plt.subplots(2, 2, figsize=(12.5, 6.6), sharex="col", gridspec_kw={"height_ratios": [1.15, 1]})
   for j, case in enumerate(spec):
     title, (lo, hi) = spec[case]
@@ -184,7 +184,7 @@ SHORT = {"transport": "decode: transport, CRC, slots, track IDs, wrapper", "stat
          "ACC target": "ACC target decode + association", "Kalman": "Kalman speed filter", "range fusion": "range fusion + ACC distance",
          "young-track factor": "young-track factor", "speed-std": "speed-std publication gate", "age-60": "age-60 publication gate",
          "fork compatibility": "fork compatibility", "ego-speed": "ego-speed alignment",
-         "path gate": "path gate (yaw rate)"}
+         "path gate": "path gate (yaw rate)", "far cars": "far cars: ACC target only"}
 
 
 def _short(part: str) -> str:
@@ -207,8 +207,9 @@ def parts_ledger() -> None:
     ax.text(p["code_lines"] + 1.2, yi, f"{p['code_lines']}  ·  {p['without']}", va="center", fontsize=7.6, color=INK2)
   ax.set_yticks(y, [f"{_short(p['part'])}  [{p['since'].split(' ')[0]}]" for p in parts], fontsize=8.5)
   ax.set_xlim(0, 215); ax.set_xlabel("code lines in upstream/ars510_radar.py (comments, docstrings and blank lines excluded)")
+  used = {status(p["upstream"]) for p in parts}
   for s, c in colors.items():
-    ax.barh(np.nan, 0, color=c, label=s)
+    if s in used: ax.barh(np.nan, 0, color=c, label=s)
   ax.legend(loc="upper right", title="for an upstream PR", title_fontsize=8)
   ax.set_title(f"What each of the openpilot file's {L['file_code_lines']} code lines buys (label: lines · cost of removing it)", loc="left")
   ax.grid(axis="y", visible=False)
@@ -218,9 +219,9 @@ def parts_ledger() -> None:
 def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
-  sets = (("owner's road drives (7.65 h)", O["confident"], ["vision", "2.1", "2.3", "2.4"]),
-          ("34 replay drives, independent (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.3", "2.4"]))
-  names = {"vision": "vision only", "2.1": "2.1", "2.3": "2.3", "2.4": "2.4 (default)"}; col = {"vision": VIS, "2.1": V21, "2.3": GRAY, "2.4": V23}
+  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.5", "2.6"]),
+          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.5", "2.6"]))
+  names = {"vision": "vision only", "2.1": "2.1", "2.5": "2.5", "2.6": "2.6 (default)"}; col = {"vision": VIS, "2.1": V21, "2.5": GRAY, "2.6": V23}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))
   for r, (label, C, vers) in enumerate(sets):
     for c, (kind, title) in enumerate((("unnecessary", "braked > 0.5 m/s² harder than needed"), ("missed", "missed braking the oracle asked for"))):
@@ -237,6 +238,30 @@ def oracle() -> None:
   fig.tight_layout(); fig.savefig(OUT / "guide_oracle.png", dpi=130); plt.close(fig)
 
 
+def far_rule() -> None:
+  """Beyond 60 m only the ACC target's track (2.6): per drive set, and the cutoff grid, from far_acc_only.json."""
+  J = json.loads((SUM / "far_acc_only.json").read_text()); T = J["by_version_and_set"]
+  sets = ["27 replay drives", "owner road drives + 2 second-car drives", "second car (issue #66 tester, never tuned on)"]
+  short = ["27 replay drives", "road drives", "second car\n(never tuned on)"]
+  vers = [("vision only", VIS), ("2.4", V21), ("2.5", GRAY), ("2.6", V23)]
+  fig, (a1, a2) = plt.subplots(1, 2, figsize=(12, 4.2), gridspec_kw={"width_ratios": [2.2, 1]})
+  x = np.arange(len(sets)); w = 0.2
+  for i, (v, c) in enumerate(vers):
+    y = [(T[v][s]["unnecessary_s"] + T[v][s]["missed_s"]) / T[v][s]["moving_h"] for s in sets]
+    b = a1.bar(x + (i - 1.5) * w, y, w * 0.92, color=c, label=v)
+    for bi, yi in zip(b, y):
+      a1.text(bi.get_x() + bi.get_width() / 2, yi + 0.1, f"{yi:.1f}", ha="center", fontsize=7.5, color=INK)
+  a1.set_xticks(x, short); a1.set_ylabel("oracle unnecessary + missed braking (s per moving hour)"); a1.legend(fontsize=8)
+  a1.set_title("Against what the car should have done, per drive set", loc="left", fontsize=10)
+  G = J["cutoff_grid_all_sets"]; ks = list(G)
+  a2.plot([int(k.split()[0]) for k in ks], [G[k]["unnecessary_s"] for k in ks], "o-", color=V23, label="unnecessary")
+  a2.plot([int(k.split()[0]) for k in ks], [G[k]["missed_s"] for k in ks], "s--", color=GRAY, label="missed")
+  a2.axhline(T["2.5"]["all"]["unnecessary_s"], color=V23, lw=0.8, ls=":"); a2.text(50, T["2.5"]["all"]["unnecessary_s"] + 0.3, "2.5 unnecessary", fontsize=7.5, color=INK2)
+  a2.set_xlabel("cutoff: only the ACC target's track beyond (m)"); a2.set_ylabel("seconds, all sets (16.9 moving h)"); a2.legend(fontsize=8)
+  a2.set_title("Choosing the cutoff", loc="left", fontsize=10)
+  fig.tight_layout(); fig.savefig(OUT / "guide_far_rule.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
-  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger(); oracle()
+  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger(); oracle(); far_rule()
   print("wrote", ", ".join(sorted(p.name for p in OUT.glob("guide_*.png"))))

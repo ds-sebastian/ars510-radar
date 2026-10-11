@@ -161,7 +161,7 @@
   "consequence": "0x80/0x85 are absent during CAN fingerprinting, so detection uses the radar FW version; a bus-1-only rule missed the radar on every ignition start in replay"
  },
  "episode_cross_check": {
-  "what": "braking-only-in-patched episodes matched (within 1 s) to the earlier camera-classified census in docs/05 / braking_episodes.csv",
+  "what": "braking-only-in-patched episodes matched (within 1 s) to an earlier camera-classified episode census (research workspace)",
   "C": {
    "episodes": 11,
    "matched": 10,

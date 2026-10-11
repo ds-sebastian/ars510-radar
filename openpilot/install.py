@@ -10,6 +10,7 @@ The path may be the openpilot checkout or its opendbc_repo. The same install wor
 StarPilot and other forks: no fork file is patched in place. The installer
   - copies the decoder package to        opendbc/car/toyota/ars510/
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
+  - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
 An install made with an older, patch-based version of this installer is removed first.
@@ -17,14 +18,14 @@ An install made with an older, patch-based version of this installer is removed 
 Profiles (docs/08 has the details and replay numbers):
   fused     FUSED_CONFIG (default): the radar decode + range fusion + one Kalman speed filter per track that weights
             the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version)
-  raw       BASE_CONFIG: the unfiltered radar decode (not vision-only, not stock openpilot) with only what radard
+  raw       BASE_CONFIG: the unfiltered radar decode with only what radard
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
             offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
-  openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): the slimmest filter that
-            keeps fused's driving, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
+  openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): fused in one file, driving
+            identically, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
 
-Legacy names are aliases, not additional profiles: anchor/steady select fused, upstream selects openpilot,
+Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
 and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended fused default.
 """
 from __future__ import annotations
@@ -168,7 +169,7 @@ def main() -> int:
         "). Reboot the device to activate.")
   if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
-          "reach the planner unfiltered and cause about three times the hard false braking of fused. Use it for research\n"
+          "reach the planner unfiltered and cause about three times the hard radar-only braking of fused. Use it for research\n"
           "and comparison only; install.py with no --profile installs the recommended fused profile.")
   return 0
 

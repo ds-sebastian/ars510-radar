@@ -1,6 +1,6 @@
 {
- "description": "Parts of upstream/ars510_radar.py (2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 34 replay drives, and its status for an upstream openpilot PR.",
- "file_code_lines": 183,
+ "description": "Parts of upstream/ars510_radar.py (2.5; line counts unchanged since 2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 27 replay drives, and its status for an upstream openpilot PR.",
+ "file_code_lines": 187,
  "file_total_lines": 223,
  "parts": [
   {
@@ -16,11 +16,11 @@
    "code_lines": 27,
    "since": "2.0 (range scale 0.4 x since 2.3)",
    "evidence": "hard_braking_review.json",
-   "without": "+24 unjustified hard ticks on 34 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2",
+   "without": "+24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2",
    "upstream": "keep"
   },
   {
-   "part": "Kalman speed filter (one state, 240|7-weighted)",
+   "part": "Kalman speed filter (one state, uncertainty-weighted)",
    "code_lines": 22,
    "since": "2.0",
    "evidence": "fused_filter.json",
@@ -48,7 +48,7 @@
    "code_lines": 2,
    "since": "1.0",
    "evidence": "fused_filter.json part_removed_34_drives",
-   "without": "radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s)",
+   "without": "radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking vs the oracle (3.3 -> 3.7 s on 2.3)",
    "upstream": "keep"
   },
   {
@@ -80,8 +80,24 @@
    "code_lines": 6,
    "since": "2.3 (2.2 from 60 m)",
    "evidence": "lead_choice_guards.json",
-   "without": "held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
+   "without": "back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
    "upstream": "candidate: keep, or move into radard as a lateral gate"
+  },
+  {
+   "part": "far cars the radar does not follow (beyond 60 m only the ACC target's)",
+   "code_lines": 2,
+   "since": "2.6",
+   "evidence": "far_acc_only.json",
+   "without": "2.5 over all four drive sets (16.9 moving h): oracle unnecessary braking 21.6 -> 28.5 s, lead flips 334 -> 418 /h, second car 0 -> 1 hard; with it a fast far closing waits ~1 s for the radar to make the car its ACC target",
+   "upstream": "keep"
+  },
+  {
+   "part": "stationary tracks path-gated close in too",
+   "code_lines": 2,
+   "since": "2.6",
+   "evidence": "far_acc_only.json",
+   "without": "all four drive sets: hard radar-only episodes 12 -> 8 (ticks 30 -> 16), mild 49 -> 26 with it; missed braking unchanged (parked cars at the curb while turning, a parked car alongside)",
+   "upstream": "keep"
   },
   {
    "part": "fork compatibility (CP_SP argument, points assigned as a list)",

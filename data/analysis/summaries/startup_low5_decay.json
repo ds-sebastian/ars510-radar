@@ -1,6 +1,6 @@
 {
   "provenance": "Imported aggregate evidence from research workspace SCR-163; full captures are not bundled reruns. Formula selected on development; other partitions previously studied for other hypotheses.",
-  "status": "exact startup law in tested scope; physical meanings unresolved",
+  "status": "exact startup law in tested scope",
   "scope": "born at age1; uninterrupted movement code5 prefix only",
   "formula": "min(30, floor(31*(2/3)**max(age-4,0)))",
   "groups": [

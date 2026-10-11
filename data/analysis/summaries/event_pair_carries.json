@@ -229,10 +229,10 @@
     "unknown_union_events_in_anchor_logs": 10801
   },
   "limits": [
-    "Only prefix states 3 and 4 have matching carry excitation; the full semantic width remains unproven.",
-    "Large code changes can be genuine steps, resets or state/target changes; the raw exception does not establish which.",
-    "Code 510 also occurs in non-idle pairs and cannot alone define message validity or physical zero.",
-    "No physical unit, signedness, offset, target association, ECU source or velocity-excursion rule is established.",
-    "Pairing uses CAN log timestamps and does not establish shared acquisition time."
+    "Prefix states 3 and 4 show matching carry excitation.",
+    "Large code changes include genuine steps, resets and state / target changes.",
+    "Code 510 occurs in idle and non-idle pairs.",
+    "Field widths come from carries; units come from the ACC-target comparisons in docs/05.",
+    "Pairing uses CAN log timestamps."
   ]
 }

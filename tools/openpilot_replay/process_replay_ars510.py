@@ -42,7 +42,7 @@ done. Outputs:
   - every other message is kept;
   - the cameras are symlinked;
   - the layout is `DIR/<label>/<dongle>|<route>/<seg>/rlog.zst`, which openpilot's Route(data_dir=...) reads.
-  Two fields are changed:
+  These are changed:
   - radarState.valid is set from the replayed radarTracks.valid, because accelerated replay fails the frequency
     checks and the UI would otherwise draw no lead;
   - initData.params is emptied, because the recording's params (another fork, the VIN) break tools/clip;

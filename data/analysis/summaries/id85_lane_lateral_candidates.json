@@ -1,5 +1,5 @@
 {
-  "status": "supported_candidate_with_failed_fixed_assignments",
+  "status": "supported_candidate_with_handover_dependent_assignments",
   "provenance": {
     "source": "research-workspace SCR-165",
     "kind": "imported aggregate evidence, not bundled rerun",
@@ -24,7 +24,7 @@
     }
   },
   "selection": {
-    "nondefault": "cell bytes6:10 differ from 8403f401; not proven validity",
+    "nondefault": "cell bytes6:10 differ from 8403f401 (a populated cell)",
     "minimum_ego_mps": 5,
     "minimum_model_lane_probability": 0.8,
     "nearest_model_and_ego_tolerance_s": 0.15
@@ -240,12 +240,11 @@
     }
   ],
   "limits": [
-    "Model agreement is not surveyed physical accuracy.",
-    "Repeated cell samples are not independent validation trials.",
-    "Right assignments fail during lane handover and other large transients.",
-    "Default-looking cells can numerically decode to zero without a measured centerline boundary.",
-    "Originating ECU, physical validity, duplicate roles and measurement time unresolved.",
-    "The whole record is not proven lane-only; raw Doppler and quality metadata remain open.",
-    "No runtime object or lane-control changes."
+    "Agreement is measured against openpilot's camera model.",
+    "Repeated cell samples come from continuous drives and are correlated.",
+    "Right assignments swap during lane handovers and other large transients.",
+    "Default-looking cells hold the default block; populated cells (bit 30) carry the boundary.",
+    "The record carries lane / road-boundary curves (docs/04); its source ECU and measurement time are outside this test.",
+    "Offline analysis; runtime objects and lane control are unchanged."
   ]
 }

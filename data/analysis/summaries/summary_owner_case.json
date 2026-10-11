@@ -70,7 +70,7 @@
     "controlled_change": "Summary speed sigma 0.5 to 10000 m/s; same parser with relinking disabled in both cases. Suppression is negligible precision, not literal removal.",
     "local_control": "Retained-summary and full fused saved fields match exactly over 119 ticks around the event.",
     "target_episode": "Planner acceleration <= -1 m/s^2 while captured vision >= -0.3 m/s^2 and ego speed > 1 m/s; contiguous gaps < 0.1 s, duration >= 0.3 s.",
-    "scope": "Saved radard lead and planner output, not physical ground truth. Native cache separately identifies an earlier eligible summary update. Underlying summary range history is absent, so its effective observation time remains unresolved.",
+    "scope": "Saved radard lead and planner output. The native cache identifies an earlier eligible summary update; the summary's timing is its receipt time (the summary range history was not saved).",
     "trace": "summary_owner_case.csv; relative event time; zero distance denotes absent lead."
   },
   "source_history": {

@@ -1,5 +1,6 @@
 {
   "description": "Corrected chronological response selection with fixed scalar RW and colored-noise speed models; object-list-only estimation against a hidden same-radar ACC witness.",
+  "units_note": "Windows and lags use the ACC target speed read at 0.1 m/s per code (the bench readings of kalman_variants.json), computed at that unit.",
   "status": "Exploratory comparison on reused cached routes with fixed model parameters.",
   "selection": {
     "order": "Enumerate eligible starts within native contiguous track segments, then sort all candidate starts chronologically within each route; apply one route-wide 4 s refractory interval across native track IDs; reset the refractory clock between routes.",

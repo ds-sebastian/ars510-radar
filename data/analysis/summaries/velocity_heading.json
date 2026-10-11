@@ -5,9 +5,9 @@
   "candidate": "coarse nonnegative velocity heading",
   "quantizer": "clip(floor(max(atan2(Vy,Vx),0)*64/pi),0,63)",
   "limits": [
-    "Not a complete signed heading: almost all Vy<0 rows have code zero.",
-    "Uses native velocity as reference, not independent body-heading truth.",
-    "Exceptions remain; no runtime or excursion gate."
+    "Nonnegative heading: almost all Vy<0 rows read code zero (clipped at 0, docs/03).",
+    "Uses native velocity as the reference.",
+    "A few exceptions remain; analysis only."
   ],
   "scores": [
     {

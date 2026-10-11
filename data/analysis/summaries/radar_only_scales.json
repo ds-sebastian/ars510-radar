@@ -125,14 +125,14 @@
      "codes_per_m": 23.83
     }
    ],
-   "decode": 64
+   "decode": 66.67
   },
   "lateral_codes_per_m": {
    "windows": 2,
    "tracks": 1,
    "estimate": null,
    "90ci": null,
-   "decode": 64
+   "decode": 66.67
   },
   "vlong_step_counts": {
    "n": 29561,
@@ -263,7 +263,7 @@
      "codes_per_m": 112.2
     }
    ],
-   "decode": 64
+   "decode": 66.67
   },
   "lateral_codes_per_m": {
    "windows": 15,
@@ -273,7 +273,7 @@
     59.8319,
     130.6018
    ],
-   "decode": 64
+   "decode": 66.67
   },
   "vlong_step_counts": {
    "n": 59807,
@@ -428,14 +428,14 @@
      "codes_per_m": 103.16
     }
    ],
-   "decode": 64
+   "decode": 66.67
   },
   "lateral_codes_per_m": {
    "windows": 3,
    "tracks": 1,
    "estimate": null,
    "90ci": null,
-   "decode": 64
+   "decode": 66.67
   },
   "vlong_step_counts": {
    "n": 38156,

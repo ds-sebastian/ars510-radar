@@ -1,0 +1,33 @@
+{
+ "description": "Does the camera enter the radar's ACC target (0x235 / 0x237)? The camera's object channel to the radar is not on the logged bus, and the camera-sent bus-1 frames never drop out (longest gap 0.78 s in 698 one-minute segments), so the natural experiment is the object-list slot's camera-association state 112|3 (docs/03), which by day ends between 40 and 60 m. 698 owner segments, 393k ACC-target cycles, day plus 4 night routes; ACC target matched to a mature object-list track (age >= 60) by position; ego > 8 m/s. Exploratory.",
+ "day_association_share_by_acc_distance": {"40-45 m": 0.89, "45-50 m": 0.52, "50-55 m": 0.17, "55-60 m": 0.03, "60+ m": 0.0},
+ "night_association_share_50_80_m": 0.86,
+ "kinematics": {
+  "associated_minus_unassociated_40_60_m_day": {
+   "acc_distance_jitter_m": {"difference": -0.0003, "ci95": [-0.0012, 0.0004]},
+   "acc_speed_jitter_mps": -0.0002,
+   "acc_minus_vision_speed_spread_mps": {"difference": -0.02, "ci95": [-0.14, 0.07]}
+  },
+  "acc_vs_vision_speed_spread_mps": {"45-55 m (partly associated)": [0.96, 0.98], "60-70 m (never associated)": 0.80},
+  "vision_over_acc_distance_40_80_m": [0.993, 1.008],
+  "steps_at_association_onset_and_loss": {
+   "events": 216,
+   "median_range_m": 47,
+   "acc_distance_step_m": {"onset": [0.06, 0.04], "loss": [0.03, 0.04]},
+   "acc_speed_step_mps": {"onset": [-0.01, 0.03], "loss": [-0.05, 0.03]},
+   "object_list_range_step_m": {"onset": -0.8, "loss": -1.7},
+   "note": "[mean, standard error]; the ACC step does not lean toward the vision lead's offset (distance weight 0.000 +- 0.020 at onset, placebo 0.006)"
+  },
+  "camera_share_upper_bound": {"distance": 0.04, "speed": 0.06, "assumption": "camera errors like openpilot's vision lead"}
+ },
+ "selection": {
+  "day_acquisitions_beyond_60_m": 539,
+  "of_which_with_association": 0,
+  "follows_nearest_moving_in_lane_object": {"60-70 m (never associated)": 0.93, "20-40 m (associated)": 0.92},
+  "follows_vision_confirmed_leads_60_80_m": [0.96, 0.97],
+  "acquisitions_40_50_m_day": 357,
+  "within_0_25_s_after_association_onset": {"count": 67, "baseline_per_bin": 27, "share": 0.11},
+  "night_beyond_70_m_followed_share": {"associated": [0.58, 0.79], "unassociated": [0.11, 0.35], "routes": 3}
+ },
+ "reading": "no detectable camera input in the ACC target's distance and closing speed; selection radar-led, with acquisitions at the camera's day range limit (40-50 m) partly coinciding with the camera's association; untested: camera input that does not set 112|3 (needs a drive with the camera covered)"
+}

@@ -88,7 +88,7 @@
     "original_motion_spot_segments": 13,
     "original_crc_checked_transition_pairs": 13
   },
-  "parser_use": "Opaque raw code; a physical decode requires an encoding and boundary reference. Lower 15 bits are a structural view, not a decoded angle.",
+  "parser_use": "Kept as a raw code; the lower 15 bits are a structural view.",
   "example": {
     "label": "A",
     "cell": 2,

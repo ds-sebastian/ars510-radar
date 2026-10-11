@@ -1,0 +1,476 @@
+{
+ "description": "How the radar's lead is consumed by the radard and MPC lead handling of sunnypilot, FrogPilot and StarPilot, and what that does with this radar. Each fork's own source is executed unmodified on recorded drives U1 (stock ACC, 21 min) and U2 (openpilot alpha longitudinal, 26 min) and on synthetic scenarios (tools/fork_lead). Radar profiles: raw and fused as of ars510 2.5.0, 'acc' = the radar's own ACC target (0x235 / 0x237) as the only radar point, the reference (the radar's own ACC tracker). 'Demand' is a proxy, not the planner: the constant deceleration that keeps the MPC's lead-based safety distance over 10 s, applied to the lead trajectory each fork hands its MPC; 'nominal' starts the ego at the desired spacing so it isolates what the lead's predicted speed and acceleration ask for, independent of the gap the driver kept. Open loop; the MPC solver and the rest of each planner are not run. Section keys: A lead supplier, B added by radar noise against the ACC-target reference, C braking added or removed against the same fork on vision only, D StarPilot lead paths, E leads only FrogPilot accepts, F first braking request in 10 lead-braking events (a hint: one proxy, 10 events; on the openpilot path it contradicts the real-planner replay of docs/08), E1 / E2 synthetic.",
+ "fork_sources": {
+  "sunnypilot": {
+   "branch": "master",
+   "commit": "3323aaf",
+   "note": "radard equals openpilot's for a Toyota (its change is Hyundai-only)"
+  },
+  "frogpilot": {
+   "branch": "FrogPilot-Staging",
+   "commit": "6976ff3",
+   "note": "compiled release branch, radard and planner are readable source"
+  },
+  "starpilot": {
+   "branch": "StarPilot",
+   "commit": "2a12dbd"
+  }
+ },
+ "defaults_assumed": {
+  "lead_detection_probability": {
+   "sunnypilot": 0.5,
+   "frogpilot": 0.35,
+   "starpilot": 0.35,
+   "note": "FrogPilot and StarPilot: LeadDetectionThreshold default 35, user range 25-50"
+  },
+  "frogpilot_human_following": "LongitudinalTune and HumanFollowing default on; default model version v9, which selects the long_mpc model-trajectory path",
+  "starpilot_uncertainty_and_panic_bypass": "0 / off (the model-uncertainty inputs to its filter time are not replayed)"
+ },
+ "code_facts": {
+  "lead_accel_tau_s": {
+   "sunnypilot": 1.5,
+   "frogpilot": 1.5,
+   "starpilot": 0.6
+  },
+  "frogpilot_far_lead": {
+   "filter_tau_s": 0.5,
+   "threshold": 0.63,
+   "requires": "moving > 1 m/s, between the model's lane lines, nearer than the model path end",
+   "applies": "only when no lead was matched and low_speed_override is set (leadOne)"
+  },
+  "frogpilot_model_path": "radar sets dRel and vLead at t=0; the model supplies the deltas; aLeadK / aLeadTau unused; no braking-lead exception",
+  "starpilot_model_path": {
+   "max_lead_brake_m_s2": 0.5,
+   "max_closing_ttc_s": 7.0,
+   "min_model_prob": 0.5,
+   "legacy_path": "radar lead used as in openpilot, through lead_v_filter / lead_a_filter"
+  },
+  "starpilot_lead_filter_time_s": "0 below 47 mph, rising to 1.2 at 65 mph and above; both filters start at 0 and update only on the legacy path",
+  "starpilot_dynamic_t_follow_max_extra_s": 0.162,
+  "starpilot_vision_lead_caps_bypassed_for_radar_leads": 11
+ },
+ "drives": {
+  "U1": "stock ACC, 20.7 min",
+  "U2": "openpilot alpha longitudinal, 25.8 min"
+ },
+ "A_lead_source": {
+  "sunnypilot/fused": {
+   "lead_min": 35.9,
+   "radar_pct": 85.0,
+   "radar_only_pct": 0.73
+  },
+  "sunnypilot/raw": {
+   "lead_min": 35.9,
+   "radar_pct": 84.7,
+   "radar_only_pct": 0.74
+  },
+  "frogpilot-hf/fused": {
+   "lead_min": 36.9,
+   "radar_pct": 83.5,
+   "radar_only_pct": 0.63
+  },
+  "frogpilot-hf/raw": {
+   "lead_min": 36.9,
+   "radar_pct": 83.2,
+   "radar_only_pct": 0.61
+  },
+  "frogpilot/fused": {
+   "lead_min": 36.9,
+   "radar_pct": 83.5,
+   "radar_only_pct": 0.63
+  },
+  "frogpilot/raw": {
+   "lead_min": 36.9,
+   "radar_pct": 83.2,
+   "radar_only_pct": 0.61
+  },
+  "starpilot/fused": {
+   "lead_min": 37.2,
+   "radar_pct": 81.7,
+   "radar_only_pct": 0.5
+  },
+  "starpilot/raw": {
+   "lead_min": 37.2,
+   "radar_pct": 82.0,
+   "radar_only_pct": 0.49
+  }
+ },
+ "B_noise_vs_acc_reference": {
+  "sunnypilot/fused": {
+   "minutes": 29.5,
+   "rms": 0.102,
+   "p95": 0.14,
+   "p99": 0.39,
+   "events_ge_0p5_per_h": 24.4,
+   "events_ge_1p0_per_h": 14.3
+  },
+  "sunnypilot/raw": {
+   "minutes": 29.2,
+   "rms": 0.324,
+   "p95": 0.65,
+   "p99": 1.31,
+   "events_ge_0p5_per_h": 291.3,
+   "events_ge_1p0_per_h": 90.3
+  },
+  "frogpilot-hf/fused": {
+   "minutes": 29.5,
+   "rms": 0.029,
+   "p95": 0.02,
+   "p99": 0.07,
+   "events_ge_0p5_per_h": 2.0,
+   "events_ge_1p0_per_h": 0.0
+  },
+  "frogpilot-hf/raw": {
+   "minutes": 29.3,
+   "rms": 0.041,
+   "p95": 0.06,
+   "p99": 0.15,
+   "events_ge_0p5_per_h": 2.0,
+   "events_ge_1p0_per_h": 0.0
+  },
+  "frogpilot/fused": {
+   "minutes": 29.5,
+   "rms": 0.102,
+   "p95": 0.14,
+   "p99": 0.39,
+   "events_ge_0p5_per_h": 24.4,
+   "events_ge_1p0_per_h": 14.2
+  },
+  "frogpilot/raw": {
+   "minutes": 29.3,
+   "rms": 0.324,
+   "p95": 0.65,
+   "p99": 1.31,
+   "events_ge_0p5_per_h": 290.8,
+   "events_ge_1p0_per_h": 90.1
+  },
+  "starpilot/fused": {
+   "minutes": 29.5,
+   "rms": 0.192,
+   "p95": 0.1,
+   "p99": 0.52,
+   "events_ge_0p5_per_h": 32.6,
+   "events_ge_1p0_per_h": 4.1
+  },
+  "starpilot/raw": {
+   "minutes": 29.4,
+   "rms": 0.302,
+   "p95": 0.71,
+   "p99": 1.24,
+   "events_ge_0p5_per_h": 328.3,
+   "events_ge_1p0_per_h": 75.4
+  }
+ },
+ "C_added_removed_vs_vision": {
+  "sunnypilot/fused": {
+   "added_per_h": 13.4,
+   "removed_per_h": 6.7
+  },
+  "sunnypilot/raw": {
+   "added_per_h": 94.1,
+   "removed_per_h": 6.7
+  },
+  "frogpilot-hf/fused": {
+   "added_per_h": 9.8,
+   "removed_per_h": 0.0
+  },
+  "frogpilot-hf/raw": {
+   "added_per_h": 6.5,
+   "removed_per_h": 0.0
+  },
+  "frogpilot/fused": {
+   "added_per_h": 14.7,
+   "removed_per_h": 6.5
+  },
+  "frogpilot/raw": {
+   "added_per_h": 91.6,
+   "removed_per_h": 6.5
+  },
+  "starpilot/fused": {
+   "added_per_h": 9.7,
+   "removed_per_h": 3.2
+  },
+  "starpilot/raw": {
+   "added_per_h": 85.6,
+   "removed_per_h": 3.2
+  }
+ },
+ "D_starpilot_paths": {
+  "vision": {
+   "legacy_pct": 12.2,
+   "runs_per_h": 751.0,
+   "median_run_s": 0.2,
+   "stale_entry_pct": 26.0,
+   "extra_demand_median": null,
+   "extra_demand_p90": null,
+   "extra_ge_1p0": null
+  },
+  "raw": {
+   "legacy_pct": 18.8,
+   "runs_per_h": 889.0,
+   "median_run_s": 0.4,
+   "stale_entry_pct": 24.0,
+   "extra_demand_median": 0.67,
+   "extra_demand_p90": 1.25,
+   "extra_ge_1p0": "74 of 392"
+  },
+  "fused": {
+   "legacy_pct": 12.9,
+   "runs_per_h": 528.0,
+   "median_run_s": 0.3,
+   "stale_entry_pct": 27.0,
+   "extra_demand_median": 0.23,
+   "extra_demand_p90": 0.91,
+   "extra_ge_1p0": "14 of 159"
+  },
+  "acc": {
+   "legacy_pct": 12.7,
+   "runs_per_h": 531.0,
+   "median_run_s": 0.25,
+   "stale_entry_pct": 29.0,
+   "extra_demand_median": null,
+   "extra_demand_p90": null,
+   "extra_ge_1p0": null
+  }
+ },
+ "E_frogpilot_far_lead": {
+  "fused": {
+   "episodes": 15,
+   "lead_min": 37.0,
+   "per_h": 24.4,
+   "median_s": 0.2,
+   "longest_s": 1.7,
+   "peak_ge_0p5": 7,
+   "peak_ge_1p0": 4
+  },
+  "raw": {
+   "episodes": 15,
+   "lead_min": 37.0,
+   "per_h": 24.4,
+   "median_s": 0.3,
+   "longest_s": 1.7,
+   "peak_ge_0p5": 6,
+   "peak_ge_1p0": 3
+  }
+ },
+ "E1_excursion": {
+  "sunnypilot/gap45/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.64,
+   "seconds_ge_0p5": 0.95
+  },
+  "frogpilot-hf/gap45/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.07,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap45/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.64,
+   "seconds_ge_0p5": 0.95
+  },
+  "starpilot/gap45/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.32,
+   "seconds_ge_0p5": 0.0
+  },
+  "sunnypilot/gap45/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 1.24,
+   "seconds_ge_0p5": 1.85
+  },
+  "frogpilot-hf/gap45/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 0.15,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap45/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 1.24,
+   "seconds_ge_0p5": 1.85
+  },
+  "starpilot/gap45/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 0.75,
+   "seconds_ge_0p5": 0.9
+  },
+  "sunnypilot/gap45/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 2.33,
+   "seconds_ge_0p5": 2.35
+  },
+  "frogpilot-hf/gap45/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 0.3,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap45/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 2.33,
+   "seconds_ge_0p5": 2.35
+  },
+  "starpilot/gap45/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 1.47,
+   "seconds_ge_0p5": 1.7
+  },
+  "sunnypilot/gap70/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.22,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot-hf/gap70/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.01,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap70/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.22,
+   "seconds_ge_0p5": 0.0
+  },
+  "starpilot/gap70/err-1": {
+   "peak_aLeadK": -0.65,
+   "extra_demand": 0.22,
+   "seconds_ge_0p5": 0.0
+  },
+  "sunnypilot/gap70/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 1.24,
+   "seconds_ge_0p5": 1.4
+  },
+  "frogpilot-hf/gap70/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 0.15,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap70/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 1.24,
+   "seconds_ge_0p5": 1.4
+  },
+  "starpilot/gap70/err-2": {
+   "peak_aLeadK": -1.31,
+   "extra_demand": 0.71,
+   "seconds_ge_0p5": 0.8
+  },
+  "sunnypilot/gap70/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 2.33,
+   "seconds_ge_0p5": 2.15
+  },
+  "frogpilot-hf/gap70/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 0.3,
+   "seconds_ge_0p5": 0.0
+  },
+  "frogpilot/gap70/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 2.33,
+   "seconds_ge_0p5": 2.15
+  },
+  "starpilot/gap70/err-4": {
+   "peak_aLeadK": -2.61,
+   "extra_demand": 1.47,
+   "seconds_ge_0p5": 1.6
+  }
+ },
+ "E2_radar_only_object": {
+  "sunnypilot/v20/1.5s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  },
+  "frogpilot-hf/v20/1.5s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 0.74
+  },
+  "frogpilot/v20/1.5s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 0.74
+  },
+  "starpilot/v20/1.5s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  },
+  "sunnypilot/v20/3.0s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  },
+  "frogpilot-hf/v20/3.0s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 0.74
+  },
+  "frogpilot/v20/3.0s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 0.74
+  },
+  "starpilot/v20/3.0s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  },
+  "sunnypilot/v10/3.0s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  },
+  "frogpilot-hf/v10/3.0s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 1.49
+  },
+  "frogpilot/v10/3.0s": {
+   "taken": true,
+   "after_s": 0.5,
+   "peak_demand": 1.49
+  },
+  "starpilot/v10/3.0s": {
+   "taken": false,
+   "after_s": null,
+   "peak_demand": 0.0
+  }
+ },
+ "scenario_setup": {
+  "ego_speed_m_s": 30,
+  "E1_error_shape": "synthetic: ramps 1.5 s, holds 1 s, decays 2 s from t=10 s",
+  "E1_gaps_m": [
+   45,
+   70
+  ],
+  "starpilot_filters": "warm (seeded at the lead's speed)"
+ },
+ "F_braking_events": {
+  "events": 10,
+  "sunnypilot": {
+   "same": 3,
+   "radar_earlier": 0,
+   "radar_later": 6,
+   "radar_only": 1
+  },
+  "frogpilot-hf": {
+   "same": 10,
+   "radar_earlier": 0,
+   "radar_later": 0,
+   "radar_only": 0
+  },
+  "frogpilot": {
+   "same": 3,
+   "radar_earlier": 0,
+   "radar_later": 6,
+   "radar_only": 1
+  },
+  "starpilot": {
+   "same": 9,
+   "radar_earlier": 0,
+   "radar_later": 0,
+   "radar_only": 1
+  }
+ }
+}

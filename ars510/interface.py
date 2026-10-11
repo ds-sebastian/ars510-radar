@@ -9,11 +9,11 @@ with points carrying dRel (m, forward), yRel (m, LEFT positive), vRel (m/s, over
 speed) and trackId (from the radar's own slot / age lifecycle).
 
 Ego speed comes from Toyota SPEED (0xB4) on the car bus, or from `set_ego_speed`. Without a fresh ego speed
-vRel is NaN, and BASE_CONFIG withholds such points (radard's per-track Kalman never recovers from a NaN).
+vRel is NaN, and BASE_CONFIG withholds such points (a NaN would stay in radard's per-track Kalman for good).
 
 Configs (docs/12 explains the filter, docs/11 compares the profiles with vision only):
-  FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list, the radar's
-                     ACC target and its summaries, each weighted by its own uncertainty
+  FUSED_CONFIG       default install profile: one Kalman speed filter per track fusing the object list and the radar's
+                     ACC target, each weighted by its own uncertainty, plus a yaw-rate path gate
   COLORED_CONFIG     experimental: fused with a colored-noise (bias) state for the object list
   BASE_CONFIG        the unfiltered radar decode with only what radard needs (the 'raw' install profile)
   ALL_TRACKS_CONFIG  every valid track from age 1 with the radar's own IDs: the decode-level view for analysis
@@ -46,15 +46,14 @@ class NativeInterfaceConfig:
     max_ego_speed_age_s: float = 0.5
     include_metadata: bool = True
     # Hold back tracks younger than this many cycles. Young tracks carry unconverged range and velocity
-    # (stopped cars read as moving; one lead read 38 m while ~100 m away for ~3 s). 60 cycles ~ 3.6 s.
+    # (stopped cars read as moving; one lead read about 39 m while ~100 m away and walked out over about 5 s). 60 cycles ~ 3.6 s.
     min_publish_age: int = 1
     # When a new track is first published, give it the trackId of a settled track (age >= 30) lost within
     # this many seconds if it starts where that track predicts and the match is one-to-one. 0 disables.
     # Requires min_publish_age >= RELINK_MIN_PUBLISH_AGE so the lost ID has ended (no duplicate IDs).
     relink_max_gap_s: float = 0.0
     # Multiplies the decoded over-ground velocity. Against Toyota 0xB4, steady following reads 0.149 m/s/code
-    # instead of nominal 0.150. This empirical 0.667% alignment is separate from the measured
-    # ~1.5% discrepancy between ego references; it is not an exact inverse or an OEM wire constant.
+    # instead of nominal 0.150: an empirical 0.667% alignment to 0xB4, which itself reads ~1-1.5% below GPS (docs/06).
     # Use 1.0 with a carState.vEgo or GPS ego reference.
     vground_scale: float = 1.0
     # Withhold points whose vRel is unresolved (no fresh ego speed).
@@ -63,7 +62,7 @@ class NativeInterfaceConfig:
     range_fusion_gain: float = 0.0
     # Saturation guard: withhold a mature track's point while its velocity code is the invalid 1023 (or 0), and after
     # that until the velocity is back within sat_recover_mps of the last good value (the sentinel decays over ~6
-    # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/07). The speed filter's
+    # records) or guard_hold_s has passed. The track then continues under a new trackId (docs/12). The speed filter's
     # robust update absorbs the sentinel on its own, so FUSED_CONFIG leaves this off.
     drop_saturated_codes: bool = False
     sat_recover_mps: float = 5.0
@@ -73,7 +72,7 @@ class NativeInterfaceConfig:
     # ACC target (0x235 / 0x237): matched to an object-list track by position, cost = |dRel - x| / max(acc_match_range_m,
     # acc_match_range_frac * x) + |yRel - y| / 0.5 < 1 with margin > 1 over the next track, for tracks of age >=
     # acc_match_min_age (x is the ACC target's 0.025 m distance, y its 0.01 m lateral; the range scale grows with range
-    # because the object list reads far cars short of the ACC distance: often 15-20 m for a newly detected car, docs/06,
+    # because the object list reads far cars short of the ACC distance, by 15-20 m for some newly detected cars, docs/06,
     # docs/12). The association is kept while the track
     # and a continuous ACC target persist, even when the object-list position slides away with an excursion; it re-matches
     # when the ACC target jumps (range > acc_sticky_jump_m or lateral > 1 m between updates), the track disappears, or its
@@ -86,31 +85,41 @@ class NativeInterfaceConfig:
     acc_match_min_age: int = 20
     acc_sticky_jump_m: float = 8.0
     acc_sticky_max_cost: float = 4.0
-    # Path gate (radard has no lateral gate and pairs the vision lead with the track nearest in range): beyond
+    # Path gate (radard weights lateral position only through the camera's uncertainty and checks only distance and
+    # speed, so far out it can pair the vision lead with a car a lane over): beyond
     # path_gate_min_range_m, a track other than the ACC target's that is more than path_gate_m from the ego path predicted
-    # from yaw rate and speed (constant curvature: y - yaw / v * d^2 / 2) is not published: a car a lane over, also on a
+    # from yaw rate and speed (constant curvature: y - yaw / v * d^2 / 2) is withheld: a car a lane over, also on a
     # curve. Closer in, cars moving into the lane must stay visible.
     path_gate_m: float = 0.0  # 0 = off (fused: 2.5)
     path_gate_min_range_m: float = 15.0
+    # Far cars the radar does not follow (docs/12 "Far cars"): beyond far_acc_only_m only the ACC target's track is
+    # published, as Toyota's own ACC acts only on its ACC target. Far non-ACC tracks carry the object list's false
+    # closings; radard uses the camera for those cars. 0 = off (fused: 60)
+    far_acc_only_m: float = 0.0
+    # Stationary tracks (|over-ground speed| < path_gate_stationary_mps) are path-gated at every range, within
+    # path_gate_stationary_m of the path curved with max(v_ego, 2 m/s): parked cars and roadside objects do not cut in,
+    # and radard's low-speed rule otherwise stops for them where the path curves away. 0 = off (fused: 0.5 m/s, 1.5 m)
+    path_gate_stationary_mps: float = 0.0
+    path_gate_stationary_m: float = 1.5
     # Summaries (0x192 / 0x194): the positions of the radar's selected targets. Their range slope over summary_window_s
-    # gives a relative speed; a summary attaches to the track at its position (range within 15 %, lateral within
+    # gives a relative speed; a summary attaches to the track at its position (range within max(5 m, 15 %), lateral within
     # summary_match_lat_m, unambiguous) and stays attached while the track stays within 25 % in range and twice that
-    # lateral limit. Used up to summary_max_range_m (beyond ~80 m the optical check no longer favours the summary speed,
-    # docs/07); the ACC-associated track is left to the ACC target.
+    # lateral limit. Used up to summary_max_range_m (the optical check favours the summary speed out to ~80 m, docs/05);
+    # the ACC-associated track is left to the ACC target. A fork option: off in FUSED_CONFIG, on in COLORED_CONFIG.
     summary_max_range_m: float = 80.0  # summary_sigma_mps <= 0 below turns the summaries off
     summary_window_s: float = 1.0
     summary_match_lat_m: float = 1.0
     summary_scales: tuple[tuple[float, float], ...] = ((0.0625, -10.0), (0.0625, -10.0))  # m per code, offset m (0x192, 0x194)
-    # Fused speed filter (docs/07 "Fused speed filter"): one per-track Kalman filter on the over-ground speed. Each
+    # Fused speed filter (docs/12 "The model"): one per-track Kalman filter on the over-ground speed. Each
     # reading is weighted by
     # its own standard deviation: the object-list speed by speed_sigma_per_code * 240|7 (the radar's velocity-error
     # scale, calibrated against its ACC target), times young_sigma_scale for tracks younger than young_age (measured:
     # young tracks err more than 240|7 says); the radar's ACC target speed for the associated track by acc_sigma_mps;
-    # the target-range summary speed (up to summary_max_range_m) by summary_sigma_mps. The lead's speed may change
+    # the target-range summary speed (option, up to summary_max_range_m) by summary_sigma_mps. The lead's speed may change
     # with lead_accel_std_mps2 (process noise); a reading beyond innovation_gate_sigma standard deviations is clamped
     # to that bound (robust update). A track is first published once its speed std is below publish_speed_std_mps.
-    # Range is not part of the filter (the object list's range rate and speed disagree, docs/07); range_fusion_gain
-    # smooths the published range as before.
+    # Range stays outside the filter (the object list's range rate and speed disagree by 10-20 %, docs/12);
+    # range_fusion_gain smooths the published range separately.
     fused_speed_filter: bool = False
     speed_sigma_per_code: float = 0.045
     young_sigma_scale: float = 1.8
@@ -145,13 +154,14 @@ BASE_CONFIG = NativeInterfaceConfig(
     drop_saturated_codes=True,
 )
 # The default install profile (docs/12, docs/11): the base decode plus range fusion and one uncertainty-weighted speed
-# filter per track that fuses the object list, the radar's ACC target and its summary ranges. The track-ID relink and the
-# saturation guard of the base decode are off: neither changes the driving with the filter on (docs/12). Young tracks
-# may take the ACC distance, and two lead-choice guards withhold tracks a lane away from the ACC target or from the
-# yaw-predicted path at range (docs/12 "Lead-choice guards"). The openpilot
+# filter per track that fuses the object list and the radar's ACC target (matched by position, 0.4 x range scale; its
+# track takes the ACC distance as range; the ACC speed is weighted at 0.3 m/s since 2.5). The track-ID relink and the saturation guard of the base decode are off:
+# with the filter on, the driving is the same with or without them (docs/12). Beyond 15 m, tracks other than the ACC target's that sit
+# more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate"). The summaries are off. The openpilot
 # version (upstream/ars510_radar.py) is this profile in one file.
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
-                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0)
+                       fused_speed_filter=True, path_gate_m=2.5, summary_sigma_mps=0.0, acc_sigma_mps=0.13, far_acc_only_m=60.0,
+                       path_gate_stationary_mps=0.5)
 
 # Experimental (fork only, docs/12 "Kalman variants tested"): fused with the object-list error as a 1.2 s Gauss-Markov
 # bias state, noise scaled by ego speed and the radar's acceleration reading (fitted on the hidden-ACC teacher). 15%
@@ -159,7 +169,7 @@ FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0,
 COLORED_CONFIG = replace(FUSED_CONFIG, speed_sigma_per_code=0.001, speed_bias_tau_s=1.19, speed_bias_sigma_per_code=0.0096,
                          speed_sigma_ego_gain=0.48, speed_sigma_accel_gain=0.51, young_sigma_scale=1.0,
                          lead_accel_std_mps2=1.0, speed_init_sigma_per_code=0.045, speed_divergence_inflation=True,
-                         summary_sigma_mps=0.5)
+                         summary_sigma_mps=0.5, acc_sigma_mps=0.5)
 
 NATIVE_VREL_STATUS = "native_over_ground_minus_ego"
 UNRESOLVED_NAN = "unresolved_nan"
@@ -525,7 +535,7 @@ class Ars510NativeRadarInterface:
         return float(obj.v_lat_ground - w * obj.d_rel)
 
     def _a_rel(self, obj: NativeObject, v_ego: float | None) -> float:
-        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by 0.5-1 s)."""
+        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by about 0.5 s)."""
         if v_ego is None or self._a_ego is None or obj.accel_like_code in (-511, 512):
             return nan
         return float(obj.accel_like_code * ACCEL_SCALE - self._a_ego)
@@ -568,9 +578,14 @@ class Ars510NativeRadarInterface:
             if obj.age < cfg.min_publish_age:
                 self.settling_suppressed += 1
                 continue
-            if cfg.path_gate_m > 0 and tid != acc_tid and d_rel > cfg.path_gate_min_range_m and v_ego is not None:
+            if cfg.far_acc_only_m > 0 and tid != acc_tid and d_rel > cfg.far_acc_only_m:
+                self.path_gated += 1
+                continue
+            still = cfg.path_gate_stationary_mps > 0 and abs(v_ground) < cfg.path_gate_stationary_mps and d_rel <= cfg.path_gate_min_range_m
+            if cfg.path_gate_m > 0 and tid != acc_tid and (d_rel > cfg.path_gate_min_range_m or still) and v_ego is not None:
                 yaw = self._fresh_yaw_rate(time_s)
-                if yaw is not None and abs(obj.y_rel - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > cfg.path_gate_m:
+                width, v_curve = (cfg.path_gate_stationary_m, max(v_ego, 2.0)) if still else (cfg.path_gate_m, max(v_ego, 5.0))
+                if yaw is not None and abs(obj.y_rel - yaw / v_curve * d_rel * d_rel / 2) > width:
                     self.path_gated += 1
                     continue
             if tid not in self._out_id and speed_std > cfg.publish_speed_std_mps and cfg.fused_speed_filter:
@@ -588,7 +603,7 @@ class Ars510NativeRadarInterface:
                 "vRel": vrel,
                 "aRel": self._a_rel(obj, v_ego),
                 "yvRel": self._yv_rel(obj, time_s),
-                "measured": not obj.predicted,  # 107|1, like Tesla's Meas; radard stores but does not weight it
+                "measured": not obj.predicted,  # 107|1, like Tesla's Meas; older radard versions store it with the track
             }
             if cfg.include_metadata:
                 point.update(slot=slot, age=obj.age, v_long_ground=float(v_ground), native_id=tid, existence_pct=obj.existence_pct,

@@ -114,11 +114,11 @@
   },
   "interpretation": "Observed joint initial-output template, with varying velocity codes and fixed initial position codes.",
   "limits": [
-    "The four zero predicates are exact on this previously used capture set.",
-    "Full byte272 is a structural view; it does not establish semantic width or height units.",
-    "Code0 at this initial state is not a measured physical object box.",
-    "Confidence probability, physical identity and field measurement timing are not calibrated.",
-    "The prefix result follows from age1 and strict age progression, not an independent delay test."
+    "The four zero predicates are exact on this capture set.",
+    "Full byte 272 is used as a structural view (zero in the initial template).",
+    "Code 0 here is the allocation template's placeholder size (data/README.md, init_template).",
+    "Confidence, identity and field timing come from the tests in docs/03.",
+    "The prefix result follows from age 1 and strict age progression."
   ],
   "example": {
     "label": "Example A",

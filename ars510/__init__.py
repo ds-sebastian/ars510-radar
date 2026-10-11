@@ -1,8 +1,7 @@
 """Toyota / Continental ARS510 front radar: CAN decode for openpilot experiments.
 
-Status: native geometry and slot lifecycle have supporting evidence; exact vRel
-and state semantics remain unresolved. Not validated for active control.
-See README.md.
+Status: transport, geometry, track IDs and the ACC target are decoded; the default `fused`
+profile filters the object list's far-range speed excursions. Field confidence: README.md and docs/03.
 """
 from .constants import ID80_ADDR, ID85_ADDR, RADAR_BUS, TOYOTA_SPEED_ADDR
 from .interface import (

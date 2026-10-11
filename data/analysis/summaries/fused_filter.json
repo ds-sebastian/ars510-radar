@@ -1,11 +1,12 @@
 {
- "description": "Fused speed filter (FUSED_CONFIG, 'fused' profile): one uncertainty-weighted per-track Kalman filter on over-ground speed replacing far smoothing, far settling, the ramp limiter and the ACC / summary clips. Replay against the driver with the unchanged openpilot card -> radard -> planner (34 replay drives) and the unchanged sunnypilot planner (fresh drives).",
+ "description": "Fused speed filter (FUSED_CONFIG, 'fused' profile): one uncertainty-weighted per-track Kalman filter on over-ground speed replacing far smoothing, far settling, the ramp limiter and the ACC / summary clips. Replay against the driver with the unchanged openpilot card -> radard -> planner (27 replay drives) and the unchanged sunnypilot planner (fresh drives). Replay, ablation and combination numbers are fused 2.0 (with the summaries, ACC sigma 0.5); the current 2.5 counts are in profiles_vs_vision.json and acc_weight.json.",
  "filter": {
   "object_list_speed_sigma_mps_per_240_7_count": 0.045,
   "young_track_sigma_scale": 1.8,
   "young_age_frames": 100,
-  "acc_target_speed_sigma_mps": 0.5,
-  "summary_speed_sigma_mps": 0.5,
+  "acc_target_speed_sigma_mps": 0.3,
+  "acc_target_speed_sigma_note": "0.5 up to 2.4 (the 2.0 ablations and combinations below ran at 0.5)",
+  "summary_speed_sigma_mps": "0.5 when enabled (fork option; off in fused since 2.4)",
   "summary_max_range_m": 80,
   "lead_accel_std_mps2": 1.5,
   "innovation_gate_sigma": 3.0,
@@ -14,7 +15,8 @@
  },
  "calibration": {
   "240_7_as_speed_std": "within-range-band AUC for false closings 0.71-0.75 at 25-55 m, 0.67 at 55-85 m, 0.60 beyond 95 m, at or above the ceiling an exact Gaussian sigma allows (0.81 -> 0.55); z std 1.0 at 35-55 m, 0.8-0.9 beyond 55 m",
-  "young_tracks": "at 45-70 m, tracks younger than ~100 frames err 1.4-2x more than 240|7 says (z std 1.36-1.97 vs 0.85 mature), biased toward closing; 240|7 itself does not change with age"
+  "young_tracks": "at 45-70 m, tracks younger than ~100 frames err 1.4-2x more than 240|7 says (z std 1.36-1.97 vs 0.85 mature), biased toward closing; 240|7 itself does not change with age",
+  "units_note": "Measured (SCR-432) with the ACC speed at 0.1 m/s per code; at 0.125 the per-count RMS is 0.04-0.06 m/s (acc_unit_recompute.json, SCR-417 claim) and the filter keeps 0.045 m/s per count."
  },
  "replay_34_drives": {
   "anchor": {
@@ -108,7 +110,7 @@
    "radar_only_braking_per_h": 0.66,
    "onset_vs_vision_s": -0.033
   },
-  "saturation_guard": "identical on all 34 drives and the 8 fresh drives; removed from fused",
+  "saturation_guard": "identical on all 27 drives and the 8 fresh drives; removed from fused",
   "range_fusion": {
    "heldout": 27,
    "further": 0,
@@ -131,7 +133,7 @@
    "heldout": 30,
    "further": 2,
    "owner": 0,
-   "note": "identical in every measure (switches 1770 vs 1772)"
+   "note": "same braking counts; lead switches 1770 vs 1772"
   }
  },
  "combinations_34_drives": {
@@ -154,7 +156,7 @@
    "target_episodes": 4,
    "owner_target_episodes": 0,
    "switches": 1770,
-   "verdict": "identical: removed from the openpilot version",
+   "verdict": "same braking counts (lead switches 1770 vs 1772): removed from the openpilot version",
    "openpilot_file_lines": 261,
    "passes": true,
    "unjustified_ticks": 3
@@ -286,7 +288,7 @@
   ]
  },
  "openpilot_file_lines": {
-  "definition": "non-blank, non-comment lines of upstream/ars510_radar.py (fused without summaries and relink)",
+  "definition": "non-blank, non-comment lines of the openpilot version of 2.0 (fused without summaries and relink); current counts (183 code lines of 223) in openpilot_file_parts.json",
   "total_lines": 213,
   "total": 189,
   "decode_ids_publication": 84,
@@ -295,7 +297,7 @@
   "adapter_constants_pruning": 62
  },
  "radard_cascade": {
-  "definition": "radard's aLeadK in the 34-drive replays (20 held-out routes), ticks where both radar profiles follow a radar lead; roughness = mean |d aLeadK / dt|; lag = cross-correlation peak of fused vs the earlier tuned profile's aLeadK per route (0.05 s ticks)",
+  "definition": "radard's aLeadK in the 27-drive replays (20 held-out routes), ticks where both radar profiles follow a radar lead; roughness = mean |d aLeadK / dt|; lag = cross-correlation peak of fused vs the earlier tuned profile's aLeadK per route (0.05 s ticks)",
   "ticks": 148219,
   "by_profile": {
    "fused": {
@@ -319,7 +321,7 @@
   "routes": 15
  },
  "acc_target_weight": {
-  "definition": "ACC target speed sigma in fused: 0.5 (default), 0.13 (its measured error), 0.02 (trusted almost completely); 34 replay drives and 8 fresh drives",
+  "definition": "ACC target speed sigma in fused: 0.5 (the default up to 2.4), 0.13 (its measured error), 0.02 (trusted almost completely); measured on 2.0 with the ACC speed at 0.1 m/s per code; 27 replay drives and 8 fresh drives",
   "replay_34_drives": {
    "0.5": {
     "heldout_hard": 30,
@@ -343,6 +345,32 @@
    }
   },
   "fresh_8_drives": "no hard ticks for any; mean gap to vision unchanged (0.086-0.087); harder windows mostly while the driver braked, but two system-driven windows softer than both fused and vision (-2.29 -> -1.94, vision -2.33; -1.40 -> -1.24, vision -1.42)",
-  "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default stays 0.5"
+  "verdict": "small, mixed differences: fewer over-braking ticks after the driver released, but softer braking in two real slowdowns with openpilot driving; default then stayed 0.5",
+  "note": "measured with the ACC speed read at 0.1 m/s per code (before the unit correction in acc_summary_units.json), so heavier ACC weights also carried a 20 % smaller closing speed; the weight under the corrected unit is in acc_weight.json (0.3 m/s since 2.5)"
+ },
+ "upstream_equality_2_4_1": {
+  "scope": "two full owner road drives (about 4.3 h, 258 segments), decode only: every bus-1 frame plus 0xB4 speed and 0x24 yaw fed to upstream/ars510_radar.py and FUSED_CONFIG",
+  "radar_cycles": 256039,
+  "points": 200209,
+  "cycles_published_by_one_only": 0,
+  "point_count_mismatches": 0,
+  "track_id_mismatches": 0,
+  "max_abs_diff": {
+   "dRel_m": 5.7e-14,
+   "yRel_m": 0.0,
+   "vRel_mps": 7.1e-15
+  },
+  "control": "BASE_CONFIG as reference on a short drive gives 1,454 trackId mismatches and dRel differences up to 2.5 m, so the comparison detects differences"
+ },
+ "saturation_guard_heldout": {
+  "note": "raw decode without and with the saturation guard, 20 held-out routes (research-workspace velocity-guard run)",
+  "without_guard": {
+   "hard_ticks": 117,
+   "hard_episodes": 16
+  },
+  "with_guard_raw": {
+   "hard_ticks": 93,
+   "hard_episodes": 15
+  }
  }
 }

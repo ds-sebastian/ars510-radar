@@ -9,7 +9,8 @@
   "error_predictable_from_object_state": "likely (fresh-drive R2 0.41-0.47 from the radar's own object state; no single field carries it; unvalidated as a correction)"
  },
  "method": {
-  "reference": "OEM ACC target 0x235/0x237 (decoded as in docs/05)",
+  "reference": "OEM ACC target 0x235/0x237, speed read at 0.1 m/s per code (before the 0.125 correction)",
+  "units_note": "Measured with the ACC speed at 0.1 m/s per code. At 0.125 (acc_unit_recompute.json, SCR-417 claim): RMS 0.04-0.06 m/s per count over codes 12-75, MAD core 0.025-0.04, incidence 5.3 % observed vs 6.5 % predicted (fresh 7.7 % vs 5.5 %), fresh-drive state-model R2 0.33-0.43.",
   "excursion": "native vRel - ACC speed, 9-record median below -2.5 m/s",
   "K_m_per_s_per_count": 0.045,
   "mean_offset_m_per_s": -0.3,

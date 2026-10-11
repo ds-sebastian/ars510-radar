@@ -23,6 +23,16 @@ jobs:
       - run: pytest -q
       - run: python tools/check_structure.py > /dev/null
 
+  opendbc-style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff==0.15.10
+      - run: ruff check upstream/
+
   privacy:
     runs-on: ubuntu-latest
     steps:

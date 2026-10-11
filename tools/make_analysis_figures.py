@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Regenerate docs/img/analysis/*.png from the shipped dataset in data/analysis (needs pandas, pyarrow, matplotlib).
 
-Every analysis chart in docs/ comes from this script, so anyone can reproduce or re-slice them.
+Most analysis charts in docs/ come from this script (the others from make_fused/jitter/guide/profile_figures.py), so
+anyone can reproduce or re-slice them.
   python tools/make_analysis_figures.py            # all figures
-  python tools/make_analysis_figures.py vrel_hexbin excursion_gallery   # a subset
+  python tools/make_analysis_figures.py vrel_hexbin excursion_sigma_scale   # a subset
 """
 from __future__ import annotations
 
@@ -101,7 +102,7 @@ def record_raster():
     slot0 = R[:, 17:17 + 36]
     bits = np.unpackbits(slot0, axis=1, bitorder="little")
     a2.imshow(bits[:, :112], aspect="auto", cmap="gray_r", interpolation="nearest")
-    for start, lab in ((24, "age"), (32, "dRel"), (44, "yRel"), (64, "v_long"), (74, "v_lat"), (84, "accel?"), (96, "u96")):
+    for start, lab in ((24, "age"), (32, "dRel"), (44, "yRel"), (64, "v_long"), (74, "v_lat"), (84, "ax"), (96, "ay")):
         a2.axvline(start - 0.5, color=S2, lw=0.7)
         a2.text(start + 0.5, -4, lab, fontsize=7.5, color=INK, rotation=45, ha="left", va="bottom")
     a2.set_title("slot 0, bits 0-111 over time\n(LSBs flicker, MSBs hold: carry chains)", pad=26)
@@ -126,7 +127,7 @@ def vground_vs_ego():
     ax.text(30, -26, "oncoming (v_ground = -v_ego)", color=INK, fontsize=8.5, ha="right")
     ax.set_xlabel("ego speed, Toyota 0xB4 (m/s)")
     ax.set_ylabel("decoded 64|10 (code - 510.5) x 0.15 (m/s)")
-    ax.set_title("64|10 is velocity OVER GROUND: traffic sits on v_ego,\nstationary objects on 0, oncoming on -v_ego (all drives, age >= 20)")
+    ax.set_title("64|10 is velocity over ground: traffic sits on v_ego,\nstationary objects on 0, oncoming on -v_ego (all drives, age >= 20)")
     save(fig, "vground_vs_ego")
 
 
@@ -141,7 +142,7 @@ def standstill_codes():
         w = (g.vel_code[(g.vel_code >= 505) & (g.vel_code <= 516)]).mean()
         ax.set_title(f"drive {DRIVE_NAME[d]}")
         ax.set_xlabel("64|10 code, ego and object stopped")
-        ax.text(0.02, 0.92, f"mean {w:.2f}", transform=ax.transAxes, fontsize=8.5, color=INK2)
+        ax.text(0.02, 0.92, f"mean of codes 505-516: {w:.2f}", transform=ax.transAxes, fontsize=8.5, color=INK2)
     axes[0].set_ylabel("samples")
     save(fig, "standstill_codes", "Stopped objects behind a stopped ego pile up on codes 510/511: zero point 510.5 (dashed).")
 
@@ -290,7 +291,7 @@ def vrel_hexbin():
         ax.set_xlabel("camera box-growth closing speed (m/s)")
     axes[0].set_ylabel("native vRel (m/s)")
     fig.colorbar(hb, ax=axes, label="samples (log)", shrink=0.85)
-    save(fig, "vrel_vs_camera", "Settled, camera-paired samples: RMS is disagreement, not isolated radar accuracy.\n"
+    save(fig, "vrel_vs_camera", "Settled, camera-paired samples: RMS is the radar-camera disagreement (both sensors' errors).\n"
                                 "Image motion has its own noise; metric camera velocity also inherits radar range and association errors.")
 
 
@@ -344,7 +345,7 @@ def fault_injection():
         ax.set_ylim(0, 1)
     np.atleast_1d(axes)[0].set_ylabel("share of ticks radard picks the ghost")
     np.atleast_1d(axes)[0].legend(fontsize=8)
-    fig.suptitle("radard has no lateral gate: a ghost at the lead's distance and speed wins at any offset if the real lead is missing", y=1.02)
+    fig.suptitle("With the real lead missing, a ghost at the lead's distance and speed becomes radard's lead at every offset tested", y=1.02)
     save(fig, "radard_lateral_gate")
 
 
@@ -450,7 +451,7 @@ def range_walk():
     axes[0].legend(fontsize=7.5, loc="upper left")
     NUMBERS["range_walk"] = out
     save(fig, "range_walk_vs_integrated_vrel", "The camera box-height ratio over 1.5 s needs no calibration. "
-                                               "Integrating the radar's velocity tracks it 2-4x better than the radar's own range change.")
+                                               "Integrating the radar's velocity tracks it 1.4-3.7x better than the radar's own range change.")
 
 
 # ---------------------------------------------------------------- slot field roles -----------------------------------
@@ -461,14 +462,14 @@ CONF_ALPHA = {"confirmed": 1.0, "likely": 0.62, "candidate": 0.32, "raw": 1.0, "
 # (start, length, label, group, confidence). Kept in sync with docs/03_slot_fields.md.
 SLOT_FIELDS = [
     (0, 2, "state", LIFE, "likely"), (2, 6, "slot index", LIFE, "confirmed"), (8, 5, "startup", LIFE, "confirmed"),
-    (13, 1, "", RAW, "raw"), (14, 1, "onc", LIFE, "confirmed"), (15, 1, "", RAW, "raw"), (16, 8, "score", LIFE, "likely"),
+    (13, 1, "", RAW, "raw"), (14, 1, "onc", LIFE, "confirmed"), (15, 1, "", RAW, "raw"), (16, 8, "exist %", LIFE, "likely"),
     (24, 7, "age", LIFE, "confirmed"), (31, 1, "", CONST, "const"), (32, 12, "dRel", KIN, "confirmed"),
-    (44, 12, "yRel", KIN, "confirmed"), (56, 7, "length", CLS, "likely"), (63, 1, "", RAW, "raw"),
+    (44, 12, "yRel", KIN, "likely"), (56, 7, "length", CLS, "likely"), (63, 1, "", RAW, "raw"),
     (64, 10, "vx (ground)", KIN, "confirmed"), (74, 10, "vy (ground)", KIN, "likely"), (84, 10, "ax", KIN, "likely"),
-    (94, 2, "", CONST, "const"), (96, 10, "ay", KIN, "likely"), (106, 1, "", RAW, "raw"), (107, 1, "c", LIFE, "candidate"),
+    (94, 2, "", CONST, "const"), (96, 10, "ay", KIN, "likely"), (106, 1, "", RAW, "raw"), (107, 1, "pred", LIFE, "likely"),
     (108, 1, "", CONST, "const"), (109, 3, "motion", LIFE, "likely"), (112, 3, "cam", CAM, "likely"), (115, 5, "cls conf", CLS, "likely"),
     (120, 3, "", RAW, "raw"), (123, 5, "", CONST, "const"), (128, 3, "lane", LANE, "confirmed"), (131, 4, "w max", LANE, "confirmed"),
-    (135, 1, "", CONST, "const"), (136, 4, "cam conf", CAM, "likely"), (140, 3, "cls alt", CLS, "likely"), (143, 5, "", CONST, "const"),
+    (135, 1, "", CONST, "const"), (136, 4, "cam conf", CAM, "likely"), (140, 3, "cls alt", CLS, "confirmed"), (143, 5, "", CONST, "const"),
     (148, 4, "w R", LANE, "likely"), (152, 4, "w L", LANE, "likely"), (156, 4, "w ego", LANE, "likely"),
     (160, 3, "", CONST, "const"), (163, 3, "class", CLS, "likely"), (166, 2, "", CONST, "const"), (168, 10, "first det.", LIFE, "candidate"),
     (178, 3, "", CONST, "const"), (181, 1, "d", CAM, "candidate"), (182, 1, "", RAW, "raw"), (183, 1, "", RAW, "raw"),
@@ -626,7 +627,7 @@ def camera_association():
         a1.plot([mid(k) for k in ks], [100 * A[key][k] for k in ks], color=col, marker="o", markersize=5, label=lab)
     a1.set_xlabel("dRel (m), in-lane vehicles moving with ego")
     a1.set_ylabel("share with 112|3 non-zero (%)")
-    a1.set_title("Camera-association state 112|3: a 45 m limit by day, none at night")
+    a1.set_title("Camera-association state 112|3: a 45 m limit by day; at night it reaches 80 m")
     a1.set_ylim(-3, 104)
     a1.legend(loc="center right")
     sets = (("700 segments", A["b181"]["day_share"], A["b181"]["night_set"] / A["b181"]["night_rows"]),
@@ -641,7 +642,7 @@ def camera_association():
         a2.text(i + 0.19, 100 * s_[2] + 0.8, f"{100 * s_[2]:.2f}".rstrip("0").rstrip(".") if s_[2] else "0", ha="center", fontsize=8.5)
     a2.set_xticks(x, [s_[0] for s_ in sets])
     a2.set_ylabel("mature vehicle rows with 181|1 set (%)")
-    a2.set_title("Flag 181|1 is set only by day")
+    a2.set_title("Flag 181|1 is set by day (2 of 59,988 night rows)")
     a2.legend(loc="upper left")
     save(fig, "camera_association", "Night = the camera sends light-source records on 0x240 / 0x244. Mature vehicle rows: class 2 or 3, age above 60. "
          "Numbers: data/analysis/summaries/slot_camera_association.json.")
@@ -675,7 +676,7 @@ def lateral_unit_evidence():
     ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=8.5)
     ax.set_ylim(len(rows) - 0.5, -1.05)
     ax.set_xlabel("object-list lateral codes per metre")
-    ax.set_title("The object-list lateral step is 1.5 cm: independent estimates")
+    ax.set_title("The object-list lateral step: 1.5 cm from the radar's own fields, cross-checked by gyro, lanes and camera")
     ax.grid(axis="y", visible=False)
     save(fig, "lateral_unit_evidence", "Dot = estimate, bar = range across sets or 95 % track-bootstrap interval. "
          "Numbers: data/analysis/summaries/lateral_units.json.")
@@ -707,9 +708,9 @@ def far_range_distance():
         ax.set_xlim(0, 120)
     axes[0].set_ylabel("difference to the radar's ACC distance (m)")
     axes[0].legend(loc="lower left")
-    fig.suptitle("Far cars: the object list reads short of the radar's own ACC distance; the vision lead agrees with the ACC distance", fontsize=11)
+    fig.suptitle("Far cars: the object list reads short of the radar's own ACC distance; the vision lead sits closer to the ACC distance", fontsize=11)
     save(fig, "far_range_distance", "Median and interquartile range. Steady following only (closing speed under 1 m/s); object-list track at the ACC target's lateral position. "
-         "The vision lead is a third witness, not ground truth. Numbers: data/analysis/summaries/far_range_distance.json.")
+         "The vision lead is a third witness with its own errors. Numbers: data/analysis/summaries/far_range_distance.json.")
 
 
 def tracker_range():
@@ -727,7 +728,7 @@ def tracker_range():
     a1.axhline(0, color=INK, lw=1)
     a1.set_xlabel("vision lead distance (m)")
     a1.set_ylabel("published radar lead − vision lead (m)")
-    a1.set_title("Lead distance radard receives")
+    a1.set_title("Lead distance radard receives (matching steps up to fused 2.1)")
     a1.legend(loc="lower left")
     for key, col, lab in (("before", S2, "before"), ("after", S1, "after")):
         a2.plot(xs, [B[k][f"mean_abs_tick_step_m_{key}"] for k in B], color=col, marker="o", markersize=4.5, label=lab)
@@ -843,7 +844,7 @@ def heading_field():
     ax.set_title("208|6 closely follows the clipped velocity angle\n(empirical comparison; approximately π/64 per code)")
     NUMBERS["heading"] = {"exact": float((pred == code).mean()), "within_one": float((np.abs(pred - code) <= 1).mean()), "n": int(m.sum())}
     save(fig, "heading_field", "Settled tracks moving faster than 5 m/s under nominal velocity scaling.\n"
-         "Exact inputs, state updates and angular calibration remain provisional.")
+         "Empirical match; angular scale nominal (◐).")
 
 
 def event_code_context():
@@ -869,7 +870,7 @@ def event_code_context():
     axes[1].set_ylabel("whole payload")
     fig.tight_layout()
     save(fig, "event_code_context", "Original CAN verifies the complete window. Both jump endpoints have non-idle "
-         "0x195 / 0x196 payloads; physical units, target identity and acquisition timing remain uncalibrated.")
+         "0x195 / 0x196 payloads; raw codes.")
 
 
 def initial_attribute_zeros():
@@ -898,8 +899,8 @@ def initial_attribute_zeros():
     fig.suptitle("A joint initial output precedes populated attributes and position", fontsize=12)
     fig.tight_layout()
     save(fig, "initial_attribute_zeros", "Example A, original-CAN checked. The initial tuple occurs on 5,774 "
-         "of 22,501 age-1 rows; it is not a measured object box or a physical zero calibration. "
-         "Full byte272 is a structural view, not a calibrated height measurement.")
+         "of 22,501 age-1 rows; its position is a placeholder. "
+         "Full byte 272 is shown as a raw height-like code.")
 
 
 def id85_direction_code_structure():
@@ -913,11 +914,11 @@ def id85_direction_code_structure():
         ax.plot(g.time_s, g[field], color=color, marker="o", markersize=3)
         ax.axvline(0, color=INK2, ls=":", lw=1)
         ax.set_ylabel(label)
-    axes[0].set_title("Cell 2: a high-bit transition beside a smoothly changing ego path")
+    axes[0].set_title("Cell 2: bit 79 toggles while the 15-bit curvature changes smoothly")
     axes[-1].set_xlabel("CAN log time relative to the transition (s)")
     fig.tight_layout()
     save(fig, "id85_direction_code_structure", "Example A; transition endpoints checked in original CRC-valid records. "
-         "Lower bits are structural only; the ego path does not identify the selected boundary.")
+         "The lower 15 bits are the curvature c2 (64|15); bit 79 is a separate flag.")
 
 
 def lane_curve_cells():
@@ -927,17 +928,17 @@ def lane_curve_cells():
     fig = plt.figure(figsize=(10.5, 7.6))
     gs = fig.add_gridspec(2, 3, height_ratios=[0.5, 2.2], hspace=0.42, wspace=0.32)
     ax = fig.add_subplot(gs[0, :])
-    fields = [(0, 30, "0|9 …(raw, unresolved)", "#d9d8d3"), (30, 1, "30", S3), (32, 12, "32|12  c0 offset", S1), (48, 16, "48|16  c1 heading", S2),
+    fields = [(0, 10, "0|9 …", "#d9d8d3"), (10, 10, "10|10 c3 rate", S5), (20, 10, "20-29 raw", "#d9d8d3"), (30, 1, "30", S3), (32, 12, "32|12  c0 offset", S1), (48, 16, "48|16  c1 heading", S2),
               (64, 15, "64|15  c2 curvature", S4), (79, 1, "79", S5), (80, 16, "80|6 …", "#d9d8d3")]
     for start, ln, label, col in fields:
         ax.barh(0, ln, left=start, color=col, edgecolor=SURFACE, height=0.7)
-        if ln >= 12:
+        if ln >= 10:
             ax.text(start + ln / 2, 0, label, ha="center", va="center", fontsize=8.5, color=INK)
     ax.text(30.5, 0.62, "30: parameters present", ha="center", fontsize=7.5, color=INK2)
     ax.text(79.5, 0.62, "79: flag", ha="center", fontsize=7.5, color=INK2)
     ax.set_xlim(0, 96); ax.set_ylim(-0.6, 0.9); ax.set_yticks([]); ax.grid(False)
     ax.set_xticks(range(0, 97, 8)); ax.set_xlabel("bit within the 12-byte cell payload (little endian)")
-    ax.set_title("A populated 0x85 cell is one lane / road-boundary curve: y(x) = c0 + c1·x + c2·x²/2")
+    ax.set_title("A populated 0x85 cell is one lane / road-boundary curve: y(x) = c0 + c1·x + c2·x²/2 + c3·x³/6")
 
     def binned(x, y, n=24):
         d = pd.DataFrame({"x": x, "y": y}).dropna()
@@ -978,8 +979,8 @@ def lane_curve_cells():
     ax3.set_xlabel("curvature code (64|15)"); ax3.set_ylabel("camera lane curvature, left positive (1/m)")
     ax3.set_title("Curvature vs camera lane curvature"); ax3.legend(fontsize=6.5, ncol=2, loc="upper left")
     ch = info["camera_reference"]["heading"]; cc = info["camera_reference"]["curvature"]
-    save(fig, "lane_curve_cells", f"{len(L):,} camera-matched cell rows from three drives. Camera reference: quadratic fit of the matched lane line over 0–40 m. Units are "
-         f"bounded, not pinned (heading 1.6–2.2e-5 rad/code, curvature 2.0–2.7e-6 1/m per code). The camera lane slope has about half the gain of the ego-motion offset rate; dashed lines are the nominal conversions. Correlations with the camera: heading "
+    save(fig, "lane_curve_cells", f"{len(L):,} camera-matched cell rows from three drives. Camera reference: quadratic fit of the matched lane line over 0–40 m. Units "
+         f"fall within heading 1.6–2.2e-5 rad/code and curvature 2.0–2.7e-6 1/m per code. The camera lane slope has about half the gain of the ego-motion offset rate; dashed lines are the nominal conversions. Correlations with the camera: heading "
          f"{min(v['corr'] for v in ch.values()):.2f}…{max(v['corr'] for v in ch.values()):.2f}, curvature {min(v['corr'] for v in cc.values()):.2f}…{max(v['corr'] for v in cc.values()):.2f}.")
 
 
@@ -1001,7 +1002,8 @@ def excursion_sigma_scale():
     b.set_xlabel("predicted excursion rate (%), Gaussian σ = 0.045 × code"); b.set_ylabel("observed rate (%)"); b.set_title("Excursion incidence per range band and code quartile"); b.legend(loc="upper left")
     fig.tight_layout()
     save(fig, "excursion_sigma_scale", "Matched to the radar's own ACC target (227 k development/held-out records, 13 k fresh). Excursion = 9-record median of native − ACC below −2.5 m/s. "
-         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian.")
+         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian. "
+         "ACC speed at 0.1 m/s per code; at the decoded 0.125 the per-count RMS is 0-6 % higher (acc_unit_recompute.json).")
 
 
 def video_truth_excursions():
@@ -1018,7 +1020,7 @@ def video_truth_excursions():
     ax.set_title("Object-list velocity disagreement with the optical reference")
     ax.legend(loc="upper left")
     fig.tight_layout()
-    save(fig, "video_truth_excursions", "2,657 selected windows; ECC metric scale uses native range. Conditional disagreement, not physical error.")
+    save(fig, "video_truth_excursions", "2,657 selected windows; ECC metric scale uses native range; the reference has its own error.")
 
 
 def kalman_response():
@@ -1040,10 +1042,10 @@ def kalman_response():
     ax.axvline(0, color=INK2, lw=1, ls=":")
     ax.set_xlim(-220, 245)
     ax.set_xlabel("Colored model − scalar model response lag (ms); negative = earlier")
-    ax.set_title("ACC-defined response: combined interval includes no difference")
+    ax.set_title("ACC-defined response: combined interval spans zero")
     fig.tight_layout()
     save(fig, "kalman_response", "252 windows, 33 routes; paired route-block bootstrap 95% intervals. Trackers hidden during estimation.\n"
-         "Same-radar ACC witness; capped misses and some short follow-up. This is not physical braking ground truth.")
+         "The reference is the same radar's ACC target, so this compares the filters with each other.")
 
 
 def summary_owner_case():
@@ -1051,8 +1053,8 @@ def summary_owner_case():
     info = summary("summary_owner_case")
     data = pd.read_csv(DATA / "summary_owner_case.csv")
     fig, axes = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
-    series = [("summary_suppressed", "Summary suppressed; no relink", S2),
-              ("summary_retained", "Summaries retained; no relink (matches fused locally)", S1),
+    series = [("summary_suppressed", "fused 2.0 without summaries", S2),
+              ("summary_retained", "fused 2.0 with summaries", S1),
               ("vision", "Captured vision reference", INK2)]
     for key, label, color in series:
         rows = data[(data.variant == key) & data.case_s.between(-1.1, 1.5)].copy()
@@ -1064,20 +1066,72 @@ def summary_owner_case():
         ax.axvspan(0, info["episode"]["duration_s"], color=S2, alpha=.10)
         ax.set_ylabel(label)
     axes[0].axhline(-1, color=INK2, lw=1, ls=":")
-    axes[0].set_title("Summary updates prevent an extra braking episode in this replay")
+    axes[0].set_title("A far lead without an ACC target: the summaries soften the request; the slowdown was real")
     axes[0].legend(loc="lower left", fontsize=8)
     axes[-1].set_xlabel("Seconds relative to episode onset (owner drive O1)")
     fig.tight_layout()
     save(fig, "summary_owner_case", "Same radar lead T1 during the shaded 0.50 s episode. Summary sigma: 0.5 versus 10,000 m/s.\n"
-         "Saved planner/lead output; captured vision is a comparison, not physical ground truth.")
+         "Saved planner/lead output; captured vision for comparison.")
 
+
+
+def target_366_coding():
+    """Owner-only fixed-code comparison, retaining all discrepancy tails."""
+    info = summary("target_366_coding")
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), sharey=True)
+    for ax, drive in zip(axes, ["O2", "O3"]):
+        for scope, label, color in [("all", "All eligible pairs", S2),
+                                    ("geometry_agreement", "Distance agreement only", S1)]:
+            group = next(g for g in info["groups"] if g["drive"] == drive and g["scope"] == scope)
+            hist = {}
+            for delta, count in group["speed_code_delta"].items():
+                error = abs(int(delta)) * 5 / 36
+                hist[error] = hist.get(error, 0) + count
+            x = sorted(hist)
+            ax.step(x, np.cumsum([hist[k] for k in x]) / group["n"] * 100,
+                    where="post", label=label, color=color)
+        ax.set_xscale("symlog", linthresh=.5)
+        ax.set_xlim(0, 25)
+        ax.set_ylim(0, 101)
+        ax.set_xlabel("Absolute fixed-map discrepancy (m/s)")
+        ax.set_title("Owner drive " + drive)
+        ax.legend(fontsize=8)
+    axes[0].set_ylabel("Pairs within discrepancy (%)")
+    fig.tight_layout()
+    save(fig, "target_366_coding", "0x366 against the preceding ACC-derived 0x365 (nominal unsigned coding).\n"
+         "Additional reports and the unqualified high-code domain contribute to the discrepancy tails.")
+
+
+def target_366_coverage():
+    """Owner-only report states, without treating a non-idle word as physical truth."""
+    info = summary("target_366_coverage")
+    fig, ax = plt.subplots(figsize=(9, 3.7))
+    categories = [("range_agrees", "ACC present, range agrees", S1),
+                  ("range_disagrees", "ACC present, range differs", INK2),
+                  ("without_ACC", "ACC absent", S2)]
+    for i, g in enumerate(info["groups"]):
+        left = 0
+        for key, label, color in categories:
+            width = g[key] / g["target_reports"] * 100
+            ax.barh(i, width, left=left, color=color, height=.5, label=label if i == 0 else None)
+            if width >= 4:
+                ax.text(left+width/2, i, f'{g[key]}', va="center", ha="center", color="white", fontsize=10)
+            left += width
+    ax.set_yticks([0, 1], [f'Owner {g["drive"]} (n={g["target_reports"]:,})' for g in info["groups"]])
+    ax.set_xlim(0, 100)
+    ax.set_xlabel("Share of non-idle 0x366 reports (%)")
+    ax.set_title("0x366 reports persist beyond ACC target coverage")
+    ax.legend(loc="upper center", bbox_to_anchor=(.5, -.2), ncol=3, fontsize=8)
+    fig.tight_layout()
+    save(fig, "target_366_coverage", "Fresh ACC pairs (both messages ≤60 ms); range agreement within 1.5 m.\n"
+         "Report states of 0x366 against the ACC target frames.")
 
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage)}
 
 
 if __name__ == "__main__":
