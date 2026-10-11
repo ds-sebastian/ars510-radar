@@ -75,6 +75,16 @@
     "episodes": 7,
     "seconds": 8.2
    }
+  },
+  "acc": {
+   "unnecessary": {
+    "episodes": 6,
+    "seconds": 6.0
+   },
+   "missed": {
+    "episodes": 8,
+    "seconds": 10.8
+   }
   }
  },
  "rms_vs_oracle_while_braking": {
@@ -150,6 +160,16 @@
      "episodes": 5,
      "seconds": 3.1
     }
+   },
+   "acc": {
+    "unnecessary": {
+     "episodes": 4,
+     "seconds": 3.3
+    },
+    "missed": {
+     "episodes": 4,
+     "seconds": 2.5
+    }
    }
   },
   "rms_vs_oracle_while_braking": {
@@ -164,5 +184,6 @@
  "hours_road": 7.65,
  "note_2_4": "2.4 = 2.3 without the radar's target summaries (the openpilot version's filter)",
  "note_2_5": "2.5 = 2.4 with the ACC target's speed weighted at 0.3 m/s instead of 0.5. The reference takes its range from the ACC target, so it partly favours a heavier ACC weight (acc_weight.json)",
- "note_2_6": "2.6 = 2.5 with only the ACC target's track beyond 60 m, stationary tracks path-gated close in, and the ACC target speed weighted at 0.13 m/s (far_acc_only.json)"
+ "note_2_6": "2.6 = 2.5 with only the ACC target's track beyond 60 m, stationary tracks path-gated close in, and the ACC target speed weighted at 0.13 m/s (far_acc_only.json)",
+ "note_acc": "acc = the acc profile (upstream/ars510_acc_target.py): only the radar's ACC target as one point. Same fast-suite replays and scoring as the 2.6 rows. The reference takes its range from the ACC target, so it partly favours this profile; on the road set 2.35 of acc's 10.8 missed seconds are one cut-in where it asks -0.51 and 2.6 -0.53 m/s2 against the -0.5 threshold"
 }

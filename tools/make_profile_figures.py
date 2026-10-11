@@ -4,7 +4,8 @@
     python tools/make_profile_figures.py      # writes docs/img/analysis/profile_comparison.png, acc_sender_clock.png
 
 Every panel runs ars510.Ars510NativeRadarInterface on data/sample/*.csv.gz and plots the in-lane lead (|yRel| < 1.8 m,
-nearest) as published, so the figures can be regenerated from the repository alone.
+nearest) as published, so the figures can be regenerated from the repository alone. The dashed ACC target is what the
+acc profile (upstream/ars510_acc_target.py) publishes as its one point.
 """
 from __future__ import annotations
 
@@ -47,12 +48,14 @@ def frames(name: str):
 def lead(name, cfg) -> dict:
     """Published in-lane lead per radar cycle, plus the radar's ACC target closing speed when present."""
     radar = Ars510NativeRadarInterface(cfg)
-    out = {"t": [], "v": [], "d": [], "acc_t": [], "acc_v": []}
+    out = {"t": [], "v": [], "d": [], "acc_t": [], "acc_v": [], "accd_t": [], "acc_d": []}
     for t, bus, addr, data in (frames(name) if isinstance(name, str) else name()):
         if bus == 1 and addr == 0x235 and len(data) == 8 and data[1] & 4:
             v = parse_acc_target_vrel(data)
             if v is not None:
                 out["acc_t"].append(t); out["acc_v"].append(v)
+        if bus == 1 and addr == 0x237 and len(data) == 8 and (int.from_bytes(data, "big") >> 10) & 1:
+            out["accd_t"].append(t); out["acc_d"].append(((int.from_bytes(data, "big") >> 39) & 0x1FFF) * 0.025)
         res = radar.update_frame(t, bus, addr, data)
         if not res:
             continue
@@ -72,8 +75,13 @@ def profiles_figure() -> None:
                                          ("highway_acc_anchor_24s.csv.gz", "Drive E: excursion that drags the range"))):
         runs = {lab: lead(name, cfg) for lab, cfg in (("raw", STOCK), ("fused", FUSED_CONFIG))}
         av, ad = axes[0, col], axes[1, col]
-        if runs["raw"]["acc_t"]:
-            av.plot(runs["raw"]["acc_t"], runs["raw"]["acc_v"], color=INK, lw=1.0, ls="--", label="radar's ACC target (0x235)")
+        if runs["raw"]["acc_t"]:  # the acc profile publishes exactly this target as its one point
+            av.plot(runs["raw"]["acc_t"], runs["raw"]["acc_v"], color=S4, lw=1.4, ls="--", label="radar's ACC target (0x235) = acc")
+        else:
+            ad.text(0.98, 0.04, "no ACC target in this drive: acc publishes no point\n(radard uses the camera lead)", transform=ad.transAxes,
+                    ha="right", va="bottom", fontsize=7.5, color=INK2)
+        if runs["raw"]["accd_t"]:
+            ad.plot(runs["raw"]["accd_t"], runs["raw"]["acc_d"], color=S4, lw=1.4, ls="--", label="ACC target distance = acc")
         for lab, color in (("raw", GRAY), ("fused", S3)):
             r = runs[lab]
             av.plot(r["t"], r["v"], color=color, label=lab)

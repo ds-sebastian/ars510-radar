@@ -5,7 +5,8 @@
   "steady": "STEADY_CONFIG",
   "anchor": "ANCHOR_CONFIG",
   "fused": "FUSED_CONFIG",
-  "fused_no_trackers": "FUSED_CONFIG of 2.0 with the ACC target and summary readings ignored (acc/summary sigma 1e4): the Kalman filter on the object list alone"
+  "fused_no_trackers": "FUSED_CONFIG of 2.0 with the ACC target and summary readings ignored (acc/summary sigma 1e4): the Kalman filter on the object list alone",
+  "acc": "the acc profile (upstream/ars510_acc_target.py, install.py --profile acc): only the radar's ACC target (0x235 / 0x237) as one point; no object list, filter or gates"
  },
  "heldout_events": {
   "anchor": {
@@ -107,6 +108,28 @@
    "hard_slowdowns": 47,
    "hard_missed_vision": 10,
    "hard_missed_radar": 10
+  },
+  "acc": {
+   "events": 167,
+   "vision_ant05": 0.8084,
+   "radar_ant05": 0.8204,
+   "vision_ant10": 0.4012,
+   "radar_ant10": 0.4491,
+   "onset_diff_mean_s": -0.036,
+   "onset_diff_ci": [
+    -0.085,
+    0.003
+   ],
+   "earlier_share": 0.141,
+   "later_share": 0.067,
+   "paired": 149,
+   "median_onset_vision_s": -0.576,
+   "median_onset_radar_s": -0.68,
+   "hard_slowdowns": 47,
+   "hard_missed_vision": 10,
+   "hard_missed_radar": 9,
+   "later_than_vision_by_more_than_0p15_s": 6,
+   "earlier_than_vision_by_more_than_0p15_s": 11
   }
  },
  "further_events": {
@@ -209,6 +232,28 @@
    "hard_slowdowns": 5,
    "hard_missed_vision": 1,
    "hard_missed_radar": 2
+  },
+  "acc": {
+   "events": 15,
+   "vision_ant05": 0.8667,
+   "radar_ant05": 0.8667,
+   "vision_ant10": 0.4667,
+   "radar_ant10": 0.3333,
+   "onset_diff_mean_s": -0.018,
+   "onset_diff_ci": [
+    -0.079,
+    0.039
+   ],
+   "earlier_share": 0.143,
+   "later_share": 0.071,
+   "paired": 14,
+   "median_onset_vision_s": -2.024,
+   "median_onset_radar_s": -2.024,
+   "hard_slowdowns": 5,
+   "hard_missed_vision": 1,
+   "hard_missed_radar": 1,
+   "later_than_vision_by_more_than_0p15_s": 1,
+   "earlier_than_vision_by_more_than_0p15_s": 1
   }
  },
  "heldout_one_system_requests_and_overrides": {
@@ -298,6 +343,21 @@
     "mean_err_after_vision": 0.652,
     "mean_err_after_radar": 0.612
    }
+  },
+  "acc": {
+   "hours": 4.56,
+   "vision_only_per_h": 0.0,
+   "vision_only_driver": {},
+   "radar_only_per_h": 0.0,
+   "radar_only_driver": {},
+   "overrides": {
+    "n": 38,
+    "radar_closer_to_driver": 7,
+    "radar_further": 0,
+    "same": 31,
+    "mean_err_after_vision": 0.652,
+    "mean_err_after_radar": 0.6
+   }
   }
  },
  "late_vs_vision_note": "fused answers 12 of the 149 paired brake presses more than 0.05 s later than vision and 18 earlier (earlier_share 0.121, later_share 0.081)",
@@ -343,6 +403,13 @@
    "radar_lead_share_of_lead_time": 0.868,
    "lead_source_switches_per_h": 702.7,
    "hours": 2.66
+  },
+  "acc": {
+   "request_rmse_vs_driver_mps2": 0.411,
+   "mean_abs_jerk_mps3": 0.985,
+   "radar_lead_share_of_lead_time": 0.848,
+   "lead_source_switches_per_h": 318.1,
+   "hours": 2.66
   }
  },
  "heldout_driving_feel_note": "moving (> 1 m/s), driver-controlled ticks (2.66 h); request error = RMS(planner request - driver acceleration 0.5 s later); jerk = mean |d request / dt|; lead-source switches = radar/vision lead flips while moving",
@@ -379,7 +446,8 @@
    "rivian": 54,
    "tesla": 66,
    "toyota": 70
-  }
+  },
+  "acc_profile_file": 33
  },
  "tuned_constants": {
   "raw": {
@@ -418,6 +486,14 @@
    "shares_with_anchor": [
     "ACC and summary association"
    ]
+  },
+  "acc": {
+   "measured_or_physical": [],
+   "chosen": [],
+   "protocol": [
+    "0.5 s staleness",
+    "report every 5th update (20 Hz, radard accepts 8-24 Hz)"
+   ]
   }
  },
  "heldout_forward_collision_warnings": {
@@ -426,7 +502,8 @@
   "steady": 0,
   "anchor": 0,
   "fused": 0,
-  "fused_no_trackers": 0
+  "fused_no_trackers": 0,
+  "acc": 0
  },
  "replay_34_drives_hard": {
   "raw": {
@@ -453,6 +530,17 @@
    "heldout_target_episodes": 1,
    "owner_target_episodes": 0,
    "further_hard_ticks": 0
+  },
+  "acc": {
+   "heldout_hard_ticks": 66,
+   "heldout_target_episodes": 2,
+   "owner_target_episodes": 0,
+   "further_hard_ticks": 19,
+   "heldout_hard_ticks_moving": 14,
+   "heldout_hard_episodes_moving": 4,
+   "heldout_hard_ticks_standstill": 52,
+   "further_hard_ticks_moving": 7,
+   "note": "standstill = ego below 0.5 m/s: the request holds the stopped car 0.7-4.8 m behind an object the camera does not report as a lead (radard low-speed rule; on video a wall, a fence, a junction island); fused 2.6 on the same split: 16 moving / 0 standstill held-out, 0 further. The further-drive moving episode is a real object drifting a lane over at 82 m that radard matches to the camera lead 27 m further on"
   }
  },
  "fused_note": "fused rows: corrected ACC / summary units (0x235 at 0.125 m/s per code; summaries (code - 160) / 16 m), lateral unit 0.015 m, ACC target and summaries matched by position, ACC distance as the followed car's range (tracker_association.json); owner target episodes: 0 in 2.4 and 2.5; ACC sigma 0.3 m/s since 2.5 (acc_weight.json); beyond 60 m only the ACC target's track since 2.6 (far_acc_only.json)",
@@ -461,5 +549,6 @@
   "mean": 0.314,
   "median": 0.159,
   "note": "radar lead speed minus vision lead speed over the 4 s before each held-out driver brake press while radard's lead is a radar point (positive = radar shows less closing); 2.5 on the same definition: 0.404 / 0.155 on 148 events"
- }
+ },
+ "acc_note": "acc rows: the public upstream/ars510_acc_target.py replayed on the same 27 drives with the same harness and definitions (its replay tree's adapter is a one-line import of the file, as install.py --profile acc wires it)"
 }

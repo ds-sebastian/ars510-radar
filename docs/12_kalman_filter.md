@@ -258,7 +258,10 @@ Over 7.65 h of road drives (the owner's and the second car's), `fused` brakes un
 oracle asked for (8.2 s, vision 10.3 s, 2.1 9.5 s; 2.5 and 2.4 7.2 s). On the 27 replay drives (6.72 h scored): 2.2 s
 unnecessary (vision 31.9 s, 2.1 9.4 s, 2.5 3.0 s, 2.4 7.1 s) and 3.1 s missed (vision 10.0 s, 2.1 4.1 s, 2.5 3.1 s).
 The reference takes its range from the ACC target, so it favours versions that weigh the ACC target more; read 2.5's
-gain over 2.4 here with that in mind ([below](#the-acc-targets-weight)). Scoring covers moving
+gain over 2.4 here with that in mind ([below](#the-acc-targets-weight)). The `acc` profile, which publishes only the ACC target, scores
+6.0 s unnecessary and 10.8 s missed on the road drives and 3.3 s / 2.5 s on the 27 replay drives. On the road, 2.35 of
+those missed seconds are a single cut-in where it asks −0.51 m/s² and `fused` −0.53 m/s², on either side of the
+oracle's −0.5 threshold. Scoring covers moving
 moments (above 1 m/s), where the lead signal decides; at standstill the planner's stop-and-go logic does. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 

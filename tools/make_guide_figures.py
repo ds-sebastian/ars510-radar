@@ -219,10 +219,11 @@ def parts_ledger() -> None:
 def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
-  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.5", "2.6"]),
-          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.5", "2.6"]))
-  names = {"vision": "vision only", "2.1": "2.1", "2.5": "2.5", "2.6": "2.6 (default)"}; col = {"vision": VIS, "2.1": V21, "2.5": GRAY, "2.6": V23}
-  fig, axs = plt.subplots(2, 2, figsize=(11.5, 5.8))
+  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.5", "2.6", "acc"]),
+          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.5", "2.6", "acc"]))
+  names = {"vision": "vision only", "2.1": "2.1", "2.5": "2.5", "2.6": "2.6 (fused, default)", "acc": "acc (ACC target)"}
+  col = {"vision": VIS, "2.1": V21, "2.5": GRAY, "2.6": V23, "acc": S4}
+  fig, axs = plt.subplots(2, 2, figsize=(11.5, 6.6))
   for r, (label, C, vers) in enumerate(sets):
     for c, (kind, title) in enumerate((("unnecessary", "braked > 0.5 m/s² harder than needed"), ("missed", "missed braking the oracle asked for"))):
       ax = axs[r, c]; v = [C[k][kind]["seconds"] for k in vers]; n = [C[k][kind]["episodes"] for k in vers]
@@ -266,7 +267,7 @@ def acc_target_parser() -> None:
   """The ACC target alone against 2.6: file size and braking outcomes over every drive set, from acc_target_parser.json."""
   J = json.loads((SUM / "acc_target_parser.json").read_text()); F, A = J["file_size"], J["by_version_and_set"]
   M = J["hard_and_mild_moving_vs_standstill"]; ALL = "all sets"
-  col = {"vision only": VIS, "2.6": V21, "ACC target only": V23}
+  col = {"vision only": VIS, "2.6": V23, "ACC target only": S4}
   fig, axs = plt.subplots(1, 5, figsize=(13, 3.6), gridspec_kw={"width_ratios": [1.5, 1, 1, 1, 1]})
   ms = ["code_lines", "constants", "state_attributes", "conditions"]; x = np.arange(len(ms))
   for k, (v, dx) in enumerate((("2.6", -0.2), ("ACC target only", 0.2))):
