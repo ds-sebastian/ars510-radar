@@ -272,6 +272,8 @@ What this means for a build today:
 
 ### What is needed, in order
 
+How to record these safely (targets, place, speeds, logging): [15](15_pcs_testing.md).
+
 1. **The alarm with the radar disabled.** This decides whether a relay is possible at all. Repeat a low-speed
    approach to a soft PCS test target under alpha long (radar disabled) with bus 1 logged, and see whether 0x100 goes to 0x02.
    The car does not warn or brake in this setup, so the driver brakes as usual. If 0x100 stays 0, a disabled radar
