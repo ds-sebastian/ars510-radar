@@ -43,7 +43,7 @@ filter carry beyond the owner's car (a second RAV4 has reported so far).
 
 - **Decoder** (`ars510/`): field changes need a test (a synthetic slot in `tests/` or a bundled sample in
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
-- **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `fused`):
+- **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `acc` and `fused`):
   state the expected effect before running it, replay it through openpilot against the current profile with the gates
   in [docs/09](docs/09_tools_and_data.md#developing-and-testing-a-change) and the vision-only comparison in
   [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that

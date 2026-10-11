@@ -92,9 +92,9 @@ percentile +0.91, at least 1.0 in 14 of 159 runs); with `raw` +0.67 (+1.25, 74 o
 
 ## What the evidence supports
 
-- On any fork, install the default `fused`: it cuts the braking demand the radar's speed errors add about six-fold on
+- On any fork, install the default `acc` or `fused`. This comparison was run with `fused`, which cuts the braking demand the radar's speed errors add about six-fold on
   sunnypilot (90 → 14 events per hour against the radar's own tracker), and the benefit grows with how much of the
-  radar's speed the fork uses.
+  radar's speed the fork uses. `acc` publishes only the radar's ACC target, which carries none of the object list's speed excursions.
 - A fork that uses the radar's speed and acceleration (sunnypilot, FrogPilot with Human Following off) gets most from the
   radar and is the most sensitive to what the radar gets wrong. A fork that anchors on the vision model (FrogPilot's
   default, StarPilot's first path) is smooth because the radar contributes less: range, and the lead's speed now.

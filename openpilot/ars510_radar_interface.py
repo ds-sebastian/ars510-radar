@@ -9,7 +9,7 @@ so the same install works on openpilot and its forks (sunnypilot, StarPilot, Car
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. No ToyotaFlags bit is added, so fork flag bits cannot collide.
 Worth knowing (docs/07, docs/08, docs/12):
-  - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the default `fused` speed filter handles them;
+  - vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m); the `fused` speed filter handles them, and the default `acc` publishes only the ACC target, which has none;
   - the radar deletes most new stationary objects at age 5, more often the faster ego drives (7 % kept above 10 m/s),
     so a car that was already stopped when it came into view comes mostly from vision;
   - radard weights lateral position only through the camera's uncertainty when it picks the lead; `fused` adds a
@@ -47,7 +47,7 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
 # over every object (docs/10). `install.py --profile` rewrites this one line.
 STANDALONE = {"acc": "ars510_acc_target", "shared_speed": "ars510_shared_speed", "shared_range": "ars510_shared_range"}
 PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}
-PROFILE = PROFILES["fused"]
+PROFILE = PROFILES["acc"]
 
 # Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
 # 8821F0R01100 (RAV4 2022 platform) is the same part series but unconfirmed; it is detected by the bus-1 fallback when

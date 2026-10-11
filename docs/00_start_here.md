@@ -166,7 +166,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **target episode** | the radar planner asks for ≤ −1 m/s² while vision only asks for ≥ −0.3, for ≥ 0.3 s while moving |
 | **onset** | when braking starts with the radar compared with vision only (negative = earlier) |
 | **anticipation** | share of driver brake presses the planner was already braking for at ≤ −1 m/s² |
-| **`fused` / `openpilot` / `raw`** | the default fork profile / the single-file upstream version / the unfiltered decode |
+| **`acc` / `fused` / `openpilot` / `raw`** | the default profile (the radar's ACC target alone) / the all-tracks Kalman profile / its single-file version / the unfiltered decode |
 
 Figures: `tools/make_guide_figures.py` (guide_*.png), `tools/make_fused_figures.py`, `tools/make_analysis_figures.py`,
 `tools/make_jitter_figures.py` (jitter_*.png).

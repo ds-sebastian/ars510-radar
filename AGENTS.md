@@ -40,7 +40,7 @@ ruff check upstream/                # the openpilot file follows opendbc's ruff 
 - **Privacy.** Route IDs, dongle IDs, VINs, GPS, device IPs, local paths and identifying video stay out of commits and pastes.
   Drives are anonymous (A/B/C, D1-D4, E, O1-O5, U1-U3) with relative times. `tools/check_privacy.py` enforces the patterns.
 - **Decoder semantics** change only with a test and the matching doc row. Keep `ars510/` dependency-free.
-- **Driving behaviour** (anything that changes a profile's output, above all the default `FUSED_CONFIG`) needs an
+- **Driving behaviour** (anything that changes a profile's output, above all the default `acc` and `FUSED_CONFIG`) needs an
   openpilot replay against the current profile with the gates in `docs/09`, the vision-only comparison in `docs/11`,
   a review of the moments that change, and numbers in the PR. Tune on other drives than the one that motivated the change.
 - **The openpilot file** (`upstream/ars510_radar.py`) is meant for upstream, where every line has to be defended. A PR

@@ -3,7 +3,8 @@
 The radar's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for 1-10 s while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
 In openpilot that shows up as extra jitter in the plan and, rarely, a braking request only the radar makes. The
-default `fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)).
+`fused` profile handles it with one Kalman filter per track ([12](12_kalman_filter.md)); the default `acc` avoids it by
+publishing only the radar's ACC target ([11](11_profiles_compared.md#why-acc-is-the-default)).
 
 **In short**
 

@@ -12,9 +12,9 @@ from ars510 import BASE_CONFIG
 REPO = Path(__file__).resolve().parents[1]
 
 
-def test_wrapper_has_one_switchable_profile_line_defaulting_to_fused():
+def test_wrapper_has_one_switchable_profile_line_defaulting_to_acc():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
-  assert src.count('PROFILE = PROFILES["fused"]') == 1
+  assert src.count('PROFILE = PROFILES["acc"]') == 1
   assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
@@ -42,13 +42,13 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert text.startswith(original) and text.count("hook_car_interface(CarInterface)") == 1
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
-  assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()  # the default
   for name, installed in (("anchor", "fused"), ("steady", "fused"), ("stock", "raw"), ("default", "raw"),
                           ("upstream", "openpilot")):  # older names
     r = _install(tmp_path, "--profile", name)
     assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
     assert f"'{name}' is an alias for '{installed}'" in r.stdout
-    assert "the recommended default is 'fused'" in r.stdout
+    assert "the recommended default is 'acc'" in r.stdout
     assert f'PROFILE = PROFILES["{installed}"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert _install(tmp_path, "--profile", "openpilot").returncode == 0
   assert 'PROFILE = PROFILES["openpilot"]' in (toyota / "ars510_radar_interface.py").read_text()

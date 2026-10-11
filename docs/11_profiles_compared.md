@@ -10,7 +10,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 ## At a glance
 
-| | `raw` | `fused` 2.0 without ACC target | `fused` (default) | `acc` |
+| | `raw` | `fused` 2.0 without ACC target | `fused` | `acc` (default) |
 |---|---|---|---|---|
 | what it publishes | the decoded object list: validity, IDs, ego subtraction | the object list through range fusion + one Kalman speed filter | the same filter, also fusing the radar's ACC target, plus path gates and the far rule | only the radar's ACC target (0x235 / 0x237), as one point; no object list |
 | filter settings | — | scalar process scale, robust update and readiness threshold | also the ACC target's weight; [definitions and evidence](12_kalman_filter.md#the-model) | none |
@@ -18,13 +18,31 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | hard radar-only braking ticks, 20 held-out routes (while moving) | 93 | 48 | **16 (16)** | 66 (**14**) |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0 (0)** | **0 (0)** |
 | first braking request vs vision only (148 paired driver brakes; 149 for `fused` and `acc`) | −0.15 s | −0.03 s | −0.01 s | −0.04 s |
-| recommended for | research | diagnostic: the filter on the object list alone | everyday driving | road tests of the candidate replacement |
+| recommended for | research | diagnostic: the filter on the object list alone | the all-tracks alternative | everyday driving |
 
 `raw` is the unfiltered radar decode. The `fused` 2.0 column is a diagnostic: `fused` with the ACC target ignored, which
 shows the Kalman filter on its own. `acc`'s hard ticks are mostly holds at standstill (52 of 66): the stopped car 0.7-4.8 m
 behind an object the camera does not report, where radard's low-speed rule keeps it stopped. The names of the earlier
 tuned profiles (`anchor`, `steady`) install `fused`. The research profiles `shared_speed` / `shared_range` are not compared
 here ([10](10_research_directions.md#the-acc-target-alone--candidate)).
+
+## Why `acc` is the default
+
+- **Equal braking, more stable leads.** Over every drive set (16.9 moving h) `acc` asks for something different from
+  `fused` on 0.21 % of moving time, and every route-bootstrap difference includes zero. It has fewer lead flips (302
+  against 332 per hour). On 26 owner routes held out from every replay, it brakes unnecessarily less (7.7 against
+  11.4 s) and flips less, both outside chance ([10](10_research_directions.md#the-acc-target-alone--candidate)).
+- **A new stationary vehicle reaches the planner at once.** `fused` publishes a track only once it is 60 radar cycles
+  old (3.6 s), which shields the planner from a young track's unconverged speed. In a short city approach that can be
+  the whole encounter. On U3 a pickup parked in the lane was tracked from about 30 m ahead and lost at 14 m, one cycle
+  short of age 60, so `fused` never published it and drove as vision only. `acc` published it from 18.9 m, 0.6 s before
+  Toyota's PCS warned, with the radar's range. Vision put the lead 3-4 m closer
+  ([13](13_car_bus_messages.md#a-recorded-stock-pcs-alarm-u3);
+  [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
+- **Small and auditable.** 26 code lines and a 7-signal DBC, with no fitted constant: it passes on the radar's own decision,
+  the one Toyota's ACC acts on.
+- **What it gives up.** Only one radar car: the one Toyota's ACC follows. Every other car, including a second lead, comes
+  from the camera. `fused` keeps every radar car and stays available as `--profile fused`.
 
 ## How each profile works
 

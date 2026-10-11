@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
-    python openpilot/install.py /data/openpilot                     # install (fused profile), then reboot
+    python openpilot/install.py /data/openpilot                     # install (acc profile, the default), then reboot
     python openpilot/install.py /data/openpilot --profile raw       # the unfiltered decode, for comparison
     python openpilot/install.py /data/openpilot --check             # report state, change nothing
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
@@ -19,7 +19,10 @@ StarPilot, CarrotPilot and other forks: no fork file is patched in place. The in
 An install made with an older, patch-based version of this installer is removed first.
 
 Profiles (docs/08 has the details and replay numbers):
-  fused     FUSED_CONFIG (default): the radar decode + range fusion + one Kalman speed filter per track that weights
+  acc       (default) the radar's ACC target alone as one point (upstream/ars510_acc_target.py with
+            toyota_tss2_ars510.dbc): the car Toyota's own ACC follows; every other car comes from the camera. It
+            publishes a target as soon as the radar picks it; fused holds new tracks back for 60 cycles (docs/11)
+  fused     FUSED_CONFIG: the radar decode + range fusion + one Kalman speed filter per track that weights
             the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version)
   raw       BASE_CONFIG: the unfiltered radar decode with only what radard
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
@@ -27,13 +30,11 @@ Profiles (docs/08 has the details and replay numbers):
             offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
   openpilot fused in one file (upstream/ars510_radar.py, opendbc style), driving identically, points with trackId /
             dRel / yRel / vRel only. The all-tracks upstream alternative; the proposal is acc
-  acc       the radar's ACC target alone as one point (upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc): the car Toyota's
-            own ACC follows; every other car comes from the camera. Candidate replacement for fused (docs/10)
   shared_speed / shared_range  research only: every object and the ACC target through one gate-free Kalman model
             (speed, or range and range rate). The object list's correlated errors reach the planner (docs/10)
 
 Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
-and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended fused default.
+and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended acc default.
 """
 from __future__ import annotations
 
@@ -47,8 +48,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
-PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("fused", "openpilot", "raw", "colored", "acc", "shared_speed", "shared_range")
+PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
+PROFILE_NAMES = ("acc", "fused", "openpilot", "raw", "colored", "shared_speed", "shared_range")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
@@ -111,8 +112,8 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="fused",
-                  metavar="{" + ",".join(PROFILE_NAMES) + "}", help="default: fused; legacy aliases also accepted")
+  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="acc",
+                  metavar="{" + ",".join(PROFILE_NAMES) + "}", help="default: acc; legacy aliases also accepted")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; no longer needed
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -121,7 +122,7 @@ def main() -> int:
   if args.profile in LEGACY_NAMES:
     new = LEGACY_NAMES[args.profile]
     retired = "the tuned profile was removed; " if new == "fused" else ""
-    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is 'fused'")
+    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is 'acc'")
     args.profile = new
   root = find_opendbc(args.openpilot)
   if root is None:

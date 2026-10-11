@@ -18,19 +18,19 @@ You need a RAV4 2022 / 2023 with the ARS510 radar and a comma device running ope
 
 ```bash
 cd /data && git clone https://github.com/ds-sebastian/ars510-radar
-python /data/ars510-radar/openpilot/install.py /data/openpilot     # installs the default `fused` profile
+python /data/ars510-radar/openpilot/install.py /data/openpilot     # installs the default `acc` profile
 sudo reboot                                                          # required: the manager pre-imports the car code
 ```
 
 1. **Check it took:** `python /data/ars510-radar/openpilot/install.py /data/openpilot --check` should report the hook as
-   present and `profile: fused`. On the next drive, leads should be radar-backed (`radarUnavailable` false).
+   present and `profile: acc`. On the next drive, leads should be radar-backed (`radarUnavailable` false).
 2. **Drive normally.** Press the bookmark (flag) button whenever braking feels wrong, a lead looks stuck, or the car
    brakes late.
 3. **Tell us how it went** in a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml):
    fork and version, the `--check` output, and the time and description of each flagged moment. Keep route
    IDs, dongle IDs, VINs, GPS and identifying video private; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
-   `--profile raw` installs the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
+   `--profile fused` installs the all-tracks Kalman profile, `--profile raw` the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
    the installer again after an update.
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
@@ -38,7 +38,9 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 ## What to expect on the road
 
 From replaying recorded drives through openpilot's unchanged radard and planner (the 20 held-out drives), judged against what
-the driver did ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
+the driver did ([11](docs/11_profiles_compared.md)), with the `fused` profile compared with vision only. The default `acc`
+matches these on every drive set, brakes unnecessarily less on held-out owner routes, and publishes a newly seen
+stationary vehicle at once where `fused` waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)):
 
 - **Leads come from the radar** about 83% of the time a lead exists, so radard follows the radar's measured distance
   and speed. Beyond 60 m only the car the radar's own ACC follows is published, as Toyota's ACC uses it; other far
@@ -97,11 +99,11 @@ The code comes in two versions that drive identically:
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
-| **`fused`** (default) | `install.py /data/openpilot` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | everyday driving: fewest false brakes, vision's smoothness |
+| **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target alone as one point (a DBC and 26 lines, the car Toyota's own ACC follows); every other car from the camera; also the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
+| `fused` | `--profile fused` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | the all-tracks alternative: every radar car, not just the one Toyota's ACC follows |
 | `raw` | `--profile raw` | the unfiltered radar decode, with only the validity rules radard needs | research and comparison only: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
-| `acc` | `--profile acc` | the radar's ACC target alone as one point (a DBC and 26 lines, the car Toyota's own ACC follows); every other car from the camera; also the upstream proposal | road tests of the candidate replacement for `fused` ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
 | `shared_speed`, `shared_range` | `--profile shared_speed` / `shared_range` | research: every object and the ACC target through one gate-free Kalman model (speed, or range and range rate) | research only: the object list's correlated errors reach the planner ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)

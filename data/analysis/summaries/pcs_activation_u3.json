@@ -1226,5 +1226,37 @@
    "0x411": "00 20 00 00 00 00 80 00"
   }
  ],
- "acc_target_is": "the parked pickup, not the inflatable in front of it"
+ "acc_target_is": "the parked pickup, not the inflatable in front of it",
+ "replay_open_loop": {
+  "note": "openpilot's planner replayed on U3 with ego on the logged trajectory (openpilot was not engaged on the drive); a_target in m/s2, lead range in m",
+  "at_alarm_56_15_s": {
+   "vision_only": {
+    "a_target": -1.82,
+    "lead_m": 11.6,
+    "radar_lead": false
+   },
+   "acc": {
+    "a_target": -1.53,
+    "lead_m": 15.4,
+    "radar_lead": true
+   },
+   "fused_2_6": {
+    "a_target": -1.82,
+    "lead_m": 11.6,
+    "radar_lead": false
+   }
+  },
+  "acc_radar_lead_from_s": 55.58,
+  "fcw_any_profile": false,
+  "all_below_minus_1_from_s": 55.48,
+  "fused_withheld": {
+   "object": "the parked pickup (object list object 2), in path, stationary",
+   "first_seen_range_m": 29.1,
+   "age_at_loss_cycles": 59,
+   "lost_at_s": 56.13,
+   "lost_at_range_m": 13.8,
+   "min_publish_age_cycles": 60,
+   "published_with_min_publish_age_0_from_s": 53.9
+  }
+ }
 }

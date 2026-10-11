@@ -15,6 +15,9 @@ It checks:
   - that no output is produced between records;
   - the radarUnavailableTemporary report at 20 Hz when records stop;
   - recovery when they resume.
+- for the `acc` profile instead: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
+  card.py's 100 Hz, and it checks the 20 Hz output, the one point against ars510.support.parse_acc_target (id, units,
+  sign), canError when the target frames stop, and recovery.
 """
 from __future__ import annotations
 
@@ -22,6 +25,54 @@ import argparse
 import sys
 import zlib
 from pathlib import Path
+
+
+def check_acc_profile(RI, check) -> None:
+  """The `acc` profile publishes the radar's ACC target (0x235 / 0x237) as its one point: replay the bundled sample."""
+  import csv
+  import gzip
+  from opendbc.car.toyota.ars510.support import parse_acc_target
+  sample = Path(__file__).resolve().parents[1] / "data" / "sample" / "highway_acc_anchor_24s.csv.gz"
+  steps: dict[int, list] = {}
+  with gzip.open(sample, "rt") as f:
+    for r in csv.DictReader(f):
+      if r["address"] in ("0x235", "0x237"):
+        steps.setdefault(int(float(r["t_s"]) * 100), []).append((int(r["address"], 16), bytes.fromhex(r["data_hex"]), int(r["bus"])))
+  t_ns, last, outs = 1_000_000_000, {}, []
+  for k in range(max(steps) + 1):
+    t_ns += 10_000_000
+    batch = steps.get(k, [])
+    for addr, dat, _ in batch:
+      last[addr] = dat
+    out = RI.update([(t_ns, batch)])
+    if out is not None and k >= 50:  # skip the parser's first 0.5 s
+      outs.append((out, parse_acc_target(last.get(0x235, b""), last.get(0x237, b""))))
+  rate = len(outs) / ((max(steps) - 50) / 100)
+  check(18 <= rate <= 22, f"acc: RadarData at ~20 Hz (got {rate:.1f} Hz)")
+  check(all(not any(o.errors.to_dict().values()) for o, _ in outs), "acc: no error flags while the target frames arrive")
+  match = [len(o.points) == (want is not None) and (want is None or (o.points[0].trackId == want.target_id and
+           abs(o.points[0].dRel - want.d_rel) < 0.03 and abs(o.points[0].yRel - want.y_rel) < 0.011 and
+           abs(o.points[0].vRel - want.v_rel) < 0.13)) for o, want in outs]
+  n_pts = sum(len(o.points) for o, _ in outs)
+  check(all(match) and n_pts > 100, f"acc: the one point equals the decoded ACC target (id, dRel, yRel left-positive, vRel) "
+        f"on every output ({sum(match)}/{len(match)}, {n_pts} points)")
+  n0 = len(outs)
+  silent = []
+  for _ in range(100):  # 1 s without target frames
+    t_ns += 10_000_000
+    out = RI.update([(t_ns, [])])
+    if out is not None:
+      silent.append(out)
+  check(any(o.errors.canError and len(o.points) == 0 for o in silent), "acc: canError and no point when the target frames stop")
+  frames = [b for b in steps.values() if b][:40]
+  rec = []
+  for batch in frames:
+    t_ns += 10_000_000
+    out = RI.update([(t_ns, batch)])
+    if out is not None:
+      rec.append(out)
+  check(bool(rec) and not rec[-1].errors.canError, "acc: recovers when the target frames resume")
+  del n0
 
 
 def main() -> int:
@@ -74,6 +125,10 @@ def main() -> int:
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
+  if PROFILE == "acc":
+    check_acc_profile(RI, check)
+    print("\nALL OK" if not failures else f"\n{len(failures)} FAILED")
+    return 0 if not failures else 1
 
   def record(age: int) -> bytes:
     # a car 40.0 m ahead, 1.5 m to the LEFT, moving at 20.0 m/s over ground
