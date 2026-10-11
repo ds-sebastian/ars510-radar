@@ -33,6 +33,7 @@ LEAD_ACCEL = 1.5  # m/s^2, process noise
 GATE_SIGMA = 3.0  # innovations beyond 3 sigma count as 3 sigma
 PUBLISH_STD = 0.75  # m/s: a new track is published once its speed is this certain
 PATH_GATE, PATH_GATE_MIN_RANGE = 2.5, 15.0  # m: off the yaw-predicted path by more than this = another lane; closer in, cut-ins stay
+FAR_ACC_ONLY = 60.0  # m: beyond this only the car the radar's ACC follows is published, as Toyota's own ACC uses it
 
 
 def bits(b: bytes, start: int, length: int) -> int:
@@ -129,8 +130,9 @@ class Ars510Radar:
       d_rel = self.fused_range(tid, t, self.acc_pos[1] if tid == acc_tid else o["d"], vrel)  # ACC distance for its track
       if o["age"] < PUBLISH_AGE or (tid not in self.published and std > PUBLISH_STD) or not isfinite(vrel):
         continue  # no point without a fresh ego speed: one NaN would poison radard's filter
-      if tid != acc_tid and d_rel > PATH_GATE_MIN_RANGE and yaw is not None and abs(o["y"] - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > PATH_GATE:
-        continue  # a car a lane over
+      if tid != acc_tid and (d_rel > FAR_ACC_ONLY or (d_rel > PATH_GATE_MIN_RANGE and yaw is not None
+                                                     and abs(o["y"] - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > PATH_GATE)):
+        continue  # far: only the car the radar's ACC follows (radard uses the camera); nearer: not a car a lane over
       self.published.add(tid)
       out.append((tid, d_rel, o["y"], vrel))
     self.prune(t)

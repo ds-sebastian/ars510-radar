@@ -174,7 +174,8 @@ leads beyond 60 m drops from 77 % to 73 % (vision covers the rest).
 |---|---|---|---|---|---|---|
 | 2.1 `fused` | 30 / 11 / 4 | 2 / 0 | 1 | 1,231 | −0.022 s | 43.7 % |
 | 2.4 `fused` (0.4 x ACC match, path gate, no summaries) | 30 / 11 / 3 | 1 / 0 | 0 | 1,349 | −0.010 s | 41.3 % |
-| 2.5 `fused` (ACC σ 0.3; = the openpilot version) | 29 / 11 / 4 | 1 / 0 | 0 | 1,336 | −0.009 s | 42.5 % |
+| 2.5 `fused` (ACC σ 0.3) | 29 / 11 / 4 | 1 / 0 | 0 | 1,336 | −0.009 s | 42.5 % |
+| 2.6 `fused` (beyond 60 m only the ACC target's track; = the openpilot version) | 29 / 11 / 3 | 1 / 0 | 0 | 1,112 | −0.012 s | 42.5 % |
 
 On the owner's 5.8 moving hours of road drives (replayed open loop) the path gate and the 0.4 x match keep hard
 radar-only braking at 0 with every hard vision brake still answered. They cut radar-only requests of 1 m/s² or more
@@ -187,6 +188,39 @@ match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard t
 stay within 0.4 s of the chosen values against the hindsight-lead oracle below. The openpilot file's parts and
 their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
+
+## Far cars the radar does not follow
+
+Toyota's own ACC acts only on its ACC target ([05](05_acc_target_and_support.md)), and the object list's false closings
+live on far tracks without one: beyond 40 m, a false closing (published vRel > 2 m/s more closing than the range-based
+reference) is on the lead about 0.1 % of the time when the lead is the ACC target's track and 25-28 % of the time when it is
+not. Since 2.6, beyond 60 m
+only the track the ACC target describes is published; radard takes other far cars from the camera.
+
+![far rule](img/analysis/guide_far_rule.png)
+
+Replayed over every drive set in 6-segment chunks (16.9 moving hours; the second car, 6.2 moving hours, was never used
+to tune anything), against 2.5:
+
+| | vision only | 2.5 | 2.6 |
+|---|---|---|---|
+| hard radar-only episodes (ticks) | – | 13 (51) | 12 (30) |
+| mild radar-only episodes | – | 60 | 49 |
+| unnecessary / missed braking against the oracle | 89.2 / 30.8 s | 28.5 / 15.4 s | 21.6 / 16.3 s |
+| second car: unnecessary + missed per moving hour | 10.8 s | 4.2 s | 3.5 s |
+| lead flips per moving hour | – | 418 | 334 |
+
+The 60 m cutoff and the ACC weight were chosen on the owner's drive sets with a route-block bootstrap (60 m / 0.3 m/s:
+1.50 s of unnecessary plus missed braking per moving hour; 50, 70 or 80 m: 1.66-1.72 s/h; 0.2 m/s: 1.53, a tie) and
+then checked on the second car. The remaining hard episodes are all on the oldest replay drives and the same for every
+version: mostly stops at about 3 m/s behind stationary objects 3-10 m ahead that the camera did not report.
+
+The cost is time on a fast far closing that the radar's ACC has not picked yet: the car reaches the planner through the
+camera until the radar makes it its ACC target, about 1 s later on one owner drive (95 m, closing 4.5 m/s) and 0.8 s on
+the second car (86 m, closing 8.8 m/s). Vision alone did not brake earlier in either, and Toyota's own ACC is more
+patient still: on a far closing car it acquired at 94 m it held for 7 s and first braked at 66 m. Moment by moment,
+where 2.6 changes the request it is closer to the oracle 17 times (25.7 s) and further 4 times (4.6 s), never making a
+later brake harder. Numbers: [`far_acc_only.json`](../data/analysis/summaries/far_acc_only.json).
 
 ## Against what the car should have done
 
@@ -204,11 +238,11 @@ drops a lead the camera still follows (a lead turning out of the lane).
 ![against the oracle](img/analysis/guide_oracle.png)
 
 Over 7.65 h of road drives (the owner's and the second car's), `fused` brakes unnecessarily (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) for
-4.4 s against 10.2 s for vision only and 11.5 s for 2.1 (2.4: 5.4 s), and misses less of the braking the oracle asked for (7.2 s,
-vision 10.3 s, 2.1 9.5 s; 2.4 the same). On the 27 replay drives (6.72 h scored): 3.0 s unnecessary (vision 31.9 s,
-2.1 9.4 s, 2.4 7.1 s) and 3.1 s missed (vision 10.0 s, 2.1 4.1 s, 2.4 3.0 s). The reference takes its range from the
-ACC target, so it favours versions that weigh the ACC target more; read 2.5's gain over 2.4 here with that in mind
-([below](#the-acc-targets-weight)). Scoring covers moving
+3.2 s against 10.2 s for vision only and 11.5 s for 2.1 (2.5: 4.4 s, 2.4: 5.4 s), and misses less of the braking the
+oracle asked for (8.1 s, vision 10.3 s, 2.1 9.5 s; 2.5 and 2.4 7.2 s). On the 27 replay drives (6.72 h scored): 1.7 s
+unnecessary (vision 31.9 s, 2.1 9.4 s, 2.5 3.0 s, 2.4 7.1 s) and 3.1 s missed (vision 10.0 s, 2.1 4.1 s, 2.5 3.1 s).
+The reference takes its range from the ACC target, so it favours versions that weigh the ACC target more; read 2.5's
+gain over 2.4 here with that in mind ([below](#the-acc-targets-weight)). Scoring covers moving
 moments (above 1 m/s), where the lead signal decides; at standstill the planner's stop-and-go logic does. Numbers:
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
 

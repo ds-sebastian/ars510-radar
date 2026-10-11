@@ -509,7 +509,7 @@ def test_path_gate_withholds_a_car_in_the_next_lane_but_not_a_close_one() -> Non
 def test_path_gate_follows_the_curve() -> None:
     from ars510.objects import encode_slot
     # 30 m/s on a left curve of 0.02 rad/s: the path is 0.02 / 30 * 100^2 / 2 = 3.3 m left at 100 m
-    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0, far_acc_only_m=0.0)  # the gate alone
 
     def run(c):
         iface, out = Ars510NativeRadarInterface(c), []
@@ -523,6 +523,9 @@ def test_path_gate_follows_the_curve() -> None:
     pts = run(cfg)
     assert (100, 3) in pts and (100, 0) not in pts and (40, 0) in pts  # straight-ahead at 100 m is a lane over on this curve
     assert (100, 0) in run(replace(cfg, path_gate_m=0.0))
+    # fused itself (2.6): beyond 60 m only the ACC target's track is published, so neither 100 m car is, the 40 m one is
+    pts = run(replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0))
+    assert (40, 0) in pts and not any(d > 60 for d, _ in pts)
 
 
 def test_track_far_short_of_the_acc_distance_matches_and_takes_it() -> None:

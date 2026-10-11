@@ -40,19 +40,20 @@ More on installing, the self-check and troubleshooting: [`openpilot/README.md`](
 From replaying recorded drives through openpilot's unchanged radard and planner (the 20 held-out drives), judged against what
 the driver did ([11](docs/11_profiles_compared.md)), with the default `fused` profile compared with vision only:
 
-- **Leads come from the radar** about 87% of the time a lead exists, so radard follows the radar's measured distance
-  and speed.
-- **Braking starts at the same time as vision only** on average (−0.01 s, 95% CI −0.07 … +0.05), and the planner is already asking for
+- **Leads come from the radar** about 83% of the time a lead exists, so radard follows the radar's measured distance
+  and speed. Beyond 60 m only the car the radar's own ACC follows is published, as Toyota's ACC uses it; other far
+  cars come from the camera.
+- **Braking starts at the same time as vision only** on average (−0.01 s, 95% CI −0.07 … +0.04), and the planner is already asking for
   ≤ −1 m/s² before 43% of the driver's brake presses (vision: 40%). On some real slowdowns the radar sees the closing
   first (curves, far leads); on others vision does.
-- **Braking that only the radar wanted** happens about 0.22 times per hour (the unfiltered radar: 1.75), always while
-  the driver also slowed (0 per hour with the driver on the gas). The requests are as smooth as vision-only.
+- **Braking that only the radar wanted:** none on the held-out drives (the unfiltered radar: 1.75 per hour). The requests are as smooth as vision-only.
 - **Against what the car should have done** (openpilot's planner on a hindsight lead, 7.65 h of road drives), it
-  brakes unnecessarily for 4.4 s against 10.2 s for vision only (27 replay drives: 3.0 s against 31.9 s), and misses
-  less braking (7.2 s against 10.3 s; 27 replay drives: 3.1 s against 10.0 s)
+  brakes unnecessarily for 3.2 s against 10.2 s for vision only (27 replay drives: 1.7 s against 31.9 s), and misses
+  less braking (8.1 s against 10.3 s; 27 replay drives: 3.1 s against 10.0 s)
   ([12](docs/12_kalman_filter.md#against-what-the-car-should-have-done)).
-- **Known quirk:** far away (beyond about 80 m) without the radar's own ACC target, a jump in a far car's reported
-  speed can still cause a short, mild slowdown.
+- **Known trade-off:** a car closing fast far ahead (beyond 60 m) that the radar's ACC has not picked yet reaches the
+  planner through the camera until the radar picks it, about 1 s later than with the object list
+  ([12](docs/12_kalman_filter.md#far-cars-the-radar-does-not-follow)).
 
 These are replay results on the owner's car (the hindsight-lead numbers also include a second car's two drives). On the road (7.4 h on the owner's car with 2.1.0, and a second driver's
 2025 RAV4 Hybrid) the braking matched them: no hard radar-only braking on the owner's car (the second car's one replayed hard brake was
@@ -86,7 +87,7 @@ matched to tracks, what each part is worth and the variants tested: [docs/12](do
 The code comes in two versions that drive identically:
 - **Fork build:** the `ars510/` package, installed by default. It is configurable, has the profiles below, and fills
   the extra point fields sunnypilot still uses.
-- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 223 lines (183 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
+- **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 225 lines (185 code) in opendbc style; [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys.
   It is `fused` in one file: a test keeps it equal to `FUSED_CONFIG` point for point. The fork build also keeps the
   radar's target summaries and the track-ID relink as options (`colored` uses the summaries); the default drives as
   well without them (fewer missed brakes, slightly more unnecessary braking on road drives) ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
