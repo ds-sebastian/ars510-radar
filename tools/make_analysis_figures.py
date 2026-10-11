@@ -1159,7 +1159,7 @@ def pcs_activation_u3():
     """A stock PCS alarm on U3 against the radar's bus-1 0x100 and event pair (pcs_activation_u3.json)."""
     D = summary("pcs_activation_u3")
     T = pd.DataFrame(D["timeline_50ms"])
-    byte = lambda col, i: T[col].map(lambda h: int(h[2 * i:2 * i + 2], 16) if isinstance(h, str) else np.nan)  # noqa: E731
+    byte = lambda col, i: T[col].map(lambda h: int(h.split()[i], 16) if isinstance(h, str) else np.nan)  # noqa: E731
     a, b = D["alarm_car_bus_s"]
     fig, ax = plt.subplots(3, 1, figsize=(10, 6.2), sharex=True, gridspec_kw=dict(height_ratios=[1.3, 1.1, 1]))
     ax[0].plot(T.t, T.v, color=S1, label="ego speed (m/s)")
@@ -1168,7 +1168,7 @@ def pcs_activation_u3():
     ax[0].set_ylim(0, 22); ax[0].legend(loc="upper right", fontsize=8)
     rows = [("radar bus 0x100 byte 0 = 0x02", (byte("0x100", 0) == 2), S4),
             ("car bus 0x344 PCSALM / 0x411 FCW", (byte("0x344", 2) & 2) > 0, INK),
-            ("event pair 0x195 / 0x196 active", T["0x195"] != "7ffe1fe0" + "0" * 8, INK2),
+            ("event pair 0x195 / 0x196 active", T["0x195"] != "7f fe 1f e0 00 00 00 00", INK2),
             ("driver brake", T.brake.astype(bool), S2), ("gas", T.gas.astype(bool), S3)]
     for i, (lab, m, c) in enumerate(rows):
         ax[1].fill_between(T.t, i - 0.35, i + 0.35, where=m.values, step="post", color=c, alpha=0.8, lw=0)
