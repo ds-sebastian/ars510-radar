@@ -1,0 +1,457 @@
+{
+ "description": "2.6 (beyond 60 m only the ACC target's track; stationary tracks path-gated close in too; ACC sigma 0.13 m/s) and its steps against 2.5, 2.4 and vision only. Unchanged openpilot card -> radard -> planner replays in 6-segment chunks of every replay drive set (first 30 s of each chunk dropped); hard = request <= -2 m/s2 while vision only >= -0.5; mild = <= -1 while vision >= -0.3; unnecessary / missed = confident seconds against the hindsight-lead oracle (oracle_reference.json); onset = first request <= -0.5 m/s2 minus vision's on the oracle's confident braking episodes (negative = earlier).",
+ "by_version_and_set": {
+  "vision only": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 0,
+    "flips_per_h": 0.0,
+    "unnecessary_s": 25.5,
+    "missed_s": 10.0,
+    "onset_vs_vision_s": 0.0
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 0,
+    "flips_per_h": 0.0,
+    "unnecessary_s": 7.2,
+    "missed_s": 10.3,
+    "onset_vs_vision_s": 0.0
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 0,
+    "flips_per_h": 0.0,
+    "unnecessary_s": 56.5,
+    "missed_s": 10.4,
+    "onset_vs_vision_s": 0.0
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 0,
+    "flips_per_h": 0.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.0
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 0,
+    "flips_per_h": 0.0,
+    "unnecessary_s": 89.2,
+    "missed_s": 30.8,
+    "onset_vs_vision_s": 0.0
+   }
+  },
+  "2.4": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 12,
+    "hard_ticks": 31,
+    "mild": 27,
+    "flips_per_h": 482.0,
+    "unnecessary_s": 7.1,
+    "missed_s": 3.0,
+    "onset_vs_vision_s": -0.021
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 8,
+    "flips_per_h": 284.0,
+    "unnecessary_s": 5.4,
+    "missed_s": 7.2,
+    "onset_vs_vision_s": 0.014
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 1,
+    "hard_ticks": 22,
+    "mild": 22,
+    "flips_per_h": 498.0,
+    "unnecessary_s": 26.2,
+    "missed_s": 6.3,
+    "onset_vs_vision_s": 0.104
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 584.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": -0.121
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "hard_ticks": 53,
+    "mild": 58,
+    "flips_per_h": 420.0,
+    "unnecessary_s": 38.7,
+    "missed_s": 16.6,
+    "onset_vs_vision_s": 0.029
+   }
+  },
+  "2.5": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 12,
+    "hard_ticks": 30,
+    "mild": 27,
+    "flips_per_h": 478.0,
+    "unnecessary_s": 3.0,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.037
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 9,
+    "flips_per_h": 283.0,
+    "unnecessary_s": 4.4,
+    "missed_s": 7.2,
+    "onset_vs_vision_s": -0.0
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 1,
+    "hard_ticks": 21,
+    "mild": 23,
+    "flips_per_h": 496.0,
+    "unnecessary_s": 21.1,
+    "missed_s": 5.2,
+    "onset_vs_vision_s": 0.099
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 584.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "hard_ticks": 51,
+    "mild": 60,
+    "flips_per_h": 418.0,
+    "unnecessary_s": 28.5,
+    "missed_s": 15.4,
+    "onset_vs_vision_s": 0.019
+   }
+  },
+  "2.5 + far rule": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 12,
+    "hard_ticks": 30,
+    "mild": 25,
+    "flips_per_h": 386.0,
+    "unnecessary_s": 1.7,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.043
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 6,
+    "flips_per_h": 211.0,
+    "unnecessary_s": 3.2,
+    "missed_s": 8.1,
+    "onset_vs_vision_s": 0.001
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 17,
+    "flips_per_h": 418.0,
+    "unnecessary_s": 16.7,
+    "missed_s": 5.2,
+    "onset_vs_vision_s": 0.086
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 349.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 12,
+    "hard_ticks": 30,
+    "mild": 49,
+    "flips_per_h": 334.0,
+    "unnecessary_s": 21.6,
+    "missed_s": 16.3,
+    "onset_vs_vision_s": 0.014
+   }
+  },
+  "2.5 + far rule + stationary gate": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 11,
+    "flips_per_h": 383.0,
+    "unnecessary_s": 1.7,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.043
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 4,
+    "flips_per_h": 211.0,
+    "unnecessary_s": 3.2,
+    "missed_s": 8.1,
+    "onset_vs_vision_s": 0.001
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 10,
+    "flips_per_h": 414.0,
+    "unnecessary_s": 16.7,
+    "missed_s": 5.2,
+    "onset_vs_vision_s": 0.086
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 352.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 26,
+    "flips_per_h": 332.0,
+    "unnecessary_s": 21.6,
+    "missed_s": 16.3,
+    "onset_vs_vision_s": 0.014
+   }
+  },
+  "2.6": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 10,
+    "flips_per_h": 383.0,
+    "unnecessary_s": 2.2,
+    "missed_s": 3.1,
+    "onset_vs_vision_s": -0.062
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 4,
+    "flips_per_h": 212.0,
+    "unnecessary_s": 3.3,
+    "missed_s": 8.3,
+    "onset_vs_vision_s": -0.01
+   },
+   "second car (issue #66 tester, never tuned on)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 12,
+    "flips_per_h": 413.0,
+    "unnecessary_s": 15.5,
+    "missed_s": 5.1,
+    "onset_vs_vision_s": 0.044
+   },
+   "fresh owner drives": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "hard_ticks": 0,
+    "mild": 1,
+    "flips_per_h": 347.0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "onset_vs_vision_s": 0.004
+   },
+   "all": {
+    "moving_h": 16.91,
+    "hard": 8,
+    "hard_ticks": 16,
+    "mild": 27,
+    "flips_per_h": 332.0,
+    "unnecessary_s": 21.0,
+    "missed_s": 16.4,
+    "onset_vs_vision_s": -0.01
+   }
+  }
+ },
+ "cutoff_grid_all_sets": {
+  "50 m": {
+   "unnecessary_s": 22.1,
+   "missed_s": 16.3,
+   "flips_per_h": 323.0
+  },
+  "60 m": {
+   "unnecessary_s": 21.6,
+   "missed_s": 16.3,
+   "flips_per_h": 334.0
+  },
+  "70 m": {
+   "unnecessary_s": 25.1,
+   "missed_s": 16.2,
+   "flips_per_h": 348.0
+  },
+  "80 m": {
+   "unnecessary_s": 24.8,
+   "missed_s": 16.3,
+   "flips_per_h": 364.0
+  }
+ },
+ "acc_sigma_grid_all_sets_at_60_m": {
+  "0.2": {
+   "unnecessary_s": 19.9,
+   "missed_s": 16.4,
+   "onset_vs_vision_s": 0.001
+  },
+  "0.3": {
+   "unnecessary_s": 21.6,
+   "missed_s": 16.3,
+   "onset_vs_vision_s": 0.014
+  },
+  "0.4": {
+   "unnecessary_s": 25.9,
+   "missed_s": 17.1,
+   "onset_vs_vision_s": 0.018
+  }
+ },
+ "selection": "cutoff and ACC sigma chosen on the owner sets with a route-block bootstrap (unnecessary + missed per moving hour: 60 m / 0.3 m/s 1.50 s/h, 0.2 m/s 1.53, 50 / 70 / 80 m 1.66-1.72) and checked on the second car (2.6 3.53 s/h against 2.5 4.24, vision 10.80)",
+ "moments_changed_vs_2_4": {
+  "replay_34_drives": {
+   "closer_to_oracle": [
+    10,
+    16.1
+   ],
+   "further_from_oracle": [
+    2,
+    3.0
+   ]
+  },
+  "road": {
+   "closer_to_oracle": [
+    7,
+    9.6
+   ],
+   "further_from_oracle": [
+    2,
+    1.6
+   ]
+  },
+  "note": "[episodes, seconds] where the request differs by > 0.3 m/s2 for >= 0.3 s; the costs are <= 0.5 m/s2 and never make later braking harder"
+ },
+ "cost": "a fast real closing far ahead without an ACC target waits for the radar to make the car its ACC target: about 1 s later on one owner drive (95 m, closing 4.5 m/s) and 0.8 s on the second car (86 m, closing 8.8 m/s); vision only did not brake earlier in either, and Toyota's own ACC holds for several seconds on a far closing car (it first braked at 66 m on a car acquired at 94 m)",
+ "held_out_driver_agreement": "20 held-out drives (2.6): anticipation at -1 m/s2 44.9 % (2.5 42.5 %), onset vs vision -0.013 s, radar-only braking 0 /h (2.5 0.22), driver overrides radar closer / further 7 / 0 (2.5 4 / 1), lead flips 347 /h (494), radar share of lead time 83 % (87 %); 34-drive hard ticks held-out / further / owner 16 / 0 / 0 (2.5 29 / 1 / 0)",
+ "far_false_closing_share": {
+  "definition": "published 2.3 vRel more than 2 m/s more closing than the range-based hindsight reference, lead beyond 40 m",
+  "acc_target_track": [
+   0.0,
+   0.001
+  ],
+  "other_tracks": [
+   0.25,
+   0.28
+  ],
+  "note": "[road, replay drives]; the other tracks are 4-6 % of far lead time and carry 31-39 % real closings too, and no per-track field separates the two"
+ },
+ "stationary_gate": "stationary tracks (|over-ground speed| < 0.5 m/s) path-gated at every range (1.5 m from the path curved with max(v, 2 m/s)): on video the hard radar-only episodes it removes are parked cars at the curb while turning and a parked car alongside, picked up by radard's low-speed rule; hard 12 -> 8 (ticks 30 -> 16), mild 49 -> 26, unnecessary and missed unchanged",
+ "route_bootstrap_2_6_vs_2_5_per_moving_h": {
+  "mild": [
+   -1.951,
+   [
+    -2.939,
+    -1.197
+   ]
+  ],
+  "unnecessary_s": [
+   -0.445,
+   [
+    -0.843,
+    -0.118
+   ]
+  ],
+  "missed_s": [
+   0.059,
+   [
+    -0.009,
+    0.173
+   ]
+  ],
+  "hard": [
+   -0.296,
+   [
+    -0.708,
+    0.0
+   ]
+  ],
+  "flips": [
+   -86.0,
+   [
+    -106.4,
+    -67.7
+   ]
+  ]
+ },
+ "remaining_hard_2_6": "8 episodes, all on the 27 replay drives (none on road, second car, fresh); 2 last longer than one 50 ms tick (7 and 3 ticks) and both are real closings the oracle also brakes for (-2.9, -1.7 m/s2); the rest are single-tick requests (crossing truck, a work-zone truck, lead switches)",
+ "untouched_drives": {
+  "set": "12 second-car routes and one owner route never used for development (1.98 moving h; 0.74 h above 20 m/s)",
+  "2.6": {
+   "hard_radar_only": 0,
+   "mild_radar_only": 2,
+   "mild_not_confirmed_by_oracle": 0,
+   "oracle_unnecessary_s": 1.6,
+   "oracle_missed_s": 0.0,
+   "onset_vs_vision_s": 0.04
+  },
+  "2.5": {
+   "hard_radar_only": 0,
+   "mild_radar_only": 3,
+   "mild_not_confirmed_by_oracle": 1,
+   "oracle_unnecessary_s": 1.7,
+   "oracle_missed_s": 0.0,
+   "onset_vs_vision_s": 0.057
+  },
+  "vision_only": {
+   "oracle_unnecessary_s": 0.0,
+   "oracle_missed_s": 0.0
+  },
+  "note": "2.6 is ahead of 2.5 on every row; on this car the camera reads closings about 0.37 m/s stronger than the range-based reference, so vision brakes slightly earlier; against the hindsight-lead oracle every version starts braking within 0.02 s of the others"
+ }
+}

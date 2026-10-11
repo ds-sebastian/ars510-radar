@@ -65,6 +65,16 @@
     "episodes": 7,
     "seconds": 7.2
    }
+  },
+  "2.6": {
+   "unnecessary": {
+    "episodes": 4,
+    "seconds": 3.3
+   },
+   "missed": {
+    "episodes": 7,
+    "seconds": 8.2
+   }
   }
  },
  "rms_vs_oracle_while_braking": {
@@ -73,7 +83,8 @@
   "2.2": 0.249,
   "2.3": 0.248,
   "2.4": 0.249,
-  "2.5": 0.246
+  "2.5": 0.246,
+  "2.6": 0.246
  },
  "turning_lead_case": "video and optical looming: the in-lane lead slowed to turn off (about -3 m/s at 105-115 m) then left the lane; 2.1 braked -1.54 m/s2 for a car a lane over whose radar speed read a false -7 m/s; 2.3 -0.29; vision -0.08",
  "suite_34_drives": {
@@ -129,6 +140,16 @@
      "episodes": 5,
      "seconds": 3.1
     }
+   },
+   "2.6": {
+    "unnecessary": {
+     "episodes": 3,
+     "seconds": 2.2
+    },
+    "missed": {
+     "episodes": 5,
+     "seconds": 3.1
+    }
    }
   },
   "rms_vs_oracle_while_braking": {
@@ -136,10 +157,12 @@
    "2.1": 0.248,
    "2.3": 0.244,
    "2.4": 0.244,
-   "2.5": 0.241
+   "2.5": 0.241,
+   "2.6": 0.22
   }
  },
  "hours_road": 7.65,
  "note_2_4": "2.4 = 2.3 without the radar's target summaries (the openpilot version's filter)",
- "note_2_5": "2.5 = 2.4 with the ACC target's speed weighted at 0.3 m/s instead of 0.5. The reference takes its range from the ACC target, so it partly favours a heavier ACC weight (acc_weight.json)"
+ "note_2_5": "2.5 = 2.4 with the ACC target's speed weighted at 0.3 m/s instead of 0.5. The reference takes its range from the ACC target, so it partly favours a heavier ACC weight (acc_weight.json)",
+ "note_2_6": "2.6 = 2.5 with only the ACC target's track beyond 60 m, stationary tracks path-gated close in, and the ACC target speed weighted at 0.13 m/s (far_acc_only.json)"
 }

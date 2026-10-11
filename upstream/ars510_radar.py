@@ -28,11 +28,13 @@ RANGE_GAIN = 0.1  # velocity-aided range: cuts 1.5 s range walks by about a thir
 # Kalman speed filter (one state: the lead's over-ground speed)
 SIGMA_PER_CODE = 0.045  # m/s per 240|7 count, against the radar's ACC target
 YOUNG_SCALE, YOUNG_AGE = 1.8, 100  # young tracks err more than 240|7 says
-ACC_SIGMA = 0.3  # m/s, the radar's ACC target speed (blended, not copied: the object list damps the ACC tracker's rare slides)
+ACC_SIGMA = 0.13  # m/s, the radar's ACC target speed (its measured noise; blended, not copied: the object list damps rare slides)
 LEAD_ACCEL = 1.5  # m/s^2, process noise
 GATE_SIGMA = 3.0  # innovations beyond 3 sigma count as 3 sigma
 PUBLISH_STD = 0.75  # m/s: a new track is published once its speed is this certain
 PATH_GATE, PATH_GATE_MIN_RANGE = 2.5, 15.0  # m: off the yaw-predicted path by more than this = another lane; closer in, cut-ins stay
+FAR_ACC_ONLY = 60.0  # m: beyond this only the car the radar's ACC follows is published, as Toyota's own ACC uses it
+STILL, STILL_GATE = 0.5, 1.5  # m/s, m: a stationary track (parked car, roadside object) cannot cut in: path-gated at every range
 
 
 def bits(b: bytes, start: int, length: int) -> int:
@@ -129,8 +131,10 @@ class Ars510Radar:
       d_rel = self.fused_range(tid, t, self.acc_pos[1] if tid == acc_tid else o["d"], vrel)  # ACC distance for its track
       if o["age"] < PUBLISH_AGE or (tid not in self.published and std > PUBLISH_STD) or not isfinite(vrel):
         continue  # no point without a fresh ego speed: one NaN would poison radard's filter
-      if tid != acc_tid and d_rel > PATH_GATE_MIN_RANGE and yaw is not None and abs(o["y"] - yaw / max(v_ego, 5.0) * d_rel * d_rel / 2) > PATH_GATE:
-        continue  # a car a lane over
+      still = abs(speed) < STILL and d_rel <= PATH_GATE_MIN_RANGE
+      if tid != acc_tid and (d_rel > FAR_ACC_ONLY or (yaw is not None and (d_rel > PATH_GATE_MIN_RANGE or still) and abs(
+          o["y"] - yaw / max(v_ego, 2.0 if still else 5.0) * d_rel * d_rel / 2) > (STILL_GATE if still else PATH_GATE))):
+        continue  # far: only the car the radar's ACC follows (radard uses the camera); else not a car or object off the path
       self.published.add(tid)
       out.append((tid, d_rel, o["y"], vrel))
     self.prune(t)

@@ -169,7 +169,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 ## Towards an upstream (comma) interface
 
 The integration installs on openpilot, sunnypilot and StarPilot as an appended hook. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (223 lines, 183 of them code). It holds the reassembler, the slot
+candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (227 lines, 187 of them code). It holds the reassembler, the slot
 decode, track IDs, the ACC target association, the Kalman speed filter and the path gate, in opendbc's style: it passes
 opendbc's ruff rules (`upstream/ruff.toml`, checked in CI) and its `ty` type check. It is the smallest version with the
 same driving as the full filter: parts were removed alone and together on 27 replay drives, and every hard brake was
@@ -209,13 +209,15 @@ upstream PR.
 | transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
 | ACC target decode and association | 27 | 2.0 (range scale 0.4 x since 2.3) | +24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2 | keep |
 | Kalman speed filter (one state, uncertainty-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
-| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 (on 2.0); second car (with the std gate, on X60): a −2.9 m/s² brake on a young track | keep |
+| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 (on 2.0); second car (with the std gate, with the far rule): a −2.9 m/s² brake on a young track | keep |
 | speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 (on 2.0); second car: see the young-track factor | keep |
 | age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |
-| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6; second car (on X60): braking neutral, flips +11 % | keep for lead stability; droppable at that cost |
+| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6; second car (with the far rule): braking neutral, flips +11 % | keep for lead stability; droppable at that cost |
 | ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
-| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match; on 2.4): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car on X60: braking neutral, flips +7 % | candidate: keep, or move into radard as a lateral gate |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match; on 2.4): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car with the far rule: braking neutral, flips +7 % | candidate: keep, or move into radard as a lateral gate |
+| far cars the radar does not follow (beyond 60 m only the ACC target's) | 2 | 2.6 | 2.5 over all four drive sets (16.9 moving h): oracle unnecessary braking 21.6 -> 28.5 s, lead flips 334 -> 418 /h, second car 0 -> 1 hard; with it a fast far closing waits ~1 s for the radar to make the car its ACC target | keep |
+| stationary tracks path-gated close in too | 2 | 2.6 | all four drive sets: hard radar-only episodes 12 -> 8 (ticks 30 -> 16), mild 49 -> 26 with it; missed braking unchanged (parked cars at the curb while turning, a parked car alongside) | keep |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
 
 Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for

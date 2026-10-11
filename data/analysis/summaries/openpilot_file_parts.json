@@ -1,6 +1,6 @@
 {
  "description": "Parts of upstream/ars510_radar.py (2.5; line counts unchanged since 2.4): code lines (no comments, docstrings or blank lines; shared constants counted once), the evidence for each, what removing it costs on the 27 replay drives, and its status for an upstream openpilot PR.",
- "file_code_lines": 183,
+ "file_code_lines": 187,
  "file_total_lines": 223,
  "parts": [
   {
@@ -32,7 +32,7 @@
    "code_lines": 3,
    "since": "2.0",
    "evidence": "fused_filter.json part_removed_34_drives ; second_car_replay.json",
-   "without": "further-drive hard ticks 2 -> 11; second car on X60 (with the std gate): a -2.9 m/s2 brake on a young track",
+   "without": "further-drive hard ticks 2 -> 11; second car with the far rule (with the std gate): a -2.9 m/s2 brake on a young track",
    "upstream": "keep"
   },
   {
@@ -56,7 +56,7 @@
    "code_lines": 9,
    "since": "2.0 (ACC distance 2.1)",
    "evidence": "fused_filter.json, tracker_association.json ; second_car_replay.json",
-   "without": "braking neutral; lead flips +39 %, target episodes 4 -> 6; second car on X60: braking neutral, flips +11 %",
+   "without": "braking neutral; lead flips +39 %, target episodes 4 -> 6; second car with the far rule: braking neutral, flips +11 %",
    "upstream": "keep for lead stability; droppable at that cost"
   },
   {
@@ -80,8 +80,24 @@
    "code_lines": 6,
    "since": "2.3 (2.2 from 60 m)",
    "evidence": "lead_choice_guards.json ; second_car_replay.json",
-   "without": "back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car on X60: braking neutral, flips +7 %",
+   "without": "back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car with the far rule: braking neutral, flips +7 %",
    "upstream": "candidate: keep, or move into radard as a lateral gate"
+  },
+  {
+   "part": "far cars the radar does not follow (beyond 60 m only the ACC target's)",
+   "code_lines": 2,
+   "since": "2.6",
+   "evidence": "far_acc_only.json",
+   "without": "2.5 over all four drive sets (16.9 moving h): oracle unnecessary braking 21.6 -> 28.5 s, lead flips 334 -> 418 /h, second car 0 -> 1 hard; with it a fast far closing waits ~1 s for the radar to make the car its ACC target",
+   "upstream": "keep"
+  },
+  {
+   "part": "stationary tracks path-gated close in too",
+   "code_lines": 2,
+   "since": "2.6",
+   "evidence": "far_acc_only.json",
+   "without": "all four drive sets: hard radar-only episodes 12 -> 8 (ticks 30 -> 16), mild 49 -> 26 with it; missed braking unchanged (parked cars at the curb while turning, a parked car alongside)",
+   "upstream": "keep"
   },
   {
    "part": "fork compatibility (CP_SP argument, points assigned as a list)",

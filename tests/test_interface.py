@@ -509,7 +509,7 @@ def test_path_gate_withholds_a_car_in_the_next_lane_but_not_a_close_one() -> Non
 def test_path_gate_follows_the_curve() -> None:
     from ars510.objects import encode_slot
     # 30 m/s on a left curve of 0.02 rad/s: the path is 0.02 / 30 * 100^2 / 2 = 3.3 m left at 100 m
-    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0, far_acc_only_m=0.0)  # the gate alone
 
     def run(c):
         iface, out = Ars510NativeRadarInterface(c), []
@@ -523,6 +523,9 @@ def test_path_gate_follows_the_curve() -> None:
     pts = run(cfg)
     assert (100, 3) in pts and (100, 0) not in pts and (40, 0) in pts  # straight-ahead at 100 m is a lane over on this curve
     assert (100, 0) in run(replace(cfg, path_gate_m=0.0))
+    # fused itself (2.6): beyond 60 m only the ACC target's track is published, so neither 100 m car is, the 40 m one is
+    pts = run(replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0))
+    assert (40, 0) in pts and not any(d > 60 for d, _ in pts)
 
 
 def test_track_far_short_of_the_acc_distance_matches_and_takes_it() -> None:
@@ -543,3 +546,20 @@ def test_track_far_short_of_the_acc_distance_matches_and_takes_it() -> None:
     assert out[-1]["radarData"]["points"][0]["dRel"] == pytest.approx(64.0, abs=4.0)  # pulled to the ACC distance by range fusion
     iface, out = run(replace(cfg, acc_match_range_frac=0.25))
     assert iface._acc_assoc is None and out[-1]["radarData"]["points"][0]["dRel"] < 50.0  # stays on the short object-list range
+
+
+def test_stationary_track_off_the_curved_path_is_withheld_close_in() -> None:
+    from ars510.objects import encode_slot
+    # 3 m/s turning left at 0.3 rad/s: the path at 8 m is 0.3 / 3 * 8^2 / 2 = 3.2 m left. A parked car straight ahead
+    # (0 m/s over ground) is withheld; a car moving at ego speed at the same spot (a cut-in) stays.
+    cfg = replace(FUSED_CONFIG, min_publish_age=1, publish_speed_std_mps=99.0)
+
+    def run(vg):
+        iface, out = Ars510NativeRadarInterface(cfg), []
+        for k in range(20):
+            t = 0.06 * k
+            obj = encode_slot(long_dist=round(160 + 8.0 * 16), lat_dist_left=2048, long_vel_over_ground=round(510.5 + vg / 0.15),
+                              age_cycles=126, vel_uncertainty_candidate=10)
+            out = iface.update_many([speed_frame(t, 3.0), _yaw_frame(t, 0.3)] + frames_(record({0: obj}), t + 0.01))
+        return out[-1]["radarData"]["points"]
+    assert run(0.0) == [] and len(run(3.0)) == 1
