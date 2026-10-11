@@ -192,6 +192,11 @@ candidate. The rule for any implementation:
 | any part unhealthy, or the AEB path not yet validated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
 | openpilot not running | malfunction | nothing sent; the car's own check reports it |
 
+"PCS on" also has to carry the radar's real alerts. The radar's own 0x411 reports a blocked or dirty sensor
+(`PCS_DUST2`) and faults (`PCS_INDICATOR` 2); a relay that always sends the idle frame would hide them. No blockage or
+fault signal on bus 1 is known yet. Until one is found ([10](10_research_directions.md#what-radard-gets-from-other-radars):
+a drive with a covered or dirty radar shows which candidate reacts), "PCS on" cannot report a radar blinded by snow or dirt.
+
 ### What is needed, in order
 
 1. **One recorded stock AEB activation with bus 0 and bus 1 logged.** A car with a radar CAN filter keeps the radar
