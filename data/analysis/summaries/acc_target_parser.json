@@ -713,5 +713,39 @@
    }
   },
   "note": "points through opendbc CANParser vs ars510.support; gaps over 0.2 s (CANParser timeout) are also over 0.5 s (the earlier staleness check)"
+ },
+ "stock_acc_span_second_car_S2": {
+  "scoreable_s": 139.7,
+  "vision": {
+   "bias": -0.343,
+   "rms": 0.376,
+   "r": 0.678,
+   "jerk_p99": 0.308,
+   "lead_is_acc_target_share": 0.951,
+   "lead_v_vs_acc_rms": 0.92
+  },
+  "2.6": {
+   "bias": -0.353,
+   "rms": 0.381,
+   "r": 0.755,
+   "jerk_p99": 0.347,
+   "lead_is_acc_target_share": 0.983,
+   "lead_v_vs_acc_rms": 0.086
+  },
+  "N1": {
+   "bias": -0.353,
+   "rms": 0.381,
+   "r": 0.758,
+   "jerk_p99": 0.348,
+   "lead_is_acc_target_share": 0.986,
+   "lead_v_vs_acc_rms": 0.039
+  },
+  "rms_N1_vs_2.6": 0.007
+ },
+ "acc_target_speed_vs_its_own_range": {
+  "best_lag_s_median": -0.06,
+  "gain_median": 1.0,
+  "runs": 483,
+  "note": "0x235 speed against the slope of 0x237 distance (2 s local-linear fit): it does not lag its own range, so a filter could only add delay"
  }
 }
