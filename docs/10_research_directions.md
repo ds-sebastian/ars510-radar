@@ -264,6 +264,12 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
 - **No filter on top:** the ACC target's speed does not lag its own distance (best lag −0.06 s, gain 1.00), and its
   fast noise (0.027 m/s) is a fifth of its 0.125 m/s code step, so a filter could only add delay.
 - **On drives never used for development** (1.98 moving h): 0 hard episodes and 1 oracle-confirmed mild, as 2.6.
+- **On 26 owner routes held out from every replay** (2.56 moving h):
+  - unnecessary braking 7.7 against 2.6's 11.4 s, and lead flips 323 against 345 per hour (both route-bootstrap CIs
+    exclude zero);
+  - braking starts 0.053 s before vision only (2.6: 0.026 s);
+  - hard, mild and missed braking tie within their intervals. Its one hard episode is a hold at 0.3 m/s, 1.3 m from an
+    object, where the oracle asks for −2.65 m/s² too.
 
 Each part earns its line, by what breaks without it (replays of every drive set):
 - **Target id as track id.** With a constant id, radard's per-track filter carries the old target's speed into the new

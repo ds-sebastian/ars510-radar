@@ -423,6 +423,85 @@
    }
   }
  },
+ "held_out_owner_routes": {
+  "description": "26 owner routes never in any replay set (none shaped a replay-tuned gate or the choice of the ACC-target file), 4.28 h, 2.56 h moving; route bootstrap over 19 routes",
+  "vision only": {
+   "moving_h": 2.56,
+   "hard": 0,
+   "hard_ticks": 0,
+   "mild": 0,
+   "flips_per_h": 0.0,
+   "unnecessary_s": 40.1,
+   "missed_s": 9.9,
+   "real_closings": 130,
+   "onset_vs_vision_s": 0.0
+  },
+  "2.6": {
+   "moving_h": 2.56,
+   "hard": 0,
+   "hard_ticks": 0,
+   "mild": 7,
+   "flips_per_h": 345.0,
+   "unnecessary_s": 11.4,
+   "missed_s": 3.6,
+   "real_closings": 130,
+   "onset_vs_vision_s": -0.026
+  },
+  "ACC target only": {
+   "moving_h": 2.56,
+   "hard": 1,
+   "hard_ticks": 12,
+   "mild": 9,
+   "flips_per_h": 323.0,
+   "unnecessary_s": 7.7,
+   "missed_s": 5.3,
+   "real_closings": 130,
+   "onset_vs_vision_s": -0.053
+  },
+  "acc_target_minus_2_6_per_moving_h": {
+   "hard": {
+    "per_h": 0.39,
+    "ci95": [
+     0.0,
+     1.242
+    ],
+    "routes": 19
+   },
+   "mild": {
+    "per_h": 0.78,
+    "ci95": [
+     0.0,
+     1.91
+    ],
+    "routes": 19
+   },
+   "unnecessary_s": {
+    "per_h": -1.447,
+    "ci95": [
+     -2.792,
+     -0.263
+    ],
+    "routes": 19
+   },
+   "missed_s": {
+    "per_h": 0.644,
+    "ci95": [
+     0.0,
+     2.038
+    ],
+    "routes": 19
+   },
+   "flips": {
+    "per_h": -22.242,
+    "ci95": [
+     -36.505,
+     -3.277
+    ],
+    "routes": 19
+   }
+  },
+  "acc_target_hard_episode": "a hold at 0.3 m/s 1.3 m from an object; the oracle also asks -2.65 m/s2"
+ },
  "ablations": {
   "what": "all sets, against ACC target only (hard 13 / mild 30 / unnecessary 19.2 s / flips 302 per h); moving = ego >= 0.5 m/s at the episode start",
   "constant track id": {
