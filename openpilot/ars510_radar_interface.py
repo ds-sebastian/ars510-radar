@@ -3,7 +3,7 @@
 Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interface.py`, together with the `ars510`
 decoder package as `opendbc/car/toyota/ars510/`. The installer appends a marked block to the end of
 `opendbc/car/toyota/interface.py` that calls `hook_car_interface(CarInterface)`; nothing else in the fork is edited,
-so the same install works on openpilot and its forks (sunnypilot, StarPilot, FrogPilot-style trees):
+so the same install works on openpilot and its forks (sunnypilot, StarPilot, CarrotPilot, FrogPilot-style trees):
   - detection: a RADAR_ACC Toyota whose radar FW is in ARS510_FW_VERSIONS, or with 0x80 and 0x85 on bus 1 at
     fingerprinting, gets radarUnavailable = False (stock leaves radar-ACC Toyotas radar-unavailable);
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car

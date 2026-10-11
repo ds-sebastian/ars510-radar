@@ -25,6 +25,7 @@ One installer serves every fork: it copies the decoder and appends a 4-line hook
 | current openpilot (opendbc master) | self-check passes; replayed end to end through card → radard → plannerd ([`openpilot_integration_replay.json`](../data/analysis/summaries/openpilot_integration_replay.json)) |
 | sunnypilot v2026.002.002 | self-check passes; replayed through sunnypilot's own radard and planner; carries `aRel` / `yvRel`; installed and driven on the owner's device |
 | StarPilot | same hook; driven by the owner with the earlier patch-based install |
+| CarrotPilot (`carrot-wip` c5f5a9a) | installer and self-check pass on a checkout of the branch; not driven on a car |
 | any fork | optional `openpilot/radard_vision_fusion.patch` ([openpilot/README](../openpilot/README.md#optional-radard-patch)) |
 
 What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the radar's speed errors reach their planners: [14](14_forks.md).

@@ -1,6 +1,6 @@
 # Installing the ARS510 integration
 
-One installer for openpilot and its forks (sunnypilot, StarPilot and other trees with openpilot's `opendbc_repo`
+One installer for openpilot and its forks (sunnypilot, StarPilot, CarrotPilot and other trees with openpilot's `opendbc_repo`
 layout). It adds the decoder and appends one marked block to the end of Toyota's `interface.py`; the fork's files stay as
 shipped apart from that block, and card, radard and the planner run as shipped. How it works and what it does on the road:
 [docs/08](../docs/08_openpilot_integration.md).

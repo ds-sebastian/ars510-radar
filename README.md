@@ -14,7 +14,7 @@ position, with track ID, distance, lateral offset and relative speed.*
 ## Try it (testers)
 
 You need a RAV4 2022 / 2023 with the ARS510 radar and a comma device running openpilot or a fork with openpilot's
-`opendbc_repo` layout (sunnypilot, StarPilot, ...).
+`opendbc_repo` layout (sunnypilot, StarPilot, CarrotPilot, ...).
 
 ```bash
 cd /data && git clone https://github.com/ds-sebastian/ars510-radar
@@ -123,7 +123,7 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 | **Single-object stream** (0x680, 2 Hz) | ● range at 1/32 m; ◐ one tracked object, mostly stationary roadside objects: lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
 | **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; remaining cell fields raw ([04](docs/04_metadata_record_0x85.md)) |
-| **openpilot integration** | installable on openpilot, sunnypilot and StarPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
+| **openpilot integration** | installable on openpilot, sunnypilot, StarPilot and CarrotPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
 
 ● confirmed · ◐ likely · ○ candidate
 

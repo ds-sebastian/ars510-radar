@@ -7,7 +7,7 @@
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
 
 The path may be the openpilot checkout or its opendbc_repo. The same install works on openpilot, sunnypilot,
-StarPilot and other forks: no fork file is patched in place. The installer
+StarPilot, CarrotPilot and other forks: no fork file is patched in place. The installer
   - copies the decoder package to        opendbc/car/toyota/ars510/
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
   - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)

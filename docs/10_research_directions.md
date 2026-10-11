@@ -168,7 +168,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 
 ## Towards an upstream (comma) interface
 
-The integration installs on openpilot, sunnypilot and StarPilot as an appended hook. For upstream there is a separate, single-file
+The integration installs on openpilot, sunnypilot, StarPilot and CarrotPilot as an appended hook. For upstream there is a separate, single-file
 candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (227 lines, 187 of them code). It holds the reassembler, the slot
 decode, track IDs, the ACC target association, the Kalman speed filter and the path gate, in opendbc's style: it passes
 opendbc's ruff rules (`upstream/ruff.toml`, checked in CI) and its `ty` type check. It is the smallest version with the
