@@ -1155,12 +1155,42 @@ def pcs_flag_0x344():
          "The dash PCS malfunction warning stayed on through every replay phase.\nNumbers: data/analysis/summaries/pcs_flag_0x344.json.")
 
 
+def pcs_activation_u3():
+    """A stock PCS alarm on U3 against the radar's bus-1 0x100 and event pair (pcs_activation_u3.json)."""
+    D = summary("pcs_activation_u3")
+    T = pd.DataFrame(D["timeline_50ms"])
+    byte = lambda col, i: T[col].map(lambda h: int(h[2 * i:2 * i + 2], 16) if isinstance(h, str) else np.nan)  # noqa: E731
+    a, b = D["alarm_car_bus_s"]
+    fig, ax = plt.subplots(3, 1, figsize=(10, 6.2), sharex=True, gridspec_kw=dict(height_ratios=[1.3, 1.1, 1]))
+    ax[0].plot(T.t, T.v, color=S1, label="ego speed (m/s)")
+    ax[0].plot(T.t, T.acc_d, color=S2, label="ACC target range (m)")
+    ax[0].plot(T.t, T.ttc, color=S3, label="time to collision (s)")
+    ax[0].set_ylim(0, 22); ax[0].legend(loc="upper right", fontsize=8)
+    rows = [("radar bus 0x100 byte 0 = 0x02", (byte("0x100", 0) == 2), S4),
+            ("car bus 0x344 PCSALM / 0x411 FCW", (byte("0x344", 2) & 2) > 0, INK),
+            ("event pair 0x195 / 0x196 active", T["0x195"] != "7ffe1fe0" + "0" * 8, INK2),
+            ("driver brake", T.brake.astype(bool), S2), ("gas", T.gas.astype(bool), S3)]
+    for i, (lab, m, c) in enumerate(rows):
+        ax[1].fill_between(T.t, i - 0.35, i + 0.35, where=m.values, step="post", color=c, alpha=0.8, lw=0)
+    ax[1].set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=8); ax[1].set_ylim(len(rows) - 0.4, -0.6); ax[1].grid(axis="y", visible=False)
+    for i, c in ((4, S1), (6, S2)):
+        ax[2].plot(T.t, byte("0x196", i), color=c, label=f"0x196 byte {i} (raw)")
+    ax[2].plot(T.t, 255 - byte("0x196", 0), color=S3, label="255 − 0x196 byte 0 (raw)")
+    ax[2].legend(loc="upper left", fontsize=8); ax[2].set_xlabel("seconds from the start of the log (U3)")
+    for x in ax:
+        x.axvspan(a, b, color="#f5d9a8", alpha=0.5, lw=0)
+    fig.suptitle("U3: a stock PCS alarm (stationary inflatable target, ego 7 m/s); the radar's bus-1 0x100 marks it to the CAN tick", fontsize=11)
+    fig.tight_layout()
+    save(fig, "pcs_activation_u3", "Shaded: the radar's car-bus alarm (0x283 / 0x411 / 0x344). 50 ms grid. "
+         "Numbers: data/analysis/summaries/pcs_activation_u3.json.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, kalman_response, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3)}
 
 
 if __name__ == "__main__":

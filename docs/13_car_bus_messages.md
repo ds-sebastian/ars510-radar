@@ -14,12 +14,12 @@ All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots
 | addr | name (opendbc / Toyota) | rate, DLC | idle payload | content | |
 |---|---|---|---|---|---|
 | 0x343 | `ACC_CONTROL` / `ACC1S03` | 33 Hz, 8 | `00 00 43 00 00 00 00 91` at power-up | ACC acceleration request and ACC / HUD flags | ● |
-| 0x344 | `PRE_COLLISION_2` / `ACC1F01` | 20 Hz, 8 | `00 00 01 00 00 00 00 50` | PCS / AEB deceleration request, pre-fill and alarm triggers; idle with only `PCSOPR` (bit 16) set | ● idle, ◐ fields |
-| 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking) | ● idle, ◐ fields |
+| 0x344 | `PRE_COLLISION_2` / `ACC1F01` | 20 Hz, 8 | `00 00 01 00 00 00 00 50` | PCS / AEB deceleration request, pre-fill and alarm triggers; idle with only `PCSOPR` (bit 16) set; PCS alarm: `PCSALM` (bit 17) also set, `00 00 03 … 52` (U3) | ● idle and alarm, ◐ other fields |
+| 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking); PCS alarm: byte 5 = 0x02 (bit 41, `PCSNOCHG`), force and state 0 (U3) | ● idle and alarm, ◐ braking fields |
 | 0x33E | none | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
 | 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**, mostly the ACC target: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
-| 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts | ● idle, ◐ alerts |
+| 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts; PCS alarm: `10 20 00 03 00 00 80 00` (FCW, byte 3 = 0x03; U3) | ● idle and FCW, ◐ alerts |
 | 0x494 | none | 1 Hz, 8 | `82 00 00 00 00 00 00 00` | constant | ○ |
 | 0x4FF | `FRD1N01` (front radar → gateway) | ~0.8 Hz, 8 | `3F 00 00 00 00 00 00 00` | front-radar node frame, `FRDNID` = 0x3F | ○ |
 
@@ -159,6 +159,30 @@ radar's normal car-bus messages at once; there is no per-message mute that would
 Startup order makes no difference: whatever openpilot sends before, during or after the disable, no brake request
 leaves the radar afterwards.
 
+### A recorded stock PCS alarm (U3)
+
+![U3: stock PCS alarm against the radar's bus-1 0x100](img/analysis/pcs_activation_u3.png)
+
+U3 is a deliberate test on the second car (stock ACC, radar enabled, no filter): a stationary inflatable target in
+the lane, approached at 7 m/s. The radar's **PCS alarm stage** ran from 56.151 to 56.922 s. It started at a time to
+collision of 2.1 s and a range of 14.5 m. The driver braked 0.12 s later and stopped short of the target, so the braking
+stages were not reached.
+
+| t (s) | radar bus (bus 1) | car bus (bus 0) |
+|---|---|---|
+| 55.09 | event pair 0x195 / 0x196 leaves idle | |
+| 55.6 | ACC target appears: 18.9 m, closing at 7.0 m/s (a stationary target) | |
+| **56.1506** | **0x100 byte 0 → 0x02** | **same CAN tick:** 0x283 → `… 02 8E`, 0x411 → FCW; 0x344 → `PCSALM` at its next slot (56.180) |
+| 56.27 | | driver brake |
+| 56.913-56.922 | 0x100 → 0 | 0x411, 0x283, 0x344 back to idle |
+| 57.18 | event pair back to idle | |
+
+**0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (◐, one event).** It starts and ends with the car-bus
+alarm, and in every stored log (1,597 rlogs, 936,440 0x100 frames, three cars) it occurs only in these 9 frames. The
+only other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair fires in many drives without any PCS
+output: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
+[`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json).
+
 ### Relaying the radar's decision (○ theoretical)
 
 The disable silences only the radar's car-bus side. On bus 1, which the comma reads, the radar keeps sending its object
@@ -170,9 +194,9 @@ reconnect that output through openpilot, so Toyota's own tuned decision logic st
 How it would work:
 
 1. **Listen on bus 1.** Each cycle openpilot reads the radar's PCS state from bus 1: alarm, pre-fill, brake assist,
-   autonomous braking, and the requested deceleration. This only works if the radar puts its brake decision on bus 1.
-   The event pair seen so far is a threat state: on U1 its short states left 0x283 / 0x344 / 0x411 idle (above). A
-   brake request has not been seen on bus 1, because no AEB activation has been recorded.
+   autonomous braking, and the requested deceleration. **The alarm stage is there:** 0x100 byte 0 = 0x02 matches the
+   car-bus alarm to the CAN tick (U3, above). Whether bus 1 also carries pre-fill and braking needs an activation
+   that reaches them; the event pair alone is a threat state, not a decision.
 2. **Translate to the car bus.** openpilot sends the 0x283 / 0x344 / 0x411 frames the radar would have sent for that
    state. The mapping is learned from a car with a radar CAN filter, where both buses are visible at once during a stock
    activation: each bus-1 state lines up with the car-bus frames the radar sent at the same moment.
@@ -206,13 +230,17 @@ a drive with a covered or dirty radar shows which candidate reacts), "PCS on" ca
 
 ### What is needed, in order
 
-1. **One recorded stock AEB activation with bus 0 and bus 1 logged.** A car with a radar CAN filter keeps the radar
-   enabled and can record it. Use an inflatable PCS test target on a closed lot at low speed. Bus 0 gives the activation
-   sequence (0x283 / 0x344 / 0x411); bus 1 shows whether the radar announces its decision there, and how. Share
-   it through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
-2. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
+1. **A recorded stock activation that reaches braking**, with bus 0 and bus 1 logged. The alarm stage is recorded
+   (U3); the braking stages need an approach where the driver does not brake first: an inflatable PCS test target on a
+   closed lot, somewhat faster than U3, from a car with the radar enabled (stock ACC, or a radar CAN filter). Bus 0
+   gives the braking sequence in 0x283 / 0x344; bus 1 shows which radar-bus values mark it, next to 0x100. Share it through a
+   [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
+2. **The alarm with the radar disabled.** Whether a disabled radar still sets 0x100: repeat the same low-speed
+   inflatable-target approach under alpha long (radar disabled) with bus 1 logged. The car does not warn or brake in this setup, so the
+   driver brakes as usual.
+3. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
-3. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
+4. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
    road. A relay does not fit upstream openpilot; it is a fork-only safety function.
 
 ### Advanced: a radar setting that drops only 0x343 (○ unexplored)

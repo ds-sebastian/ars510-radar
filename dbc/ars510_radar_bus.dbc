@@ -312,7 +312,7 @@ CM_ BO_ 128 "0x80 object-list transport: a 742-byte record (20 object slots + CR
 CM_ BO_ 133 "0x85 metadata-record transport: a 147-byte record (prefix, ten 12-byte cells, CRC32) sent every 60 ms as 21 frames. First frame starts 10 90.";
 CM_ BO_ 129 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x80 record start.";
 CM_ BO_ 134 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x85 record start.";
-CM_ BO_ 256 "Startup context: word 0 is 0xFFFF in the first frame after power-up, zero afterwards.";
+CM_ BO_ 256 "Startup context: word 0 is 0xFFFF in the first frame after power-up, zero afterwards; byte 0 = 0x02 during a PCS alarm.";
 CM_ BO_ 257 "Camera-sent radar-running state: 0x1D while the radar boots, 0x11 once its object list arrives (switches 60 ms before 0x197 bit 8 sets).";
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";
 CM_ BO_ 259 "Always zero.";
@@ -424,7 +424,7 @@ CM_ SG_ 134 A086_B4 "Always zero.";
 CM_ SG_ 134 A086_B5 "Always zero.";
 CM_ SG_ 134 A086_B6 "Always zero.";
 CM_ SG_ 134 A086_B7 "Always zero.";
-CM_ SG_ 256 A100_STARTUP_WORD_BE16 "0xFFFF in the first frame after power-up, zero afterwards.";
+CM_ SG_ 256 A100_STARTUP_WORD_BE16 "0xFFFF in the first frame after power-up, zero afterwards. Byte 0 = 0x02 (bit 1) while the radar's PCS alarm is active (one recorded event, U3).";
 CM_ SG_ 256 A100_B2_B6_RESERVED_ZERO40 "Always zero.";
 CM_ SG_ 257 A101_STARTUP_STATE8 "0x1D booting, 0x11 running (0x21 seen once, briefly).";
 CM_ SG_ 257 A101_B1_B5_RESERVED_ZERO40 "Always zero.";
