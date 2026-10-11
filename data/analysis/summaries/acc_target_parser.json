@@ -325,11 +325,33 @@
   }
  },
  "ablations": {
+  "what": "all sets, against ACC target only (hard 13 / mild 30 / unnecessary 19.2 s / flips 302 per h); moving = ego >= 0.5 m/s at the episode start",
   "constant track id": {
    "hard": 16,
    "mild": 35,
    "unnecessary_s": 37.2,
-   "missed_s": 17.4
+   "missed_s": 17.4,
+   "flips_per_h": 302.0,
+   "hard_moving": 8,
+   "mild_moving": 27
+  },
+  "lateral position fixed at 0": {
+   "hard": 12,
+   "mild": 34,
+   "unnecessary_s": 21.7,
+   "missed_s": 17.4,
+   "flips_per_h": 295.0,
+   "hard_moving": 7,
+   "mild_moving": 27
+  },
+  "no target-present flags": {
+   "hard": 13,
+   "mild": 32,
+   "unnecessary_s": 21.6,
+   "missed_s": 17.4,
+   "flips_per_h": 342.0,
+   "hard_moving": 5,
+   "mild_moving": 24
   },
   "report on every update (100 Hz)": "no change in replay (simulation mode); on the car radard accepts radarTracks only at 8-24 Hz"
  }

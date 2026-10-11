@@ -257,12 +257,15 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
   both, jerk p99 0.167 against 0.176 m/s³).
 - **On drives never used for development** (1.98 moving h): 0 hard episodes and 1 oracle-confirmed mild, as 2.6.
 
-Each part earns its line:
-- **Target id as track id:** with a constant id, radard's per-track filter carries the old target's speed into the
-  new one, and unnecessary braking doubles (19.2 → 37.2 s).
-- **The radar's target-present flags:** an absent target sends zero codes, a point at 0 m.
-- **Reporting at 20 Hz:** radard accepts radarTracks only at 8-24 Hz.
-- **The lateral position:** radard's low-speed rule takes only points within 1 m.
+Each part earns its line, by what breaks without it (replays of every drive set):
+- **Target id as track id.** With a constant id, radard's per-track filter carries the old target's speed into the new
+  one: unnecessary braking 19.2 → 37.2 s, hard episodes 13 → 16.
+- **Lateral position.** At 0, radard's low-speed rule (points within 1 m of the path) takes targets that are off the
+  path: hard braking while moving 5 → 7, mild 22 → 27.
+- **The radar's target-present flags.** Without them an absent target becomes a point at 0 m, which radard keeps
+  switching to: lead flips 302 → 342 per hour, mild 30 → 32.
+- **Reporting at 20 Hz.** No effect in replay, which runs radard in simulation mode; on the car radard accepts
+  radarTracks only at 8-24 Hz.
 
 The oracle's reference lead is built mostly from the ACC target's range, so its unnecessary and missed seconds lean
 toward this file; the hard, mild and onset numbers do not use it. Numbers:

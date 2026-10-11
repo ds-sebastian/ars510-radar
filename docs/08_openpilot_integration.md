@@ -97,7 +97,10 @@ filtered and how its ID continues.
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus only what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison only. **Velocity excursions reach the planner unfiltered** |
 | `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([10](10_research_directions.md#towards-an-upstream-comma-interface)) | driving exactly what is proposed for openpilot |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list, the summaries on and the ACC target at 0.5 m/s ([12](12_kalman_filter.md#kalman-variants-tested)) | road tests only: fewer false closings offline, slower to let go of a far excursion that recovers |
+| `acc` | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py), 33 code lines): the car Toyota's own ACC follows; no object list, filter or gates; every other car comes from the camera ([10](10_research_directions.md#the-acc-target-alone--candidate)) | road tests of the candidate replacement for `fused`: same braking in replay, 0.21 % of moving time differs |
 
+`--profile acc` hands the whole update to `ars510_acc_target.py` (its own 20 Hz reporting and stale flag), with the
+legacy point fields for forks that carry them.
 `--profile openpilot` runs the same `Ars510Radar` core as the standalone file through the fork adapter (fork
 constructor arguments, legacy point fields); its `trackId` / `dRel` / `yRel` / `vRel` match `fused` exactly
 ([12](12_kalman_filter.md#removing-parts-together)).

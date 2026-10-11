@@ -11,6 +11,7 @@ StarPilot and other forks: no fork file is patched in place. The installer
   - copies the decoder package to        opendbc/car/toyota/ars510/
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
   - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
+  - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by --profile acc)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
 An install made with an older, patch-based version of this installer is removed first.
@@ -24,6 +25,8 @@ Profiles (docs/08 has the details and replay numbers):
             offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
   openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): fused in one file, driving
             identically, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
+  acc       the radar's ACC target alone as one point (upstream/ars510_acc_target.py, 33 code lines): the car Toyota's
+            own ACC follows; every other car comes from the camera. Candidate replacement for fused (docs/10)
 
 Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
 and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended fused default.
@@ -41,7 +44,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["fused"]'
-PROFILE_NAMES = ("fused", "openpilot", "raw", "colored")
+PROFILE_NAMES = ("fused", "openpilot", "raw", "colored", "acc")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ is for Cabana on a PC; not installed
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
@@ -67,7 +70,7 @@ def find_opendbc(path: Path) -> Path | None:
 def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
   return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
-          "upstream": toyota / "ars510_upstream.py"}
+          "upstream": toyota / "ars510_upstream.py", "acc_target": toyota / "ars510_acc_target.py"}
 
 
 def old_dbcs(root: Path) -> list[Path]:
@@ -161,6 +164,7 @@ def main() -> int:
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
   shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
+  shutil.copyfile(REPO / "upstream" / "ars510_acc_target.py", t["acc_target"])
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))

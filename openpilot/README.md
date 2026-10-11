@@ -14,7 +14,7 @@ sudo reboot
 ```
 
 That's all: the fork is detected, the `fused` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. `--profile raw` installs the unfiltered decode for comparison
+version of this installer is replaced automatically. `--profile raw` installs the unfiltered decode for comparison and `--profile acc` the ACC-target-only candidate
 ([docs/11](../docs/11_profiles_compared.md) compares them); the removed `anchor` and `steady` names install `fused`.
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
