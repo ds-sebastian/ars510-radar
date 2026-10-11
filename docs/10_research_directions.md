@@ -253,8 +253,12 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
 - **One far case:** a real object braking and drifting a lane to the right at 82 m, still flagged in-path. radard
   matches it to the camera's lead 27 m further on, at radard's 25 % distance limit (−2.6 m/s² for 0.35 s; 2.6 blends it
   down to −0.85).
-- **On Toyota's stock-ACC drive** (U1) its requests track Toyota's command as closely as 2.6's (RMS 0.249 m/s² for
-  both, jerk p99 0.167 against 0.176 m/s³).
+- **On Toyota's stock-ACC drives** its requests track Toyota's command as closely as 2.6's: on U1 RMS 0.249 m/s² for
+  both (jerk p99 0.167 against 0.176 m/s³); on the second car's stock drive (140 s) the two differ by 0.007 m/s² RMS,
+  with correlation to Toyota 0.76 for both against 0.68 for vision only. The rest of the gap to Toyota is openpilot's
+  planner (0.35 m/s² more braking where Toyota holds at its set speed), not the radar point.
+- **No filter on top:** the ACC target's speed does not lag its own distance (best lag −0.06 s, gain 1.00), and its
+  fast noise (0.027 m/s) is a fifth of its 0.125 m/s code step, so a filter could only add delay.
 - **On drives never used for development** (1.98 moving h): 0 hard episodes and 1 oracle-confirmed mild, as 2.6.
 
 Each part earns its line, by what breaks without it (replays of every drive set):
