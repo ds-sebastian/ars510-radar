@@ -532,5 +532,50 @@
    "mild_moving": 24
   },
   "report on every update (100 Hz)": "no change in replay (simulation mode); on the car radard accepts radarTracks only at 8-24 Hz"
+ },
+ "drives_not_used_for_development_pooled": {
+  "routes": 32,
+  "moving_h": 4.54,
+  "unn": {
+   "N1": 9.2,
+   "fused_2_6": 13.0,
+   "diff_per_moving_h": -0.84,
+   "ci95": [
+    -1.72,
+    -0.13
+   ]
+  },
+  "hard": {
+   "N1": 1.0,
+   "fused_2_6": 0.0,
+   "diff_per_moving_h": 0.22,
+   "ci95": [
+    0.0,
+    0.75
+   ]
+  },
+  "mild": {
+   "N1": 10.0,
+   "fused_2_6": 9.0,
+   "diff_per_moving_h": 0.22,
+   "ci95": [
+    -0.53,
+    1.01
+   ]
+  },
+  "flips": {
+   "N1": 1764.0,
+   "fused_2_6": 1740.0,
+   "diff_per_moving_h": 5.29,
+   "ci95": [
+    -28.89,
+    47.33
+   ]
+  },
+  "onset_vs_vision_s": {
+   "acc_target": -0.02,
+   "fused_2_6": -0.008
+  },
+  "note": "unn = oracle unnecessary braking seconds; diff = ACC target minus fused 2.6 per moving hour, route-block bootstrap 95 % CI"
  }
 }

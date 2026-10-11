@@ -263,7 +263,10 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
   planner (0.35 m/s² more braking where Toyota holds at its set speed), not the radar point.
 - **No filter on top:** the ACC target's speed does not lag its own distance (best lag −0.06 s, gain 1.00), and its
   fast noise (0.027 m/s) is a fifth of its 0.125 m/s code step, so a filter could only add delay.
-- **On drives never used for development** (1.98 moving h): 0 hard episodes and 1 oracle-confirmed mild, as 2.6.
+- **On drives never used for development or tuning** (32 routes of both cars, 4.54 moving h) it brakes unnecessarily less
+  than 2.6: 9.2 against 13.0 oracle seconds (−0.84 s per moving hour, route bootstrap −1.72…−0.13). Hard and mild
+  radar-only braking are equal (1 against 0, a correct hold at 0.3 m/s 1.3 m from an object; 10 against 9), and braking
+  starts earlier on real closings (−0.020 against −0.008 s vs vision).
 - **On 26 owner routes held out from every replay** (2.56 moving h):
   - unnecessary braking 7.7 against 2.6's 11.4 s, and lead flips 323 against 345 per hour (both route-bootstrap CIs
     exclude zero);
