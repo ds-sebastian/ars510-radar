@@ -125,21 +125,11 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## Keeping AEB under openpilot longitudinal
 
-On an unfiltered radar line, openpilot longitudinal switches off the radar's car-bus output, including its PCS / AEB
-brake request, and the car flags the loss ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)).
-Ways to keep AEB:
-
-- **A filter in the radar's line** (smartDSU-style) drops only the radar's 0x343 and passes its AEB. This works today and
-  needs hardware at the radar, because the radar's link to the gateway bypasses the comma harness.
-- **Relay the radar's own decision.** A disabled radar keeps sending its short-time-to-collision event pair (◐) on bus 1 (0x195 / 0x196).
-  If its brake request also appears on bus 1, openpilot can forward it as 0x283 / 0x344, keeping Toyota's decision
-  logic. One recorded stock AEB activation with bus 1 logged (for example against an inflatable PCS test target on a
-  closed lot) shows whether it does.
-- **An openpilot AEB on 0x283 / 0x344.** This needs the actuation sequence from a recorded activation, an AEB decision in
-  openpilot, and a panda safety change (0x283 is idle-only). It is a fork-level safety function.
-- **Keep the brake link healthy honestly.** 0x320 bit 13 is "0x344 missing" ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)).
-  A fork that disables the radar can replay idle 0x344 with `PCSOPR` 0 to clear it, while the dash keeps showing PCS off.
-  Show PCS as available (0x411, `PCSOPR` 1) only while a real AEB source is active.
+Without a radar CAN filter, openpilot longitudinal disables the radar and its AEB. Two routes could bring AEB back:
+relaying the radar's own decision from bus 1, or an openpilot AEB. Both send the PCS messages in the radar's place,
+keep 0x344 running for the brake system's link check, and show PCS on the dash only while the AEB source is healthy.
+The design, the dash rule and what is needed first (above all, one recorded stock AEB activation with bus 0 and bus 1
+logged) are in [13](13_car_bus_messages.md#aeb-without-a-can-filter).
 
 ## What radard gets from other radars
 

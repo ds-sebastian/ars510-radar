@@ -145,5 +145,60 @@ openpilot's Toyota longitudinal TX list (DSU-unplugged TSS-P support) already co
 | 0x283 | allowed only with bytes 0-5 zero (the idle frame) |
 | 0x494, 0x4FF | outside the TX list |
 
-opendbc's `toyotacan.create_pcs_commands` builds 0x283 + 0x344. Ways to keep AEB under openpilot longitudinal
-on an unfiltered radar line are listed in [10](10_research_directions.md#keeping-aeb-under-openpilot-longitudinal).
+opendbc's `toyotacan.create_pcs_commands` builds 0x283 + 0x344; the carcontroller does not call it.
+
+## AEB without a CAN filter
+
+**Today:** stock AEB works with stock ACC (openpilot lateral only, no filter) and with openpilot longitudinal through a
+radar CAN filter. With openpilot longitudinal and no filter, the radar is disabled and the car has no AEB. The dash
+says so ("Pre-Collision System Malfunction", PCS OFF lamp).
+
+**Why the disable takes AEB with it.** AEB is a live request: the radar sends non-idle 0x283 / 0x344 frames at the
+moment it decides to brake, and the brake system acts on them. UDS communication control (`28 01 01`) stops all of the
+radar's normal car-bus messages at once; there is no per-message mute that would keep 0x283 / 0x344 and drop only 0x343.
+Startup order makes no difference: whatever openpilot sends before, during or after the disable, no brake request
+leaves the radar afterwards.
+
+### Two ways to bring it back
+
+Both keep the radar disabled and have openpilot send the PCS messages in its place.
+
+| | A. relay the radar's decision | B. openpilot AEB |
+|---|---|---|
+| who decides | the radar, which keeps assessing threats on bus 1 while disabled (its 0x195 / 0x196 event pair, [05](05_acc_target_and_support.md#0x195--0x196-event-pair)) | openpilot, from the radar's tracks on bus 1 and the camera model |
+| openpilot's job | translate the radar's bus-1 brake state into 0x283 / 0x344 | run a collision decision and build 0x283 / 0x344 itself |
+| strength | Toyota's tuned, validated decision logic stays in charge | needs nothing more from the radar than the object list |
+| needs first | the radar's brake request (or its stages) visible on bus 1 | a decision with a validated false-trigger rate; a large safety project |
+
+What openpilot sends is the same in both:
+
+1. **0x344 without a gap** (20 Hz, idle `00 00 01 00 00 00 00 50` or with `PCSOPR` 0). The brake system checks for
+   it: 0x320 bit 13 sets 0.15 s after it stops (above).
+2. **0x283 idle** (33 Hz), so an activation changes the content of a running stream.
+3. **The activation sequence.** The reference names describe the stages: alarm (`PCSALM`, `PCSWAR`, FCW in 0x411),
+   brake pre-fill (`PREFILL`), brake assist, autonomous braking (0x283 `FORCE` and `STATE` 3, `PRECOLLISION_ACTIVE`; 0x344
+   `DSS1GDRV` deceleration). Order, timing and values come from a recorded stock activation.
+4. **A panda safety mode that allows it.** Upstream panda passes 0x283 only with bytes 0-5 zero. A fork needs limits
+   of its own: force, duration, only while moving, and AEB only while its source is healthy.
+
+### The dash: PCS shows what is true
+
+The malfunction warning does not follow 0x344 or 0x283 (O5 above); the radar's own 0x411 (`PCS_HUD`) is the leading
+candidate. The rule for any implementation:
+
+| situation | dash | 0x411 |
+|---|---|---|
+| AEB source healthy (radar records arriving, openpilot running, panda in its AEB mode) | PCS on | as the radar's idle frame, `PCS_OFF` 0 |
+| any part unhealthy, or the AEB path not yet validated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
+| openpilot not running | malfunction | nothing sent; the car's own check reports it |
+
+### What is needed, in order
+
+1. **One recorded stock AEB activation with bus 0 and bus 1 logged.** A car with a radar CAN filter keeps the radar
+   enabled and can record it. Use an inflatable PCS test target on a closed lot at low speed. Bus 0 gives the activation
+   sequence (0x283 / 0x344 / 0x411); bus 1 shows whether the radar announces its decision there first (route A). Share
+   it through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
+2. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
+   "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
+3. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
+   road. Neither route fits upstream openpilot; both are fork-only safety functions.

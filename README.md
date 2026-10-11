@@ -144,6 +144,9 @@ other radar interfaces: [docs/11](docs/11_profiles_compared.md). The filter itse
 - **openpilot longitudinal, checked on one firmware.** openpilot's radar-disable request silences only the radar's
   car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
   `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)).
+- **AEB needs a radar CAN filter under openpilot longitudinal.** Without one, openpilot disables the radar and the
+  car's AEB with it; stock ACC keeps AEB. Routes to AEB without a filter, and the one recording they need, are in
+  [13](docs/13_car_bus_messages.md#aeb-without-a-can-filter).
 - **Community integration.** It installs on top of openpilot; the single-file openpilot version is the candidate for an
   upstream PR ([10](docs/10_research_directions.md#towards-an-upstream-comma-interface)).
 
@@ -217,7 +220,7 @@ numbers and a glossary.
 | [10 Research directions](docs/10_research_directions.md) | open problems, the signals that would help most, the path to an upstream interface |
 | [11 Profiles compared](docs/11_profiles_compared.md) | each profile against vision only, driving pros and cons, assumptions, other openpilot radar interfaces |
 | [12 Kalman speed filter](docs/12_kalman_filter.md) | the default filter: model, gains, constants and their sources, what each part is worth, variants tested |
-| [13 Car-bus messages](docs/13_car_bus_messages.md) | the radar's nine Toyota driving-support messages on bus 0 (ACC command, PCS / AEB, lead distance), CAN filter versus radar disable, what happens to AEB |
+| [13 Car-bus messages](docs/13_car_bus_messages.md) | the radar's nine Toyota driving-support messages on bus 0 (ACC command, PCS / AEB, lead distance), CAN filter versus radar disable, what happens to AEB, AEB without a filter |
 | [14 Forks](docs/14_forks.md) | what sunnypilot, FrogPilot and StarPilot do with the radar lead, and what that does with this radar (replays of their own radard and MPC lead code) |
 
 ## Repository layout
