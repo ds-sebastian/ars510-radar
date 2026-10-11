@@ -645,5 +645,48 @@
   "moving_h": 21.45,
   "routes": 94,
   "note": "fast suite (four sets) + never-fitted owner routes + confirmation set; ACC target minus fused 2.6 per moving hour, route-block bootstrap 95 % CI; hard/mild_moving = episodes starting at ego >= 0.5 m/s"
+ },
+ "close_cut_ins": {
+  "definition": "lead jumps >= 5 m closer within 0.5 s to < 35 m, ego > 5 m/s (2.6 lead); faster = cutting car opening (> 0.5 m/s); window 0-4 s",
+  "all": {
+   "n": 450,
+   "2.6": {
+    "min_a_median": -0.845,
+    "brake_below_minus_0_5": 286,
+    "brake_below_minus_1": 198
+   },
+   "ACC target only": {
+    "min_a_median": -0.81,
+    "brake_below_minus_0_5": 283,
+    "brake_below_minus_1": 196
+   },
+   "vision only": {
+    "min_a_median": -0.8,
+    "brake_below_minus_0_5": 287,
+    "brake_below_minus_1": 195
+   },
+   "acc_target_switch_s_median": 0.2
+  },
+  "faster_car": {
+   "n": 120,
+   "2.6": {
+    "min_a_median": -0.15,
+    "brake_below_minus_0_5": 27,
+    "brake_below_minus_1": 14
+   },
+   "ACC target only": {
+    "min_a_median": -0.155,
+    "brake_below_minus_0_5": 28,
+    "brake_below_minus_1": 14
+   },
+   "vision only": {
+    "min_a_median": -0.155,
+    "brake_below_minus_0_5": 29,
+    "brake_below_minus_1": 14
+   },
+   "acc_target_switch_s_median": 0.32499999999999996,
+   "acc_target_brakes_more_than_2_6_by_0_3": 0,
+   "acc_target_brakes_less_by_0_3": 0
+  }
  }
 }

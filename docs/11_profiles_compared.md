@@ -122,7 +122,7 @@ What the radar adds, by profile:
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away seen later than the radar sees them |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 | `fused` | closest to vision in feel, radar-only braking gone, as early as vision on average, one speed state | the head start over vision is small on average; 187 lines with tuned gates |
-| `acc` | 33 lines, nothing tuned; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision | a cut-in or fast far closing reaches the planner through the camera until the radar picks the car (~0.75-1 s); holds at standstill behind close objects; no road miles yet |
+| `acc` | 33 lines, nothing tuned; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision | a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (0.8-1 s later; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s (0.3 s for a faster car) and brake as with `fused` ([10](10_research_directions.md#the-acc-target-alone--candidate)); holds at standstill behind close objects; no road miles yet |
 
 ## Assumptions and limits
 
