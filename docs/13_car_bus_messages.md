@@ -228,20 +228,43 @@ candidate. The rule for any implementation:
 fault signal on bus 1 is known yet. Until one is found ([10](10_research_directions.md#what-radard-gets-from-other-radars):
 a drive with a covered or dirty radar shows which candidate reacts), "PCS on" cannot report a radar blinded by snow or dirt.
 
+### Where a relay stands (for developers)
+
+| relay stage | radar bus (input) | car bus (output) | status |
+|---|---|---|---|
+| idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), no gap | ● known (O5) |
+| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ◐ one event (U3); unknown whether a disabled radar still sets 0x100 |
+| pre-fill, brake assist | unknown | unknown | ○ not recorded |
+| autonomous braking | unknown | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence unknown | ○ not recorded |
+
+What this means for a build today:
+
+- **A braking relay cannot be built yet.** The frames that make the brake system act, and the radar-bus values
+  that announce them, have not been recorded. Do not send guessed brake requests.
+- **A warning-only relay adds little.** openpilot already shows a forward-collision warning and sends FCW in 0x411
+  under alpha long. A relay would only swap in Toyota's decision for openpilot's. The alarm-stage frames (0x344
+  `PCSALM`, 0x283 `PCSNOCHG`) may also prime brake assist in the brake system, so even they should not be sent before
+  their effect is known.
+- **A passive watcher is the safe first build.** Read 0x100 on bus 1 while the radar is disabled, log it, and raise
+  openpilot's existing FCW alert when it fires. It sends nothing new to the brake system and proves the signal on
+  real drives.
+
 ### What is needed, in order
 
-1. **A recorded stock activation that reaches braking**, with bus 0 and bus 1 logged. The alarm stage is recorded
+1. **The alarm with the radar disabled.** This decides whether a relay is possible at all. Repeat a low-speed
+   approach to an inflatable PCS test target under alpha long (radar disabled) with bus 1 logged, and see whether 0x100 goes to 0x02.
+   The car does not warn or brake in this setup, so the driver brakes as usual. If 0x100 stays 0, a disabled radar
+   does not announce its decision and the relay route is closed.
+2. **A recorded stock activation that reaches braking**, with bus 0 and bus 1 logged. The alarm stage is recorded
    (U3); the braking stages need an approach where the driver does not brake first: an inflatable PCS test target on a
    closed lot, somewhat faster than U3, from a car with the radar enabled (stock ACC, or a radar CAN filter). Bus 0
-   gives the braking sequence in 0x283 / 0x344; bus 1 shows which radar-bus values mark it, next to 0x100. Share it through a
-   [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
-2. **The alarm with the radar disabled.** Whether a disabled radar still sets 0x100: repeat the same low-speed
-   inflatable-target approach under alpha long (radar disabled) with bus 1 logged. The car does not warn or brake in this setup, so the
-   driver brakes as usual.
+   gives the braking sequence in 0x283 / 0x344; bus 1 shows which radar-bus values mark it, next to 0x100.
 3. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
 4. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
    road. A relay does not fit upstream openpilot; it is a fork-only safety function.
+
+Share recordings through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
 
 ### Advanced: a radar setting that drops only 0x343 (○ unexplored)
 
