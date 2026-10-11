@@ -1,5 +1,5 @@
 {
- "description": "U3: second RAV4 (radar firmware 8821F0R03100, no CAN filter), stock Toyota ACC with openpilot lateral, radar enabled. A deliberate test against a stationary inflatable target at 7 m/s produced a stock PCS alarm. Times: seconds from the start of the log. Car bus = bus 0 (src 0), radar bus = bus 1. ACC target from 0x235 / 0x237 (ars510.support.parse_acc_target); time to collision = range / closing speed. Payloads are written as spaced hex bytes.",
+ "description": "U3: second RAV4 (radar firmware 8821F0R03100, no CAN filter), stock Toyota ACC with openpilot lateral, radar enabled. A deliberate test at 7 m/s produced a stock PCS alarm: an inflatable stood in the lane with a pickup parked a few metres behind it, and the radar tracked the pickup (one object; ACC range 8 m at the stop while the inflatable was at the bumper). Times: seconds from the start of the log. Car bus = bus 0 (src 0), radar bus = bus 1. ACC target from 0x235 / 0x237 (ars510.support.parse_acc_target); time to collision = range / closing speed. Payloads are written as spaced hex bytes.",
  "alarm_car_bus_s": [
   56.1506,
   56.922
@@ -1225,5 +1225,6 @@
    "0x344": "00 00 01 00 00 00 00 50",
    "0x411": "00 20 00 00 00 00 80 00"
   }
- ]
+ ],
+ "acc_target_is": "the parked pickup, not the inflatable in front of it"
 }

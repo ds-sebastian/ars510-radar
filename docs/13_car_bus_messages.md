@@ -163,15 +163,17 @@ leaves the radar afterwards.
 
 ![U3: stock PCS alarm against the radar's bus-1 0x100](img/analysis/pcs_activation_u3.png)
 
-U3 is a deliberate test on the second car (stock ACC, radar enabled, no filter): a stationary inflatable target in
-the lane, approached at 7 m/s. The radar's **PCS alarm stage** ran from 56.151 to 56.922 s. It started at a time to
-collision of 2.1 s and a range of 14.5 m. The driver braked 0.12 s later and stopped short of the target, so the braking
-stages were not reached.
+U3 is a deliberate test on the second car (stock ACC, radar enabled, no filter), approached at 7 m/s: an inflatable
+decoration stood in the lane, with a pickup parked a few metres behind it. **The radar tracked the pickup, not the
+inflatable.** Its only object and its ACC target (one ID throughout) read 8 m at the stop, while the inflatable was at
+the bumper, and no second object appeared. Air-filled vinyl reflects little at 77 GHz. The radar's **PCS alarm stage**
+ran from 56.151 to 56.922 s, at a time to collision of 2.2 s and a range of 15.4 m to the pickup. The driver braked
+0.12 s later and stopped with the inflatable at the bumper, so the braking stages were not reached.
 
 | t (s) | radar bus (bus 1) | car bus (bus 0) |
 |---|---|---|
 | 55.09 | event pair 0x195 / 0x196 leaves idle | |
-| 55.6 | ACC target appears: 18.9 m, closing at 7.0 m/s (a stationary target) | |
+| 55.6 | ACC target appears: the parked pickup, 18.9 m, closing at 7.0 m/s | |
 | **56.1506** | **0x100 byte 0 → 0x02** | **same CAN tick:** 0x283 → `… 02 8E`, 0x411 → FCW; 0x344 → `PCSALM` at its next slot (56.180) |
 | 56.27 | | driver brake |
 | 56.913-56.922 | 0x100 → 0 | 0x411, 0x283, 0x344 back to idle |
@@ -252,13 +254,17 @@ What this means for a build today:
 ### What is needed, in order
 
 1. **The alarm with the radar disabled.** This decides whether a relay is possible at all. Repeat a low-speed
-   approach to an inflatable PCS test target under alpha long (radar disabled) with bus 1 logged, and see whether 0x100 goes to 0x02.
+   approach to a soft PCS test target under alpha long (radar disabled) with bus 1 logged, and see whether 0x100 goes to 0x02.
    The car does not warn or brake in this setup, so the driver brakes as usual. If 0x100 stays 0, a disabled radar
    does not announce its decision and the relay route is closed.
 2. **A recorded stock activation that reaches braking**, with bus 0 and bus 1 logged. The alarm stage is recorded
-   (U3); the braking stages need an approach where the driver does not brake first: an inflatable PCS test target on a
+   (U3); the braking stages need an approach where the driver does not brake first: a soft PCS test target on a
    closed lot, somewhat faster than U3, from a car with the radar enabled (stock ACC, or a radar CAN filter). Bus 0
    gives the braking sequence in 0x283 / 0x344; bus 1 shows which radar-bus values mark it, next to 0x100.
+
+   **The target must be visible to the radar.** Use a radar-reflective soft target, of the kind made for ADAS / NCAP testing.
+   An inflatable decoration is close to invisible at 77 GHz (U3), and with nothing parked behind it the radar would
+   see nothing at all.
 3. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
 4. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the

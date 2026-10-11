@@ -1179,7 +1179,7 @@ def pcs_activation_u3():
     ax[2].legend(loc="upper left", fontsize=8); ax[2].set_xlabel("seconds from the start of the log (U3)")
     for x in ax:
         x.axvspan(a, b, color="#f5d9a8", alpha=0.5, lw=0)
-    fig.suptitle("U3: a stock PCS alarm (stationary inflatable target, ego 7 m/s); the radar's bus-1 0x100 marks it to the CAN tick", fontsize=11)
+    fig.suptitle("U3: a stock PCS alarm (target: a pickup parked in the lane, ego 7 m/s); the radar's bus-1 0x100 marks it to the CAN tick", fontsize=11)
     fig.tight_layout()
     save(fig, "pcs_activation_u3", "Shaded: the radar's car-bus alarm (0x283 / 0x411 / 0x344). 50 ms grid. "
          "Numbers: data/analysis/summaries/pcs_activation_u3.json.")
