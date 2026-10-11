@@ -66,12 +66,15 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
 ### Built into a fork's opendbc (car-model routing)
 
 A fork that carries the parser in its own opendbc can select it the way openpilot selects any radar: by the radar name in
-the car's `DBC` entry, with no hook and no firmware check. [`upstream/toyota_routing.patch`](../upstream/toyota_routing.patch)
+the car's `DBC` entry, with no hook. [`upstream/toyota_routing.patch`](../upstream/toyota_routing.patch)
 does this for sunnypilot's opendbc (tested on its 2026-09-30 sync):
 
 - `values.py`: `TOYOTA_RAV4_TSS2_2022` and `TOYOTA_RAV4_TSS2_2023` name the radar `toyota_tss2_ars510` (`ARS510_RADAR`).
-  The other radar-ACC Toyotas keep a powertrain-only entry, so they stay radarless. `radarUnavailable` becomes false
-  through the usual `Bus.radar in DBC` rule, and choosing the car model in the fork's settings selects the parser.
+  The other radar-ACC Toyotas keep a powertrain-only entry, so they stay radarless. Choosing the car model in the
+  fork's settings selects the parser.
+- `interface.py`: on those two platforms the radar counts as available only with the ARS510's firmware
+  (`8821F0R03100`, for a cold start) or its object list (0x80) seen on bus 1 at fingerprinting, the same check as the
+  installer's hook. A RAV4 with another radar (such as the 2022 firmware `8821F0R01100`) stays radarless.
 - `radar_interface.py`: for that radar name the Toyota RadarInterface hands every update to
   [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (copied to `opendbc/car/toyota/ars510_radar.py`). No CAN
   parser is built for it, because `toyota_tss2_ars510` is a name, not a DBC file.
@@ -81,8 +84,7 @@ cp upstream/ars510_radar.py $OPENDBC/opendbc/car/toyota/ars510_radar.py
 git -C $OPENDBC apply $PWD/upstream/toyota_routing.patch
 ```
 
-Both RAV4 platforms have ARS510 cars with `8821F0R03100` (the owner's car fingerprints as the 2022 platform). A car of
-these platforms whose radar does not send the object list gets no radar points and drives on vision leads. Upstream
+Both RAV4 platforms have ARS510 cars with `8821F0R03100` (the owner's car fingerprints as the 2022 platform). Upstream
 openpilot's RadarInterface takes only `CP`; the patch's context differs there by that argument. With this routing the
 profile is the openpilot version; `install.py` profiles do not apply.
 

@@ -1,3 +1,27 @@
+diff --git a/opendbc/car/toyota/interface.py b/opendbc/car/toyota/interface.py
+index 579d283..4104ac4 100644
+--- a/opendbc/car/toyota/interface.py
++++ b/opendbc/car/toyota/interface.py
+@@ -2,7 +2,7 @@ from opendbc.car import Bus, structs, get_safety_config, uds
+ from opendbc.car.toyota.carstate import CarState
+ from opendbc.car.toyota.carcontroller import CarController
+ from opendbc.car.toyota.radar_interface import RadarInterface
+-from opendbc.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
++from opendbc.car.toyota.values import ARS510_FW_VERSIONS, ARS510_RADAR, Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
+                                                   MIN_ACC_SPEED, EPS_SCALE, NO_STOP_TIMER_CAR, ToyotaSafetyFlags, UNSUPPORTED_DSU_CAR
+ from opendbc.car.disable_ecu import disable_ecu
+ from opendbc.car.interfaces import CarInterfaceBase
+@@ -88,6 +88,10 @@ class CarInterface(CarInterfaceBase):
+     # No radar dbc for cars without DSU which are not TSS 2.0
+     # TODO: make an adas dbc file for dsu-less models
+     ret.radarUnavailable = Bus.radar not in DBC[candidate] or candidate in (NO_DSU_CAR - TSS2_CAR)
++    if DBC[candidate].get(Bus.radar) == ARS510_RADAR:
++      # radar-ACC RAV4s: only the Continental ARS510 sends its object list (0x80) on bus 1; other radars stay radarless
++      ars510_fw = any(fw.ecu == Ecu.fwdRadar and fw.fwVersion in ARS510_FW_VERSIONS for fw in car_fw)
++      ret.radarUnavailable = not (ars510_fw or 0x80 in fingerprint[1])
+ 
+     # since we don't yet parse radar on TSS2/TSS-P radar-based ACC cars, gate longitudinal behind experimental toggle
+     if ret.flags & ToyotaFlags.RADAR_ACC:
 diff --git a/opendbc/car/toyota/radar_interface.py b/opendbc/car/toyota/radar_interface.py
 index 766243f..15858cf 100755
 --- a/opendbc/car/toyota/radar_interface.py
@@ -30,22 +54,23 @@ index 766243f..15858cf 100755
        return super().update(None)
  
 diff --git a/opendbc/car/toyota/values.py b/opendbc/car/toyota/values.py
-index b2cab32..6e80a5b 100644
+index b2cab32..0973b74 100644
 --- a/opendbc/car/toyota/values.py
 +++ b/opendbc/car/toyota/values.py
-@@ -102,6 +102,11 @@ class ToyotaSecOcCarDocs(ToyotaCarDocs):
+@@ -102,6 +102,12 @@ class ToyotaSecOcCarDocs(ToyotaCarDocs):
    support_link: str = "#secoc-cars-with-recoverable-keys"
  
  
 +# Radar-ACC cars have no radar DBC, except those with the Continental ARS510 (fwdRadar 8821F0R03100): its object list
 +# is reassembled from 0x80 frames by ars510_radar.py, so this name selects that parser and there is no DBC file.
 +ARS510_RADAR = 'toyota_tss2_ars510'
++ARS510_FW_VERSIONS = {b'\x018821F0R03100\x00\x00\x00\x00'}
 +
 +
  @dataclass
  class ToyotaTSS2PlatformConfig(PlatformConfig):
    dbc_dict: dict = field(default_factory=lambda: dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_adas'))
-@@ -109,7 +114,7 @@ class ToyotaTSS2PlatformConfig(PlatformConfig):
+@@ -109,7 +115,7 @@ class ToyotaTSS2PlatformConfig(PlatformConfig):
    def init(self):
      self.flags |= ToyotaFlags.TSS2 | ToyotaFlags.NO_STOP_TIMER | ToyotaFlags.NO_DSU
  
@@ -54,7 +79,7 @@ index b2cab32..6e80a5b 100644
        self.dbc_dict = {Bus.pt: 'toyota_nodsu_pt_generated'}
  
  
-@@ -277,6 +282,7 @@ class CAR(Platforms):
+@@ -277,6 +283,7 @@ class CAR(Platforms):
        ToyotaCarDocs("Toyota RAV4 Hybrid 2022", video="https://youtu.be/U0nH9cnrFB0"),
      ],
      TOYOTA_RAV4_TSS2.specs,
@@ -62,7 +87,7 @@ index b2cab32..6e80a5b 100644
      flags=ToyotaFlags.RADAR_ACC,
    )
    TOYOTA_RAV4_TSS2_2023 = ToyotaTSS2PlatformConfig(
-@@ -285,6 +291,7 @@ class CAR(Platforms):
+@@ -285,6 +292,7 @@ class CAR(Platforms):
        ToyotaCarDocs("Toyota RAV4 Hybrid 2023-25", video="https://youtu.be/4eIsEq4L4Ng"),
      ],
      TOYOTA_RAV4_TSS2.specs,
