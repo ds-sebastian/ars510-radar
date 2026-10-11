@@ -222,6 +222,9 @@ to tune anything), against 2.5:
 
 Against 2.5, per moving hour with a route-block bootstrap (95 % intervals): mild radar-only braking −1.95 [−2.94, −1.20],
 unnecessary braking −0.45 s [−0.84, −0.12], missed braking +0.06 s [−0.01, +0.17], lead flips −86 [−106, −68].
+On drives never used for development (12 second-car routes and one owner route, 2 moving hours) 2.6 had no hard
+radar-only braking, its 2 mild radar-only requests were both real slowdowns, and it was ahead of 2.5 on every count; on
+that car the camera reads closings stronger than the radar's range-based reference, so vision brakes 0.04 s earlier.
 
 The 60 m cutoff and the ACC weight were chosen on the owner's drive sets with a route-block bootstrap (60 m / 0.3 m/s:
 1.50 s of unnecessary plus missed braking per moving hour; 50, 70 or 80 m: 1.66-1.72 s/h; 0.2 m/s: 1.53, a tie) and

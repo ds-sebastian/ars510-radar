@@ -429,5 +429,29 @@
    ]
   ]
  },
- "remaining_hard_2_6": "8 episodes, all on the 27 replay drives (none on road, second car, fresh); 2 last longer than one 50 ms tick (7 and 3 ticks) and both are real closings the oracle also brakes for (-2.9, -1.7 m/s2); the rest are single-tick requests (crossing truck, a work-zone truck, lead switches)"
+ "remaining_hard_2_6": "8 episodes, all on the 27 replay drives (none on road, second car, fresh); 2 last longer than one 50 ms tick (7 and 3 ticks) and both are real closings the oracle also brakes for (-2.9, -1.7 m/s2); the rest are single-tick requests (crossing truck, a work-zone truck, lead switches)",
+ "untouched_drives": {
+  "set": "12 second-car routes and one owner route never used for development (1.98 moving h; 0.74 h above 20 m/s)",
+  "2.6": {
+   "hard_radar_only": 0,
+   "mild_radar_only": 2,
+   "mild_not_confirmed_by_oracle": 0,
+   "oracle_unnecessary_s": 1.6,
+   "oracle_missed_s": 0.0,
+   "onset_vs_vision_s": 0.04
+  },
+  "2.5": {
+   "hard_radar_only": 0,
+   "mild_radar_only": 3,
+   "mild_not_confirmed_by_oracle": 1,
+   "oracle_unnecessary_s": 1.7,
+   "oracle_missed_s": 0.0,
+   "onset_vs_vision_s": 0.057
+  },
+  "vision_only": {
+   "oracle_unnecessary_s": 0.0,
+   "oracle_missed_s": 0.0
+  },
+  "note": "2.6 is ahead of 2.5 on every row; on this car the camera reads closings about 0.37 m/s stronger than the range-based reference, so vision brakes slightly earlier; against the hindsight-lead oracle every version starts braking within 0.02 s of the others"
+ }
 }
