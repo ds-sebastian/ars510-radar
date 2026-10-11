@@ -1,5 +1,5 @@
 {
- "description": "U3: second RAV4 (radar firmware 8821F0R03100, no CAN filter), stock Toyota ACC with openpilot lateral, radar enabled. A deliberate test at 7 m/s produced a stock PCS alarm: an inflatable stood in the lane with a pickup parked a few metres behind it, and the radar tracked the pickup (one object; ACC range 8 m at the stop while the inflatable was at the bumper). Times: seconds from the start of the log. Car bus = bus 0 (src 0), radar bus = bus 1. ACC target from 0x235 / 0x237 (ars510.support.parse_acc_target); time to collision = range / closing speed. Payloads are written as spaced hex bytes.",
+ "description": "U3: second RAV4 (radar firmware 8821F0R03100, no CAN filter), stock Toyota ACC with openpilot lateral, radar enabled. A deliberate test at 7 m/s produced a stock PCS alarm: an inflatable stood in the lane with a pickup parked a few metres behind it, and the radar tracked the pickup (one object; ACC range 8 m at the stop while the inflatable was at the bumper). Which object the alarm was about is open (alarm_trigger). Times: seconds from the start of the log. Car bus = bus 0 (src 0), radar bus = bus 1. ACC target from 0x235 / 0x237 (ars510.support.parse_acc_target); time to collision = range / closing speed. Payloads are written as spaced hex bytes.",
  "alarm_car_bus_s": [
   56.1506,
   56.922
@@ -1258,5 +1258,6 @@
    "min_publish_age_cycles": 60,
    "published_with_min_publish_age_0_from_s": 53.9
   }
- }
+ },
+ "alarm_trigger": "most likely the pickup (TTC 2.2 s, the only tracked object). The camera sent the radar nothing that varied during the approach: its bus-1 frames 0x101/0x102/0x180/0x197/0x210/0x24D/0x500/0x501 were constant and 0x240-0x248 only stepped their phase counter (default daytime bodies); on the car side only steering frames (0x191, 0x2E4, 0x371 LTA_RELATED) changed. A radar detection of the inflatable below the object list's threshold is not ruled out."
 }

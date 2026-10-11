@@ -167,8 +167,19 @@ U3 is a deliberate test on the second car (stock ACC, radar enabled, no filter),
 decoration stood in the lane, with a pickup parked a few metres behind it. **The radar tracked the pickup, not the
 inflatable.** Its only object and its ACC target (one ID throughout) read 8 m at the stop, while the inflatable was at
 the bumper, and no second object appeared. Air-filled vinyl reflects little at 77 GHz. The radar's **PCS alarm stage**
-ran from 56.151 to 56.922 s, at a time to collision of 2.2 s and a range of 15.4 m to the pickup. The driver braked
-0.12 s later and stopped with the inflatable at the bumper, so the braking stages were not reached.
+ran from 56.151 to 56.922 s. The driver braked 0.12 s later and stopped with the inflatable at the bumper, so the
+braking stages were not reached.
+
+**The alarm was most likely for the pickup (◐).** At the alarm the pickup was at a time to collision of 2.2 s (15.4 m),
+a usual warning point, and the only object the radar tracked. The inflatable was about 5 m ahead (0.75 s).
+- **No camera input changed.** The camera sent the radar nothing that varied during the approach. On bus 1 its frames
+  (0x101 / 0x102, 0x180, 0x197, 0x210, 0x24D, 0x500 / 0x501) stayed constant. 0x240-0x248 only stepped their phase
+  counter with default daytime bodies (their light-source records appear at night). On the car side only steering
+  messages moved: 0x191, 0x2E4 and 0x371 `LTA_RELATED`.
+- **So the alarm came from the radar's own data.** A camera pedestrian detection did not reach the radar. What remains
+  open is a radar detection of the inflatable below the object list's threshold: the object list shows only the
+  radar's filtered tracks.
+- The 0x100 flag marks the alarm either way.
 
 | t (s) | radar bus (bus 1) | car bus (bus 0) |
 |---|---|---|
@@ -263,11 +274,12 @@ What this means for a build today:
    gives the braking sequence in 0x283 / 0x344; bus 1 shows which radar-bus values mark it, next to 0x100.
 
    **The target must be visible to the radar.** Use a radar-reflective soft target, of the kind made for ADAS / NCAP testing.
-   An inflatable decoration is close to invisible at 77 GHz (U3), and with nothing parked behind it the radar would
-   see nothing at all.
-3. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
+   An inflatable decoration did not appear in the radar's object list at all (U3).
+3. **Which object a warning is about.** Two separate approaches settle U3's open point: the inflatable alone, with nothing
+   behind it (a warning then comes from the camera's detection), and a parked car alone (the radar's own case).
+4. **A parked 0x411 test.** With the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
-4. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
+5. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
    road. A relay does not fit upstream openpilot; it is a fork-only safety function.
 
 Share recordings through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
