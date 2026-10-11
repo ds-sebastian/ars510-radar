@@ -1,0 +1,150 @@
+{
+ "description": "ACC target width (0x23B, cm) and class code (0x239) every 5th 50 Hz frame over every stored rlog (three cars); object-list class, class confidence, size and camera association (112|3) on every 20th rlog, rows with age >= 25. 0x239 codes other than 1 (car) and 2 (truck) are not named.",
+ "acc_target_by_class_code": {
+  "0": {
+   "samples": 68081,
+   "routes": 59,
+   "width_cm_median": 10.0,
+   "width_cm_min": 10.0,
+   "range_m_median": 1.6,
+   "moving_samples": 623,
+   "moving_routes": 30,
+   "moving_width_cm_min": 10.0,
+   "moving_range_m_median": 58.6,
+   "moving_lead_speed_mps_median": 16.1
+  },
+  "1": {
+   "samples": 418318,
+   "routes": 62,
+   "width_cm_median": 171.0,
+   "width_cm_min": 140.0,
+   "range_m_median": 35.9,
+   "moving_samples": 318496,
+   "moving_routes": 57,
+   "moving_width_cm_min": 140.0,
+   "moving_range_m_median": 42.3,
+   "moving_lead_speed_mps_median": 21.6
+  },
+  "2": {
+   "samples": 7532,
+   "routes": 26,
+   "width_cm_median": 200.0,
+   "width_cm_min": 200.0,
+   "range_m_median": 47.7,
+   "moving_samples": 7257,
+   "moving_routes": 25,
+   "moving_width_cm_min": 200.0,
+   "moving_range_m_median": 47.9,
+   "moving_lead_speed_mps_median": 26.5
+  },
+  "4": {
+   "samples": 3687,
+   "routes": 42,
+   "width_cm_median": 120.0,
+   "width_cm_min": 50.0,
+   "range_m_median": 47.8,
+   "moving_samples": 2992,
+   "moving_routes": 29,
+   "moving_width_cm_min": 50.0,
+   "moving_range_m_median": 50.1,
+   "moving_lead_speed_mps_median": 27.0
+  },
+  "5": {
+   "samples": 193,
+   "routes": 15,
+   "width_cm_median": 120.0,
+   "width_cm_min": 50.0,
+   "range_m_median": 23.6,
+   "moving_samples": 64,
+   "moving_routes": 7,
+   "moving_width_cm_min": 50.0,
+   "moving_range_m_median": 34.7,
+   "moving_lead_speed_mps_median": 6.3
+  },
+  "6": {
+   "samples": 3766,
+   "routes": 18,
+   "width_cm_median": 128.0,
+   "width_cm_min": 31.0,
+   "range_m_median": 2.6,
+   "moving_samples": 43,
+   "moving_routes": 1,
+   "moving_width_cm_min": 170.0,
+   "moving_range_m_median": 21.1,
+   "moving_lead_speed_mps_median": -0.2
+  }
+ },
+ "acc_samples": 501577,
+ "rlogs": 1597,
+ "acc_small_stationary_while_moving": {
+  "samples": 170,
+  "routes": 22,
+  "width_cm_min": 23.0,
+  "width_cm_median": 50.0,
+  "range_m_median": 31.0,
+  "ego_mps_median": 5.3,
+  "class_codes": {
+   "0": 169,
+   "4": 1
+  }
+ },
+ "object_list_by_class": {
+  "1": {
+   "rows": 4077,
+   "camera_associated_share": 0.159,
+   "width_m": 1.9000000000000001,
+   "length_m": 4.5,
+   "class_conf_pct": 0.0,
+   "width_m_unassociated": 1.9000000000000001,
+   "class_conf_pct_unassociated": 0.0
+  },
+  "2": {
+   "rows": 79556,
+   "camera_associated_share": 0.5,
+   "width_m": 1.8,
+   "length_m": 5.1000000000000005,
+   "class_conf_pct": 80.0,
+   "width_m_unassociated": 1.8,
+   "class_conf_pct_unassociated": 85.0
+  },
+  "3": {
+   "rows": 10861,
+   "camera_associated_share": 0.359,
+   "width_m": 2.0,
+   "length_m": 6.1000000000000005,
+   "class_conf_pct": 55.0,
+   "width_m_unassociated": 2.0,
+   "class_conf_pct_unassociated": 55.0
+  },
+  "4": {
+   "rows": 1322,
+   "camera_associated_share": 0.0,
+   "width_m": 0.5,
+   "length_m": 0.4,
+   "class_conf_pct": 77.5,
+   "width_m_unassociated": 0.5,
+   "class_conf_pct_unassociated": 77.5
+  },
+  "5": {
+   "rows": 20,
+   "camera_associated_share": 0.0,
+   "width_m": 0.5,
+   "length_m": 0.8,
+   "class_conf_pct": 40.0,
+   "width_m_unassociated": 0.5,
+   "class_conf_pct_unassociated": 40.0
+  }
+ },
+ "object_rows": 121940,
+ "object_rlogs": 75,
+ "camera_association_onsets": {
+  "n": 245,
+  "width_change_gt_0p2m_share": 0.08,
+  "length_change_gt_0p5m_share": 0.16,
+  "class_change_share": 0.17,
+  "baseline_n": 5964,
+  "baseline_width_share": 0.04,
+  "baseline_length_share": 0.06,
+  "baseline_class_share": 0.079
+ }
+}

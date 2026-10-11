@@ -171,15 +171,23 @@ ran from 56.151 to 56.922 s. The driver braked 0.12 s later and stopped with the
 braking stages were not reached.
 
 **The alarm was most likely for the pickup (◐).** At the alarm the pickup was at a time to collision of 2.2 s (15.4 m),
-a usual warning point, and the only object the radar tracked. The inflatable was about 5 m ahead (0.75 s).
-- **No camera input changed.** The camera sent the radar nothing that varied during the approach. On bus 1 its frames
-  (0x101 / 0x102, 0x180, 0x197, 0x210, 0x24D, 0x500 / 0x501) stayed constant. 0x240-0x248 only stepped their phase
-  counter with default daytime bodies (their light-source records appear at night). On the car side only steering
-  messages moved: 0x191, 0x2E4 and 0x371 `LTA_RELATED`.
-- **So the alarm came from the radar's own data.** A camera pedestrian detection did not reach the radar. What remains
-  open is a radar detection of the inflatable below the object list's threshold: the object list shows only the
-  radar's filtered tracks.
+a usual warning point. The inflatable was about 5 m ahead (0.75 s).
+- **The in-path object is a vehicle.** The pickup was the only object the radar tracked: a car at 85 % class
+  confidence, 1.8 × 4.7 m ([03](03_slot_fields.md#class-and-size)), camera-associated (`112|3` = 2). The ACC target's
+  width (0x23B) was 177 cm, and nothing in the object list sat at the inflatable's position.
+- **No logged camera input changed.** On bus 1 the camera's frames (0x101 / 0x102, 0x180, 0x197, 0x210, 0x24D,
+  0x500 / 0x501) stayed constant, and 0x240-0x248 only stepped their phase counter with default daytime bodies. On the
+  car side only steering messages moved: 0x191, 0x2E4 and 0x371 `LTA_RELATED`.
+- **Open:** the camera also reaches the radar over a link the logs do not carry ([03](03_slot_fields.md#camera-association)),
+  and the object list shows only the radar's filtered tracks. So neither a camera trigger on the inflatable nor a weak
+  radar detection of it is excluded.
 - The 0x100 flag marks the alarm either way.
+
+**Would an inflatable trigger the radar's PCS?** Not because of its size. The radar tracks pedestrians at 0.5 × 0.4 m,
+and its ACC target has followed stationary objects as narrow as 23 cm while driving
+([05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b)). What matters is how strongly the object
+reflects at 77 GHz: air-filled vinyl reflects very little, and U3's inflatable never entered the object list. A minimum
+size for the PCS itself cannot be read from one recorded event.
 
 | t (s) | radar bus (bus 1) | car bus (bus 0) |
 |---|---|---|

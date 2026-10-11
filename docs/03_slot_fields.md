@@ -201,7 +201,15 @@ three-drive dataset):
 | 4 pedestrian | 1% | 0.7 m/s | 0.5 m | 0.4 m |
 | 6 two-wheeler | rare | 9.4 m/s | 0.7 m | 1.7 m |
 
-On 43 strict camera pairs, width agrees with the camera's vehicle width to about 0.05-0.07 m (per-track median, ○). Video review shows
+On 43 strict camera pairs, width agrees with the camera's vehicle width to about 0.05-0.07 m (per-track median, ○).
+
+**Class and size are the radar's own (◐).** In a sample of 75 drives (mature rows):
+- **Pedestrians** (1,322 rows) are never camera-associated, yet carry 78 % class confidence and a 0.5 × 0.4 m size.
+- **Cars** are camera-associated on half their rows, with the same width (1.8 m) and confidence either way.
+- **When the camera associates** with a track, the width rarely changes (> 0.2 m on 8 % of 245 onsets, against 4 %
+  otherwise). Length and class change about twice as often (16 % and 17 %, against 6 % and 8 %), so the camera may
+  refine an existing track, but it does not create its class or size. Numbers:
+  [`object_size_provenance.json`](../data/analysis/summaries/object_size_provenance.json). Video review shows
 class 4 on people at crossings and fuel pumps and class 6 on motorcycles.
 
 **Class 5 has candidate cyclist and person associations.** Four reviewed lifecycles across three drives align

@@ -132,9 +132,13 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 | 0x23B | byte 1 low nibble + byte 2 (12 bits) | **target width in cm** | ◐ |
 
 - **Class.** Class 1 goes with the car template of the target summaries below and class 2 with the truck template in every
-  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives). Classes 0 and 6 appear while ego is stopped
-  behind something within a few metres (6 with a car-sized width, 0 with a width of 10-50 cm); classes 4 and 5 carry a
-  120 cm width and sit 1-1.5 m off the path.
+  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives). Classes 0 and 6 appear mostly while ego is stopped
+  behind something within a few metres (6 with a car-sized width, 0 with a width of 10-50 cm); classes 4 and 5 carry
+  widths of 50-120 cm. Class 4 is mostly a moving target at 50 m (lead speed median 27 m/s), so not a pedestrian.
+- **Small targets while driving.** Over every stored log (three cars), class 0 also appears with ego above 3 m/s. That
+  includes stationary objects as narrow as 23 cm (median 50 cm, at a median 31 m, on 22 routes)
+  ([`object_size_provenance.json`](../data/analysis/summaries/object_size_provenance.json)). The radar's target choice
+  does not need a vehicle-sized object.
 - **Width.** Zero exactly while there is no target. The car class reads 140-220 cm (median 171, clipped at 140), the truck
   class 200-280 cm (exactly 200 on 97 % of its frames); cars read about 175 cm inside 30 m and 165 cm at 90 m.
 - **Object-list flag.** Set on 88-95 % of target frames when the object list holds one to four objects and on 0.2 % when
