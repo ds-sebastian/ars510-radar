@@ -6,7 +6,7 @@
 guide_pipeline.png and guide_lead_guards.png are schematics with numbers from the summaries. guide_cases.png plots
 data/analysis/lead_choice_cases.csv.gz: two road moments replayed through openpilot's planner with vision only, 2.1 and
 2.3 (relative time, no route identifiers; 2.4 asks the same as 2.3 in both, lead_choice_guards.json). guide_road_stats.png plots data/analysis/summaries/road_v21.json;
-guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_far_rule.png plots far_acc_only.json; guide_oracle.png plots
+guide_parts_ledger.png plots data/analysis/summaries/openpilot_file_parts.json; guide_far_rule.png plots far_acc_only.json; guide_acc_target_parser.png plots acc_target_parser.json; guide_oracle.png plots
 data/analysis/summaries/oracle_reference.json.
 """
 from __future__ import annotations
@@ -262,6 +262,44 @@ def far_rule() -> None:
   fig.tight_layout(); fig.savefig(OUT / "guide_far_rule.png", dpi=130); plt.close(fig)
 
 
+def acc_target_parser() -> None:
+  """The ACC target alone against 2.6: file size and braking outcomes over every drive set, from acc_target_parser.json."""
+  J = json.loads((SUM / "acc_target_parser.json").read_text()); F, A = J["file_size"], J["by_version_and_set"]
+  M = J["hard_and_mild_moving_vs_standstill"]; ALL = "all sets"
+  col = {"vision only": VIS, "2.6": V21, "ACC target only": V23}
+  fig, axs = plt.subplots(1, 5, figsize=(13, 3.6), gridspec_kw={"width_ratios": [1.5, 1, 1, 1, 1]})
+  ms = ["code_lines", "constants", "state_attributes", "conditions"]; x = np.arange(len(ms))
+  for k, (v, dx) in enumerate((("2.6", -0.2), ("ACC target only", 0.2))):
+    b = axs[0].bar(x + dx, [F[v][m] for m in ms], 0.38, color=col[v], label=v)
+    for bi, m in zip(b, ms):
+      axs[0].text(bi.get_x() + bi.get_width() / 2, F[v][m] + 2, F[v][m], ha="center", fontsize=7.5, color=INK)
+  axs[0].set_xticks(x, ["code\nlines", "constants", "state", "conditions"]); axs[0].legend(fontsize=8)
+  axs[0].set_title("openpilot file", loc="left", fontsize=10)
+  for ax, kind in zip(axs[1:3], ("hard", "mild")):
+    for i, v in enumerate(("2.6", "ACC target only")):
+      mv, st = M[v][kind]["moving"], M[v][kind]["standstill"]
+      ax.bar(i, mv, 0.6, color=col[v])
+      if st:
+        ax.bar(i, st, 0.6, bottom=mv, color="white", edgecolor=col[v], hatch="////")
+      ax.text(i, mv + st + 0.5, f"{mv}" + (f" + {st}" if st else ""), ha="center", fontsize=8, color=INK)
+    ax.set_xticks([0, 1], ["2.6", "ACC target\nonly"]); ax.set_ylim(0, max(M[v][kind]["moving"] + M[v][kind]["standstill"] for v in M if v != "note") * 1.3)
+    ax.set_title(f"{kind} radar-only episodes", loc="left", fontsize=10)
+  axs[1].text(1.35, M["ACC target only"]["hard"]["moving"] + 2, "hatched:\nholds at\nstandstill", fontsize=7, color=INK2, va="bottom")
+  axs[1].set_xlim(-0.5, 2.1)
+  for ax, m, t in ((axs[3], "unnecessary_s", "unnecessary braking (oracle)"), (axs[4], "missed_s", "missed braking (oracle)")):
+    vs = ["vision only", "2.6", "ACC target only"]; y = [A[v][ALL][m] for v in vs]
+    ax.bar(range(3), y, 0.6, color=[col[v] for v in vs])
+    for i, yi in enumerate(y):
+      ax.text(i, yi + 1, f"{yi:g}", ha="center", fontsize=8, color=INK)
+    ax.set_xticks(range(3), ["vision\nonly", "2.6", "ACC target\nonly"]); ax.set_ylabel("s"); ax.set_title(t, loc="left", fontsize=10)
+  for ax in axs:
+    ax.yaxis.grid(True, color=GRID); ax.set_axisbelow(True)
+  d = J["disagreement"]["share_of_moving_time_differing_by_more_than_0.3_mps2"]
+  fig.suptitle(f"Every drive set, {A['ACC target only'][ALL]['moving_h']:.1f} moving h: the two files ask for different accelerations (> 0.3 m/s²) on {d * 100:.2f} % of moving time",
+               x=0.01, ha="left", fontsize=9, color=INK2)
+  fig.tight_layout(); fig.savefig(OUT / "guide_acc_target_parser.png", dpi=130); plt.close(fig)
+
+
 if __name__ == "__main__":
-  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger(); oracle(); far_rule()
+  pipeline(); lead_guards(); cases(); road_stats(); parts_ledger(); oracle(); far_rule(); acc_target_parser()
   print("wrote", ", ".join(sorted(p.name for p in OUT.glob("guide_*.png"))))
