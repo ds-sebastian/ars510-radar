@@ -166,8 +166,15 @@ upstream is the ACC target alone, written the way opendbc writes radar interface
   `ACC_TARGET_2` (same file: [`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc));
 - `opendbc/car/toyota/ars510_acc_target.py`: a CANParser on those messages that publishes one point at 20 Hz and reports
   `canError` when they stop (26 code lines; same file: [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py));
-- in `values.py` the radar DBC for the radar-ACC RAV4 2022 and 2023-25 platforms (so `radarUnavailable` is false there),
-  and in `radar_interface.py` the dispatch to it.
+- in `values.py` the radar DBC for the radar-ACC RAV4 2022 and 2023-25 platforms, and in `radar_interface.py` the
+  dispatch to it;
+- in `interface.py` detection: the radar counts as available only with the known ARS510 firmware (`8821F0R03100`, for a
+  cold start) or its ACC target (0x235) seen on bus 1 at fingerprinting. Other radar-ACC RAV4 radars, such as the 2022
+  firmware `8821F0R01100` that has never been seen sending these frames, stay radarless; without this check they would
+  report a permanent CAN error. Selecting the parser by the car's radar DBC name follows smasher816's routing branch
+  (fixed in #72);
+- `opendbc/car/toyota/tests/test_ars510_acc_target.py`: recorded and packed frames, no target, a stuck counter, a silent
+  radar, the 20 Hz cadence and the detection.
 
 With the patch, opendbc's Toyota, platform-config, DBC-parser and car-interface tests pass and its ruff rules hold.
 Through opendbc's own CANParser the DBC decodes the bundled frames exactly like the reference decoder
