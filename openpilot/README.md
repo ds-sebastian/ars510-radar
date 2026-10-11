@@ -33,7 +33,8 @@ while testing).
 |---|---|
 | `fused` (default) | `FUSED_CONFIG`: the `raw` decode with range fusion, one Kalman speed filter fusing the object list and the ACC target (0x235) by the radar's own uncertainty, and a path gate; it drives exactly like the `openpilot` version. Fewest false brakes ([docs/11](../docs/11_profiles_compared.md)) |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode with only what radard needs, for research and comparison. Velocity excursions reach the planner unfiltered (three times the hard radar-only braking of `fused`); the installer prints a warning. `stock` and `default` are its older names |
-| `openpilot` | the upstream version ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
+| `openpilot` | the single-file version of `fused` ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
+| `acc` | the radar's ACC target alone as one point, the upstream proposal ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), opendbc's CANParser): no object list, no filter; every other car comes from the camera ([docs/10](../docs/10_research_directions.md#towards-an-upstream-comma-interface)) |
 | `colored` | experimental: `COLORED_CONFIG`, `fused` with a colored-noise (bias) state for the object list; road tests only ([docs/12](../docs/12_kalman_filter.md#kalman-variants-tested)) |
 
 Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,
@@ -45,11 +46,13 @@ Older names still work and print what they select: `anchor` / `steady` → `fuse
 |---|---|---|
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged |
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
-| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the upstream version (used by `--profile openpilot`) |
+| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the single-file `fused` (used by `--profile openpilot`) |
+| `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone (used by `--profile acc`) |
+| `../upstream/toyota_tss2_ars510.dbc` | `opendbc/dbc/toyota_tss2_ars510.dbc` | its DBC: the two ACC target messages |
 | 4-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)` |
 
 The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC; the decoder reassembles the 106-frame
-record in Python, so the device needs only the package.
+record in Python. The only DBC installed on the device is `toyota_tss2_ars510.dbc`, which the `acc` profile parses.
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 - **detection** in `_get_params`: a radar-ACC Toyota whose radar firmware is `8821F0R03100`, or whose fingerprint saw

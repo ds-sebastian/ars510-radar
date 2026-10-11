@@ -25,7 +25,7 @@ def _fake_opendbc() -> dict:
     trackId, dRel, yRel, vRel = 0, 0.0, 0.0, 0.0
 
   class Errors:
-    radarUnavailableTemporary = False
+    radarUnavailableTemporary = canError = False
 
   class RadarData:
     RadarPoint = Point

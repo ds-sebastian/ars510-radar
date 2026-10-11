@@ -14,7 +14,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 |---|---|---|---|---|
 | what it publishes | the decoded object list: validity, IDs, ego subtraction | the object list through range fusion + one Kalman speed filter | the same filter, also fusing the radar's ACC target, plus path gates and the far rule | only the radar's ACC target (0x235 / 0x237), as one point; no object list |
 | filter settings | — | scalar process scale, robust update and readiness threshold | also the ACC target's weight; [definitions and evidence](12_kalman_filter.md#the-model) | none |
-| code | fork build: relink and saturation guard on the shared decode ([below](#how-each-profile-works)) | fork build: speed filter and range fusion | the openpilot version is 187 code lines in all ([10](10_research_directions.md#parts-of-the-openpilot-file)) | 33 code lines in all ([10](10_research_directions.md#the-acc-target-alone--candidate)) |
+| code | fork build: relink and saturation guard on the shared decode ([below](#how-each-profile-works)) | fork build: speed filter and range fusion | the openpilot version is 187 code lines in all ([10](10_research_directions.md#parts-of-the-openpilot-file)) | 26 code lines and a 7-signal DBC in all ([10](10_research_directions.md#the-acc-target-alone--candidate)) |
 | hard radar-only braking ticks, 20 held-out routes (while moving) | 93 | 48 | **16 (16)** | 66 (**14**) |
 | braking only the radar asked for, per hour (driver on the gas) | 1.75 (0.66) | 0.88 (0.22) | **0 (0)** | **0 (0)** |
 | first braking request vs vision only (148 paired driver brakes; 149 for `fused` and `acc`) | −0.15 s | −0.03 s | −0.01 s | −0.04 s |
@@ -48,8 +48,8 @@ whole file reads the ACC target.*
 - **`acc`** publishes only the radar's ACC target: the one car the radar's own ACC function follows, already chosen,
   converged and in path, with its fine distance (0.025 m), lateral position and closing speed. Toyota's ACC uses
   nothing else. The radar's target ID is the track ID; every other car comes from the camera through radard's usual
-  vision match. Protocol only: the target-present flags, a stale flag after 0.5 s without ACC frames, and a report
-  every 5th update (20 Hz).
+  vision match. Protocol only, through opendbc's CANParser and a two-message DBC: the target-present flags, `canError` when the
+  ACC frames stop (CANParser's timeout), and a report every 5th update (20 Hz).
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
 
@@ -122,7 +122,7 @@ What the radar adds, by profile:
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away seen later than the radar sees them |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 / h, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 | `fused` | closest to vision in feel, radar-only braking gone, as early as vision on average, one speed state | the head start over vision is small on average; 187 lines with tuned gates |
-| `acc` | 33 lines, nothing tuned; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision | a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (0.8-1 s later; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s (0.3 s for a faster car) and brake as with `fused` ([10](10_research_directions.md#the-acc-target-alone--candidate)); holds at standstill behind close objects; no road miles yet |
+| `acc` | a DBC and 26 lines, nothing tuned; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision | a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (0.8-1 s later; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s (0.3 s for a faster car) and brake as with `fused` ([10](10_research_directions.md#the-acc-target-alone--candidate)); holds at standstill behind close objects; no road miles yet |
 
 ## Assumptions and limits
 

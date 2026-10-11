@@ -1,0 +1,60 @@
+VERSION ""
+
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_:
+
+BU_: XXX
+BO_ 565 ACC_TARGET_1: 8 XXX
+ SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
+ SG_ STATE : 11|4@0+ (1,0) [0|15] "" XXX
+ SG_ REL_ACCEL : 23|8@0+ (0.125,-12.5) [-12.5|19.375] "m/s^2" XXX
+ SG_ REL_SPEED : 31|11@0+ (0.125,-128) [-128|127.875] "m/s" XXX
+ SG_ TARGET_ID : 60|5@0+ (1,0) [0|31] "" XXX
+
+BO_ 567 ACC_TARGET_2: 8 XXX
+ SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
+ SG_ LONG_DIST : 11|13@0+ (0.025,0) [0|204.775] "m" XXX
+ SG_ LAT_DIST : 30|12@0+ (0.01,-20) [-20|20.95] "m" XXX
+ SG_ PRESENT : 50|1@0+ (1,0) [0|1] "" XXX
+
+CM_ "Continental ARS510 front radar (Toyota RAV4 2022-25, fwdRadar 8821F0R03100), radar bus: the target the radar's own ACC follows. The 0x80 object list and 0x85 metadata record span many frames and are not described here.";
+CM_ BO_ 565 "ACC target, part 1: 50 Hz, content updated once per 60 ms radar cycle.";
+CM_ SG_ 565 STATE "5 = target present, 1 = no target (all other fields zero).";
+CM_ SG_ 565 REL_ACCEL "Target acceleration relative to ego.";
+CM_ SG_ 565 REL_SPEED "Closing speed relative to ego, negative = closing.";
+CM_ SG_ 565 TARGET_ID "Changes when the radar switches to a different target.";
+CM_ BO_ 567 "ACC target, part 2: 50 Hz.";
+CM_ SG_ 567 LONG_DIST "Distance from the radar.";
+CM_ SG_ 567 LAT_DIST "Lateral position, left positive.";
+CM_ SG_ 567 PRESENT "1 = target present.";
+VAL_ 565 STATE 5 "TARGET" 1 "NO_TARGET" ;

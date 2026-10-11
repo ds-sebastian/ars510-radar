@@ -101,7 +101,7 @@ The code comes in two versions that drive identically:
 | `raw` | `--profile raw` | the unfiltered radar decode, with only the validity rules radard needs | research and comparison only: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | the openpilot version: `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot |
 | `colored` | `--profile colored` | experimental: `fused` with the object list's slow speed error as its own state | road tests of the main alternative ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested)) |
-| `acc` | `--profile acc` | the radar's ACC target alone as one point (33 lines, the car Toyota's own ACC follows); every other car from the camera | road tests of the candidate replacement for `fused` ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
+| `acc` | `--profile acc` | the radar's ACC target alone as one point (a DBC and 26 lines, the car Toyota's own ACC follows); every other car from the camera; also the upstream proposal | road tests of the candidate replacement for `fused` ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
 | `shared_speed`, `shared_range` | `--profile shared_speed` / `shared_range` | research: every object and the ACC target through one gate-free Kalman model (speed, or range and range rate) | research only: the object list's correlated errors reach the planner ([docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)) |
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
@@ -229,7 +229,7 @@ numbers and a glossary.
 |---|---|
 | [`ars510/`](ars510) | pure-Python decoder: reassembly, CRC, slot decode, track IDs, the openpilot-shaped interface and its profiles (`FUSED_CONFIG`, `BASE_CONFIG` for `raw`) |
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
-| [`upstream/`](upstream) | the single-file upstream candidate (`ars510_radar.py`), tested against the corresponding fork configuration on bundled CAN samples |
+| [`upstream/`](upstream) | the upstream proposal: `opendbc_ars510.patch` for opendbc master, with its DBC (`toyota_tss2_ars510.dbc`) and the ACC-target interface (`ars510_acc_target.py`); also `ars510_radar.py`, `fused` in one file, tested against the fork configuration on bundled CAN samples |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (the decoder works from raw frames) |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |
 | [`data/`](data) | three CAN samples, an anonymised analysis dataset (3 drives, 88 min) and the summary JSONs behind every number in the docs |

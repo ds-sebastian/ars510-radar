@@ -9,11 +9,13 @@
    "functions": 13
   },
   "ACC target only": {
-   "code_lines": 33,
-   "constants": 4,
-   "state_attributes": 3,
-   "conditions": 12,
-   "functions": 3
+   "code_lines": 26,
+   "constants": 1,
+   "state_attributes": 1,
+   "conditions": 4,
+   "functions": 2,
+   "dbc_signals": 7,
+   "note": "upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc (opendbc CANParser); replays ran on an earlier hand-decoded version with the same points (33 code lines, 4 constants, 3 state attributes, 12 conditions)"
   }
  },
  "by_version_and_set": {
@@ -688,5 +690,28 @@
    "acc_target_brakes_more_than_2_6_by_0_3": 0,
    "acc_target_brakes_less_by_0_3": 0
   }
+ },
+ "dbc_version_check": {
+  "bundled_reports": 11028,
+  "identical_points": 11028,
+  "acc_frame_gaps": {
+   "0x235": {
+    "hours": 11.4,
+    "gaps_over_0_1": 13,
+    "gaps_over_0_2": 13,
+    "gaps_over_0_5": 13,
+    "max_s": 0.83,
+    "p99_9_s": 0.0405
+   },
+   "0x237": {
+    "hours": 11.4,
+    "gaps_over_0_1": 13,
+    "gaps_over_0_2": 13,
+    "gaps_over_0_5": 13,
+    "max_s": 0.83,
+    "p99_9_s": 0.0405
+   }
+  },
+  "note": "points through opendbc CANParser vs ars510.support; gaps over 0.2 s (CANParser timeout) are also over 0.5 s (the earlier staleness check)"
  }
 }

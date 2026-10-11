@@ -1,9 +1,9 @@
 {
  "provenance": "research-workspace run 2026-09-26 (SCR-129), imported numbers, not a bundled rerun",
- "field": "0x235 byte 2 (A235_ACC_TARGET_AREL, LE 16|8)",
+ "field": "0x235 byte 2 (ACC_TARGET_1.REL_ACCEL, byte 2)",
  "decode": "(code-100)*0.125 m/s^2 (docs/05), d vRel/dt, positive = opening; values below decoded at the earlier 0.1 (units_note)",
  "zero_point": "idle payload byte 2 = 0x64 = 100",
- "reference": "centred 0.2 s derivative of 0.5 s-smoothed A235_ACC_TARGET_VREL at the assumed 0.1 m/s per code, active frames only",
+ "reference": "centred 0.2 s derivative of 0.5 s-smoothed ACC_TARGET_1.REL_SPEED at the assumed 0.1 m/s per code, active frames only",
  "interpretation": "Relative-acceleration normalization against the same nominal velocity convention (an internal closure check).",
  "frames": {
   "discovery": 410557,

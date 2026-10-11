@@ -41,7 +41,7 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
 
 # Decoder profile (docs/08): "fused" (FUSED_CONFIG, default: one Kalman speed filter fusing the object list and the ACC
 # target by the radar's own uncertainty, plus a path gate, docs/12), "raw" (BASE_CONFIG: the unfiltered radar
-# decode, research only), "openpilot" (the upstream version, ars510_upstream.py: one file in opendbc style) or "acc"
+# decode, research only), "openpilot" (fused in one file, ars510_upstream.py) or "acc"
 # (the radar's ACC target alone as one point, ars510_acc_target.py, docs/10). "colored" is an experimental fused
 # variant for road tests (docs/12); "shared_speed" / "shared_range" are research files with one gate-free Kalman model
 # over every object (docs/10). `install.py --profile` rewrites this one line.
@@ -129,7 +129,7 @@ def _point(p: dict) -> structs.RadarData.RadarPoint:
 
 
 class UpstreamCandidate:
-  """The single-file upstream candidate behind the decoder's update_frame call (no aRel / yvRel: legacy defaults)."""
+  """The single-file fused version behind the decoder's update_frame call (no aRel / yvRel: legacy defaults)."""
   def __init__(self):
     from opendbc.car.toyota.ars510_upstream import Ars510Radar
     self.radar = Ars510Radar()

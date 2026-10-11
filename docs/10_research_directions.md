@@ -159,20 +159,34 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 
 ## Towards an upstream (comma) interface
 
-The integration installs on openpilot, sunnypilot, StarPilot and CarrotPilot as an appended hook. For upstream there is a separate, single-file
-candidate: [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (227 lines, 187 of them code). It holds the reassembler, the slot
+The integration installs on openpilot, sunnypilot, StarPilot and CarrotPilot as an appended hook. The proposal for
+upstream is the ACC target alone, written the way opendbc writes radar interfaces.
+[`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510.patch) applies to opendbc master and adds:
+- `opendbc/dbc/toyota_tss2_ars510.dbc`: the radar's two ACC target messages, 0x235 `ACC_TARGET_1` and 0x237
+  `ACC_TARGET_2` (same file: [`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc));
+- `opendbc/car/toyota/ars510_acc_target.py`: a CANParser on those messages that publishes one point at 20 Hz and reports
+  `canError` when they stop (26 code lines; same file: [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py));
+- in `values.py` the radar DBC for the radar-ACC RAV4 2022 and 2023-25 platforms (so `radarUnavailable` is false there),
+  and in `radar_interface.py` the dispatch to it.
+
+With the patch, opendbc's Toyota, platform-config, DBC-parser and car-interface tests pass and its ruff rules hold.
+Through opendbc's own CANParser the DBC decodes the bundled frames exactly like the reference decoder
+(`tests/test_acc_target_parser.py` checks the same in CI with a minimal parser). `install.py --profile acc` installs the
+same file and DBC on a fork. Why the ACC target and not the object list: [the ACC target alone](#the-acc-target-alone--candidate).
+
+If upstream wants every radar track instead, the candidate is the single file
+[`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (227 lines, 187 of them code). It holds the reassembler, the slot
 decode, track IDs, the ACC target association, the Kalman speed filter and the path gate, in opendbc's style: it passes
 opendbc's ruff rules (`upstream/ruff.toml`, checked in CI) and its `ty` type check. It is the smallest version with the
 same driving as the full filter: parts were removed alone and together on 27 replay drives, and every hard brake was
 checked against the radar's raw range, the camera and the driver ([12](12_kalman_filter.md#removing-parts-together));
 the wider ACC match and the path gate came from road drives ([12](12_kalman_filter.md#path-gate)). The ledger below
-says what each line buys and which parts an upstream PR could drop. Constants are fixed in the file, it runs one
-configuration, and points carry `trackId`, `dRel`, `yRel` and `vRel` (the other RadarPoint fields are deprecated
-upstream). A test keeps it equal to `fused` point for point (bundled samples; on 2.4.1 also two full road drives, 200,209 points, identical; `upstream_equality_2_4_1` in
-[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), and
-`install.py --profile openpilot` drives it on a fork. What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
+says what each line buys. A test keeps it equal to `fused` point for point (bundled samples; on 2.4.1 also two full road
+drives, 200,209 points, identical; `upstream_equality_2_4_1` in
+[`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), and `install.py --profile openpilot` drives it on a fork.
+What upstream review is likely to ask, from recent openpilot / opendbc radar PRs:
 
-1. **A clear reason the filter belongs in the interface.** Every upstream radar interface except Ford's passes the radar's
+1. **For the single file: a clear reason the filter belongs in the interface.** Every upstream radar interface except Ford's passes the radar's
    tracks through. The ARS510's object list has slow, correlated speed errors whose width the radar's `240|7` code
    follows as a continuous scale (◐); the unfiltered decode asks for hard braking three times as often as `fused`
    ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). The candidate's test covers the filter
@@ -219,7 +233,10 @@ each part.
 [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) publishes only the radar's ACC target
 (0x235 / 0x237: distance, lateral position, closing speed, target id) as openpilot's one radar point, the way Toyota's
 own ACC uses the radar ([05](05_acc_target_and_support.md)). It has no object list, reassembly, track-ID logic, ego speed,
-filter or gates: 33 code lines against 187, 4 constants against 28, 12 conditions against 85. The object list is the
+filter or gates: 26 code lines and a 7-signal DBC against 187 lines, 1 constant against 28, 4 conditions against 85.
+The replay numbers below come from an earlier hand-decoded version that publishes the same points (all 11,028 bundled
+reports identical); the DBC version reports `canError` instead of `radarUnavailableTemporary` when the frames stop
+(13 gaps in 11.4 h of drives, all longer than 0.5 s, so both versions flag the same ones). The object list is the
 tracker's raw state; the ACC target is its decision: one converged, in-path, moving target with a fine distance and a
 filtered speed. Each part of `ars510_radar.py` above rebuilds a piece of that decision:
 - the Kalman filter and the young-track factor rebuild the tracker's own speed filtering;

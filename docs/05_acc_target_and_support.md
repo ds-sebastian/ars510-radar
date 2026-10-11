@@ -8,22 +8,24 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows.
 The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and while idle
-every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0).
+every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0). Both DBCs name them `ACC_TARGET_1` (0x235) and `ACC_TARGET_2` (0x237):
+[`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) carries every field for Cabana,
+[`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc) only what the `acc` interface parses.
 
 ![ACC target frames](img/analysis/acc_frame_map.png)
 
 | field | conversion | conf. | DBC signal |
 |---|---|---|---|
-| closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | ● | `A235_ACC_TARGET_VREL` |
-| relative acceleration | 0x235 byte 2: `(code − 100) × 0.125` m/s², positive = opening | ● | `A235_ACC_TARGET_AREL` |
-| distance | 0x237 bits 39-51: `code × 0.025` m | ● | `A237_ACC_TARGET_DISTANCE_CODE` |
-| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive | ● layout, ◐ unit | `A237_ACC_TARGET_LAT` |
-| lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive | ◐ | `A235_ACC_TARGET_VLAT` |
-| target identity | 0x235 bits 0-4: constant while the radar follows one target | ◐ | `A235_TARGET_ID5` |
-| in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `A237_IN_PATH_*` |
-| relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `A235_ACC_TARGET_ALAT` |
-| tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `A237_TRACKER_A8`, `_B8` |
-| target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `A235_STATUS_MUX4` |
+| closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | ● | `REL_SPEED` |
+| relative acceleration | 0x235 byte 2: `(code − 100) × 0.125` m/s², positive = opening | ● | `REL_ACCEL` |
+| distance | 0x237 bits 39-51: `code × 0.025` m | ● | `LONG_DIST` |
+| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive | ● layout, ◐ unit | `LAT_DIST` |
+| lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive | ◐ | `LAT_SPEED` |
+| target identity | 0x235 bits 0-4: constant while the radar follows one target | ◐ | `TARGET_ID` |
+| in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
+| relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
+| tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `TRACKER_A`, `TRACKER_B` |
+| target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `STATE` (0x235), `PRESENT` (0x237) |
 
 `support.parse_acc_target(data235, data237)` returns all of them as one `AccTarget`; the single-field helpers
 (`parse_acc_target_vrel`, `_arel`, `_position`, `_range_code`) read the same bits.

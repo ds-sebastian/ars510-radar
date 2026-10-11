@@ -12,6 +12,7 @@ StarPilot, CarrotPilot and other forks: no fork file is patched in place. The in
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
   - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
   - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by --profile acc)
+    and its DBC to                       opendbc/dbc/toyota_tss2_ars510.dbc
   - copies two research files to         opendbc/car/toyota/ars510_shared_{speed,range}.py (--profile shared_speed / shared_range)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
@@ -24,9 +25,9 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   colored   experimental: fused with the object-list error as its own (colored-noise) state; fewer false closings
             offline, slower to let go of a far excursion that recovers (docs/12). For road tests only
-  openpilot the upstream version (upstream/ars510_radar.py, one file in opendbc style): fused in one file, driving
-            identically, points with trackId / dRel / yRel / vRel only. For driving the merge candidate
-  acc       the radar's ACC target alone as one point (upstream/ars510_acc_target.py, 33 code lines): the car Toyota's
+  openpilot fused in one file (upstream/ars510_radar.py, opendbc style), driving identically, points with trackId /
+            dRel / yRel / vRel only. The all-tracks upstream alternative; the proposal is acc
+  acc       the radar's ACC target alone as one point (upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc): the car Toyota's
             own ACC follows; every other car comes from the camera. Candidate replacement for fused (docs/10)
   shared_speed / shared_range  research only: every object and the ACC target through one gate-free Kalman model
             (speed, or range and range rate). The object list's correlated errors reach the planner (docs/10)
@@ -74,7 +75,8 @@ def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
   return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
           "upstream": toyota / "ars510_upstream.py", "acc_target": toyota / "ars510_acc_target.py",
-          "shared_speed": toyota / "ars510_shared_speed.py", "shared_range": toyota / "ars510_shared_range.py"}
+          "shared_speed": toyota / "ars510_shared_speed.py", "shared_range": toyota / "ars510_shared_range.py",
+          "acc_dbc": root / "opendbc" / "dbc" / "toyota_tss2_ars510.dbc"}
 
 
 def old_dbcs(root: Path) -> list[Path]:
@@ -169,6 +171,7 @@ def main() -> int:
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
   shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
   shutil.copyfile(REPO / "upstream" / "ars510_acc_target.py", t["acc_target"])
+  shutil.copyfile(REPO / "upstream" / "toyota_tss2_ars510.dbc", t["acc_dbc"])
   for name in ("shared_speed", "shared_range"):
     shutil.copyfile(HERE / "standalone" / f"ars510_{name}.py", t[name])
   src = (HERE / "ars510_radar_interface.py").read_text()

@@ -1,0 +1,196 @@
+diff --git a/opendbc/car/toyota/ars510_acc_target.py b/opendbc/car/toyota/ars510_acc_target.py
+new file mode 100644
+index 0000000..583cf69
+--- /dev/null
++++ b/opendbc/car/toyota/ars510_acc_target.py
+@@ -0,0 +1,41 @@
++"""Toyota / Continental ARS510 front radar (RAV4 2022+, fwdRadar 8821F0R03100): the car Toyota's ACC follows.
++
++Besides its raw object list (0x80, one record over 106 frames), the radar sends the one target its own ACC acts on
++(ACC_TARGET_1 / ACC_TARGET_2 in toyota_tss2_ars510.dbc): a converged, in-path track chosen by the radar's tracker, with
++distance, lateral position, closing speed and an ID that changes when the radar switches targets. Toyota's ACC uses
++nothing else. This interface publishes that target as openpilot's only radar point; radard matches it to the camera's
++lead as for any radar, and every other car comes from the camera. ars510-radar docs/10 ("The ACC target alone") has
++the evidence.
++"""
++from opendbc.can import CANParser
++from opendbc.car.structs import RadarData
++from opendbc.car.interfaces import RadarInterfaceBase
++
++RADAR_DBC = "toyota_tss2_ars510"
++
++
++class RadarInterface(RadarInterfaceBase):
++  def __init__(self, CP, *args, **kwargs):  # forks pass more (sunnypilot: CP_SP)
++    super().__init__(CP, *args, **kwargs)
++    self.rcp = CANParser(RADAR_DBC, [("ACC_TARGET_1", 50), ("ACC_TARGET_2", 50)], 1)
++
++  def update(self, can_strings):
++    self.frame += 1
++    self.rcp.update(can_strings)
++    if self.frame % 5 != 0:  # card calls update at 100 Hz: report at 20 Hz
++      return None
++
++    ret = RadarData()
++    if not self.rcp.can_valid:
++      ret.errors.canError = True
++      return ret
++
++    target, position = self.rcp.vl["ACC_TARGET_1"], self.rcp.vl["ACC_TARGET_2"]
++    if target["STATE"] == 5 and position["PRESENT"]:  # 1 = no target, with every field zero
++      pt = RadarData.RadarPoint()
++      pt.trackId = int(target["TARGET_ID"])
++      pt.dRel = position["LONG_DIST"]
++      pt.yRel = position["LAT_DIST"]
++      pt.vRel = target["REL_SPEED"]
++      ret.points = [pt]  # assigned as a list: forks with capnp-backed structs (sunnypilot) have no append
++    return ret
+diff --git a/opendbc/car/toyota/interface.py b/opendbc/car/toyota/interface.py
+index 2090e7f..1da1eae 100644
+--- a/opendbc/car/toyota/interface.py
++++ b/opendbc/car/toyota/interface.py
+@@ -90,7 +90,7 @@ class CarInterface(CarInterfaceBase):
+ 
+     ret.radarUnavailable = Bus.radar not in DBC[candidate]
+ 
+-    # since we don't yet parse radar on TSS2 radar-based ACC cars, gate longitudinal behind alpha toggle
++    # TSS2 radar-based ACC cars: only the ARS510's ACC target is parsed (ars510_acc_target.py); gate longitudinal behind alpha toggle
+     if ret.flags & ToyotaFlags.RADAR_ACC:
+       ret.alphaLongitudinalAvailable = True
+ 
+diff --git a/opendbc/car/toyota/radar_interface.py b/opendbc/car/toyota/radar_interface.py
+index 207b5a1..c819f8a 100755
+--- a/opendbc/car/toyota/radar_interface.py
++++ b/opendbc/car/toyota/radar_interface.py
+@@ -2,7 +2,8 @@
+ from opendbc.can import CANParser
+ from opendbc.car import Bus
+ from opendbc.car.structs import RadarData
+-from opendbc.car.toyota.values import DBC, ToyotaFlags
++from opendbc.car.toyota.values import ARS510_RADAR, DBC, ToyotaFlags
++from opendbc.car.toyota.ars510_acc_target import RadarInterface as Ars510RadarInterface
+ from opendbc.car.interfaces import RadarInterfaceBase
+ 
+ 
+@@ -35,11 +36,14 @@ class RadarInterface(RadarInterfaceBase):
+ 
+     self.valid_cnt = {key: 0 for key in self.RADAR_A_MSGS}
+ 
+-    self.rcp = None if CP.radarUnavailable else _create_radar_can_parser(CP)
++    self.ars510 = Ars510RadarInterface(CP) if DBC[CP.carFingerprint].get(Bus.radar) == ARS510_RADAR else None
++    self.rcp = None if CP.radarUnavailable or self.ars510 is not None else _create_radar_can_parser(CP)
+     self.trigger_msg = self.RADAR_B_MSGS[-1]
+     self.updated_messages = set()
+ 
+   def update(self, can_strings):
++    if self.ars510 is not None:
++      return self.ars510.update(can_strings)
+     if self.rcp is None:
+       return super().update(None)
+ 
+diff --git a/opendbc/car/toyota/values.py b/opendbc/car/toyota/values.py
+index efdef6a..e691e50 100644
+--- a/opendbc/car/toyota/values.py
++++ b/opendbc/car/toyota/values.py
+@@ -104,6 +104,10 @@ class ToyotaSecOcCarDocs(ToyotaCarDocs):
+   support_link: str = "#secoc-cars-with-recoverable-keys"
+ 
+ 
++# Continental ARS510 front radar (fwdRadar 8821F0R03100) on radar-ACC RAV4s: the target its own ACC follows
++ARS510_RADAR = 'toyota_tss2_ars510'
++
++
+ @dataclass
+ class ToyotaTSS2PlatformConfig(PlatformConfig):
+   dbc_dict: dict = field(default_factory=lambda: dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_adas'))
+@@ -111,7 +115,7 @@ class ToyotaTSS2PlatformConfig(PlatformConfig):
+   def init(self):
+     self.flags |= ToyotaFlags.TSS2 | ToyotaFlags.NO_DSU
+ 
+-    if self.flags & ToyotaFlags.RADAR_ACC:
++    if self.flags & ToyotaFlags.RADAR_ACC and self.dbc_dict.get(Bus.radar) != ARS510_RADAR:
+       self.dbc_dict = {Bus.pt: 'toyota_nodsu_pt_generated'}
+ 
+ 
+@@ -276,6 +280,7 @@ class CAR(Platforms):
+       ToyotaCarDocs("Toyota RAV4 Hybrid 2022", video="https://youtu.be/U0nH9cnrFB0"),
+     ],
+     TOYOTA_RAV4_TSS2.specs,
++    dbc_dict('toyota_nodsu_pt_generated', ARS510_RADAR),
+     flags=ToyotaFlags.RADAR_ACC,
+   )
+   TOYOTA_RAV4_TSS2_2023 = ToyotaTSS2PlatformConfig(
+@@ -284,6 +289,7 @@ class CAR(Platforms):
+       ToyotaCarDocs("Toyota RAV4 Hybrid 2023-25", video="https://youtu.be/4eIsEq4L4Ng"),
+     ],
+     TOYOTA_RAV4_TSS2.specs,
++    dbc_dict('toyota_nodsu_pt_generated', ARS510_RADAR),
+     flags=ToyotaFlags.RADAR_ACC | ToyotaFlags.ANGLE_CONTROL,
+   )
+   TOYOTA_RAV4_PRIME = ToyotaSecOCPlatformConfig(
+diff --git a/opendbc/dbc/toyota_tss2_ars510.dbc b/opendbc/dbc/toyota_tss2_ars510.dbc
+new file mode 100644
+index 0000000..2e9d4a7
+--- /dev/null
++++ b/opendbc/dbc/toyota_tss2_ars510.dbc
+@@ -0,0 +1,60 @@
++VERSION ""
++
++
++NS_ :
++    NS_DESC_
++    CM_
++    BA_DEF_
++    BA_
++    VAL_
++    CAT_DEF_
++    CAT_
++    FILTER
++    BA_DEF_DEF_
++    EV_DATA_
++    ENVVAR_DATA_
++    SGTYPE_
++    SGTYPE_VAL_
++    BA_DEF_SGTYPE_
++    BA_SGTYPE_
++    SIG_TYPE_REF_
++    VAL_TABLE_
++    SIG_GROUP_
++    SIG_VALTYPE_
++    SIGTYPE_VALTYPE_
++    BO_TX_BU_
++    BA_DEF_REL_
++    BA_REL_
++    BA_DEF_DEF_REL_
++    BU_SG_REL_
++    BU_EV_REL_
++    BU_BO_REL_
++    SG_MUL_VAL_
++
++BS_:
++
++BU_: XXX
++BO_ 565 ACC_TARGET_1: 8 XXX
++ SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
++ SG_ STATE : 11|4@0+ (1,0) [0|15] "" XXX
++ SG_ REL_ACCEL : 23|8@0+ (0.125,-12.5) [-12.5|19.375] "m/s^2" XXX
++ SG_ REL_SPEED : 31|11@0+ (0.125,-128) [-128|127.875] "m/s" XXX
++ SG_ TARGET_ID : 60|5@0+ (1,0) [0|31] "" XXX
++
++BO_ 567 ACC_TARGET_2: 8 XXX
++ SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
++ SG_ LONG_DIST : 11|13@0+ (0.025,0) [0|204.775] "m" XXX
++ SG_ LAT_DIST : 30|12@0+ (0.01,-20) [-20|20.95] "m" XXX
++ SG_ PRESENT : 50|1@0+ (1,0) [0|1] "" XXX
++
++CM_ "Continental ARS510 front radar (Toyota RAV4 2022-25, fwdRadar 8821F0R03100), radar bus: the target the radar's own ACC follows. The 0x80 object list and 0x85 metadata record span many frames and are not described here.";
++CM_ BO_ 565 "ACC target, part 1: 50 Hz, content updated once per 60 ms radar cycle.";
++CM_ SG_ 565 STATE "5 = target present, 1 = no target (all other fields zero).";
++CM_ SG_ 565 REL_ACCEL "Target acceleration relative to ego.";
++CM_ SG_ 565 REL_SPEED "Closing speed relative to ego, negative = closing.";
++CM_ SG_ 565 TARGET_ID "Changes when the radar switches to a different target.";
++CM_ BO_ 567 "ACC target, part 2: 50 Hz.";
++CM_ SG_ 567 LONG_DIST "Distance from the radar.";
++CM_ SG_ 567 LAT_DIST "Lateral position, left positive.";
++CM_ SG_ 567 PRESENT "1 = target present.";
++VAL_ 565 STATE 5 "TARGET" 1 "NO_TARGET" ;

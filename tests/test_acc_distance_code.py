@@ -22,9 +22,10 @@ def test_raw_code_has_no_offset():
 
 
 def test_dbc_distance_code_is_metric_with_zero_offset():
-    dbc = (Path(__file__).resolve().parents[1] / "dbc/ars510_radar_bus.dbc").read_text()
-    assert 'SG_ A237_ACC_TARGET_DISTANCE_CODE : 11|13@0+ (0.025,0) [0|204.775] "m"' in dbc
-    assert 'SG_ A235_ACC_TARGET_VREL : 31|11@0+ (0.125,-128)' in dbc
+    for path in ("dbc/ars510_radar_bus.dbc", "upstream/toyota_tss2_ars510.dbc"):
+      dbc = (Path(__file__).resolve().parents[1] / path).read_text()
+      assert 'SG_ LONG_DIST : 11|13@0+ (0.025,0) [0|204.775] "m"' in dbc
+      assert 'SG_ REL_SPEED : 31|11@0+ (0.125,-128)' in dbc
 
 
 def test_acc_target_arel_byte2_zero_at_idle_payload():
@@ -40,4 +41,4 @@ def test_acc_target_arel_byte2_zero_at_idle_payload():
 
 def test_dbc_arel_matches_parser():
     dbc = (Path(__file__).resolve().parents[1] / "dbc/ars510_radar_bus.dbc").read_text()
-    assert 'SG_ A235_ACC_TARGET_AREL : 16|8@1+ (0.125,-12.5) [-12.5|19.375] "m/s^2"' in dbc
+    assert 'SG_ REL_ACCEL : 23|8@0+ (0.125,-12.5) [-12.5|19.375] "m/s^2"' in dbc
