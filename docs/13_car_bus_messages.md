@@ -202,3 +202,12 @@ candidate. The rule for any implementation:
    "Malfunction" to "PCS off". This names the dash's input. It is the same kind of parked test as O5.
 3. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
    road. Neither route fits upstream openpilot; both are fork-only safety functions.
+
+### Advanced: a radar setting that drops only 0x343 (○ unexplored)
+
+A third route would make both of the above unnecessary: a Toyota-specific setting, if one exists, that stops only the
+radar's ACC command (0x343) while its PCS messages keep running. Standard communication control cannot do this, and no
+such setting is known. Someone with Toyota's dealer tool (Techstream) or service information could check whether the
+radar offers one. Explore it **only on a spare radar on the bench**: changing a radar's configuration can leave it
+faulted, AEB included, and is not something to try on a car that is driven. Report what you find through a
+[research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).
