@@ -273,6 +273,36 @@ The rule fixed before these results also required zero target episodes on the ow
 summaries had one. Reviewed afterwards, that episode was an early reaction to a real slowdown (the case below), and it
 is counted as such: a judgment made after the results, stated here.
 
+### On a second car
+
+A second driver's 2025 RAV4 Hybrid (same radar firmware, never used for tuning) supplied 20 drives with openpilot
+longitudinal or stock ACC: 8.8 h, 6.5 h moving, replayed open loop with the same harness. The gates were fixed before
+any variant was run on it. The driver had flagged 11 false brakes made by an older profile.
+
+| on the second car | hard radar-only | false mild | flagged false brakes ≤ −1 m/s² | lead flips / moving h | far new track (97 m) |
+|---|---|---|---|---|---|
+| older profile, as driven | | | 11 of 11 | | |
+| `fused` 2.5 | 1 | 6 | 1 | 491 | −1.78 m/s² |
+| 2.5 + only the ACC target beyond 60 m (X60) | 0 | 4 | 0 | 412 | −0.11 |
+| X60 without the young-track factor and std gate | 1 | 4 | 0 | 414 | −0.19 |
+| X60 without the path gate | 0 | 4 | 0 | 441 | −0.11 |
+| X60 without range fusion | 0 | 4 | 0 | 456 | −0.05 |
+
+- **`fused` 2.5** stays off the brakes at 10 of the 11 flagged moments (vision only stays off at all 11). Its one hard brake is a
+  lead at 86 m published at −7.3 m/s with no ACC target while the camera range opens. It also brakes −1.8 m/s² for
+  a new track at 97 m published at −11.9 m/s where the ACC target and camera read −3 to −3.6. Both are the far case of
+  the README's known quirk.
+- **X60** removes both and keeps all six real closings. On one real closing (a car at 86 m closing at 8.8 m/s) it starts braking 0.8 s
+  later than 2.5: the object list has the car 0.75 s before the radar picks it as its ACC target, and X60 waits for that
+  pick (vision only never brakes there). The owner car's one 95 m closing shows the same delay (about 1 s). That is
+  the trade: the ACC target's pickup delay on fast far closings against the far false braking 2.5 still has.
+- **The young-track factor and std gate are needed on this car too:** without them a new track at 31 m is published at
+  −13 m/s for 0.15 s and the planner asks −2.9 m/s².
+- **With X60, the path gate and range fusion only steady the lead** (flips +7 % and +11 % without them). Neither changes braking.
+
+Numbers: [`second_car_replay.json`](../data/analysis/summaries/second_car_replay.json). The speed noise that sets
+the filter's σ values is the same on both radar units ([06](06_accuracy.md#velocity)).
+
 ### What the summaries do
 
 ![summary updates in an owner-drive replay](img/analysis/summary_owner_case.png)

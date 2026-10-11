@@ -1,0 +1,180 @@
+{
+ "description": "Speed noise of the object list and the ACC target on two radar units (owner car and a second 2025 RAV4 Hybrid, same firmware), same definitions: the ACC target matched uniquely to an object list track (age >= 60, ego > 8 m/s, |lateral| < 2 m), runs of >= 6 s with one ACC id and one slot. fast = std of the second difference / sqrt(6) (m/s); resid = speed minus the object's own range slope over 33 records (RMS, m/s); obj_minus_acc mean / RMS (m/s); excursion share = share of time with a 1 s median |object - ACC| > 1 m/s. Run-length weighted.",
+ "second_unit_runs": 457,
+ "second_unit_minutes": 152.9,
+ "bands": {
+  "all": {
+   "runs": 457,
+   "minutes": 152.9,
+   "fast_noise_acc": {
+    "second_car": 0.027,
+    "owner": 0.025
+   },
+   "fast_noise_obj": {
+    "second_car": 0.11,
+    "owner": 0.123
+   },
+   "range_rate_resid_rms_acc": {
+    "second_car": 0.083,
+    "owner": 0.074
+   },
+   "range_rate_resid_rms_obj": {
+    "second_car": 1.991,
+    "owner": 2.352
+   },
+   "range_rate_bias_obj": {
+    "second_car": -0.363,
+    "owner": -0.337
+   },
+   "obj_minus_acc_mean": {
+    "second_car": -0.332,
+    "owner": -0.299
+   },
+   "obj_minus_acc_rms": {
+    "second_car": 0.9,
+    "owner": 0.984
+   },
+   "excursion_share_obj_vs_acc": {
+    "second_car": 0.185,
+    "owner": 0.227
+   }
+  },
+  "20-50 m": {
+   "runs": 267,
+   "minutes": 100.9,
+   "fast_noise_acc": {
+    "second_car": 0.027,
+    "owner": 0.028
+   },
+   "fast_noise_obj": {
+    "second_car": 0.086,
+    "owner": 0.088
+   },
+   "range_rate_resid_rms_acc": {
+    "second_car": 0.084,
+    "owner": 0.082
+   },
+   "range_rate_resid_rms_obj": {
+    "second_car": 1.527,
+    "owner": 1.716
+   },
+   "range_rate_bias_obj": {
+    "second_car": -0.271,
+    "owner": -0.334
+   },
+   "obj_minus_acc_mean": {
+    "second_car": -0.217,
+    "owner": -0.292
+   },
+   "obj_minus_acc_rms": {
+    "second_car": 0.671,
+    "owner": 0.77
+   },
+   "excursion_share_obj_vs_acc": {
+    "second_car": 0.114,
+    "owner": 0.163
+   }
+  },
+  "50-80 m": {
+   "runs": 109,
+   "minutes": 31.9,
+   "fast_noise_acc": {
+    "second_car": 0.026,
+    "owner": 0.023
+   },
+   "fast_noise_obj": {
+    "second_car": 0.16,
+    "owner": 0.141
+   },
+   "range_rate_resid_rms_acc": {
+    "second_car": 0.08,
+    "owner": 0.066
+   },
+   "range_rate_resid_rms_obj": {
+    "second_car": 3.046,
+    "owner": 2.64
+   },
+   "range_rate_bias_obj": {
+    "second_car": -0.568,
+    "owner": -0.278
+   },
+   "obj_minus_acc_mean": {
+    "second_car": -0.545,
+    "owner": -0.263
+   },
+   "obj_minus_acc_rms": {
+    "second_car": 1.442,
+    "owner": 1.014
+   },
+   "excursion_share_obj_vs_acc": {
+    "second_car": 0.357,
+    "owner": 0.25
+   }
+  },
+  ">=80 m": {
+   "runs": 49,
+   "minutes": 12.6,
+   "fast_noise_acc": {
+    "second_car": 0.024,
+    "owner": 0.023
+   },
+   "fast_noise_obj": {
+    "second_car": 0.206,
+    "owner": 0.22
+   },
+   "range_rate_resid_rms_acc": {
+    "second_car": 0.078,
+    "owner": 0.072
+   },
+   "range_rate_resid_rms_obj": {
+    "second_car": 3.831,
+    "owner": 4.347
+   },
+   "range_rate_bias_obj": {
+    "second_car": -0.717,
+    "owner": -0.679
+   },
+   "obj_minus_acc_mean": {
+    "second_car": -0.851,
+    "owner": -0.543
+   },
+   "obj_minus_acc_rms": {
+    "second_car": 1.735,
+    "owner": 2.029
+   },
+   "excursion_share_obj_vs_acc": {
+    "second_car": 0.42,
+    "owner": 0.471
+   }
+  }
+ },
+ "scale_check": {
+  "note": "object - ACC speed against ego speed on steady leads; scale and constant offset are not separable here",
+  "slope_per_mps": -0.00394,
+  "intercept": -0.116,
+  "implied_ground_scale": 0.9961,
+  "median_diff_by_ego": [
+   [
+    "(8, 15]",
+    -0.111
+   ],
+   [
+    "(15, 20]",
+    -0.157
+   ],
+   [
+    "(20, 25]",
+    -0.176
+   ],
+   [
+    "(25, 30]",
+    -0.146
+   ],
+   [
+    "(30, 40]",
+    -0.237
+   ]
+  ],
+  "interface_vground_scale": 0.99333
+ }
+}

@@ -79,6 +79,11 @@ With stock ACC (U1, 21 min) the radar's own command spans −0.52 to +0.20 m/s²
 `ALLOW_LONG_PRESS` 3, `MINI_CAR` 1 while it has a lead, mostly `PERMIT_BRAKING` 1, and `DISTANCE` pulses on button
 presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` stay 0. openpilot's own `ACC_CONTROL` sends
 `ALLOW_LONG_PRESS` 1.
+On a second car with a board in the radar's car-bus line, stock ACC passes the radar's 0x343 through unchanged: `MINI_CAR`
+equals ACC-target presence on 99.98 % of cruise-on cycles. Its command spans −0.83 to +0.72 m/s² while cruising, and stopped
+behind a lead with cruise off it sends a constant −0.30 m/s² (U1 does the same on 96 % of such cycles). How the command follows the ACC target is in
+[10](10_research_directions.md#learn-from-toyotas-own-longitudinal-control)
+([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json)).
 
 ## openpilot longitudinal: filter or disable
 

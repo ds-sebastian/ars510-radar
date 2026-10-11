@@ -23,6 +23,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 | **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed |
 | **vRel** vs camera | lower error than a constant zero or range differencing at every range (table below) |
 | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |
+| **speed noise**, second radar unit | object-list and ACC-target noise match the owner unit (fast noise 0.11 / 0.027 against 0.12 / 0.025 m/s) |
 | **trackId** | each ID in one slot only; 77 of 87 camera-checked tracks within 60 m keep one camera identity ≥ 95% of their life |
 
 ## Distance
@@ -128,6 +129,21 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 - **Stopped targets.** Against targets that video and odometry show stopped at 5-30 m, settled tracks read vRel with
   RMS 0.54 m/s (B and C).
 - **Timing.** On decelerating leads the radar's speed leads the camera's by 0.2-0.4 s (owner's StarPilot drives).
+- **A second radar unit behaves the same (◐).** On a second car with the same firmware (153 min of ACC-target runs),
+  the noise numbers that set `fused`'s σ values match the owner car's:
+
+  | | second unit | owner car |
+  |---|---|---|
+  | ACC-target speed, fast noise | 0.027 m/s | 0.025 m/s |
+  | object-list speed, fast noise | 0.11 m/s | 0.12 m/s |
+  | object-list minus ACC speed, mean / RMS | −0.33 / 0.90 m/s | −0.30 / 0.98 m/s |
+  | share of time the two differ by > 1 m/s (1 s median) | 18 % | 23 % |
+
+  The growth with range is the same: object-list fast noise is 0.09 / 0.16 / 0.21 m/s at 20-50 / 50-80 / ≥ 80 m on the
+  second unit. At 50-80 m the second unit's object list reads more closing than the owner's (−0.55 against −0.26 m/s).
+  The object-list minus ACC difference grows with ego speed (−0.11 m/s at 8-15 m/s, −0.24 m/s at 30-40 m/s), consistent
+  with the 0.149/0.15 ego alignment below. Scale and offset cannot be separated on these data. One set of constants
+  serves both units ([`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json)).
 
 ### Encoding constants and motion geometry
 

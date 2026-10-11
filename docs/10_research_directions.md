@@ -54,8 +54,15 @@ a turning lane. Those are likely two different parts of its pipeline; openpilot 
   (1.5 s and ≥ 6 s earlier); the `fused` profile leaves the lead choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
   and 0x235 also carries a filtered relative acceleration. `fused` already uses the speed as a measurement.
-- **The control law (to be fitted).** How Toyota turns distance, closing speed and relative acceleration into a braking
-  request shows only while Toyota's ACC is in control, which the study below records.
+- **The control law (◐, fitted on two cars).** While following, Toyota's 0x343 command is a linear law on its own ACC
+  target: about 0.02 m/s² per metre of gap error, 0.25 m/s² per m/s of closing speed, and a time gap of about 1.1 s (1-bar
+  setting, U1). The command trails the target through a short dead time (0.1 s), a slow first-order lag and a rate limit.
+  A second car's stock drive only fits once a **set-speed cap** is added: at or above the set speed Toyota holds about 0
+  instead of closing a large gap (u1 law R² −0.69 → 0.58 on the second car, U1 unchanged at 0.66). One law with that cap
+  fits both cars (time gap 1.07 s). The law also explains Toyota's patience on far leads: a car closing at 3.5 m/s becomes
+  the ACC target at 94 m, and Toyota holds +0.06 m/s² for 7 s. It first brakes at 66 m (about 15 s to contact) and
+  reaches −0.83 m/s² at 52 m. No lead change or cut-in has yet been seen under stock control without the driver on the gas
+  ([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json)).
 
 Proposed study:
 
@@ -183,8 +190,9 @@ upstream). A test keeps it equal to `fused` point for point (bundled samples; on
    interface (Delphi MRR, 272 lines, 184 of them code) clusters raw detections into tracks and associates them over time.
 2. **Small, separable PRs.** Decode and points first (opendbc, decode only, tested on recorded frames), the
    filter second with before/after plots and process-replay diffs.
-3. **Fleet evidence.** Replays come from one car and firmware (`8821F0R03100`), with a second car's road report on the
-   same firmware. Drives on other cars, through `--profile openpilot`, are what upstream would weigh.
+3. **Fleet evidence.** Replays come from two cars on one firmware (`8821F0R03100`): the owner's, and 8.8 h from a second
+   car that was never used for tuning ([12](12_kalman_filter.md#on-a-second-car)). Its radar unit has the same speed noise
+   ([06](06_accuracy.md#velocity)). Drives on other cars and firmware, through `--profile openpilot`, are what upstream would weigh.
 4. **Process replay coverage.** A route segment with the radar in openpilot's process-replay tests.
 5. **Alpha longitudinal compatibility.** Covered for `8821F0R03100`: after openpilot's UDS radar-disable request the
    radar stops only its car-bus messages and keeps sending bus 1 on an unfiltered radar line
@@ -201,13 +209,13 @@ upstream PR.
 | transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | 1.0 | no radar | required |
 | ACC target decode and association | 27 | 2.0 (range scale 0.4 x since 2.3) | +24 unjustified hard ticks on 27 drives; with the 0.25 x scale, one road late brake -1.47 -> -2.36 m/s2 | keep |
 | Kalman speed filter (one state, uncertainty-weighted) | 22 | 2.0 | hard radar-only braking about 3x (raw) | keep |
-| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 (on 2.0) | keep |
-| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 (on 2.0) | keep |
+| young-track factor | 3 | 2.0 | further-drive hard ticks 2 -> 11 (on 2.0); second car (with the std gate, on X60): a −2.9 m/s² brake on a young track | keep |
+| speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8 (on 2.0); second car: see the young-track factor | keep |
 | age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking against the hindsight-lead oracle (3.3 -> 3.7 s) | keep |
-| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6 | keep for lead stability; droppable at that cost |
+| range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6; second car (on X60): braking neutral, flips +11 % | keep for lead stability; droppable at that cost |
 | ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | neutral (onset +12 ms); folded into the decode factor, so it costs no line | keep (no line) |
 | state pruning | 7 | 2.0 | unbounded state | required |
-| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match; on 2.4): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes | candidate: keep, or move into radard as a lateral gate |
+| path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match; on 2.4): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car on X60: braking neutral, flips +7 % | candidate: keep, or move into radard as a lateral gate |
 | fork compatibility (CP_SP argument, points assigned as a list) | 2 | 2.2 | crashes on sunnypilot | keep (harmless upstream) |
 
 Numbers: [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json), with the evidence file for

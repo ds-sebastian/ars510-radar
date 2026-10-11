@@ -31,16 +31,16 @@
    "part": "young-track factor",
    "code_lines": 3,
    "since": "2.0",
-   "evidence": "fused_filter.json part_removed_34_drives",
-   "without": "further-drive hard ticks 2 -> 11",
+   "evidence": "fused_filter.json part_removed_34_drives ; second_car_replay.json",
+   "without": "further-drive hard ticks 2 -> 11; second car on X60 (with the std gate): a -2.9 m/s2 brake on a young track",
    "upstream": "keep"
   },
   {
    "part": "speed-std publication gate",
    "code_lines": 2,
    "since": "2.0",
-   "evidence": "fused_filter.json part_removed_34_drives",
-   "without": "further-drive hard ticks 2 -> 8",
+   "evidence": "fused_filter.json part_removed_34_drives ; second_car_replay.json",
+   "without": "further-drive hard ticks 2 -> 8; second car: see the young-track factor",
    "upstream": "keep"
   },
   {
@@ -55,8 +55,8 @@
    "part": "range fusion (incl. ACC distance as the followed car's range)",
    "code_lines": 9,
    "since": "2.0 (ACC distance 2.1)",
-   "evidence": "fused_filter.json, tracker_association.json",
-   "without": "braking neutral; lead flips +39 %, target episodes 4 -> 6",
+   "evidence": "fused_filter.json, tracker_association.json ; second_car_replay.json",
+   "without": "braking neutral; lead flips +39 %, target episodes 4 -> 6; second car on X60: braking neutral, flips +11 %",
    "upstream": "keep for lead stability; droppable at that cost"
   },
   {
@@ -79,8 +79,8 @@
    "part": "path gate (yaw rate)",
    "code_lines": 6,
    "since": "2.3 (2.2 from 60 m)",
-   "evidence": "lead_choice_guards.json",
-   "without": "back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes",
+   "evidence": "lead_choice_guards.json ; second_car_replay.json",
+   "without": "back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car on X60: braking neutral, flips +7 %",
    "upstream": "candidate: keep, or move into radard as a lateral gate"
   },
   {

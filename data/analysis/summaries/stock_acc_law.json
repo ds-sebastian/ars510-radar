@@ -1,0 +1,121 @@
+{
+ "description": "Toyota's stock ACC command (0x343 ACCEL_CMD from the radar) against the radar's ACC target on two cars: U1 (229 s following at 30-43 m) and the second car's stock-ACC drive (138 s scoreable: cruise on, no gas or brake, >= 2 s after gas, ACC target present). Law: u = c_d d + c_v vEgo + c_vr vRel + c_ar aRel + c0 through a dead time, first-order lag and rate limit fitted on U1, simulated free-running from the inputs; optional set-speed cap u = min(u, k (v_set - v) + c). Exploratory.",
+ "u1_law": {
+  "lag_s": 0.1,
+  "tau_s": 2.5,
+  "rate_mps3": 0.3,
+  "time_gap_s": 1.022,
+  "gain_per_m": 0.019,
+  "gain_vrel_per_s": 0.2478,
+  "r2_u1": 0.6571,
+  "u1_steady_state_time_gap_s": 1.099
+ },
+ "second_car": {
+  "cmd_passes_filter": {
+   "mini_car_equals_acc_present_cruise_on": 0.9998,
+   "note": "the second car has a board in the radar's car-bus line; on stock ACC it passes the radar's 0x343 unchanged"
+  },
+  "set_speed_minus_vego_median": {
+   "second_car": -0.3,
+   "u1": 1.01
+  },
+  "u1_law_no_cap": {
+   "second_car": {
+    "r2": -0.691,
+    "rms": 0.257,
+    "n_s": 137.7
+   },
+   "u1": {
+    "r2": 0.663,
+    "rms": 0.0695,
+    "n_s": 237.8
+   }
+  },
+  "u1_law_plus_cap": {
+   "k": 0.179,
+   "c": 0.109,
+   "second_car": {
+    "r2": 0.584,
+    "rms": 0.1275,
+    "n_s": 137.7
+   },
+   "u1": {
+    "r2": 0.659,
+    "rms": 0.0699,
+    "n_s": 237.8
+   }
+  },
+  "joint_law_both_cars": {
+   "T_s": 1.073,
+   "d0_m": 0.85,
+   "k_c": 0.246,
+   "second_car": {
+    "r2": 0.818,
+    "rms": 0.0844,
+    "n_s": 137.7
+   },
+   "u1": {
+    "r2": 0.563,
+    "rms": 0.0791,
+    "n_s": 237.8
+   }
+  },
+  "far_closing": {
+   "note": "a closing car becomes the ACC target at 94 m",
+   "acquisition": {
+    "t_after_acq_s": 0.0,
+    "d_m": 94.3,
+    "vrel": -3.5,
+    "ttc_s": 26.9,
+    "cmd": 0.064,
+    "v_ego": 32.6,
+    "v_set": 32.2,
+    "vision_x": 77.8
+   },
+   "first_cmd_le_-0.1": {
+    "t_after_acq_s": 7.05,
+    "d_m": 66.2,
+    "vrel": -4.5,
+    "ttc_s": 14.7,
+    "cmd": -0.1,
+    "v_ego": 32.1,
+    "v_set": 32.2,
+    "vision_x": 65.0
+   },
+   "first_cmd_le_-0.3": {
+    "t_after_acq_s": 7.95,
+    "d_m": 62.3,
+    "vrel": -4.38,
+    "ttc_s": 14.2,
+    "cmd": -0.317,
+    "v_ego": 31.8,
+    "v_set": 32.2,
+    "vision_x": 60.5
+   },
+   "cmd_min": {
+    "t_after_acq_s": 10.3,
+    "d_m": 51.7,
+    "vrel": -4.12,
+    "ttc_s": 12.5,
+    "cmd": -0.826,
+    "v_ego": 30.2,
+    "v_set": 32.2,
+    "vision_x": 53.5
+   }
+  },
+  "lead_changes": "three ACC-target switches, all under gas override or at the set-speed cap: not usable"
+ },
+ "u1_standstill_hold": {
+  "note": "not engaged, stopped (< 0.5 m/s) behind a lead (MINI_CAR 1): ACCEL_CMD value shares",
+  "stopped_by_mini_car": {
+   "0": {
+    "n": 2026,
+    "share_cmd_minus03": 0.014313919052319843
+   },
+   "1": {
+    "n": 2338,
+    "share_cmd_minus03": 0.9640718562874252
+   }
+  }
+ }
+}

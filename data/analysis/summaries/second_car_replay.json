@@ -1,0 +1,301 @@
+{
+ "description": "Second car (2025 RAV4 Hybrid, radar firmware 8821F0R03100, never used for tuning): 20 drives with openpilot longitudinal or stock ACC, 55 twelve-segment chains, 8.8 h (6.5 h moving), replayed open loop through the pinned openpilot of the 27-drive suite with vision only, 2.5 fused and the X60 slim variants. Gates fixed before any variant result: hard radar-only braking 0 (a_target <= -2 while vision >= -0.5); false mild episodes (a_target <= -1 while vision >= -0.3, no driver/ego braking and no camera or ACC-target closing) not above 2.5; the driver's 11 reported false brakes (from an older profile) not braked for more often than 2.5; the six real closings 2.5 brakes for kept, first -1 m/s2 at most 0.5 s after 2.5 (the far new track excepted, where the ACC target and camera read about -3 to -3.6 m/s).",
+ "hours": 8.842,
+ "moving_hours": 6.493,
+ "vision_only": {
+  "known_false_le_minus1": 0
+ },
+ "as_driven_older_profile": {
+  "known_false_le_minus1": 11,
+  "known_false": 11
+ },
+ "versions": {
+  "2.5 fused (main)": {
+   "hard": 1,
+   "false_mild": 6,
+   "mild": 25,
+   "known_false_le_minus1": 1,
+   "flips_per_moving_h": 491.0,
+   "far_new_track_min_a": -1.78,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.46,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.44,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.91,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -1.78,
+     "delay_vs_2_5_s": 0.0
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": false,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": true
+   }
+  },
+  "X60: 2.5 + only the ACC target beyond 60 m": {
+   "hard": 0,
+   "false_mild": 4,
+   "mild": 19,
+   "known_false_le_minus1": 0,
+   "flips_per_moving_h": 412.0,
+   "far_new_track_min_a": -0.11,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.55,
+     "delay_vs_2_5_s": 0.8
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.44,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.91,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -0.11,
+     "delay_vs_2_5_s": null
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": true,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": false
+   }
+  },
+  "X60 without young-track factor and std gate": {
+   "hard": 1,
+   "false_mild": 4,
+   "mild": 20,
+   "known_false_le_minus1": 0,
+   "flips_per_moving_h": 414.0,
+   "far_new_track_min_a": -0.19,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.55,
+     "delay_vs_2_5_s": 0.8
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.44,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.91,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -0.19,
+     "delay_vs_2_5_s": null
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": false,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": false
+   }
+  },
+  "X60 without path gate": {
+   "hard": 0,
+   "false_mild": 4,
+   "mild": 21,
+   "known_false_le_minus1": 0,
+   "flips_per_moving_h": 441.0,
+   "far_new_track_min_a": -0.11,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.55,
+     "delay_vs_2_5_s": 0.8
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.44,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.91,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -0.11,
+     "delay_vs_2_5_s": null
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": true,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": false
+   }
+  },
+  "X60 without young factor, std gate and path gate": {
+   "hard": 1,
+   "false_mild": 4,
+   "mild": 22,
+   "known_false_le_minus1": 0,
+   "flips_per_moving_h": 443.0,
+   "far_new_track_min_a": -0.19,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.55,
+     "delay_vs_2_5_s": 0.8
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.44,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.91,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -0.19,
+     "delay_vs_2_5_s": null
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": false,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": false
+   }
+  },
+  "X60 without range fusion": {
+   "hard": 0,
+   "false_mild": 4,
+   "mild": 20,
+   "known_false_le_minus1": 0,
+   "flips_per_moving_h": 456.0,
+   "far_new_track_min_a": -0.05,
+   "real_closings": [
+    {
+     "case": "closing at 86 m (ACC -8.7 m/s)",
+     "min_a": -1.54,
+     "delay_vs_2_5_s": 1.1
+    },
+    {
+     "case": "closing at 17 m",
+     "min_a": -2.46,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 91 m (ACC -7.3 m/s)",
+     "min_a": -1.16,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 20 m",
+     "min_a": -1.01,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "closing at 14 m",
+     "min_a": -1.89,
+     "delay_vs_2_5_s": 0.0
+    },
+    {
+     "case": "far new track at 97 m (ACC -3.6 m/s, camera about -3)",
+     "min_a": -0.05,
+     "delay_vs_2_5_s": null
+    }
+   ],
+   "passes_all_gates": false,
+   "gates": {
+    "hard_0": true,
+    "false_mild_le_6": true,
+    "known_false_le_1": true,
+    "real_kept": false
+   }
+  }
+ },
+ "notes": [
+  "2.5's hard brake: a lead published at 86 m, -7.3 m/s, with no ACC target and the camera range opening; X60 removes it.",
+  "X60's real-closing delay: on the 86 m closing the object list has the car 0.75 s before the radar picks it as its ACC target; X60 waits for that pick (vision only never brakes there). The owner car's 95 m closing showed the same (about 1 s).",
+  "Without the young-track factor and std gate a new track at 31 m is published at -13 m/s for 0.15 s (ACC target, camera and range slope -2 to -3) and the planner asks -2.9 m/s2."
+ ]
+}
