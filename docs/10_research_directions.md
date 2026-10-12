@@ -157,9 +157,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 ## For the integration
 
-- **Other cars and firmware.** *Does the layout hold on other firmware?* openpilot's fingerprints list `8821F0R01100` for
-  the RAV4 2022 platform, the only other `8821F0R` entry besides the documented `8821F0R03100`. *Data:* one capture from
-  such a car confirms the layout and adds it to `ARS510_FW_VERSIONS` (until then the installer detects it by the bus-1
-  fallback on a warm restart); a second unit also shows whether 0x500 / 0x502 differ per unit.
+- **Per-unit values.** Both RAV4 radar firmwares send the same bus ([01](01_radar_bus.md#radar-firmware)). *Do
+  0x500 / 0x502 differ per unit?* *Data:* captures from further units.
 - **More closed-loop driving** with `acc` and `fused`, on a second car or with another driver
   (question 8 above).

@@ -151,8 +151,9 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 
 - **One owner's car.** The decode and the 27-drive replays come from one RAV4 2022 with radar firmware `8821F0R03100`; a second
   driver's 2025 RAV4 Hybrid with the same firmware reported similar road numbers ([08](docs/08_openpilot_integration.md#on-the-road)).
-  Firmware `8821F0R01100`, also in openpilot's fingerprints, is detected by its bus-1 messages when the radar is
-  already running at fingerprinting (a warm restart); one capture from such a car adds it to the firmware list.
+  Firmware `8821F0R01100`, the other RAV4 radar in openpilot's fingerprints, sends the same messages: on opendbc's two
+  2022 RAV4 test routes (Hybrid and ICE) it carries the full ARS510 bus, and the `acc` and `fused` parsers decode it
+  ([01](docs/01_radar_bus.md#radar-firmware)). The integration therefore selects the parser by the car model.
 - **Far range.** The object list's speed sometimes reads a far car closing several m/s faster than it is, for 1-10 s
   ([07](docs/07_velocity_excursions.md)). The ACC target is present for 99 % of radar-lead time at 15-80 m and 66 %
   beyond 80 m ([08](docs/08_openpilot_integration.md#on-the-road)); beyond 60 m both profiles publish the car the ACC

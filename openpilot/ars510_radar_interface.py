@@ -4,8 +4,8 @@ Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interfac
 decoder package as `opendbc/car/toyota/ars510/`. The installer appends a marked block to the end of
 `opendbc/car/toyota/interface.py` that calls `hook_car_interface(CarInterface)`; every other file of the fork stays as shipped,
 so the same install works on openpilot and its forks (sunnypilot, StarPilot, CarrotPilot, FrogPilot-style trees):
-  - detection: a RADAR_ACC Toyota whose radar FW is in ARS510_FW_VERSIONS, or with 0x80 and 0x85 on bus 1 at
-    fingerprinting, gets radarUnavailable = False (stock keeps radar-ACC Toyotas radar-unavailable);
+  - detection: the radar-ACC RAV4 2022 and 2023-25 platforms (ARS510_PLATFORMS) get radarUnavailable = False (stock
+    keeps radar-ACC Toyotas radar-unavailable); C-HR and Yaris keep the fork's behaviour;
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. ToyotaFlags stays as shipped, so fork flag bits stay free.
 Worth knowing (docs/07, docs/08, docs/12):
@@ -50,12 +50,9 @@ STANDALONE = {"acc": "ars510_acc_target", "shared_speed": "ars510_shared_speed",
 PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}
 PROFILE = PROFILES["acc"]
 
-# Radar firmware confirmed to be a Continental ARS510 that sends the native object list (0x80) on bus 1.
-# 8821F0R01100 (RAV4 2022 platform) is the same part series but unconfirmed; it is detected by the bus-1 fallback when
-# the radar is already running at fingerprinting.
-ARS510_FW_VERSIONS = {
-  b'\x018821F0R03100\x00\x00\x00\x00',
-}
+# Radar-ACC RAV4 platforms: both radar firmwares in openpilot's fingerprints (8821F0R01100, 8821F0R03100) are the
+# Continental ARS510 and send the same bus-1 messages (docs/01), so the car model selects the parser.
+ARS510_PLATFORMS = {"TOYOTA_RAV4_TSS2_2022", "TOYOTA_RAV4_TSS2_2023"}
 
 STALE_S = 0.5  # radard leaves track-content staleness to this interface
 NO_RECORD_WARN_S = 15.0
@@ -160,11 +157,8 @@ def _radar_acc(flags) -> bool:
 
 
 def detect(ret, fingerprint, car_fw) -> bool:
-  """ARS510 on a radar-ACC Toyota: known radar FW (works at a cold start) or its object list already on bus 1."""
-  if not _radar_acc(ret.flags):
-    return False
-  fw = any(f.ecu == "fwdRadar" and f.fwVersion in ARS510_FW_VERSIONS for f in (car_fw or []))
-  return fw or {0x80, 0x85} <= set((fingerprint or {}).get(1, {}).keys())
+  """ARS510: a radar-ACC RAV4 2022 or 2023-25 (the car model; works at a cold start, before the radar sends)."""
+  return _radar_acc(ret.flags) and str(ret.carFingerprint) in ARS510_PLATFORMS
 
 
 def is_ars510(CP) -> bool:

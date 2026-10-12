@@ -11,9 +11,9 @@ def test_patch_imports_what_the_upstream_file_defines():
   assert "ARS510_RADAR = 'toyota_tss2_ars510'" in patch
   # the ARS510 car must not get a CAN parser for the radar name (it is not a DBC file)
   assert "self.ars510 is not None else _create_radar_can_parser(CP)" in patch
-  # only a detected ARS510 (its FW, or its object list on bus 1 at fingerprinting) enables radar; other radars stay radarless
-  assert "ARS510_FW_VERSIONS = {b'\\x018821F0R03100\\x00\\x00\\x00\\x00'}" in patch
-  assert "ret.radarUnavailable = not (ars510_fw or 0x80 in fingerprint[1])" in patch
+  # the car model selects the parser (both RAV4 radar firmwares are the ARS510); the routing keeps the radarUnavailable guard
+  assert "+++ b/opendbc/car/toyota/interface.py" not in patch
+  assert "dbc_dict('toyota_nodsu_pt_generated', ARS510_RADAR)" in patch
   assert "if not CP.radarUnavailable and DBC[CP.carFingerprint].get(Bus.radar) == ARS510_RADAR" in patch
   tree = ast.parse((REPO / "upstream" / "ars510_radar.py").read_text())
   cls = {n.name: n for n in tree.body if isinstance(n, ast.ClassDef)}

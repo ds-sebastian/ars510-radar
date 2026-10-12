@@ -57,8 +57,9 @@ The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC; 
 record in Python. The only DBC installed on the device is `toyota_tss2_ars510.dbc`, which the `acc` profile parses.
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
-- **detection** in `_get_params`: a radar-ACC Toyota whose radar firmware is `8821F0R03100`, or whose fingerprint saw
-  0x80 and 0x85 on bus 1 (when the radar is already running, e.g. a warm restart), gets `radarUnavailable = False`;
+- **detection** in `_get_params`: a radar-ACC RAV4 2022 or 2023-25 gets `radarUnavailable = False` from the car model
+  (both radar firmwares in openpilot's fingerprints are the ARS510, [docs/01](../docs/01_radar_bus.md#radar-firmware));
+  C-HR and Yaris keep the fork's behaviour;
 - **tracks** through `CarInterface.RadarInterface`: `Ars510RadarInterface` for that car, the fork's own
   RadarInterface for every other car. Extra constructor arguments (sunnypilot's `CP_SP`) pass through, and forks
   whose RadarPoint still has `aRel` / `yvRel` / `measured` get those fields filled.
@@ -96,7 +97,7 @@ replay your own drives stock vs installed, see
 | symptom | what to check |
 |---|---|
 | `expected opendbc/car/toyota/interface.py under …` | pass the openpilot checkout (`/data/openpilot`) or its `opendbc_repo` directly |
-| leads are still vision-only after installing | reboot (a full reboot reloads the Toyota modules); `--check` must show `hook … present`; the radar's firmware must be `8821F0R03100`, or bus 1 must carry 0x80 and 0x85 (`tools/decode_log.py` on a log from the car) |
+| leads are still vision-only after installing | reboot (a full reboot reloads the Toyota modules); `--check` must show `hook … present`; the car must fingerprint as `TOYOTA_RAV4_TSS2_2022` or `TOYOTA_RAV4_TSS2_2023` (radar-ACC RAV4) |
 | radar leads disappeared after a fork update | the update reset `/data/openpilot`; run the installer again and reboot |
 | `radarUnavailableTemporary` alerts | the radar stopped sending its object list for more than 0.5 s; check the wiring / harness; openpilot longitudinal's radar disable keeps the object list running on `8821F0R03100` ([docs/01](../docs/01_radar_bus.md#openpilots-radar-disable)), so a log showing 0x80 stopping after the radar's `68 01` response points to other firmware or hardware in the radar line ([docs/08](../docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)) |
 | the lead chevron sits on the hood when stopped close behind a car | a UI quirk: the chevron is drawn from the radar distance in the camera frame; driving uses the measured distance |

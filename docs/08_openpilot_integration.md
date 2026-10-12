@@ -34,9 +34,11 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
 
 ## How it hooks in
 
-1. **Detection** (hook around Toyota's `CarInterface._get_params`). A `RADAR_ACC` Toyota gets
-   `radarUnavailable = False` when its radar firmware is in `ARS510_FW_VERSIONS` (`8821F0R03100`) or 0x80 and 0x85
-   were seen on bus 1. The firmware rule matters: the object list starts ~5.9 s after power-up, after fingerprinting.
+1. **Detection** (hook around Toyota's `CarInterface._get_params`). A radar-ACC RAV4 2022 or 2023-25
+   (`ARS510_PLATFORMS`) gets `radarUnavailable = False` from the car model: both radar firmwares in openpilot's
+   fingerprints (`8821F0R01100`, `8821F0R03100`) are the ARS510 ([01](01_radar_bus.md#radar-firmware)). The car model
+   also covers a cold start, where the object list starts ~5.9 s after power-up, after fingerprinting. C-HR and Yaris
+   keep the fork's behaviour.
 2. **Hand-over** (hook on `CarInterface.RadarInterface`, which card instantiates). A radar-ACC Toyota with radar
    available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card runs as
    shipped.
@@ -76,9 +78,6 @@ does this for sunnypilot's opendbc (tested on its 2026-09-30 sync):
 - `values.py`: `TOYOTA_RAV4_TSS2_2022` and `TOYOTA_RAV4_TSS2_2023` name the radar `toyota_tss2_ars510` (`ARS510_RADAR`).
   The other radar-ACC Toyotas keep a powertrain-only entry, so they stay radarless. Choosing the car model in the
   fork's settings selects the parser.
-- `interface.py`: on those two platforms the radar counts as available only with the ARS510's firmware
-  (`8821F0R03100`, for a cold start) or its object list (0x80) seen on bus 1 at fingerprinting, the same check as the
-  installer's hook. A RAV4 with another radar (such as the 2022 firmware `8821F0R01100`) stays radarless.
 - `radar_interface.py`: for that radar name the Toyota RadarInterface hands every update to
   [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (copied to `opendbc/car/toyota/ars510_radar.py`). That radar
   name selects the parser, and the file reads the raw frames itself.
@@ -88,7 +87,8 @@ cp upstream/ars510_radar.py $OPENDBC/opendbc/car/toyota/ars510_radar.py
 git -C $OPENDBC apply $PWD/upstream/toyota_routing.patch
 ```
 
-Both RAV4 platforms have ARS510 cars with `8821F0R03100` (the owner's car fingerprints as the 2022 platform). Upstream
+Both RAV4 platforms carry the ARS510: the owner's car (`8821F0R03100`) fingerprints as the 2022 platform, and opendbc's 2022
+test cars (`8821F0R01100`) send the same messages ([01](01_radar_bus.md#radar-firmware)). Upstream
 openpilot's RadarInterface takes only `CP`; the patch's context differs there by that argument. With this routing the
 profile is the openpilot version; the `install.py` profiles belong to the hook install.
 

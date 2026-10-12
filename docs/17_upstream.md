@@ -24,7 +24,7 @@ all-tracks candidate.
 | files | [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) + [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), as [`opendbc_ars510.patch`](../upstream/opendbc_ars510.patch) | [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), routed by [`toyota_routing.patch`](../upstream/toyota_routing.patch) |
 | size | 33 code lines (50 in the file), 8 DBC signals in three messages plus two rolling counters | 187 code lines (227 in the file) |
 | constants / state attributes / conditions / functions | 1 / 4 / 5 / 2 | 28 / 15 / 85 / 13 |
-| radar available when | the car model: the radar-ACC RAV4 2022 and 2023-25 platforms | known firmware, or 0x80 seen on bus 1 at fingerprinting |
+| radar available when | the car model: the radar-ACC RAV4 2022 and 2023-25 platforms | the car model (same platforms) |
 | evidence | [below](#the-acc-target-alone--candidate) | [parts ledger](#parts-of-the-openpilot-file) |
 
 Sizes: [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) (`file_size`) and

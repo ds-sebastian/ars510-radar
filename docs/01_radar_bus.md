@@ -62,9 +62,9 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 
 Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `decode_claim_sources.json` (0x235 / 0x680 / sendcan, recomputed from the research captures).
 
-- The object list starts after openpilot's fingerprinting has finished, so the openpilot integration detects the
-  radar by its firmware version (`8821F0R03100` at 0x750 / 0x0f), with 0x80 / 0x85 on bus 1 as a fallback
-  ([08](08_openpilot_integration.md)).
+- The object list starts after openpilot's fingerprinting has finished, so the openpilot integration selects the
+  radar by the car model, the radar-ACC RAV4 2022 and 2023-25 platforms ([08](08_openpilot_integration.md),
+  [radar firmware](#radar-firmware)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record (spread 7 ms) and 0x197 bit 8 sets 60 ms later (0.20 s, spread 14 ms) on
   27 of 27 cold starts: both behave as the camera's acknowledgement of the object list (◐) and serve as "radar running" signals.
 - 0x680 reports tracked objects 5 s before the object list starts.
@@ -96,3 +96,22 @@ The object-list velocities are **over ground**, so the `raw` and `fused` profile
 GPS and wheel speed; those profiles read the radar speed at 0.149 m/s per code (`vground_scale = 0.149 / 0.15` on the nominal 0.15)
 and subtract 0xB4 speed ([06](06_accuracy.md#velocity)). The `acc` profile publishes the ACC target's closing speed (0.125 m/s per code,
 [05](05_acc_target_and_support.md#units-of-the-acc-target)), which is already relative to the car.
+
+## Radar firmware
+
+openpilot's fingerprints list two radar firmwares for the radar-ACC RAV4 (fwdRadar at 0x750 / 0x0f): `8821F0R01100`
+(the original 2022 ports, RAV4 Hybrid 2022 and RAV4 2022) and `8821F0R03100` (the 2023-25 platform; also the owner's car,
+which fingerprints as 2022). Both are the ARS510 and send the same bus (●, [`rav4_radar_firmware.json`](../data/analysis/summaries/rav4_radar_firmware.json)):
+
+| | `8821F0R01100` (opendbc's 2022 test routes, Hybrid / ICE, 1 min each) | `8821F0R03100` (owner's car) |
+|---|---|---|
+| bus-1 addresses | 36 / 36 | the same set |
+| 0x80 / 0x85 records | 995 CRC-valid records per minute (16.6 / s), 0x85 with each | 16.7 / s |
+| 0x235 / 0x237 / 0x239 | 3,000 frames per minute each (50 Hz), counter steps of 1 on every frame | 50 Hz, counter steps of 1 |
+| radar cycle clock (0x239) | 15.4 / 15.8 changes per s | 16.5 per s |
+| ACC target state | 5 (target) on 68 % of the Hybrid minute; 1 (no target) on the whole ICE minute | 5 / 1 / 15 (start-up) |
+| `acc` interface | 15.5 / 15.8 reports per s; all 627 points equal the reference decoder | 17.0 reports per s; all 1,018 points equal |
+| `fused` object list | 783 points published on the Hybrid minute | the replay drives |
+
+The integration therefore selects the parser by the car model: both firmwares carry the same messages, and the cycle
+clock stays inside radard's 8-24 Hz window on both.

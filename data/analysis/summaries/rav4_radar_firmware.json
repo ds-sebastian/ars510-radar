@@ -1,0 +1,87 @@
+{
+ "description": "Both radar firmwares listed for the radar-ACC RAV4 in openpilot's fingerprints, 8821F0R01100 and 8821F0R03100, are the Continental ARS510 and send the same bus-1 messages. 8821F0R01100: one minute each from the two opendbc test routes of the TOYOTA_RAV4_TSS2_2022 platform (the RAV4 Hybrid 2022 and RAV4 2022 cars of the original 2022 ports, openpilot #23969 / #24367; logs from comma's public CI store), read with the repo's log reader and run through the acc interface (opendbc branch ars510-acc) and the fused decoder (upstream/ars510_radar.py). 8821F0R03100: the owner's car (drives in this repo).",
+ "firmware_8821F0R01100": {
+  "RAV4 Hybrid 2022 (opendbc test route)": {
+   "seconds": 60,
+   "bus1_addresses": 36,
+   "frames_per_min": {
+    "0x80": 105472,
+    "0x85": 20895,
+    "0x235": 3000,
+    "0x237": 3000,
+    "0x239": 3000
+   },
+   "acc_target_state": {
+    "5 (target)": 2033,
+    "1 (no target)": 967
+   },
+   "counter_steps_of_1": "2999 of 2999",
+   "cycle_clock_changes_per_s": 15.4,
+   "acc_interface": {
+    "reports_per_s": 15.5,
+    "reports": 927,
+    "with_point": 627,
+    "dRel_m": [
+     4.45,
+     37.78
+    ],
+    "mismatches_vs_reference_decoder": 0
+   },
+   "fused_object_list": {
+    "crc_valid_records": 995,
+    "records_per_s": 16.6,
+    "published_points": 783
+   }
+  },
+  "RAV4 2022 ICE (opendbc test route)": {
+   "seconds": 60,
+   "bus1_addresses": 36,
+   "frames_per_min": {
+    "0x80": 105501,
+    "0x85": 20903,
+    "0x235": 3000,
+    "0x237": 3000,
+    "0x239": 3000
+   },
+   "acc_target_state": {
+    "1 (no target)": 3000
+   },
+   "counter_steps_of_1": "2999 of 2999",
+   "cycle_clock_changes_per_s": 15.8,
+   "acc_interface": {
+    "reports_per_s": 15.8,
+    "reports": 948,
+    "with_point": 0,
+    "mismatches_vs_reference_decoder": 0
+   },
+   "fused_object_list": {
+    "crc_valid_records": 995,
+    "records_per_s": 16.6,
+    "published_points": 0
+   }
+  }
+ },
+ "firmware_8821F0R03100": {
+  "owner car, parked 18 s, no target": {
+   "frames_per_s": {
+    "0x235": 47,
+    "0x237": 47,
+    "0x239": 47
+   },
+   "acc_target_state": {
+    "1 (no target)": 847,
+    "15 (start-up)": 2
+   },
+   "cycle_clock_changes_per_s": 16.5
+  },
+  "owner car, 60 s driving (atlas segment)": {
+   "acc_interface": {
+    "reports_per_s": 17.0,
+    "reports": 1018,
+    "with_point": 1018,
+    "mismatches_vs_reference_decoder": 0
+   }
+  }
+ },
+ "consequence": "The integration selects the parser by the car model (TOYOTA_RAV4_TSS2_2022, TOYOTA_RAV4_TSS2_2023): installer hook ARS510_PLATFORMS, upstream/opendbc_ars510.patch and upstream/toyota_routing.patch. The cycle clock runs at 15.4-16.5 changes per s on both firmwares, inside radard's 8-24 Hz liveTracks window."
+}

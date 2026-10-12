@@ -5,9 +5,9 @@ installed into, using a Python that has pycapnp (for example openpilot's .venv):
     $OP/.venv/bin/python openpilot/check_integration.py --opendbc $OP/opendbc_repo
 
 It checks:
-- detection: RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False when the radar FW is a known ARS510
-  (a cold start, before 0x80 exists) or 0x80 and 0x85 were seen on bus 1; stock behaviour otherwise, and every other
-  Toyota keeps the fork's own RadarInterface;
+- detection: the RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False from the car model alone (either radar
+  firmware, also at a cold start); the radar-ACC C-HR keeps the fork's behaviour, and every other Toyota keeps the fork's
+  own RadarInterface;
 - the RadarInterface path card.py uses: synthetic 0x80 records are fed as card.py's (address, data, src) tuples and
   as CanData, and it checks
   - the RadarData points (units, sign, ego-speed subtraction, age gate);
@@ -16,8 +16,9 @@ It checks:
   - the radarUnavailableTemporary report at 20 Hz when records stop;
   - recovery when they resume.
 - for the `acc` profile instead: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
-  card.py's 100 Hz, and it checks the 20 Hz output, the one point against ars510.support.parse_acc_target (id, units,
-  sign), canError when the target frames stop, and recovery.
+  card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.7 Hz),
+  the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop, and
+  recovery.
 """
 from __future__ import annotations
 
@@ -28,16 +29,22 @@ from pathlib import Path
 
 
 def check_acc_profile(RI, check) -> None:
-  """The `acc` profile publishes the radar's ACC target (0x235 / 0x237) as its one point: replay the bundled sample."""
+  """The `acc` profile publishes the radar's ACC target (0x235 / 0x237) as its one point, once per radar cycle (0x239):
+  replay the bundled sample, which has no 0x239, with the cycle clock added every third 0x237 (60 ms) as on the car."""
   import csv
   import gzip
   from opendbc.car.toyota.ars510.support import parse_acc_target
   sample = Path(__file__).resolve().parents[1] / "data" / "sample" / "highway_acc_anchor_24s.csv.gz"
   steps: dict[int, list] = {}
+  n237 = 0
   with gzip.open(sample, "rt") as f:
     for r in csv.DictReader(f):
       if r["address"] in ("0x235", "0x237"):
-        steps.setdefault(int(float(r["t_s"]) * 100), []).append((int(r["address"], 16), bytes.fromhex(r["data_hex"]), int(r["bus"])))
+        step = steps.setdefault(int(float(r["t_s"]) * 100), [])
+        step.append((int(r["address"], 16), bytes.fromhex(r["data_hex"]), int(r["bus"])))
+        if r["address"] == "0x237":
+          step.append((0x239, ((1 + n237 // 3) * 60000 << 3).to_bytes(8, "big"), 1))
+          n237 += 1
   t_ns, last, outs = 1_000_000_000, {}, []
   for k in range(max(steps) + 1):
     t_ns += 10_000_000
@@ -48,7 +55,7 @@ def check_acc_profile(RI, check) -> None:
     if out is not None and k >= 50:  # skip the parser's first 0.5 s
       outs.append((out, parse_acc_target(last.get(0x235, b""), last.get(0x237, b""))))
   rate = len(outs) / ((max(steps) - 50) / 100)
-  check(18 <= rate <= 22, f"acc: RadarData at ~20 Hz (got {rate:.1f} Hz)")
+  check(14 <= rate <= 19, f"acc: RadarData once per radar cycle, ~16.7 Hz (got {rate:.1f} Hz)")
   check(all(not any(o.errors.to_dict().values()) for o, _ in outs), "acc: no error flags while the target frames arrive")
   match = [len(o.points) == (want is not None) and (want is None or (o.points[0].trackId == want.target_id and
            abs(o.points[0].dRel - want.d_rel) < 0.03 and abs(o.points[0].yRel - want.y_rel) < 0.011 and
@@ -56,23 +63,18 @@ def check_acc_profile(RI, check) -> None:
   n_pts = sum(len(o.points) for o, _ in outs)
   check(all(match) and n_pts > 100, f"acc: the one point equals the decoded ACC target (id, dRel, yRel left-positive, vRel) "
         f"on every output ({sum(match)}/{len(match)}, {n_pts} points)")
-  n0 = len(outs)
-  silent = []
-  for _ in range(100):  # 1 s after the target frames stop
-    t_ns += 10_000_000
-    out = RI.update([(t_ns, [])])
-    if out is not None:
-      silent.append(out)
-  check(any(o.errors.canError and len(o.points) == 0 for o in silent), "acc: canError and no point when the target frames stop")
-  frames = [b for b in steps.values() if b][:40]
+  silent = [RI.update([(t_ns + i * 10_000_000, [])]) for i in range(1, 101)]  # 1 s after the target frames stop
+  t_ns += 100 * 10_000_000
+  check(all(o is None for o in silent), "acc: no output (and no stale point) when the target frames stop, as Toyota's other radars")
   rec = []
-  for batch in frames:
+  for k in sorted(steps)[:60]:  # frames resume, with the cycle clock continuing
     t_ns += 10_000_000
+    batch = [(a, ((5000 + n237) * 60000 << 3).to_bytes(8, "big") if a == 0x239 else d, s) for a, d, s in steps[k]]
+    n237 += sum(1 for a, _, _ in batch if a == 0x239)
     out = RI.update([(t_ns, batch)])
     if out is not None:
       rec.append(out)
-  check(bool(rec) and not rec[-1].errors.canError, "acc: recovers when the target frames resume")
-  del n0
+  check(bool(rec) and not rec[-1].errors.canError and len(rec[-1].points) == 1, "acc: recovers when the target frames resume")
 
 
 def main() -> int:
@@ -106,15 +108,13 @@ def main() -> int:
     return CarInterface.get_params(car, fp, car_fw, alpha_long=False, is_release=False, docs=False)
 
   ars_bus1 = {0x80: 8, 0x85: 8, 0x81: 8, 0x86: 8}
-  ars_fw = b'\x018821F0R03100\x00\x00\x00\x00'
   cold_bus1 = {0x191: 8, 0x192: 4, 0x180: 5}  # first ~1 s after power-up: target summaries, no 0x80 / 0x85 yet
   for car in (CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023):
-    CP = params(car, cold_bus1, ars_fw)
-    check(is_ars510(CP), f"{car}: ARS510 detected from radar FW at a cold start")
-    CP = params(car, ars_bus1)
-    check(is_ars510(CP), f"{car}: ARS510 detected from 0x80/0x85 on bus 1")
-    CP = params(car, cold_bus1, b'\x018821F0R99999\x00\x00\x00\x00')
-    check(not is_ars510(CP) and CP.radarUnavailable, f"{car}: other radar FW, no 0x80/0x85 -> stock (radar unavailable)")
+    for fw in (b'\x018821F0R01100\x00\x00\x00\x00', b'\x018821F0R03100\x00\x00\x00\x00'):
+      CP = params(car, cold_bus1, fw)
+      check(is_ars510(CP), f"{car}: ARS510 from the car model (radar FW {fw[1:13].decode()}, cold start)")
+  CP = params(CAR.TOYOTA_CHR_TSS2, ars_bus1)
+  check(not is_ars510(CP) and CP.radarUnavailable, "radar-ACC C-HR keeps the fork's behaviour (radar unavailable)")
   extra = (structs.CarParamsSP(),) if hasattr(structs, "CarParamsSP") else ()  # sunnypilot passes CP_SP
   CP = params(CAR.TOYOTA_RAV4_TSS2, ars_bus1)
   RI0 = CarInterface.RadarInterface(CP, *extra)

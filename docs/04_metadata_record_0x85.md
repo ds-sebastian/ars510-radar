@@ -1,8 +1,8 @@
 # 04. The metadata record (0x85)
 
 0x85 carries a second segmented record at the radar cycle rate. The first frame starts `10 90`; keeping bytes 1..7 of
-each of 21 frames gives **147 bytes**. A fixed marker follows on 0x86. The profiles use 0x85 to detect the radar (0x80 and 0x85 on bus 1,
-[08](08_openpilot_integration.md)); the lane cells below serve analysis and in-path research
+each of 21 frames gives **147 bytes**. A fixed marker follows on 0x86. It comes with every 0x80 record on both RAV4 radar firmwares
+([01](01_radar_bus.md#radar-firmware)); the lane cells below serve analysis and in-path research
 ([10](10_research_directions.md#for-the-decode)).
 
 ## Layout
