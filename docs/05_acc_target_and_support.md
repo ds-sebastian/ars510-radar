@@ -143,9 +143,10 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
 | error scale against the [optical reference](07_velocity_excursions.md#compared-with-an-optical-reference), 10-40 m / 40-70 m | at most about 0.4 m/s (0.01-0.37 by reference triple) / 0.54 m/s | 0.55 / 1.07 m/s | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), [`video_truth.json`](../data/analysis/summaries/video_truth.json) |
 | present while a radar lead exists, owner road drives, 15-80 m / 80-200 m | 99 % / 66 % | every tracked car | [`road_v21.json`](../data/analysis/summaries/road_v21.json), [08](08_openpilot_integration.md#on-the-road) |
 
-- It carries information beyond the object list: the object list's own fields and their recent history explain about
+- Evidence favors additional internal state or observations in the ACC tracker (◐): the object list's own fields and their recent history explain about
   37-43 % of its disagreement with the ACC target
-  ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). The `fused` profile
+  ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). This measures what the tested models recover;
+  it does not identify the tracker's inputs or establish a limit for every possible estimator. The `fused` profile
   therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
