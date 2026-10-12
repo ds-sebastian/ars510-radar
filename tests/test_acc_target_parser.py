@@ -1,4 +1,4 @@
-"""upstream/ars510_acc_target.py (the ACC target alone, docs/10) must publish exactly the decoded ACC target.
+"""upstream/ars510_acc_target.py (the ACC target alone, docs/17) must publish exactly the decoded ACC target.
 
 opendbc's CANParser is replaced by a small decoder that reads the signals from upstream/toyota_tss2_ars510.dbc, so these
 tests also check the DBC against ars510.support. upstream/opendbc_ars510.patch must carry the same files.

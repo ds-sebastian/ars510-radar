@@ -6,7 +6,7 @@ one more track. Estimation: every track is the same two-state Kalman filter (ran
 acceleration process and a traffic prior on its range rate (0 +- PRIOR_SIGMA). Its readings are weighted by their own
 uncertainty: object-list range RANGE_FRAC x range (the slot speed stays out: its errors are slow and correlated, while a filter
 assumes white noise, docs/07); ACC target range ACC_RANGE_SIGMA and closing speed ACC_SIGMA.
-Research only: the object list's slow, correlated errors reach the planner (docs/10, "The ACC target alone").
+Research only: the object list's slow, correlated errors reach the planner (docs/17, "The ACC target alone").
 """
 import zlib
 

@@ -42,7 +42,7 @@ filter carry beyond the owner's car (a second RAV4 has reported so far).
 
 For a targeted contribution, use [the route and test guide](docs/16_routes_and_tests.md). It lists the ordinary
 drives, parked/controlled acquisitions, logs to keep and independent references that each question needs.
-PCS/AEB event collection follows the [professional/passive specification](docs/15_pcs_testing.md).
+PCS/AEB event collection follows the [professional/passive specification](docs/15_aeb_pcs.md#recording-pcs--aeb-events).
 
 ## Code changes
 

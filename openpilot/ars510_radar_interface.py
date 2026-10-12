@@ -40,12 +40,12 @@ from opendbc.car.toyota.ars510 import BASE_CONFIG, COLORED_CONFIG, FUSED_CONFIG,
 from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
                                                  TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
 
-# Decoder profile (docs/08): "acc" (default: the radar's ACC target alone as one point, ars510_acc_target.py, docs/10),
+# Decoder profile (docs/08): "acc" (default: the radar's ACC target alone as one point, ars510_acc_target.py, docs/17),
 # "fused" (FUSED_CONFIG: one Kalman speed filter fusing the object list and the ACC target by the radar's own
 # uncertainty, plus a path gate, docs/12), "raw" (BASE_CONFIG: the unfiltered radar decode, research only) or
 # "openpilot" (fused in one file, ars510_upstream.py). "colored" is an experimental fused
 # variant for road tests (docs/12); "shared_speed" / "shared_range" are research files with one gate-free Kalman model
-# over every object (docs/10). `install.py --profile` rewrites this one line.
+# over every object (docs/17). `install.py --profile` rewrites this one line.
 STANDALONE = {"acc": "ars510_acc_target", "shared_speed": "ars510_shared_speed", "shared_range": "ars510_shared_range"}
 PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}
 PROFILE = PROFILES["acc"]

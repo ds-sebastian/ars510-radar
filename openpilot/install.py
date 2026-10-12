@@ -28,7 +28,7 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   openpilot fused in one file (upstream/ars510_radar.py, opendbc style), driving identically, points with trackId /
             dRel / yRel / vRel only. The all-tracks upstream alternative; the proposal is acc
-  Also tried, set aside (installable for research; docs/12, docs/10): colored (fused with a colored-noise state) and
+  Also tried, set aside (installable for research; docs/12, docs/17): colored (fused with a colored-noise state) and
   shared_speed / shared_range (every object and the ACC target through one gate-free Kalman model)
 
 Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
@@ -181,7 +181,7 @@ def main() -> int:
         "). Reboot the device to activate.")
   if args.profile in ("shared_speed", "shared_range"):
     print("warning: a research profile. The object list's slow, correlated errors reach the planner: replays ask for hard\n"
-          "radar-only braking 7-21 times as often as fused (docs/10). Keep to research use.")
+          "radar-only braking 7-21 times as often as fused (docs/17). Keep to research use.")
   if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
           "reach the planner unfiltered: 93 hard radar-only braking ticks on the held-out replay routes against 16 for fused and\n"

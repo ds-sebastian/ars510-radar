@@ -266,7 +266,7 @@ request −1.47 instead of −2.36 m/s² (vision −1.61); 2.4 asks the same as 
 −1 m/s² go from 43.7 to 41.9 % with the path gate and 0.4 x match, and to 41.3 % with the summaries dropped in 2.4. Both constants sit in a flat region: an ACC
 match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard ticks at 30 on 2.3 (target episodes 2-3) and
 stay within 0.3 s of the chosen values against the hindsight-lead oracle below. The openpilot file's parts and
-their line costs are in [10](10_research_directions.md#parts-of-the-openpilot-file).
+their line costs are in [17](17_upstream.md#parts-of-the-openpilot-file).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 
 ### Stationary objects close in
@@ -404,7 +404,7 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
 The smallest version with the same driving is 2.0 with the summaries and the relink removed. With 2.3's path gate and wider
 ACC match, and 2.6's far rule and stationary gate added, that is today's `fused`. The openpilot version
 ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line
-costs are in [10](10_research_directions.md#parts-of-the-openpilot-file)) is the same filter in one file, and a test
+costs are in [17](17_upstream.md#parts-of-the-openpilot-file)) is the same filter in one file, and a test
 keeps the two equal point for point (`tests/test_upstream_candidate.py`; combinations in
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 

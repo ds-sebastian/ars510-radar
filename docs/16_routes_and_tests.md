@@ -36,7 +36,7 @@ logging works with either.
 
 PCS/AEB is a professional test: Toyota advises leaving PCS testing to professionals
 ([RAV4 quick-reference guide, PCS section](https://assets.sia.toyota.com/publications/en/om-s/OM19V1QRG/pdf/OM19V1QRG.pdf)).
-The recording specification and target controls are in [15](15_pcs_testing.md).
+The recording specification and target controls are in [15](15_aeb_pcs.md#recording-pcs--aeb-events).
 
 ## What to keep
 
@@ -227,7 +227,7 @@ contribution comes from a professional facility test or access to the actual inp
    conditions separate measured size from templates. Labels come from the independent annotation, while the radar's
    size and speed codes are the quantities under test.
 3. Include roadside/overhead and unoccupied reflectors as candidate controls, with physical path/contact geometry.
-   Define what makes a control a non-obstacle (a stationary object can still be an obstacle). Keep volunteers out of any approach path ([15](15_pcs_testing.md)).
+   Define what makes a control a non-obstacle (a stationary object can still be an obstacle). Keep volunteers out of any approach path ([15](15_aeb_pcs.md#recording-pcs--aeb-events)).
 4. Keep early life, class changes, confidence changes, score drops and dropped outputs. Label blind to the radar
    codes. Class 5 cyclist/person hypotheses come with counterexamples as well as an overlapping projection.
 
@@ -251,9 +251,9 @@ Cell roles and quality units take several lane geometries.
 ## T12: PCS and event reports
 
 **Targets:** 0x100, 0x195/196, 0x33E and car-bus PCS stages. Follow the professional/passive recording specification
-in [15](15_pcs_testing.md), including isolated target controls, synchronized reference/video, all-bus logs and driver actions.
+in [15](15_aeb_pcs.md#recording-pcs--aeb-events), including isolated target controls, synchronized reference/video, all-bus logs and driver actions.
 The recorded alarm stage covers the alarm; brake stages, disabled-radar signaling and target attribution take the events
-specified in [15](15_pcs_testing.md). Keep short-TTC states with PCS idle as controls. Brake requests come from
+specified in [15](15_aeb_pcs.md#recording-pcs--aeb-events). Keep short-TTC states with PCS idle as controls. Brake requests come from
 decoded stock events, and a replica that substitutes for a message is described as a replica.
 
 ## T13: fresh road and parser validation

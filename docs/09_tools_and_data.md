@@ -152,7 +152,7 @@ camera stills are included, with licence plates and place names blurred.
 ## Testing on your own car
 
 Choose a session from [16: Routes and tests](16_routes_and_tests.md) for step-by-step capture procedures,
-equipment, required references and interpretation limits. [15](15_pcs_testing.md) covers PCS event recording.
+equipment, required references and interpretation limits. [15](15_aeb_pcs.md#recording-pcs--aeb-events) covers PCS event recording.
 
 1. **Same radar?** The forward radar at 0x750 / 0x0f answers `8821F0R03100` (in your route's `carParams.carFw`). Bus 1
    carries 0x80 at ~1,760 frames/s and 0x85 at ~350 frames/s; `decode_log.py --profile all-tracks` should report zero CRC

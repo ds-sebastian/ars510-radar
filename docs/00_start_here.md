@@ -1,7 +1,7 @@
 # 00. Start here: the parser in pictures
 
 A guided tour from the radar's CAN frames to openpilot's planner, one figure per step, with the key numbers and a link to
-the topic doc that has the detail. Read this first; docs 01-16 are the reference. Terms in **bold** are in the
+the topic doc that has the detail. Read this first; docs 01-17 are the reference. Terms in **bold** are in the
 [glossary](#glossary).
 
 Two install profiles turn the radar into openpilot radar points. The tour shows both side by side:
@@ -137,8 +137,8 @@ upstream PR could drop:
 ![parts ledger](img/analysis/guide_parts_ledger.png)
 
 `acc` is the other end of the scale: 26 code lines, one constant, the radar's target-present flags as its only gate. Each of `fused`'s parts rebuilds a piece of the
-decision the radar's tracker has already made ([10](10_research_directions.md#the-acc-target-alone--candidate)).
-More: [12](12_kalman_filter.md#what-each-part-is-worth), [10](10_research_directions.md#parts-of-the-openpilot-file).
+decision the radar's tracker has already made ([17](17_upstream.md#the-acc-target-alone--candidate)).
+More: [12](12_kalman_filter.md#what-each-part-is-worth), [17](17_upstream.md#parts-of-the-openpilot-file).
 
 ## 8. The result against vision only
 

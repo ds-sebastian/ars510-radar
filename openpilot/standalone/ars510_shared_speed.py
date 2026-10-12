@@ -5,7 +5,7 @@ age counts up while the radar keeps an object, which gives track IDs; the ACC ta
 one more track. Estimation: every track's over-ground speed is one Kalman state with the same model for all of them:
 a prior from traffic (relative speed 0 +- PRIOR_SIGMA), a random-acceleration process, and each reading weighted by
 its own uncertainty (object list: SIGMA_PER_CODE x its 240|7 code; ACC target: ACC_SIGMA).
-Research only: the object list's slow, correlated errors reach the planner (docs/10, "The ACC target alone").
+Research only: the object list's slow, correlated errors reach the planner (docs/17, "The ACC target alone").
 """
 import zlib
 

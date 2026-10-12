@@ -1,4 +1,4 @@
-"""The parts ledger (docs/10, data/analysis/summaries/openpilot_file_parts.json) must add up to the openpilot file: a PR
+"""The parts ledger (docs/17, data/analysis/summaries/openpilot_file_parts.json) must add up to the openpilot file: a PR
 that changes upstream/ars510_radar.py's code lines has to update its row."""
 import ast
 import json
@@ -22,5 +22,5 @@ def test_ledger_matches_the_openpilot_file():
   n = code_lines(REPO / "upstream/ars510_radar.py")
   assert ledger["file_code_lines"] == n, f"upstream/ars510_radar.py has {n} code lines; update the parts ledger"
   assert sum(p["code_lines"] for p in ledger["parts"]) == n
-  docs = (REPO / "docs/10_research_directions.md").read_text()
+  docs = (REPO / "docs/17_upstream.md").read_text()
   assert all(f"| {p['part']} | {p['code_lines']} |" in docs for p in ledger["parts"])

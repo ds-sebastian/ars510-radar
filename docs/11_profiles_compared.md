@@ -20,7 +20,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | source | ACC target frames 0x235 / 0x237 | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | radar and camera | radar and camera |
-| code | 26 code lines and a two-message, 7-signal DBC ([10](10_research_directions.md#the-acc-target-alone--candidate)) | 187 code lines in the openpilot file ([10](10_research_directions.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| code | 26 code lines and a two-message, 7-signal DBC ([17](17_upstream.md#the-acc-target-alone--candidate)) | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
 | tuned constants | protocol values only | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 1.75 (0.66) |
@@ -29,7 +29,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | use | everyday driving | the all-tracks alternative | research |
 
 Alternatives that were tried (`colored`, `shared_speed`, `shared_range`) are summarised in
-[12](12_kalman_filter.md#kalman-variants-tested) and [10](10_research_directions.md#the-acc-target-alone--candidate). The legacy names `anchor` and `steady` select `fused`.
+[12](12_kalman_filter.md#kalman-variants-tested) and [17](17_upstream.md#the-acc-target-alone--candidate). The legacy names `anchor` and `steady` select `fused`.
 
 ## `acc` and `fused` head to head
 
@@ -110,7 +110,7 @@ unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the
   the whole encounter. On U3 a pickup parked in the lane was tracked from about 30 m ahead and lost at 14 m, one cycle
   short of age 60, so `fused` drove as vision only. `acc` published it from 18.9 m, 0.6 s before Toyota's PCS warned,
   with the radar's range; vision put the lead 3-4 m closer
-  ([13](13_car_bus_messages.md#a-recorded-stock-pcs-alarm-u3);
+  ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3);
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
 - **Small and auditable.** 26 code lines and a two-message, 7-signal DBC with protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
@@ -260,26 +260,5 @@ whose lead comes from the object list alone.
 
 ## Compared with the other radar interfaces in openpilot
 
-| interface (opendbc at the openpilot used for the replays) | code lines | what it does |
-|---|---|---|
-| Toyota (older radars, 0x210-0x22F) | 70 | `VALID` flag plus a score / valid counter; pass-through |
-| Tesla (Continental, like the ARS510) | 66 | `Tracked`; publishes `Meas` as `measured`; radar status for faults |
-| Honda | 60 | range < 255; pass-through |
-| Hyundai | 55 | track `STATE`; pass-through |
-| Rivian | 54 | `STATE`; pass-through |
-| Chrysler | 56 | pass-through |
-| GM | 71 | pass-through of the radar's targets |
-| Ford | 184 (272 lines in all) | clusters raw Delphi detections into tracks |
-| **ARS510 `acc` profile** ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py)) | 26 | the radar's ACC target as one point: target-present flags; pass-through |
-| **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 187 | `fused` in one file; part by part in [10](10_research_directions.md#parts-of-the-openpilot-file) |
-| … transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
-| … ACC target decode and association | 27 | match the radar's own ACC target to one track |
-| … Kalman speed filter, its young-track factor and publication gates | 29 | the filter itself |
-| … range fusion, path gate, state pruning, fork compatibility | 24 | lead stability, next-lane leads, bounded state |
-
-- The other interfaces, except Ford's, pass the radar's tracks through with validity and lifecycle checks and leave
-  speed filtering to radard. `acc` is the same shape: a pass-through of the radar's own target.
-- The ARS510's `240|7` code follows the width of its far-range speed error as a continuous per-reading scale (◐), so `fused`
-  weights each reading in one scalar filter ([12](12_kalman_filter.md#the-model)); the replays above are its evidence.
-- Moving that weighting into radard (a per-point speed variance) would make `fused` a pass-through like the
-  others ([10](10_research_directions.md#towards-an-upstream-comma-interface)).
+The ARS510 files against openpilot's other radar interfaces, line by line, are in
+[17](17_upstream.md#compared-with-the-other-radar-interfaces-in-openpilot).

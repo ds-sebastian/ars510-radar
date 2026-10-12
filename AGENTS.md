@@ -17,6 +17,8 @@ Start with [README.md](README.md), then the doc for your area:
 | ACC target, support messages, car-bus 0x366 | `ars510/support.py` | `docs/05`, `docs/13` |
 | openpilot-facing interface, profiles, filters | `ars510/interface.py` | `docs/08`, `docs/11`, `docs/12` |
 | what each fork does with the radar lead | `tools/fork_lead/` | `docs/14` |
+| upstream opendbc proposals (`acc`, `fused`), parts ledger | `upstream/` | `docs/17` |
+| PCS / AEB: alarm, relay design, recording | `ars510/support.py` | `docs/15` |
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
 
@@ -44,7 +46,7 @@ ruff check upstream/                # the openpilot file follows opendbc's ruff 
   openpilot replay against the current profile with the gates in `docs/09`, the vision-only comparison in `docs/11`,
   a review of the moments that change, and numbers in the PR. Tune on other drives than the one that motivated the change.
 - **The openpilot file** (`upstream/ars510_radar.py`) is meant for upstream, where every line has to be defended. A PR
-  that adds or removes lines there updates its row in the parts ledger (`docs/10`, "Parts of the openpilot file", and
+  that adds or removes lines there updates its row in the parts ledger (`docs/17`, "Parts of the openpilot file", and
   `data/analysis/summaries/openpilot_file_parts.json`): code lines, evidence, what removing it costs, upstream status.
 - **Installer** stays fork-agnostic: append-only hook in `toyota/interface.py`, fork files left as they are, the fork's
   existing `ToyotaFlags` bits. Run `openpilot/check_integration.py` against every fork available.

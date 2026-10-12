@@ -109,7 +109,7 @@ The code comes in two versions that drive identically:
   the extra point fields sunnypilot still uses.
 - **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 227 lines (187 code) in
   opendbc style, which is `fused` in one file (a test keeps it equal to `FUSED_CONFIG` point for point);
-  [docs/10](docs/10_research_directions.md#parts-of-the-openpilot-file) lists what each part costs and buys. The
+  [docs/17](docs/17_upstream.md#parts-of-the-openpilot-file) lists what each part costs and buys. The
   `acc` proposal is [`upstream/ars510_acc_target.py`](upstream/ars510_acc_target.py), 41 lines (26 code) with its
   [DBC](upstream/toyota_tss2_ars510.dbc). The fork build also keeps the radar's target summaries and the track-ID
   relink as options; `fused` drives the same with both switched off
@@ -124,10 +124,10 @@ The code comes in two versions that drive identically:
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
-Also tried, set aside: a colored-noise variant of `fused` (`--profile colored`) and two gate-free Kalman models over every object (`shared_speed`, `shared_range`). In replay, `colored` asks for 10 s more unnecessary braking than `fused` over 16.9 moving hours, and the gate-free models brake hard 7-21 times as often ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested), [docs/10](docs/10_research_directions.md#the-acc-target-alone--candidate)); the installer keeps them for research.
+Also tried, set aside: a colored-noise variant of `fused` (`--profile colored`) and two gate-free Kalman models over every object (`shared_speed`, `shared_range`). In replay, `colored` asks for 10 s more unnecessary braking than `fused` over 16.9 moving hours, and the gate-free models brake hard 7-21 times as often ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested), [docs/17](docs/17_upstream.md#the-acc-target-alone--candidate)); the installer keeps them for research.
 
 `anchor` and `steady` (earlier tuned profiles) install `fused`. Each profile against vision only, pros and cons,
-assumptions and a comparison with openpilot's other radar interfaces: [docs/11](docs/11_profiles_compared.md). The
+assumptions and a comparison with openpilot's other radar interfaces: [docs/11](docs/11_profiles_compared.md) and [docs/17](docs/17_upstream.md#compared-with-the-other-radar-interfaces-in-openpilot). The
 filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 
 ## Status
@@ -166,9 +166,9 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
   `8821F0R03100` car through 26 min of alpha long, [01](docs/01_radar_bus.md#openpilots-radar-disable)).
 - **AEB under openpilot longitudinal** relies on a radar CAN filter: the radar disable takes the car's AEB with it, and
   stock ACC keeps AEB. A relay of the radar's own decision and the one recording it needs are in
-  [13](docs/13_car_bus_messages.md#aeb-on-an-unfiltered-radar-line).
+  [15](docs/15_aeb_pcs.md#aeb-on-an-unfiltered-radar-line).
 - **Community integration.** It installs on top of openpilot; `acc` is the candidate for an upstream PR
-  ([10](docs/10_research_directions.md#towards-an-upstream-comma-interface)).
+  ([17](docs/17_upstream.md#towards-an-upstream-comma-interface)).
 
 ## How it fits into openpilot
 
@@ -237,13 +237,14 @@ numbers and a glossary.
 | [07 Velocity excursions](docs/07_velocity_excursions.md) | the far-range false-closing issue: what it looks like, how often, what the radar reports about it |
 | [08 openpilot integration](docs/08_openpilot_integration.md) | how it hooks in, profiles, what radard does, replay and road results, on-car checks |
 | [09 Tools and data](docs/09_tools_and_data.md) | decoding logs, Cabana, replaying drives through openpilot, the dataset, testing on your car |
-| [10 Research directions](docs/10_research_directions.md) | open problems, the signals that would help most, the path to an upstream interface |
-| [11 Profiles compared](docs/11_profiles_compared.md) | `acc` and `fused` head to head and against vision only, which profile for what, driving pros and cons, assumptions, other openpilot radar interfaces |
+| [10 Research directions](docs/10_research_directions.md) | open problems and the data that would answer each, ordered by how directly the answer improves the radar in openpilot |
+| [11 Profiles compared](docs/11_profiles_compared.md) | `acc` and `fused` head to head and against vision only, which profile for what, driving pros and cons, assumptions |
 | [12 Kalman speed filter](docs/12_kalman_filter.md) | the `fused` profile's filter: model, gains, constants and their sources, what each part is worth, variants tested |
-| [13 Car-bus messages](docs/13_car_bus_messages.md) | the radar's nine Toyota driving-support messages on bus 0 (ACC command, PCS / AEB, lead distance), CAN filter versus radar disable, what happens to AEB, AEB on an unfiltered radar line |
+| [13 Car-bus messages](docs/13_car_bus_messages.md) | the radar's nine Toyota driving-support messages on bus 0 (ACC command, PCS / AEB, lead distance), CAN filter versus radar disable, what happens to AEB |
 | [14 Forks](docs/14_forks.md) | what sunnypilot, FrogPilot and StarPilot do with the radar lead, and what that does with this radar (replays of their own radard and MPC lead code) |
-| [15 Recording PCS / AEB events](docs/15_pcs_testing.md) | professional/passive recording specification: isolated targets, warning/brake stages, complete logs and interpretation limits |
+| [15 AEB and PCS](docs/15_aeb_pcs.md) | the recorded stock PCS alarm, AEB on an unfiltered radar line, relaying the radar's decision, open questions, and the professional/passive recording specification |
 | [16 Routes and tests](docs/16_routes_and_tests.md) | thirteen capture procedures: ordinary routes, parked diagnostics, physical references, lifecycle/class/lane tests and what to send back |
+| [17 Upstream proposals](docs/17_upstream.md) | the `acc` and `fused` opendbc branches, the parts ledger of the openpilot file, the evidence for the ACC target alone, what review will ask, other radar interfaces |
 
 ## Repository layout
 

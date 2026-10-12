@@ -4,7 +4,7 @@ Besides its raw object list (0x80, one record over 106 frames), the radar sends 
 (ACC_TARGET_1 / ACC_TARGET_2 in toyota_tss2_ars510.dbc): a converged, in-path track chosen by the radar's tracker, with
 distance, lateral position, closing speed and an ID that changes when the radar switches targets. Toyota's ACC acts on
 this target alone. This interface publishes that target as openpilot's only radar point; radard matches it to the
-camera's lead as for any radar, and every other car comes from the camera. ars510-radar docs/10 ("The ACC target alone") has
+camera's lead as for any radar, and every other car comes from the camera. ars510-radar docs/17 ("The ACC target alone") has
 the evidence.
 """
 from opendbc.can import CANParser

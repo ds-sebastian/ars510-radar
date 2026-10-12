@@ -203,7 +203,7 @@ def parts_ledger() -> None:
   fig, ax = plt.subplots(figsize=(12, 5.6)); y = np.arange(len(parts))[::-1]
   for yi, p in zip(y, parts):
     s = status(p["upstream"]); ax.barh(yi, p["code_lines"], 0.7, color=colors[s])
-    w = p["without"] if len(p["without"]) <= 95 else p["without"][:p["without"].rfind(" ", 0, 93)].rstrip(",;:") + " ..."  # full text: docs/10
+    w = p["without"] if len(p["without"]) <= 95 else p["without"][:p["without"].rfind(" ", 0, 93)].rstrip(",;:") + " ..."  # full text: docs/17
     ax.text(p["code_lines"] + 1.2, yi, f"{p['code_lines']}  ·  {w}", va="center", fontsize=7.6, color=INK2)
   ax.set_yticks(y, [f"{_short(p['part'])}  [{p['since'].split(' ')[0]}]" for p in parts], fontsize=8.5)
   ax.set_xlim(0, 215); ax.set_xlabel("code lines in upstream/ars510_radar.py (comments, docstrings and blank lines excluded)")

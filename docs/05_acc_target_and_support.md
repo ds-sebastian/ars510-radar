@@ -245,7 +245,7 @@ a pre-collision / brake-assist deceleration quantity (◐). Counts and relative-
 On U3, the one recorded stock PCS alarm, the pair left idle 1.06 s before the alarm and returned 0.26 s after it. The
 alarm itself is marked on the radar bus by **0x100 byte 0 = 0x02**, in the same CAN tick as the car-bus alarm. `q10` stayed
 at 510 until the driver braked, and the 0x196 bytes ramped from the pair's onset
-([13](13_car_bus_messages.md#a-recorded-stock-pcs-alarm-u3)).
+([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3)).
 
 ![event raw code and exact idle payload](img/analysis/event_code_context.png)
 
