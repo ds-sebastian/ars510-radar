@@ -9,13 +9,14 @@
    "functions": 13
   },
   "ACC target only": {
-   "code_lines": 26,
+   "code_lines": 33,
    "constants": 1,
-   "state_attributes": 1,
-   "conditions": 4,
+   "state_attributes": 4,
+   "conditions": 5,
    "functions": 2,
-   "dbc_signals": 7,
-   "note": "upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc (opendbc CANParser); replays ran on the hand-decoded version that publishes the same points on 11,028 bundled reports (33 code lines, 4 constants, 3 state attributes, 12 conditions)"
+   "dbc_signals": 8,
+   "note": "upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc (opendbc CANParser; ACC_TARGET_1/2/3, plus two rolling counters); one report per radar cycle (0x239 clock); the replays ran a hand-decoded version with the same points",
+   "file_lines": 50
   }
  },
  "by_version_and_set": {
@@ -747,5 +748,66 @@
   "gain_median": 1.0,
   "runs": 483,
   "note": "0x235 speed against the slope of 0x237 distance (2 s local-linear fit): it moves with its own range, so a filter adds delay"
+ },
+ "per_cycle_reporting": {
+  "description": "the same ACC-target point reported once per radar cycle (0x239 clock, 16.7 Hz) against every 5th card update (20 Hz); fast suite, all four drive sets, 16.9 moving h; difference per moving h, route-block bootstrap 95 % CI",
+  "per_cycle": {
+   "hard": 13,
+   "mild": 32,
+   "unnecessary_s": 19.3,
+   "missed_s": 17.4,
+   "onset_vs_vision_s": -0.02,
+   "flips_per_h": 301.0
+  },
+  "every_5th_update": {
+   "hard": 13,
+   "mild": 30,
+   "unnecessary_s": 19.2,
+   "missed_s": 17.4,
+   "onset_vs_vision_s": -0.017,
+   "flips_per_h": 302.0
+  },
+  "difference": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 62
+   },
+   "mild": {
+    "per_h": 0.118,
+    "ci95": [
+     0.0,
+     0.316
+    ],
+    "routes": 62
+   },
+   "unnecessary_s": {
+    "per_h": 0.006,
+    "ci95": [
+     -0.007,
+     0.021
+    ],
+    "routes": 62
+   },
+   "missed_s": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 62
+   },
+   "flips": {
+    "per_h": -0.769,
+    "ci95": [
+     -2.208,
+     0.625
+    ],
+    "routes": 62
+   }
+  }
  }
 }

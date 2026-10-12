@@ -80,7 +80,7 @@ car its ACC function follows: the ACC target. The two profiles use these differe
 | speed source | the radar's own tracker | object list (σ = 0.045 m/s × `240\|7`) and ACC target (σ = 0.13 m/s) weighted by uncertainty |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (other tracks: object-list range) |
 | gates | the radar's target-present flags | path gate beyond 15 m, 60 cycles of age, speed std ≤ 0.75 m/s, far rule beyond 60 m |
-| code | 26 code lines + a two-message, 7-signal DBC | 187 code lines in one openpilot file |
+| code | 33 code lines + a three-message, 8-signal DBC | 187 code lines in one openpilot file |
 | strength | smallest and closest to Toyota's own ACC; speed and range come from the ACC target alone | every radar car; the filter handles object-list speed excursions |
 
 `fused` runs the filter as:
@@ -110,14 +110,14 @@ The code comes in two versions that drive identically:
 - **openpilot version:** [`upstream/ars510_radar.py`](upstream/ars510_radar.py), one file of 227 lines (187 code) in
   opendbc style, which is `fused` in one file (a test keeps it equal to `FUSED_CONFIG` point for point);
   [docs/17](docs/17_upstream.md#parts-of-the-openpilot-file) lists what each part costs and buys. The
-  `acc` proposal is [`upstream/ars510_acc_target.py`](upstream/ars510_acc_target.py), 41 lines (26 code) with its
+  `acc` proposal is [`upstream/ars510_acc_target.py`](upstream/ars510_acc_target.py), 50 lines (33 code) with its
   [DBC](upstream/toyota_tss2_ars510.dbc). The fork build also keeps the radar's target summaries and the track-ID
   relink as options; `fused` drives the same with both switched off
   ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
-| **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point (26 code lines and a DBC; the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
+| **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point (33 code lines and a DBC; the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
 | `fused` | `--profile fused` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | the all-tracks alternative: every radar car within 60 m |
 | `raw` | `--profile raw` | the unfiltered radar decode, with the validity rules radard needs | research and comparison: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot in all-tracks form |
@@ -176,7 +176,7 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 flowchart LR
     CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed, yaw rate"] --> card --> RI["Toyota RadarInterface"]
     RI -- "ARS510 detected<br/>(firmware or 0x80/0x85)" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>fused: reassemble · CRC · decode · Kalman speed filter"]
-    A -- "RadarPoints: acc 20 Hz, fused 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
+    A -- "RadarPoints: acc 16.7 Hz, fused 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
 The installer adds the decoder package and appends one hook block to the end of Toyota's `interface.py`. The rest of

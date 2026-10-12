@@ -5,12 +5,13 @@ ask. Both are prepared as branches on a fork of opendbc, on top of opendbc maste
 
 | branch | profile | what it adds |
 |---|---|---|
-| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal) | `car/toyota/ars510_acc_target.py`, its test, the DBC `toyota_tss2_ars510.dbc`, and the routing and detection in `interface.py`, `radar_interface.py` and `values.py` |
+| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal) | smasher816's implementation (the ACC target inline in the Toyota `radar_interface.py`, the DBC `toyota_tss2_ars510.dbc`, the radar DBC for the two RAV4 platforms in `values.py`), then our fixes on top and `tests/test_ars510.py` |
 | [`ars510-fused`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-fused) | `fused`: every track, one Kalman speed filter per track | `car/toyota/ars510_radar.py`, its test, the same DBC, and the same routing and detection |
 
-The radar parser files in this repo's [`upstream/`](../upstream) are the source: CI tests them, the installer installs
-them, and the branches carry them unchanged. A change to a parser lands here first and then on its branch.
-`upstream/opendbc_ars510.patch` is the `ars510-acc` branch as one patch.
+`upstream/opendbc_ars510.patch` is the `ars510-acc` branch as one patch, and `upstream/toyota_tss2_ars510.dbc` is its
+DBC. [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) is the same logic as a standalone file, which the
+installer's `acc` profile runs on forks; the `fused` branch carries `upstream/ars510_radar.py` unchanged. CI tests the
+standalone files and checks the patch against the DBC and the standalone logic.
 
 ## Towards an upstream (comma) interface
 
@@ -21,32 +22,36 @@ all-tracks candidate.
 | | `acc`: the ACC target alone (proposal) | `fused`: every track (single file) |
 |---|---|---|
 | files | [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) + [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), as [`opendbc_ars510.patch`](../upstream/opendbc_ars510.patch) | [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), routed by [`toyota_routing.patch`](../upstream/toyota_routing.patch) |
-| size | 26 code lines (41 in the file), 7 DBC signals plus two rolling counters | 187 code lines (227 in the file) |
-| constants / state attributes / conditions / functions | 1 / 1 / 4 / 2 | 28 / 15 / 85 / 13 |
-| radar available when | known firmware, or 0x235 seen on bus 1 at fingerprinting | known firmware, or 0x80 seen on bus 1 at fingerprinting |
+| size | 33 code lines (50 in the file), 8 DBC signals in three messages plus two rolling counters | 187 code lines (227 in the file) |
+| constants / state attributes / conditions / functions | 1 / 4 / 5 / 2 | 28 / 15 / 85 / 13 |
+| radar available when | the car model: the radar-ACC RAV4 2022 and 2023-25 platforms | known firmware, or 0x80 seen on bus 1 at fingerprinting |
 | evidence | [below](#the-acc-target-alone--candidate) | [parts ledger](#parts-of-the-openpilot-file) |
 
 Sizes: [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) (`file_size`) and
 [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json).
 
-The `acc` proposal, [`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510.patch), applies to opendbc master and adds:
-- `opendbc/dbc/toyota_tss2_ars510.dbc`: the radar's two ACC target messages, 0x235 `ACC_TARGET_1` and 0x237
-  `ACC_TARGET_2` (same file: [`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc));
-- `opendbc/car/toyota/ars510_acc_target.py`: a CANParser on those messages that publishes one point at 20 Hz and reports
-  `canError` when they stop (26 code lines; same file: [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py));
-- in `values.py` the radar DBC for the radar-ACC RAV4 2022 and 2023-25 platforms, and in `radar_interface.py` the
-  dispatch to it;
-- in `interface.py` detection: the radar counts as available when the known ARS510 firmware (`8821F0R03100`, for a
-  cold start) or its ACC target (0x235) on bus 1 is present at fingerprinting. Other radar-ACC RAV4 radars, such as the 2022
-  firmware `8821F0R01100` (its frames await a capture), stay radarless and report a clean CAN state. Selecting the parser by the car's radar DBC name follows smasher816's routing branch
-  (PR #72);
-- `opendbc/car/toyota/tests/test_ars510_acc_target.py`: recorded and packed frames, the idle (no-target) payload, a stuck
-  counter, a silent radar, the 20 Hz cadence and the detection.
+The `acc` proposal, [`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510.patch), applies to opendbc master as two
+commits:
+1. **smasher816's implementation** ([smasher816/sunnypilot@3436526](https://github.com/smasher816/sunnypilot/commit/3436526cb80ec8988c1dfb09c5fcf7440cd28d02)), ported to opendbc master:
+   - **DBC:** `opendbc/dbc/toyota_tss2_ars510.dbc` with `ACC_TARGET_1` (0x235) and `ACC_TARGET_2` (0x237).
+   - **`values.py`:** `dbc_dict` accepts no radar; the radar-ACC override is gone; C-HR and Yaris are listed radarless;
+     the RAV4 2022 and 2023-25 platforms get `toyota_tss2_ars510`.
+   - **`radar_interface.py`:** for radar-ACC cars the Toyota `RadarInterface` parses the ACC target and publishes it as
+     one point.
+
+   Of the radar-ACC cars only the two RAV4s then have a radar DBC, so the car model selects the parser.
+2. **Our fixes:**
+   - **Once per radar cycle:** after the stock trigger check (0x237 updated), the radar's cycle clock (0x239 `TIMESTAMP`,
+     added as `ACC_TARGET_3`) must have advanced. The frames repeat at 50 Hz, and radard accepts `liveTracks` only at
+     8-24 Hz. The clock advances once per 60 ms cycle, with or without a target, so reports go out at 16.7 Hz: empty when
+     there is no target, nothing when the radar stops sending.
+   - **No stale point:** no point while the frames are invalid (a stale or bad counter).
+   - **Tests:** `opendbc/car/toyota/tests/test_ars510.py`.
 
 With the patch, opendbc's Toyota, platform-config, DBC-parser and car-interface tests pass and its ruff rules hold.
 Through opendbc's own CANParser the DBC decodes the bundled frames exactly like the reference decoder
 (`tests/test_acc_target_parser.py` checks the same in CI with a minimal parser). `install.py --profile acc` installs the
-same file and DBC on a fork. Why the ACC target replaces the object list as the lead source: [the ACC target alone](#the-acc-target-alone--candidate).
+standalone form (`upstream/ars510_acc_target.py`) and the DBC on a fork. Why the ACC target replaces the object list as the lead source: [the ACC target alone](#the-acc-target-alone--candidate).
 
 If upstream wants every radar track instead, the candidate is the single file
 [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (227 lines, 187 of them code). It holds the reassembler, the slot
@@ -82,7 +87,7 @@ What upstream review is likely to ask, from recent openpilot / opendbc radar PRs
 
 Each part of [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (`fused`), its code lines (statements only, comments, docstrings and
 blank lines left out of the count; shared constants counted once, counted as `tests/test_openpilot_file_ledger.py` does), what removing it costs
-on the 27 replay drives, and its status for an upstream PR. The `acc` file has 26 code lines counted the same way.
+on the 27 replay drives, and its status for an upstream PR. The `acc` file has 33 code lines counted the same way.
 
 | part | code lines | since | cost of removal | for upstream |
 |---|---|---|---|---|
@@ -107,11 +112,13 @@ each part.
 
 [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) publishes only the radar's ACC target
 (0x235 / 0x237: distance, lateral position, closing speed, target id) as openpilot's one radar point, the way Toyota's
-own ACC uses the radar ([05](05_acc_target_and_support.md)). It is a CANParser on two messages, the target-present flags and
-one point: 26 code lines (41 in the file) and a two-message, 7-signal DBC against 187 lines, 1 constant against 28, 4 conditions against 85.
-The replay numbers below come from a hand-decoded version of 33 code lines that publishes the same points (all 11,028 bundled
-reports identical); the DBC version reports `canError` instead of `radarUnavailableTemporary` when the frames stop
-(13 gaps in 11.4 h of drives, all longer than 0.5 s, so both versions flag the same ones). The object list is the
+own ACC uses the radar ([05](05_acc_target_and_support.md)). It is a CANParser on three messages, the target-present flags and
+one point: 33 code lines (50 in the file) and a three-message, 8-signal DBC against 187 lines, 1 constant against 28, 5 conditions against 85.
+The replay numbers below come from a hand-decoded version that decodes the same values (all 11,028 bundled reports
+identical) and reported every fifth card update. Reporting once per radar cycle instead gives the same results on every
+measure (hard 13 against 13, mild 32 against 30, unnecessary 19.3 against 19.2 s, missed 17.4 against 17.4 s; every
+route-bootstrap interval includes zero; `per_cycle_reporting` in the summary). When the frames stop, this file
+publishes nothing, as Toyota's other radars do. The object list is the
 tracker's raw state; the ACC target is its decision: one converged, in-path, moving target with a fine distance and a
 filtered speed. Each part of `ars510_radar.py` above rebuilds a piece of that decision:
 - the Kalman filter and the young-track factor rebuild the tracker's own speed filtering;
@@ -170,8 +177,9 @@ Each part earns its line, by what breaks when it is removed (replays of every dr
   path: hard braking while moving 5 → 7, mild 22 → 27.
 - **The radar's target-present flags.** They remove the point of an idle target; with the flags dropped it becomes a point at 0 m, which radard keeps
   switching to: lead flips 302 → 342 per hour, mild 30 → 32.
-- **Reporting at 20 Hz.** Replay runs radard in simulation mode and shows the same results at 100 Hz; on the car radard
-  accepts radarTracks at 8-24 Hz.
+- **One report per radar cycle.** The frames repeat at 50 Hz; on the car radard accepts radarTracks at 8-24 Hz, so a report
+  goes out when the radar's cycle clock (0x239) advances, every 60 ms (16.7 Hz). Replay runs radard in simulation mode,
+  where the rate check is off, and gives the same results at 20 Hz and per cycle.
 
 The hard, mild and onset numbers are independent of the oracle, whose reference lead takes its range mostly from the ACC
 target and leans toward this file on unnecessary and missed seconds. Numbers:

@@ -19,7 +19,7 @@ The object-list profiles (`fused`, `raw`) parse from card's raw `can_packets`: t
 ~60 ms. CANParser keeps the latest value per address (or a per-call list in vl_all), and a DBC maps address and bits, while the
 part of the record a frame carries follows from its sequence nibble (which wraps every 16 frames). The frames are reassembled from the
 raw `can_packets` card.py passes in, CRC-checked, and decoded in `ars510`. The DBCs in `dbc/` are for cabana; the `acc`
-profile parses its two 50 Hz ACC target messages with CANParser and `toyota_tss2_ars510.dbc`.
+profile parses its three 50 Hz ACC target messages with CANParser and `toyota_tss2_ars510.dbc`.
 
 Output cadence: one RadarData per completed record (~16.7 Hz, inside radard's 8-24 Hz radarTracks window).
 - After power-up the radar sends its first object record ~6 s after first CAN. Until the first valid record, this

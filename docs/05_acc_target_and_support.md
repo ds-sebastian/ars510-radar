@@ -14,9 +14,10 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 At **50 Hz** (content updated every 60 ms radar cycle), this stream reports the one target the radar's own ACC logic follows.
 The two frames are mapped bit for bit: field boundaries come from the carry structure of 2 M frames, and while idle
-every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0). Both DBCs name them `ACC_TARGET_1` (0x235) and `ACC_TARGET_2` (0x237):
+every numeric field sits at its zero code (100, 1024, 100, 1024, 2000, 0). Both DBCs name them `ACC_TARGET_1` (0x235) and `ACC_TARGET_2` (0x237), with the companion 0x239 as `ACC_TARGET_3`
+(the radar cycle clock `TIMESTAMP`, which advances once per 60 ms cycle with or without a target):
 [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) carries every field for Cabana,
-[`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc) holds the seven signals (plus counters) the `acc` interface and its checks use.
+[`upstream/toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc) holds the eight signals (plus counters) the `acc` interface and its checks use.
 The stream is a distinct output of the radar's tracker: it reports on 58,553 of 484,061 active cycles in which the object
 list is empty (mostly stopped within 6.4 m; 1,443 of them above 3 m/s ego speed; 13 drives,
 [`acc_target_availability.json`](../data/analysis/summaries/acc_target_availability.json)).

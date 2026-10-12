@@ -16,7 +16,7 @@ lines in all; the installer's single-file `fused`). Numbers:
 
 Same drives, same openpilot card → radard → planner, same pre-registered definitions per row
 ([11](11_profiles_compared.md) has the full comparison with `raw`). `fused` is version 2.6 and `acc` is
-[`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py): 26 code lines of 41 and a two-message, 7-signal DBC (`fused`: 187
+[`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py): 33 code lines of 50 and a three-message, 8-signal DBC (`fused`: 187
 code lines, 28 constants, 85 conditions; `acc`: 1 constant, 4 conditions). The `acc` replays ran the hand-decoded
 33-line version that publishes identical points on 11,028 bundled reports. Sources:
 [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),

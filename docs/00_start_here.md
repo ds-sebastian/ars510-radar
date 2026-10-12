@@ -9,7 +9,7 @@ Two install profiles turn the radar into openpilot radar points. The tour shows 
 | | `acc` (default) | `fused` (the all-tracks alternative) |
 |---|---|---|
 | publishes | the radar's ACC target (0x235 / 0x237) as one point | every settled object-list track, with one Kalman speed filter per track |
-| code | 26 code lines (41 in the file) and a 7-signal DBC (plus two rolling counters) | 187 code lines (the single-file openpilot version) |
+| code | 33 code lines (50 in the file) and an 8-signal DBC (plus two rolling counters) | 187 code lines (the single-file openpilot version) |
 | other cars | from openpilot's camera match in radard | from the radar up to 60 m, from the camera beyond |
 | install | `install.py` | `install.py --profile fused` |
 
@@ -136,7 +136,7 @@ upstream PR could drop:
 
 ![parts ledger](img/analysis/guide_parts_ledger.png)
 
-`acc` is the other end of the scale: 26 code lines, one constant, the radar's target-present flags as its only gate. Each of `fused`'s parts rebuilds a piece of the
+`acc` is the other end of the scale: 33 code lines, one constant, the radar's target-present flags as its only gate. Each of `fused`'s parts rebuilds a piece of the
 decision the radar's tracker has already made ([17](17_upstream.md#the-acc-target-alone--candidate)).
 More: [12](12_kalman_filter.md#what-each-part-is-worth), [17](17_upstream.md#parts-of-the-openpilot-file).
 
@@ -184,7 +184,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | published radar lead − camera range, 20-70 m (`fused` 2.1, owner's car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
-| code size | `acc` 26 code lines + 7-signal DBC; `fused` 187 code lines | `acc_target_parser.json`, `openpilot_file_parts.json` |
+| code size | `acc` 33 code lines + 8-signal DBC; `fused` 187 code lines | `acc_target_parser.json`, `openpilot_file_parts.json` |
 | every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
 | lead flips per moving hour, every drive set | `fused` 332, `acc` 302 | `acc_target_parser.json` |
 

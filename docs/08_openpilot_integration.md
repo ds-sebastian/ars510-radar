@@ -12,7 +12,7 @@ flowchart LR
         card --> RI["toyota RadarInterface.update()"]
         RI -- "ARS510 detected" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>fused: reassemble · CRC · decode · filter · track IDs"]
     end
-    A -- "RadarData: acc 20 Hz, fused ~16.7 Hz" --> T["radarTracks / liveTracks"]
+    A -- "RadarData: acc 16.7 Hz, fused ~16.7 Hz" --> T["radarTracks / liveTracks"]
     T --> radard --> RS["radarState leads"] --> P[longitudinal planner]
     V["modelV2 vision leads"] --> radard
 ```
@@ -45,7 +45,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    reassemble 0x80 records, check the CRC32 and decode the 20 slots; ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost of the object-list decode: about 6-14 µs per 10 ms call on a desktop CPU.
 4. **Output.** `acc`: one `RadarPoint(trackId, dRel, yRel, vRel)` for the radar's ACC target while its target-present
-   flags are set, reported every fifth update (20 Hz). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
+   flags are set, reported once per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
    for tracks aged ≥ 60 cycles (with `fused`, also once the filter's speed standard deviation is at most 0.75 m/s), with
    the radar's own track IDs (`raw` also re-links them across short losses), published while a fresh ego speed gives a
    finite vRel. Forks whose RadarPoint still has the legacy fields (sunnypilot) also get:
@@ -101,7 +101,7 @@ same drives.
 
 | profile | what it is | when to use |
 |---|---|---|
-| **`acc`** (default) | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), 26 code lines, opendbc's CANParser; the upstream proposal): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([17](17_upstream.md#the-acc-target-alone--candidate)) | everyday driving: braking equal to `fused` in replay (0.21 % of moving time differs), less unnecessary braking and fewer lead flips on held-out drives ([11](11_profiles_compared.md#why-acc-is-the-default)) |
+| **`acc`** (default) | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), 33 code lines, opendbc's CANParser; the upstream proposal): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([17](17_upstream.md#the-acc-target-alone--candidate)) | everyday driving: braking equal to `fused` in replay (0.21 % of moving time differs), less unnecessary braking and fewer lead flips on held-out drives ([11](11_profiles_compared.md#why-acc-is-the-default)) |
 | `fused` | `FUSED_CONFIG`: the `raw` decode with range fusion and one Kalman speed filter that weights the object list and the radar's ACC target by their own uncertainty ([12](12_kalman_filter.md#the-model)), plus a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)); the filter makes `raw`'s relink and saturation guard redundant | the all-tracks alternative: every radar car within 60 m, with 0 radar-only braking per hour on the held-out drives ([11](11_profiles_compared.md)) |
 | `openpilot` | `fused` in one file ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([17](17_upstream.md#towards-an-upstream-comma-interface)) | driving the all-tracks upstream alternative |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison; velocity excursions reach the planner |

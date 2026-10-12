@@ -1,120 +1,167 @@
-diff --git a/opendbc/car/toyota/ars510_acc_target.py b/opendbc/car/toyota/ars510_acc_target.py
-new file mode 100644
-index 00000000..583cf690
---- /dev/null
-+++ b/opendbc/car/toyota/ars510_acc_target.py
-@@ -0,0 +1,41 @@
-+"""Toyota / Continental ARS510 front radar (RAV4 2022+, fwdRadar 8821F0R03100): the car Toyota's ACC follows.
-+
-+Besides its raw object list (0x80, one record over 106 frames), the radar sends the one target its own ACC acts on
-+(ACC_TARGET_1 / ACC_TARGET_2 in toyota_tss2_ars510.dbc): a converged, in-path track chosen by the radar's tracker, with
-+distance, lateral position, closing speed and an ID that changes when the radar switches targets. Toyota's ACC acts on
-+this target alone. This interface publishes that target as openpilot's only radar point; radard matches it to the
-+camera's lead as for any radar, and every other car comes from the camera. ars510-radar docs/17 ("The ACC target alone") has
-+the evidence.
-+"""
-+from opendbc.can import CANParser
-+from opendbc.car.structs import RadarData
-+from opendbc.car.interfaces import RadarInterfaceBase
-+
-+RADAR_DBC = "toyota_tss2_ars510"
-+
-+
-+class RadarInterface(RadarInterfaceBase):
-+  def __init__(self, CP, *args, **kwargs):  # forks pass more (sunnypilot: CP_SP)
-+    super().__init__(CP, *args, **kwargs)
-+    self.rcp = CANParser(RADAR_DBC, [("ACC_TARGET_1", 50), ("ACC_TARGET_2", 50)], 1)
-+
-+  def update(self, can_strings):
-+    self.frame += 1
-+    self.rcp.update(can_strings)
-+    if self.frame % 5 != 0:  # card calls update at 100 Hz: report at 20 Hz
-+      return None
-+
-+    ret = RadarData()
-+    if not self.rcp.can_valid:
-+      ret.errors.canError = True
-+      return ret
-+
-+    target, position = self.rcp.vl["ACC_TARGET_1"], self.rcp.vl["ACC_TARGET_2"]
-+    if target["STATE"] == 5 and position["PRESENT"]:  # 1 = idle, with every field zero
-+      pt = RadarData.RadarPoint()
-+      pt.trackId = int(target["TARGET_ID"])
-+      pt.dRel = position["LONG_DIST"]
-+      pt.yRel = position["LAT_DIST"]
-+      pt.vRel = target["REL_SPEED"]
-+      ret.points = [pt]  # assigned as a list: forks with capnp-backed structs (sunnypilot) take list assignment only
-+    return ret
-diff --git a/opendbc/car/toyota/interface.py b/opendbc/car/toyota/interface.py
-index 2090e7f0..7319ca5d 100644
---- a/opendbc/car/toyota/interface.py
-+++ b/opendbc/car/toyota/interface.py
-@@ -2,7 +2,7 @@ from opendbc.car import Bus, structs, get_safety_config, uds
- from opendbc.car.toyota.carstate import CarState
- from opendbc.car.toyota.carcontroller import CarController
- from opendbc.car.toyota.radar_interface import RadarInterface
--from opendbc.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, MIN_ACC_SPEED, \
-+from opendbc.car.toyota.values import ARS510_FW_VERSIONS, ARS510_RADAR, Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, MIN_ACC_SPEED, \
-                                                   EPS_SCALE, ToyotaSafetyFlags
- from opendbc.car.disable_ecu import disable_ecu
- from opendbc.car.interfaces import CarInterfaceBase
-@@ -89,8 +89,12 @@ class CarInterface(CarInterfaceBase):
-       ret.flags |= ToyotaFlags.HAS_BSM.value
- 
-     ret.radarUnavailable = Bus.radar not in DBC[candidate]
-+    if DBC[candidate].get(Bus.radar) == ARS510_RADAR:
-+      # radar-ACC RAV4s: only the Continental ARS510 sends its ACC target (0x235) on bus 1; other radars stay radarless
-+      ars510_fw = any(fw.ecu == Ecu.fwdRadar and fw.fwVersion in ARS510_FW_VERSIONS for fw in car_fw)
-+      ret.radarUnavailable = not (ars510_fw or 0x235 in fingerprint[1])
- 
--    # since we don't yet parse radar on TSS2 radar-based ACC cars, gate longitudinal behind alpha toggle
-+    # TSS2 radar-based ACC cars: only the ARS510's ACC target is parsed (ars510_acc_target.py); gate longitudinal behind alpha toggle
-     if ret.flags & ToyotaFlags.RADAR_ACC:
-       ret.alphaLongitudinalAvailable = True
- 
 diff --git a/opendbc/car/toyota/radar_interface.py b/opendbc/car/toyota/radar_interface.py
-index 207b5a17..95ab80e2 100755
+index 207b5a17..3edda177 100755
 --- a/opendbc/car/toyota/radar_interface.py
 +++ b/opendbc/car/toyota/radar_interface.py
-@@ -2,7 +2,8 @@
- from opendbc.can import CANParser
- from opendbc.car import Bus
- from opendbc.car.structs import RadarData
--from opendbc.car.toyota.values import DBC, ToyotaFlags
-+from opendbc.car.toyota.values import ARS510_RADAR, DBC, ToyotaFlags
-+from opendbc.car.toyota.ars510_acc_target import RadarInterface as Ars510RadarInterface
+@@ -6,8 +6,11 @@ from opendbc.car.toyota.values import DBC, ToyotaFlags
  from opendbc.car.interfaces import RadarInterfaceBase
  
  
-@@ -35,11 +36,14 @@ class RadarInterface(RadarInterfaceBase):
+-def _create_radar_can_parser(CP):
+-  if CP.flags & ToyotaFlags.TSS2:
++def _create_radar_can_parser(CP, use_ars510=False):
++  if use_ars510:
++    RADAR_A_MSGS = [0x235]
++    RADAR_B_MSGS = [0x237]
++  elif CP.flags & ToyotaFlags.TSS2:
+     RADAR_A_MSGS = list(range(0x180, 0x190))
+     RADAR_B_MSGS = list(range(0x190, 0x1a0))
+   else:
+@@ -16,9 +19,13 @@ def _create_radar_can_parser(CP):
+ 
+   msg_a_n = len(RADAR_A_MSGS)
+   msg_b_n = len(RADAR_B_MSGS)
+-  messages = list(zip(RADAR_A_MSGS + RADAR_B_MSGS, [20] * (msg_a_n + msg_b_n), strict=True))
+ 
+-  messages.append(('STATUS_MSG', 10))
++  if use_ars510:
++    messages = list(zip(RADAR_A_MSGS + RADAR_B_MSGS, [50] * (msg_a_n + msg_b_n), strict=True))
++    messages.append(('ACC_TARGET_3', 50))
++  else:
++    messages = list(zip(RADAR_A_MSGS + RADAR_B_MSGS, [20] * (msg_a_n + msg_b_n), strict=True))
++    messages.append(('STATUS_MSG', 10))
+ 
+   return CANParser(DBC[CP.carFingerprint][Bus.radar], messages, 1)
+ 
+@@ -26,7 +33,12 @@ def _create_radar_can_parser(CP):
+ class RadarInterface(RadarInterfaceBase):
+   def __init__(self, CP):
+     super().__init__(CP)
+-    if CP.flags & ToyotaFlags.TSS2:
++    # of the radar-ACC cars only the RAV4s have a radar DBC (Continental ARS510); C-HR and Yaris stay radarless
++    self.use_ars510 = CP.flags & ToyotaFlags.RADAR_ACC
++    if self.use_ars510:
++      self.RADAR_A_MSGS = [0x235]
++      self.RADAR_B_MSGS = [0x237]
++    elif CP.flags & ToyotaFlags.TSS2:
+       self.RADAR_A_MSGS = list(range(0x180, 0x190))
+       self.RADAR_B_MSGS = list(range(0x190, 0x1a0))
+     else:
+@@ -35,8 +47,9 @@ class RadarInterface(RadarInterfaceBase):
  
      self.valid_cnt = {key: 0 for key in self.RADAR_A_MSGS}
  
 -    self.rcp = None if CP.radarUnavailable else _create_radar_can_parser(CP)
-+    self.ars510 = Ars510RadarInterface(CP) if not CP.radarUnavailable and DBC[CP.carFingerprint].get(Bus.radar) == ARS510_RADAR else None
-+    self.rcp = None if CP.radarUnavailable or self.ars510 is not None else _create_radar_can_parser(CP)
++    self.rcp = None if CP.radarUnavailable else _create_radar_can_parser(CP, self.use_ars510)
      self.trigger_msg = self.RADAR_B_MSGS[-1]
++    self.ars510_cycle = 0
      self.updated_messages = set()
  
    def update(self, can_strings):
-+    if self.ars510 is not None:
-+      return self.ars510.update(can_strings)
-     if self.rcp is None:
-       return super().update(None)
+@@ -49,6 +62,13 @@ class RadarInterface(RadarInterfaceBase):
+     if self.trigger_msg not in self.updated_messages:
+       return None
  
-diff --git a/opendbc/car/toyota/tests/test_ars510_acc_target.py b/opendbc/car/toyota/tests/test_ars510_acc_target.py
++    if self.use_ars510:
++      # the ACC target frames repeat at 50 Hz; publish once per radar cycle (16.7 Hz), when the radar's clock advances
++      cycle = self.rcp.vl['ACC_TARGET_3']['TIMESTAMP']
++      if cycle == self.ars510_cycle:
++        return None
++      self.ars510_cycle = cycle
++
+     rr = self._update(self.updated_messages)
+     self.updated_messages.clear()
+ 
+@@ -59,35 +79,46 @@ class RadarInterface(RadarInterfaceBase):
+     if not self.rcp.can_valid:
+       ret.errors.canError = True
+ 
+-    if self.rcp.vl['STATUS_MSG']['RADAR_STATUS'] != 1 or self.rcp.vl['STATUS_MSG']['RADAR_PRE_FAULT'] != 0:
+-      ret.errors.radarUnavailableTemporary = True
+-
+-    for ii in sorted(updated_messages):
+-      if ii in self.RADAR_A_MSGS:
+-        cpt = self.rcp.vl[ii]
+-
+-        if cpt['LONG_DIST'] >= 255 or cpt['NEW_TRACK']:
+-          self.valid_cnt[ii] = 0    # reset counter
+-        if cpt['VALID'] and cpt['LONG_DIST'] < 255:
+-          self.valid_cnt[ii] += 1
+-        else:
+-          self.valid_cnt[ii] = max(self.valid_cnt[ii] - 1, 0)
+-
+-        score = self.rcp.vl[ii+16]['SCORE']
+-        # print ii, self.valid_cnt[ii], score, cpt['VALID'], cpt['LONG_DIST'], cpt['LAT_DIST']
+-
+-        # radar point only valid if it's a valid measurement and score is above 50
+-        if cpt['VALID'] or (score > 50 and cpt['LONG_DIST'] < 255 and self.valid_cnt[ii] > 0):
+-          if ii not in self.pts or cpt['NEW_TRACK']:
+-            self.pts[ii] = RadarData.RadarPoint()
+-            self.pts[ii].trackId = self.track_id
+-            self.track_id += 1
+-          self.pts[ii].dRel = cpt['LONG_DIST']  # from front of car
+-          self.pts[ii].yRel = -cpt['LAT_DIST']  # in car frame's y axis, left is positive
+-          self.pts[ii].vRel = cpt['REL_SPEED']
+-        else:
+-          if ii in self.pts:
+-            del self.pts[ii]
+-
+-    ret.points = list(self.pts.values())
++    if self.use_ars510:
++      target, position = self.rcp.vl["ACC_TARGET_1"], self.rcp.vl["ACC_TARGET_2"]
++      if self.rcp.can_valid and target["STATE"] == 5 and position["PRESENT"]:  # 1 = idle, with every field zero
++        pt = RadarData.RadarPoint()
++        pt.trackId = int(target["TARGET_ID"])
++        pt.dRel = position["LONG_DIST"]
++        pt.yRel = position["LAT_DIST"]
++        pt.vRel = target["REL_SPEED"]
++        ret.points = [pt]
++
++    else:
++      if self.rcp.vl['STATUS_MSG']['RADAR_STATUS'] != 1 or self.rcp.vl['STATUS_MSG']['RADAR_PRE_FAULT'] != 0:
++        ret.errors.radarUnavailableTemporary = True
++
++      for ii in sorted(updated_messages):
++        if ii in self.RADAR_A_MSGS:
++          cpt = self.rcp.vl[ii]
++
++          if cpt['LONG_DIST'] >= 255 or cpt['NEW_TRACK']:
++            self.valid_cnt[ii] = 0    # reset counter
++          if cpt['VALID'] and cpt['LONG_DIST'] < 255:
++            self.valid_cnt[ii] += 1
++          else:
++            self.valid_cnt[ii] = max(self.valid_cnt[ii] - 1, 0)
++
++          score = self.rcp.vl[ii+16]['SCORE']
++          # print ii, self.valid_cnt[ii], score, cpt['VALID'], cpt['LONG_DIST'], cpt['LAT_DIST']
++
++          # radar point only valid if it's a valid measurement and score is above 50
++          if cpt['VALID'] or (score > 50 and cpt['LONG_DIST'] < 255 and self.valid_cnt[ii] > 0):
++            if ii not in self.pts or cpt['NEW_TRACK']:
++              self.pts[ii] = RadarData.RadarPoint()
++              self.pts[ii].trackId = self.track_id
++              self.track_id += 1
++            self.pts[ii].dRel = cpt['LONG_DIST']  # from front of car
++            self.pts[ii].yRel = -cpt['LAT_DIST']  # in car frame's y axis, left is positive
++            self.pts[ii].vRel = cpt['REL_SPEED']
++          else:
++            if ii in self.pts:
++              del self.pts[ii]
++
++      ret.points = list(self.pts.values())
+     return ret
+diff --git a/opendbc/car/toyota/tests/test_ars510.py b/opendbc/car/toyota/tests/test_ars510.py
 new file mode 100644
-index 00000000..ea70ad7a
+index 00000000..96e283e4
 --- /dev/null
-+++ b/opendbc/car/toyota/tests/test_ars510_acc_target.py
-@@ -0,0 +1,94 @@
++++ b/opendbc/car/toyota/tests/test_ars510.py
+@@ -0,0 +1,97 @@
 +import unittest
 +
 +from opendbc.can import CANPacker
-+from opendbc.car import Bus, gen_empty_fingerprint, structs
++from opendbc.car import Bus, gen_empty_fingerprint
 +from opendbc.car.toyota.interface import CarInterface
-+from opendbc.car.toyota.ars510_acc_target import RADAR_DBC, RadarInterface
-+from opendbc.car.toyota.values import ARS510_FW_VERSIONS, ARS510_RADAR, CAR, DBC
++from opendbc.car.toyota.radar_interface import RadarInterface
++from opendbc.car.toyota.values import CAR, DBC, ToyotaFlags
 +
 +# recorded ACC target frames (0x235, 0x237) of one followed car, and the radar's idle payload without a target
 +RECORDED = [
@@ -125,130 +172,160 @@ index 00000000..ea70ad7a
 +IDLE_235, IDLE_237 = bytes.fromhex("000164800B2400FF"), bytes.fromhex("00000000003E8000")
 +
 +
++def car_params(car=CAR.TOYOTA_RAV4_TSS2_2023):
++  return CarInterface.get_params(car, gen_empty_fingerprint(), [], False, False, False)
++
++
 +def with_counter(dat, counter):
 +  """The rolling counter is the high nibble of byte 1."""
 +  return dat[:1] + bytes([(counter % 16) << 4 | dat[1] & 0x0F]) + dat[2:]
 +
 +
-+def run(ri, frames, t0=0):
-+  """Feed card-style updates at 100 Hz (one ACC frame pair every other update, as at 50 Hz); returns the reports."""
++PACKER = CANPacker("toyota_tss2_ars510")
++
++
++def run(ri, frames, t0=0, cycle0=0):
++  """card.py updates at 100 Hz, one ACC frame pair every other update (50 Hz), the radar's cycle clock (0x239)
++  advancing every third pair (60 ms); returns the reports."""
 +  out = []
 +  for i, pair in enumerate(frames):
 +    for j in range(2):
-+      can = [(0x235, with_counter(pair[0], i), 1), (0x237, with_counter(pair[1], i), 1)] if j == 0 and pair else []
++      can = []
++      if j == 0 and pair:
++        clock = PACKER.make_can_msg("ACC_TARGET_3", 1, {"TIMESTAMP": cycle0 + 60000 * (1 + i // 3)})[1]
++        can = [(0x235, with_counter(pair[0], i), 1), (0x237, with_counter(pair[1], i), 1), (0x239, clock, 1)]
 +      rr = ri.update([(int(t0 + (2 * i + j) * 1e7), can)])
 +      if rr is not None:
 +        out.append(rr)
 +  return out
 +
 +
-+class TestArs510AccTarget(unittest.TestCase):
-+  def setUp(self):
-+    self.CP = structs.CarParams.new_message()
-+    self.CP.carFingerprint = CAR.TOYOTA_RAV4_TSS2_2023
++class TestArs510(unittest.TestCase):
++  def test_radar_dbc_only_on_the_rav4s(self):
++    with_radar = {car for car in CAR if car.config.flags & ToyotaFlags.RADAR_ACC and Bus.radar in DBC[car]}
++    assert with_radar == {CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023}
 +
-+  def test_rav4_radar_dbc(self):
++  def test_radar_available_on_the_rav4s_only(self):
 +    for car in (CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023):
-+      assert DBC[car][Bus.radar] == ARS510_RADAR == RADAR_DBC
++      assert not car_params(car).radarUnavailable
++    for car in (CAR.TOYOTA_CHR_TSS2, CAR.TOYOTA_YARIS):
++      CP = car_params(car)
++      assert CP.radarUnavailable and RadarInterface(CP).rcp is None
 +
-+  def test_detection(self):
-+    """Only an ARS510 (known radar FW, or its ACC target on bus 1 at fingerprinting) enables radar; other radars stay radarless."""
-+    def params(car, radar_fw, acc_on_bus1):
-+      fingerprint = gen_empty_fingerprint()
-+      if acc_on_bus1:
-+        fingerprint[1][0x235] = 8
-+      car_fw = [structs.CarParams.CarFw(ecu="fwdRadar", fwVersion=radar_fw, address=0x750, subAddress=0xf)]
-+      return CarInterface.get_params(car, fingerprint, car_fw, False, False, False)
-+
-+    ars510_fw, other_fw = next(iter(ARS510_FW_VERSIONS)), b'\x018821F0R01100\x00\x00\x00\x00'
-+    for car in (CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023):
-+      assert not params(car, ars510_fw, False).radarUnavailable  # cold start: the radar is not sending yet
-+      assert not params(car, other_fw, True).radarUnavailable
-+      CP = params(car, other_fw, False)
-+      assert CP.radarUnavailable and CarInterface.RadarInterface(CP).ars510 is None
-+
-+  def test_recorded_frames(self):
++  def test_recorded_frames_once_per_radar_cycle(self):
 +    for f235, f237, track_id, d_rel, y_rel, v_rel in RECORDED:
-+      ri = RadarInterface(self.CP)
-+      pair = (bytes.fromhex(f235), bytes.fromhex(f237))
-+      reports = run(ri, [pair] * 20)
-+      assert len(reports) == 8  # 20 Hz
++      ri = RadarInterface(car_params())
++      reports = run(ri, [(bytes.fromhex(f235), bytes.fromhex(f237))] * 21)
++      assert len(reports) == 7  # 21 frame pairs at 50 Hz = 7 radar cycles of 60 ms (16.7 Hz)
 +      pt, = reports[-1].points
 +      assert pt.trackId == track_id
 +      assert abs(pt.dRel - d_rel) < 1e-6 and abs(pt.yRel - y_rel) < 1e-6 and abs(pt.vRel - v_rel) < 1e-6
 +
 +  def test_packed_target(self):
-+    packer = CANPacker(RADAR_DBC)
-+    pair = (packer.make_can_msg("ACC_TARGET_1", 1, {"STATE": 5, "REL_SPEED": -3.25, "TARGET_ID": 7})[1],
-+            packer.make_can_msg("ACC_TARGET_2", 1, {"LONG_DIST": 61.5, "LAT_DIST": 0.42, "PRESENT": 1})[1])
-+    reports = run(RadarInterface(self.CP), [pair] * 30)
++    pair = (PACKER.make_can_msg("ACC_TARGET_1", 1, {"STATE": 5, "REL_SPEED": -3.25, "TARGET_ID": 7})[1],
++            PACKER.make_can_msg("ACC_TARGET_2", 1, {"LONG_DIST": 61.5, "LAT_DIST": 0.42, "PRESENT": 1})[1])
++    reports = run(RadarInterface(car_params()), [pair] * 30)
 +    pt, = reports[-1].points
 +    assert pt.trackId == 7 and abs(pt.dRel - 61.5) < 1e-6 and abs(pt.yRel - 0.42) < 1e-6 and abs(pt.vRel + 3.25) < 1e-6
 +    assert not reports[-1].errors.canError
 +
-+  def test_stuck_counter_is_a_can_error(self):
-+    ri = RadarInterface(self.CP)
++  def test_stuck_counter_publishes_no_target(self):
++    # the ACC target frames repeat a counter value: CANParser rejects them, so the trigger (0x237) never updates
++    ri = RadarInterface(car_params())
 +    pair = (bytes.fromhex(RECORDED[0][0]), bytes.fromhex(RECORDED[0][1]))
-+    reports = [ri.update([(int(i * 1e7), [(0x235, pair[0], 1), (0x237, pair[1], 1)] if i % 2 == 0 else [])]) for i in range(40)]
-+    assert [rr for rr in reports if rr is not None][-1].errors.canError
++    reports = []
++    for i in range(21):
++      clock = PACKER.make_can_msg("ACC_TARGET_3", 1, {"TIMESTAMP": 60000 * (1 + i // 3)})[1]
++      for j in range(2):
++        rr = ri.update([(int((2 * i + j) * 1e7), [(0x235, pair[0], 1), (0x237, pair[1], 1), (0x239, clock, 1)] if j == 0 else [])])
++        if rr is not None:
++          reports.append(rr)
++    assert len(reports) == 2  # frames accepted until CANParser's counter check trips (5 bad frames), then nothing
 +
 +  def test_no_target_and_silent_radar(self):
-+    ri = RadarInterface(self.CP)
-+    reports = run(ri, [(IDLE_235, IDLE_237)] * 20)
-+    assert len(reports[-1].points) == 0 and not reports[-1].errors.canError
-+    reports = run(ri, [None] * 20, t0=0.4e9)
-+    assert len(reports[-1].points) == 0 and reports[-1].errors.canError
++    ri = RadarInterface(car_params())
++    reports = run(ri, [(IDLE_235, IDLE_237)] * 21)  # no target: the radar keeps sending, so empty reports keep coming
++    assert len(reports) == 7 and all(len(rr.points) == 0 and not rr.errors.canError for rr in reports)
++    # a silent radar publishes nothing, like Toyota's other radars: radard then flags liveTracks as missing
++    assert run(ri, [None] * 20, t0=0.5e9) == []
 +
 +
 +if __name__ == "__main__":
 +  unittest.main()
 diff --git a/opendbc/car/toyota/values.py b/opendbc/car/toyota/values.py
-index efdef6a0..12d25237 100644
+index efdef6a0..d9739771 100644
 --- a/opendbc/car/toyota/values.py
 +++ b/opendbc/car/toyota/values.py
-@@ -104,6 +104,11 @@ class ToyotaSecOcCarDocs(ToyotaCarDocs):
-   support_link: str = "#secoc-cars-with-recoverable-keys"
+@@ -83,7 +83,10 @@ class ToyotaFlags(IntFlag):
  
  
-+# Continental ARS510 front radar (fwdRadar 8821F0R03100) on radar-ACC RAV4s: the target its own ACC follows
-+ARS510_RADAR = 'toyota_tss2_ars510'
-+ARS510_FW_VERSIONS = {b'\x018821F0R03100\x00\x00\x00\x00'}
-+
-+
- @dataclass
- class ToyotaTSS2PlatformConfig(PlatformConfig):
-   dbc_dict: dict = field(default_factory=lambda: dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_adas'))
-@@ -111,7 +116,7 @@ class ToyotaTSS2PlatformConfig(PlatformConfig):
+ def dbc_dict(pt, radar):
+-  return {Bus.pt: pt, Bus.radar: radar}
++  if radar is not None:
++    return {Bus.pt: pt, Bus.radar: radar}
++  else:
++    return {Bus.pt: pt}
+ 
+ 
+ class Footnote(Enum):
+@@ -111,9 +114,6 @@ class ToyotaTSS2PlatformConfig(PlatformConfig):
    def init(self):
      self.flags |= ToyotaFlags.TSS2 | ToyotaFlags.NO_DSU
  
 -    if self.flags & ToyotaFlags.RADAR_ACC:
-+    if self.flags & ToyotaFlags.RADAR_ACC and self.dbc_dict.get(Bus.radar) != ARS510_RADAR:
-       self.dbc_dict = {Bus.pt: 'toyota_nodsu_pt_generated'}
+-      self.dbc_dict = {Bus.pt: 'toyota_nodsu_pt_generated'}
+-
  
+ @dataclass
+ class ToyotaSecOCPlatformConfig(PlatformConfig):
+@@ -122,9 +122,6 @@ class ToyotaSecOCPlatformConfig(PlatformConfig):
+   def init(self):
+     self.flags |= ToyotaFlags.TSS2 | ToyotaFlags.NO_DSU | ToyotaFlags.SECOC
  
-@@ -276,6 +281,7 @@ class CAR(Platforms):
+-    if self.flags & ToyotaFlags.RADAR_ACC:
+-      self.dbc_dict = {Bus.pt: 'toyota_secoc_pt_generated'}
+-
+ 
+ class CAR(Platforms):
+   # Toyota
+@@ -190,6 +187,7 @@ class CAR(Platforms):
+       ToyotaCarDocs("Toyota C-HR Hybrid 2021-22"),
+     ],
+     TOYOTA_CHR.specs,
++    dbc_dict('toyota_nodsu_pt_generated', None),
+     flags=ToyotaFlags.RADAR_ACC,
+   )
+   TOYOTA_COROLLA = PlatformConfig(
+@@ -276,6 +274,7 @@ class CAR(Platforms):
        ToyotaCarDocs("Toyota RAV4 Hybrid 2022", video="https://youtu.be/U0nH9cnrFB0"),
      ],
      TOYOTA_RAV4_TSS2.specs,
-+    dbc_dict('toyota_nodsu_pt_generated', ARS510_RADAR),
++    dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_ars510'),
      flags=ToyotaFlags.RADAR_ACC,
    )
    TOYOTA_RAV4_TSS2_2023 = ToyotaTSS2PlatformConfig(
-@@ -284,6 +290,7 @@ class CAR(Platforms):
+@@ -284,6 +283,7 @@ class CAR(Platforms):
        ToyotaCarDocs("Toyota RAV4 Hybrid 2023-25", video="https://youtu.be/4eIsEq4L4Ng"),
      ],
      TOYOTA_RAV4_TSS2.specs,
-+    dbc_dict('toyota_nodsu_pt_generated', ARS510_RADAR),
++    dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_ars510'),
      flags=ToyotaFlags.RADAR_ACC | ToyotaFlags.ANGLE_CONTROL,
    )
    TOYOTA_RAV4_PRIME = ToyotaSecOCPlatformConfig(
+@@ -293,6 +293,7 @@ class CAR(Platforms):
+   TOYOTA_YARIS = ToyotaSecOCPlatformConfig(
+     [ToyotaSecOcCarDocs("Toyota Yaris (Non-US only) 2020, 2023", min_enable_speed=MIN_ACC_SPEED)],
+     CarSpecs(mass=1170, wheelbase=2.55, steerRatio=14.80, tireStiffnessFactor=0.5533),
++    dbc_dict('toyota_secoc_pt_generated', None),
+     flags=ToyotaFlags.RADAR_ACC,
+   )
+   TOYOTA_MIRAI = ToyotaTSS2PlatformConfig( # TSS 2.5
 diff --git a/opendbc/dbc/toyota_tss2_ars510.dbc b/opendbc/dbc/toyota_tss2_ars510.dbc
 new file mode 100644
-index 00000000..2e9d4a78
+index 00000000..ba9c33c2
 --- /dev/null
 +++ b/opendbc/dbc/toyota_tss2_ars510.dbc
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,65 @@
 +VERSION ""
 +
 +
@@ -298,6 +375,9 @@ index 00000000..2e9d4a78
 + SG_ LAT_DIST : 30|12@0+ (0.01,-20) [-20|20.95] "m" XXX
 + SG_ PRESENT : 50|1@0+ (1,0) [0|1] "" XXX
 +
++BO_ 569 ACC_TARGET_3: 8 XXX
++ SG_ TIMESTAMP : 26|32@0+ (1,0) [0|4294967295] "us" XXX
++
 +CM_ "Continental ARS510 front radar (Toyota RAV4 2022-25, fwdRadar 8821F0R03100), radar bus: the target the radar's own ACC follows. The 0x80 object list and 0x85 metadata record span many frames and are decoded by ars510-radar (ars510/).";
 +CM_ BO_ 565 "ACC target, part 1: 50 Hz, content updated once per 60 ms radar cycle.";
 +CM_ SG_ 565 STATE "5 = target present, 1 = idle (all other fields zero).";
@@ -308,4 +388,6 @@ index 00000000..2e9d4a78
 +CM_ SG_ 567 LONG_DIST "Distance from the radar.";
 +CM_ SG_ 567 LAT_DIST "Lateral position, left positive.";
 +CM_ SG_ 567 PRESENT "1 = target present.";
++CM_ BO_ 569 "ACC target, part 3: 50 Hz.";
++CM_ SG_ 569 TIMESTAMP "Radar cycle clock: changes once per 60 ms radar cycle, when the ACC target is recomputed.";
 +VAL_ 565 STATE 5 "TARGET" 1 "NO_TARGET" ;

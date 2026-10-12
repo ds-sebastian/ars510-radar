@@ -20,7 +20,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | source | ACC target frames 0x235 / 0x237 | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | radar and camera | radar and camera |
-| code | 26 code lines and a two-message, 7-signal DBC ([17](17_upstream.md#the-acc-target-alone--candidate)) | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| code | 33 code lines and a three-message, 8-signal DBC ([17](17_upstream.md#the-acc-target-alone--candidate)) | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
 | tuned constants | protocol values only | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 1.75 (0.66) |
@@ -112,7 +112,7 @@ unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the
   with the radar's range; vision put the lead 3-4 m closer
   ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3);
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
-- **Small and auditable.** 26 code lines and a two-message, 7-signal DBC with protocol values only: it passes on the radar's own
+- **Small and auditable.** 33 code lines and a three-message, 8-signal DBC with protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
 - **Replay evidence on 21.45 moving hours.** `fused` also has road drives (sunnypilot and a second driver's car,
   [08](08_openpilot_integration.md#on-the-road)); road drives with `acc` are the next evidence.
@@ -140,8 +140,8 @@ the object-list steps belong to `raw` and `fused`.*
 - **`acc`** publishes the radar's ACC target: the one car the radar's own ACC function follows, already chosen,
   converged and in path, with its fine distance (0.025 m), lateral position and closing speed. Toyota's ACC uses
   that same output. The radar's target ID is the track ID; every other car comes from the camera through radard's usual
-  vision match. The protocol part: opendbc's CANParser and a two-message DBC, the target-present flags, `canError` when
-  the ACC frames stop (CANParser's timeout), and a report every 5th update (20 Hz).
+  vision match. The protocol part: opendbc's CANParser and a three-message DBC, the target-present flags, `canError` when
+  the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances).
 - **`fused`** adds range fusion and **one Kalman filter per track** on the lead's over-ground speed
   ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations with a process-noise scale of 1.5 m/s²
   (a lead-acceleration bound). Each reading updates it in turn, weighted by its model variance: object-list speed has
@@ -233,7 +233,7 @@ whose lead comes from the object list alone.
 | profile | pros | cons |
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
-| `acc` | a DBC and 26 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours, road drives are the next evidence |
+| `acc` | a DBC and 33 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours, road drives are the next evidence |
 | `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
