@@ -1,0 +1,145 @@
+{
+ "scope": "owner RAV4 TSS2 with a smartDSU-style radar CAN filter; 663 segments (FrogPilot 0.9.7 and StarPilot drives, plus sunnypilot drives) scanned",
+ "segments_scanned": 663,
+ "segments_with_0x2FF": 661,
+ "segments_without_0x2FF": 2,
+ "button_presses_in_0x2FF_bit7": 7,
+ "segments_with_presses": 5,
+ "pulse_width_s_range": [
+  0.09,
+  0.21
+ ],
+ "pulse_at_carstate_gapAdjustCruise": "all 7 presses: carState gapAdjustCruise pressed / released within 3 ms of the 0x2FF edges",
+ "presses": [
+  {
+   "pulse_width_s": 0.21,
+   "lead_bars_change": [
+    2,
+    1
+   ],
+   "lead_bars_after_release_ms": 20,
+   "openpilot_distance_pulse_after_release_ms": 20,
+   "pcm_follow_distance_change": [
+    2,
+    3
+   ],
+   "pcm_follow_distance_after_release_ms": 60
+  },
+  {
+   "pulse_width_s": 0.143,
+   "lead_bars_change": [
+    1,
+    3
+   ],
+   "lead_bars_after_release_ms": 17,
+   "openpilot_distance_pulse_after_release_ms": 37,
+   "pcm_follow_distance_change": [
+    3,
+    1
+   ],
+   "pcm_follow_distance_after_release_ms": 57
+  },
+  {
+   "pulse_width_s": 0.2,
+   "lead_bars_change": [
+    3,
+    2
+   ],
+   "lead_bars_after_release_ms": 20,
+   "openpilot_distance_pulse_after_release_ms": 50,
+   "pcm_follow_distance_change": [
+    1,
+    2
+   ],
+   "pcm_follow_distance_after_release_ms": 90
+  },
+  {
+   "pulse_width_s": 0.173,
+   "lead_bars_change": [
+    2,
+    1
+   ],
+   "lead_bars_after_release_ms": 17,
+   "openpilot_distance_pulse_after_release_ms": 37,
+   "pcm_follow_distance_change": [
+    2,
+    3
+   ],
+   "pcm_follow_distance_after_release_ms": 67
+  },
+  {
+   "pulse_width_s": 0.09,
+   "lead_bars_change": [
+    1,
+    3
+   ],
+   "lead_bars_after_release_ms": 20,
+   "openpilot_distance_pulse_after_release_ms": 20,
+   "pcm_follow_distance_change": [
+    3,
+    1
+   ],
+   "pcm_follow_distance_after_release_ms": 70
+  },
+  {
+   "pulse_width_s": 0.153,
+   "lead_bars_change": [
+    3,
+    2
+   ],
+   "lead_bars_after_release_ms": 17,
+   "openpilot_distance_pulse_after_release_ms": 177,
+   "pcm_follow_distance_change": [
+    1,
+    2
+   ],
+   "pcm_follow_distance_after_release_ms": 227
+  },
+  {
+   "pulse_width_s": 0.181,
+   "lead_bars_change": [
+    2,
+    1
+   ],
+   "lead_bars_after_release_ms": 19,
+   "openpilot_distance_pulse_after_release_ms": 39,
+   "pcm_follow_distance_change": [
+    2,
+    3
+   ],
+   "pcm_follow_distance_after_release_ms": 109
+  }
+ ],
+ "stock_acc_no_filter": {
+  "drive": "second RAV4 TSS2, radar on, stock ACC",
+  "presses": 5,
+  "radar_0x343_DISTANCE_edge_then_pcm_follow_distance_step_ms": [
+   20,
+   40
+  ],
+  "frames_outside_car_bus_with_consistent_change": "none beyond the car-bus echoes of 0x1D3 / 0x399 / 0x343"
+ },
+ "radar_disabled_no_filter": {
+  "drive": "second RAV4 TSS2, radar disabled over UDS, openpilot alpha long",
+  "radar_0x343_frames_on_car_bus": 0,
+  "0x2FF_frames": 0,
+  "wheel_press_frames_seen": 0,
+  "openpilot_own_distance_pulses": 1
+ },
+ "frogpilot_condition": "carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (SMART_DSU and not RADAR_CAN_FILTER); owner car flags SMART_DSU (0x2FF seen), RADAR_ACC, TSS2; RADAR_CAN_FILTER (needs 0x2AA) not set",
+ "sunnypilot_condition": "SDSU.FD_BUTTON read only in an elif after 'if carFingerprint in TSS2_CAR', so never reached on a TSS2 radar-ACC car (snapshot 2026-09-30)",
+ "frame_layout_0x2FF": {
+  "length_bytes": 4,
+  "byte0_bit7": "FD_BUTTON (button pressed = 1)",
+  "byte2": "state nibble (high) + 4-bit counter",
+  "byte3": "byte 2 + 5 (mod 256) on all sampled frames",
+  "sampled_frames": 12388,
+  "state_nibble_counts": {
+   "5": 11977,
+   "0": 399,
+   "3": 12
+  },
+  "byte3_equals_byte2_plus_5": 12388
+ },
+ "note_owner_filter_id": "the filter announces itself with 0x2FF (SMART_DSU); RADAR_CAN_FILTER in FrogPilot / sunnypilot needs 0x2AA and would skip the SDSU parser"
+}

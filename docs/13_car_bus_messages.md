@@ -100,6 +100,26 @@ bus, openpilot longitudinal needs one of two setups:
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
 | car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (0x344 stopped, below); dash "Pre-Collision System Malfunction" and PCS OFF lamp |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
+| follow-distance wheel button | **reported on 0x2FF** byte 0 bit 7 (below) | no frame carries it (◐) |
+
+**The filter also reports the follow-distance button (●).** The filter's 0x2FF heartbeat (4 bytes, ~51 Hz) is opendbc's `SDSU` message:
+byte 0 bit 7 is `FD_BUTTON`, "the follow distance button signal as forwarded by the sdsu". Byte 2 holds a state nibble (5 on 97 % of 12,388
+sampled frames) and a 4-bit counter, and byte 3 equals byte 2 + 5 on all of them. Over 663 owner segments (661 carry 0x2FF) the bit rose seven
+times, each a 90-210 ms pulse, and every one followed the same chain
+([`filter_follow_distance_button.json`](../data/analysis/summaries/filter_follow_distance_button.json)):
+
+| step | time |
+|---|---|
+| 0x2FF bit 7 rises / falls | = the `carState` `gapAdjustCruise` pressed / released event, within 3 ms |
+| FrogPilot / StarPilot step the personality (`leadDistanceBars` 3 → 2 → 1 → 3) | 17-20 ms after release |
+| openpilot's own 0x343 `DISTANCE` pulse | 20-177 ms after release |
+| car's `PCM_FOLLOW_DISTANCE` (0x1D3) follows, `4 − leadDistanceBars` | 57-227 ms after release |
+
+FrogPilot and StarPilot read the bit when the car reports a smartDSU (0x2FF seen; `SMART_DSU` flag) and not a radar filter announced by
+0x2AA (`RADAR_CAN_FILTER`), and on release of the button (not a long press) they set `personality = (personality − 1) % 3`. The upstream
+radar-ACC path ignores the wheel button, and sunnypilot's `SDSU` read (source snapshot) sits in a branch that TSS2 cars never reach. The press has no other path to openpilot while it sends 0x343:
+with the radar on (second car, stock ACC) it is the radar's own 0x343 `DISTANCE` pulse (5 of 5 presses, the PCM follows 20-40 ms
+later), and with the radar switched off over UDS no frame in 26 segments changed with a press (◐: no press is known on that drive).
 
 **0x320 bit 13 = "0x344 stopped" (●).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the
 driving-support ECU. Its bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) sets about 0.15 s after the radar's 0x344
