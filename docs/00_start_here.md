@@ -11,7 +11,7 @@ Two install profiles turn the radar into openpilot radar points. The tour shows 
 | publishes | the radar's ACC target (0x235 / 0x237) as one point | every settled object-list track, with one Kalman speed filter per track |
 | code | 33 code lines (50 in the file) and an 8-signal DBC (plus two rolling counters) | 187 code lines (the single-file openpilot version) |
 | other cars | from openpilot's camera match in radard | from the radar up to 60 m, from the camera beyond |
-| install | `install.py` | `install.py --profile fused` |
+| install | `install.py` (`--profile acc` to switch back) | `install.py --profile fused` |
 
 Sections 1-3 describe the object list that `fused` decodes; section 4 describes the ACC target that `acc` publishes and
 `fused` also uses; sections 5-8 compare the two.

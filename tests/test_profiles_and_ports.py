@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+import os
 import re
 from pathlib import Path
 import subprocess
@@ -30,7 +31,10 @@ def _fake_opendbc(tmp_path):
 
 
 def _install(*args):
-  return subprocess.run([sys.executable, str(REPO / "openpilot" / "install.py"), *map(str, args)], capture_output=True, text=True)
+  # the installer records each install's profile; keep that record in the test's directory, out of the repo
+  env = {**os.environ, "ARS510_INSTALL_STATE": str(Path(args[0]) / "install_state.json")}
+  return subprocess.run([sys.executable, str(REPO / "openpilot" / "install.py"), *map(str, args)], capture_output=True,
+                        text=True, env=env)
 
 
 def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):

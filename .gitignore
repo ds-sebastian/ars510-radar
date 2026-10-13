@@ -15,3 +15,4 @@ qlog.*
 *.hevc
 *.ts
 uv.lock
+openpilot/.installed_profiles.json

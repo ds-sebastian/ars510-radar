@@ -18,17 +18,24 @@ version of this installer is replaced automatically. `--profile fused` installs 
 `--profile raw` the unfiltered decode for comparison ([docs/11](../docs/11_profiles_compared.md) compares them);
 `anchor` and `steady` install `fused`.
 
+Running the installer again without `--profile` keeps the profile already installed, so an update script can call it
+as is. It looks in the installed interface file, and when a fork update has removed the install, in the record this
+checkout keeps of its last install into the same path (`openpilot/.installed_profiles.json`, ignored by git). A first
+install gets `acc`. The installer prints one line with the active profile and why (`requested with --profile`,
+`kept from the existing install`, `kept from the last install into this path`, or `the default`), and a note when
+`--profile` changes it. `--check` shows what a plain re-run would install; `--uninstall` forgets the record.
+
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
 
 ```bash
 python /data/ars510-radar/openpilot/install.py /data/openpilot --check        # report state (read-only), incl. whether the install matches this checkout
 python /data/ars510-radar/openpilot/install.py /data/openpilot --uninstall    # remove everything it added
-cd /data/ars510-radar && git pull && python openpilot/install.py /data/openpilot   # update, then reboot
+cd /data/ars510-radar && git pull && python openpilot/install.py /data/openpilot   # update (keeps the profile), then reboot
 ```
 
 A fork update resets `/data/openpilot`: run the installer again after updating (and turn off automatic updates
-while testing).
+while testing). The re-run reinstalls the profile you had.
 
 | profile | config |
 |---|---|
@@ -40,7 +47,8 @@ while testing).
 `colored`, `shared_speed` and `shared_range` are alternatives that were tried and replayed worse than `acc` and `fused` ([docs/12](../docs/12_kalman_filter.md#kalman-variants-tested)); they stay installable for research.
 
 Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,
-`upstream` → `openpilot`. `--profile default` selects `raw`; leave `--profile` out to install `acc`.
+`upstream` → `openpilot`. `--profile default` selects `raw`; leave `--profile` out to install `acc` the first time
+and to keep the installed profile afterwards (`--profile acc` switches back to `acc`).
 
 ## What gets installed
 
