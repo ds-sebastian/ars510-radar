@@ -38,6 +38,8 @@ the output of the radar's own internal tracker, and the 0x192 / 0x194 summaries 
   states. This is why its range is smooth and why no filter over the object list reproduces it
   ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)).
 
+![ACC target from the radar's own tracker](img/analysis/acc_function_tracker.png)
+
 ![ACC target frames](img/analysis/acc_frame_map.png)
 
 | field | conversion | conf. | DBC signal |
@@ -172,15 +174,17 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
   it is empty; 99 % when an object-list track sits at the target's position. While moving it is clear on 5 % of target
   cycles (second car). Those are not a full list (at most 9 of 20 slots are ever valid): they go with trucks (41 % vs 4 %), curves,
   lateral offsets beyond 4 m, young tracks and lower in-path levels. The target then stays as close to the camera's lead as with
-  the flag set; one 17 s stretch held a braking car from 64 m to 16 m with no object at its position, and Toyota's ACC
-  braked for it ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)).
+  the flag set; one 17 s stretch held a braking car from 64 m to 16 m with an object-list track at its position on only 13 % of
+  cycles, and Toyota's ACC braked for it ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)).
 - **Timestamp.** Equal to the 0x190 timestamp in 73 % of frames and within one cycle in 99.8 % (the 50 Hz frames can
   arrive before or after the cycle header). It says which radar cycle a 0x235 / 0x237 update belongs to.
 
 ## 0x191-0x194: selected-target summaries
 
 Two target-summary pairs: 0x191 with 0x192, and 0x193 with 0x194. Each pair describes one target of the radar's
-internal tracker: 0x191 / 0x193 its lifecycle and class, 0x192 / 0x194 its position.
+internal tracker, the same tracker that produces the ACC target: 0x191 / 0x193 its lifecycle and class, 0x192 / 0x194 its position.
+When a summary and the ACC target describe the same car, the summary range is the ACC range rounded down to 1/16 m
+([above](#the-radars-acc-target-0x235--0x237)).
 
 **0x191 / 0x193** (8 bytes, sentinel `FE FE FE FC FC FF FE FF`):
 

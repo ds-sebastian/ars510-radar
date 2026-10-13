@@ -83,5 +83,27 @@
    "range_resid_rms_m": 0.0411,
    "speed_step_gain_on_arel_dt": 0.972
   }
- }
+ },
+ "parked_hold_radar_disabled": {
+  "description": "second car parked with the radar's car-bus output disabled: ACC target after an SUV crossed 5 m ahead; two held segments",
+  "segments_s": [
+   16.2,
+   26.8
+  ],
+  "range_m_median": 7.225,
+  "second_segment": {
+   "range_code_change_share": 0.018,
+   "lateral_std_m": 0.015,
+   "width_cm": 10,
+   "class": 0
+  },
+  "object_list_flag_share": 0.0,
+  "other_standstill_holds": {
+   "n": 229,
+   "duration_s_median": 30.2,
+   "range_code_change_share_median": 0.052,
+   "exactly_constant_range_code": 8
+  }
+ },
+ "figure_window_note": "acc_function_tracker.parquet: curve_window (one 37 s curve, relative time), kinematic_pair / summary_minus_acc / list_minus_acc (20,000-row samples)"
 }

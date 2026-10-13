@@ -1160,12 +1160,50 @@ def pcs_activation_u3():
          "Numbers: data/analysis/summaries/pcs_activation_u3.json.")
 
 
+def acc_function_tracker():
+    """The ACC target is the radar's own tracker: summaries carry the same state, the object list is meters off, the range
+    integrates the speed, and a braking car outside the object list (acc_function_tracker.parquet / .json)."""
+    T = load("acc_function_tracker")
+    D = summary("acc_function_tracker")
+    fig, ax = plt.subplots(1, 3, figsize=(14.5, 4.2), gridspec_kw={"width_ratios": [1.5, 1, 1]})
+    W = T[T.kind == "curve_window"].sort_values("t_s")
+    off = W.in_list_flag.values == 0
+    a = ax[0]
+    a.fill_between(W.t_s, 0, 75, where=off, step="post", color="#f5d9a8", alpha=0.55, lw=0, label="0x239 object-list flag clear")
+    a.plot(W.t_s, W.camera_d, color=S3, lw=1.2, label="camera lead")
+    near = (W.list_nearest_dy.abs() < 0.7) & ((W.list_nearest_d - W.acc_d).abs() < np.maximum(1.5, 0.05 * W.acc_d))
+    a.plot(W.t_s[near], W.list_nearest_d[near], "o", color=S2, ms=2.5, label="object-list track at the target")
+    a.plot(W.t_s, W.summary_d, "s", color=S4, ms=2.5, label="summary 0x192 / 0x194")
+    a.plot(W.t_s, W.acc_d, color=S1, lw=1.8, label="ACC target")
+    a.set_ylim(0, 75); a.set_xlabel("seconds (second car, curve, stock ACC braking 44 → 17 mph)"); a.set_ylabel("distance (m)")
+    a.set_title("A braking car the object list does not carry"); a.legend(loc="lower left", fontsize=8)
+    a = ax[1]
+    bins = np.linspace(-8, 8, 161)
+    for kind, col, lab in (("list_minus_acc", S2, "nearest object-list track (±0.7 m lateral) − ACC"), ("summary_minus_acc", S4, "summary − ACC")):
+        v = T.loc[T.kind == kind, "diff_m"]
+        v = v[v.abs() < 8]
+        a.hist(v, bins=bins, color=col, alpha=0.75, label=lab, log=True)
+    a.set_xlabel("range difference to the ACC target (m)"); a.set_ylabel("cycles (sample)")
+    a.set_title("Same state in the summaries, meters off in the list"); a.legend(loc="upper left", fontsize=8)
+    a = ax[2]
+    K = T[T.kind == "kinematic_pair"]
+    a.hexbin(K.v_dt, K.d_step, gridsize=60, cmap=BLUES, bins="log", mincnt=1, extent=(-1.2, 1.2, -1.2, 1.2))
+    a.plot([-1.2, 1.2], [-1.2, 1.2], color=INK, lw=1)
+    kc = D["kinematic_consistency"]["second_car"]
+    a.text(-1.1, 1.0, f"gain {kc['range_step_gain_on_vrel_dt']:.3f}, residual {100 * kc['range_resid_rms_m']:.1f} cm", fontsize=8.5)
+    a.set_xlabel("ACC relative speed × cycle time (m)"); a.set_ylabel("ACC range step (m)")
+    a.set_title("Range integrates the target's own speed")
+    fig.tight_layout()
+    save(fig, "acc_function_tracker", "Second car, 17 drives; radar cycles aligned by the 0x239 / 0x190 clock. Left: one curve with the object-list flag clear for 17 s. "
+         "Numbers: data/analysis/summaries/acc_function_tracker.json.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3, acc_function_tracker)}
 
 
 if __name__ == "__main__":

@@ -70,7 +70,9 @@ The object list's speed has **excursions**: for 1-10 s a far car seems to close 
 Besides the object list, the radar publishes the car its own ACC function follows, the **ACC target**
 (0x235 / 0x237), with a smooth 0.025 m distance and a speed that stays steady through the object list's excursions. It is
 present for 99 % of the radar-lead time at 15-80 m and 66 % beyond 80 m (`road_v21.json`, owner's car; second car 99 / 95 / 66 %
-at 15-40 / 40-80 / 80-200 m).
+at 15-40 / 40-80 / 80-200 m). It is not computed from the object list: it comes from the radar's own internal tracker
+(the summaries 0x192 / 0x194 show the same state), keeps running when the object list stops, and its range integrates
+its own speed ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)).
 
 - `acc` publishes this target as its one radar point; the radar's target ID is the track ID.
 - `fused` matches the target to an object-list track by position. That track takes the ACC speed as an extra reading and
