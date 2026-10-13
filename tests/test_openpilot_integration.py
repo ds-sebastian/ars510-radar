@@ -29,7 +29,7 @@ def test_integration_files_compile() -> None:
 def test_install_check_uninstall(tmp_path: Path) -> None:
     dst = tmp_path / "opendbc_repo"
     shutil.copytree(OPENDBC, dst, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"), symlinks=True)
-    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "ARS510_INSTALL_STATE": str(tmp_path / "state.json")}
 
     def run(*args: str) -> subprocess.CompletedProcess:
         return subprocess.run([*args], cwd=REPO, env=env, capture_output=True, text=True)
@@ -45,17 +45,36 @@ def test_install_check_uninstall(tmp_path: Path) -> None:
     assert not (dst / "opendbc/car/toyota/ars510").exists()
 
 
-def test_check_reports_an_outdated_install(tmp_path: Path) -> None:
-    """--check tells an install from this checkout apart from one made with another ars510-radar version."""
-    toyota = tmp_path / "opendbc/car/toyota"
+def stub_opendbc(tmp_path: Path) -> tuple[Path, Path]:
+    """A minimal opendbc layout the installer accepts, and the install-state file the tests point it at."""
+    root = tmp_path / "opendbc_repo"
+    toyota = root / "opendbc/car/toyota"
     toyota.mkdir(parents=True)
-    (tmp_path / "opendbc/dbc").mkdir()
+    (root / "opendbc/dbc").mkdir()
     (toyota / "interface.py").write_text("class CarInterface:\n  pass\n")
+    return root, tmp_path / "state.json"
 
+
+def installer(root: Path, state: Path):
     def run(*args: str) -> str:
-        r = subprocess.run([sys.executable, "openpilot/install.py", str(tmp_path), *args], cwd=REPO, capture_output=True, text=True)
+        env = {**os.environ, "ARS510_INSTALL_STATE": str(state)}
+        r = subprocess.run([sys.executable, "openpilot/install.py", str(root), *args], cwd=REPO, env=env,
+                           capture_output=True, text=True, check=False)
         assert r.returncode == 0, r.stdout + r.stderr
         return r.stdout
+    return run
+
+
+def installed(root: Path) -> str:
+    txt = (root / "opendbc/car/toyota/ars510_radar_interface.py").read_text()
+    return txt.split('PROFILE = PROFILES["', 1)[1].split('"', 1)[0]
+
+
+def test_check_reports_an_outdated_install(tmp_path: Path) -> None:
+    """--check tells an install from this checkout apart from one made with another ars510-radar version."""
+    root, state = stub_opendbc(tmp_path)
+    toyota = root / "opendbc/car/toyota"
+    run = installer(root, state)
 
     run("--profile", "fused")
     assert "installed files: match this checkout" in run("--check")
@@ -65,3 +84,60 @@ def test_check_reports_an_outdated_install(tmp_path: Path) -> None:
     assert "differ from this checkout (package, interface); run install.py again" in run("--check")
     run()
     assert "installed files: match this checkout" in run("--check")
+
+
+def test_first_install_gets_the_default(tmp_path: Path) -> None:
+    root, state = stub_opendbc(tmp_path)
+    out = installer(root, state)()
+    assert "profile: acc (the default; no earlier install found)" in out
+    assert installed(root) == "acc"
+
+
+def test_reinstall_keeps_the_installed_profile(tmp_path: Path) -> None:
+    """The issue #66 case: an update script re-runs install.py without --profile on a fused install."""
+    root, state = stub_opendbc(tmp_path)
+    run = installer(root, state)
+    assert "note:" not in run("--profile", "fused")
+    out = run()
+    assert "profile: fused (kept from the existing install; pass --profile to change it)" in out
+    assert installed(root) == "fused"
+    assert "install.py without --profile installs: fused (kept from the existing install" in run("--check")
+
+
+def test_reinstall_after_a_fork_update_keeps_the_profile(tmp_path: Path) -> None:
+    """A fork update resets the checkout (installed files and hook gone); the record in this checkout keeps the profile."""
+    root, state = stub_opendbc(tmp_path)
+    run = installer(root, state)
+    run("--profile", "raw")
+    shutil.rmtree(root)
+    stub_opendbc(tmp_path)
+    out = run()
+    assert "profile: raw (kept from the last install into this path, which a fork update removed" in out
+    assert installed(root) == "raw"
+
+
+def test_explicit_profile_changes_it_with_a_note(tmp_path: Path) -> None:
+    root, state = stub_opendbc(tmp_path)
+    run = installer(root, state)
+    run("--profile", "fused")
+    out = run("--profile", "acc")
+    assert "profile: acc (requested with --profile)" in out
+    assert "note: --profile changes the profile from fused to acc" in out
+    assert "kept from the existing install" in run() and installed(root) == "acc"
+
+
+def test_legacy_name_in_the_installed_file_is_kept_as_its_profile(tmp_path: Path) -> None:
+    root, state = stub_opendbc(tmp_path)
+    run = installer(root, state)
+    run("--profile", "fused")
+    iface = root / "opendbc/car/toyota/ars510_radar_interface.py"
+    iface.write_text(iface.read_text().replace('PROFILES["fused"]', 'PROFILES["anchor"]'))
+    assert "profile: fused (kept from the existing install" in run()
+
+
+def test_uninstall_forgets_the_profile(tmp_path: Path) -> None:
+    root, state = stub_opendbc(tmp_path)
+    run = installer(root, state)
+    run("--profile", "fused")
+    run("--uninstall")
+    assert "profile: acc (the default; no earlier install found)" in run()

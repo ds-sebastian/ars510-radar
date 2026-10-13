@@ -3,6 +3,7 @@
 
     python openpilot/install.py /data/openpilot                     # install (acc profile, the default), then reboot
     python openpilot/install.py /data/openpilot --profile raw       # the unfiltered decode, for comparison
+    python openpilot/install.py /data/openpilot                     # reinstall / update: keeps the installed profile
     python openpilot/install.py /data/openpilot --check             # report the state only
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
 
@@ -32,11 +33,16 @@ Profiles (docs/08 has the details and replay numbers):
   shared_speed / shared_range (every object and the ACC target through one gate-free Kalman model)
 
 Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
-and stock/default select raw. Every alias prints its selection. Omit --profile for the recommended acc default.
+and stock/default select raw. Every alias prints its selection.
+
+Without --profile, a reinstall keeps the profile installed before: the one in the installed interface file, or, when a
+fork update has removed the install, the one this checkout last installed into the same path (recorded in
+openpilot/.installed_profiles.json, which git ignores). A first install gets the recommended acc default.
 """
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -45,6 +51,10 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
+DEFAULT_PROFILE = "acc"
+# The profile last installed into each opendbc path, so a reinstall after a fork update (which removes the installed
+# files) keeps it. Lives in this checkout, outside the fork; ARS510_INSTALL_STATE overrides the path (tests).
+STATE = Path(os.environ.get("ARS510_INSTALL_STATE", HERE / ".installed_profiles.json"))
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
 PROFILE_NAMES = ("acc", "fused", "openpilot", "raw", "colored", "shared_speed", "shared_range")
@@ -131,6 +141,59 @@ def stale(t: dict[str, Path]) -> list[str]:
   return out
 
 
+def installed_profile(t: dict[str, Path]) -> str | None:
+  """The profile set in the installed interface file (legacy names mapped), or None without a readable install."""
+  if not t["interface"].exists():
+    return None
+  txt = t["interface"].read_text()
+  prof = next((k for k in PROFILE_NAMES + tuple(LEGACY_NAMES) if f'PROFILE = PROFILES["{k}"]' in txt), None)
+  return LEGACY_NAMES.get(prof, prof)
+
+
+def read_state() -> dict[str, str]:
+  try:
+    state = json.loads(STATE.read_text())
+  except (OSError, ValueError):
+    return {}
+  return state if isinstance(state, dict) else {}
+
+
+def record_profile(root: Path, profile: str | None) -> None:
+  """Remember (or, with None, forget) the profile installed into root. Best effort: a read-only checkout only loses
+  the fallback for reinstalling after a fork update."""
+  state = read_state()
+  if profile is None:
+    if str(root) not in state:
+      return
+    state.pop(str(root))
+  else:
+    state[str(root)] = profile
+  try:
+    STATE.write_text(json.dumps(state, indent=1, sort_keys=True) + "\n")
+  except OSError as e:
+    print(f"note: could not record the profile in {STATE} ({e})")
+
+
+def choose_profile(requested: str | None, t: dict[str, Path], root: Path) -> tuple[str, str]:
+  """The profile to install and one line saying which and why: requested, kept from the existing install, kept from
+  this checkout's record of the last install into this path, or the default."""
+  current = installed_profile(t)
+  recorded = read_state().get(str(root))
+  recorded = recorded if recorded in PROFILE_NAMES else None
+  previous = current or recorded
+  if requested is not None:
+    line = f"profile: {requested} (requested with --profile)"
+    if previous is not None and previous != requested:
+      line += f"\nnote: --profile changes the profile from {previous} to {requested}"
+    return requested, line
+  if current is not None:
+    return current, f"profile: {current} (kept from the existing install; pass --profile to change it)"
+  if recorded is not None:
+    return recorded, (f"profile: {recorded} (kept from the last install into this path, which a fork update removed; "
+                      "pass --profile to change it)")
+  return DEFAULT_PROFILE, f"profile: {DEFAULT_PROFILE} (the default; no earlier install found)"
+
+
 def remove_hook(text: str) -> str:
   if BEGIN not in text:
     return text
@@ -141,8 +204,9 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES), default="acc",
-                  metavar="{" + ",".join(PROFILE_NAMES) + "}", help="default: acc; legacy aliases also accepted")
+  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES),
+                  metavar="{" + ",".join(PROFILE_NAMES) + "}",
+                  help="default: the installed profile on a reinstall, acc on a first install; legacy aliases also accepted")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; ignored
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
@@ -151,7 +215,7 @@ def main() -> int:
   if args.profile in LEGACY_NAMES:
     new = LEGACY_NAMES[args.profile]
     retired = "the tuned profile was removed; " if new == "fused" else ""
-    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is 'acc'")
+    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is '{DEFAULT_PROFILE}'")
     args.profile = new
   root = find_opendbc(args.openpilot)
   if root is None:
@@ -170,6 +234,7 @@ def main() -> int:
       txt = t["interface"].read_text()
       prof = next((k for k in PROFILE_NAMES + tuple(LEGACY_NAMES) if f'PROFILE = PROFILES["{k}"]' in txt), "other")
       print(f"profile: {prof}")
+    print("install.py without --profile installs: " + choose_profile(None, t, root)[1].removeprefix("profile: "))
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'to be installed'} ({p})")
     for p in old_dbcs(root):
@@ -194,12 +259,15 @@ def main() -> int:
         shutil.rmtree(p)
       elif p.exists():
         p.unlink()
+    record_profile(root, None)
     print("removed" + (f" (including the older {legacy.name})" if legacy else ""))
     return 0
 
   if "class CarInterface" not in text:
     print("expected a CarInterface class in toyota/interface.py; the checkout stays as it was", file=sys.stderr)
     return 1
+  args.profile, line = choose_profile(args.profile, t, root)
+  print(line)
   if t["package"].exists():
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
@@ -212,6 +280,7 @@ def main() -> int:
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
   interface_py.write_text(text.rstrip("\n") + "\n" + HOOK)
+  record_profile(root, args.profile)
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
   if args.profile in ("shared_speed", "shared_range"):
@@ -220,7 +289,7 @@ def main() -> int:
   if args.profile == "raw":
     print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
           "reach the planner unfiltered: 93 hard radar-only braking ticks on the held-out replay routes against 16 for fused and\n"
-          "14 for acc (docs/11). Use it for research and comparison; install.py alone installs acc.")
+          "14 for acc (docs/11). Use it for research and comparison; --profile acc installs the default.")
   return 0
 
 

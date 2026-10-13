@@ -96,7 +96,8 @@ profile is the openpilot version; the `install.py` profiles belong to the hook i
 
 ## Profiles
 
-`install.py --profile NAME` picks one; with no `--profile` you get `acc`. The profile sets which radar output reaches
+`install.py --profile NAME` picks one; with no `--profile` a first install gets `acc` and a reinstall keeps the
+installed profile ([openpilot/README.md](../openpilot/README.md#install-on-a-comma-device)). The profile sets which radar output reaches
 radard (the ACC target, or the object list), when a track is published (validity, age, guards, filter readiness),
 how its values are filtered and how its ID continues. [11](11_profiles_compared.md) compares `acc` and `fused` on the
 same drives.

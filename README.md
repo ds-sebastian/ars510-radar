@@ -47,7 +47,7 @@ sudo reboot                                                          # required:
    IDs, dongle IDs, VINs, GPS and identifying video private; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
    `--profile fused` installs the all-tracks Kalman profile, `--profile raw` the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
-   the installer again after an update.
+   the installer again after an update; without `--profile` it keeps the profile you had.
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
 For the routes and controlled captures that help most, see [16: Routes and tests](docs/16_routes_and_tests.md).

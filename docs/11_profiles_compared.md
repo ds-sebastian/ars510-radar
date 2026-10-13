@@ -25,7 +25,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 1.75 (0.66) |
 | first braking request vs vision only (95 % CI) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) | −0.15 s (−0.26 … −0.05) |
-| install | `install.py /data/openpilot` | `--profile fused` | `--profile raw` |
+| install | `install.py /data/openpilot` (`--profile acc` to switch back) | `--profile fused` | `--profile raw` |
 | use | everyday driving | the all-tracks alternative | research |
 
 Alternatives that were tried (`colored`, `shared_speed`, `shared_range`) are summarised in
