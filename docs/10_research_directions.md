@@ -5,8 +5,8 @@ directly the answer improves the radar in openpilot. [16: Routes and tests](16_r
 recording procedures, physical references and hand-in checklists; begin with the smallest observable contrast before a
 long session.
 
-Two install profiles frame the questions. `acc` (the default) publishes the radar's ACC target alone; `fused` publishes
-every settled track with one Kalman speed filter per track. A question says which profile it concerns when it concerns
+Three install profiles frame the questions. `acc` (the default) publishes the radar's ACC target alone; `acc_summaries`
+adds the radar's two nearest other moving cars within 60 m; `fused` publishes every settled track with one Kalman speed filter per track. A question says which profile it concerns when it concerns
 one. The upstream proposals, the parts ledger and the evidence for the ACC target alone are in
 [17: Upstream proposals](17_upstream.md); the AEB / PCS questions are in [15: AEB and PCS](15_aeb_pcs.md#open-questions).
 
@@ -21,7 +21,7 @@ one. The upstream proposals, the parts ledger and the evidence for the ACC targe
    logger gives the true far distance ([T03/T04](16_routes_and_tests.md)).
 2. **More of the lead covered by the radar's own trackers.** *When and why does the radar drop or delay its ACC target?*
    The target is present for 99% of radar-lead time at 15-80 m and 66% beyond 80 m on the owner's car
-   ([08](08_openpilot_integration.md#on-the-road)). Beyond 60 m both profiles take only that target, and a fast far
+   ([08](08_openpilot_integration.md#on-the-road)). Beyond 60 m every profile takes only that target, and a fast far
    closing waits about 1 s for the radar to pick the car (0.8-1 s on the two cars measured,
    [`far_acc_only.json`](../data/analysis/summaries/far_acc_only.json)). *Data:* stock-ACC drives
    ([T08](16_routes_and_tests.md#t08-stock-acc-and-additional-target-reports)) with the target's acquisition and loss
@@ -61,9 +61,9 @@ one. The upstream proposals, the parts ledger and the evidence for the ACC targe
 7. **Lead acceleration in fork planners.** *Does a decaying extrapolation or an `aLeadTau` floor for radar leads remove the
    brake-then-accelerate swing?* StarPilot extrapolates `aLeadK` unchanged above 35 mph (read from its source, ○).
    *Data:* StarPilot replays with `tools/fork_lead` using each variant ([14](14_forks.md)).
-8. **Road miles with `acc` and `fused`.** *Do the replay results hold in closed loop?* The replay results
-   ([11](11_profiles_compared.md)) cover 16.9 moving hours on two cars; `fused` has closed-loop road drives
-   ([08](08_openpilot_integration.md#on-the-road)), and closed-loop drives with `acc` are the next evidence. *Data:* drives
+8. **Road miles with `acc`, `acc_summaries` and `fused`.** *Do the replay results hold in closed loop?* The replay results
+   ([11](11_profiles_compared.md)) cover 16.9 moving hours on two cars; `fused` has closed-loop road drives and `acc` its first two
+   ([08](08_openpilot_integration.md#on-the-road)); more `acc` miles and the first `acc_summaries` drives are the next evidence. *Data:* drives
    with flagged moments, ideally from a second car, driver or radar firmware, with the installed profile recorded
    ([T13](16_routes_and_tests.md#t13-fresh-road-and-parser-validation)).
 
@@ -82,7 +82,7 @@ from the first:
   earlier). `acc` hands the radar's choice to openpilot as one point and radard's camera match decides which lead the
   planner follows; `fused` publishes every track and leaves the choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
-  and 0x235 also carries a filtered relative acceleration. Both profiles use the speed (`acc` publishes it, `fused` takes it as a
+  and 0x235 also carries a filtered relative acceleration. All three use the speed (`acc` and `acc_summaries` publish it, `fused` takes it as a
   measurement).
 - **The control law (◐, fitted on two cars).** While following, Toyota's 0x343 command is a linear law on its own ACC
   target: about 0.02 m/s² per metre of gap error, 0.25 m/s² per m/s of closing speed, and a time gap of about 1.1 s (1-bar
@@ -143,8 +143,6 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
   *Data:* a camera lane polynomial with matched timing, or a drive along a surveyed curve of known radius.
 - **Class 5.** *Is class 5 a cyclist?* *Data:* a few recorded passes of a cyclist and of a pedestrian test the bicycle
   reading of its size and speed.
-- **0x195 `q10` with brake pressure.** *Which deceleration quantity does `q10` carry?* *Data:* the logged brake pressure or
-  the brake-assist state next to the event code.
 - **The radar's ACC tracker bytes and the night light records.** *What are the units of the two bytes of 0x237 that rise
   while the ACC target accelerates or brakes, and of the camera's 0x240 / 0x244 light-source records at night?*
   ([05](05_acc_target_and_support.md)). *Data:* a drive behind a car with known braking, and a night drive past lights at

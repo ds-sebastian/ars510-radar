@@ -75,7 +75,7 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
   lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
   waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)). `fused` keeps every radar car within 60 m and
-  has road drives behind it; `acc` has replays.
+  has the most road drives behind it; `acc` has its first two ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **`acc_summaries` adds the radar's two nearest other moving cars** within 60 m to `acc`, in 53 code lines. Over all
   drives it has the least unnecessary and missed braking, the same hard episodes as `acc`, and close cut-ins become
   radar-backed 0.16 s earlier; it flips more. On the held-out drives it brakes slightly more than `acc` (small samples,
@@ -180,11 +180,11 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
   but no drive in traffic has been checked yet ([01](docs/01_radar_bus.md#c-hr-and-yaris)).
 - **Far range.** The object list's speed sometimes reads a far car closing several m/s faster than it is, for 1-10 s
   ([07](docs/07_velocity_excursions.md)). The ACC target is present for 99 % of radar-lead time at 15-80 m and 66 %
-  beyond 80 m ([08](docs/08_openpilot_integration.md#on-the-road)); beyond 60 m both profiles publish the car the ACC
+  beyond 80 m ([08](docs/08_openpilot_integration.md#on-the-road)); beyond 60 m every profile publishes only the car the ACC
   target follows, with the camera supplying other far cars.
 - **Range and speed.** The object list's range rate and its speed differ by 10-20 %, so `fused` smooths range separately
   from the speed filter ([12](docs/12_kalman_filter.md#what-runs-before-and-around-the-filter)). At 50-100 m the object-list
-  range reads 5-8 % short of the radar's own ACC distance, which both profiles publish for the followed car
+  range reads 5-8 % short of the radar's own ACC distance, which `acc`, `acc_summaries` and `fused` all publish for the followed car
   ([06](docs/06_accuracy.md#distance)).
 - **openpilot longitudinal, checked on one firmware.** openpilot's radar-disable request silences the radar's
   car-bus messages; the object list, ACC target and summaries on bus 1 keep arriving at full rate (an unfiltered
@@ -200,8 +200,8 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 ```mermaid
 flowchart LR
     CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed, yaw rate"] --> card --> RI["Toyota RadarInterface"]
-    RI -- "radar-ACC Toyota<br/>(car model)" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>fused: reassemble · CRC · decode · Kalman speed filter"]
-    A -- "RadarPoints: acc 16.7 Hz, fused 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
+    RI -- "radar-ACC Toyota<br/>(car model)" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>acc_summaries: + target summaries<br/>fused: reassemble · CRC · decode · Kalman speed filter"]
+    A -- "RadarPoints: acc 16.7 Hz, acc_summaries 20 Hz, fused 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
 The installer adds the decoder package and appends one hook block to the end of Toyota's `interface.py`. The rest of

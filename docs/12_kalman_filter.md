@@ -18,7 +18,7 @@ Same drives, same openpilot card → radard → planner, same pre-registered def
 ([11](11_profiles_compared.md) has the full comparison with `raw`). `fused` is version 2.6 and `acc` is
 [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py): 33 code lines of 50 and a three-message, 8-signal DBC (`fused`: 187
 code lines, 28 constants, 85 conditions; `acc`: 1 constant, 4 conditions). The `acc` replays ran the hand-decoded
-33-line version that publishes identical points on 11,028 bundled reports. Sources:
+version that publishes identical points on 11,028 bundled reports. Sources:
 [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),
 [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) and
 [`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json).
@@ -59,7 +59,8 @@ held out of all tuning):
   objects the camera leaves out of its lead list ([11](11_profiles_compared.md)). `fused` publishes every track and carries the gates
   of the sections below. `acc` has the lower unnecessary braking on the second car and the held-out owner routes, `fused`
   the lower missed braking on the road drives and all sets.
-- **Reference.** The oracle takes its range from the ACC target, so it favours profiles built on that target; the
+- **Reference.** The oracle takes its range from the ACC target, so it can favour profiles built on that target (a camera-only
+  reference leaves `acc`'s standing against `fused` unchanged, [11](11_profiles_compared.md#head-to-head)); the
   driver-agreement rows are independent of it ([below](#against-what-the-car-should-have-done)).
 
 ## Versions the numbers were measured on
@@ -201,9 +202,9 @@ it describes.
 | tracker | match | kept while |
 |---|---|---|
 | ACC target (0x235 / 0x237) | cost = \|dRel − x\| / max(12 m, 0.4 x) + \|yRel − y\| / 0.5 m below 1, at least 1 better than the next track, track age ≥ 20; x is the 0.025 m ACC distance, y its 0.01 m lateral | the track's cost stays below 4 and the ACC position moves at most 8 m / 1 m per update |
-| summary (0x192 / 0x194), option | the track within max(5 m, 15 %) in range and 1 m laterally of the summary position, unambiguous (alone or 3 m nearer than the next), track age ≥ 20 | the track stays within max(8 m, 25 %) in range and 2 m laterally |
+| summary (0x192 / 0x194), `fused` 2.0-2.3 only | the track within max(5 m, 15 %) in range and 1 m laterally of the summary position, unambiguous (alone or 3 m nearer than the next), track age ≥ 20 | the track stays within max(8 m, 25 %) in range and 2 m laterally |
 
-- **Matched by position.** Both matches use the tracker's own position, so they hold through object-list speed
+- **Matched by position.** Both matches (the summary match as it ran in 2.0-2.3) use the tracker's own position, so they hold through object-list speed
   excursions: replayed over the logged frames, a summary matched by position sits on its track on 99.5-100 % of cycles,
   also during excursions, where a speed-agreement rule kept 17-56 %
   ([`tracker_association.json`](../data/analysis/summaries/tracker_association.json)).
@@ -463,7 +464,7 @@ better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead o
 bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and 7 mild requests each
 ([`driving_claim_sources.json`](../data/analysis/summaries/driving_claim_sources.json)); against the
 oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` leaves
-them out from 2.4 on, and the fork default and the openpilot version drive identically. The summary cars are now
+them out from 2.4 on, and the fork's `fused` build and the openpilot version drive identically. The summary cars are now
 published as points of their own by `acc_summaries` ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 ### The ACC target's weight

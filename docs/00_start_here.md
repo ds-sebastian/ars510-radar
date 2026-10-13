@@ -170,7 +170,7 @@ and the camera leaves out of its lead (a wall, a fence), where radard's low-spee
 
 Vision only has its own errors, so a second reference helps. openpilot's own planner fed a hindsight lead (the
 radar's ACC target and smoothed range, checked with the camera) gives the seconds of unnecessary and missed braking
-below. Its reference range comes mostly from the ACC target, which favours designs built on that target; hard ticks and onset are judged against the raw range, the camera and the driver.
+below. Its reference range comes mostly from the ACC target, which can favour designs built on that target (against a camera-only reference `acc`'s standing against `fused` holds: [11](11_profiles_compared.md#head-to-head)); hard ticks and onset are judged against the raw range, the camera and the driver.
 
 | unnecessary / missed braking, seconds (set) | vision only | `fused` | `acc` | `acc_summaries` | source |
 |---|---|---|---|---|---|

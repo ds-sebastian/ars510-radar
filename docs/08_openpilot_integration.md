@@ -2,17 +2,17 @@
 
 The integration turns the radar's output into openpilot radar tracks with openpilot itself running as shipped: a decoder plus
 one appended hook block in opendbc's Toyota port (detection and hand-over). radard, the planner and card run unchanged.
-The default `acc` profile publishes the radar's ACC target; `fused` publishes the object list through a Kalman speed
-filter ([profiles](#profiles)).
+The default `acc` profile publishes the radar's ACC target; `acc_summaries` adds the radar's two nearest other moving cars
+(target summaries) within 60 m; `fused` publishes the object list through a Kalman speed filter ([profiles](#profiles)).
 
 ```mermaid
 flowchart LR
     CAN["CAN frames<br/>(bus 0 + bus 1)"] --> card
     subgraph opendbc Toyota port
         card --> RI["toyota RadarInterface.update()"]
-        RI -- "ARS510 detected" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>fused: reassemble · CRC · decode · filter · track IDs"]
+        RI -- "ARS510 detected" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>acc_summaries: + target summaries<br/>fused: reassemble · CRC · decode · filter · track IDs"]
     end
-    A -- "RadarData: acc 16.7 Hz, fused ~16.7 Hz" --> T["radarTracks / liveTracks"]
+    A -- "RadarData: acc 16.7 Hz, acc_summaries 20 Hz, fused ~16.7 Hz" --> T["radarTracks / liveTracks"]
     T --> radard --> RS["radarState leads"] --> P[longitudinal planner]
     V["modelV2 vision leads"] --> radard
 ```
@@ -45,11 +45,13 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card runs as
    shipped.
 3. **Decoding from raw frames.** The interface reads the raw `(address, data, src)` tuples card already passes. `acc`
-   parses the ACC target frames 0x235 / 0x237 with opendbc's CANParser. The object-list profiles (`fused`, `raw`)
+   parses the ACC target frames 0x235 / 0x237 with opendbc's CANParser; `acc_summaries` decodes the same frames and the
+   target summaries 0x190-0x194 by hand. The object-list profiles (`fused`, `raw`)
    reassemble 0x80 records, check the CRC32 and decode the 20 slots; ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost of the object-list decode: about 6-14 µs per 10 ms call on a desktop CPU.
 4. **Output.** `acc`: one `RadarPoint(trackId, dRel, yRel, vRel)` for the radar's ACC target while its target-present
-   flags are set, reported once per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
+   flags are set, reported once per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances). `acc_summaries`: that point plus up to two summary cars within 60 m (`trackId` 32 + pair code, speed from
+   the slope of the last 8 ranges), reported every fifth card update (20 Hz). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
    for tracks aged ≥ 60 cycles (with `fused`, also once the filter's speed standard deviation is at most 0.75 m/s), with
    the radar's own track IDs (`raw` also re-links them across short losses), published while a fresh ego speed gives a
    finite vRel. Forks whose RadarPoint still has the legacy fields (sunnypilot) also get:
@@ -208,7 +210,16 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 
 ## On the road
 
-Road drives so far ran `fused` 2.1.0 and earlier tuned profiles; `acc`'s evidence is the replays in [11](11_profiles_compared.md).
+Road drives so far ran `fused` 2.1.0, `acc` (two drives) and earlier tuned profiles; `acc_summaries` has replays only
+([11](11_profiles_compared.md)).
+
+- **sunnypilot with `acc`** (2 drives, 1.4 h, the upstream `acc` file; [`acc_road_drives.json`](../data/analysis/summaries/acc_road_drives.json)).
+  The radar was active throughout: radard used the ACC target for 95 % of engaged lead time, and for 98-99 % of the time
+  the camera saw a lead within 80 m. Engaged stops ended 3.9-6.2 m behind the lead (`fused` 2.1: 3.3-4.3 m): while
+  creeping up to a stopped car `acc` reports a lead speed of −0.03 m/s on average, so the planner holds openpilot's
+  designed stop distance, where `fused`'s +0.23 m/s let it creep closer. Beyond 80 m the lead was camera-only for 19-57 %
+  of engaged lead time (`fused` 8 %): the radar's ACC function takes a target at about 80-126 m and drops it when it
+  leaves the lane.
 
 - **sunnypilot with `fused` 2.1.0** (9 drives, 7.4 h, 4.4 h with openpilot longitudinal; the logged radar tracks match
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera or the radar's
