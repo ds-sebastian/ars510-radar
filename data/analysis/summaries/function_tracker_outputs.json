@@ -76,7 +76,12 @@
   "lead_time_median_s": [
    1.3,
    0.7
-  ]
+  ],
+  "non_acc_tracks_per_moving_cycle_second_car": {
+   "0": 0.447,
+   "1": 0.32,
+   "2": 0.233
+  }
  },
  "0x195_object_range": {
   "field": "MSB-first 50|11 (last 11 bits) x 0.05 m",

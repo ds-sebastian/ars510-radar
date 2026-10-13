@@ -224,8 +224,9 @@ at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json), block `current_units_recompute`). They carry position only, so a speed comes
 from the range slope and lags by about half a second.
 
-**The other summary is a second tracker-quality car (◐, two cars, exploratory).** When one summary holds the ACC target, the other slot holds
-another track of the same internal tracker: on 57-65 % of moving cycles (19-25 % with no ACC target at all). It carries only
+**Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
+target holds another track of the same internal tracker: up to two cars besides the lead, one on 32 % and two on 23 % of
+moving cycles (second car), at least one on 57-65 % (19-25 % with no ACC target at all). It carries only
 moving vehicles going the same way (99.9 %; never stationary or oncoming), mostly in the next lanes (median lateral 3.8 m), at
 a median 34-50 m. Its range is as smooth as the ACC target's (0.022-0.024 m residual against 0.018 m quantization; the object
 list's moving tracks 1.2-1.4 m). A causal slope over 5-8 radar cycles gives a speed within 0.16-0.19 m/s RMS of the ACC speed on
