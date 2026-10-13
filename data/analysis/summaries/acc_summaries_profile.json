@@ -1,0 +1,137 @@
+{
+ "what": "acc_summaries profile (acc + summary cars within 60 m) replayed against acc (N1) through the pinned openpilot on every fast-suite chunk and the second car's batch 2 (313 chunks, 74 routes, 18.84 moving h); route-block bootstrap 95 % CI of acc_summaries - acc per moving hour",
+ "code_lines": {
+  "acc_summaries": 82,
+  "acc": 33
+ },
+ "totals": {
+  "acc": {
+   "hard": 14,
+   "hard_moving": 6,
+   "mild": 35,
+   "mild_moving": 27,
+   "unnecessary_s": 24.4,
+   "missed_s": 19.4,
+   "flips_per_h": 294
+  },
+  "acc_summaries": {
+   "hard": 14,
+   "hard_moving": 6,
+   "mild": 37,
+   "mild_moving": 29,
+   "unnecessary_s": 24.2,
+   "missed_s": 17.1,
+   "flips_per_h": 335
+  }
+ },
+ "delta_per_moving_h": {
+  "hard": {
+   "per_h": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "routes": 74
+  },
+  "hard_moving": {
+   "per_h": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "routes": 74
+  },
+  "mild": {
+   "per_h": 0.106,
+   "ci95": [
+    -0.099,
+    0.338
+   ],
+   "routes": 74
+  },
+  "mild_moving": {
+   "per_h": 0.106,
+   "ci95": [
+    -0.096,
+    0.334
+   ],
+   "routes": 74
+  },
+  "unnecessary_s": {
+   "per_h": -0.011,
+   "ci95": [
+    -0.081,
+    0.072
+   ],
+   "routes": 74
+  },
+  "missed_s": {
+   "per_h": -0.125,
+   "ci95": [
+    -0.358,
+    0.0
+   ],
+   "routes": 74
+  }
+ },
+ "onset_vs_acc_paired": {
+  "n": 732,
+  "mean": 0.004,
+  "ci95": [
+   -0.002,
+   0.012
+  ],
+  "routes": 62
+ },
+ "new_hard_episodes": 0,
+ "cutins_close": {
+  "n": 434,
+  "via_summary": 229,
+  "summary_head_start_median": 3.15,
+  "lead_diff": {
+   "n": 329,
+   "mean": -0.155,
+   "ci95": [
+    -0.235,
+    -0.086
+   ]
+  },
+  "brake_diff": {
+   "n": 434,
+   "mean": -0.009,
+   "ci95": [
+    -0.018,
+    -0.001
+   ]
+  }
+ },
+ "camera_lead_appears": {
+  "n": 1006,
+  "A_at0": 0.081,
+  "N1_at0": 0.037,
+  "diff_mean": {
+   "n": 1006,
+   "mean": -0.41,
+   "ci95": [
+    -0.536,
+    -0.3
+   ],
+   "routes": 64
+  }
+ },
+ "lead_share_moving": {
+  "vision": 0.1091,
+  "acc": 0.88,
+  "summary": 0.011
+ },
+ "points_per_report_moving_share": [
+  0.388,
+  0.3364,
+  0.2259,
+  0.0497
+ ],
+ "first_version_without_far_rule": {
+  "hard_moving": "7 vs 6 (two new adjacent-lane spikes at 86-93 m, one acc-only episode gone)",
+  "flips_delta_per_h": 151
+ }
+}

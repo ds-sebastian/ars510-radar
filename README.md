@@ -134,6 +134,7 @@ The code comes in two versions that drive identically:
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point (33 code lines and a DBC; the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
+| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 60 m, speed from their range slope; 82 code lines) | experimental: braking as `acc` in replay, cut-ins radar-backed slightly earlier ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 | `fused` | `--profile fused` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | the all-tracks alternative: every radar car within 60 m |
 | `raw` | `--profile raw` | the unfiltered radar decode, with the validity rules radard needs | research and comparison: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot in all-tracks form |

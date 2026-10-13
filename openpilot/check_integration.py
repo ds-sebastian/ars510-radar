@@ -19,6 +19,8 @@ It checks:
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.7 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop, and
   recovery.
+- for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
+  published once, a summary car with its range-slope speed, nothing beyond 60 m, staleness and recovery.
 """
 from __future__ import annotations
 
@@ -78,6 +80,44 @@ def check_acc_profile(RI, check) -> None:
   check(bool(rec) and not rec[-1].errors.canError and len(rec[-1].points) == 1, "acc: recovers when the target frames resume")
 
 
+def check_acc_summaries_profile(RI, check) -> None:
+  """`acc_summaries`: the ACC target plus the target-summary cars within 60 m. Synthetic radar cycles (0x190 clock, ACC
+  target at 30 m, summary 1 on the ACC car, summary 2 a car at 40 m closing at 6 m/s, then one at 80 m) are fed at
+  card.py's 100 Hz: the ACC car once, the 40 m car with its slope speed, nothing beyond 60 m, staleness and recovery."""
+  def cycle(n, k, far):  # n: radar cycle number (clock), k: cycle within the run (geometry)
+    ts, acc_code = 1_000_000 + 60_000 * n, round((30.0 - 0.24 * k) / 0.025)
+    other = (80.0 if far else 40.0) - 0.36 * k
+    return [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00", 1),
+            (0x235, ((1 << 59) | (5 << 48) | (1056 << 29) | 7).to_bytes(8, "big"), 1),
+            (0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big"), 1),
+            (0x191, bytes([182, 0, 0, 3 << 2, 0, 0, 0, 0]), 1), (0x192, (160 + (2 * acc_code) // 5).to_bytes(2, "big") + (2048).to_bytes(2, "big"), 1),
+            (0x193, bytes([182, 0, 0, 9 << 2, 0, 0, 0, 0]), 1), (0x194, round(other * 16 + 160).to_bytes(2, "big") + (2288).to_bytes(2, "big"), 1)]
+  t_ns, outs = 1_000_000_000, {False: [], True: []}
+  for far in (False, True):
+    for k in range(40):
+      for j in range(6):  # one radar cycle per six card steps
+        t_ns += 10_000_000
+        out = RI.update([(t_ns, cycle(k + (100 if far else 0), k, far) if j == 0 else [])])
+        if out is not None and k >= 10:
+          outs[far].append(out)
+  near = outs[False]
+  check(all(not any(o.errors.to_dict().values()) for o in near), "acc_summaries: no error flags while the frames arrive")
+  ok = [sorted(p.trackId for p in o.points) == [7, 41] and abs(next(p for p in o.points if p.trackId == 41).vRel + 6.0) < 0.1 for o in near]
+  check(bool(near) and all(ok), f"acc_summaries: the ACC target once plus the 40 m summary car with its slope speed ({sum(ok)}/{len(ok)})")
+  check(all([p.trackId for p in o.points] == [7] for o in outs[True]), "acc_summaries: summary cars beyond 60 m are not published")
+  silent = [o for o in (RI.update([(t_ns + i * 10_000_000, [])]) for i in range(1, 101)) if o is not None]
+  t_ns += 100 * 10_000_000
+  check(bool(silent) and silent[-1].errors.radarUnavailableTemporary and len(silent[-1].points) == 0,
+        "acc_summaries: silent radar -> radarUnavailableTemporary with no points")
+  rec = []
+  for k in range(12):
+    for j in range(6):
+      t_ns += 10_000_000
+      out = RI.update([(t_ns, cycle(300 + k, k, False) if j == 0 else [])])
+      rec += [out] if out is not None else []
+  check(bool(rec) and not rec[-1].errors.radarUnavailableTemporary and len(rec[-1].points) >= 1, "acc_summaries: recovers when the frames resume")
+
+
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("--opendbc", type=Path, default=None, help="opendbc checkout to import (default: whatever is importable)")
@@ -134,8 +174,8 @@ def main() -> int:
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
-  if PROFILE == "acc":
-    check_acc_profile(RI, check)
+  if PROFILE in ("acc", "acc_summaries"):
+    (check_acc_profile if PROFILE == "acc" else check_acc_summaries_profile)(RI, check)
     print("\nALL OK" if not failures else f"\n{len(failures)} FAILED")
     return 0 if not failures else 1
 
