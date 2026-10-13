@@ -92,7 +92,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
 | ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.13 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)); blended with the object list ([below](#the-acc-targets-weight)) |
-| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off in `fused` | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within max(5 m, 15 %), lateral within 1 m); the ACC track takes the ACC target ([below](#what-the-summaries-do)) |
+| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope per message, which spans two cars in 8-11 % of moving windows, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)), fork option, off in `fused` | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within max(5 m, 15 %), lateral within 1 m); the ACC track takes the ACC target ([below](#what-the-summaries-do)) |
 
 The ACC target's units are checked against the absolute `0x680` range ([05](05_acc_target_and_support.md#units-of-the-acc-target)).
 

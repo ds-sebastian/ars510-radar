@@ -107,5 +107,36 @@
   "moving_vehicle_share": 0.085
  },
  "no_other_bus1_field": "no 4-16 bit window of 26 per-cycle bus-1 addresses reaches |r| 0.95 against the track state",
- "pairs_note": "[second car, owner] where two values are given"
+ "pairs_note": "[second car, owner] where two values are given",
+ "summary_slot_identity_and_slope": {
+  "acc_target_in_a_summary_moving": [
+   0.705,
+   0.735
+  ],
+  "first_pair_is_acc_given_both": [
+   0.389,
+   0.533
+  ],
+  "slope_1s_per_message_rms_vs_acc_mps": [
+   0.837,
+   0.594
+  ],
+  "slope_1s_per_message_p99_abs_mps": [
+   4.15,
+   2.33
+  ],
+  "slope_1s_per_linked_track_rms_vs_acc_mps": [
+   0.252,
+   0.252
+  ],
+  "slope_1s_per_linked_track_p99_abs_mps": [
+   0.945,
+   0.954
+  ],
+  "moving_1s_windows_spanning_two_tracks": [
+   0.107,
+   0.083
+  ],
+  "source": "workspace re-check SCR-543 (range-continuity linking of pair code and age)"
+ }
 }
