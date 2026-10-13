@@ -23,7 +23,8 @@ list is empty (mostly stopped within 6.4 m; 1,443 of them above 3 m/s ego speed;
 [`acc_target_availability.json`](../data/analysis/summaries/acc_target_availability.json)).
 
 **Where the target comes from (◐, exploratory, two cars).** The ACC target is not a smoothed object from the 0x80 list. It is
-the output of the radar's own internal tracker, and the 0x192 / 0x194 summaries below show the same track state:
+the output of the radar's own internal tracker. When one of the 0x192 / 0x194 summaries below is on the ACC car (70-74 % of
+moving ACC-target cycles; the first pair only on 39-53 %), it shows the same track state:
 - **Same state as the summaries.** Aligned by the radar cycle clock (33,695 cycles on a second car), summary range minus ACC
   range always lies between 0 and −0.0625 m, one summary step: the summary code is `160 + floor(0.4 × ACC code)` on 90 % of
   cycles and one code lower on the rest. Lateral differs by a constant 2.75 cm (within 2 cm on 99.8 %).
@@ -222,7 +223,11 @@ a camera optical reference it is closer than the object list out to about 80 m (
 14.9 % → about 10 %; closer in 97 % of object-list false closings). The summaries also describe far cars while the ACC target is idle,
 at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json), block `current_units_recompute`). They carry position only, so a speed comes
-from the range slope and lags by about half a second.
+from the range slope and lags by about half a second. Take that slope per track, not per message: a pair can switch to another car, so
+8-11 % of moving 1 s windows span two tracks, and a per-message slope has 0.59-0.84 m/s RMS against the ACC speed (99th
+percentile 2.3-4.2 m/s) where a per-track slope has 0.25 m/s (0.95). Restart it when the pair's code or age breaks
+([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json), block
+`summary_slot_identity_and_slope`).
 
 **Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
 target holds another track of the same internal tracker: up to two cars besides the lead, one on 32 % and two on 23 % of
@@ -328,8 +333,9 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 ## 0x680: single-object stream
 
 Every 0.5 s the radar reports **one object from its function-level tracker**. On vehicles it shares with the ACC target its
-speed equals the ACC speed (median difference 0.09 m/s), so it is likely a second output of the tracker that feeds the
-ACC target (◐). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
+speed equals the ACC speed (median difference 0.09 m/s), so it likely comes from the tracker that feeds the ACC target (◐).
+Its range is close to that state but not a rounding of it: on the ACC car it is exact on about 21 % of frames and
+0.07-0.15 m RMS away ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 
 | field | reading | conf. |
 |---|---|---|
