@@ -272,7 +272,7 @@ non-idle samples, so recognise idle frames by the whole payload. `q10` is the lo
 
 **While active, 0x195 describes one object of the radar's tracker and the ego's path (◐ unless marked; two cars, raw-checked):**
 
-| 0x195 bits (MSB-first start\|length) | DBC | decode |
+| 0x195 bits (DBC start\|length, big-endian) | DBC | decode |
 |---|---|---|
 | 50\|11 | `A195_OBJECT_RANGE` | object range, 0.05 m per code (●): `floor(ACC distance code / 2)` on the ACC car; on 16-25 % of active cycles another, mostly stationary object |
 | 27\|12 | `A195_OBJECT_SPEED` | its longitudinal over-ground speed, 1/16 m/s per code, zero code 0 (the same quantity as 0x680's speed, including the ego-rotation term) |

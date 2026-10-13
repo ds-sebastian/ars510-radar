@@ -23,7 +23,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from the range slope | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
-| code | 33 code lines and a three-message, 8-signal DBC ([17](17_upstream.md#the-acc-target-alone--candidate)) | 53 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| code | 33 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 53 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
 | tuned constants | protocol values only | 60 m limit, 8-range slope, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
@@ -155,7 +155,7 @@ flips rise most here (+31 per hour on the owner routes, +112 on the 13 routes).
   with the radar's range; vision put the lead 3-4 m closer
   ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3);
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
-- **Small and auditable.** 33 code lines and a three-message, 8-signal DBC with protocol values only: it passes on the radar's own
+- **Small and auditable.** 33 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
 - **Replay evidence on 21.45 moving hours.** `fused` also has road drives (sunnypilot and a second driver's car,
   [08](08_openpilot_integration.md#on-the-road)); `acc`'s first two road drives (1.4 h) had the radar lead on 95 % of
@@ -238,7 +238,7 @@ the object-list steps belong to `raw` and `fused`.*
 - **`acc`** publishes the radar's ACC target: the one car the radar's own ACC function follows, already chosen,
   converged and in path, with its fine distance (0.025 m), lateral position and closing speed. Toyota's ACC uses
   that same output. The radar's target ID is the track ID; every other car comes from the camera through radard's usual
-  vision match. The protocol part: opendbc's CANParser and a three-message DBC, the target-present flags, `canError` when
+  vision match. The protocol part: opendbc's CANParser on three DBC messages, the target-present flags, `canError` when
   the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances).
 - **`acc_summaries`** publishes the same ACC point and, from the target summaries 0x191-0x194, the radar's two nearest
   other moving cars within 60 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 32 + the summary's pair code,

@@ -102,7 +102,7 @@ profiles use these differently.
 | speed source | the radar's own tracker | ACC target; summary cars: slope of their last 8 ranges | object list (σ = 0.045 m/s × `240\|7`) and ACC target (σ = 0.13 m/s) weighted by uncertainty |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary cars: 1/16 m) | ACC distance (other tracks: object-list range) |
 | gates | the radar's target-present flags | target-present flags, 60 m limit, ACC car skipped within 1 m / 0.5 m | path gate beyond 15 m, 60 cycles of age, speed std ≤ 0.75 m/s, far rule beyond 60 m |
-| code | 33 code lines + a three-message, 8-signal DBC | 53 code lines, no DBC | 187 code lines in one openpilot file |
+| code | 33 code lines reading 7 signals of the DBC | 53 code lines, no DBC | 187 code lines in one openpilot file |
 | strength | smallest and closest to Toyota's own ACC; speed and range come from the ACC target alone; opendbc-compatible | the nearest other cars as radar points while staying small | every radar car; the filter handles object-list speed excursions |
 
 `fused` runs the filter as:
