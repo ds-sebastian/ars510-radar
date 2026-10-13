@@ -22,6 +22,22 @@ The stream is a distinct output of the radar's tracker: it reports on 58,553 of 
 list is empty (mostly stopped within 6.4 m; 1,443 of them above 3 m/s ego speed; 13 drives,
 [`acc_target_availability.json`](../data/analysis/summaries/acc_target_availability.json)).
 
+**Where the target comes from (◐, exploratory, two cars).** The ACC target is not a smoothed object from the 0x80 list. It is
+the output of the radar's own internal tracker, and the 0x192 / 0x194 summaries below show the same track state:
+- **Same state as the summaries.** Aligned by the radar cycle clock (33,695 cycles on a second car), summary range minus ACC
+  range always lies between 0 and −0.0625 m, one summary step: the summary code is `160 + floor(0.4 × ACC code)` on 90 % of
+  cycles and one code lower on the rest. Lateral differs by a constant 2.75 cm (within 2 cm on 99.8 %).
+- **No range flows from the list.** The list object at the target's position is 3.1 m RMS away in range, and the fast
+  frame-to-frame changes of the two ranges are uncorrelated (|r| ≤ 0.01 at lags −3 to +3 cycles). A filter fed by the list
+  would need a gain below 5 × 10⁻⁵ per cycle. Only lateral shares fast content with the list, about 3 cycles later.
+- **Runs without the list.** When a wiring fault stopped the object-list group on bus 1 (14 min of driving), the ACC target
+  kept sending: present for 96 % of camera leads within 60 m (99 % normally), with the same agreement with the camera.
+- **One kinematic filter.** From one radar cycle to the next, the range step equals `vRel × dt` (gain 1.004, 1.9 cm RMS
+  residual, at the 2.5 cm code) and the speed step equals `aRel × dt` (gain 0.96, at the 0.125 m/s code); the owner's car gives
+  1.002 / 0.97. The tracker propagates range from speed and speed from acceleration, and corrections reach range through those
+  states. This is why its range is smooth and why no filter over the object list reproduces it
+  ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)).
+
 ![ACC target frames](img/analysis/acc_frame_map.png)
 
 | field | conversion | conf. | DBC signal |
@@ -153,7 +169,11 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 - **Width.** Zero exactly while the ACC target is idle. The car class reads 140-220 cm (median 171, clipped at 140), the truck
   class 200-280 cm (exactly 200 on 97 % of its frames); cars read about 175 cm inside 30 m and 165 cm at 90 m.
 - **Object-list flag.** Set on 88-95 % of target frames when the object list holds one to four objects and on 0.2 % when
-  it is empty; 99 % when an object-list track sits at the target's position.
+  it is empty; 99 % when an object-list track sits at the target's position. While moving it is clear on 5 % of target
+  cycles (second car). Those are not a full list (at most 9 of 20 slots are ever valid): they go with trucks (41 % vs 4 %), curves,
+  lateral offsets beyond 4 m, young tracks and lower in-path levels. The target then stays as close to the camera's lead as with
+  the flag set; one 17 s stretch held a braking car from 64 m to 16 m with no object at its position, and Toyota's ACC
+  braked for it ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)).
 - **Timestamp.** Equal to the 0x190 timestamp in 73 % of frames and within one cycle in 99.8 % (the 50 Hz frames can
   arrive before or after the cycle header). It says which radar cycle a 0x235 / 0x237 update belongs to.
 

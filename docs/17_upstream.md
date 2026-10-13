@@ -158,10 +158,9 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
 - **Filter-free:** the ACC target's speed follows the slope of its own distance (best lag −0.06 s, gain 1.00), and its
   fast noise (0.027 m/s on the second car, 0.025 on the owner's;
   [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json)) is a fifth of its 0.125 m/s code step, so a filter would add delay.
-- **On drives held out from development and tuning** (32 routes of both cars, 4.54 moving h) it brakes unnecessarily less
-  than 2.6: 9.2 against 13.0 oracle seconds (−0.84 s per moving hour, route bootstrap −1.72…−0.13). Hard and mild
-  radar-only braking are equal (1 against 0, a correct hold at 0.3 m/s 1.3 m from an object; 10 against 9), and braking
-  starts earlier on real closings (−0.020 against −0.008 s vs vision).
+- **On drives held out from development and tuning** (44 routes of both cars, 6.46 moving h) it brakes unnecessarily no more
+  than 2.6: 14.0 against 18.6 oracle seconds (−0.72 s per moving hour, route bootstrap −1.65…+0.15). Hard and mild
+  radar-only braking are equal, and braking starts at least as early on real closings (vs vision).
 - **Close cut-ins** (the lead jumps at least 5 m closer to within 35 m; 450 in all drives): the radar's ACC target moves
   to the cut-in car after a median 0.2 s (0.3 s for a faster car). On the 120 where that car is faster than ego, `acc` and 2.6 differ by at most 0.3 m/s² (braking below −0.5 m/s² in 28 against 27, below −1 in 14 against 14; vision only 29 / 14).
 - **Over every drive** (94 routes, 21.45 moving h; it carries protocol values only, while 2.6 was tuned on most of them) it has

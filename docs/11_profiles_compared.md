@@ -87,8 +87,12 @@ What the table shows:
 
 On the 26 held-out owner routes `acc` minus `fused` per moving hour (route-bootstrap 95 % CI, 19 routes) is −1.45 s of
 unnecessary braking (−2.79 … −0.26) and −22 lead flips (−36.5 … −3.3); the differences in hard (+0.39,
-0.0 … +1.24), mild and missed braking include zero. Pooling every drive held out of development (32 routes, 4.54 moving
-h), `acc` has −0.84 s of unnecessary braking per hour (−1.72 … −0.13). Over every drive (94 routes, 21.45 moving h) the
+0.0 … +1.24), mild and missed braking include zero. Pooling every drive held out of development, including a second
+car's 12 later drives that no tuning touched (6.46 moving h, 2.0 h above 20 m/s), `acc` has 14.0 against 18.6 s of unnecessary braking
+(−0.72 s per hour, −1.65 … +0.15): fewer, but the interval now includes zero. On those 12 drives alone the two tie on every
+measure (hard 1 against 1, the same real closing; mild 5 against 4; unnecessary 5.2 against 5.7 s; onset vs vision −0.002 against
++0.007 s), and both follow Toyota's own command about equally (RMS 0.309 against 0.313 m/s², vision 0.345;
+[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (94 routes, 21.45 moving h) the
 unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the flip difference −22 per hour (−35.9 … −7.4).
 
 ### Stock ACC span and cut-ins

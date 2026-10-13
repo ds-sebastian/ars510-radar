@@ -87,13 +87,14 @@ from the first:
 - **The control law (◐, fitted on two cars).** While following, Toyota's 0x343 command is a linear law on its own ACC
   target: about 0.02 m/s² per metre of gap error, 0.25 m/s² per m/s of closing speed, and a time gap of about 1.1 s (1-bar
   setting, U1). The command trails the target through a short dead time (0.1 s), a slow first-order lag and a rate limit.
-  A second car's stock drive fits once a **set-speed cap** is added: at or above the set speed Toyota holds about 0
-  even with a large gap (u1 law R² −0.69 → 0.58 on the second car, U1 unchanged at 0.66). One law with that cap
-  fits both cars (time gap 1.07 s). The law also explains Toyota's patience on far leads: a car closing at 3.5 m/s becomes
-  the ACC target at 94 m, and Toyota holds +0.06 m/s² for 7 s. It first brakes at 66 m (about 15 s to contact) and
-  reaches −0.83 m/s² at 52 m. The three recorded lead changes happened under gas override or at the set-speed cap; a lead
-  change or cut-in under stock control with the driver off the gas is the data this study needs
-  ([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json)).
+  A second car's stock drives need a **set-speed cap**: at or above the set speed Toyota holds about 0 even with a large
+  gap (U1's law R² −0.33 → 0.50 on 15 min of the second car's scoreable stock ACC). A linear law describes highway following
+  only roughly: one law for both cars scores R² 0.40 pooled, 0.37-0.91 per highway drive, and fails in city stop-and-go.
+  Far leads: fast closings picked up at 72-87 m draw −0.3 m/s² within 0.65 s, while slow closings first brake at 17-23 s
+  to contact. A faster car cutting in at 10 m became the ACC target on the first tick (the camera's lead about 1 s
+  later) and Toyota did not brake. At a stop the target reads 2.9-4.3 m, and `RELEASE_STANDSTILL` sets when the stopped
+  lead's relative speed reaches +0.5 m/s
+  ([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json), [`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)).
 
 Proposed study:
 

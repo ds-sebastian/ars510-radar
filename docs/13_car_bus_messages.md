@@ -76,13 +76,18 @@ the low three bits of byte 5 are constant. The profiles read the same target fro
 
 ### 0x343 from the radar (●)
 
-With stock ACC (U1, 21 min) the radar's own command spans −0.52 to +0.20 m/s². It sends `ACC_TYPE` 1 and
-`ALLOW_LONG_PRESS` 3 on every frame, `MINI_CAR` 1 while it has a lead (5,086 of 5,134 frames), `PERMIT_BRAKING` 1 on 4,971 frames, and `DISTANCE` pulses on button
+With stock ACC (U1, 21 min) the radar's own command spans −0.52 to +0.20 m/s². It sends `ACC_TYPE` 1 (after `ACC_TYPE` 0 for
+its first 0.69 s after power-up) and `ALLOW_LONG_PRESS` 3 on every frame, `MINI_CAR` 1 while it has a lead (5,086 of 5,134 frames), `PERMIT_BRAKING` 1 on 4,971 frames, and `DISTANCE` pulses on button
 presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` hold 0. openpilot's own `ACC_CONTROL` sends
 `ALLOW_LONG_PRESS` 1.
-On a second car with a board in the radar's car-bus line, stock ACC passes the radar's 0x343 through unchanged: `MINI_CAR`
-equals ACC-target presence on 99.98 % of cruise-on cycles, and a closing car that becomes the ACC target at 94 m draws a command down to
-−0.83 m/s² by 10 s later. Stopped behind a lead with cruise off, U1's command is −0.30 m/s² on 96 % of such cycles. How the command follows the ACC target is in
+On a second car with a filter board (smartDSU-style) in the radar's car-bus line, the board passes `ACCEL_CMD` and `MINI_CAR` but
+forces `ACC_TYPE` 1 and `PERMIT_BRAKING` 1 whenever openpilot is not sending its own 0x343 (73,513 of 73,513 frames on 32 drives);
+without the board the same radar sends `PERMIT_BRAKING` 1 on 23-94 % of cruise-on frames per drive.
+**`PERMIT_BRAKING` allows the friction brakes (◐).** With stock ACC commanding −0.3 m/s² or more, the car reaches the
+command 0.5 s later with the bit set (−0.83 → −0.86 m/s², 166 s) and only about −0.6 with it clear (−1.01 → −0.61, 32 s): with
+the bit clear the car brakes on regeneration and engine drag alone. The radar sets it for 99 % of targets within 20 m, 63 % at
+40-60 m and 17 % at 80-100 m, and keeps it for tens of seconds rather than following each command
+([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)). Stopped behind a lead with cruise off, U1's command is −0.30 m/s² on 96 % of such cycles. How the command follows the ACC target is in
 [10](10_research_directions.md#learn-from-toyotas-own-longitudinal-control)
 ([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json), [`radar_car_bus_messages.json`](../data/analysis/summaries/radar_car_bus_messages.json)).
 
@@ -94,11 +99,11 @@ bus, openpilot longitudinal needs one of two setups:
 
 | | radar CAN filter (smartDSU-style) | openpilot's radar disable (alpha long) |
 |---|---|---|
-| how | a board in the radar's line drops only the radar's 0x343 while openpilot sends its own; status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
+| how | a board in the radar's line drops the radar's 0x343 while openpilot sends its own (and otherwise forces two of its bits, above); status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
 | PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: the radar's PCS / AEB request is off with its car-bus output |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
-| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (0x344 stopped, below); dash "Pre-Collision System Malfunction" and PCS OFF lamp |
+| car's reaction | normal (0x320 bit 13 clear) | **0x320 bit 13** set (0x344 stopped, below); PCS OFF lamp; "Pre-Collision System Malfunction" only when nothing replaces 0x411 |
 | bus 1 (decoder input) | running | running ([01](01_radar_bus.md#openpilots-radar-disable)) |
 | follow-distance wheel button | **reported on 0x2FF** byte 0 bit 7 (below) | no frame carries it (◐) |
 
