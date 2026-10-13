@@ -1,5 +1,5 @@
 diff --git a/opendbc/car/toyota/radar_interface.py b/opendbc/car/toyota/radar_interface.py
-index 207b5a17..68323afc 100755
+index 207b5a17..b9525e3b 100755
 --- a/opendbc/car/toyota/radar_interface.py
 +++ b/opendbc/car/toyota/radar_interface.py
 @@ -6,8 +6,11 @@ from opendbc.car.toyota.values import DBC, ToyotaFlags
@@ -71,41 +71,10 @@ index 207b5a17..68323afc 100755
      rr = self._update(self.updated_messages)
      self.updated_messages.clear()
  
-@@ -59,35 +79,46 @@ class RadarInterface(RadarInterfaceBase):
+@@ -59,6 +79,17 @@ class RadarInterface(RadarInterfaceBase):
      if not self.rcp.can_valid:
        ret.errors.canError = True
  
--    if self.rcp.vl['STATUS_MSG']['RADAR_STATUS'] != 1 or self.rcp.vl['STATUS_MSG']['RADAR_PRE_FAULT'] != 0:
--      ret.errors.radarUnavailableTemporary = True
--
--    for ii in sorted(updated_messages):
--      if ii in self.RADAR_A_MSGS:
--        cpt = self.rcp.vl[ii]
--
--        if cpt['LONG_DIST'] >= 255 or cpt['NEW_TRACK']:
--          self.valid_cnt[ii] = 0    # reset counter
--        if cpt['VALID'] and cpt['LONG_DIST'] < 255:
--          self.valid_cnt[ii] += 1
--        else:
--          self.valid_cnt[ii] = max(self.valid_cnt[ii] - 1, 0)
--
--        score = self.rcp.vl[ii+16]['SCORE']
--        # print ii, self.valid_cnt[ii], score, cpt['VALID'], cpt['LONG_DIST'], cpt['LAT_DIST']
--
--        # radar point only valid if it's a valid measurement and score is above 50
--        if cpt['VALID'] or (score > 50 and cpt['LONG_DIST'] < 255 and self.valid_cnt[ii] > 0):
--          if ii not in self.pts or cpt['NEW_TRACK']:
--            self.pts[ii] = RadarData.RadarPoint()
--            self.pts[ii].trackId = self.track_id
--            self.track_id += 1
--          self.pts[ii].dRel = cpt['LONG_DIST']  # from front of car
--          self.pts[ii].yRel = -cpt['LAT_DIST']  # in car frame's y axis, left is positive
--          self.pts[ii].vRel = cpt['REL_SPEED']
--        else:
--          if ii in self.pts:
--            del self.pts[ii]
--
--    ret.points = list(self.pts.values())
 +    if self.use_ars510:
 +      target, position = self.rcp.vl["ACC_TARGET_1"], self.rcp.vl["ACC_TARGET_2"]
 +      if self.rcp.can_valid and target["STATE"] == 5 and position["PRESENT"]:  # 1 = idle, with every field zero
@@ -115,40 +84,11 @@ index 207b5a17..68323afc 100755
 +        pt.yRel = position["LAT_DIST"]
 +        pt.vRel = target["REL_SPEED"]
 +        ret.points = [pt]
++      return ret
 +
-+    else:
-+      if self.rcp.vl['STATUS_MSG']['RADAR_STATUS'] != 1 or self.rcp.vl['STATUS_MSG']['RADAR_PRE_FAULT'] != 0:
-+        ret.errors.radarUnavailableTemporary = True
-+
-+      for ii in sorted(updated_messages):
-+        if ii in self.RADAR_A_MSGS:
-+          cpt = self.rcp.vl[ii]
-+
-+          if cpt['LONG_DIST'] >= 255 or cpt['NEW_TRACK']:
-+            self.valid_cnt[ii] = 0    # reset counter
-+          if cpt['VALID'] and cpt['LONG_DIST'] < 255:
-+            self.valid_cnt[ii] += 1
-+          else:
-+            self.valid_cnt[ii] = max(self.valid_cnt[ii] - 1, 0)
-+
-+          score = self.rcp.vl[ii+16]['SCORE']
-+          # print ii, self.valid_cnt[ii], score, cpt['VALID'], cpt['LONG_DIST'], cpt['LAT_DIST']
-+
-+          # radar point only valid if it's a valid measurement and score is above 50
-+          if cpt['VALID'] or (score > 50 and cpt['LONG_DIST'] < 255 and self.valid_cnt[ii] > 0):
-+            if ii not in self.pts or cpt['NEW_TRACK']:
-+              self.pts[ii] = RadarData.RadarPoint()
-+              self.pts[ii].trackId = self.track_id
-+              self.track_id += 1
-+            self.pts[ii].dRel = cpt['LONG_DIST']  # from front of car
-+            self.pts[ii].yRel = -cpt['LAT_DIST']  # in car frame's y axis, left is positive
-+            self.pts[ii].vRel = cpt['REL_SPEED']
-+          else:
-+            if ii in self.pts:
-+              del self.pts[ii]
-+
-+      ret.points = list(self.pts.values())
-     return ret
+     if self.rcp.vl['STATUS_MSG']['RADAR_STATUS'] != 1 or self.rcp.vl['STATUS_MSG']['RADAR_PRE_FAULT'] != 0:
+       ret.errors.radarUnavailableTemporary = True
+ 
 diff --git a/opendbc/car/toyota/tests/test_toyota.py b/opendbc/car/toyota/tests/test_toyota.py
 index 9d825d35..02c3b48f 100644
 --- a/opendbc/car/toyota/tests/test_toyota.py
@@ -230,7 +170,7 @@ index efdef6a0..91cd3f24 100644
  class CAR(Platforms):
 diff --git a/opendbc/dbc/toyota_tss2_ars510.dbc b/opendbc/dbc/toyota_tss2_ars510.dbc
 new file mode 100644
-index 00000000..d7390cba
+index 00000000..90a5785d
 --- /dev/null
 +++ b/opendbc/dbc/toyota_tss2_ars510.dbc
 @@ -0,0 +1,104 @@
@@ -306,7 +246,7 @@ index 00000000..d7390cba
 + SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
 + SG_ WIDTH : 11|12@0+ (1,0) [0|4095] "cm" XXX
 +
-+CM_ "Continental ARS510 front radar, radar bus: the target the radar's own ACC follows. Used on the radar-ACC platforms: RAV4 2022-25 (fwdRadar 8821F0R01100, 8821F0R03100), C-HR 2021-22 (8821FF4102xx-0500) and Yaris (8821F0D0xxxx). The 0x80 object list and 0x85 metadata record span many frames and are decoded by ars510-radar (ars510/). The radar interface uses STATE, REL_SPEED, TARGET_ID, LONG_DIST, LAT_DIST, PRESENT and TIMESTAMP; the other signals are documented for completeness.";
++CM_ "Continental ARS510 front radar, radar bus: the target the radar's own ACC follows. Used on the radar-ACC platforms: RAV4 2022-25 (fwdRadar 8821F0R01100, 8821F0R03100), C-HR 2021-22 (8821FF4102xx-0500) and Yaris (8821F0D0xxxx). The 0x80 object list and 0x85 metadata record are segmented over many frames and not described here. The radar interface uses STATE, REL_SPEED, TARGET_ID, LONG_DIST, LAT_DIST, PRESENT and TIMESTAMP; the other signals are documented for completeness.";
 +CM_ BO_ 565 "ACC target, part 1: 50 Hz, content updated once per 60 ms radar cycle.";
 +CM_ SG_ 565 CHECK_BYTE "Check byte over the rest of the frame (algorithm unknown).";
 +CM_ SG_ 565 STATE "5 = target present, 1 = idle (bytes 2-7 64 80 0B 24 00 FF), 15 = start-up.";

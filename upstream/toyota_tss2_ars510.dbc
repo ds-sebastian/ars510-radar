@@ -70,7 +70,7 @@ BO_ 571 ACC_TARGET_4: 3 XXX
  SG_ COUNTER : 15|4@0+ (1,0) [0|15] "" XXX
  SG_ WIDTH : 11|12@0+ (1,0) [0|4095] "cm" XXX
 
-CM_ "Continental ARS510 front radar, radar bus: the target the radar's own ACC follows. Used on the radar-ACC platforms: RAV4 2022-25 (fwdRadar 8821F0R01100, 8821F0R03100), C-HR 2021-22 (8821FF4102xx-0500) and Yaris (8821F0D0xxxx). The 0x80 object list and 0x85 metadata record span many frames and are decoded by ars510-radar (ars510/). The radar interface uses STATE, REL_SPEED, TARGET_ID, LONG_DIST, LAT_DIST, PRESENT and TIMESTAMP; the other signals are documented for completeness.";
+CM_ "Continental ARS510 front radar, radar bus: the target the radar's own ACC follows. Used on the radar-ACC platforms: RAV4 2022-25 (fwdRadar 8821F0R01100, 8821F0R03100), C-HR 2021-22 (8821FF4102xx-0500) and Yaris (8821F0D0xxxx). The 0x80 object list and 0x85 metadata record are segmented over many frames and not described here. The radar interface uses STATE, REL_SPEED, TARGET_ID, LONG_DIST, LAT_DIST, PRESENT and TIMESTAMP; the other signals are documented for completeness.";
 CM_ BO_ 565 "ACC target, part 1: 50 Hz, content updated once per 60 ms radar cycle.";
 CM_ SG_ 565 CHECK_BYTE "Check byte over the rest of the frame (algorithm unknown).";
 CM_ SG_ 565 STATE "5 = target present, 1 = idle (bytes 2-7 64 80 0B 24 00 FF), 15 = start-up.";
