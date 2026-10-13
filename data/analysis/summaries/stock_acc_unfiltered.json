@@ -1,0 +1,101 @@
+{
+ "description": "Second car (E2 drives, filter out) unmodified stock Toyota ACC, 50.5 min (909 s scoreable), and the radar's 0x343 / 0x411 behaviour. Exploratory except the protocol counts, which were rechecked from raw CAN.",
+ "filter_rewrite_0x343": {
+  "filtered_drives": 32,
+  "frames_checked_without_openpilot_0x343": 73513,
+  "acc_type_1_share": 1.0,
+  "permit_braking_1_share": 1.0,
+  "accel_cmd_and_mini_car_rewritten": false
+ },
+ "radar_own_0x343": {
+  "acc_type_0_after_power_up_frames": 23,
+  "acc_type_0_after_power_up_s": 0.69,
+  "drives_recorded_from_power_up": 11,
+  "permit_braking_1_share_of_cruise_on_per_drive": [
+   0.23,
+   0.94
+  ]
+ },
+ "permit_braking_decel": {
+  "pb1": {
+   "s": 165.6,
+   "commanded": -0.83,
+   "achieved_0p5s_later": -0.86,
+   "ratio": 1.04
+  },
+  "pb0": {
+   "s": 32.4,
+   "commanded": -1.01,
+   "achieved_0p5s_later": -0.61,
+   "ratio": 0.6
+  },
+  "pb0_floor_approx": -0.65
+ },
+ "permit_braking_1_by_target_range_m": {
+  "0-20": 0.99,
+  "20-40": 0.85,
+  "40-60": 0.63,
+  "60-80": 0.55,
+  "80-100": 0.17,
+  "100-130": 0.07,
+  "no_target": 0.02
+ },
+ "0x411_after_object_list_outage": {
+  "byte0": "0x48",
+  "delay_after_last_record_s": [
+   2.0,
+   2.2
+  ],
+  "held_s": [
+   4.0,
+   21.0
+  ],
+  "latched": false,
+  "power_up_lamp_check": "0x40 for 4 frames"
+ },
+ "radar_disable_parked": {
+  "car_bus_0x343_0x344_0x283_stop_within_s": 0.02,
+  "0x320_bit13_set_after_s": 0.17,
+  "object_list_hz": 16.6,
+  "crc_failures": 0,
+  "openpilot_0x411_start_after_radar_last_s": 0.49,
+  "dash": "PCS OFF lamp only (tester report)"
+ },
+ "stock_law": {
+  "joint_two_car_law_r2_pooled": 0.4,
+  "per_drive_r2_range": [
+   0.37,
+   0.91
+  ],
+  "city_drive_r2": -2.6,
+  "set_speed_cap_needed": true
+ },
+ "stops": {
+  "n": 9,
+  "target_range_at_standstill_m": [
+   2.9,
+   4.3
+  ],
+  "camera_range_m": [
+   4.5,
+   6.0
+  ],
+  "release_standstill_at_target_vrel_mps": [
+   0.5,
+   0.625
+  ]
+ },
+ "far_closings": {
+  "fast_pickup_72_87m_first_minus0p3_within_s": 0.65,
+  "slow_closing_first_brake_ttc_s": [
+   17,
+   23
+  ]
+ },
+ "cut_in": {
+  "range_m": 9.9,
+  "acc_target_switch": "first tick",
+  "camera_lag_s": 1.0,
+  "acc_cut_in_bit_set": 0
+ }
+}

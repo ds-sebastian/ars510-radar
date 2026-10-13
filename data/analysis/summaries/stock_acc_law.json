@@ -13,7 +13,7 @@
  "second_car": {
   "cmd_passes_filter": {
    "mini_car_equals_acc_present_cruise_on": 0.9998,
-   "note": "the second car has a board in the radar's car-bus line; on stock ACC it forwards the radar's 0x343 as sent"
+   "note": "the second car has a board in the radar's car-bus line; on stock ACC it forwards the radar's ACCEL_CMD and MINI_CAR but forces ACC_TYPE 1 and PERMIT_BRAKING 1 (stock_acc_unfiltered.json)"
   },
   "set_speed_minus_vego_median": {
    "second_car": -0.3,

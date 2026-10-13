@@ -89,8 +89,9 @@ How it would work:
 
 ## The dash: PCS shows what is true
 
-The malfunction warning follows the radar's messages (O5, [13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)); the radar's own 0x411 (`PCS_HUD`) is the leading
-candidate. The rule for any implementation:
+The malfunction warning follows the radar's 0x411 (`PCS_HUD`) (◐): with the radar disabled and parked, a second car showing upstream
+openpilot's "PCS off" 0x411 (from 0.49 s after the radar's last one) showed only the PCS OFF lamp, while O5, with nothing replacing
+0x411, showed "Pre-Collision System Malfunction" after about 7 s ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)). The rule for any implementation:
 
 | situation | dash | 0x411 |
 |---|---|---|
@@ -99,7 +100,9 @@ candidate. The rule for any implementation:
 | openpilot stopped | malfunction | the car's own check reports it |
 
 "PCS on" also carries the radar's real alerts. The radar's own 0x411 reports a blocked or dirty sensor
-(`PCS_DUST2`) and faults (`PCS_INDICATOR` 2); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1
+(`PCS_DUST2`) and faults (`PCS_INDICATOR` 2). When its object-list output on bus 1 stops (a wiring fault on a second car),
+it sets 0x411 byte 0 to `0x48` (`PCS_INDICATOR` 1 plus bit 3) 2.0-2.2 s later for 4-21 s, not latched; `0x40` for the first frames after
+power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1
 signals for blockage and faults are listed in [17](17_upstream.md#what-radard-gets-from-other-radars); a drive
 with a covered or dirty radar shows which candidate reacts, and "PCS on" reports a blinded radar from that point.
 
@@ -152,9 +155,7 @@ These are facility-managed engineering tasks.
    ADAS / NCAP testing (U3's inflatable left the object list empty at its position).
 3. **Which object a warning is about:** separate characterised target controls with a clean background and independently
    measured motion distinguish U3's candidate targets.
-4. **A parked 0x411 test:** with the radar disabled, send upstream's "PCS off" 0x411 and see whether the dash changes from
-   "Malfunction" to "PCS off". This names the dash's input; it is the same kind of parked test as O5.
-5. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
+4. **A fork-level design** of the panda limits and the health check, reviewed before anything brakes the car on the
    road. A relay is a fork-only safety function.
 
 Share recordings through a [research finding](https://github.com/ds-sebastian/ars510-radar/issues/new/choose).

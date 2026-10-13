@@ -1,0 +1,87 @@
+{
+ "description": "Where the ACC target comes from: ACC target vs 0x192/0x194 summaries vs 0x80 object list, aligned by the 0x239 / 0x190 radar clock; list outage; kinematic self-consistency. Second car (drives E2: 17 drives, untouched by tuning) with an owner-car replication. Exploratory.",
+ "aligned_acc_cycles": 89630,
+ "summary_vs_acc": {
+  "cycles": 33695,
+  "range_diff_m_q01_q99": [
+   -0.0625,
+   0.0
+  ],
+  "summary_code_equals_160_plus_floor_0p4_acc_code_share": 0.897,
+  "lateral_offset_m_median": -0.025,
+  "lateral_within_2cm_of_median": 0.998,
+  "lateral_hp_increment_corr_lag0": 0.936
+ },
+ "list_vs_acc": {
+  "cycles": 57036,
+  "range_diff_rms_m": 3.1467,
+  "range_hp_increment_corr_lags_m3_p3": [
+   -0.005,
+   -0.002,
+   0.001,
+   0.01,
+   -0.003,
+   -0.006,
+   0.006
+  ],
+  "alpha_beta_gain_per_cycle_ci95": [
+   2e-05,
+   5e-05
+  ]
+ },
+ "list_outage": {
+  "outage_moving_min": 13.82,
+  "acc_present_when_camera_lead_lt_60m": {
+   "outage": 0.962,
+   "normal": 0.987
+  },
+  "acc_vs_camera_range_mad": {
+   "outage": 0.0277,
+   "normal": 0.0415
+  },
+  "acc_vs_camera_speed_rms": {
+   "outage": 1.063,
+   "normal": 1.316
+  },
+  "summaries_active_share_outage": 0.67
+ },
+ "object_list_flag": {
+  "moving_acc_cycles": 45236,
+  "flag0_share": 0.0496,
+  "max_valid_list_slots": 9,
+  "truck_share_flag0_vs_flag1": [
+   0.41,
+   0.04
+  ],
+  "level5_share_flag0_vs_flag1": [
+   0.48,
+   0.91
+  ],
+  "list_object_near_target_flag0_vs_flag1": [
+   0.1,
+   0.51
+  ],
+  "longest_flag0_run_s": 17.0,
+  "longest_flag0_run_range_m": [
+   64.0,
+   15.9
+  ],
+  "longest_flag0_run_camera_range_median_rel": -0.003
+ },
+ "kinematic_consistency": {
+  "second_car": {
+   "pairs": 50484,
+   "range_step_gain_on_vrel_dt": 1.0039,
+   "range_resid_rms_m": 0.0186,
+   "range_step_rms_m": 0.1421,
+   "speed_step_gain_on_arel_dt": 0.958,
+   "speed_resid_rms": 0.0472
+  },
+  "owner_car_receipt_time": {
+   "pairs": 237874,
+   "range_step_gain_on_vrel_dt": 1.002,
+   "range_resid_rms_m": 0.0411,
+   "speed_step_gain_on_arel_dt": 0.972
+  }
+ }
+}
