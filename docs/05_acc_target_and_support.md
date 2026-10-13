@@ -23,7 +23,8 @@ list is empty (mostly stopped within 6.4 m; 1,443 of them above 3 m/s ego speed;
 [`acc_target_availability.json`](../data/analysis/summaries/acc_target_availability.json)).
 
 **Where the target comes from (◐, exploratory, two cars).** The ACC target is not a smoothed object from the 0x80 list. It is
-the output of the radar's own internal tracker, and the 0x192 / 0x194 summaries below show the same track state:
+the output of the radar's own internal tracker. When one of the 0x192 / 0x194 summaries below is on the ACC car (70-74 % of
+moving ACC-target cycles; it is the first pair on only 39-53 %), it shows the same track state:
 - **Same state as the summaries.** Aligned by the radar cycle clock (33,695 cycles on a second car), summary range minus ACC
   range always lies between 0 and −0.0625 m, one summary step: the summary code is `160 + floor(0.4 × ACC code)` on 90 % of
   cycles and one code lower on the rest. Lateral differs by a constant 2.75 cm (within 2 cm on 99.8 %).
@@ -218,7 +219,9 @@ a camera optical reference it is closer than the object list out to about 80 m (
 14.9 % → about 10 %; closer in 97 % of object-list false closings). The summaries also describe far cars while the ACC target is idle,
 at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json), block `current_units_recompute`). They carry position only, so a speed comes
-from the range slope and lags by about half a second.
+from the range slope and lags by about half a second. Take the slope per track, not per message: a pair can switch to
+another car (8-11 % of moving 1 s windows span two tracks), and a per-pair slope then has 0.59-0.84 m/s RMS against the
+ACC speed instead of 0.25 m/s. Restart it when the pair's code or age breaks.
 
 **The slot that is not the ACC target is a further track of the same tracker (◐, exploratory, two cars).** When a summary
 sits on the ACC car it is that car's state exactly: `160 + floor(0.4 × ACC code)` or one code lower on 99.9 % of 32,156
@@ -266,8 +269,11 @@ non-idle samples, so recognise idle frames by the whole payload. The DBC keeps t
 **0x195 bits 53-63 (MSB-first; the low 11 bits of the payload) = range of a function-tracker object, 0.05 m per code (●).** On the ACC car the code is
 `floor(ACC distance code / 2)` or one above on 99.0 % of 290 raw-CAN cycles (94.8 % in the full second-car table at cycle
 lag 0 or 1). The frame is active on 0.5-0.6 % of moving cycles, at a median 20-21 m. It shows the ACC target on 75-84 % of
-active cycles and another object on 16-25 % (61 % of those stationary), sometimes with no ACC target at all. It has no speed
-field: the byte at bits 16-23 rises with ego speed but is not an exact speed. `support.parse_0x195_range()` returns the range
+active cycles and another object on 16-25 % (61 % of those stationary), sometimes with no ACC target at all. Two more fields
+describe the same object (◐, two cars): bits 28-39 (MSB-first) are its **speed over ground** at 1/16 m/s per code
+(r 0.99; it reads 0.25 m/s above carState speed + ACC speed, MAD 0.08 m/s, an offset not yet explained), and bits 16-27
+follow its **acceleration over ground**, about 0.04 m/s² per code around 512. The byte at bits 40-47 rises with ego speed
+but is not an exact speed. `support.parse_0x195_range()` returns the range
 in metres, or `None` for the idle payload `7F FE 1F E0 00 00 00 00`
 ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
 

@@ -89,5 +89,36 @@
    "other_moving_vehicle_frames_per_moving_hour": 606
   }
  },
- "screen": "every 4-16-bit window of 26 per-cycle bus-1 addresses at lags -1/0/+1 and as differences: no field outside 0x235/0x237/0x192/0x194 reaches |r| 0.95 with the track state; on active cycles only 0x195 does"
+ "screen": "every 4-16-bit window of 26 per-cycle bus-1 addresses at lags -1/0/+1 and as differences: no field outside 0x235/0x237/0x192/0x194 reaches |r| 0.95 with the track state; on active cycles only 0x195 does",
+ "recheck": {
+  "event_0x195_speed_lsb_24_12": {
+   "scale_mps_per_code": 0.0625,
+   "r": 0.99,
+   "offset_vs_carstate_plus_acc_vrel_mps": 0.25,
+   "mad_mps": 0.08,
+   "raw_can_rows": 364
+  },
+  "event_0x195_accel_lsb_36_12": {
+   "scale_mps2_per_code_approx": 0.04,
+   "zero_code_approx": 512,
+   "r": "0.93-0.96"
+  },
+  "summary_slope_1s": {
+   "per_message_rms_vs_acc_mps": "0.59-0.84",
+   "per_linked_track_rms_vs_acc_mps": 0.25,
+   "moving_windows_spanning_two_tracks": "8-11 %"
+  },
+  "acc_target_in_a_summary_moving": {
+   "second": 0.705,
+   "owner": 0.735
+  },
+  "acc_target_is_first_pair_when_both_present": {
+   "second": 0.389,
+   "owner": 0.533
+  },
+  "far_non_acc_summaries_without_acc_target": {
+   "within_1p5m_lateral": "22-29 %",
+   "match_camera_lead": "4 %"
+  }
+ }
 }

@@ -54,8 +54,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   at 30-100 m. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
-  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, likely a
-  second output of the same tracker (◐) that also covers other vehicles, shows the same: the object list is a median 2.5 m
+  ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to
+  the same tracker's state but not a rounding of it (◐), which also covers other vehicles, shows the same: the object list is a median 2.5 m
   short at 40-60 m, 3 m at 60-110 m and 14 m at 110-170 m
   ([`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)).
 
