@@ -33,7 +33,9 @@ Sizes: [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.j
 The `acc` proposal, [`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510.patch), applies to opendbc master as one
 commit:
 - **DBC:** `opendbc/dbc/toyota_tss2_ars510.dbc` with the ACC target frames `ACC_TARGET_1`-`4` (0x235 / 0x237 / 0x239 /
-  0x23B), every field documented. The interface reads seven signals; through CANParser every signal equals the
+  0x23B), every field documented, and the radar's other support frames for completeness: the cycle header (0x190), the
+  target summaries (0x191-0x194), the event pair (0x195 / 0x196, with the fault bit) and the object stream (0x680),
+  confirmed and likely fields only, with approximate units marked. The interface reads seven signals; through CANParser every signal equals the
   reference decoder on 9,574 frame sets.
 - **`values.py`:** the radar-ACC platforms (RAV4 2022 and 2023-25, C-HR, Yaris) get `toyota_tss2_ars510` as their radar
   DBC instead of none, two lines in the TSS2 and SecOC platform configs. So the car model selects the parser.

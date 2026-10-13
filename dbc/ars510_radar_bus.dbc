@@ -98,9 +98,10 @@ BO_ 405 ARS510_A195_CANDIDATE: 8 RADAR
  SG_ A195_OBJECT_RANGE : 50|11@0+ (0.05,0) [0|102.35] "m" RADAR
 
 BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
- SG_ A196_B0_RESERVED_ONE2 : 7|2@0+ (1,0) [0|3] "raw" RADAR
- SG_ A196_FIELD0_CODE6 : 5|6@0+ (1,0) [0|63] "code" RADAR
- SG_ A196_B1_B4_RESERVED_ZERO26 : 15|26@0+ (1,0) [0|67108863] "raw" RADAR
+ SG_ A196_REQUIRED_DECEL : 7|8@0- (0.1,0) [-12.8|12.7] "m/s^2" RADAR
+ SG_ A196_B1_RESERVED_ZERO7 : 15|7@0+ (1,0) [0|127] "raw" RADAR
+ SG_ A196_RADAR_FAULT : 8|1@0+ (1,0) [0|1] "" RADAR
+ SG_ A196_B2_B4_RESERVED_ZERO18 : 23|18@0+ (1,0) [0|262143] "raw" RADAR
  SG_ A196_FIELD1_CODE6 : 37|6@0+ (1,0) [0|63] "code" RADAR
  SG_ A196_B5_UNKNOWN3 : 47|3@0+ (1,0) [0|7] "raw" RADAR
  SG_ A196_FIELD2_CODE5 : 44|5@0+ (1,0) [0|31] "code" RADAR
@@ -366,14 +367,15 @@ CM_ SG_ 589 A24D_OBSERVED_CONSTANT_BE56 "00000000000056 normally; 00000000020058
 CM_ SG_ 1280 A500_OBSERVED_CONSTANT_BE48 "Unit-specific constant (redacted here; compare your own).";
 CM_ SG_ 405 A195_PATH_CURVATURE "Ego path curvature, left positive, about 1/133,000 per m per code around 32768 (R2 0.997 against yaw rate / speed); 32766 when idle.";
 CM_ SG_ 405 A195_OBJECT_ACCEL "Over-ground acceleration of the 0x195 object, about 1/32 m/s2 per code (29-32 codes per m/s2 measured) around 512; 510 when idle. Its low 10 bits are the older 10-bit event code.";
-CM_ SG_ 405 A195_OBJECT_SPEED "Longitudinal over-ground speed of the 0x195 object (including the ego-rotation term), 1/16 m/s per code, zero code 0. Like the ACC target it matches carState about 0.2 s earlier.";
+CM_ SG_ 405 A195_OBJECT_SPEED "Longitudinal over-ground speed of the 0x195 object (including the ego-rotation term), 1/16 m/s per code, zero code 0. Like the ACC target it matches carState about 0.15 s earlier.";
 CM_ SG_ 405 A195_B5_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_EGO_TRAVEL_TO_TTC "Ego predicted travel until the time to collision with the 0x195 object (v T + a T2 / 2, T = range / closing speed), clamped at 0.";
 CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_OBJECT_RANGE "Range of one radar-tracker object while the event pair is active (0 when idle): floor(ACC distance code / 2) on the ACC car; otherwise another, mostly stationary object.";
-CM_ SG_ 406 A196_B0_RESERVED_ONE2 "Always 3.";
-CM_ SG_ 406 A196_FIELD0_CODE6 "Raw.";
-CM_ SG_ 406 A196_B1_B4_RESERVED_ZERO26 "Always zero.";
+CM_ SG_ 406 A196_REQUIRED_DECEL "Required deceleration for the event object while active, about 0.1 m/s2 per code (approximate; close to the lead-moving / lead-stops formula with a 1-2 m margin); -1 when idle.";
+CM_ SG_ 406 A196_B1_RESERVED_ZERO7 "Always zero.";
+CM_ SG_ 406 A196_RADAR_FAULT "Radar fault: sets 0.3-0.4 s after the object list stops and clears with it; also set for the first cycle after power-up, so require two or more consecutive cycles (likely).";
+CM_ SG_ 406 A196_B2_B4_RESERVED_ZERO18 "Always zero.";
 CM_ SG_ 406 A196_FIELD1_CODE6 "Raw.";
 CM_ SG_ 406 A196_B5_UNKNOWN3 "Raw.";
 CM_ SG_ 406 A196_FIELD2_CODE5 "Raw.";
