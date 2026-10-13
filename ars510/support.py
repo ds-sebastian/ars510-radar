@@ -13,6 +13,12 @@ from dataclasses import dataclass
 from .objects import LATERAL_M_PER_CODE
 
 A192_SENTINEL = bytes.fromhex("00FF00FF")
+# Summary distance: (code - 160) / 16 m. The same numbers as the object list's LONG_DIST, but established independently:
+# the zero is pinned by the ACC target (summary code = 160 + floor(0.4 x ACC distance code), and the ACC distance has no
+# offset), while the object list's zero comes from vision. Kept separate on purpose, so a future object-list correction
+# does not move the summaries.
+SUMMARY_RANGE_ZERO_CODE = 160
+SUMMARY_RANGE_M_PER_CODE = 1 / 16
 A680_IDLE = bytes.fromhex("000008008000800A")
 
 
@@ -23,8 +29,8 @@ class Target192:
 
     @property
     def d_rel(self) -> float:
-        """Distance in m: the object list's encoding, (code - 160) / 16."""
-        return (self.range_code13 - 160) / 16
+        """Distance in m: (code - 160) / 16, the object list's encoding (see SUMMARY_RANGE_ZERO_CODE)."""
+        return (self.range_code13 - SUMMARY_RANGE_ZERO_CODE) * SUMMARY_RANGE_M_PER_CODE
 
     @property
     def y_rel(self) -> float:
@@ -195,9 +201,9 @@ def parse_acc_target(data235: bytes, data237: bytes) -> AccTarget | None:
     code. The driving interface keeps using the single-field helpers below."""
     if len(data235) != 8 or len(data237) != 8 or data235[1] & 0x0F != 5 or not _be_field(data237, 10, 1):
         return None
-    return AccTarget(target_id=_be_field(data235, 0, 5), d_rel=_be_field(data237, 39, 13) * 0.025,
-                     y_rel=(_be_field(data237, 27, 12) - 2000) * 0.01, v_rel=(_be_field(data235, 29, 11) - 1024) * 0.125,
-                     a_rel=(data235[2] - 100) * 0.125, v_lat=(_be_field(data235, 8, 11) - 1024) * 0.0125,
+    d_rel, y_rel = parse_acc_target_position(data237)
+    return AccTarget(target_id=_be_field(data235, 0, 5), d_rel=d_rel, y_rel=y_rel, v_rel=parse_acc_target_vrel(data235),
+                     a_rel=parse_acc_target_arel(data235), v_lat=(_be_field(data235, 8, 11) - 1024) * 0.0125,
                      a_lat=(_be_field(data235, 19, 8) - 100) * 0.125, in_path=bool(_be_field(data237, 8, 1)),
                      in_path_level=_be_field(data237, 4, 3), tracker_codes=(_be_field(data237, 19, 8), _be_field(data237, 11, 8)))
 

@@ -30,7 +30,6 @@ import argparse
 import csv
 import gzip
 import json
-import math
 import sys
 from collections import defaultdict
 from dataclasses import replace
