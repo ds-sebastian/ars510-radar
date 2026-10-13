@@ -1,0 +1,13 @@
+{
+ "description": "First owner road drives with the acc profile (sunnypilot, the ported upstream acc patch, Experimental mode); 2 drives, 1.4 h. Exploratory: small n, no tuning on these drives. Comparison: the owner's fused 2.1.0 road drives (road_v21.json).",
+ "drives": 2,
+ "hours": 1.4,
+ "acc_points": "1 point whenever 0x239 reports a target; matches the decoded ACC range on 98 % of ticks",
+ "radar_backed_share_of_engaged_lead_time": 0.95,
+ "radar_backed_share_when_camera_lead_within_80_m": [0.994, 0.984],
+ "engaged_stops_gap_m": {"acc_drive_1": [5.0, 6.2], "acc_drive_1_stops": 4, "acc_drive_2": [3.9, 4.9], "acc_drive_2_stops": 3, "fused_2_1": [3.3, 4.3], "fused_2_1_stops": 7},
+ "creeping_to_stopped_lead_mean_lead_speed_mps": {"acc": -0.03, "acc_share_above_0p3": 0.07, "fused_2_1": 0.23, "fused_2_1_share_above_0p3": 0.28},
+ "stop_distance_note": "with a lead speed near zero the planner holds openpilot's designed stop distance (STOP_DISTANCE 6 m); fused's small positive low-speed lead speed let the MPC creep closer",
+ "camera_only_share_of_engaged_lead_time_beyond_80_m": {"acc_drive_1": 0.57, "acc_drive_2": 0.19, "fused_2_1": 0.08},
+ "acc_target_acquired_m": [80, 126]
+}

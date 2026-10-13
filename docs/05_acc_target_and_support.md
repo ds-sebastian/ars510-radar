@@ -6,9 +6,9 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 | stream | read by | role |
 |---|---|---|
-| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` alone; `fused` as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
+| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` and `acc_summaries`; `fused` as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
 | object list (0x80) | `raw` and `fused` | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
-| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets; sparse far-range witnesses |
+| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets: the ACC car and the two nearest other moving cars (not a far-lead source) |
 
 ## The radar's ACC target (0x235 / 0x237)
 
@@ -82,7 +82,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 
 | check | result |
 |---|---|
-| stopped lead vehicles (true closing speed = ego speed), 97 tracks on 26 drives | closing speed = 1.03 × ego at 0.125 m/s per code; same on 16 held-out tracks |
+| stopped lead vehicles (true closing speed = ego speed), 97 tracks on 26 drives | closing speed = 1.004 × ego at 0.125 m/s per code once the radar's 0.15 s output age is taken into account (1.03 against the current ego speed while braking; [06](06_accuracy.md#velocity)); same on 16 held-out tracks |
 | fine distance against the 0x680 object range on the same car, 1,872 frames | 0.02500 m per code, +0.01 m, median residual 0.02 m |
 | closure inside the frames, 2,905 two-second windows | 5.03 distance codes per speed-code-second |
 | closing speed against the slope of the fine distance, 1,862 windows | 0.99 (IQR 0.97-1.00); 0.99 on held-out drives |
@@ -243,10 +243,10 @@ when it swaps slots. Limits: it covers about a third of the moving cars the obje
 a median 0.7-1.3 s before ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
-layout). It returns `None` for a short payload or the exact whole-frame sentinel. The fork build can attach each summary
-to the object-list track at its position (range within max(5 m, 15 %), lateral within 1 m) and use its range slope as a speed
-measurement up to 80 m: an option, off in `fused` and `acc`
-([12](12_kalman_filter.md#what-the-summaries-do)).
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. `acc_summaries` publishes the non-ACC
+summaries within 60 m as radar points of their own, with a speed from the slope of their last 8 ranges
+([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)); `fused` and `acc` do not read them
+(`fused` 2.0-2.3 used them inside its filter: [12](12_kalman_filter.md#what-the-summaries-do)).
 
 ## 0x190: cycle header
 

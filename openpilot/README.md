@@ -96,7 +96,9 @@ $OP/.venv/bin/python openpilot/check_integration.py --opendbc /tmp/opendbc_ars51
 - detection: cold start by firmware, fallback by bus 1, other cars untouched;
 - RadarData points: units, sign, ego-speed subtraction, age gate;
 - radarless behaviour before the first record;
-- the timeout report and recovery when records stop and resume.
+- the timeout report and recovery when records stop and resume;
+- for `acc` and `acc_summaries`: synthetic ACC target (and summary) frames, the ACC car published once, summary cars
+  beyond 60 m left out, timeout and recovery.
 
 It passes 21-22 checks on current openpilot, the openpilot 10b9e73 used for replays and sunnypilot v2026.002.002. To
 replay your own drives stock vs installed, see

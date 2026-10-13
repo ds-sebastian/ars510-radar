@@ -100,7 +100,7 @@ percentile +0.79, at least 1.0 in 17 of 225 runs); with `raw` +0.66 (+1.79, 208 
 
 ## What the evidence supports
 
-- On any fork, install the default `acc` or `fused`. `acc` publishes only the radar's ACC target, the reference of this
+- On any fork, install the default `acc`, the main alternative `acc_summaries`, or `fused`. `acc` publishes only the radar's ACC target, the reference of this
   comparison, so the fork's lead speed is the ACC target's speed. `fused` 2.6.0 cuts the braking demand
   the radar's speed errors add about ninety-fold on sunnypilot (128 → 1.4 events per hour against the radar's own tracker), and the
   benefit grows with how much of the radar's speed the fork uses.

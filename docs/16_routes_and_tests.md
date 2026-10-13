@@ -31,7 +31,7 @@ run with a maintainer-assisted read-only acquisition setup. Physical calibration
 Road captures record normal driving: short gaps, cut-ins, oncoming traffic and hard braking come from traffic as it
 occurs, and a passenger handles equipment and notes. Target placement, intentional occlusion and sensor-cover
 conditions use a parked ego or a controlled site. Remove covers before driving away, and keep the sensor clean so a
-fault reflects the condition under test. Record the actual installed profile (`acc` or `fused`) and version; raw CAN
+fault reflects the condition under test. Record the actual installed profile (`acc`, `acc_summaries` or `fused`) and version; raw CAN
 logging works with either.
 
 PCS/AEB is a professional test: Toyota advises leaving PCS testing to professionals
