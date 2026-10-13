@@ -360,5 +360,322 @@
    "short_form": 0.21
   },
   "source": "workspace SCR-549 (313 chunks, 18.84 moving h)"
+ },
+ "every_drive_set_by_set": {
+  "description": "fast-suite sets, 16.91 moving h, same scorer as acc_target_parser.json by_version_and_set (acc rows reproduce it exactly); 53-line form",
+  "27 replay drives": {
+   "unnecessary_s": 3.3,
+   "missed_s": 2.5,
+   "flips_per_moving_h": 362,
+   "hard": 13,
+   "mild": 19,
+   "onset_vs_vision_s": -0.065
+  },
+  "owner road drives + 2 second-car drives": {
+   "unnecessary_s": 5.5,
+   "missed_s": 8.4,
+   "flips_per_moving_h": 226,
+   "hard": 0,
+   "mild": 5,
+   "onset_vs_vision_s": -0.006
+  },
+  "second car, held out from tuning": {
+   "unnecessary_s": 10.2,
+   "missed_s": 4.2,
+   "flips_per_moving_h": 442,
+   "hard": 0,
+   "mild": 9,
+   "onset_vs_vision_s": 0.034
+  },
+  "fresh owner drives": {
+   "unnecessary_s": 0.0,
+   "missed_s": 0.0,
+   "flips_per_moving_h": 409,
+   "hard": 0,
+   "mild": 0,
+   "onset_vs_vision_s": 0.004
+  },
+  "all sets": {
+   "unnecessary_s": 19.0,
+   "missed_s": 15.1,
+   "flips_per_moving_h": 344,
+   "hard": 13,
+   "mild": 33,
+   "onset_vs_vision_s": -0.014
+  }
+ },
+ "held_out_owner_routes": {
+  "description": "26 owner routes held out of every replay set (2.56 moving h); route bootstrap over 19 routes",
+  "totals": {
+   "hours": 4.28,
+   "moving_h": 2.56,
+   "hard": 1,
+   "hard_ticks": 12,
+   "mild": 9,
+   "flips_per_h": 354.0,
+   "unnecessary_s": 9.2,
+   "missed_s": 7.6,
+   "real_closings": 130,
+   "onset_vs_vision_s": -0.032,
+   "earlier": 25,
+   "later": 11,
+   "only_label": 0,
+   "only_vision": 0
+  },
+  "minus_acc_per_moving_h": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 19
+   },
+   "mild": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 19
+   },
+   "unnecessary_s": {
+    "per_h": 0.607,
+    "ci95": [
+     0.0,
+     1.88
+    ],
+    "routes": 19
+   },
+   "missed_s": {
+    "per_h": 0.899,
+    "ci95": [
+     0.0,
+     2.568
+    ],
+    "routes": 19
+   },
+   "flips": {
+    "per_h": 31.217,
+    "ci95": [
+     15.934,
+     47.857
+    ],
+    "routes": 19
+   }
+  },
+  "minus_fused_per_moving_h": {
+   "hard": {
+    "per_h": 0.39,
+    "ci95": [
+     0.0,
+     1.209
+    ],
+    "routes": 19
+   },
+   "mild": {
+    "per_h": 0.78,
+    "ci95": [
+     0.0,
+     2.024
+    ],
+    "routes": 19
+   },
+   "unnecessary_s": {
+    "per_h": -0.84,
+    "ci95": [
+     -1.732,
+     0.0
+    ],
+    "routes": 19
+   },
+   "missed_s": {
+    "per_h": 1.543,
+    "ci95": [
+     0.0,
+     3.4
+    ],
+    "routes": 19
+   },
+   "flips": {
+    "per_h": 8.975,
+    "ci95": [
+     -14.616,
+     41.29
+    ],
+    "routes": 19
+   }
+  }
+ },
+ "drives_not_used_for_development": {
+  "description": "12 second-car routes + 1 owner route (1.98 moving h); route bootstrap over 13 routes",
+  "totals": {
+   "hours": 2.61,
+   "moving_h": 1.98,
+   "hard": 0,
+   "hard_ticks": 0,
+   "mild": 2,
+   "flips_per_h": 586.0,
+   "unnecessary_s": 2.3,
+   "missed_s": 0.0,
+   "real_closings": 49,
+   "onset_vs_vision_s": 0.091,
+   "earlier": 8,
+   "later": 9,
+   "only_label": 0,
+   "only_vision": 0
+  },
+  "minus_acc_per_moving_h": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 13
+   },
+   "mild": {
+    "per_h": 0.506,
+    "ci95": [
+     0.0,
+     1.84
+    ],
+    "routes": 13
+   },
+   "unnecessary_s": {
+    "per_h": 0.608,
+    "ci95": [
+     0.0,
+     1.767
+    ],
+    "routes": 13
+   },
+   "missed_s": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 13
+   },
+   "flips": {
+    "per_h": 112.32,
+    "ci95": [
+     50.113,
+     178.185
+    ],
+    "routes": 13
+   }
+  },
+  "minus_fused_per_moving_h": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 13
+   },
+   "mild": {
+    "per_h": 0.0,
+    "ci95": [
+     -1.346,
+     1.695
+    ],
+    "routes": 13
+   },
+   "unnecessary_s": {
+    "per_h": 0.355,
+    "ci95": [
+     -0.435,
+     1.412
+    ],
+    "routes": 13
+   },
+   "missed_s": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "routes": 13
+   },
+   "flips": {
+    "per_h": 153.301,
+    "ci95": [
+     50.662,
+     275.349
+    ],
+    "routes": 13
+   }
+  }
+ },
+ "held_out_mechanism": "the differences sit in 4 chunks; lead one is the same ACC track in both profiles; the planner's request differs through radard's lead two (a summary car instead of the ACC point) and the MPC state",
+ "vs_vision_27_drives": {
+  "hard_ticks_heldout": 66,
+  "hard_ticks_moving": 14,
+  "target_eps_heldout": 2,
+  "onset_diff_mean_s": -0.037,
+  "onset_diff_ci": [
+   -0.085,
+   0.002
+  ],
+  "radar_ant10": 0.4491,
+  "radar_lead_share": 0.868,
+  "flips_per_h": 362.8,
+  "source": "profiles_vs_vision.json (acc_summaries entries)"
+ },
+ "vs_fused_313_chunks": {
+  "hard_moving": [
+   6,
+   9
+  ],
+  "mild_moving": [
+   29,
+   31
+  ],
+  "unnecessary_s": [
+   24.2,
+   26.6
+  ],
+  "missed_s": [
+   17.1,
+   19.0
+  ],
+  "flips_per_h": [
+   335,
+   319
+  ],
+  "diff_per_moving_h": {
+   "hard_moving": [
+    -0.16,
+    [
+     -0.52,
+     0.12
+    ]
+   ],
+   "mild_moving": [
+    -0.11,
+    [
+     -0.74,
+     0.47
+    ]
+   ],
+   "unnecessary_s": [
+    -0.13,
+    [
+     -0.64,
+     0.32
+    ]
+   ],
+   "missed_s": [
+    -0.1,
+    [
+     -0.24,
+     -0.01
+    ]
+   ]
+  },
+  "note": "[acc_summaries, fused]; oracle reference"
  }
 }

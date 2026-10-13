@@ -25,7 +25,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "tools"))
 from ars510 import FUSED_CONFIG, Ars510NativeRadarInterface  # noqa: E402
 from ars510.objects import encode_slot  # noqa: E402
-from make_profile_figures import INK, INK2, GRAY, S1, S2, S3, S4  # noqa: E402
+from make_profile_figures import INK, INK2, GRAY, S1, S2, S3, S4, S5  # noqa: E402
 from ars510.constants import ID80_IDLE_SLOT  # noqa: E402
 import zlib  # noqa: E402
 
@@ -48,6 +48,7 @@ def frames_for_slot(slot: bytes, t: float) -> list:
 OUT = REPO / "docs" / "img" / "analysis"
 VIS, ANC, FUS, ACC, SUM = "#7a5fb0", S2, S3, INK, S4
 ACCP = S4  # the acc profile (ACC target alone): one colour in every figure
+ACCS = S5  # the acc_summaries profile (ACC target + summary cars)
 
 
 def how_it_works() -> None:
@@ -98,10 +99,10 @@ def path_gate_lines() -> int:
     return sum(1 for line in src[i:j] if line.strip() and not line.strip().startswith("#"))
 
 
-def acc_lines() -> int:
-    """Code lines of upstream/ars510_acc_target.py, counted as the parts ledger counts them (docstrings, comments and blanks excluded)."""
+def acc_lines(path: str = "upstream/ars510_acc_target.py") -> int:
+    """Code lines of a single-file profile, counted as the parts ledger counts them (docstrings, comments and blanks excluded)."""
     import ast, io, tokenize
-    src = (REPO / "upstream" / "ars510_acc_target.py").read_text(); tree = ast.parse(src); doc = set()
+    src = (REPO / path).read_text(); tree = ast.parse(src); doc = set()
     for node in ast.walk(tree):
         if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef)) and ast.get_docstring(node):
             doc.update(range(node.body[0].lineno, node.body[0].end_lineno + 1))
@@ -125,36 +126,39 @@ def layers() -> None:
 
     n = lambda *fs: sum(code(f) for f in fs)
     from ars510.tracks import NativeTrackIdAssigner
-    rows = [("validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (1, 1)),
-            ("track-ID relink across short losses", n(I._relink), (1, 0)),
-            ("saturation guard", n(I._guard), (1, 0)),
-            ("range fusion (gain 0.1)", n(I._fused_range), (0, 1)),
-            ("ACC target: association", n(I._acc_target_match), (0, 1)),
-            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1)),
-            ("path gate (yaw rate)", path_gate_lines(), (0, 1)),
-            ("ACC target (0x235 / 0x237) as the only point", acc_lines(), (0, 0, 1), " (the whole acc file)")]
-    rows = [r if len(r) == 4 else (*r[:2], (*r[2], 0), "") for r in rows]
-    prof = ["raw", "fused", "acc (default)"]; colors = [GRAY, FUS, ACCP]
-    fig, ax = plt.subplots(figsize=(9.6, 3.9))
+    # columns: acc, acc_summaries, fused, raw (the recommended order)
+    rows = [("ACC target (0x235 / 0x237) as a point", acc_lines(), (1, 1, 0, 0), " (whole file)"),
+            ("+ summary cars (0x191-0x194) within 60 m, range-slope speed",
+             acc_lines("openpilot/standalone/ars510_acc_summaries.py"), (0, 1, 0, 0), " (whole file)"),
+            ("object list: validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (0, 0, 1, 1), ""),
+            ("track-ID relink across short losses", n(I._relink), (0, 0, 0, 1), ""),
+            ("saturation guard", n(I._guard), (0, 0, 0, 1), ""),
+            ("range fusion (gain 0.1)", n(I._fused_range), (0, 0, 1, 0), ""),
+            ("ACC target: association to a track", n(I._acc_target_match), (0, 0, 1, 0), ""),
+            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 0, 1, 0), ""),
+            ("path gate (yaw rate)", path_gate_lines(), (0, 0, 1, 0), "")]
+    prof = ["acc (default)", "acc_summaries", "fused", "raw"]; colors = [ACCP, ACCS, FUS, GRAY]
+    fig, ax = plt.subplots(figsize=(11.8, 4.4))
     for i, (name, lines, on, note) in enumerate(rows):
         y = len(rows) - 1 - i
         for j, flag in enumerate(on):
             ax.add_patch(plt.Rectangle((j + 0.08, y + 0.12), 0.84, 0.76, color=colors[j] if flag else "#efeee9", lw=0))
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
-        ax.text(3.1, y + 0.5, f"{lines} lines{note}", ha="left", va="center", fontsize=8.3, color=INK2)
-    ax.set_xlim(-0.05, 4.2); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5], prof); ax.xaxis.tick_top()
+        ax.text(4.1, y + 0.5, f"{lines} lines{note}", ha="left", va="center", fontsize=8.3, color=INK2)
+    ax.set_xlim(-0.05, 5.3); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5, 3.5], prof); ax.xaxis.tick_top()
     ax.set_yticks([]); ax.grid(False)
     for sp in ax.spines.values(): sp.set_visible(False)
-    ax.set_title("What each profile does: raw and fused process the 0x80 object list, acc only the ACC target", pad=26, fontsize=10.5)
+    ax.set_title("What each profile does: acc and acc_summaries use the radar's tracker outputs; fused and raw the 0x80 list",
+                 pad=26, fontsize=10.5, loc="right")
     fig.tight_layout(); fig.savefig(OUT / "profile_layers.png", dpi=130); plt.close(fig)
 
 
 def vs_vision() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "profiles_vs_vision.json").read_text())
     ev, req = S["heldout_events"], S["heldout_one_system_requests_and_overrides"]
-    prof = ["raw", "fused_no_trackers", "fused", "acc"]; colors = [GRAY, "#8fd9bb", FUS, ACCP]
-    names = ["raw", "fused,\nno ACC target", "fused", "acc (default)\n(ACC target)"]
-    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(15, 4.2))
+    prof = ["acc", "acc_summaries", "fused", "fused_no_trackers", "raw"]; colors = [ACCP, ACCS, FUS, "#8fd9bb", GRAY]
+    names = ["acc (default)\n(ACC target)", "acc_summaries\n(+ summary cars)", "fused", "fused,\nno ACC target", "raw"]
+    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(17, 4.4))
     m = [ev[p]["onset_diff_mean_s"] for p in prof]; ci = np.array([ev[p]["onset_diff_ci"] for p in prof]).T
     a1.bar(names, m, color=colors, yerr=[np.array(m) - ci[0], ci[1] - np.array(m)], capsize=4)
     a1.axhline(0, color=INK, lw=0.8); a1.set_ylabel("onset vs vision only (s, < 0 = earlier)")
@@ -166,13 +170,13 @@ def vs_vision() -> None:
     a2.axhline(ev["fused"]["vision_ant10"] * 100, color=VIS, ls=":", lw=1.1)
     a2.set_xticks(x, names); a2.set_ylabel("% of driver brakes"); a2.set_ylim(0, 100)
     a2.set_title("Already asking within 3 s before (purple: vision only)")
-    a2.text(1.5, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
+    a2.text(2.0, 93, "solid ≤ −0.5, light ≤ −1.0 m/s²", fontsize=7.5, color=INK2, ha="center")
     slowed = [req[p]["radar_only_driver"].get("slowed", 0) for p in prof]
     gas = [req[p]["radar_only_driver"].get("on_gas", 0) for p in prof]
     a3.bar(names, slowed, color=colors, label="driver also slowed")
     a3.bar(names, gas, bottom=slowed, color=colors, alpha=0.4, hatch="//", label="driver on the gas")
     a3.set_ylabel("per hour of driving"); a3.set_title("Braking only the radar asked for (vision: 0)")
-    a3.legend(loc="upper right")
+    a3.legend(loc="upper left")
     fig.tight_layout(); fig.savefig(OUT / "profiles_vs_vision.png", dpi=130); plt.close(fig)
 
 
