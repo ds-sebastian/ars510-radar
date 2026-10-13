@@ -263,7 +263,7 @@ In 59 of 60 changes where the low seven bits move by more than 64 codes, the hig
 direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
 non-idle samples, so recognise idle frames by the whole payload. The DBC keeps the remaining sub-fields as raw codes.
 
-**0x195 bits 0-10 (LSB-numbered) = range of a function-tracker object, 0.05 m per code (●).** On the ACC car the code is
+**0x195 bits 53-63 (MSB-first; the low 11 bits of the payload) = range of a function-tracker object, 0.05 m per code (●).** On the ACC car the code is
 `floor(ACC distance code / 2)` or one above on 99.0 % of 290 raw-CAN cycles (94.8 % in the full second-car table at cycle
 lag 0 or 1). The frame is active on 0.5-0.6 % of moving cycles, at a median 20-21 m. It shows the ACC target on 75-84 % of
 active cycles and another object on 16-25 % (61 % of those stationary), sometimes with no ACC target at all. It has no speed
