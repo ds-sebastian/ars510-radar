@@ -261,10 +261,22 @@ q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 
 In 59 of 60 changes where the low seven bits move by more than 64 codes, the high bits move by one in the opposite
 direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
-non-idle samples, so recognise idle frames by the whole payload. **The last 11 bits of 0x195 (MSB-first `50|11`) are the range of
-one tracker object × 0.05 m** while the pair is active (●, raw check 99 %): on the ACC car the code is `floor(ACC distance code / 2)`,
-and on 16-25 % of active cycles it is another object, mostly stationary. It is active on only 0.5-0.6 % of moving cycles
-([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)); DBC `A195_OBJECT_RANGE`.
+non-idle samples, so recognise idle frames by the whole payload. `q10` is the low 10 bits of the object acceleration below.
+
+**While active, 0x195 describes one object of the radar's tracker and the ego's path (◐ unless marked; two cars, raw-checked):**
+
+| 0x195 bits (MSB-first start\|length) | DBC | decode |
+|---|---|---|
+| 50\|11 | `A195_OBJECT_RANGE` | object range, 0.05 m per code (●): `floor(ACC distance code / 2)` on the ACC car; on 16-25 % of active cycles another, mostly stationary object |
+| 27\|12 | `A195_OBJECT_SPEED` | its longitudinal over-ground speed, 1/16 m/s per code, zero code 0 (the same quantity as 0x680's speed, including the ego-rotation term) |
+| 23\|12 | `A195_OBJECT_ACCEL` | its over-ground acceleration, about 1/32 m/s² per code around 512 (29-32 codes per m/s² measured) |
+| 46\|11 | `A195_EGO_TRAVEL_TO_TTC` | the ego's predicted travel up to the time to collision, `v·T + a·T²/2` with `T = range / closing speed`, clamped at 0; 0.05 m per code (residual 0.20 m against a 0.17 m rounding floor) |
+| 7\|16 | `A195_PATH_CURVATURE` | ego path curvature, left positive, about 1/133,000 per m per code around 32768 (R² 0.997 against yaw rate / speed) |
+
+0x196 byte 0 (signed) is a required deceleration of about 0.1 m/s² per code, close to the usual lead-moving / lead-stops
+formula with a 1-2 m margin (within one code on 92-98 % of active cycles, not exact; it relaxes while the driver brakes
+hard). Bytes 4-7 form two coupled pairs, capped at 50 / 62, and bytes 1-3 stay 0 while active. 0x195 is active on only
+0.5-0.6 % of moving cycles ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
 The DBC keeps the remaining sub-fields as raw codes.
 
 **The event pair behaves like a short-time-to-collision state (◐).** Across 700 segments, compared with matched moving moments:
@@ -276,15 +288,15 @@ The DBC keeps the remaining sub-fields as raw codes.
 | brake pedal pressed | 67% | 18% |
 | accelerator pressed | 12% | 51% |
 
-85% of event frames occur with both the stock cruise and openpilot longitudinal control off. `q10` leads the car's
-own deceleration by 0.5-1 s (r = 0.39-0.56 on three drive partitions, about 0.004-0.008 m/s² per code). The reading:
-a pre-collision / brake-assist deceleration quantity (◐). Counts and relative-time example:
+85% of event frames occur with both the stock cruise and openpilot longitudinal control off. `q10` (the object's
+acceleration) leads the car's own deceleration by 0.5-1 s, as a braking lead would. The reading: the radar's
+pre-collision view of one object, with its range, speed, acceleration and the deceleration needed (◐). Counts and relative-time example:
 [`event_pair_carries.json`](../data/analysis/summaries/event_pair_carries.json); context table and lead lags:
 [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
 On U3, the one recorded stock PCS alarm, the pair left idle 1.06 s before the alarm and returned 0.26 s after it. The
-alarm itself is marked on the radar bus by **0x100 byte 0 = 0x02**, in the same CAN tick as the car-bus alarm. `q10` stayed
-at 510 until the driver braked, and the 0x196 bytes ramped from the pair's onset
+alarm itself is marked on the radar bus by **0x100 byte 0 = 0x02**, in the same CAN tick as the car-bus alarm. The object acceleration stayed
+at 510 (the parked pickup), the required deceleration fell to about −2 m/s² at the alarm, and the 0x196 bytes ramped from the pair's onset
 ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3)).
 
 ![event raw code and exact idle payload](img/analysis/event_code_context.png)

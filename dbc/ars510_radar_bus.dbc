@@ -89,14 +89,11 @@ BO_ 400 ARS510_A190_CANDIDATE: 7 RADAR
  SG_ A190_COUNTER4 : 52|4@1+ (1,0) [0|15] "counter" RADAR
 
 BO_ 405 ARS510_A195_CANDIDATE: 8 RADAR
- SG_ A195_WORD0_CODE16 : 7|16@0+ (1,0) [0|65535] "code" RADAR
- SG_ A195_B2_UNKNOWN3 : 23|3@0+ (1,0) [0|7] "raw" RADAR
- SG_ A195_B2_UNKNOWN2 : 20|2@0+ (1,0) [0|3] "raw" RADAR
- SG_ A195_FIELD1_CODE7 : 18|7@0+ (1,0) [0|127] "code" RADAR
- SG_ A195_B3_B4_UNKNOWN5 : 27|5@0+ (1,0) [0|31] "raw" RADAR
- SG_ A195_FIELD2_CODE7 : 38|7@0+ (1,0) [0|127] "code" RADAR
+ SG_ A195_PATH_CURVATURE : 7|16@0+ (7.5e-06,-0.24576) [-0.24576|0.2457525] "1/m" RADAR
+ SG_ A195_OBJECT_ACCEL : 23|12@0+ (0.03125,-16) [-16|111.96875] "m/s^2" RADAR
+ SG_ A195_OBJECT_SPEED : 27|12@0+ (0.0625,0) [0|255.9375] "m/s" RADAR
  SG_ A195_B5_RESERVED_ZERO1 : 47|1@0+ (1,0) [0|1] "raw" RADAR
- SG_ A195_FIELD3_CODE11 : 46|11@0+ (1,0) [0|2047] "code" RADAR
+ SG_ A195_EGO_TRAVEL_TO_TTC : 46|11@0+ (0.05,0) [0|102.35] "m" RADAR
  SG_ A195_B6_RESERVED_ZERO1 : 51|1@0+ (1,0) [0|1] "raw" RADAR
  SG_ A195_OBJECT_RANGE : 50|11@0+ (0.05,0) [0|102.35] "m" RADAR
 
@@ -367,14 +364,11 @@ CM_ SG_ 408 A198_OBSERVED_CONSTANT_BE8 "Constant 0x10.";
 CM_ SG_ 573 A23D_OBSERVED_CONSTANT_BE64 "Always zero.";
 CM_ SG_ 589 A24D_OBSERVED_CONSTANT_BE56 "00000000000056 normally; 00000000020058 in a rare second state.";
 CM_ SG_ 1280 A500_OBSERVED_CONSTANT_BE48 "Unit-specific constant (redacted here; compare your own).";
-CM_ SG_ 405 A195_WORD0_CODE16 "Event word, 32766 when idle.";
-CM_ SG_ 405 A195_B2_UNKNOWN3 "Raw.";
-CM_ SG_ 405 A195_B2_UNKNOWN2 "Raw.";
-CM_ SG_ 405 A195_FIELD1_CODE7 "Event code, 126 when idle. Bits 18-27 (MSB-first) together form one 10-bit code: ((B2 & 0x3F) << 4) | (B3 >> 4), 510 when idle.";
-CM_ SG_ 405 A195_B3_B4_UNKNOWN5 "Raw.";
-CM_ SG_ 405 A195_FIELD2_CODE7 "Raw.";
+CM_ SG_ 405 A195_PATH_CURVATURE "Ego path curvature, left positive, about 1/133,000 per m per code around 32768 (R2 0.997 against yaw rate / speed); 32766 when idle.";
+CM_ SG_ 405 A195_OBJECT_ACCEL "Over-ground acceleration of the 0x195 object, about 1/32 m/s2 per code (29-32 codes per m/s2 measured) around 512; 510 when idle. Its low 10 bits are the older 10-bit event code.";
+CM_ SG_ 405 A195_OBJECT_SPEED "Longitudinal over-ground speed of the 0x195 object (including the ego-rotation term), 1/16 m/s per code, zero code 0. Like the ACC target it matches carState about 0.2 s earlier.";
 CM_ SG_ 405 A195_B5_RESERVED_ZERO1 "Always zero.";
-CM_ SG_ 405 A195_FIELD3_CODE11 "Raw.";
+CM_ SG_ 405 A195_EGO_TRAVEL_TO_TTC "Ego predicted travel until the time to collision with the 0x195 object (v T + a T2 / 2, T = range / closing speed), clamped at 0.";
 CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_OBJECT_RANGE "Range of one radar-tracker object while the event pair is active (0 when idle): floor(ACC distance code / 2) on the ACC car; otherwise another, mostly stationary object.";
 CM_ SG_ 406 A196_B0_RESERVED_ONE2 "Always 3.";

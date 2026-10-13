@@ -1,0 +1,88 @@
+{
+ "description": "0x195 / 0x196 fields and the radar's timing against carState. Second car / owner corpus, active 0x195 cycles; raw-CAN rechecked on 8 second-car segments. Exploratory.",
+ "timing": {
+  "radar_state_matches_carstate_earlier_s": 0.2,
+  "wheel_odometry_braking_stops": 16,
+  "iqr_s": [
+   0.185,
+   0.215
+  ],
+  "speed_offset_before_after_mps": {
+   "second_car": [
+    0.3,
+    -0.016
+   ],
+   "owner": [
+    0.34,
+    0.001
+   ],
+   "raw": [
+    0.336,
+    0.008
+   ]
+  },
+  "ego_scale_bound": 0.003,
+  "latency_prediction_test": {
+   "tau_s": 0.2,
+   "onset_change_s": -0.03,
+   "new_mild_episodes_discovery": 4
+  }
+ },
+ "0x195": {
+  "active_share_moving": [
+   0.005,
+   0.006
+  ],
+  "object_range": {
+   "bits": "50|11",
+   "scale_m": 0.05
+  },
+  "object_speed": {
+   "bits": "27|12",
+   "scale_mps": 0.0625,
+   "zero_code": 0,
+   "mad_mps": [
+    0.035,
+    0.042
+   ]
+  },
+  "object_accel": {
+   "bits": "23|12",
+   "codes_per_mps2": [
+    29,
+    32
+   ],
+   "offset": 512
+  },
+  "ego_travel_to_ttc": {
+   "bits": "46|11",
+   "scale_m": 0.05,
+   "residual_mad_m": 0.2,
+   "rounding_floor_m": 0.17
+  },
+  "path_curvature": {
+   "bits": "7|16",
+   "codes_per_inv_m": 133861,
+   "offset": 32768,
+   "r2": [
+    0.997,
+    0.994
+   ],
+   "raw_r": 0.9986
+  }
+ },
+ "0x196": {
+  "byte0_required_decel_mps2_per_code": 0.1,
+  "within_one_code": [
+   0.92,
+   0.98
+  ],
+  "raw_within_one_code": 0.58,
+  "bytes4_7": "two coupled pairs, capped 50 / 62, undecoded"
+ },
+ "0x680_second_car_offset": {
+  "cause": "ego-rotation term (-yaw x lateral offset) on one curve",
+  "r": -0.994,
+  "corrected_median_mps": 0.009
+ }
+}
