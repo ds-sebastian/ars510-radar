@@ -45,8 +45,7 @@ from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET
 # uncertainty, plus a path gate, docs/12), "raw" (BASE_CONFIG: the unfiltered radar decode, research only) or
 # "openpilot" (fused in one file, ars510_upstream.py). "colored" is an experimental fused
 # variant for road tests (docs/12); "shared_speed" / "shared_range" are research files with one gate-free Kalman model
-# over every object (docs/17); "acc_summaries" is "acc" plus the radar's summary cars while the ACC target is present
-# (ars510_acc_summaries.py, docs/11). `install.py --profile` rewrites this one line.
+# over every object (docs/17). `install.py --profile` rewrites this one line.
 STANDALONE = {"acc": "ars510_acc_target", "acc_summaries": "ars510_acc_summaries", "shared_speed": "ars510_shared_speed", "shared_range": "ars510_shared_range"}
 PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}
 PROFILE = PROFILES["acc"]

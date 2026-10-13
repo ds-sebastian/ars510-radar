@@ -28,8 +28,8 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | install | `install.py /data/openpilot` (`--profile acc` to switch back) | `--profile fused` | `--profile raw` |
 | use | everyday driving | the all-tracks alternative | research |
 
-**`acc_summaries`** (◐, research option) is `acc` plus up to two more cars from the radar's own tracker while the ACC
-target is present; see [below](#acc_summaries-acc-plus-the-summary-cars).
+**`acc_summaries`** (◐, experimental option) is `acc` plus up to two more cars from the radar's own tracker; see
+[below](#acc_summaries-acc-plus-the-summary-cars).
 
 Alternatives that were tried (`colored`, `shared_speed`, `shared_range`) are summarised in
 [12](12_kalman_filter.md#kalman-variants-tested) and [17](17_upstream.md#the-acc-target-alone--candidate). The legacy names `anchor` and `steady` select `fused`.
@@ -132,43 +132,33 @@ unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 74 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 82 code lines,
 no DBC) publishes them next to the ACC target:
-- **The ACC target** as in `acc`: its own track ID, distance, lateral position and closing speed.
-- **The summary cars only while the ACC target is present.** They add context to the radar's selected target and never
-  stand in for it. Without that anchor, radard matches the camera lead to whichever summary car fits its distance and
-  speed check best, including one in the next lane: an unanchored version gave two hard brakes from cars 2-9 m to the
-  side at 52-94 m.
 - **The ACC car once.** A summary whose range code is `160 + floor(0.4 × ACC distance code)` or one below, with the
   lateral within 0.1 m, is the ACC car and is not published again.
-- **Identity and speed.** Every other summary is `trackId 32 + code` while it moves less than 3 m / 1 m per radar
-  cycle. Its speed is the least-squares slope of its last 8 ranges on the radar clock (0x190), 0.16-0.19 m/s RMS against
-  the ACC target's own speed; it is published once 8 cycles exist.
+- **Identity and speed.** Every other summary is `trackId 32 + code` while it moves less than 3 m / 1 m per cycle. Its
+  speed is the least-squares slope of its last 8 ranges on the radar clock.
+- **Within 60 m.** Beyond 60 m only the ACC target is published, the same far rule as `fused`. A first version without
+  it gave two hard spikes from cars 7 m to the side at 86-93 m, which radard matched to the camera's far lead.
 
-Replayed against `acc` on confirmation sets not used to choose between variants (the owner's road drives, the second
-car's held-out set and its further batch; 222 chunks, 14.19 moving hours), with the file and the pass rule fixed before
-the run (route-bootstrap 95 % CI of the difference per moving hour,
+Replayed against `acc` on every drive set (313 chunks, 74 routes, 18.8 moving hours; route-bootstrap 95 % CI of the
+difference per moving hour,
 [`acc_summaries_profile.json`](../data/analysis/summaries/acc_summaries_profile.json)):
 
 | | `acc` | `acc_summaries` | difference per moving h |
 |---|---|---|---|
-| hard episodes (moving) | 1 | 1 (the same episode) | 0 [0, 0] |
-| mild episodes (moving) | 18 | 17 | −0.07 [−0.25, 0] |
-| oracle unnecessary braking | 21.2 s | 21.2 s | +0.003 [−0.08, +0.10] s |
-| oracle missed braking | 17.0 s | 14.6 s | −0.17 [−0.46, 0] s |
-| braking onset on 489 real closings, paired | | | −0.001 [−0.005, +0.003] s |
-| lead flips per hour | 279 | 335 | +56 [+33, +87] |
+| hard episodes (moving) | 14 (6) | 14 (6) | 0 [0, 0]; no new episode |
+| mild episodes (moving) | 35 (27) | 37 (29) | +0.11 [−0.10, +0.33] |
+| oracle unnecessary braking | 24.4 s | 24.2 s | −0.01 [−0.08, +0.07] s |
+| oracle missed braking | 19.4 s | 17.1 s | −0.13 [−0.36, 0] s |
+| first braking on real closings, paired | | | +0.004 [−0.002, +0.012] s |
+| lead flips per hour | 294 | 335 | |
 
-- **Braking equal to `acc`.** No hard or mild episode is new, and stop approaches are identical (113 stops).
-- **No earlier reaction.** On 321 close cut-ins radard's lead switches +0.04 s [+0.002, +0.09] relative to `acc`, with
-  the same braking. The earlier radar backing a summary car could give comes from times without an ACC target, which is
-  where the profile publishes nothing.
-- **How often it matters.** radard takes its lead from a summary point on 0.19 % of moving lead time; the extra flips
-  are the lead alternating between radar and vision while the ACC target is present.
-
-Choose `acc_summaries` for a more complete `radarTracks` (up to two more radar cars beside the followed one, for logs,
-displays or fork features that read every track) with braking equal to `acc`. For driving alone, `acc` gives the same
-result with fewer lines.
+- **Earlier radar backing.** On 434 close cut-ins radard's lead switches 0.16 s earlier [−0.24, −0.09], with the same
+  braking. When the camera first sees a lead it is radar-backed 0.41 s earlier [−0.54, −0.30].
+- **How often it matters.** radard takes its lead from a summary point on 1.1 % of moving lead time.
+- **Choice of the 60 m rule.** It was chosen after the first version's failures on these same drives. The result is
+  therefore a design-set pass, not an independent confirmation; `acc` stays the default until road drives confirm it.
 
 ## Which profile for what
 
@@ -177,7 +167,6 @@ result with fewer lines.
 | everyday driving, the upstream proposal | `acc` |
 | a second lead (the car ahead of the car ahead) or any radar car beyond what Toyota's ACC follows, within 60 m | `fused` |
 | an all-tracks candidate for upstream, in one file | `openpilot` (`fused` in `upstream/ars510_radar.py`) |
-| `acc`'s braking with the radar's nearby cars in `radarTracks` | `acc_summaries` |
 | research on the object list's own errors | `raw` |
 
 `acc` publishes the followed car; Toyota's own ACC follows that same car. `fused` keeps the radar's other cars, which
