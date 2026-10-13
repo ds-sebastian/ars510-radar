@@ -98,7 +98,7 @@ BO_ 405 ARS510_A195_CANDIDATE: 8 RADAR
  SG_ A195_B5_RESERVED_ZERO1 : 47|1@0+ (1,0) [0|1] "raw" RADAR
  SG_ A195_FIELD3_CODE11 : 46|11@0+ (1,0) [0|2047] "code" RADAR
  SG_ A195_B6_RESERVED_ZERO1 : 51|1@0+ (1,0) [0|1] "raw" RADAR
- SG_ A195_FIELD4_CODE11 : 50|11@0+ (1,0) [0|2047] "code" RADAR
+ SG_ A195_OBJECT_RANGE : 50|11@0+ (0.05,0) [0|102.35] "m" RADAR
 
 BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
  SG_ A196_B0_RESERVED_ONE2 : 7|2@0+ (1,0) [0|3] "raw" RADAR
@@ -376,7 +376,7 @@ CM_ SG_ 405 A195_FIELD2_CODE7 "Raw.";
 CM_ SG_ 405 A195_B5_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_FIELD3_CODE11 "Raw.";
 CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "Always zero.";
-CM_ SG_ 405 A195_FIELD4_CODE11 "Raw.";
+CM_ SG_ 405 A195_OBJECT_RANGE "Range of one radar-tracker object while the event pair is active (0 when idle): floor(ACC distance code / 2) on the ACC car; otherwise another, mostly stationary object.";
 CM_ SG_ 406 A196_B0_RESERVED_ONE2 "Always 3.";
 CM_ SG_ 406 A196_FIELD0_CODE6 "Raw.";
 CM_ SG_ 406 A196_B1_B4_RESERVED_ZERO26 "Always zero.";
