@@ -232,7 +232,8 @@ radard matches to the camera's lead through its distance and speed gates.
 ![which processing each profile applies](img/analysis/profile_layers.png)
 
 *Each row is one processing step; coloured cells are the steps a profile runs. Line counts are code lines of the
-fork build (`ars510/`). `acc` and `acc_summaries` are whole files (ACC target; ACC target plus summary cars);
+fork build (`ars510/`). `acc` and `acc_summaries` are each one whole file: `acc_summaries`' 53 lines include its own ACC target decode, so they
+are not added to `acc`'s 33;
 the object-list steps belong to `raw` and `fused`.*
 
 - **`acc`** publishes the radar's ACC target: the one car the radar's own ACC function follows, already chosen,

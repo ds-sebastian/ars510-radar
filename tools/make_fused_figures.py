@@ -127,24 +127,37 @@ def layers() -> None:
     n = lambda *fs: sum(code(f) for f in fs)
     from ars510.tracks import NativeTrackIdAssigner
     # columns: acc, acc_summaries, fused, raw (the recommended order)
-    rows = [("ACC target (0x235 / 0x237) as a point", acc_lines(), (1, 1, 0, 0), " (whole file)"),
-            ("+ summary cars (0x191-0x194) within 60 m, range-slope speed",
-             acc_lines("openpilot/standalone/ars510_acc_summaries.py"), (0, 1, 0, 0), " (whole file)"),
-            ("object list: validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (0, 0, 1, 1), ""),
-            ("track-ID relink across short losses", n(I._relink), (0, 0, 0, 1), ""),
-            ("saturation guard", n(I._guard), (0, 0, 0, 1), ""),
-            ("range fusion (gain 0.1)", n(I._fused_range), (0, 0, 1, 0), ""),
-            ("ACC target: association to a track", n(I._acc_target_match), (0, 0, 1, 0), ""),
-            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 0, 1, 0), ""),
-            ("path gate (yaw rate)", path_gate_lines(), (0, 0, 1, 0), "")]
+    acc_n, accs_n = acc_lines(), acc_lines("openpilot/standalone/ars510_acc_summaries.py")
+    rows = [("ACC target (0x235 / 0x237) as a point", None, (1, 1, 0, 0)),
+            ("summary cars (0x191-0x194) within 60 m, range-slope speed", None, (0, 1, 0, 0)),
+            ("object list: validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (0, 0, 1, 1)),
+            ("track-ID relink across short losses", n(I._relink), (0, 0, 0, 1)),
+            ("saturation guard", n(I._guard), (0, 0, 0, 1)),
+            ("range fusion (gain 0.1)", n(I._fused_range), (0, 0, 1, 0)),
+            ("ACC target: association to a track", n(I._acc_target_match), (0, 0, 1, 0)),
+            ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 0, 1, 0)),
+            ("path gate (yaw rate)", path_gate_lines(), (0, 0, 1, 0))]
     prof = ["acc (default)", "acc_summaries", "fused", "raw"]; colors = [ACCP, ACCS, FUS, GRAY]
-    fig, ax = plt.subplots(figsize=(11.8, 4.4))
-    for i, (name, lines, on, note) in enumerate(rows):
-        y = len(rows) - 1 - i
+    fig, ax = plt.subplots(figsize=(11.8, 4.6))
+    top = len(rows) - 1
+    for i, (name, lines, on) in enumerate(rows):
+        y = top - i
         for j, flag in enumerate(on):
+            if j in (0, 1) and i < 2:
+                continue  # the two ACC-based profiles are drawn as whole files below
             ax.add_patch(plt.Rectangle((j + 0.08, y + 0.12), 0.84, 0.76, color=colors[j] if flag else "#efeee9", lw=0))
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
-        ax.text(4.1, y + 0.5, f"{lines} lines{note}", ha="left", va="center", fontsize=8.3, color=INK2)
+        if lines is not None:
+            ax.text(4.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
+    # acc: one file covering row 0; acc_summaries: one file covering rows 0-1 (its ACC part is inside its own 53 lines)
+    ax.add_patch(plt.Rectangle((0.08, top + 0.12), 0.84, 0.76, color=ACCP, lw=0))
+    ax.text(0.5, top + 0.5, f"one file,\n{acc_n} lines in all", ha="center", va="center", fontsize=7.8, color="white", fontweight="bold")
+    ax.add_patch(plt.Rectangle((0.08, top - 1 + 0.12), 0.84, 0.76, color="#efeee9", lw=0))
+    ax.add_patch(plt.Rectangle((1.08, top - 1 + 0.12), 0.84, 1.76, color=ACCS, lw=0))
+    ax.text(1.5, top + 0.5 - 0.5, f"one file,\n{accs_n} lines in all\n(own ACC decode\nincluded)", ha="center", va="center",
+            fontsize=7.8, color="white", fontweight="bold")
+    ax.text(4.1, top + 0.5 - 0.5, "acc / acc_summaries:\nwhole files, not added up", ha="left", va="center", fontsize=8.3, color=INK2)
+    ax.text(4.1, top - 2 + 1.02, "fork build, per step:", ha="left", va="bottom", fontsize=8.0, color=INK2, style="italic")
     ax.set_xlim(-0.05, 5.3); ax.set_ylim(0, len(rows)); ax.set_xticks([0.5, 1.5, 2.5, 3.5], prof); ax.xaxis.tick_top()
     ax.set_yticks([]); ax.grid(False)
     for sp in ax.spines.values(): sp.set_visible(False)
