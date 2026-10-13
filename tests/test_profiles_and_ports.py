@@ -66,6 +66,9 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
     assert r.returncode == 0 and "research profile" in r.stdout
     assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
     assert (toyota / f"ars510_{name}.py").read_text() == (REPO / "openpilot" / "standalone" / f"ars510_{name}.py").read_text()
+  assert _install(tmp_path, "--profile", "acc_summaries").returncode == 0
+  assert 'PROFILE = PROFILES["acc_summaries"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert (toyota / "ars510_acc_summaries.py").read_text() == (REPO / "openpilot" / "standalone" / "ars510_acc_summaries.py").read_text()
   r = _install(tmp_path, "--profile", "raw")
   assert r.returncode == 0 and "warning" in r.stdout
   assert 'PROFILE = PROFILES["raw"]' in (toyota / "ars510_radar_interface.py").read_text()
@@ -73,7 +76,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
-  assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_acc_target.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
+  assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_acc_target.py", "ars510_acc_summaries.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
   assert not (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").exists()
 
 

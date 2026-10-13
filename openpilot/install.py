@@ -14,6 +14,7 @@ StarPilot, CarrotPilot and other forks: the installer adds new files and one mar
   - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
   - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by --profile acc)
     and its DBC to                       opendbc/dbc/toyota_tss2_ars510.dbc
+  - copies the acc_summaries file to    opendbc/car/toyota/ars510_acc_summaries.py (--profile acc_summaries)
   - copies two research files to         opendbc/car/toyota/ars510_shared_{speed,range}.py (--profile shared_speed / shared_range)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
@@ -23,6 +24,8 @@ Profiles (docs/08 has the details and replay numbers):
   acc       (default) the radar's ACC target alone as one point (upstream/ars510_acc_target.py with
             toyota_tss2_ars510.dbc): the car Toyota's own ACC follows; every other car comes from the camera. It
             publishes a target as soon as the radar picks it; fused holds new tracks back for 60 cycles (docs/11)
+  acc_summaries  acc plus up to two more cars from the radar's own tracker (the target summaries 0x191-0x194, within
+            60 m, speed from their range slope); radar-backed cut-ins slightly earlier, braking as acc in replay (docs/11)
   fused     FUSED_CONFIG: the radar decode + range fusion + one Kalman speed filter per track that weights
             the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version)
   raw       BASE_CONFIG: the unfiltered radar decode with only what radard
@@ -57,7 +60,7 @@ DEFAULT_PROFILE = "acc"
 STATE = Path(os.environ.get("ARS510_INSTALL_STATE", HERE / ".installed_profiles.json"))
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
-PROFILE_NAMES = ("acc", "fused", "openpilot", "raw", "colored", "shared_speed", "shared_range")
+PROFILE_NAMES = ("acc", "acc_summaries", "fused", "openpilot", "raw", "colored", "shared_speed", "shared_range")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ serves Cabana on a PC and stays in the repo
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
@@ -85,6 +88,7 @@ def targets(root: Path) -> dict[str, Path]:
   return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
           "upstream": toyota / "ars510_upstream.py", "acc_target": toyota / "ars510_acc_target.py",
           "shared_speed": toyota / "ars510_shared_speed.py", "shared_range": toyota / "ars510_shared_range.py",
+          "acc_summaries": toyota / "ars510_acc_summaries.py",
           "acc_dbc": root / "opendbc" / "dbc" / "toyota_tss2_ars510.dbc"}
 
 
@@ -116,6 +120,7 @@ def sources() -> dict[str, Path]:
           "upstream": REPO / "upstream" / "ars510_radar.py", "acc_target": REPO / "upstream" / "ars510_acc_target.py",
           "shared_speed": HERE / "standalone" / "ars510_shared_speed.py",
           "shared_range": HERE / "standalone" / "ars510_shared_range.py",
+          "acc_summaries": HERE / "standalone" / "ars510_acc_summaries.py",
           "acc_dbc": REPO / "upstream" / "toyota_tss2_ars510.dbc"}
 
 
@@ -274,7 +279,7 @@ def main() -> int:
   shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
   shutil.copyfile(REPO / "upstream" / "ars510_acc_target.py", t["acc_target"])
   shutil.copyfile(REPO / "upstream" / "toyota_tss2_ars510.dbc", t["acc_dbc"])
-  for name in ("shared_speed", "shared_range"):
+  for name in ("acc_summaries", "shared_speed", "shared_range"):
     shutil.copyfile(HERE / "standalone" / f"ars510_{name}.py", t[name])
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
