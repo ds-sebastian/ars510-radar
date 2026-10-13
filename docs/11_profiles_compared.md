@@ -69,7 +69,14 @@ What the table shows:
 - **`acc` flips between a radar and a vision lead less often** (302 against 332 per hour; route-bootstrap difference
   −29.6 per hour, 95 % CI −43.8 … −15.6 over 62 routes). The other differences over the 62 routes include zero: hard
   +0.30 per hour (−0.33 … +1.11), mild +0.18 (−0.75 … +1.21), unnecessary −0.10 s (−0.55 … +0.31), missed +0.06 s
-  (−0.19 … +0.34).
+  (−0.19 … +0.34). Part of the flip edge comes from 28 drives whose camera driving model (some sunnypilot community models)
+  reports a saturated lead uncertainty, so radard matches a multi-point profile such as `fused` on lateral position only.
+  Without them the flip difference is −20.6 per hour (−34.0 … +2.9) and unnecessary braking +0.26 s (−0.03 … +0.74).
+- **The yardstick.** The hindsight oracle takes its lead from the radar's ACC target 96 % of the time. Against a
+  camera-only hindsight reference instead, `acc` minus `fused` is −0.48 s of unnecessary braking per moving hour
+  (−1.44 … +0.36) and −0.16 s of missed braking (−0.35 … −0.02), so `acc`'s standing does not come from the
+  oracle. On 10 episodes where the two references disagree, video sides with the oracle 6 times and with the camera
+  twice ([`yardstick_check.json`](../data/analysis/summaries/yardstick_check.json)).
 - **`acc`'s hard episodes are mostly standstill holds.** Of its 13 hard episodes, 8 start with the ego car below
   0.5 m/s: the request holds a stopped car 0.7-4.8 m behind an object the camera leaves out of its lead list (a wall, a
   fence, a junction island on video), through radard's low-speed rule. The radar keeps these holds as live tracks, not
@@ -115,7 +122,12 @@ unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the
 
 ## Why `acc` is the default
 
-- **Equal braking, fewer lead flips, less unnecessary braking on held-out drives** (tables above).
+- **Equal braking, fewer lead flips, less unnecessary braking on held-out drives** (tables above), with the same
+  standing under a camera-only reference.
+- **No slower launches.** When a stopped lead pulls away, the ACC target reports it moving (+0.5 m/s) a median 0.11 s
+  before the camera lead and 0.20 s before the object list (168 departures, two cars), and Toyota's own ACC releases at
+  that same +0.5 m/s. A slow green-light launch is the planner's, not the radar's
+  ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)).
 - **A new stationary vehicle reaches the planner at once.** `fused` publishes a track once it is 60 radar cycles
   old (3.6 s), which shields the planner from a young track's unconverged speed. In a short city approach that can be
   the whole encounter. On U3 a pickup parked in the lane was tracked from about 30 m ahead and lost at 14 m, one cycle
@@ -157,6 +169,8 @@ difference per moving hour,
 - **Earlier radar backing.** On 434 close cut-ins radard's lead switches 0.16 s earlier [−0.24, −0.09], with the same
   braking. When the camera first sees a lead it is radar-backed 0.41 s earlier [−0.54, −0.30].
 - **How often it matters.** radard takes its lead from a summary point on 1.1 % of moving lead time.
+- **Against a camera-only reference** the tie with `acc` shifts slightly: +0.29 s of unnecessary braking per moving hour
+  (+0.01 … +0.61) for `acc_summaries` ([`yardstick_check.json`](../data/analysis/summaries/yardstick_check.json)).
 - **Choice of the 60 m rule.** It is `fused`'s far rule, applied after the first version's failures on these same drives,
   so this is a design-set pass. The result does not hinge on the exact value: every limit from 40 to 80 m passes, braking
   and the cut-in gain stay flat, and the limit mainly trades lead flips (+22 per hour at 40 m, +69 at 80 m) against how

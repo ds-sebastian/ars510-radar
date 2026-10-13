@@ -139,11 +139,15 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 - **Stopped targets.** Against targets that video and odometry show stopped at 5-30 m, settled tracks read vRel with
   RMS 0.54 m/s (B and C; [`review_followup.json`](../data/analysis/summaries/review_followup.json)).
 - **Timing.** On decelerating leads the radar's speed leads the camera's by 0.2-0.4 s (owner's StarPilot closed-loop drives, object list).
-  Against openpilot's own ego speed (carState), the radar's outputs (ACC target, 0x195) match the car's state about 0.20 s
-  earlier (wheel odometry on 16 braking stops, IQR 0.185-0.215 s; ◐, braking only): the radar's data are about 0.2 s old
-  when they arrive. A speed comparison that uses the current ego speed reads about −0.25 × ego acceleration too high. The
+  Against openpilot's own ego speed (carState), the radar's outputs (ACC target, 0x195) match the car's state about 0.15 s
+  earlier (0.10-0.20 s; stationary targets on two cars, range scale fitted; ◐): the radar's data are about 0.15 s old when
+  they arrive. The delay is on the radar side: carState trails the raw wheel-speed frames by only 2-4 ms, and the IMU
+  agrees. A speed comparison that uses the current ego speed reads about −0.15 × ego acceleration too high; with the lag
+  taken into account the ACC target's speed unit (0.125 m/s per code) is exact within about 0.5 % (stationary targets
+  read 1.004 × ego speed). The
   profiles publish the radar's values as sent; predicting them 0.2 s ahead brakes 0.03 s earlier but turns some moderate
-  requests into firmer ones ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
+  requests into firmer ones ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json),
+  [`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)).
 - **A second radar unit behaves the same (◐).** On a second car with the same firmware (153 min of ACC-target runs),
   the noise numbers that set `fused`'s σ values match the owner car's:
 

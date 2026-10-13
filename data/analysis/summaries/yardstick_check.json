@@ -1,0 +1,80 @@
+{
+ "oracle_lead_source_share": {
+  "acc_target": 0.964,
+  "object_list": 0.01,
+  "camera": 0.014
+ },
+ "camera_only_reference": {
+  "acc_minus_fused_unnecessary_s_per_moving_h": [
+   -0.48,
+   [
+    -1.44,
+    0.36
+   ]
+  ],
+  "acc_minus_fused_missed_s_per_moving_h": [
+   -0.16,
+   [
+    -0.35,
+    -0.02
+   ]
+  ],
+  "acc_summaries_minus_acc_unnecessary_s_per_moving_h": [
+   0.29,
+   [
+    0.01,
+    0.61
+   ]
+  ]
+ },
+ "oracle_reference": {
+  "acc_minus_fused_unnecessary_s_per_moving_h": [
+   -0.12,
+   [
+    -0.59,
+    0.34
+   ]
+  ],
+  "acc_summaries_minus_acc_unnecessary_s_per_moving_h": [
+   -0.01,
+   [
+    -0.08,
+    0.07
+   ]
+  ]
+ },
+ "video_on_disagreements": {
+  "episodes": 10,
+  "oracle_right": 6,
+  "camera_right": 2,
+  "unclear": 2
+ },
+ "saturated_camera_lead_sigma": {
+  "value": "e^11 (59874.14)",
+  "cause": "some sunnypilot community driving models",
+  "drives": 28,
+  "unaffected_profiles": [
+   "acc",
+   "oracle"
+  ],
+  "acc_minus_fused_without_them": {
+   "unnecessary_s_per_moving_h": [
+    0.26,
+    [
+     -0.03,
+     0.74
+    ]
+   ],
+   "flips_per_h": [
+    -20.6,
+    [
+     -34.0,
+     2.9
+    ]
+   ]
+  }
+ },
+ "chunks": 311,
+ "moving_h": 18.84,
+ "source": "workspace SCR-554"
+}

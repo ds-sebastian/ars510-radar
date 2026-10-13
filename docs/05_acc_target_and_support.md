@@ -282,7 +282,12 @@ non-idle samples, so recognise idle frames by the whole payload. `q10` is the lo
 
 0x196 byte 0 (signed) is a required deceleration of about 0.1 m/s² per code, close to the usual lead-moving / lead-stops
 formula with a 1-2 m margin (within one code on 92-98 % of active cycles, not exact; it relaxes while the driver brakes
-hard). Bytes 4-7 form two coupled pairs, capped at 50 / 62, and bytes 1-3 stay 0 while active. 0x195 is active on only
+hard). Bytes 4-7 form two coupled pairs, capped at 50 / 62, and bytes 1-3 stay 0 while active, except one bit:
+**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.4 s after the object list stops (two outages on a second
+car, together with 0x198 byte 0 changing 0x10 → 0x90), about 1.5 s before the car-bus 0x411 fault code, and clears with it.
+It marks the onset of an outage (5.6 and 22.6 s here), not a list that is missing from power-up, and it is also set for the
+first cycle after every power-up, so a reader should require two or more consecutive cycles. No false alarm in 14.4 h of
+normal driving ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)). 0x195 is active on only
 0.5-0.6 % of moving cycles ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
 The DBC keeps the remaining sub-fields as raw codes.
 
@@ -316,7 +321,12 @@ records**: every drive that starts after dark carries them and drives that end b
 one-minute segments; 35 of 114 on a second set, ramping in over three minutes at dusk;
 [`decode_claim_sources.json`](../data/analysis/summaries/decode_claim_sources.json), [`context_24x.json`](../data/analysis/summaries/context_24x.json)). Each frame holds two records of
 {type nibble, 3 flag bits, 13-bit signed value, 8-bit value}; the two records of 0x244 share the 8-bit value. One record
-kind sweeps from small to large values while its byte falls from 255, as an approaching light does. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
+kind sweeps from small to large values while its byte falls from 255, as an approaching light does. In 0x240 the two
+13-bit values are the left and right edges of a horizontal angle range (◐ reading, ○ about 0.01° per code, left
+positive): the ACC car's bearing lies inside it on 98 % of night cycles, against 85 % with bearings shuffled, and the range
+is a median 11.5° wide, so it brackets the car only coarsely. By day these frames carry nothing that changes: no lane
+lines, lane assignment or object list reach the radar on bus 1. The radar's own lane estimate is the 0x85 cells
+([04](04_metadata_record_0x85.md)), whose ego-lane left edge matches openpilot's lane line to 2-9 cm. 0x248 byte 2 is 1 by day and 0, 2 or 3 at night and carries startup and event bits with the same phase.
 
 The night mode matters for the object list: two slot fields change with it ([03](03_slot_fields.md#camera-association)).
 

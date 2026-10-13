@@ -72,7 +72,7 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default) a
 - **The radar's measured distance reaches radard** for about 83-85 % of the time a lead exists. Beyond 60 m both
   profiles publish only the car the radar's own ACC follows, as Toyota's ACC uses it; other far cars come from the camera.
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
-  lead less often (−30 per hour, 95 % CI −44 … −16) and publishes a newly seen stationary vehicle at once, where `fused`
+  lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
   waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)). `fused` keeps every radar car within 60 m and
   has road drives behind it; `acc` has replays.
 - **On some real slowdowns the radar sees the closing first** (curves, far leads); on others vision does.

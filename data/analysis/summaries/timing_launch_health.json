@@ -1,0 +1,62 @@
+{
+ "radar_output_age_s": {
+  "estimate": 0.148,
+  "ci95": [
+   0.094,
+   0.191
+  ],
+  "method": "stationary ACC targets on two cars, range scale fitted (1.011)",
+  "carstate_vs_raw_wheel_speed_s": [
+   0.002,
+   0.004
+  ],
+  "previous_braking_only_estimate_s": 0.2
+ },
+ "acc_speed_unit": {
+  "stationary_ratio_minus_vrel_over_vego": {
+   "lag_corrected": 1.004,
+   "ci95": [
+    0.999,
+    1.011
+   ],
+   "uncorrected": 1.034
+  },
+  "range_vs_integrated_vrel_up_to_45mps": [
+   1.002,
+   1.008
+  ]
+ },
+ "launch": {
+  "departures": 168,
+  "acc_before_camera_median_s": 0.11,
+  "acc_before_object_list_median_s": 0.2,
+  "acc_more_than_0p5s_after_camera": "3 of 162",
+  "stock_release_after_plus_0p5_mps_s": [
+   0.06,
+   0.28
+  ],
+  "sim_vision_only_minus_acc_launch_median_s": 0.0
+ },
+ "fault_flag_0x196_byte1_bit0": {
+  "outages": 2,
+  "set_after_list_stop_s": [
+   0.29,
+   0.44
+  ],
+  "lead_over_car_bus_0x411_s": 1.5,
+  "duration_s": [
+   5.6,
+   22.6
+  ],
+  "false_alarms_normal_h": 14.4,
+  "powerup_single_cycle": true,
+  "rule": ">= 2 consecutive cycles"
+ },
+ "camera_0x240_night": {
+  "acc_bearing_inside_range": 0.983,
+  "shuffled": 0.848,
+  "median_width_deg": 11.5,
+  "day": "default body, no dynamic content"
+ },
+ "source": "workspace SCR-551, SCR-552, SCR-553 (raw-CAN checked)"
+}
