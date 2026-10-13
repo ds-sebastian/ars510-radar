@@ -144,12 +144,12 @@ unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 82 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 53 code lines,
 no DBC) publishes them next to the ACC target:
-- **The ACC car once.** A summary whose range code is `160 + floor(0.4 × ACC distance code)` or one below, with the
-  lateral within 0.1 m, is the ACC car and is not published again.
-- **Identity and speed.** Every other summary is `trackId 32 + code` while it moves less than 3 m / 1 m per cycle. Its
-  speed is the least-squares slope of its last 8 ranges on the radar clock.
+- **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
+- **Identity and speed.** Every other summary is `trackId 32 + code` (its pair code). Its speed is the least-squares
+  slope of that code's last 8 ranges over CAN time, published once the 8 span less than 0.6 s, so a code that returns
+  after a gap does not mix old and new ranges.
 - **Within 60 m.** Beyond 60 m only the ACC target is published, the same far rule as `fused`. A first version without
   it gave two hard spikes from cars 7 m to the side at 86-93 m, which radard matched to the camera's far lead.
 
@@ -168,6 +168,10 @@ difference per moving hour,
 
 - **Earlier radar backing.** On 434 close cut-ins radard's lead switches 0.16 s earlier [−0.24, −0.09], with the same
   braking. When the camera first sees a lead it is radar-backed 0.41 s earlier [−0.54, −0.30].
+- **The short form drives like the longer first version.** An 82-line version that tracked each summary on the radar
+  clock, restarted it on range jumps and matched the ACC car by its exact rounding gives the same braking on every
+  measure (hard, mild and missed identical; unnecessary −0.02 s/h [−0.07, +0.02]); its speeds were slightly cleaner
+  offline (0.18 against 0.21 m/s RMS against the ACC speed).
 - **How often it matters.** radard takes its lead from a summary point on 1.1 % of moving lead time.
 - **Against a camera-only reference** the tie with `acc` shifts slightly: +0.29 s of unnecessary braking per moving hour
   (+0.01 … +0.61) for `acc_summaries` ([`yardstick_check.json`](../data/analysis/summaries/yardstick_check.json)).
