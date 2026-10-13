@@ -61,7 +61,6 @@ def how_it_works() -> None:
     a1.set_xlabel("range (m)"); a1.set_ylabel("reading std (m/s)"); a1.set_title("How much each reading is trusted")
     a1.legend(loc="upper left")
     # share of the estimate that comes from the radar's own trackers when they are present
-    q = (FUSED_CONFIG.lead_accel_std_mps2 * 0.06) ** 2
     w_obj = 1 / sig ** 2; w_trk = 1 / FUSED_CONFIG.acc_sigma_mps ** 2
     a2.plot(rng, w_trk / (w_trk + w_obj), color=ACC, label="ACC target present")
     a2.set_ylim(0, 1.02); a2.set_xlabel("range (m)"); a2.set_ylabel("weight of the ACC target reading")

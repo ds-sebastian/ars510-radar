@@ -1,7 +1,6 @@
 """Decoder profiles and the generic openpilot / fork installer."""
 from __future__ import annotations
 
-import dataclasses
 import os
 import re
 from pathlib import Path

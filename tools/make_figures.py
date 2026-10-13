@@ -44,7 +44,7 @@ def excursion_figure() -> None:
     fig, (a1, a2) = plt.subplots(2, 1, figsize=(10, 5.5), sharex=True)
     a1.plot(t, d, ".", ms=2)
     a1.set_ylabel("dRel (m)")
-    a1.set_title(f"Settled in-lane lead (age 126) on the highway: the range keeps opening while vRel dips")
+    a1.set_title("Settled in-lane lead (age 126) on the highway: the range keeps opening while vRel dips")
     a2.plot(t, v, lw=1, label="native vRel (over-ground - ego)")
     a2.plot(t, slope, lw=1.5, label="4 s range slope (noisy reference)")
     a2.axhline(0, color="k", lw=0.5)
