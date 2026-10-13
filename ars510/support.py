@@ -40,6 +40,20 @@ def parse_0x192(data: bytes) -> Target192 | None:
                      int.from_bytes(data[2:4], "big") & 0x1FFF)
 
 
+A195_IDLE = bytes.fromhex("7FFE1FE000000000")
+
+
+def parse_0x195_range(data: bytes) -> float | None:
+    """0x195 (event frame, docs/05): range in m of the function-tracker object it describes, or None while idle.
+
+    Bits 0-10 (LSB-numbered) at 0.05 m per code: the same internal track state as the ACC target, floor(ACC distance code / 2)
+    or one code above. Active on about 0.5 % of moving cycles (short time-to-collision); usually the ACC target, sometimes
+    another, mostly stationary, object. No speed field."""
+    if len(data) != 8 or bytes(data) == A195_IDLE:
+        return None
+    return _be_field(data, 0, 11) * 0.05
+
+
 A191_SENTINEL = bytes.fromhex("FEFEFEFCFCFFFEFF")
 
 

@@ -1,0 +1,93 @@
+{
+ "what": "Bus outputs of the radar's internal function tracker beyond the ACC target (exploratory; owner car and second car).",
+ "summary_fingerprint": {
+  "second_car_near_cycles": 32156,
+  "exact_share": 0.99885,
+  "raw_can_rows": 1694,
+  "raw_can_exact_share": 1.0
+ },
+ "non_acc_summary_track": {
+  "owner": {
+   "moving_cycles_with_track": 0.619,
+   "moving_cycles_with_track_and_no_acc_target": 0.189,
+   "range_m_p10_50_90": [
+    11.5,
+    49.9,
+    129.1
+   ],
+   "lateral_abs_m_p10_50_90": [
+    0.68,
+    3.72,
+    8.02
+   ],
+   "moving_same_direction_share": 0.999,
+   "handovers_to_acc_target": 436,
+   "range_slope_5_cycles_vs_acc_vrel": {
+    "n": 182626,
+    "rms_vs_acc": 0.176,
+    "mae": 0.113,
+    "p95_abs": 0.296
+   },
+   "range_slope_vs_0x680_speed_median_abs": 0.139,
+   "range_slope_vs_0x680_n": 1806
+  },
+  "second": {
+   "moving_cycles_with_track": 0.571,
+   "moving_cycles_with_track_and_no_acc_target": 0.249,
+   "range_m_p10_50_90": [
+    9.4,
+    34.2,
+    122.6
+   ],
+   "lateral_abs_m_p10_50_90": [
+    1.24,
+    3.78,
+    10.23
+   ],
+   "moving_same_direction_share": 0.9997,
+   "handovers_to_acc_target": 95,
+   "range_slope_5_cycles_vs_acc_vrel": {
+    "n": 30817,
+    "rms_vs_acc": 0.191,
+    "mae": 0.124,
+    "p95_abs": 0.334
+   },
+   "range_slope_vs_0x680_speed_median_abs": 0.147,
+   "range_slope_vs_0x680_n": 253
+  }
+ },
+ "event_0x195_range": {
+  "owner": {
+   "active_share_of_moving_cycles": 0.0046,
+   "acc_target_share": 0.836,
+   "other_object_share": 0.162,
+   "other_object_stationary_share": 0.611
+  },
+  "second": {
+   "active_share_of_moving_cycles": 0.006,
+   "acc_target_share": 0.755,
+   "other_object_share": 0.245,
+   "other_object_stationary_share": 0.615
+  }
+ },
+ "event_0x195_raw_can": {
+  "active195": 372,
+  "active195_on_acc": 290,
+  "active195_no_acc_target": 69,
+  "active195_other_object_acc_present": 13,
+  "0x195_exact_share_on_acc": 0.9896551724137931
+ },
+ "obj_0x680": {
+  "owner": {
+   "acc_target_share_moving": 0.0376,
+   "exact_range_share_on_acc": 0.211,
+   "other_moving_vehicle_frames_per_moving_hour": 613
+  },
+  "second": {
+   "acc_target_share_moving": 0.0064,
+   "exact_range_share_on_acc": 0.212,
+   "other_moving_vehicle_frames_per_moving_hour": 606
+  }
+ },
+ "screen": "every 4-16-bit window of 26 per-cycle bus-1 addresses at lags -1/0/+1 and as differences: no field outside 0x235/0x237/0x192/0x194 reaches |r| 0.95 with the track state; on active cycles only 0x195 does"
+}

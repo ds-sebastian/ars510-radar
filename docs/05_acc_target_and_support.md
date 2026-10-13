@@ -220,6 +220,21 @@ at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json), block `current_units_recompute`). They carry position only, so a speed comes
 from the range slope and lags by about half a second.
 
+**The slot that is not the ACC target is a further track of the same tracker (◐, exploratory, two cars).** When a summary
+sits on the ACC car it is that car's state exactly: `160 + floor(0.4 × ACC code)` or one code lower on 99.9 % of 32,156
+cycles aligned by the radar clock, and on 1,694 of 1,694 raw-CAN rows. The other slot holds a second vehicle:
+- **What it holds.** Moving same-direction vehicles only (99.9 %), mostly in the neighbouring lanes (lateral median
+  3.7-3.8 m), at 12 / 50 / 129 m (10th / 50th / 90th percentile; second car 9 / 34 / 123 m).
+- **Coverage.** Present on 62 % of moving cycles, and on 19 % of moving cycles with no ACC target (second car 57 % / 25 %).
+- **Same track before and after.** It keeps its pair-local code and age, and 436 such tracks later became the ACC target
+  with no range step at the handover.
+- **Speed.** A least-squares range slope over 5 cycles (0.3 s, on the 0x190 clock) gives the relative speed: 0.18 m/s RMS
+  against the ACC speed on the slot that is the ACC car (MAE 0.11, 95th percentile 0.30; 0.125 m/s is the ACC speed's own
+  step). On the other slot it agrees with 0x680's own speed to a median 0.14 m/s.
+
+The summaries do not carry stationary or oncoming objects
+([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
+
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. The fork build can attach each summary
 to the object-list track at its position (range within max(5 m, 15 %), lateral within 1 m) and use its range slope as a speed
@@ -247,6 +262,14 @@ q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 In 59 of 60 changes where the low seven bits move by more than 64 codes, the high bits move by one in the opposite
 direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
 non-idle samples, so recognise idle frames by the whole payload. The DBC keeps the remaining sub-fields as raw codes.
+
+**0x195 bits 0-10 (LSB-numbered) = range of a function-tracker object, 0.05 m per code (●).** On the ACC car the code is
+`floor(ACC distance code / 2)` or one above on 99.0 % of 290 raw-CAN cycles (94.8 % in the full second-car table at cycle
+lag 0 or 1). The frame is active on 0.5-0.6 % of moving cycles, at a median 20-21 m. It shows the ACC target on 75-84 % of
+active cycles and another object on 16-25 % (61 % of those stationary), sometimes with no ACC target at all. It has no speed
+field: the byte at bits 16-23 rises with ego speed but is not an exact speed. `support.parse_0x195_range()` returns the range
+in metres, or `None` for the idle payload `7F FE 1F E0 00 00 00 00`
+([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
 
 **The event pair behaves like a short-time-to-collision state (◐).** Across 700 segments, compared with matched moving moments:
 
@@ -298,7 +321,10 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 
 Every 0.5 s the radar reports **one object from its function-level tracker**. On vehicles it shares with the ACC target its
 speed equals the ACC speed (median difference 0.09 m/s), so it is likely a second output of the tracker that feeds the
-ACC target (◐). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
+ACC target (◐). Its range is close to the ACC state but not a rounding of it: on the ACC car it is exact on about 21 % of
+frames and 0.07 m RMS away, and a time shift does not explain the rest. While moving it reports another moving vehicle
+about 610 times per hour; the rest are mostly stationary roadside objects
+([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 
 | field | reading | conf. |
 |---|---|---|

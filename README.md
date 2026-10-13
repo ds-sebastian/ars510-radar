@@ -157,7 +157,7 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 | **Target summaries** (0x190-0x194) | ● 0x192 / 0x194 = position of one internal track in the object list's encoding (range ●, lateral unit ◐); ● 0x190 counts them; ◐ 0x191 / 0x193 carry the class template (car / truck size) ([05](docs/05_acc_target_and_support.md)) |
 | **Car-bus target report** (0x366, 5 Hz) | ◐ the ACC target while one exists, plus other states: relative speed 0.5 km/h, distance ≈ 0.8 m, lateral 0.34 m per code ([13](docs/13_car_bus_messages.md)) |
 | **Single-object stream** (0x680, 2 Hz) | ● range at 1/32 m; ◐ one tracked object, mostly stationary roadside objects: lateral position and speed, stationary / oncoming / moving flags ([05](docs/05_acc_target_and_support.md)) |
-| **Event pair** (0x195 / 0x196) | ● raw payloads; ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
+| **Event pair** (0x195 / 0x196) | ● raw payloads; ● 0x195 range of a function-tracker object (0.05 m); ◐ a short-time-to-collision state ([05](docs/05_acc_target_and_support.md#0x195--0x196-event-pair)) |
 | **Metadata cells** (0x85) | ◐ ten lane / road-boundary curves; remaining cell fields raw ([04](docs/04_metadata_record_0x85.md)) |
 | **openpilot integration** | installable on openpilot, sunnypilot, StarPilot and CarrotPilot; replayed end to end; driven by the owner on FrogPilot, StarPilot and sunnypilot ([08](docs/08_openpilot_integration.md)) |
 
