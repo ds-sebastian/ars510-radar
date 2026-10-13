@@ -92,7 +92,6 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 |---|---|---|
 | object-list speed `64\|10` | 0.045 m/s × max(`240\|7`, 1); × 1.8 up to age 60, tapering to × 1 at age 100 | `240\|7` scales with the error against the ACC target ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)); young tracks err 1.4-2× more |
 | ACC target speed (0x235 at 0.125 m/s per code, + ego speed) | 0.13 m/s | the radar's own ACC tracker, for the one track it matches by position ([05](05_acc_target_and_support.md)); blended with the object list ([below](#the-acc-targets-weight)) |
-| summary speed (0x192 / 0x194 range, (code − 160) / 16 m; 1 s slope), fork option, off in `fused` | 0.5 m/s, up to 80 m | the positions of the radar's selected targets, each attached to the track at that position (range within max(5 m, 15 %), lateral within 1 m); the ACC track takes the ACC target ([below](#what-the-summaries-do)) |
 
 The ACC target's units are checked against the absolute `0x680` range ([05](05_acc_target_and_support.md#units-of-the-acc-target)).
 
@@ -197,7 +196,7 @@ The two filters run in series, so all replay numbers include their combined effe
 ## Matching the radar's trackers to tracks
 
 The ACC target is a position from the radar's function-level tracker; the filter needs to know which object-list track
-it describes. The summaries (a fork option) are matched the same way.
+it describes.
 
 | tracker | match | kept while |
 |---|---|---|
@@ -464,8 +463,8 @@ better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead o
 bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and 7 mild requests each
 ([`driving_claim_sources.json`](../data/analysis/summaries/driving_claim_sources.json)); against the
 oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` leaves
-them out from 2.4 on, and the fork default and the openpilot version drive identically. The code remains a fork option
-(`summary_sigma_mps`).
+them out from 2.4 on, and the fork default and the openpilot version drive identically. The summary cars are now
+published as points of their own by `acc_summaries` ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 ### The ACC target's weight
 
@@ -497,15 +496,10 @@ metric is the share of cycles with estimate − ACC target below −2 m/s (d > 3
 | Student-t update instead of the 3σ clamp | 7.8 / 8.7 / 7.4 % |
 | speed + acceleration state, with the ACC target's acceleration as a reading | 7.7 / 8.5 / 7.6 % |
 | noise learned from all slot fields (gradient boosting) | 7.2 / 8.3 / 6.9 % |
-| object-list error as its own state (colored noise, τ 1.19 s), noise scaled by ego speed and `84\|10` (`--profile colored`) | 6.8 / 7.8 / 7.8 % |
+| object-list error as its own state (colored noise, τ 1.19 s), noise scaled by ego speed and `84\|10` | 6.8 / 7.8 / 7.8 % |
 
-The colored-noise filter is the textbook fix for the object list's slow, correlated errors (lag-1 autocorrelation 0.95 per
-60 ms record). On the bench it lowers false closings by 0.8 points on held-out drives and responds 84 ms sooner to
-ACC-defined drops (276 windows, 95% route-bootstrap interval [−129, −45] ms; [`kalman_response.json`](../data/analysis/summaries/kalman_response.json)).
-In replay through openpilot on every drive set (16.9 moving hours) it asks for 10.1 s more unnecessary braking than `fused`
-2.6 (31.1 s against 21.0 s; +0.60 s per moving hour, 95% route-bootstrap interval [+0.19, +1.15]) and 1.7 s more missed
-braking (18.1 s against 16.4 s), with the same hard braking and lead flips. `fused` keeps one speed state; the fork build
-keeps `COLORED_CONFIG` as an option.
+We also tried a colored-noise (bias) state for the object list's slow, correlated error; it looked best on the bench but
+asked for 10 s more unnecessary braking than `fused` in replay (16.9 moving hours), so it was dropped.
 
 Constants retuned on 8 fresh drives (σ per count 0.033, ACC σ 0.3, lead acceleration 1.0 / 2.0): only lead acceleration 2.0
 passes every gate, and it scores the same as 1.5 ([`driving_claim_sources.json`](../data/analysis/summaries/driving_claim_sources.json)).

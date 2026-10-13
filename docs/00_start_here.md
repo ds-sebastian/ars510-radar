@@ -212,7 +212,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **uncertainty `240\|7`** | the radar's own speed-error code per object; `fused` weights the speed by it |
 | **excursion** | a 1-10 s stretch where the object list's speed is wrong, mostly a false closing on a far car |
 | **ACC target** | the car the radar's own ACC function follows (0x235 / 0x237): smooth distance and speed |
-| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; a fork option, off in `fused` and `acc` |
+| **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; published as extra points by `acc_summaries`, unused by `fused` and `acc` |
 | **radard** | openpilot's process that turns radar points and the camera's lead into the lead the planner follows |
 | **hard radar-only tick** | a 20 Hz tick where the radar planner asks for ≤ −2 m/s² while vision only asks for ≥ −0.5 |
 | **target episode** | the radar planner asks for ≤ −1 m/s² while vision only asks for ≥ −0.3, for ≥ 0.3 s while moving |

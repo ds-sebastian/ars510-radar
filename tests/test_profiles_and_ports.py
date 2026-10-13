@@ -16,7 +16,7 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_acc():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["acc"]') == 1
-  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, "colored": COLORED_CONFIG, **{k: k for k in STANDALONE}}' in src
+  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, **{k: k for k in STANDALONE}}' in src
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -47,7 +47,7 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()  # the default
-  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("stock", "raw"), ("default", "raw"),
+  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("colored", "fused"), ("stock", "raw"), ("default", "raw"),
                           ("upstream", "openpilot")):  # older names
     r = _install(tmp_path, "--profile", name)
     assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
@@ -173,7 +173,7 @@ def test_fused_is_raw_plus_range_fusion_and_one_speed_filter_without_relink_or_g
   from ars510 import FUSED_CONFIG
   diff = {f.name for f in fields(BASE_CONFIG) if getattr(BASE_CONFIG, f.name) != getattr(FUSED_CONFIG, f.name)}
   assert diff == {"range_fusion_gain", "relink_max_gap_s", "drop_saturated_codes", "fused_speed_filter", "path_gate_m",
-                  "summary_sigma_mps", "acc_sigma_mps", "far_acc_only_m", "path_gate_stationary_mps"}
+                  "acc_sigma_mps", "far_acc_only_m", "path_gate_stationary_mps"}
   assert FUSED_CONFIG.range_fusion_gain == 0.1 and not FUSED_CONFIG.drop_saturated_codes
   assert FUSED_CONFIG.acc_sigma_mps == 0.13  # docs/12: ACC weight (0.3 in 2.5)
   assert FUSED_CONFIG.far_acc_only_m == 60.0  # docs/12: far cars beyond 60 m, since 2.6
