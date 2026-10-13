@@ -67,7 +67,8 @@ def main() -> int:
                 t = m.logMonoTime / 1e9
                 if which == "can":
                     for f in m.can:
-                        if not (f.src == 1 or (f.src == 0 and f.address == 0xB4)):
+                        # bus 1 plus the car-bus frames the interface reads: 0xB4 ego speed, 0x24 yaw rate (fused's path gate)
+                        if not (f.src == 1 or (f.src == 0 and f.address in (0xB4, 0x24))):
                             continue
                         data = bytes(f.dat)
                         for name, iface in ifaces.items():
