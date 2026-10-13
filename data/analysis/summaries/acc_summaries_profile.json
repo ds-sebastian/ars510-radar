@@ -1,7 +1,7 @@
 {
  "what": "acc_summaries profile (acc + summary cars within 60 m) replayed against acc (N1) through the pinned openpilot on every fast-suite chunk and the second car's batch 2 (313 chunks, 74 routes, 18.84 moving h); route-block bootstrap 95 % CI of acc_summaries - acc per moving hour",
  "code_lines": {
-  "acc_summaries": 82,
+  "acc_summaries": 53,
   "acc": 33
  },
  "totals": {
@@ -307,5 +307,58 @@
    "flips_per_h": 335,
    "cutin_lead_switch_s": 0.044
   }
+ },
+ "short_form_vs_first_version": {
+  "first_version_code_lines": 82,
+  "short_form_code_lines": 53,
+  "delta_short_minus_first_per_moving_h": {
+   "hard": [
+    0,
+    [
+     0,
+     0
+    ]
+   ],
+   "mild": [
+    0,
+    [
+     0,
+     0
+    ]
+   ],
+   "missed_s": [
+    0,
+    [
+     0,
+     0
+    ]
+   ],
+   "unnecessary_s": [
+    -0.02,
+    [
+     -0.07,
+     0.02
+    ]
+   ],
+   "flips": [
+    0,
+    [
+     -1,
+     1
+    ]
+   ],
+   "onset_s": [
+    0.0,
+    [
+     -0.001,
+     0.0
+    ]
+   ]
+  },
+  "slope_rms_vs_acc_vrel_mps": {
+   "first_version": 0.18,
+   "short_form": 0.21
+  },
+  "source": "workspace SCR-549 (313 chunks, 18.84 moving h)"
  }
 }
