@@ -1,0 +1,111 @@
+{
+ "description": "Outputs of the radar's internal tracker beyond the ACC target: the summary slot that is not the ACC target, 0x195's object range, 0x680. Second car (17 never-tuned drives) / owner corpus, radar cycles aligned by the 0x190 clock; two independent analyses, raw-CAN checked. Exploratory.",
+ "summary_fingerprint": {
+  "rows_within_1m_of_acc": 33807,
+  "match_share": 1.0,
+  "exact_share": 0.898,
+  "raw_recheck": "130/130"
+ },
+ "non_acc_summary_track": {
+  "present_share_moving_cycles": [
+   0.57,
+   0.65
+  ],
+  "present_without_acc_target_share": [
+   0.19,
+   0.25
+  ],
+  "moving_same_direction_share": 0.999,
+  "range_m_p10_p50_p90": {
+   "second_car": [
+    9,
+    34,
+    123
+   ],
+   "owner": [
+    12,
+    50,
+    129
+   ]
+  },
+  "lateral_m_p50": 3.8,
+  "range_smoothness_m": {
+   "non_acc_summary": [
+    0.024,
+    0.022
+   ],
+   "object_list_moving_slots": [
+    1.18,
+    1.38
+   ],
+   "quantization_floor": 0.018
+  },
+  "differenced_speed_rms_vs_acc_mps": {
+   "5_cycle_causal": [
+    0.19,
+    0.18
+   ],
+   "8_cycle_causal": [
+    0.167,
+    0.159
+   ]
+  },
+  "differenced_speed_median_vs_0x680_mps": [
+   0.15,
+   0.14
+  ],
+  "share_of_list_moving_vehicles_within_120m": [
+   0.33,
+   0.3
+  ],
+  "by_range": {
+   "<20m": 0.8,
+   "20-40m": [
+    0.41,
+    0.46
+   ],
+   ">40m": [
+    0.1,
+    0.22
+   ]
+  },
+  "acc_acquisitions_already_summary_track": [
+   0.62,
+   0.67
+  ],
+  "lead_time_median_s": [
+   1.3,
+   0.7
+  ],
+  "non_acc_tracks_per_moving_cycle_second_car": {
+   "0": 0.447,
+   "1": 0.32,
+   "2": 0.233
+  }
+ },
+ "0x195_object_range": {
+  "field": "MSB-first 50|11 (last 11 bits) x 0.05 m",
+  "active_share_moving": [
+   0.005,
+   0.006
+  ],
+  "on_acc_car_exact_share_raw": 0.99,
+  "other_object_share": [
+   0.16,
+   0.25
+  ],
+  "other_object_stationary_share": 0.61
+ },
+ "0x680": {
+  "rate_hz": 2,
+  "has_speed_field": true,
+  "exact_to_acc_state_share": 0.21,
+  "rms_m_from_acc_state": [
+   0.07,
+   0.15
+  ],
+  "moving_vehicle_share": 0.085
+ },
+ "no_other_bus1_field": "no 4-16 bit window of 26 per-cycle bus-1 addresses reaches |r| 0.95 against the track state",
+ "pairs_note": "[second car, owner] where two values are given"
+}

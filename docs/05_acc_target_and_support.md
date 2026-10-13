@@ -224,6 +224,17 @@ at a median 60 m (0x194: 79 m)
 ([`summary_tracks.json`](../data/analysis/summaries/summary_tracks.json), block `current_units_recompute`). They carry position only, so a speed comes
 from the range slope and lags by about half a second.
 
+**Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
+target holds another track of the same internal tracker: up to two cars besides the lead, one on 32 % and two on 23 % of
+moving cycles (second car), at least one on 57-65 % (19-25 % with no ACC target at all). It carries only
+moving vehicles going the same way (99.9 %; never stationary or oncoming), mostly in the next lanes (median lateral 3.8 m), at
+a median 34-50 m. Its range is as smooth as the ACC target's (0.022-0.024 m residual against 0.018 m quantization; the object
+list's moving tracks 1.2-1.4 m). A causal slope over 5-8 radar cycles gives a speed within 0.16-0.19 m/s RMS of the ACC speed on
+the same car, and a median 0.14 m/s from 0x680's own speed on other cars. The 6-bit pair code stays with a track, including
+when it swaps slots. Limits: it covers about a third of the moving cars the object list shows within 120 m (80 % within
+20 m, 10-22 % beyond 40 m), and many runs are short (median 0.6 s). 62-67 % of new ACC targets were already a summary track,
+a median 0.7-1.3 s before ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
+
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. The fork build can attach each summary
 to the object-list track at its position (range within max(5 m, 15 %), lateral within 1 m) and use its range slope as a speed
@@ -250,7 +261,11 @@ q10 = ((payload[2] & 0x3f) << 4) | (payload[3] >> 4)   # 510 when idle
 
 In 59 of 60 changes where the low seven bits move by more than 64 codes, the high bits move by one in the opposite
 direction: a carry, so the ten bits are one field. Non-idle codes span 391–558. Code 510 also occurs in 1,202 of 2,215
-non-idle samples, so recognise idle frames by the whole payload. The DBC keeps the remaining sub-fields as raw codes.
+non-idle samples, so recognise idle frames by the whole payload. **The last 11 bits of 0x195 (MSB-first `50|11`) are the range of
+one tracker object × 0.05 m** while the pair is active (●, raw check 99 %): on the ACC car the code is `floor(ACC distance code / 2)`,
+and on 16-25 % of active cycles it is another object, mostly stationary. It is active on only 0.5-0.6 % of moving cycles
+([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)); DBC `A195_OBJECT_RANGE`.
+The DBC keeps the remaining sub-fields as raw codes.
 
 **The event pair behaves like a short-time-to-collision state (◐).** Across 700 segments, compared with matched moving moments:
 
