@@ -24,8 +24,8 @@ Profiles (docs/08 has the details and replay numbers):
   acc       (default) the radar's ACC target alone as one point (upstream/ars510_acc_target.py with
             toyota_tss2_ars510.dbc): the car Toyota's own ACC follows; every other car comes from the camera. It
             publishes a target as soon as the radar picks it; fused holds new tracks back for 60 cycles (docs/11)
-  acc_summaries  acc plus up to two more cars from the radar's own tracker (the target summaries 0x191-0x194, within
-            60 m, speed from their range slope); radar-backed cut-ins slightly earlier, braking as acc in replay (docs/11)
+  acc_summaries  acc plus up to two more cars from the radar's own tracker (the target summaries 0x191-0x194, only
+            while the ACC target is present, speed from their range slope); braking equal to acc in replay (docs/11)
   fused     FUSED_CONFIG: the radar decode + range fusion + one Kalman speed filter per track that weights
             the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version)
   raw       BASE_CONFIG: the unfiltered radar decode with only what radard

@@ -1,27 +1,33 @@
 {
- "what": "acc_summaries profile (acc + summary cars within 60 m) replayed against acc (N1) through the pinned openpilot on every fast-suite chunk and the second car's batch 2 (313 chunks, 74 routes, 18.84 moving h); route-block bootstrap 95 % CI of acc_summaries - acc per moving hour",
+ "what": "acc_summaries profile (the ACC target plus the target-summary cars while the ACC target is present) replayed against acc through the pinned openpilot (card -> radard -> planner) on the confirmation sets: the owner's road drives, the second car's held-out set and its further batch (222 chunks, 44 routes, 14.19 moving h). File and pass rule fixed before the run; route-block bootstrap 95 % CI of acc_summaries - acc per moving hour",
  "code_lines": {
-  "acc_summaries": 82,
+  "acc_summaries": 74,
   "acc": 33
  },
+ "pass_rule_upper_bounds_per_moving_h": {
+  "hard": 0.5,
+  "mild": 1.0,
+  "unnecessary_s": 1.0,
+  "missed_s": 1.0,
+  "onset_paired_s": 0.05
+ },
+ "verdict": "pass (neutral): braking equal to acc, no new hard or mild episode, no cut-in gain",
  "totals": {
   "acc": {
-   "hard": 14,
-   "hard_moving": 6,
-   "mild": 35,
-   "mild_moving": 27,
-   "unnecessary_s": 24.4,
-   "missed_s": 19.4,
-   "flips_per_h": 294
+   "hard_moving": 1,
+   "mild_moving": 18,
+   "unnecessary_s": 21.2,
+   "missed_s": 17.0,
+   "flips_per_h": 279,
+   "onset_vs_vision_s": 0.01
   },
   "acc_summaries": {
-   "hard": 14,
-   "hard_moving": 6,
-   "mild": 37,
-   "mild_moving": 29,
-   "unnecessary_s": 24.2,
-   "missed_s": 17.1,
-   "flips_per_h": 335
+   "hard_moving": 1,
+   "mild_moving": 17,
+   "unnecessary_s": 21.2,
+   "missed_s": 14.6,
+   "flips_per_h": 335,
+   "onset_vs_vision_s": 0.008
   }
  },
  "delta_per_moving_h": {
@@ -30,108 +36,140 @@
    "ci95": [
     0.0,
     0.0
-   ],
-   "routes": 74
+   ]
+  },
+  "mild": {
+   "per_h": -0.07,
+   "ci95": [
+    -0.266,
+    0.0
+   ]
   },
   "hard_moving": {
    "per_h": 0.0,
    "ci95": [
     0.0,
     0.0
-   ],
-   "routes": 74
-  },
-  "mild": {
-   "per_h": 0.106,
-   "ci95": [
-    -0.099,
-    0.338
-   ],
-   "routes": 74
+   ]
   },
   "mild_moving": {
-   "per_h": 0.106,
+   "per_h": -0.07,
    "ci95": [
-    -0.096,
-    0.334
-   ],
-   "routes": 74
+    -0.246,
+    0.0
+   ]
   },
   "unnecessary_s": {
-   "per_h": -0.011,
+   "per_h": 0.003,
    "ci95": [
-    -0.081,
-    0.072
-   ],
-   "routes": 74
+    -0.084,
+    0.098
+   ]
   },
   "missed_s": {
-   "per_h": -0.125,
+   "per_h": -0.166,
    "ci95": [
-    -0.358,
+    -0.464,
     0.0
-   ],
-   "routes": 74
-  }
- },
- "onset_vs_acc_paired": {
-  "n": 732,
-  "mean": 0.004,
-  "ci95": [
-   -0.002,
-   0.012
-  ],
-  "routes": 62
- },
- "new_hard_episodes": 0,
- "cutins_close": {
-  "n": 434,
-  "via_summary": 229,
-  "summary_head_start_median": 3.15,
-  "lead_diff": {
-   "n": 329,
-   "mean": -0.155,
-   "ci95": [
-    -0.235,
-    -0.086
    ]
   },
-  "brake_diff": {
-   "n": 434,
-   "mean": -0.009,
+  "flips": {
+   "per_h": 55.88,
    "ci95": [
-    -0.018,
-    -0.001
+    33.48,
+    87.36
    ]
   }
  },
- "camera_lead_appears": {
-  "n": 1006,
-  "A_at0": 0.081,
-  "N1_at0": 0.037,
-  "diff_mean": {
-   "n": 1006,
-   "mean": -0.41,
-   "ci95": [
-    -0.536,
-    -0.3
-   ],
-   "routes": 64
+ "onset_paired_vs_acc_s": {
+  "n": 489,
+  "mean": -0.001,
+  "ci95": [
+   -0.005,
+   0.003
+  ]
+ },
+ "new_hard_or_mild_episodes": 0,
+ "stops": {
+  "n": 113,
+  "mean_request_diff_m_s2": 0.0,
+  "lead_range_3s_before_diff_m": 0.0
+ },
+ "cutins": {
+  "close": {
+   "n": 321,
+   "car_was_summary_first": 94,
+   "lead_switch_vs_acc_s": {
+    "n": 241,
+    "mean": 0.044,
+    "ci95": [
+     0.002,
+     0.093
+    ]
+   },
+   "brake_diff_m_s2": {
+    "n": 321,
+    "mean": -0.002,
+    "ci95": [
+     -0.007,
+     0.002
+    ]
+   }
+  },
+  "close_faster_car": {
+   "n": 94,
+   "car_was_summary_first": 33,
+   "lead_switch_vs_acc_s": {
+    "n": 75,
+    "mean": 0.029,
+    "ci95": [
+     -0.031,
+     0.1
+    ]
+   },
+   "brake_diff_m_s2": {
+    "n": 94,
+    "mean": -0.001,
+    "ci95": [
+     -0.01,
+     0.006
+    ]
+   }
+  },
+  "acc_switch_closer": {
+   "n": 102,
+   "car_was_summary_first": 77,
+   "lead_switch_vs_acc_s": {
+    "n": 79,
+    "mean": -0.063,
+    "ci95": [
+     -0.157,
+     0.049
+    ]
+   },
+   "brake_diff_m_s2": {
+    "n": 102,
+    "mean": 0.002,
+    "ci95": [
+     -0.01,
+     0.011
+    ]
+   }
   }
  },
- "lead_share_moving": {
-  "vision": 0.1091,
-  "acc": 0.88,
-  "summary": 0.011
+ "lead_source_share_moving": {
+  "vision": 0.1139,
+  "acc": 0.8842,
+  "summary": 0.0019
  },
- "points_per_report_moving_share": [
-  0.388,
-  0.3364,
-  0.2259,
-  0.0497
+ "points_per_report_moving_share_0_1_2_3": [
+  0.4618,
+  0.1393,
+  0.3287,
+  0.0702
  ],
- "first_version_without_far_rule": {
-  "hard_moving": "7 vs 6 (two new adjacent-lane spikes at 86-93 m, one acc-only episode gone)",
-  "flips_delta_per_h": 151
+ "unanchored_version": {
+  "hard_moving_new": 2,
+  "note": "summary cars published without an ACC target: radard matched the camera lead to cars 1.8-9.3 m to the side at 52-94 m"
  }
 }

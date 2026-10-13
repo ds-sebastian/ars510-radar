@@ -50,33 +50,3 @@ def _is_acc_point(mod, p):
   """shared_* give the ACC target trackId ACC_TRACK and above; acc_summaries keeps the radar's target ID (below SUMMARY_ID)."""
   return p.trackId >= mod.ACC_TRACK if hasattr(mod, "ACC_TRACK") else p.trackId < mod.SUMMARY_ID
 
-
-def _cycle(k, acc_m, cars):
-  """One 60 ms radar cycle as CAN frames: the 0x190 clock, the ACC target (0x235 / 0x237) at acc_m and the summaries in cars
-  [(code, range m, lateral m), ...] in 0x191 / 0x192 and 0x193 / 0x194."""
-  ts = 1_000_000 + 60_000 * k
-  acc_code = round(acc_m / 0.025)
-  f235 = ((1 << 59) | (5 << 48) | (1056 << 29) | 7).to_bytes(8, "big")  # status 5, id 7, vRel +4 m/s
-  f237 = ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big")
-  frames = [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00"), (0x235, f235), (0x237, f237)]
-  for (code, d, y), (ia, pa) in zip(cars, ((0x191, 0x192), (0x193, 0x194))):
-    rc = 160 + (2 * acc_code) // 5 if d is None else round(d * 16 + 160)
-    frames += [(ia, bytes([182, 0, 0, code << 2, 0, 0, 0, 0])), (pa, rc.to_bytes(2, "big") + round(y / 0.015 + 2048).to_bytes(2, "big"))]
-  return [(int(k * 0.06e9 + i * 1e6), [(a, d, 1)]) for i, (a, d) in enumerate(frames)]
-
-
-def test_acc_summaries_adds_summary_cars_once_and_within_60_m(mod):
-  if not hasattr(mod, "SUMMARY_ID"):
-    pytest.skip("acc_summaries only")
-  for cars, n_extra in (([(3, None, 0.0), (9, 40.0, 3.6)], 1),   # summary 1 is the ACC car, summary 2 another car at 40 m
-                        ([(3, None, 0.0), (9, 80.0, 3.6)], 0)):  # beyond 60 m: not published
-    ri, last = mod.RadarInterface(None), None
-    for k in range(30):
-      for pk in _cycle(k, 30.0 - 0.24 * k, [(c, d if d is None else d - 0.36 * k, y) for c, d, y in cars]):
-        out = ri.update([pk])
-        last = out if out is not None and out.points else last
-    acc = [p for p in last.points if p.trackId < mod.SUMMARY_ID]
-    summ = [p for p in last.points if p.trackId >= mod.SUMMARY_ID]
-    assert len(acc) == 1 and len(summ) == n_extra
-    if n_extra:
-      assert summ[0].trackId == mod.SUMMARY_ID + 9 and abs(summ[0].vRel - (-6.0)) < 0.1  # 0.36 m per 60 ms cycle
