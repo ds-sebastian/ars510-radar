@@ -157,8 +157,19 @@ difference per moving hour,
 - **Earlier radar backing.** On 434 close cut-ins radard's lead switches 0.16 s earlier [−0.24, −0.09], with the same
   braking. When the camera first sees a lead it is radar-backed 0.41 s earlier [−0.54, −0.30].
 - **How often it matters.** radard takes its lead from a summary point on 1.1 % of moving lead time.
-- **Choice of the 60 m rule.** It was chosen after the first version's failures on these same drives. The result is
-  therefore a design-set pass, not an independent confirmation; `acc` stays the default until road drives confirm it.
+- **Choice of the 60 m rule.** It is `fused`'s far rule, applied after the first version's failures on these same drives,
+  so this is a design-set pass. The result does not hinge on the exact value: every limit from 40 to 80 m passes, braking
+  and the cut-in gain stay flat, and the limit mainly trades lead flips (+22 per hour at 40 m, +69 at 80 m) against how
+  early a camera lead becomes radar-backed.
+- **Drives held back from the alternative design** (owner road drives, the second car's held-out set and its later drives,
+  14.2 moving h): `acc` / `acc_summaries` moving hard 1 / 1, mild 18 / 18, unnecessary 21.2 / 20.6 s, missed 17.0 / 14.6 s,
+  cut-in lead switch 0.16 s earlier [−0.23, −0.09] on 321 cut-ins. Publishing the summary cars only while an ACC target
+  exists brakes the same but loses that gain (+0.04 s), so the profile keeps the 60 m form.
+- **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
+  the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
+  default until road drives with this profile confirm it.
+
+![acc_summaries against the range limit](img/analysis/acc_summaries_sweep.png)
 
 ## Which profile for what
 

@@ -1198,12 +1198,37 @@ def acc_function_tracker():
          "Numbers: data/analysis/summaries/acc_function_tracker.json.")
 
 
+def acc_summaries_sweep():
+    """acc_summaries against acc as the summary range limit varies (acc_summaries_profile.json, range_limit_sweep)."""
+    R = summary("acc_summaries_profile")["range_limit_sweep"]["rows"]
+    xs = [r["limit_m"] if r["limit_m"] else 100 for r in R]
+    labels = [f"{r['limit_m']:.0f} m" if r["limit_m"] else "none" for r in R]
+    panels = (("mild_d", "mild_lo", "mild_hi", "mild episodes per moving h", 1.0),
+              ("unnecessary_s_d", "unnecessary_s_lo", "unnecessary_s_hi", "unnecessary braking, s per moving h", 1.0),
+              ("cutin_d", "cutin_lo", "cutin_hi", "cut-in lead switch, s (negative = earlier)", None),
+              ("flips_d", "flips_lo", "flips_hi", "lead flips per moving h", None))
+    fig, ax = plt.subplots(1, 4, figsize=(15, 3.6))
+    for a, (k, lo, hi, lab, bound) in zip(ax, panels):
+        y = np.array([r[k] for r in R]); e = np.array([[r[k] - r[lo] for r in R], [r[hi] - r[k] for r in R]])
+        a.errorbar(xs, y, yerr=e, fmt="o", color=S1, ms=5, capsize=3)
+        a.axhline(0, color=INK, lw=1)
+        if bound is not None:
+            a.axhline(bound, color=S2, lw=1, ls="--", label="owner's bound")
+            a.legend(loc="upper left", fontsize=8)
+        a.axvline(60, color=INK2, lw=0.8, ls=":")
+        a.set_xticks(xs, labels, fontsize=8); a.set_xlabel("summary range limit"); a.set_title(lab, fontsize=9.5)
+    fig.suptitle("acc_summaries minus acc as the range limit varies (95 % route-bootstrap CI; shipped: 60 m)", fontsize=11)
+    fig.tight_layout()
+    save(fig, "acc_summaries_sweep", "Every drive set, 313 chunks, 18.84 moving h; design set (60 m was chosen on these drives). "
+         "Numbers: data/analysis/summaries/acc_summaries_profile.json.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3, acc_function_tracker)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3, acc_function_tracker, acc_summaries_sweep)}
 
 
 if __name__ == "__main__":
