@@ -69,7 +69,11 @@ What the table shows:
   (−0.19 … +0.34).
 - **`acc`'s hard episodes are mostly standstill holds.** Of its 13 hard episodes, 8 start with the ego car below
   0.5 m/s: the request holds a stopped car 0.7-4.8 m behind an object the camera leaves out of its lead list (a wall, a
-  fence, a junction island on video), through radard's low-speed rule. While moving, `acc` has 5 hard episodes against
+  fence, a junction island on video), through radard's low-speed rule. The radar keeps these holds as live tracks, not
+  frozen values: on a second car parked with the radar's car-bus output disabled, the ACC target held a small return 7 m
+  ahead for 43 s after an SUV crossed in front (range code moving on 2 % of cycles, never in the object list), inside the
+  range of 229 other standstill holds, and `acc` would publish it as a lead
+  ([`acc_function_tracker.json`](../data/analysis/summaries/acc_function_tracker.json)). While moving, `acc` has 5 hard episodes against
   `fused`'s 8, and 22 mild against 27.
 - **Both reach the planner with fine range.** The followed car's range comes from the ACC distance in both
   (per-frame scatter 0.002-0.035 m against 0.1-2.8 m for the object-list range).

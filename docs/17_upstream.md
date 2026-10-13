@@ -123,12 +123,14 @@ The replay numbers below come from a hand-decoded version that decodes the same 
 identical) and reported every fifth card update. Reporting once per radar cycle instead gives the same results on every
 measure (hard 13 against 13, mild 32 against 30, unnecessary 19.3 against 19.2 s, missed 17.4 against 17.4 s; every
 route-bootstrap interval includes zero; `per_cycle_reporting` in the summary). When the frames stop, this file
-publishes nothing, as Toyota's other radars do. The object list is the
-tracker's raw state; the ACC target is its decision: one converged, in-path, moving target with a fine distance and a
-filtered speed. Each part of `ars510_radar.py` above rebuilds a piece of that decision:
-- the Kalman filter and the young-track factor rebuild the tracker's own speed filtering;
-- the age and speed-std gates rebuild "converged";
-- the path gates rebuild "in path";
+publishes nothing, as Toyota's other radars do. The ACC target is the output
+of the radar's own internal tracker: one converged, in-path target with a fine distance and a filtered speed. The object
+list is a separate, partial export that carries no range information into it
+([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)). Each part of `ars510_radar.py` above
+approximates a piece of that tracker's work from the object list:
+- the Kalman filter and the young-track factor approximate the tracker's own speed filtering;
+- the age and speed-std gates approximate "converged";
+- the path gates approximate "in path";
 - the far rule is the decision itself at range.
 
 Tried and set aside: one gate-free Kalman model over every object (`shared_speed`, `shared_range`; over speed with a traffic

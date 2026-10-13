@@ -188,6 +188,10 @@ common speed scale comes from T04.
 ## T08: stock ACC and additional target reports
 
 **Targets:** stock controller/selection, ACC lateral/in-path/tracker fields, 0x366/0x680 ([05](05_acc_target_and_support.md)).
+**Recorded so far:** 21 min on the owner's car and about 50 min on a second car without a filter board (highway following,
+city stops, one close cut-in). More stop-and-go and cut-ins under stock control, with the driver off the gas, add the most.
+A filter board in the radar's car-bus line forces two bits of the radar's 0x343 ([13](13_car_bus_messages.md#0x343-from-the-radar-)),
+so record with the board removed or note that it is fitted.
 
 1. Record 30–60 minutes with Toyota ACC available and openpilot longitudinal off, keeping normal logging. Verify
    original 0x343/344 and support reports reach the log; record any CAN filter/DSU and controller replacement.

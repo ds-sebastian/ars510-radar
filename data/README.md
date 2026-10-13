@@ -30,6 +30,7 @@ labels and relative times.
 | `brake_events/E*_*.csv` | | drive-A brake-event windows: replay ticks, radar lead track, camera pair |
 | `fault_injection.csv` | 82 | ghost / fault scenarios through radard and the planner |
 | `summary_owner_case.csv` | 476 | relative-time owner-drive O1 comparison under `fused` 2.0: summaries off / on, and captured vision; saved planner and lead outputs, anonymous lead T1 |
+| `acc_function_tracker.parquet` | 60.6k | second car: one 37 s curve (ACC target, matching summary, nearest object-list track, camera lead, 0x239 object-list flag; relative time) and 20,000-row samples of ACC range steps vs speed × cycle time and of summary / object-list range minus ACC; figure `acc_function_tracker` |
 | `lead_choice_cases.csv.gz` | 500 | two road moments for [docs/00](../docs/00_start_here.md#6-choosing-which-tracks-openpilot-sees) (`case`, relative `t`): planner request and published lead (range, radar flag) under vision only, `fused` 2.1 and 2.3 (2.4 asks the same), plus the camera lead range, the radar's ACC target range and ego speed; owner drives, anonymised |
 | `stats.json`, `STATS.md` | | descriptive statistics from `tools/compute_stats.py` |
 
