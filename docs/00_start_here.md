@@ -4,17 +4,17 @@ A guided tour from the radar's CAN frames to openpilot's planner, one figure per
 the topic doc that has the detail. Read this first; docs 01-17 are the reference. Terms in **bold** are in the
 [glossary](#glossary).
 
-Two install profiles turn the radar into openpilot radar points. The tour shows both side by side:
+Three install profiles turn the radar into openpilot radar points. The tour shows them side by side:
 
-| | `acc` (default) | `fused` (the all-tracks alternative) |
-|---|---|---|
-| publishes | the radar's ACC target (0x235 / 0x237) as one point | every settled object-list track, with one Kalman speed filter per track |
-| code | 33 code lines (50 in the file) and an 8-signal DBC (plus two rolling counters) | 187 code lines (the single-file openpilot version) |
-| other cars | from openpilot's camera match in radard | from the radar up to 60 m, from the camera beyond |
-| install | `install.py` (`--profile acc` to switch back) | `install.py --profile fused` |
+| | `acc` (default, opendbc-compatible) | `acc_summaries` (the main alternative) | `fused` (every radar car) |
+|---|---|---|---|
+| publishes | the radar's ACC target (0x235 / 0x237) as one point | the ACC target plus the radar's two nearest other moving cars (summaries 0x191-0x194) within 60 m | every settled object-list track, with one Kalman speed filter per track |
+| code | 33 code lines (50 in the file) and an 8-signal DBC (plus two rolling counters) | 53 code lines, no DBC | 187 code lines (the single-file openpilot version) |
+| other cars | from openpilot's camera match in radard | two from the radar, the rest from the camera | from the radar up to 60 m, from the camera beyond |
+| install | `install.py` (`--profile acc` to switch back) | `install.py --profile acc_summaries` | `install.py --profile fused` |
 
-Sections 1-3 describe the object list that `fused` decodes; section 4 describes the ACC target that `acc` publishes and
-`fused` also uses; sections 5-8 compare the two.
+Sections 1-3 describe the object list that `fused` decodes; section 4 describes the ACC target that `acc` and
+`acc_summaries` publish and `fused` also uses; sections 5-8 compare them.
 
 ![the parser's nine steps](img/analysis/guide_pipeline.png)
 
@@ -82,11 +82,15 @@ its own speed ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x
 
 More: [05 ACC target](05_acc_target_and_support.md), [12](12_kalman_filter.md#matching-the-radars-trackers-to-tracks).
 
-## 5. Two profiles: `acc` and the `fused` Kalman filter
+## 5. Three profiles: `acc`, `acc_summaries` and the `fused` Kalman filter
 
 **`acc`** publishes the radar's tracker output as sent: the tracker has already chosen, converged and filtered the one car Toyota's ACC follows.
 Its speed follows the slope of its own distance (best lag −0.06 s, gain 1.00; `acc_target_parser.json`), so the point goes to
 openpilot unfiltered. Every other car reaches the planner through the camera.
+
+**`acc_summaries`** adds the radar's two nearest other moving cars from the same tracker (the target summaries) within
+60 m, each with a speed from the slope of its last 8 ranges; a summary at the ACC car's position is not published twice
+([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 **`fused`** keeps the whole object list and estimates each car's speed over ground with one small Kalman filter per track.
 Each reading is weighted by its own uncertainty: the object list by 0.045 m/s × `240|7`, the ACC target by 0.13 m/s. A reading the
@@ -146,33 +150,34 @@ More: [12](12_kalman_filter.md#what-each-part-is-worth), [17](17_upstream.md#par
 
 ![profiles against vision only](img/analysis/profiles_vs_vision.png)
 
-Against openpilot with vision only, both profiles start braking within 0.04 s of the camera's first request on average
-(`fused` −0.01 s, `acc` −0.04 s), ask for ≤ −1 m/s² before the same 44.9 % of driver brakes (vision only 40.1 %), and ask
+Against openpilot with vision only, all three profiles start braking within 0.04 s of the camera's first request on average
+(`fused` −0.01 s, `acc` and `acc_summaries` −0.04 s), ask for ≤ −1 m/s² before the same 44.9 % of driver brakes (vision only 40.1 %), and ask
 for ≤ −1 m/s² braking only where vision only asks for it too (0 radar-only braking per hour; `raw`: 1.75). Table
 ([`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json), 20 held-out drives, 4.56 h with the driver
 controlling speed):
 
-| | vision only | `raw` | `fused` | `acc` |
-|---|---|---|---|---|
-| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s (−0.26 … −0.05) | −0.01 s (−0.06 … +0.03) | −0.04 s (−0.09 … +0.00) |
-| already asking ≤ −1 m/s² around the driver's brake | 40.1 % | 44.3 % | 44.9 % | 44.9 % |
-| braking only the radar asked for, per hour | 0 | 1.75 | 0 | 0 |
-| hard radar-only ticks (while moving) | 0 | 93 | 16 (16) | 66 (14) |
-| share of lead time on a radar lead | 0 | 86.6 % | 83.1 % | 84.8 % |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 347 | 318 |
+| | vision only | `raw` | `fused` | `acc` | `acc_summaries` |
+|---|---|---|---|---|---|
+| first request ≤ −0.5 m/s², mean vs vision (95 % CI) | — | −0.15 s (−0.26 … −0.05) | −0.01 s (−0.06 … +0.03) | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) |
+| already asking ≤ −1 m/s² around the driver's brake | 40.1 % | 44.3 % | 44.9 % | 44.9 % | 44.9 % |
+| braking only the radar asked for, per hour | 0 | 1.75 | 0 | 0 | 0 |
+| hard radar-only ticks (while moving) | 0 | 93 | 16 (16) | 66 (14) | 66 (14) |
+| share of lead time on a radar lead | 0 | 86.6 % | 83.1 % | 84.8 % | 86.8 % |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 347 | 318 | 363 |
 
-`acc`'s extra hard ticks are holds at standstill (52 of 66): a stopped car 0.7-4.8 m behind an object the radar sees
+The `acc` profiles' extra hard ticks are holds at standstill (52 of 66): a stopped car 0.7-4.8 m behind an object the radar sees
 and the camera leaves out of its lead (a wall, a fence), where radard's low-speed rule holds it stopped.
 
 Vision only has its own errors, so a second reference helps. openpilot's own planner fed a hindsight lead (the
 radar's ACC target and smoothed range, checked with the camera) gives the seconds of unnecessary and missed braking
 below. Its reference range comes mostly from the ACC target, which favours designs built on that target; hard ticks and onset are judged against the raw range, the camera and the driver.
 
-| unnecessary / missed braking, seconds (set) | vision only | `fused` | `acc` | source |
-|---|---|---|---|---|
-| owner road drives and a second car's two drives (7.65 h) | 10.2 / 10.3 | 3.3 / 8.2 | 6.0 / 10.8 | `oracle_reference.json` |
-| 27 replay drives (6.72 h) | 31.9 / 10.0 | 2.2 / 3.1 | 3.3 / 2.5 | `oracle_reference.json` |
-| every drive set incl. the second car's 8.8 h (16.9 moving h) | 89.2 / 30.8 | 21.0 / 16.4 | 19.2 / 17.4 | `acc_target_parser.json` |
+| unnecessary / missed braking, seconds (set) | vision only | `fused` | `acc` | `acc_summaries` | source |
+|---|---|---|---|---|---|
+| owner road drives and a second car's two drives (7.65 h) | 10.2 / 10.3 | 3.3 / 8.2 | 6.0 / 10.8 | 5.5 / 8.4 | `oracle_reference.json` |
+| 27 replay drives (6.72 h) | 31.9 / 10.0 | 2.2 / 3.1 | 3.3 / 2.5 | 3.3 / 2.5 | `oracle_reference.json` |
+| every drive set incl. the second car's 8.8 h (16.9 moving h) | 89.2 / 30.8 | 21.0 / 16.4 | 19.2 / 17.4 | 19.0 / 15.1 | `acc_target_parser.json`, `acc_summaries_profile.json` |
+| 26 held-out owner routes (2.56 moving h) | 40.1 / 9.9 | 11.4 / 3.6 | 7.7 / 5.3 | 9.2 / 7.6 | `acc_target_parser.json`, `acc_summaries_profile.json` |
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
@@ -186,9 +191,9 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | published radar lead − camera range, 20-70 m (`fused` 2.1, owner's car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
-| code size | `acc` 33 code lines + 8-signal DBC; `fused` 187 code lines | `acc_target_parser.json`, `openpilot_file_parts.json` |
+| code size | `acc` 33 code lines + 8-signal DBC; `acc_summaries` 53 code lines; `fused` 187 code lines | `acc_target_parser.json`, `acc_summaries_profile.json`, `openpilot_file_parts.json` |
 | every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
-| lead flips per moving hour, every drive set | `fused` 332, `acc` 302 | `acc_target_parser.json` |
+| lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 344 | `acc_target_parser.json`, `acc_summaries_profile.json` |
 
 ## How to read the evidence
 
@@ -218,7 +223,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | **target episode** | the radar planner asks for ≤ −1 m/s² while vision only asks for ≥ −0.3, for ≥ 0.3 s while moving |
 | **onset** | when braking starts with the radar compared with vision only (negative = earlier) |
 | **anticipation** | share of driver brake presses the planner was already braking for at ≤ −1 m/s² |
-| **`acc` / `fused` / `openpilot` / `raw`** | the default profile (the radar's ACC target alone) / the all-tracks Kalman profile / its single-file version / the unfiltered decode |
+| **`acc` / `acc_summaries` / `fused` / `openpilot` / `raw`** | the default profile (the radar's ACC target alone) / the main alternative (ACC target plus summary cars) / the all-tracks Kalman profile / its single-file version / the unfiltered decode |
 
 Figures: `tools/make_guide_figures.py` (guide_*.png), `tools/make_fused_figures.py`, `tools/make_analysis_figures.py`,
 `tools/make_jitter_figures.py` (jitter_*.png).

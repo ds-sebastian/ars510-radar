@@ -1,4 +1,4 @@
-"""Toyota / Continental ARS510 front radar (RAV4 2022+): research profile `acc_summaries`, `acc` plus the radar's target summaries.
+"""Toyota / Continental ARS510 front radar (RAV4 2022+): profile `acc_summaries`, `acc` plus the radar's target summaries.
 
 The radar's ACC target (0x235 / 0x237) is published as in `acc`. The target summaries add up to two more moving cars from
 the same tracker: range and lateral in 0x192 / 0x194, a pair code in 0x191 / 0x193 (trackId 32 + code). A summary within

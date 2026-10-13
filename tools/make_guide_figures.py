@@ -219,10 +219,10 @@ def parts_ledger() -> None:
 def oracle() -> None:
   """Unnecessary and missed braking against openpilot's planner on a hindsight lead (confident moments), two data sets."""
   O = json.loads((SUM / "oracle_reference.json").read_text())
-  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.5", "2.6", "acc"]),
-          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.5", "2.6", "acc"]))
-  names = {"vision": "vision only", "2.1": "2.1", "2.5": "2.5", "2.6": "2.6 (fused)", "acc": "acc (default, ACC target)"}
-  col = {"vision": VIS, "2.1": V21, "2.5": GRAY, "2.6": V23, "acc": S4}
+  sets = (("road drives, 2 cars (7.65 h)", O["confident"], ["vision", "2.1", "2.5", "2.6", "acc", "acc_summaries"]),
+          ("27 replay drives (6.72 h)", O["suite_34_drives"]["confident"], ["vision", "2.1", "2.5", "2.6", "acc", "acc_summaries"]))
+  names = {"vision": "vision only", "2.1": "2.1", "2.5": "2.5", "2.6": "2.6 (fused)", "acc": "acc (default, ACC target)", "acc_summaries": "acc_summaries (+ summary cars)"}
+  col = {"vision": VIS, "2.1": V21, "2.5": GRAY, "2.6": V23, "acc": S4, "acc_summaries": "#e87ba4"}
   fig, axs = plt.subplots(2, 2, figsize=(11.5, 6.6))
   for r, (label, C, vers) in enumerate(sets):
     for c, (kind, title) in enumerate((("unnecessary", "braked > 0.5 m/s² harder than needed"), ("missed", "missed braking the oracle asked for"))):
