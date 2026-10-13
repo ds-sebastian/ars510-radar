@@ -31,7 +31,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 **`acc_summaries`** (◐, experimental option) is `acc` plus up to two more cars from the radar's own tracker; see
 [below](#acc_summaries-acc-plus-the-summary-cars).
 
-Alternatives that were tried (`colored`, `shared_speed`, `shared_range`) are summarised in
+Alternatives that were tried (`shared_speed`, `shared_range` and other filter variants) are summarised in
 [12](12_kalman_filter.md#kalman-variants-tested) and [17](17_upstream.md#the-acc-target-alone--candidate). The legacy names `anchor` and `steady` select `fused`.
 
 ## `acc` and `fused` head to head
@@ -188,7 +188,7 @@ radard matches to the camera's lead through its distance and speed gates.
 ![which processing each profile applies](img/analysis/profile_layers.png)
 
 *Each row is one processing step; coloured cells are the steps a profile runs. Line counts are code lines of the
-fork build (`ars510/`); the summaries are a fork option. `acc` reads the ACC target in its whole file;
+fork build (`ars510/`). `acc` reads the ACC target in its whole file;
 the object-list steps belong to `raw` and `fused`.*
 
 - **`acc`** publishes the radar's ACC target: the one car the radar's own ACC function follows, already chosen,

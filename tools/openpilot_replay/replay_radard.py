@@ -45,7 +45,7 @@ PROFILES = {
     "raw": BASE_CONFIG,
     "fused": FUSED_CONFIG,
     # the Kalman filter on the object list alone, trackers' sigmas at 1e4 (docs/12 "What each part is worth")
-    "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4, summary_sigma_mps=1e4),
+    "fused_no_trackers": replace(FUSED_CONFIG, acc_sigma_mps=1e4),
 }
 SM_KEYS = ("carState", "controlsState", "selfdriveState", "vehicleParameters", "carControl")
 MAX_CAN_GAP_S = 2.0

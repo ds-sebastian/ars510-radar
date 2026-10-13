@@ -127,9 +127,8 @@ The code comes in two versions that drive identically:
   opendbc style, which is `fused` in one file (a test keeps it equal to `FUSED_CONFIG` point for point);
   [docs/17](docs/17_upstream.md#parts-of-the-openpilot-file) lists what each part costs and buys. The
   `acc` proposal is [`upstream/ars510_acc_target.py`](upstream/ars510_acc_target.py), 50 lines (33 code) with its
-  [DBC](upstream/toyota_tss2_ars510.dbc). The fork build also keeps the radar's target summaries and the track-ID
-  relink as options; `fused` drives the same with both switched off
-  ([docs/12](docs/12_kalman_filter.md#what-the-summaries-do)).
+  [DBC](upstream/toyota_tss2_ars510.dbc). The fork build also keeps the track-ID relink as an option; `fused` drives
+  the same with it switched off ([docs/12](docs/12_kalman_filter.md#what-each-part-is-worth)).
 
 | profile | install | what it does | use it for |
 |---|---|---|---|
@@ -141,7 +140,7 @@ The code comes in two versions that drive identically:
 
 ![which processing each profile applies](docs/img/analysis/profile_layers.png)
 
-Also tried, set aside: a colored-noise variant of `fused` (`--profile colored`) and two gate-free Kalman models over every object (`shared_speed`, `shared_range`). In replay, `colored` asks for 10 s more unnecessary braking than `fused` over 16.9 moving hours, and the gate-free models brake hard 7-21 times as often ([docs/12](docs/12_kalman_filter.md#kalman-variants-tested), [docs/17](docs/17_upstream.md#the-acc-target-alone--candidate)); the installer keeps them for research.
+Also tried, set aside: two gate-free Kalman models over every object (`shared_speed`, `shared_range`), which brake hard 7-21 times as often as `fused` in replay ([docs/17](docs/17_upstream.md#the-acc-target-alone--candidate)); the installer keeps them for research. Other filter variants that didn't help are listed in [docs/12](docs/12_kalman_filter.md#kalman-variants-tested).
 
 `anchor` and `steady` (earlier tuned profiles) install `fused`. Each profile against vision only, pros and cons,
 assumptions and a comparison with openpilot's other radar interfaces: [docs/11](docs/11_profiles_compared.md) and [docs/17](docs/17_upstream.md#compared-with-the-other-radar-interfaces-in-openpilot). The

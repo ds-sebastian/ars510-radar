@@ -133,7 +133,6 @@ def layers() -> None:
             ("ACC target: association", n(I._acc_target_match), (0, 1)),
             ("Kalman speed filter (σ from the radar)", n(I._fused_speed), (0, 1)),
             ("path gate (yaw rate)", path_gate_lines(), (0, 1)),
-            ("summaries (fork option, on in colored)", n(I._summary_update, I._summary_speed, I._summary_match), (0, 0, 0), ""),
             ("ACC target (0x235 / 0x237) as the only point", acc_lines(), (0, 0, 1), " (the whole acc file)")]
     rows = [r if len(r) == 4 else (*r[:2], (*r[2], 0), "") for r in rows]
     prof = ["raw", "fused", "acc (default)"]; colors = [GRAY, FUS, ACCP]
@@ -180,21 +179,13 @@ def vs_vision() -> None:
 
 def kalman_variants() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "kalman_variants.json").read_text())
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(13.0, 4.0), gridspec_kw=dict(width_ratios=[1, 1.25]))
+    fig, a1 = plt.subplots(figsize=(7.5, 4.0))
     names = list(S["bench_false_closing_pct"]); groups = ["heldout", "fresh", "owner"]
     y = np.arange(len(names))
     for k, (g, c) in enumerate(zip(groups, [FUS, S1, ANC])):
         a1.barh(y + (k - 1) * 0.26, [S["bench_false_closing_pct"][n][g] for n in names], 0.26, color=c, label=g.replace("heldout", "held-out"))
     a1.set_yticks(y, names); a1.invert_yaxis(); a1.set_xlabel("false closings (% of cycles, error < −2 m/s)")
-    a1.set_xlim(0, 11); a1.set_title("Offline bench: object list only, vs the hidden ACC target (ACC at 0.125 m/s per code)"); a1.legend(loc="lower right", fontsize=8)
-    T = S["trace"]; t = np.array(T["t"])
-    a2.plot(t, T["raw_vrel"], color=GRAY, lw=1, label="object-list vRel")
-    a2.plot(t, T["fused_vrel"], color=FUS, lw=2, label="fused (one speed state)")
-    a2.plot(t, T["colored_vrel"], color=S4, lw=2, ls="--", label="colored noise (speed + bias state)")
-    a2.set_xlabel("s"); a2.set_ylabel("vRel (m/s)")
-    ax = a2.twinx(); ax.plot(t, T["d"], color=INK2, lw=0.8, ls=":"); ax.set_ylabel("range (m, dotted)", color=INK2)
-    a2.set_title("A far false closing that recovers: the bias state lets go slowly")
-    a2.legend(loc="lower right", fontsize=8)
+    a1.set_xlim(0, 11); a1.set_title("Offline bench, object list only, vs the hidden ACC target"); a1.legend(loc="lower right", fontsize=8)
     fig.tight_layout(); fig.savefig(OUT / "kalman_variants.png", dpi=130); plt.close(fig)
 
 
@@ -203,7 +194,7 @@ def kalman_trace() -> None:
     class Traced(Ars510NativeRadarInterface):
         log: dict = {}
 
-        def _fused_speed(self, tid, time_s, obj, extra, v_ego=0.0):
+        def _fused_speed(self, tid, time_s, obj, extra):
             cfg = self.config
             sig = cfg.speed_sigma_per_code * max(obj.vel_unc_code, 1)
             if obj.age < cfg.young_age:
@@ -215,7 +206,7 @@ def kalman_trace() -> None:
                 p = st[2] + (cfg.lead_accel_std_mps2 * (time_s - st[0])) ** 2
                 for _, r in [(None, sig)] + list(extra):
                     k = p / (p + r * r); gains.append(k); p *= 1.0 - k
-            v, std = super()._fused_speed(tid, time_s, obj, extra, v_ego)
+            v, std = super()._fused_speed(tid, time_s, obj, extra)
             ego = self._fresh_ego_speed(time_s) or 0.0
             self.log.setdefault(tid, []).append(dict(t=time_s, raw=obj.v_long_ground * cfg.vground_scale - ego, v=v - ego,
                                                      std=std, sig=sig, n_extra=len(extra), gains=gains, d=obj.d_rel))
@@ -301,12 +292,11 @@ def kalman_justified() -> None:
     S = json.loads((REPO / "data" / "analysis" / "summaries" / "hard_braking_review.json").read_text())["by_run"]
     order = ["fused, ACC/summary units corrected", "fused", "fused - relink", "fused - summaries", "fused - S - L", "fused - range fusion", "fused - S - R - L",
              "fused - S - R - L - Y - G", "fused - ego scale", "fused - age 60", "fused - std gate", "fused - young factor",
-             "fused - ACC (summaries kept)", "fused - ACC - summaries", "colored", "tuned (anchor)"]
+             "fused - ACC (summaries kept)", "fused - ACC - summaries", "tuned (anchor)"]
     names = {"fused, ACC/summary units corrected": "fused 2.1 (with summaries)", "fused": "fused 2.0 (with summaries)",
              "fused - S - L": "2.0 − summaries − relink (the base of fused 2.6)",
              "fused - S - R - L": "2.0 − summaries − relink − range fusion", "fused - S - R - L - Y - G": "… − young factor − std gate",
-             "fused - ACC (summaries kept)": "2.0 − ACC target", "fused - ACC - summaries": "2.0 − ACC target − summaries",
-             "colored": "colored (experimental)", "tuned (anchor)": "tuned profile (anchor)"}
+             "fused - ACC (summaries kept)": "2.0 − ACC target", "fused - ACC - summaries": "2.0 − ACC target − summaries", "tuned (anchor)": "tuned profile (anchor)"}
     rows = [(names.get(k, k.replace("fused - ", "2.0 − ").replace(" - ", " − ")), S[k]) for k in order if k in S]
     y = np.arange(len(rows))
     fig, ax = plt.subplots(figsize=(11, 0.42 * len(rows) + 1.5))

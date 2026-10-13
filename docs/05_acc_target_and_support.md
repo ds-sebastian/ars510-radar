@@ -8,7 +8,7 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 |---|---|---|
 | ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` alone; `fused` as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
 | object list (0x80) | `raw` and `fused` | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
-| target summaries (0x191-0x194), 0x680 | analysis; a fork option (off in `fused`) | positions of the radar's internal tracker targets; sparse far-range witnesses |
+| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets; sparse far-range witnesses |
 
 ## The radar's ACC target (0x235 / 0x237)
 

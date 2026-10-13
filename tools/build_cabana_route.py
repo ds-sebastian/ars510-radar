@@ -46,7 +46,7 @@ OBJ_BASE, DERIVED_BASE, HEADER_ADDR, TRAILER_ADDR, SHELL_HDR, SHELL_BASE = 0x700
 OBJ_DLC, DERIVED_DLC, HEADER_DLC, TRAILER_DLC, SHELL_HDR_DLC, SHELL_DLC = 48, 16, 20, 8, 24, 12
 SHELL_CRC = 0x76B
 FUSED_CONFIG = replace(ALL_TRACKS_CONFIG, range_fusion_gain=0.1)
-KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0, summary_sigma_mps=0.0, acc_sigma_mps=0.3)
+KALMAN_CONFIG = replace(ALL_TRACKS_CONFIG, fused_speed_filter=True, publish_speed_std_mps=99.0, acc_sigma_mps=0.3)
 SETTLED_AGE = 60
 BIT_MAP = REPO / "data" / "reference" / "slot_bit_map.json"
 DBC_OUT = REPO / "dbc" / "ars510_objects_vbus.dbc"

@@ -32,10 +32,10 @@ Profiles (docs/08 has the details and replay numbers):
             needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
   openpilot fused in one file (upstream/ars510_radar.py, opendbc style), driving identically, points with trackId /
             dRel / yRel / vRel only. The all-tracks upstream alternative; the proposal is acc
-  Also tried, set aside (installable for research; docs/12, docs/17): colored (fused with a colored-noise state) and
-  shared_speed / shared_range (every object and the ACC target through one gate-free Kalman model)
+  Also tried, set aside (installable for research; docs/17): shared_speed / shared_range (every object and the ACC
+  target through one gate-free Kalman model)
 
-Legacy names are aliases: anchor/steady select fused, upstream selects openpilot,
+Legacy names are aliases: anchor/steady/colored select fused, upstream selects openpilot,
 and stock/default select raw. Every alias prints its selection.
 
 Without --profile, a reinstall keeps the profile installed before: the one in the installed interface file, or, when a
@@ -60,8 +60,8 @@ DEFAULT_PROFILE = "acc"
 STATE = Path(os.environ.get("ARS510_INSTALL_STATE", HERE / ".installed_profiles.json"))
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
-PROFILE_NAMES = ("acc", "acc_summaries", "fused", "openpilot", "raw", "colored", "shared_speed", "shared_range")
-LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
+PROFILE_NAMES = ("acc", "acc_summaries", "fused", "openpilot", "raw", "shared_speed", "shared_range")
+LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "colored": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ serves Cabana on a PC and stays in the repo
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
@@ -219,7 +219,8 @@ def main() -> int:
   args = ap.parse_args()
   if args.profile in LEGACY_NAMES:
     new = LEGACY_NAMES[args.profile]
-    retired = "the tuned profile was removed; " if new == "fused" else ""
+    retired = {"anchor": "the tuned profile was removed; ", "steady": "the tuned profile was removed; ",
+               "colored": "the colored-noise profile was removed; "}.get(args.profile, "")
     print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is '{DEFAULT_PROFILE}'")
     args.profile = new
   root = find_opendbc(args.openpilot)

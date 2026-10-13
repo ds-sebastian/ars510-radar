@@ -110,9 +110,9 @@ same drives.
 | `openpilot` | `fused` in one file ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([17](17_upstream.md#towards-an-upstream-comma-interface)) | driving the all-tracks upstream alternative |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison; velocity excursions reach the planner |
 
-Also tried and set aside: `colored` (`fused` with a colored-noise state) and the research files `shared_speed` / `shared_range`
-(every object and the ACC target through one gate-free Kalman model; 59 and 168 hard moving episodes against `fused`'s 8).
-In replay `colored` asks for 10 s more unnecessary braking than `fused` over 16.9 moving hours ([12](12_kalman_filter.md#kalman-variants-tested)); the installer keeps them.
+Also tried and set aside: the research files `shared_speed` / `shared_range` (every object and the ACC target through one
+gate-free Kalman model; 59 and 168 hard moving episodes against `fused`'s 8); the installer keeps them. Other filter
+variants: [12](12_kalman_filter.md#kalman-variants-tested).
 
 `--profile acc` hands the whole update to its standalone file (its own reporting
 cadence and error report; it also needs its DBC, which the installer copies to `opendbc/dbc/`), with the legacy point
@@ -149,7 +149,7 @@ What each setting does (examples and plots in [12](12_kalman_filter.md)):
 | `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: cuts 1.5 s range walks by about a third |
-| `fused_speed_filter` (σ per reading from `240\|7`, ACC target; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([12](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding; the summaries are an option, on in `colored` |
+| `fused_speed_filter` (σ per reading from `240\|7`, ACC target; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([12](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding |
 | `path_gate_m=2.5` | fused | beyond 15 m, withholds tracks other than the ACC target's that sit more than 2.5 m from the yaw-predicted path ([12](12_kalman_filter.md#path-gate)) |
 
 ## What radard does with radar points
