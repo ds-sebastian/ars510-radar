@@ -1,0 +1,213 @@
+{
+ "description": "Round-2 readings (2026-10-14): which speed and range are right, ACC target fields, 0x680, 0x196 bytes 4-7. Drives anonymised; numbers from the research workspace (exploratory unless stated).",
+ "speed_gain_standstill": {
+  "scope": "ego stopped, lead moving off; owner drives",
+  "acc_windows": 40,
+  "list_range_change_over_acc_range_change": {
+   "median": 0.98,
+   "pooled": 1.08,
+   "ci95": [
+    0.99,
+    1.18
+   ],
+   "original_can_check": 1.03
+  },
+  "acc_speed_integral_over_range_change": [
+   0.94,
+   0.99
+  ],
+  "list_speed_integral_over_acc_range_change": {
+   "pooled": 0.83,
+   "ci95": [
+    0.75,
+    0.91
+   ],
+   "original_can_check": 0.8
+  },
+  "list_tracks_ego_stopped": {
+   "n": 1046,
+   "list_speed_integral_over_own_range_change": 0.85,
+   "ci95": [
+    0.82,
+    0.89
+   ],
+   "by_range_m": {
+    "<20": 0.94,
+    "20-40": 0.9,
+    ">40": 0.8
+   }
+  },
+  "step_response_lt30m": {
+   "0.24s": 0.62,
+   "1s": 0.87,
+   "2s": 0.83,
+   "10s": 0.86
+  },
+  "division_by_0.86_heldout_rms_m_s": {
+   "<40m_raw": 0.61,
+   "<40m_divided": 0.69
+  }
+ },
+ "far_range_against_odometry": {
+  "scope": "approaches to stopped cars starting at 60-80 m, two cars, ego <= 16 m/s, 20 episodes; GNSS-scaled wheel odometry, 0.15 s output age",
+  "acc_distance_median_m": 0.12,
+  "acc_distance_iqr_m": [
+   -0.16,
+   0.4
+  ],
+  "acc_relative": 0.001,
+  "object_list_median_m": "-0.8 (anchored at the stop) to -3.1 (anchored at 30 m); first run -1.46",
+  "object_list_relative": "about -1 to -4 %",
+  "vision_lead_median_m": -2.48,
+  "vision_lead_relative": -0.03,
+  "independent_raw_check": {
+   "episodes": 26,
+   "acc_median_m": -0.15,
+   "acc_iqr_m": [
+    -0.28,
+    0.15
+   ],
+   "odometry": "carState vEgo, no GNSS scaling"
+  },
+  "note": "each stream anchored on itself: tests the range scale on stopped cars, not an absolute zero; list result is anchor-dependent"
+ },
+ "far_range_list_vs_acc": {
+  "relative_gap_beyond_45m_by_ego_speed": "-2 to -5 % at every ego speed 10-40 m/s, no step",
+  "trucks_class2": -0.021,
+  "cars_class1": -0.049,
+  "birth_range_split": "none (831 tracks from birth)"
+ },
+ "ego_speed_vs_gnss": {
+  "gnss_over_vego": {
+   "owner": 0.9991,
+   "second_car": 0.997,
+   "third_car": 1.0039
+  },
+  "b4_low_by": [
+   0.01,
+   0.014
+  ],
+  "acc_speed_unit_k_with_gnss_ego": [
+   0.996,
+   1.001
+  ]
+ },
+ "acc_lat_speed": {
+  "stationary_targets_slope_on_yaw_times_distance": [
+   -1.12,
+   -1.23
+  ],
+  "lat_dist_slope_over_lat_speed": [
+   0.98,
+   1.0
+  ],
+  "wrap_episodes": 16,
+  "wrap_cause": "crossing traffic 12.8-20 m/s, 14 of 16 at ego standstill",
+  "lever_arm_fit_m": 3.6
+ },
+ "acc_lat_dist_wrap": {
+  "scope": "every stored segment of three cars (38.2 h of radar cycles); wrap read from the check byte (residual 0x14)",
+  "active_cycles": 320,
+  "in_path_cycles": 227,
+  "episodes": 15,
+  "drives": 14,
+  "per_hour": {
+   "active": 8.4,
+   "in_path": 5.9
+  },
+  "episode_median_range_m": [
+   25,
+   79
+  ],
+  "episode_median_lateral_m": [
+   21.0,
+   42.7
+  ],
+  "ego_speed_m_s": [
+   0.0,
+   16.9
+  ],
+  "situation": "ego turning or at a junction; the radar marks some of these targets in-path",
+  "camera_lead_at_target": "none: modelV2 lead probability median 0.005-0.11 on 13 episodes; on the other two the model lead is a different car 3-5 m to the side",
+  "radard_lead_on_wrapped_target_cycles": 0,
+  "negative_side": "stops at -20.00 m (code 0)"
+ },
+ "acc_target_id": {
+  "same_track_return_same_id": "56/56",
+  "other_track_return_new_id": "23/23",
+  "id31_active_share": {
+   "owner": 0.017,
+   "second_car": 0.03,
+   "third_car": 0.031
+  },
+  "id31_scope": "active cycles over every stored segment (raw recheck); 0.028 on the owner atlas subset"
+ },
+ "obj680_is_track0": {
+  "owner": "2073/2073",
+  "second_car": "81/85",
+  "other_id_match_share": [
+   0.0008,
+   0.004
+  ],
+  "note": "same car whenever ID 0 (173/173 original-log recheck, 6/6 third car); ranges are a close copy (tight copy 171/173), few moving-vehicle frames"
+ },
+ "acc_class": {
+  "class3_cycles": 0,
+  "cycles_checked": 860000,
+  "class4_list_says_car": [
+   0.79,
+   0.95
+  ],
+  "class4_width_cm": [
+   120,
+   50
+  ],
+  "class5_lat_speed_median_m_s": 4.4
+ },
+ "a196_bytes_4_7": {
+  "reading": "byte6-byte4 / byte7-byte5 = lateral distance to left / right corridor edge",
+  "m_per_code": [
+   0.09,
+   0.1
+  ],
+  "edge_offset_m": [
+   1.0,
+   1.15
+  ],
+  "r2_owner": [
+   0.83,
+   0.87
+  ],
+  "r2_raw_recheck": [
+   0.69,
+   0.63
+  ],
+  "r2_second_car": [
+   0.18,
+   0.28
+  ],
+  "byte4_5_clip": 50,
+  "byte6_7_max": [
+   74,
+   80
+  ],
+  "note": "owner car only; fit does not transfer to the second car (R2 negative), lateral / TTC alternatives compete"
+ },
+ "check_23b": {
+  "form": "CRC-8 SAE J1850 over [0x00][counter][width u16]",
+  "frames": 354413
+ },
+ "range_output_age_vs_odometry": {
+  "scope": "21 braking approaches to stopped cars, original logs, ranges 3-60 m, carState odometry",
+  "acc_distance_s": 0.15,
+  "object_list_range_s": 0.09,
+  "paired_list_minus_acc_s": {
+   "median": -0.09,
+   "iqr": [
+    -0.26,
+    0.15
+   ]
+  },
+  "list_older_share": "8/21"
+ }
+}

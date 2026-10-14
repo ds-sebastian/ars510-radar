@@ -48,10 +48,17 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 - **Against the radar's own ACC distance** (◐). For the car the radar's ACC function follows, `dRel` agrees with the ACC
   distance ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)) below 30 m and reads progressively
   short beyond it: median −1 m at 30-50 m, −3 m at 50-70 m, −4 m at 70-80 m and −7 m at 80-100 m (2-3 %, 5 %, 5-6 % and 8 %; cars
-  more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 8-11 m at
+  more than large vehicles: −2 % for trucks, −5 % for cars beyond 60 m; the same at every ego speed from 10 to 40 m/s and
+  whatever range the track was born at), and about twice that on a second set of drives, with an interquartile spread of 8-11 m at
   60-100 m. openpilot's vision lead, a camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
-  at 30-100 m. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
+  at 30-100 m. **Against physical odometry the ACC distance is right (◐):** on 20 approaches to stopped cars that start at 60-80 m (two cars,
+  ego up to 16 m/s), the ACC distance follows GNSS-scaled wheel odometry to a median +0.12 m (+0.1 %, IQR −0.16 to +0.40 m;
+  −0.15 m on 26 episodes with plain wheel odometry), while the object list reads 0.8-3 m short and the vision lead
+  about 2.5 m short, depending on whether each stream is anchored at the stop or at 30 m
+  ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)). The comparison tests the range scale on
+  stopped cars (each stream anchored on itself), not an absolute zero. It points to the object list, not the ACC distance,
+  as the short one, and vision is not a far-range reference. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to
@@ -109,7 +116,11 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 
   A and B contain .15. These fits rest on the 1/16 m range scale and the GPS ego speed, so an error in either moves
   them too. Against the ACC target's distance slope, the object-list relative speed is 0.87 (IQR 0.77-0.96;
-  [05](05_acc_target_and_support.md#units-of-the-acc-target)).
+  [05](05_acc_target_and_support.md#units-of-the-acc-target)). **The low one is the object list (◐):** while ego stands
+  still and the lead moves off, both range channels see the same motion (object-list range change 0.98-1.03 × the ACC
+  distance change), the ACC speed integrates to 0.94-0.99 of it and the object-list speed to 0.80-0.86. The shortfall
+  holds from 1 s to 10 s after a change, so it is a gain, not a slow catch-up; dividing it out does not help, because it
+  also scales the noise ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
 - **Ego reference.** Toyota 0xB4 reads about 1-1.5% below GPS and wheel speed in the measured comparisons. Steady
   following against 0xB4 fits .149 m/s per code. The `raw` and `fused` object-list profiles use
   `vground_scale = .149 / .15`, a **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed (the
@@ -144,7 +155,10 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   they arrive. The delay is on the radar side: carState trails the raw wheel-speed frames by only 2-4 ms, and the IMU
   agrees. A speed comparison that uses the current ego speed reads about −0.15 × ego acceleration too high; with the lag
   taken into account the ACC target's speed unit (0.125 m/s per code) is exact within about 0.5 % (stationary targets
-  read 1.004 × ego speed). The
+  read 1.004 × ego speed). Against wheel odometry on 21 braking approaches to stopped cars, the ACC distance is 0.15 s old
+  as well, and the object-list range is no older (0.09 s median; [`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
+  openpilot's native form of this age is `CP.radarDelay` (radard adds the ego speed from that long ago to vRel); the same
+  re-reference of `acc`'s speed left braking unchanged in replay, so the profiles keep the default 0. The
   profiles publish the radar's values as sent; predicting them 0.2 s ahead brakes 0.03 s earlier but turns some moderate
   requests into firmer ones ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json),
   [`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)).
