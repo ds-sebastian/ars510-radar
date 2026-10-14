@@ -231,7 +231,7 @@ class 2 with 22:23:120 in every frame, and the object list's own class for a cla
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
 [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 
-**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`; the radar also sends `FF FF FF FF` for a single cycle inside a live track, 7 of about 756 k summary frames on two cars, which `parse_0x192` and `acc_summaries` skip):
+**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`; the radar also sends `FF FF FF FF` for a single cycle inside a live track, 7 of about 756 k summary frames on two cars; the top three bits of each 16-bit word are 0 on every valid frame, so `parse_0x192` and `acc_summaries` skip any word with one of them set, which catches that glitch):
 
 | bytes | field |
 |---|---|

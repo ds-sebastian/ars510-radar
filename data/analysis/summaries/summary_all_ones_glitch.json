@@ -190,5 +190,51 @@
    "guard_fires": 6,
    "rate": 5.65e-05
   }
+ },
+ "word_top3_bits_valid_frames": {
+  "owner": {
+   "r192": {
+    "rows": 366760,
+    "w1_top3": {
+     "0": 366760
+    },
+    "w2_top3": {
+     "0": 366760
+    },
+    "bytes4_7_nonzero_share": 0.0
+   },
+   "r194": {
+    "rows": 241410,
+    "w1_top3": {
+     "0": 241410
+    },
+    "w2_top3": {
+     "0": 241410
+    },
+    "bytes4_7_nonzero_share": 0.0
+   }
+  },
+  "second": {
+   "r192": {
+    "rows": 82996,
+    "w1_top3": {
+     "0": 82996
+    },
+    "w2_top3": {
+     "0": 82996
+    },
+    "bytes4_7_nonzero_share": 0.0
+   },
+   "r194": {
+    "rows": 65020,
+    "w1_top3": {
+     "0": 65020
+    },
+    "w2_top3": {
+     "0": 65020
+    },
+    "bytes4_7_nonzero_share": 0.0
+   }
+  }
  }
 }
