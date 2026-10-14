@@ -2356,5 +2356,47 @@
     }
    }
   }
+ },
+ "id85_prefix15_bits03": {
+  "owner": {
+   "b3": {
+    "n_flag": 98,
+    "own_cell": 8,
+    "p_own": 0.571,
+    "base_own": 0.0586,
+    "ratio_own": 9.7,
+    "ratio_other": 3.0,
+    "result": "pass"
+   },
+   "b0": {
+    "n_flag": 20,
+    "own_cell": 9,
+    "p_own": 0.25,
+    "base_own": 0.0375,
+    "ratio_own": 6.7,
+    "ratio_other": 2.5,
+    "result": "pass"
+   }
+  },
+  "second": {
+   "b3": {
+    "n_flag": 91,
+    "own_cell": 8,
+    "p_own": 0.363,
+    "base_own": 0.0303,
+    "ratio_own": 12.0,
+    "ratio_other": 1.8,
+    "result": "pass"
+   },
+   "b0": {
+    "n_flag": 73,
+    "own_cell": 9,
+    "p_own": 0.26,
+    "base_own": 0.0424,
+    "ratio_own": 6.1,
+    "ratio_other": 3.6,
+    "result": "pass"
+   }
+  }
  }
 }
