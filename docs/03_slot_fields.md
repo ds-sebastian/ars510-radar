@@ -133,7 +133,7 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 records): its lateral speed is three times the usual (median 0.68 against 0.23 m/s), the lane state changes within a second
 on 98 %, and the sign of the lateral speed matches the code on 92-98 %. A vehicle crossing the whole ego lane reads 2 then 4
 (left to right) or 5 then 3 (right to left), and the lane state before and after moves the same way. Values 2 and 5 are a
-radar-native cut-in flag. `NativeObject.lane_crossing_code`
+radar-native cut-in flag; the second car shows the same signs, lane states and order. `NativeObject.lane_crossing_code`
 ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `lane_crossing_120`).
 
 The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples; all 54,191 nonzero rows of the bundled drives,
