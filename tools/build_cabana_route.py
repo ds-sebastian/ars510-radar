@@ -92,7 +92,7 @@ SIGNAL_COMMENTS = {
     "UNK_224_7": "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.",
     "UNK_232_7": "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.",
     "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.",
-    "UNK_248_7": "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.",
+    "UNK_248_7": "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.",
     "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Keep all seven bits.",
     "UNK_256_8": "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.",
     "UNK_264_8": "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).",

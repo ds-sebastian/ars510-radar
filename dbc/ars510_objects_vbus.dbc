@@ -1856,7 +1856,7 @@ CM_ SG_ 1792 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1792 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1792 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1792 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1792 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1792 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1792 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1792 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -1919,7 +1919,7 @@ CM_ SG_ 1793 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1793 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1793 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1793 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1793 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1793 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1793 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1793 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -1982,7 +1982,7 @@ CM_ SG_ 1794 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1794 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1794 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1794 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1794 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1794 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1794 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1794 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2045,7 +2045,7 @@ CM_ SG_ 1795 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1795 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1795 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1795 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1795 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1795 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1795 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1795 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2108,7 +2108,7 @@ CM_ SG_ 1796 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1796 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1796 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1796 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1796 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1796 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1796 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1796 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2171,7 +2171,7 @@ CM_ SG_ 1797 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1797 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1797 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1797 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1797 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1797 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1797 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1797 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2234,7 +2234,7 @@ CM_ SG_ 1798 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1798 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1798 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1798 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1798 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1798 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1798 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1798 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2297,7 +2297,7 @@ CM_ SG_ 1799 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1799 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1799 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1799 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1799 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1799 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1799 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1799 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2360,7 +2360,7 @@ CM_ SG_ 1800 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1800 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1800 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1800 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1800 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1800 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1800 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1800 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2423,7 +2423,7 @@ CM_ SG_ 1801 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1801 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1801 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1801 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1801 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1801 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1801 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1801 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2486,7 +2486,7 @@ CM_ SG_ 1802 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1802 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1802 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1802 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1802 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1802 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1802 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1802 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2549,7 +2549,7 @@ CM_ SG_ 1803 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1803 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1803 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1803 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1803 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1803 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1803 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1803 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2612,7 +2612,7 @@ CM_ SG_ 1804 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1804 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1804 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1804 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1804 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1804 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1804 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1804 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2675,7 +2675,7 @@ CM_ SG_ 1805 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1805 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1805 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1805 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1805 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1805 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1805 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1805 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2738,7 +2738,7 @@ CM_ SG_ 1806 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1806 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1806 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1806 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1806 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1806 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1806 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1806 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2801,7 +2801,7 @@ CM_ SG_ 1807 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1807 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1807 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1807 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1807 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1807 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1807 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1807 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2864,7 +2864,7 @@ CM_ SG_ 1808 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1808 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1808 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1808 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1808 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1808 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1808 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1808 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2927,7 +2927,7 @@ CM_ SG_ 1809 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1809 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1809 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1809 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1809 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1809 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1809 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1809 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -2990,7 +2990,7 @@ CM_ SG_ 1810 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1810 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1810 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1810 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1810 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1810 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1810 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1810 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";
@@ -3053,7 +3053,7 @@ CM_ SG_ 1811 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m pe
 CM_ SG_ 1811 UNK_239_1 "Raw; often set near track birth.";
 CM_ SG_ 1811 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1811 CONST_247_1 "Constant in the captured data.";
-CM_ SG_ 1811 UNK_248_7 "Lateral velocity standard deviation (sigma vy), about 0.37 m/s per count.";
+CM_ SG_ 1811 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
 CM_ SG_ 1811 CONST_255_1 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_256_8 "Longitudinal-acceleration uncertainty (sigma ax candidate): grows with the spread between ALONG_LIKE_84 and the track's own speed slope (about 0.06-0.07 m/s^2 per code pooled); within a range band it grades that spread only within about 20 m.";
 CM_ SG_ 1811 UNK_264_8 "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).";

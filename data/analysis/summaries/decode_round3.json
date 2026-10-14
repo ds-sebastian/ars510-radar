@@ -1895,6 +1895,27 @@
     "p_b5_not_oncoming": 0.087,
     "pass_": true
    }
+  },
+  "independent_check": {
+   "sample": "300 random stored rlog segments, 0x33E frames with a 0x366 target, ACC target closing faster than 0.5 m/s",
+   "ttc_below_5_s": {
+    "rows": 1001,
+    "residual_median_s": 0.024,
+    "residual_iqr_s": [
+     -0.059,
+     0.083
+    ]
+   },
+   "ttc_below_3_s": {
+    "rows": 156,
+    "residual_median_s": 0.016,
+    "residual_iqr_s": [
+     -0.04,
+     0.077
+    ]
+   },
+   "saturated_0xfff_share_beyond_6_6_s": 0.8,
+   "note": "residual = (code - 29) / 625 - ACC range / closing speed; the low overall correlation comes from reports whose 0x366 target is not the ACC target"
   }
  },
  "sigma_256_self_consistency": {
