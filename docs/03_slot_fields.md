@@ -285,8 +285,9 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   [07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The `fused` profile uses it this way
   (`speed_sigma_per_code = 0.045`).
-- **The codes are σ-like, not variance-like:** against the ACC target, with each track's slow bias removed, the error
-  spread grows linearly with `224|7` (log-log slope 1.01) and `232|7` (0.79)
+- **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
+  all ranges grows linearly with `224|7` (log-log slope 1.01; `232|7` 0.79), but within a fixed range band (beyond 15 m)
+  it grows about as √code on both cars (0.51 / 0.59 on fresh drives), because code and error both grow with range
   ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
