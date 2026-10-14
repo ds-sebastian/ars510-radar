@@ -50,7 +50,7 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 
 | bits | field | coding |
 |---|---|---|
-| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; codes 442-506 (eight reports) fit `code − 512` and return `None` |
+| `16\|9` | relative speed | signed 9 bits: `(s − 155) × 0.5 km/h` with `s = code` below 256 and `code − 512` from 256 |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = idle target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = idle target, −16 = invalid (mostly a target beyond ±5 m) |
 | `32\|5` | target number | the ACC target's `TARGET_ID` on 98 % of reports (the rest are publication timing); `Target366.target_id` |
@@ -71,9 +71,15 @@ object-list track sit a median 4 m to the side, and their speeds correlate at 0.
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
 
-**High speed codes.** Eight reports have codes 442-506; five same-tail steps among them close at 20-28 m/s by their distances; subtracting 512 counts
-fits them (mean difference 2.9 m/s). The parser returns a speed for codes below 256, the domain the ACC target confirms
-([domain](../data/analysis/summaries/target_366_speed_domain.json)).
+**The speed is signed.** Over 2,645 consecutive reports of the same target (0.2 s apart, two cars) the report's own range
+slope equals the signed speed with slope 1.000 (r 0.92). The eight reports with codes 442-506 close at 20-28 m/s by their own
+range, as `code − 512` gives. They are oncoming cars, not the ACC target
+([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), [domain](../data/analysis/summaries/target_366_speed_domain.json)).
+
+**Without an ACC target the report carries other objects (◐).** Of 339 reports sent while the ACC target is idle, 43 % are
+oncoming (over-ground speed below −2 m/s) and 43 % stationary; 3 % move in ego's direction, and 16 % carry a target number the
+ACC target has within 10 s. With an ACC target the report is that target (98 %). It reads as the car-bus collision-target
+report: the ACC target when there is one, otherwise a stationary or oncoming object; the selection rule is not known.
 
 It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are raw speed / range-dependent flags, and
 the low three bits of byte 5 are constant. The profiles read the same target from the 50 Hz ACC target frames.

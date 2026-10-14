@@ -27,7 +27,7 @@ from this radar's own data.
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
-| `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by about 0.5 s | ◐ field; ○ scale |
+| `84\|10` | **ax over ground**, filtered | `(code − 510.3) × ≈ 0.075` m/s² with ego stopped (0.055-0.09 on two cars); follows the track's own speed by about 0.3 s | ◐ field; ◐ scale with ego stopped, ○ moving |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
@@ -241,7 +241,7 @@ coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`
 | distance, lateral position | `d_rel`, `y_rel` | `32\|12`, `44\|12` |
 | speed over ground (minus ego speed = relative speed) | `v_long_ground`, `vel_code` | `64\|10` |
 | lateral speed | `v_lat_ground`, `v_lat_code` | `74\|10` |
-| acceleration (filtered, raw code; about 0.04 m/s² per code) | `accel_like_code` | `84\|10` |
+| acceleration (filtered, raw code; about 0.075 m/s² per code with ego stopped) | `accel_like_code` | `84\|10` |
 | tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
 | existence probability | `existence_pct` | `16\|8` |
 | secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
@@ -278,6 +278,9 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   [07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The `fused` profile uses it this way
   (`speed_sigma_per_code = 0.045`).
+- **The codes are σ-like, not variance-like:** against the ACC target, with each track's slow bias removed, the error
+  spread grows linearly with `224|7` (log-log slope 1.01) and `232|7` (0.79)
+  ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
   range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the

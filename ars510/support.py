@@ -318,8 +318,8 @@ class Target366:
 
     @property
     def v_rel(self) -> float | None:
-        """Nominal relative speed for codes below 256 (0.5 km/h per code, zero 155); None from 256 (docs/13)."""
-        return (self.speed_code - 155) * 5 / 36 if self.speed_code < 256 else None
+        """Relative speed: the 9 bits are signed (codes from 256 are code - 512), 0.5 km/h per code, zero 155 (docs/13)."""
+        return ((self.speed_code - 512 if self.speed_code >= 256 else self.speed_code) - 155) * 5 / 36
 
     @property
     def d_rel(self) -> float:
