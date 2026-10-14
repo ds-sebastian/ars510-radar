@@ -1879,6 +1879,22 @@
     "result": "pass",
     "p_mid_10_20": 0.75
    }
+  },
+  "byte2_bit5_class6_heldout": {
+   "owner": {
+    "n_class6": 75,
+    "p_b5_given_class6": 1.0,
+    "n_not_oncoming": 3772,
+    "p_b5_not_oncoming": 0.0938,
+    "pass_": true
+   },
+   "second": {
+    "n_class6": 904,
+    "p_b5_given_class6": 0.9989,
+    "n_not_oncoming": 10495,
+    "p_b5_not_oncoming": 0.087,
+    "pass_": true
+   }
   }
  },
  "sigma_256_self_consistency": {
