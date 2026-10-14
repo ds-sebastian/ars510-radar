@@ -60,11 +60,11 @@
    "upstream": "keep for lead stability; droppable at that cost"
   },
   {
-   "part": "ego-speed alignment (0.149 m/s per code instead of the DBC 0.15)",
+   "part": "ego-speed alignment (0xB4 / 0.9865 = carState vEgo; DBC factor 0.15)",
    "code_lines": 0,
-   "since": "1.x",
-   "evidence": "fused_filter.json part_removed_34_drives",
-   "without": "braking neutral (onset +12 ms); folded into the decode factor, so it costs 0 lines",
+   "since": "2.6.1",
+   "evidence": "fused_filter.json part_removed_34_drives ; ego_reference.json",
+   "without": "braking neutral (onset +12 ms); one constant where 0xB4 is read, so it costs 0 lines",
    "upstream": "keep (0 lines)"
   },
   {

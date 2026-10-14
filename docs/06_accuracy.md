@@ -123,12 +123,15 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   distance change), the ACC speed integrates to 0.94-0.99 of it and the object-list speed to 0.80-0.86. The shortfall
   holds from 1 s to 10 s after a change, so it is a gain, not a slow catch-up; dividing it out does not help, because it
   also scales the noise ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
-- **Ego reference.** Toyota 0xB4 reads about 1-1.5% below GPS and wheel speed in the measured comparisons. Steady
-  following against 0xB4 fits .149 m/s per code. The `raw` and `fused` object-list profiles use
-  `vground_scale = .149 / .15`, a **0.667%** reduction of decoded ground velocity, then subtract 0xB4 ego speed (the
-  openpilot file, `fused`, decodes at 0.149 directly). This is an empirical profile setting on top of the nominal
-  0.15 decoder unit. Against the ACC target's speed it moves the pooled RMS 1.302 → 1.297 m/s (below 40 m 0.758 → 0.760;
-  [comparison](../data/analysis/summaries/native_speed_alignment.json)); the ACC target is a correlated radar witness.
+- **Ego reference.** Toyota 0xB4 reads 1.35 % below carState vEgo on the owner car (0.987 and 0.991 on two more cars),
+  constant over speed, and 1.0-1.4 % below GNSS; carState vEgo is within 0.1-0.4 % of GNSS. The `raw` and `fused`
+  object-list profiles decode the radar's ground speed at the nominal 0.15 m/s per code and subtract 0xB4 / 0.9865
+  (`ego_speed_scale`), so the subtracted ego is on the scale of the vEgo that radard adds back. Earlier releases instead
+  read the radar speed at an empirical 0.149 m/s per code against unscaled 0xB4, which compensates the same deficit in steady
+  following. The two forms drive the same in replay (`fused`: hard 8 and mild 27 episodes either way, unnecessary braking
+  −0.01 s per moving hour, 95 % CI −0.12…+0.10, 16.9 moving h; [`ego_reference.json`](../data/analysis/summaries/ego_reference.json)). Against the ACC target's speed the
+  empirical 0.149 moved the pooled RMS 1.302 → 1.297 m/s ([comparison](../data/analysis/summaries/native_speed_alignment.json));
+  the ACC target is a correlated radar witness.
   The `acc` profile reads the ACC target's own 0.125 m/s unit, which is already relative to the car.
 
 - **Object list against the camera** (closing speed from box growth over 2 s, all camera-paired samples):
@@ -177,7 +180,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   The growth with range is the same: object-list fast noise is 0.09 / 0.16 / 0.21 m/s at 20-50 / 50-80 / ≥ 80 m on the
   second unit. At 50-80 m the second unit's object list reads more closing than the owner's (−0.55 against −0.26 m/s).
   The object-list minus ACC difference grows with ego speed (−0.11 m/s at 8-15 m/s, −0.24 m/s at 30-40 m/s), consistent
-  with the 0.149/0.15 ego alignment above. These data fit a scale and an offset equally well. One set of constants
+  with 0xB4 reading low (the ego reference above). These data fit a scale and an offset equally well. One set of constants
   serves both units ([`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json)).
 
 ### Encoding constants and motion geometry
@@ -239,7 +242,7 @@ for the object-list range of the same car ([`acc_fields.json`](../data/analysis/
 | distance unit | 0.0625 m per code | 0.025 m per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
 | distance jitter per cycle, same car | 0.94 m | 0.04 m | [`acc_fields.json`](../data/analysis/summaries/acc_fields.json) |
 | distance against the ACC distance, 30-50 / 50-70 / 70-80 / 80-100 m | median −1 / −3 / −4 / −7 m | 0 (reference); openpilot's vision lead within 1 % | [`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json) |
-| speed unit | 0.15 m/s per code (0.149 in the profiles) | 0.125 m/s per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
+| speed unit | 0.15 m/s per code (the profiles subtract 0xB4 on the vEgo scale) | 0.125 m/s per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
 | fast speed noise, owner / second car | 0.12 / 0.11 m/s | 0.025 / 0.027 m/s | [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json) |
 | speed against the range slope of the same car, 1,862 windows | 0.87 (IQR 0.77-0.96) | 0.99 (IQR 0.97-1.00) | [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json) |
 | closer to the range slope in 62 tail episodes | 24 % (median error 2.5 m/s) | 76 % (1.2 m/s) | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json) |

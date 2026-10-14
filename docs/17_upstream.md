@@ -105,7 +105,7 @@ on the 27 replay drives, and its status for an upstream PR. The `acc` file has 3
 | speed-std publication gate | 2 | 2.0 | further-drive hard ticks 2 -> 8; second car: see the young-track factor | keep |
 | age-60 publication gate | 2 | 1.0 | radar-only braking x3 (age 6); age 40: further-drive hard ticks 1 -> 9; age 80: more missed braking vs the oracle (3.3 -> 3.7 s on 2.3) | keep |
 | range fusion (incl. ACC distance as the followed car's range) | 9 | 2.0 (ACC distance 2.1) | braking neutral; lead flips +39 %, target episodes 4 -> 6; second car with the far rule: braking neutral, flips +11 % | keep for lead stability; droppable at that cost |
-| ego-speed alignment (0.149 m/s per code instead of the DBC 0.15) | 0 | 1.x | braking neutral (onset +12 ms); folded into the decode factor, so it costs 0 lines | keep (0 lines) |
+| ego-speed alignment (0xB4 / 0.9865 = carState vEgo; DBC factor 0.15) | 0 | 2.6.1 | braking neutral (onset +12 ms); one constant where 0xB4 is read, so it costs 0 lines | keep (0 lines) |
 | state pruning | 7 | 2.0 | state grows with every track id seen | required |
 | path gate (yaw rate) | 6 | 2.3 (2.2 from 60 m) | back to 2.1 (removed with the 0.4 x match): held-out target episodes 3 -> 4, owner 0 -> 1, further hard ticks 1 -> 2; two road false brakes; second car with the far rule: braking neutral, flips +7 % | candidate: keep, or move into radard as a lateral gate |
 | far cars: only the ACC target's track beyond 60 m | 2 | 2.6 | 2.5 over all four drive sets (16.9 moving h): oracle unnecessary braking 21.6 -> 28.5 s, lead flips 334 -> 418 /h, second car 0 -> 1 hard; with it a fast far closing waits ~1 s for the radar to make the car its ACC target | keep |

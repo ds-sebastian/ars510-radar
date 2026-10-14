@@ -150,7 +150,7 @@ What each setting does (examples and plots in [12](12_kalman_filter.md)):
 |---|---|---|
 | `min_publish_age=60` | all | a track is published after ~3.6 s, once range and velocity have converged |
 | `relink_max_gap_s=3.5` | raw | a lost and re-found track keeps its ID; with the speed filter the driving is the same on 27 drives (same braking counts; lead switches 1,770 vs 1,772), so `fused` leaves it off |
-| `vground_scale=0.149/0.15`, `drop_unresolved_vrel` | all | ego-speed alignment against Toyota 0xB4; points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
+| `ego_speed_scale=1/0.9865`, `drop_unresolved_vrel` | all | Toyota 0xB4 ego speed put on the carState vEgo scale (0xB4 reads 1.35 % low); points only with a fresh ego speed (a NaN would stay in radard's filter for good) |
 | `drop_saturated_codes` | raw | withholds the invalid velocity code 1023/0 and restarts the track ID afterwards (the filter's robust update absorbs it in `fused`) |
 | `range_fusion_gain=0.1` | fused | predicts dRel with vRel and corrects 10% toward the measurement: cuts 1.5 s range walks by about a third |
 | `fused_speed_filter` (σ per reading from `240\|7`, ACC target; lead acceleration 1.5 m/s²; 3σ clamp; first publication at speed std ≤ 0.75 m/s) | fused | one Kalman speed filter per track ([12](12_kalman_filter.md#the-model)); the ACC target is associated by position and the association survives the target's range sliding |

@@ -56,11 +56,11 @@ class NativeInterfaceConfig:
     # this many seconds if it starts where that track predicts and the match is one-to-one. 0 disables.
     # Requires min_publish_age >= RELINK_MIN_PUBLISH_AGE so the lost ID has ended (IDs stay unique).
     relink_max_gap_s: float = 0.0
-    # Multiplies the decoded over-ground velocity. Against Toyota 0xB4, steady following reads 0.149 m/s/code
-    # instead of nominal 0.150 in the original fit. This empirical 0.667% profile setting is
-    # separate from physical calibration and the ~1-1.5% discrepancy between ego references (docs/06).
-    # Use 1.0 with a carState.vEgo or GPS ego reference.
+    # Multiplies the decoded over-ground velocity (nominal 0.15 m/s per code). The profiles keep 1.0.
     vground_scale: float = 1.0
+    # Multiplies the Toyota 0xB4 ego speed. 0xB4 reads 1.35 % below carState.vEgo, the wheel-speed ego that radard adds
+    # back to vRel (and within 0.1-0.4 % of GNSS); B4_TO_VEGO puts the subtracted ego on that scale (docs/06).
+    ego_speed_scale: float = 1.0
     # Withhold points whose vRel rests on a stale ego speed.
     drop_unresolved_vrel: bool = False
     # Velocity-aided range: predict dRel with vRel, correct toward measured dRel with this gain (0 disables).
@@ -124,11 +124,14 @@ class NativeInterfaceConfig:
     publish_speed_std_mps: float = 0.75
 
 
+# Toyota 0xB4 against carState.vEgo: 0.9865 on the owner car (0.987 / 0.991 on two more cars), constant over speed (docs/06).
+B4_TO_VEGO = 1 / 0.9865
+
 # Every valid track, radar's own IDs: the decode-level view.
 ALL_TRACKS_CONFIG = NativeInterfaceConfig(min_publish_age=1, relink_max_gap_s=0.0)
 # The unfiltered radar decode with only the validity rules radard needs: the "raw" install profile (docs/08).
 BASE_CONFIG = NativeInterfaceConfig(
-    min_publish_age=60, relink_max_gap_s=3.5, vground_scale=0.149 / 0.15, drop_unresolved_vrel=True,
+    min_publish_age=60, relink_max_gap_s=3.5, ego_speed_scale=B4_TO_VEGO, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
 # The `fused` install profile (docs/12, docs/11; the default is `acc`): the base decode plus range fusion and one uncertainty-weighted speed
@@ -222,7 +225,7 @@ class Ars510NativeRadarInterface:
         if bus == self.config.ego_speed_bus and addr == TOYOTA_SPEED_ADDR:
             v = parse_toyota_speed_mps(bytes(data))
             if v is not None:
-                self.set_ego_speed(v, time_s)
+                self.set_ego_speed(v * self.config.ego_speed_scale, time_s)
             return None
         if bus == self.config.radar_bus and addr in (ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR):
             data = bytes(data)

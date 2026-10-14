@@ -242,7 +242,8 @@ bytes and a CRC32. Each slot is one little-endian bit field:
 | class | `163\|3` | 1 new, 2 car, 3 large vehicle, 4 pedestrian, 5 cyclist / person (○), 6 two-wheeler |
 
 Scales and zero points are nominal ([06](docs/06_accuracy.md#encoding-constants-and-motion-geometry)). The driving
-profiles multiply ground speed by `0.149 / 0.15` before subtracting Toyota 0xB4 ego speed. Every field:
+profiles decode ground speed at the DBC's 0.15 m/s per code and subtract Toyota's 0xB4 ego speed scaled to carState vEgo (0xB4 reads
+1.35 % low). Every field:
 [docs/03](docs/03_slot_fields.md).
 
 ## Documentation

@@ -240,8 +240,8 @@ def main() -> int:
   d_tol = 1e-3 if gain == 0 else 2.5
   check(abs(p.dRel - 40.0) < d_tol and abs(p.yRel - 1.5) < 1e-3,
         f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f}; profile fusion gain {gain})")
-  # vRel = v_ground * 0.149/0.15 - v_ego (0xB4 reference correction)
-  exp = (round(510.5 + 20.0 / 0.15 + 0.5) - 510.5) * 0.15 * 0.149 / 0.15 - 18.0
+  # vRel = v_ground - v_ego, with the 0xB4 ego speed on the carState vEgo scale (0xB4 reads 1.35 % low)
+  exp = (round(510.5 + 20.0 / 0.15 + 0.5) - 510.5) * 0.15 - 18.0 / 0.9865
   check(abs(p.vRel - exp) < 1e-3, f"vRel = over-ground velocity - ego speed (got {p.vRel:.3f}, want {exp:.3f})")
   check(len({q.trackId for q in pts}) == 1, "trackId stable across records")
   check(all(not any(o.errors.to_dict().values()) for o in outs), "no error flags while records arrive")

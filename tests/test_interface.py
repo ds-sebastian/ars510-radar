@@ -151,12 +151,12 @@ def test_openpilot_profile_holds_settling_tracks_and_relinks() -> None:
     assert ALL_TRACKS_CONFIG.min_publish_age == 1 and ALL_TRACKS_CONFIG.relink_max_gap_s == 0
 
 
-def test_openpilot_profile_applies_the_measured_velocity_scale() -> None:
-    assert BASE_CONFIG.vground_scale == pytest.approx(0.149 / 0.15)
-    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(vground_scale=0.149 / 0.15))
+def test_profiles_put_the_0xb4_ego_on_the_vego_scale() -> None:
+    assert BASE_CONFIG.vground_scale == 1.0 and BASE_CONFIG.ego_speed_scale == pytest.approx(1 / 0.9865)
+    iface = Ars510NativeRadarInterface(NativeInterfaceConfig(ego_speed_scale=1 / 0.9865))
     rec = record({3: slot_bytes(r_code=600, lat_code=2048, vel_code=int(510.5 + 100), age=40)})
     (p,) = iface.update_many([speed_frame(0.0, 20.0)] + frames(rec, 0.01))[0]["radarData"]["points"]
-    assert p["vRel"] == pytest.approx(0.149 * 99.5 - 20.0, abs=0.01)
+    assert p["vRel"] == pytest.approx(0.15 * 99.5 - 20.0 / 0.9865, abs=0.01)
 
 
 class TestRangeFusionAndUnresolvedVrel:
@@ -215,8 +215,7 @@ def test_acc_target_decodes_round_trip() -> None:
     assert x == pytest.approx(41.7, abs=0.02) and y == pytest.approx(1.2, abs=0.01)
 
 
-FUSED_ACC = replace(FUSED_CONFIG, min_publish_age=1, relink_max_gap_s=0.0, range_fusion_gain=0.0, publish_speed_std_mps=99.0,
-                    vground_scale=1.0)
+FUSED_ACC = replace(FUSED_CONFIG, min_publish_age=1, relink_max_gap_s=0.0, range_fusion_gain=0.0, publish_speed_std_mps=99.0)
 
 
 def test_acc_target_reading_pulls_only_the_matched_object() -> None:
@@ -232,7 +231,7 @@ def test_acc_target_reading_pulls_only_the_matched_object() -> None:
                                   age_cycles=80 + k, vel_uncertainty_candidate=40) for dy in (0, 240))
         frames += [speed_frame(t, 10.0)] + _acc_frames(t + 0.005, 0.0, 40.0, 0.0) + frames_(record({0: lead, 1: side}), t + 0.01)
     pts = {round(p["yRel"]): p for p in iface.update_many(frames)[-1]["radarData"]["points"]}
-    native = (round(510.5 + 4.0 / 0.15) - 510.5) * 0.15 - 10.0
+    native = (round(510.5 + 4.0 / 0.15) - 510.5) * 0.15 - 10.0 * cfg.ego_speed_scale
     assert pts[0]["vRel"] > native + 4  # the matched lead follows the ACC target (0.0), not the -6 m/s glitch
     assert pts[4]["vRel"] == pytest.approx(native, abs=1e-6)  # the side car is untouched
     assert iface._acc_assoc[0] is not None
@@ -333,7 +332,7 @@ def test_idle_acc_cannot_pull_a_real_closing_object():
               (0.001, 1, 0x235, bytes.fromhex("000164800B2400FF")),
               (0.001, 1, 0x237, bytes.fromhex("0000003E80000000"))] + frames(rec, 0.01)
     (point,) = iface.update_many(inputs)[0]["radarData"]["points"]
-    assert point["vRel"] == pytest.approx((537 - 510.5) * .15 - 10.)
+    assert point["vRel"] == pytest.approx((537 - 510.5) * .15 - 10. * FUSED_ACC.ego_speed_scale)
     assert point["dRel"] == 10.0 and iface._acc_assoc is None
 
 

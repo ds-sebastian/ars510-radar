@@ -1,0 +1,58 @@
+{
+ "description": "Ego reference for the object-list profiles: Toyota 0xB4 against carState vEgo and GNSS, and the replay of the vEgo-scale form against the earlier empirical 0.149 m/s per code. Drives anonymised.",
+ "b4_over_vego": {
+  "car_A": 0.9865,
+  "car_B": 0.9872,
+  "car_C": 0.9905,
+  "note": "constant over speed"
+ },
+ "gnss_over_b4": {
+  "car_A": 1.0128,
+  "car_B": 1.01,
+  "car_C": 1.0135,
+  "note": "grows from about 0.9 % at 5-10 m/s to 1.4 % at 35-45 m/s"
+ },
+ "gnss_over_vego_steady_straight": {
+  "car_A": 0.9991,
+  "car_B": 0.997,
+  "car_C": 1.0039
+ },
+ "replay": {
+  "what": "fused 2.6 (0.149 m/s per code, unscaled 0xB4) vs the same with nominal 0.15 and 0xB4 / 0.9865, fast suite: 278 six-segment chunks, 22.8 h, 16.9 moving h (27 replay drives, owner road, second car, fresh), unchanged pinned openpilot; route-block bootstrap",
+  "fused_2_6": {
+   "hard_episodes": 8,
+   "hard_ticks": 16,
+   "mild": 27,
+   "unnecessary_s": 21.0,
+   "missed_s": 16.4,
+   "onset_vs_vision_s": -0.01
+  },
+  "vego_scale_form": {
+   "hard_episodes": 8,
+   "hard_ticks": 16,
+   "mild": 27,
+   "unnecessary_s": 20.8,
+   "missed_s": 16.5,
+   "onset_vs_vision_s": -0.011
+  },
+  "difference_per_moving_h_ci95": {
+   "hard": [
+    0.0,
+    0.0
+   ],
+   "mild": [
+    0.0,
+    0.0
+   ],
+   "unnecessary_s": [
+    -0.121,
+    0.102
+   ],
+   "unnecessary_s_point": -0.012,
+   "missed_s": [
+    0.0,
+    0.008
+   ]
+  }
+ }
+}
