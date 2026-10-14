@@ -149,6 +149,12 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
   also feeds the radar its lane curves (0x85); a drive with the camera covered tests the rest
   ([10](10_research_directions.md)). The interface uses the target as the radar's own ACC target: `acc` publishes it
   alone, `fused` associates it with an object-list track by position.
+- **The radar acquires a moving target only within max(80 m, about 4 s × ego speed) (◐, owner car):** of 430 moving acquisitions the
+  farthest are 78-80 m below 20 m/s, 100 m at 20-25, 111 m at 25-30 and 129 m at 30-40 m/s; 0.2 % lie beyond max(80 m, 4 s × vEgo).
+  The limit is on acquisition, not on keeping a target: in-lane camera leads beyond 80 m are covered 78-90 % inside it and 32-53 %
+  outside it (targets taken nearer and kept as they pull away). Below 20 m/s a lead beyond 80 m is the ACC target only if it was
+  acquired nearer; otherwise only vision supplies it (`acc_summaries` publishes summaries within 60 m). With cruise off the same limit
+  holds (1 of 277 acquisitions beyond it, 0 of 153 with cruise engaged) ([summary](../data/analysis/summaries/acc_horizon_and_flips.json)).
 
 ![sender clock](img/analysis/acc_sender_clock.png)
 
@@ -222,18 +228,22 @@ When a summary and the ACC target describe the same car, the summary range is th
 
 | bits (LE) | field |
 |---|---|
-| `1\|7` | score: 91-100 active, 127 idle |
+| `1\|7` | score: 91-99 on a young target, then 100; 127 idle |
 | `9\|7` | target age in cycles, saturates at 126 |
-| `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames |
+| `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames. Not the ACC `TARGET_ID` (equal on 1-9 % of frames where both describe the same car), but kept when the car becomes the ACC target |
 | `17\|7` | 100 while a target is present |
 | `34\|6`, `49\|7`, `56\|8` | **class template** in 0.1 m: width, a height-like size and length. 18:15:45 for cars, 22:23:120 for trucks |
-| `43\|5` | counter that grows with target age and saturates at 30 (about 20 at age 10-20) |
+| `43\|5` | track-maturity counter: median 14 at age 5-10 cycles, 20 at 10-15, 27-28 at 25-40, then 30 (on 85-89 % of frames); not higher for in-lane cars |
 
 The template is the target's class: when the ACC target is this summary target, 0x239 reports class 1 with 18:15:45 and
 class 2 with 22:23:120 in every frame, and the object list's own class for a class-2 target is "large vehicle" on 92 % of
 20,394 matched frames ([`decode_claim_sources.json`](../data/analysis/summaries/decode_claim_sources.json)). Most active frames use 18:15:45 or 22:23:120 (607,999 of 608,186); the remaining 187 frames contain
 28 further tuples such as 25:15:20.
-`support.parse_0x191` returns score, age, code, the template in metres and the counter.
+`support.parse_0x191` returns score, age, code, the template in metres and the counter. Byte 2 (`17|7` = 100 with bit 16 clear) is 200 on all but one active frame of both cars.
+Score, counter and age do not say which car the radar will pick next: for "this summary car becomes the ACC target within 3 s" they score
+AUC 0.37-0.49 on both cars (young targets are picked slightly more often, consistent with cut-ins); of the fields tested only the lateral
+position separates (0.68-0.75)
+([summary](../data/analysis/summaries/acc_horizon_and_flips.json)).
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
 [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 

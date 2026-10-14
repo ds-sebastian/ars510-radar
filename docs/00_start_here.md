@@ -195,6 +195,13 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
 | lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 344 | `acc_target_parser.json`, `acc_summaries_profile.json` |
 
+A flip is radard switching between a radar-backed and a vision-only lead. About 80 % of `acc`'s flips (241 per moving hour) are radard's
+distance check (radar within the larger of 25 % and 5 m of the camera lead) failing and recovering. On 70 % of those the ACC target is
+within 1 m laterally of the camera lead, so most likely the same car whose camera range strayed just past the gate (median 1.1 × its width). Drives whose camera model reports a saturated distance uncertainty flip 393 times per
+hour against 255 for the rest. The other causes are the ACC target going idle (42), the low-speed rule (3) and other switches (16);
+`acc_summaries` adds 48 switches to or from a summary track. So flip counts compare profiles on the same drives, but their level mostly reflects the camera
+([summary](../data/analysis/summaries/acc_horizon_and_flips.json)).
+
 ## How to read the evidence
 
 - **Replay of recorded drives.** Recorded drives run through openpilot's own card → radard → planner, once with vision
