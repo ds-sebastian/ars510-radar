@@ -266,7 +266,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
-| `248\|7` | σ vy (≈ 0.37 m/s per count against the ACC target) | grows with \|yRel\|, shrinks with age; the same on both cars (spread of the lateral-speed self-consistency residual 0.11 / 0.21 / 0.37 m/s at codes 1 / 2 / 4 on each) | ◐ field and form; ○ unit |
+| `248\|7` | σ vy | grows with \|yRel\|, shrinks with age; linear and the same on both cars. Against stationary objects (true lateral speed 0) about 0.085 + 0.03 m/s per count; the earlier ACC-referenced 0.37 m/s per count was far too wide | ◐ field and form; ◐ unit (stationary objects) |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
@@ -290,7 +290,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
-  range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
+  range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s (against stationary objects it is about 0.03 per count, see the table). Relative units: the
   reference is the radar's own estimate.
 - **Axis check from the codes' own jitter:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). For `232|7` and `240|7` the

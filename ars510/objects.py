@@ -111,7 +111,7 @@ HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "lik
 LANE_CROSSING_120 = NativeField("lane_crossing_code", 120, 3, 0.0, 1.0, "code", "likely")
 # m or m/s per count; range_uncertainty_code is the overall 0.23 (0.24 below 40 m).
 UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
-                         "lateral_speed_uncertainty_code": 0.37}
+                         "lateral_speed_uncertainty_code": 0.03}
 
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel.
@@ -178,7 +178,7 @@ class NativeObject:
     height_code: int | None = None  # 272|5, coarse length code, about length / 0.555 m (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
-    vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count against the ACC target; the same form on both cars)
+    vlat_unc_code: int | None = None  # 248|7 (about 0.085 + 0.03 m/s per count against stationary objects; the same form on both cars)
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10 (0.0062 m/s^2 per count)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
     orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
