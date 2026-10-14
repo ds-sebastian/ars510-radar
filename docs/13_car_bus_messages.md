@@ -53,6 +53,12 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 | `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; codes 442-506 (eight reports) fit `code − 512` and return `None` |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = idle target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = idle target, −16 = invalid (mostly a target beyond ±5 m) |
+| `32\|5` | target number | the ACC target's `TARGET_ID` on 98 % of reports (the rest are publication timing); `Target366.target_id` |
+| `13\|1` | PCS alarm | set only during the radar's PCS alarm: 5 of 547,922 frames in every stored log, all inside the recorded alarm U3, with extra frames when it sets and clears ([15](15_aeb_pcs.md)); `Target366.pcs_alarm` |
+
+The leaked `DS11D71` layout (14-bit distance at 0.01 m, 11-bit speed at 0.025 m/s, request bits in bytes 0 and 2) does not
+match this radar's frame at any start bit; only its roles recur here: target number, lateral position at bit 40 and an alarm request
+([summary](../data/analysis/summaries/car_bus_0x366_fields.json)).
 
 **While the radar has an ACC target, 0x366 reports that target.** Against the latest `0x235`/`0x237` on an owner drive
 (820 frames) the residuals are 0.06 m/s, 0.26 m and 0.14 m, about the quantization of both frames, and 99 % agree in

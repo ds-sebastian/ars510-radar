@@ -71,7 +71,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 1 update-like, 2 prediction-like (coasting candidate); 0 rare | ◐ |
+| `0\|2` | **state** | 0 new (exactly the age-0 rows), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
@@ -177,7 +177,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 | `115\|5` | **class confidence** | `code × 5` %: mostly 0 while the class is 1, 4-20 otherwise | ◐ |
 | `216\|6` | **width** | `(code + 1) × 0.1` m | ◐ |
 | `56\|7` | **length** | `code × 0.1` m | ◐ |
-| `272\|5` | height-like size code | larger for large vehicles | ○ |
+| `272\|5` | **coarse length code** | ≈ length / 0.555 m (within one code of the rounded value on 91 %, exact on 66 %); changes with the length estimate, barely with range | ◐ |
 
 **Class confidence `115|5`.** Values are 0 and 4-20, so 20 is 100 %. It is 0 on 83 % of class-1 rows and
 4-20 on every car row, starts near 55 % for a track born as a car and settles at 80-90 % (median 16-18 from age 25), and moves by exactly one
@@ -227,7 +227,7 @@ walkers, including one with 31 mature rows. The camera review covers 21 episodes
 medians, a different statistic from the row medians in the table above; between pedestrians at 0.5 × 0.6 m and
 two-wheelers at 1.6 × 0.7 m on the same per-object basis) and move at 2.0 m/s median, from walking pace up to 6 m/s: the size of
 a bicycle at walking-to-cycling speed. All 968 class-5 samples read `136|4` = 15, the value of rows with `112|3` = 0, and their
-height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
+coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`](../data/analysis/summaries/class5_video_review.json) and
 [`decode_references.json`](../data/analysis/summaries/decode_references.json).
 
 ![object size](img/analysis/object_size.png)
@@ -244,9 +244,9 @@ height-like `272|5` code spans 4-11. Counts are in [`class5_video_review.json`](
 | acceleration (filtered, raw code; about 0.04 m/s² per code) | `accel_like_code` | `84\|10` |
 | tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
 | existence probability | `existence_pct` | `16\|8` |
-| secondary score (obstacle-probability candidate) | `secondary_score_pct` | `184\|8` |
+| secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
 | class, class confidence | `object_class`, `class_confidence_pct` | `163\|3`, `115\|5` |
-| size | `length_m`, `width_m`, `height_code` (height-like size code) | `56\|7`, `216\|6`, `272\|5` |
+| size | `length_m`, `width_m`, `height_code` (coarse length code; name kept for compatibility) | `56\|7`, `216\|6`, `272\|5` |
 | uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|7`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
 
 Relative speed is the over-ground speed minus ego speed. The ACC target's relative speed, acceleration and lateral speed are in
@@ -263,7 +263,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
-| `184\|8` | secondary score | percent-like: 100 on 98 % of rows (97.9 % on the bundled drives); a lower value on 10 % of the rows at age ≤ 5 and 0.1 % beyond age 120 (bits 184-189 of the bundled `UNK_183_7` window) | ○ |
+| `184\|8` | **track-confidence percent** | 0 on every new track (age 0), then 90-99 and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
 | `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
