@@ -1,0 +1,298 @@
+{
+ "description": "ACC acquisition horizon (owner car, 698 one-minute segments), what the replay lead-flip counts measure (fast suite, 16.9 moving h, pinned radard rules re-evaluated per flip), and the 0x191 / 0x193 companion fields against the ACC target (owner car A and second car B). Drives anonymised.",
+ "acc_acquisition_range_by_ego_speed_mps": {
+  "(3, 10]": {
+   "n": 115,
+   "d_p50": 27.6,
+   "d_p90": 63.3,
+   "d_max": 78.5,
+   "share_gt_80": 0.0,
+   "v_p50": 7.1
+  },
+  "(10, 15]": {
+   "n": 99,
+   "d_p50": 48.8,
+   "d_p90": 78.4,
+   "d_max": 80.0,
+   "share_gt_80": 0.0,
+   "v_p50": 11.9
+  },
+  "(15, 20]": {
+   "n": 47,
+   "d_p50": 59.0,
+   "d_p90": 79.9,
+   "d_max": 80.0,
+   "share_gt_80": 0.0,
+   "v_p50": 17.3
+  },
+  "(20, 25]": {
+   "n": 26,
+   "d_p50": 72.0,
+   "d_p90": 82.7,
+   "d_max": 99.5,
+   "share_gt_80": 0.231,
+   "v_p50": 22.3
+  },
+  "(25, 30]": {
+   "n": 42,
+   "d_p50": 76.3,
+   "d_p90": 103.8,
+   "d_max": 111.0,
+   "share_gt_80": 0.405,
+   "v_p50": 27.9
+  },
+  "(30, 40]": {
+   "n": 101,
+   "d_p50": 78.6,
+   "d_p90": 121.0,
+   "d_max": 129.2,
+   "share_gt_80": 0.485,
+   "v_p50": 33.1
+  }
+ },
+ "acc_acquisitions_beyond_max80m_4s_share": 0.0023,
+ "inlane_camera_leads_beyond_80m_covered_by_acc": {
+  "inside_horizon": {
+   "(60, 80]|inside=True": 0.96,
+   "(80, 100]|inside=True": 0.9,
+   "(100, 120]|inside=True": 0.781
+  },
+  "outside_horizon": {
+   "(80, 100]|inside=False": 0.528,
+   "(100, 120]|inside=False": 0.317
+  },
+  "by_range_and_ego_speed": {
+   "(60, 80]|(5, 15]": {
+    "n": 4240,
+    "hit": 0.671,
+    "in_horizon": 1.0
+   },
+   "(60, 80]|(15, 20]": {
+    "n": 18471,
+    "hit": 0.893,
+    "in_horizon": 1.0
+   },
+   "(60, 80]|(20, 25]": {
+    "n": 13527,
+    "hit": 0.938,
+    "in_horizon": 1.0
+   },
+   "(60, 80]|(25, 30]": {
+    "n": 13868,
+    "hit": 0.963,
+    "in_horizon": 1.0
+   },
+   "(60, 80]|(30, 40]": {
+    "n": 107314,
+    "hit": 0.985,
+    "in_horizon": 1.0
+   },
+   "(80, 100]|(5, 15]": {
+    "n": 1087,
+    "hit": 0.255,
+    "in_horizon": 0.0
+   },
+   "(80, 100]|(15, 20]": {
+    "n": 10661,
+    "hit": 0.563,
+    "in_horizon": 0.0
+   },
+   "(80, 100]|(20, 25]": {
+    "n": 6979,
+    "hit": 0.647,
+    "in_horizon": 0.457
+   },
+   "(80, 100]|(25, 30]": {
+    "n": 6075,
+    "hit": 0.868,
+    "in_horizon": 1.0
+   },
+   "(80, 100]|(30, 40]": {
+    "n": 21440,
+    "hit": 0.922,
+    "in_horizon": 1.0
+   },
+   "(100, 120]|(15, 20]": {
+    "n": 2522,
+    "hit": 0.401,
+    "in_horizon": 0.0
+   },
+   "(100, 120]|(20, 25]": {
+    "n": 1888,
+    "hit": 0.211,
+    "in_horizon": 0.0
+   },
+   "(100, 120]|(25, 30]": {
+    "n": 3808,
+    "hit": 0.602,
+    "in_horizon": 0.765
+   },
+   "(100, 120]|(30, 40]": {
+    "n": 9333,
+    "hit": 0.809,
+    "in_horizon": 1.0
+   }
+  }
+ },
+ "lead_flips_per_moving_h_by_cause": {
+  "acc": {
+   "dist_sane": 240.7,
+   "ACC target idle": 42.2,
+   "other": 16.1,
+   "low-speed rule ends": 1.7,
+   "low-speed rule starts": 1.1,
+   "vel_sane": 0.2
+  },
+  "acc_summaries": {
+   "dist_sane": 232.1,
+   "summary track": 48.4,
+   "other": 32.6,
+   "ACC target idle": 27.4,
+   "low-speed rule ends": 1.8,
+   "low-speed rule starts": 1.4,
+   "vel_sane": 0.1
+  }
+ },
+ "lead_flip_dRel_step_vision_minus_radar_same_car_m": {
+  "(0, 15]": -0.22,
+  "(15, 30]": -0.69,
+  "(30, 50]": -0.39,
+  "(50, 80]": -1.45,
+  "(80, 200]": -2.73
+ },
+ "dist_sane_flips_same_car_share": 0.698,
+ "flips_per_moving_h_by_camera_model": {
+  "normal_xstd": {
+   "moving_h": 11.11,
+   "chunks": 183,
+   "flips_per_mh": 254.7,
+   "dist_per_mh": 193.0,
+   "idle_per_mh": 43.8
+  },
+  "saturated_xstd": {
+   "moving_h": 5.81,
+   "chunks": 94,
+   "flips_per_mh": 392.5,
+   "dist_per_mh": 332.0,
+   "idle_per_mh": 39.1
+  }
+ },
+ "same_lane_dist_check_failure_share_by_range": {
+  "normal_xstd": {
+   "(0, 20]": {
+    "n": 19686,
+    "rel_p50": -0.012,
+    "rel_iqr": 0.071,
+    "share_gate_fail": 0.008
+   },
+   "(20, 40]": {
+    "n": 122847,
+    "rel_p50": -0.01,
+    "rel_iqr": 0.055,
+    "share_gate_fail": 0.006
+   },
+   "(40, 60]": {
+    "n": 171497,
+    "rel_p50": -0.011,
+    "rel_iqr": 0.048,
+    "share_gate_fail": 0.004
+   },
+   "(60, 80]": {
+    "n": 43866,
+    "rel_p50": -0.014,
+    "rel_iqr": 0.075,
+    "share_gate_fail": 0.012
+   },
+   "(80, 120]": {
+    "n": 28959,
+    "rel_p50": -0.028,
+    "rel_iqr": 0.077,
+    "share_gate_fail": 0.009
+   },
+   "(120, 250]": {
+    "n": 834,
+    "rel_p50": -0.048,
+    "rel_iqr": 0.063,
+    "share_gate_fail": 0.013
+   }
+  },
+  "saturated_xstd": {
+   "(0, 20]": {
+    "n": 17047,
+    "rel_p50": 0.007,
+    "rel_iqr": 0.085,
+    "share_gate_fail": 0.02
+   },
+   "(20, 40]": {
+    "n": 78397,
+    "rel_p50": -0.0,
+    "rel_iqr": 0.056,
+    "share_gate_fail": 0.015
+   },
+   "(40, 60]": {
+    "n": 43716,
+    "rel_p50": -0.001,
+    "rel_iqr": 0.061,
+    "share_gate_fail": 0.021
+   },
+   "(60, 80]": {
+    "n": 16823,
+    "rel_p50": -0.016,
+    "rel_iqr": 0.089,
+    "share_gate_fail": 0.092
+   },
+   "(80, 120]": {
+    "n": 15103,
+    "rel_p50": -0.015,
+    "rel_iqr": 0.088,
+    "share_gate_fail": 0.066
+   },
+   "(120, 250]": {
+    "n": 18,
+    "rel_p50": -0.036,
+    "rel_iqr": 0.049,
+    "share_gate_fail": 0.0
+   }
+  }
+ },
+ "summary_companions": {
+  "byte2_constant_200_cycles": {
+   "A": 608136,
+   "B": 148005
+  },
+  "counter_43_5_share_at_30": {
+   "A": 0.856,
+   "B": 0.877
+  },
+  "pair_code_equals_target_id_share": {
+   "A": [
+    0.012,
+    0.018
+   ],
+   "B": [
+    0.091,
+    0.088
+   ]
+  },
+  "auc_becomes_acc_target_within_3s": {
+   "A": {
+    "score": 0.371,
+    "cnt": 0.453,
+    "age": 0.407,
+    "absy": 0.675,
+    "d": 0.504
+   },
+   "B": {
+    "score": 0.448,
+    "cnt": 0.485,
+    "age": 0.443,
+    "absy": 0.748,
+    "d": 0.455
+   }
+  },
+  "handovers_per_moving_h": {
+   "A": 44.4,
+   "B": 28.7
+  }
+ }
+}
