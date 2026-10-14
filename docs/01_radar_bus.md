@@ -92,9 +92,9 @@ off, including the radar's PCS / AEB brake request, are described in [13](13_car
 
 ## Ego speed
 
-The object-list velocities are **over ground**, so the `raw` and `fused` profiles subtract ego speed. Toyota 0xB4 reads about 1-1.5% below
-GPS and wheel speed; those profiles read the radar speed at 0.149 m/s per code (`vground_scale = 0.149 / 0.15` on the nominal 0.15)
-and subtract 0xB4 speed ([06](06_accuracy.md#velocity)). The `acc` profile publishes the ACC target's closing speed (0.125 m/s per code,
+The object-list velocities are **over ground**, so the `raw` and `fused` profiles subtract ego speed. Toyota 0xB4 reads 1.35 % below
+carState vEgo (the wheel-speed ego openpilot uses, within 0.1-0.4 % of GNSS); those profiles decode the radar speed at the nominal
+0.15 m/s per code and subtract 0xB4 / 0.9865 (`ego_speed_scale`, [06](06_accuracy.md#velocity)). The `acc` profile publishes the ACC target's closing speed (0.125 m/s per code,
 [05](05_acc_target_and_support.md#units-of-the-acc-target)), which is already relative to the car.
 
 ## Radar firmware

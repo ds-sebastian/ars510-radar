@@ -35,8 +35,8 @@ LONG_DIST = NativeField("long_dist", 32, 12, 160.0, 1.0 / 16.0, "m", "validated"
 # ACC-target lateral (cm), ten codes per lateral-velocity code-second, 69 codes/m [65, 74.5] under ego rotation (docs/06).
 LATERAL_M_PER_CODE = 0.015
 LAT_DIST = NativeField("lat_dist_left", 44, 12, 2048.0, LATERAL_M_PER_CODE, "m", "validated_sign_likely_scale")
-# Longitudinal velocity OVER GROUND. Nominal 0.15 m/s/code and zero 510.5; the driving profiles read 0.149 against
-# Toyota 0xB4 ego speed (docs/06).
+# Longitudinal velocity OVER GROUND. Nominal 0.15 m/s/code and zero 510.5; the driving profiles subtract Toyota 0xB4 ego
+# speed scaled to carState vEgo (docs/06).
 # vRel = this - ego speed.
 LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s", "validated_with_caveats")
 # Lateral velocity over ground, left positive. With the rotating-frame correction (vy = dy/dt + yaw_rate * x) it fits

@@ -164,9 +164,8 @@ from ars510.objects import decode_native_slot
 o = decode_native_slot(3, record[17 + 36 * 3 : 17 + 36 * 4])   # slot 3
 o.d_rel, o.y_rel, o.v_long_ground, o.age, o.movement_code, o.raw_weights148
 vrel_native = o.v_long_ground - v_ego                         # nominal velocity; matched ego reference
-vrel_b4 = o.v_long_ground * (0.149 / 0.15) - v_ego_b4          # raw and fused profiles; Toyota 0xB4
+vrel_b4 = o.v_long_ground - v_ego_b4 / 0.9865                   # raw and fused profiles; Toyota 0xB4 on the vEgo scale
 ```
 
-The profile factor multiplies the radar's ground velocity before the Toyota 0xB4 ego speed is subtracted as read
-(the openpilot file folds it into the decode as 0.149 m/s per code). The nominal decode and the alignment are in
-[06](06_accuracy.md#velocity).
+Toyota 0xB4 reads 1.35 % below carState vEgo, so the profiles scale it before subtracting it (`ego_speed_scale`; the
+openpilot file does it where it reads 0xB4). The nominal decode and the ego reference are in [06](06_accuracy.md#velocity).

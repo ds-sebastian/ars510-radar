@@ -175,7 +175,7 @@ The two filters run in series, so all replay numbers include their combined effe
   - publish from age 60 (~3.6 s), when range and speed have converged ([02](02_object_list.md)). Age 40
     gives the young far false closings (further-drive hard ticks 1 → 9), as does publishing the ACC target's track
     early; age 80 raises missed braking against the hindsight-lead oracle from 3.3 to 3.7 s on 27 drives (measured on 2.3);
-  - read the object list's over-ground speed at 0.149 m/s per code (nominal decoder 0.15; empirical profile setting), then subtract 0xB4 ego speed;
+  - read the object list's over-ground speed at the nominal 0.15 m/s per code, then subtract the 0xB4 ego speed scaled to carState vEgo (0xB4 / 0.9865);
   - publish a point with a fresh ego speed (at most 0.5 s old); a NaN would persist in radard's filter.
 - **Saturation guard (`raw` only):** velocity code 1023 (and 0) is an invalid sentinel that decays over ~6 records.
   `raw` withholds the track until the speed is back within 5 m/s (or 1 s), then continues under a new ID. Held-out
@@ -366,7 +366,7 @@ owner drives:
 | the speed-std publication gate | 30 | 8 | 0 | needed |
 | the age-60 publication gate (age 6) | 31 | 12 | 0 (radar-only braking ×3) | needed |
 | range fusion | 27 | 0 | 0 | same braking; lead switches +39 %, held-out target episodes 4 → 6: kept for lead stability |
-| the ego-speed alignment (× 0.149/0.15) | 31 | 2 | 0 | same braking (onset +12 ms); one empirical setting, folded into the decode factor (0 lines) |
+| the ego-speed alignment (0xB4 on the vEgo scale; earlier × 0.149/0.15) | 31 | 2 | 0 | same braking (onset +12 ms); one constant where 0xB4 is read (0 lines) |
 | the track-ID relink | 30 | 2 | 0 | same braking counts, lead switches 1,770 vs 1,772: off in `fused` |
 | the saturation guard | identical | identical | identical | off in `fused`: the robust update absorbs the sentinel |
 

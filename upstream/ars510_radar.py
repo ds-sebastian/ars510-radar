@@ -59,7 +59,7 @@ class Ars510Radar:
 
   def update(self, t: float, bus: int, addr: int, dat: bytes):
     if bus == CAR_BUS and addr == SPEED_ADDR and len(dat) >= 7:
-      self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6)
+      self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6 / 0.9865)  # 0xB4 reads 1.35 % below carState.vEgo
     elif bus == CAR_BUS and addr == YAW_ADDR and len(dat) >= 2:
       self.yaw = (t, (((dat[0] & 0x03) << 8 | dat[1]) * 0.244 - 125.0) * pi / 180.0)
     elif bus == RADAR_BUS and addr in (ACC_SPEED_ADDR, ACC_POS_ADDR):
@@ -112,9 +112,8 @@ class Ars510Radar:
         continue
       age, lat = bits(s, 24, 7), bits(s, 44, 12) - 2048
       init_template = age == 1 and bits(s, 56, 7) == 0 and bits(s, 216, 6) == 0
-      # over-ground speed: 0.149 m/s per code against 0xB4 ego speed (DBC factor 0.15)
       objs.append(dict(tid=self.track_id(t, slot, age), age=age, d=(bits(s, 32, 12) - 160) / 16, y=lat * 0.015,
-                       vg=(bits(s, 64, 10) - 510.5) * 0.149, unc=bits(s, 240, 7),
+                       vg=(bits(s, 64, 10) - 510.5) * 0.15, unc=bits(s, 240, 7),
                        valid=age >= 1 and not init_template and abs(lat) < 2000))
     tracks = {o["tid"]: o for o in objs if o["valid"]}
     acc_tid = self.acc_match(t, tracks)
