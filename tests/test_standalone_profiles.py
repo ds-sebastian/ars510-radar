@@ -98,3 +98,18 @@ def test_acc_summaries_ignores_a_one_cycle_all_ones_summary_word(mod):
       if out is not None:
         speeds += [p.vRel for p in out.points if p.trackId >= mod.SUMMARY_ID]
   assert speeds and all(abs(v - (-6.0)) < 0.5 for v in speeds)
+
+
+def test_acc_summaries_restarts_the_speed_after_a_one_cycle_range_jump(mod):
+  """A valid-looking summary word can jump for one cycle (4.8 -> 49.9 -> 4.3 m seen once on each car). The slope must not run
+  through it: the car drops out for a moment and comes back with its true speed."""
+  if not hasattr(mod, "SUMMARY_ID"):
+    pytest.skip("acc_summaries only")
+  ri, speeds = mod.RadarInterface(None), []
+  for k in range(50):
+    d = 40.0 - 0.36 * k
+    for pk in _cycle(k, 30.0 - 0.24 * k, [(3, None, 0.0), (9, d + (45.0 if k == 20 else 0.0), 3.6)]):
+      out = ri.update([pk])
+      if out is not None:
+        speeds += [(k, p.vRel) for p in out.points if p.trackId >= mod.SUMMARY_ID]
+  assert all(abs(v - (-6.0)) < 0.5 for _, v in speeds) and any(k > 32 for k, _ in speeds)

@@ -124,5 +124,71 @@
     ]
    }
   }
+ },
+ "single_cycle_range_spikes_valid_words": {
+  "owner": {
+   "r192": {
+    "rows": 366760,
+    "spikes_gt_2m_within_60m": 1,
+    "spikes_gt_5m_within_60m": 1,
+    "spikes_gt_10m_within_60m": 1,
+    "spikes_gt_50m_within_60m": 0,
+    "example_spikes": [
+     [
+      4.8,
+      49.9,
+      4.3
+     ]
+    ],
+    "vrel_error_for_2m_spike_mps": 2.8
+   },
+   "r194": {
+    "rows": 241410,
+    "spikes_gt_2m_within_60m": 0,
+    "spikes_gt_5m_within_60m": 0,
+    "spikes_gt_10m_within_60m": 0,
+    "spikes_gt_50m_within_60m": 0,
+    "example_spikes": [],
+    "vrel_error_for_2m_spike_mps": 2.8
+   }
+  },
+  "second": {
+   "r192": {
+    "rows": 82996,
+    "spikes_gt_2m_within_60m": 1,
+    "spikes_gt_5m_within_60m": 1,
+    "spikes_gt_10m_within_60m": 0,
+    "spikes_gt_50m_within_60m": 0,
+    "example_spikes": [
+     [
+      3.8,
+      9.9,
+      4.2
+     ]
+    ],
+    "vrel_error_for_2m_spike_mps": 2.8
+   },
+   "r194": {
+    "rows": 65020,
+    "spikes_gt_2m_within_60m": 0,
+    "spikes_gt_5m_within_60m": 0,
+    "spikes_gt_10m_within_60m": 0,
+    "spikes_gt_50m_within_60m": 0,
+    "example_spikes": [],
+    "vrel_error_for_2m_spike_mps": 2.8
+   }
+  }
+ },
+ "jump_guard_5m_fire_rate": {
+  "owner": {
+   "consecutive_within_60m": 371079,
+   "guard_fires": 12,
+   "rate": 3.23e-05
+  },
+  "second": {
+   "consecutive_within_60m": 106183,
+   "guard_fires": 6,
+   "rate": 5.65e-05
+  }
  }
 }
