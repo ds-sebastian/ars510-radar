@@ -80,3 +80,36 @@ def test_acc_summaries_adds_summary_cars_once_and_within_60_m(mod):
     assert len(acc) == 1 and len(summ) == n_extra
     if n_extra:
       assert summ[0].trackId == mod.SUMMARY_ID + 9 and abs(summ[0].vRel - (-6.0)) < 0.1  # 0.36 m per 60 ms cycle
+
+
+def test_acc_summaries_ignores_a_one_cycle_all_ones_summary_word(mod):
+  """The radar occasionally sends 0x192 / 0x194 as FF FF FF FF for one cycle inside a live track while the 0x191 / 0x193
+  companion stays valid (4 + 3 cases on two cars). Decoded it is 501.9 m; it must not enter the slope history, or the
+  next eight reports of that car carry speeds of hundreds of m/s."""
+  if not hasattr(mod, "SUMMARY_ID"):
+    pytest.skip("acc_summaries only")
+  ri, speeds = mod.RadarInterface(None), []
+  for k in range(40):
+    for pk in _cycle(k, 30.0 - 0.24 * k, [(3, None, 0.0), (9, 40.0 - 0.36 * k, 3.6)]):
+      t, ((a, d, b),) = pk
+      if k == 20 and a == 0x194:
+        pk = (t, [(a, b"\xff\xff\xff\xff", b)])
+      out = ri.update([pk])
+      if out is not None:
+        speeds += [p.vRel for p in out.points if p.trackId >= mod.SUMMARY_ID]
+  assert speeds and all(abs(v - (-6.0)) < 0.5 for v in speeds)
+
+
+def test_acc_summaries_restarts_the_speed_after_a_one_cycle_range_jump(mod):
+  """A valid-looking summary word can jump for one cycle (4.8 -> 49.9 -> 4.3 m seen once on each car). The slope must not run
+  through it: the car drops out for a moment and comes back with its true speed."""
+  if not hasattr(mod, "SUMMARY_ID"):
+    pytest.skip("acc_summaries only")
+  ri, speeds = mod.RadarInterface(None), []
+  for k in range(50):
+    d = 40.0 - 0.36 * k
+    for pk in _cycle(k, 30.0 - 0.24 * k, [(3, None, 0.0), (9, d + (45.0 if k == 20 else 0.0), 3.6)]):
+      out = ri.update([pk])
+      if out is not None:
+        speeds += [(k, p.vRel) for p in out.points if p.trackId >= mod.SUMMARY_ID]
+  assert all(abs(v - (-6.0)) < 0.5 for _, v in speeds) and any(k > 32 for k, _ in speeds)

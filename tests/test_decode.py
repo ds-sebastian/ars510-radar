@@ -138,6 +138,8 @@ class TestShellAndSupport:
 
     def test_0x192(self) -> None:
         assert parse_0x192(bytes.fromhex("00FF00FF")) is None
+        assert parse_0x192(bytes.fromhex("FFFFFFFF")) is None  # one-cycle all-ones glitch, not a 501.9 m target
+        assert parse_0x192(bytes.fromhex("2320") + (2048).to_bytes(2, "big")) is None  # a top bit set: corrupt word
         assert parse_0x192(bytes.fromhex("0320")) is None
         t = parse_0x192((640).to_bytes(2, "big") + bytes([7, 0]))
         assert t.range_code13 == 640 and t.field1_code13 == 1792

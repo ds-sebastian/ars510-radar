@@ -12,6 +12,7 @@ from opendbc.car import structs
 from opendbc.car.interfaces import RadarInterfaceBase
 
 STALE_S, FAR_M, SLOPE_N, SLOPE_SPAN_S, SUMMARY_ID = 0.5, 60.0, 8, 0.6, 32  # summary trackIds: 32 + pair code
+JUMP_M = 5.0  # a range step this large between cycles is a glitch, a new car, or two cars sharing a pair code (codes are per slot)
 
 
 def bits(b, start, length):
@@ -51,9 +52,12 @@ class RadarInterface(RadarInterfaceBase):
           self.ident[address] = dat
         elif address in (0x192, 0x194) and len(dat) >= 4 and address - 1 in self.ident:  # range, lateral (left positive)
           ident, self.summaries[address] = self.ident[address - 1], None
-          if dat[0:4] != b"\x00\xff\x00\xff" and ident[0] >> 1 != 127:
+          if dat[0:4] != b"\x00\xff\x00\xff" and not (dat[0] | dat[2]) & 0xE0 and ident[0] >> 1 != 127:  # top 3 bits of each word are 0 unless corrupt (e.g. FF FF FF FF)
             code, d = ident[3] >> 2, ((int.from_bytes(dat[0:2], "big") & 0x1FFF) - 160) / 16
-            self.ranges.setdefault(code, deque(maxlen=SLOPE_N)).append((t, d))
+            hist = self.ranges.setdefault(code, deque(maxlen=SLOPE_N))
+            if hist and abs(d - hist[-1][1]) > JUMP_M:  # no car moves 5 m in one 60 ms cycle: restart rather than slope through it
+              hist.clear()
+            hist.append((t, d))
             self.summaries[address] = (code, d, ((int.from_bytes(dat[2:4], "big") & 0x1FFF) - 2048) * 0.015, t)
     if t is None or self.frame % 5 != 0:  # card calls update at 100 Hz: report at 20 Hz
       return None
