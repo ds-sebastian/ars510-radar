@@ -2202,5 +2202,83 @@
     "50": 0.197
    }
   }
+ },
+ "lane_cells_80_6": {
+  "outer_value_15": {
+   "steps": {
+    "15": {
+     "off": {
+      "med_in": 1.0,
+      "p90_in": 9.0,
+      "med_out": 1.0
+     },
+     "curv": {
+      "med_in": 10.0,
+      "p90_in": 179.0,
+      "med_out": 16.0
+     },
+     "head": {
+      "med_in": 51.0,
+      "p90_in": 503.3000000000002,
+      "med_out": 69.0
+     },
+     "p0": {
+      "med_in": 3.0,
+      "p90_in": 17.0,
+      "med_out": 3.0
+     },
+     "n": 7355
+    },
+    "50_in_50run": {
+     "off": {
+      "med_in": 1.0,
+      "p90_in": 2.0,
+      "med_out": 1.0
+     },
+     "curv": {
+      "med_in": 16.0,
+      "p90_in": 58.0,
+      "med_out": 15.0
+     },
+     "head": {
+      "med_in": 71.0,
+      "p90_in": 205.0,
+      "med_out": 71.0
+     },
+     "p0": {
+      "med_in": 4.0,
+      "p90_in": 14.0,
+      "med_out": 4.0
+     },
+     "n": 173848
+    }
+   },
+   "camera": {
+    "15": {
+     "n": 2385,
+     "prob_median": 0.3,
+     "prob_lt_05": 0.851,
+     "std_median": 0.479
+    },
+    "15_then_0": {
+     "n": 75,
+     "prob_median": 0.535,
+     "prob_lt_05": 0.493,
+     "std_median": 0.356
+    },
+    "15_then_50": {
+     "n": 281,
+     "prob_median": 0.744,
+     "prob_lt_05": 0.306,
+     "std_median": 0.238
+    },
+    "50": {
+     "n": 7637,
+     "prob_median": 0.783,
+     "prob_lt_05": 0.308,
+     "std_median": 0.224
+    }
+   }
+  }
  }
 }
