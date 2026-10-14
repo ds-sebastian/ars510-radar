@@ -1,0 +1,140 @@
+{
+ "description": "Five-cycle latches (168|10, 181|1, bit 183) and the slow 0x501 / 0x502 codes. Exploratory unless stated; numbers from the research workspace, every stored drive of three cars; drives anonymised; no payloads.",
+ "five_cycle_latches": {
+  "structure": "five sticky per-track latches, one per phase of age mod 5; a set phase stays set until the track ends",
+  "on_to_off_at_lag5": {
+   "pairs": 1140865,
+   "count": 0
+  },
+  "independent_recheck_on_to_off_at_lag5": {
+   "168": [
+    0,
+    793231
+   ],
+   "181": [
+    0,
+    176959
+   ],
+   "183": [
+    0,
+    27156
+   ]
+  },
+  "latch_records": {
+   "168": 7430,
+   "181": 4479,
+   "183": 1396
+  },
+  "phase_per_track": "pooled by the header record counter mod 5 the flags are flat (168 0.49-0.56, 181 0.57-0.60); within-segment phase agreement at chance (168 0.26 vs 0.26, 181 0.22 vs 0.29)",
+  "168_latch_on_predicted_record_share": [
+   0.77,
+   0.81
+  ],
+  "predicted_rows_with_168_share": 0.966,
+  "183_latch_velocity_change_gt_3_m_s_share": 0.83,
+  "183_latch_pairs": 655,
+  "183_velocity_change_median_m_s": 9.0,
+  "183_uncertainty_code_jump": 13,
+  "181_existence_before_latch": {
+   "mean": [
+    92,
+    46
+   ],
+   "median": [
+    80,
+    39
+   ]
+  },
+  "168_on_from_first_records_by_birth_range": {
+   "0-40 m": 0.34,
+   "40-70 m": 0.53,
+   "beyond 70 m": 0.82
+  },
+  "183_velocity_change_window": "over-ground speed 3 records before vs 4 after the first latch record of an adjacent pair",
+  "183_other_records_velocity_change_gt_3_m_s_share": 0.033,
+  "independent_recheck": "own decode on the slot corpus: P(168 | predicted) 0.966, 168 latch predicted share 0.77, 183 655 pairs 0.827 / +9.0 m/s, 181 existence median 80 -> 39"
+ },
+ "a502_codes": {
+  "behaviour": "both words stored across power cycles (drive starts within a median 2 / 4-6 codes of the previous drive's end), frozen below about 5 m/s, paused in turns (owner change share 0.34 -> 0.05 and 0.68 -> 0.16 above 0.1 rad/s yaw)",
+  "w1_bytes_2_3_vs_openpilot_calibration_pitch_r": {
+   "per_drive": {
+    "car_A": -0.92,
+    "car_B": -0.39
+   },
+   "independent_recheck_per_drive": {
+    "car_A": -0.94,
+    "car_B": -0.41
+   },
+   "drive_to_drive_changes": {
+    "car_A": -0.9,
+    "car_B": -0.56
+   },
+   "within_drive_5_min": {
+    "car_A": -0.68,
+    "car_B": -0.59,
+    "car_C": -0.78
+   }
+  },
+  "w1_large_steps_opposite_a_pitch_step": [
+   8,
+   8
+  ],
+  "pitch_step_deg": [
+   0.18,
+   0.63
+  ],
+  "w1_scale_deg_per_code_if_same_body_pitch": [
+   0.005,
+   0.006
+  ],
+  "w0_byte_1_vs_azimuth_from_stationary_objects_r": {
+   "car_A": -0.05,
+   "car_B": -0.07
+  }
+ },
+ "a501_code": {
+  "sender": "camera, 2 Hz",
+  "startup": "31, then placeholder 16 for about 6.9 s, then the stored value",
+  "first_value_equals_previous_drive_last": {
+   "car_A": 0.66,
+   "car_B": 0.71,
+   "shuffled_null": [
+    0.39,
+    0.27
+   ]
+  },
+  "changes_per_hour": {
+   "standstill": [
+    0.2,
+    1.0
+   ],
+   "above_2_m_s": [
+    40,
+    76
+   ]
+  },
+  "not_supported": [
+   "radar reach / object count",
+   "rain (0x24D)",
+   "light",
+   "ambient or CPU temperature",
+   "excursion rate",
+   "speed-mode selector"
+  ],
+  "per_drive_r_with_calibration_pitch": {
+   "car_A": [
+    0.39,
+    0.7
+   ],
+   "car_B": [
+    0.13,
+    0.31
+   ],
+   "note": "range over averaging methods (medians / means / after 5 min)"
+  },
+  "first_value_within_one_code_of_previous_drive": {
+   "car_A": 0.95,
+   "car_B": 1.0
+  }
+ }
+}

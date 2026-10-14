@@ -158,7 +158,7 @@ as `raw_weight_state128`.
 |---|---|---|---|
 | `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
 | `136\|4` | association confidence | 15 on 91 % of rows with `112\|3` = 0; restarts at 3-7 (median 4) when `112\|3` becomes non-zero (1,279 onsets on the bundled drives) and climbs to 14-15 | ◐ |
-| `181\|1` | daylight flag on the five-cycle schedule | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night; inside a track it follows a five-cycle pattern locked to the track's age, like `168\|10` | ◐ schedule; ○ meaning |
+| `181\|1` | daylight latch | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night; one of the five-cycle latches (below): a phase latches after a dip in existence, which about halves over the five records before (mean 92 → 46, median 80 → 39) | ◐ latch structure; ○ meaning |
 
 ![camera association by day and night](img/analysis/camera_association.png)
 
@@ -271,7 +271,13 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `256\|8` | σ ax candidate | the spread between the track's acceleration `84\|10` and its own speed slope grows with the code on both cars (0.13-0.18 m/s² at code 6 to 1.6-1.9 at 24-27, about 0.06-0.07 per code, pooled over range); within a fixed range band it grades the spread at near range (within 20 m on three cars; 20-40 m on two of them) but not beyond (40-80 m: no grade), so range and stopped scenes confound the pooled slope; grows with range and with age | ○ candidate |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; behaves like a tracker covariance state: moves with `248\|7` in every range band (ρ 0.43-0.89) and shrinks with track age (ρ −0.55 to −0.81 beyond 20 m; median 11 at age 5-10, 2 from age 60) on three cars and unseen drives ([summary](../data/analysis/summaries/decode_round3.json)) | ○ |
 | `184\|8` | **track-confidence percent** | 0 on the deletion record (age 0), 90-99 on young tracks and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
-| `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
+| `168\|10` | no-measurement latch | all ones or all zeros; one of the five-cycle latches (below): a phase latches on a cycle without a near-scan measurement (77-81 % of latch records are predicted, `107\|1`; 96.6 % of predicted rows have it set), so most tracks born far out have it set from their first records (82 % of tracks born beyond 70 m, 34 % inside 40 m) and k follows the range at birth | ◐ latch structure; ◐ trigger |
+| 183 | velocity re-initialisation latch | one of the five-cycle latches (below): a phase latches when the track's over-ground speed is re-initialised: across the seven records around the first latch record, 83 % change speed by more than 3 m/s (median +9 m/s among them; 3 % of other records), and the uncertainty codes jump by about 13 | ◐ latch structure; ○ trigger |
+
+**Five-cycle latches (◐).** `168|10`, `181|1` and bit 183 are each five sticky latches, one per phase of the track's age mod 5: a phase,
+once set, stays set until the track ends (on, then off five records later: 0 of 1.14 M pairs), so the count of set phases in any five
+records never drops. The phase belongs to the track, not to a radar-wide counter or the slot. A steady value therefore says only that the
+event happened at some time on that phase; the record where a phase newly sets is the one that carries the event ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
   (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
@@ -327,7 +333,7 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 ## Raw and constant bits
 
-- **Raw (listed by bit):** 13, 15, 63, 106, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
+- **Raw (listed by bit):** 13, 15, 63, 106, 182, 239. Bits 15 and 239 are mostly active near track birth.
 - **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
   `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 
