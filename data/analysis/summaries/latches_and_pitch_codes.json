@@ -26,16 +26,33 @@
    "183": 1396
   },
   "phase_per_track": "pooled by the header record counter mod 5 the flags are flat (168 0.49-0.56, 181 0.57-0.60); within-segment phase agreement at chance (168 0.26 vs 0.26, 181 0.22 vs 0.29)",
-  "168_latch_on_predicted_record_share": 0.81,
+  "168_latch_on_predicted_record_share": [
+   0.77,
+   0.81
+  ],
   "predicted_rows_with_168_share": 0.966,
   "183_latch_velocity_change_gt_3_m_s_share": 0.83,
   "183_latch_pairs": 655,
   "183_velocity_change_median_m_s": 9.0,
   "183_uncertainty_code_jump": 13,
-  "181_existence_before_latch": [
-   92,
-   46
-  ]
+  "181_existence_before_latch": {
+   "mean": [
+    92,
+    46
+   ],
+   "median": [
+    80,
+    39
+   ]
+  },
+  "168_on_from_first_records_by_birth_range": {
+   "0-40 m": 0.34,
+   "40-70 m": 0.53,
+   "beyond 70 m": 0.82
+  },
+  "183_velocity_change_window": "over-ground speed 3 records before vs 4 after the first latch record of an adjacent pair",
+  "183_other_records_velocity_change_gt_3_m_s_share": 0.033,
+  "independent_recheck": "own decode on the slot corpus: P(168 | predicted) 0.966, 168 latch predicted share 0.77, 183 655 pairs 0.827 / +9.0 m/s, 181 existence median 80 -> 39"
  },
  "a502_codes": {
   "behaviour": "both words stored across power cycles (drive starts within a median 2 / 4-6 codes of the previous drive's end), frozen below about 5 m/s, paused in turns (owner change share 0.34 -> 0.05 and 0.68 -> 0.16 above 0.1 rad/s yaw)",
@@ -114,6 +131,10 @@
     0.31
    ],
    "note": "range over averaging methods (medians / means / after 5 min)"
+  },
+  "first_value_within_one_code_of_previous_drive": {
+   "car_A": 0.95,
+   "car_B": 1.0
   }
  }
 }

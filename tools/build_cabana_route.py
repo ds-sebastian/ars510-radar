@@ -98,7 +98,7 @@ SIGNAL_COMMENTS = {
     "UNK_264_8": "Lateral-acceleration uncertainty (sigma ay candidate), covariance-like: moves with UNK_248_7 in every range band and shrinks with track age (about 11 at age 5-10, 2 from age 60).",
     "UNK_183_7": "Bit 183: velocity re-initialisation latch (five sticky per-track latches by age mod 5); bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows; lower mostly on young tracks, far lateral objects and stationary large vehicles / pedestrians).",
     "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 are zero.",
-    "UNK_168_10": "All ones or all zeros (768 / 832 rare): five sticky per-track latches by age mod 5; a phase latches on a cycle without a near-scan measurement, so tracks born far out have all five set.",
+    "UNK_168_10": "All ones or all zeros (768 / 832 rare): five sticky per-track latches by age mod 5; a phase latches on a cycle without a near-scan measurement, so most tracks born far out have it set from birth.",
     "UNK_15_1": "Raw; mostly set on newborn zero-range rows.",
     "UNK_239_1": "Raw; often set near track birth.",
     "UNK_277_11": "Raw; bit 277 rarely set on newborn tracks.",

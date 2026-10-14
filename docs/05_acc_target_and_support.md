@@ -452,8 +452,8 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
   alignment estimate. Byte 1 shows no link to the azimuth of stationary objects (○) ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 - **0x501 (● layout, ○ interpretation):** byte 5 bits 3-7 form one five-bit numerical code (`43|5@1+` in the DBC),
   including the carry from 15 to 16. Its low three bits are `100b` during active output and `000b` in the startup payload.
-  The code is a learned value kept across drives: after power-up the camera sends 31, then 16 for about 7 s, then the previous
-  drive's value; it changes only while driving, in single steps. It is not a reach, rain, light, temperature or speed-mode signal;
+  The code is a learned value kept across drives: after power-up the camera sends 31, then 16 for about 7 s, then a value within one
+  code of the previous drive's last (95-100 % of drives; equal on 66-71 %); it changes only while driving, in single steps. It is not a reach, rain, light, temperature or speed-mode signal;
   between drives it follows openpilot's calibration pitch weakly (○).
   Counts and scope for these register readings are in
   [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json).
