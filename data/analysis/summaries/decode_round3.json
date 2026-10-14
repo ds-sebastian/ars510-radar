@@ -3874,5 +3874,24 @@
    "spearman_0x25": 0.592,
    "K_median": -9.0
   }
+ },
+ "b33e_byte2_bit5_transitions": {
+  "what": "0x33E byte 2 bit 5 on non-oncoming reports: within 1 s of a 0x366 target episode start / end vs > 5 s from both; unseen drives",
+  "car_A": {
+   "transition": 0.212,
+   "steady": 0.056,
+   "n": [
+    419,
+    2342
+   ]
+  },
+  "car_B": {
+   "transition": 0.255,
+   "steady": 0.043,
+   "n": [
+    1450,
+    6203
+   ]
+  }
  }
 }
