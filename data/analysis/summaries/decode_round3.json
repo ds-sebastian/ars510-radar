@@ -1859,6 +1859,26 @@
     "rho_abs": -0.973,
     "pass_": true
    }
+  },
+  "byte2_bit6_far_oncoming": {
+   "owner_heldout": {
+    "n_far": 167,
+    "p_far": 0.988,
+    "n_near": 147,
+    "p_near": 0.041,
+    "pass_": true,
+    "enough": true
+   },
+   "second_replication": {
+    "logs": 200,
+    "n_oncoming": 2623,
+    "n_far": 534,
+    "p_far": 0.978,
+    "n_near": 2041,
+    "p_near": 0.002,
+    "result": "pass",
+    "p_mid_10_20": 0.75
+   }
   }
  },
  "sigma_256_self_consistency": {
