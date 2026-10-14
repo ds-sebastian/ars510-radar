@@ -150,7 +150,7 @@ as `raw_weight_state128`.
 |---|---|---|---|
 | `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
 | `136\|4` | association confidence | 15 on 91 % of rows with `112\|3` = 0; restarts at 3-7 (median 4) when `112\|3` becomes non-zero (1,279 onsets on the bundled drives) and climbs to 14-15 | ◐ |
-| `181\|1` | daylight flag | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night | ○ |
+| `181\|1` | daylight flag on the five-cycle schedule | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night; inside a track it follows a five-cycle pattern locked to the track's age, like `168\|10` | ◐ schedule; ○ meaning |
 
 ![camera association by day and night](img/analysis/camera_association.png)
 
@@ -259,7 +259,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
-| `248\|7` | σ vy (≈ 0.37 m/s per count) | grows with \|yRel\|, shrinks with age | ◐ field; ○ unit |
+| `248\|7` | σ vy (≈ 0.37 m/s per count against the ACC target) | grows with \|yRel\|, shrinks with age; the same on both cars (spread of the lateral-speed self-consistency residual 0.11 / 0.21 / 0.37 m/s at codes 1 / 2 / 4 on each) | ◐ field and form; ○ unit |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |

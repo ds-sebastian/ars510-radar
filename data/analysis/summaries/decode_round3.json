@@ -927,5 +927,177 @@
     ]
    }
   }
+ },
+ "target_366_selection": {
+  "acc_idle": {
+   "reports": 268,
+   "uniquely_matched": 61,
+   "ambiguous": 4,
+   "unmatched": 203,
+   "nearest overall": 0.77,
+   "nearest |y|<2": 0.361,
+   "min TTC overall": 0.934,
+   "min TTC |y|<2.5": 0.41,
+   "min TTC |y|<4": 0.59,
+   "fastest closing": 0.951,
+   "nearest oncoming-or-stationary |y|<4": 0.607,
+   "matched_obj": {
+    "y_abs_med": 3.63,
+    "vg_med": -4.88,
+    "ttc_med": 3.06,
+    "d_med": 18.1,
+    "n_cands_med": 2.0
+   }
+  },
+  "acc_active": {
+   "reports": 2237,
+   "uniquely_matched": 1325,
+   "ambiguous": 8,
+   "unmatched": 904,
+   "nearest overall": 0.683,
+   "nearest |y|<2": 0.937,
+   "min TTC overall": 0.472,
+   "min TTC |y|<2.5": 0.931,
+   "min TTC |y|<4": 0.737,
+   "fastest closing": 0.445,
+   "nearest oncoming-or-stationary |y|<4": 0.298,
+   "matched_obj": {
+    "y_abs_med": 0.36,
+    "vg_med": 10.28,
+    "ttc_med": 99.0,
+    "d_med": 23.9,
+    "n_cands_med": 3.0
+   }
+  }
+ },
+ "sigma_248_two_cars": {
+  "owner": {
+   "rows": 408491,
+   "codes": [
+    1,
+    12
+   ],
+   "per_code": 0.0873,
+   "floor": 0.087,
+   "loglog": 0.903,
+   "spread": {
+    "1": 0.11,
+    "2": 0.205,
+    "3": 0.285,
+    "4": 0.374,
+    "5": 0.455,
+    "6": 0.529,
+    "7": 0.604,
+    "8": 0.704,
+    "9": 0.778,
+    "10": 0.8,
+    "11": 1.125,
+    "12": 0.977
+   }
+  },
+  "second": {
+   "rows": 179488,
+   "codes": [
+    1,
+    11
+   ],
+   "per_code": 0.1017,
+   "floor": 0.0,
+   "loglog": 0.971,
+   "spread": {
+    "1": 0.111,
+    "2": 0.209,
+    "3": 0.318,
+    "4": 0.377,
+    "5": 0.47,
+    "6": 0.538,
+    "7": 0.695,
+    "8": 0.792,
+    "9": 0.863,
+    "10": 1.092,
+    "11": 1.182
+   }
+  }
+ },
+ "bit181_schedule": {
+  "mixed_tracks": 903,
+  "median_autocorr_lag1_12": [
+   0.834,
+   0.726,
+   0.672,
+   0.661,
+   0.886,
+   0.574,
+   0.478,
+   0.432,
+   0.471,
+   0.771,
+   0.417,
+   0.262
+  ],
+  "share_by_age_mod5": {
+   "0": 0.259,
+   "1": 0.526,
+   "2": 0.308,
+   "3": 0.303,
+   "4": 0.269
+  },
+  "share_by_age_mod2": {
+   "0": 0.5,
+   "1": 0.29
+  },
+  "onsets": {
+   "flag_share": 0.1465,
+   "onsets": 25749,
+   "change_rate_cam": {
+    "onset": 0.017,
+    "control": 0.017,
+    "onset_pm2": 0.017
+   },
+   "change_rate_cls": {
+    "onset": 0.001,
+    "control": 0.003,
+    "onset_pm2": 0.002
+   },
+   "change_rate_conf": {
+    "onset": 0.016,
+    "control": 0.032,
+    "onset_pm2": 0.017
+   },
+   "change_rate_W": {
+    "onset": 0.144,
+    "control": 0.148,
+    "onset_pm2": 0.144
+   },
+   "change_rate_L": {
+    "onset": 0.404,
+    "control": 0.399,
+    "onset_pm2": 0.406
+   },
+   "change_rate_camconf": {
+    "onset": 0.143,
+    "control": 0.141,
+    "onset_pm2": 0.145
+   },
+   "cam_when_flag": {
+    "0": 0.587,
+    "1": 0.28,
+    "3": 0.074,
+    "2": 0.053
+   },
+   "cam_when_not": {
+    "0": 0.639,
+    "1": 0.255,
+    "3": 0.053,
+    "2": 0.047
+   },
+   "flag_by_range": {
+    "(0, 20]": 0.51,
+    "(20, 40]": 0.522,
+    "(40, 60]": 0.53,
+    "(60, 80]": 0.457,
+    "(80, 200]": 0.46
+   }
+  }
  }
 }

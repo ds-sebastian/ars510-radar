@@ -79,7 +79,10 @@ range, as `code − 512` gives. They are oncoming cars, not the ACC target
 **Without an ACC target the report carries other objects (◐).** Of 339 reports sent while the ACC target is idle, 43 % are
 oncoming (over-ground speed below −2 m/s) and 43 % stationary; 3 % move in ego's direction, and 16 % carry a target number the
 ACC target has within 10 s. With an ACC target the report is that target (98 %). It reads as the car-bus collision-target
-report: the ACC target when there is one, otherwise a stationary or oncoming object; the selection rule is not known.
+report: the ACC target when there is one, otherwise the object with the shortest time to collision, with no path
+corridor: on 61 such reports that match one object of the object list, it is the shortest-TTC object on 93 % (chance 52 %),
+median 3.6 m to the side and 3.1 s away, i.e. oncoming traffic in the next lane. Three quarters of these reports match no
+listed object.
 
 It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are raw speed / range-dependent flags, and
 the low three bits of byte 5 are constant. The profiles read the same target from the 50 Hz ACC target frames.
