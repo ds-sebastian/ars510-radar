@@ -103,12 +103,12 @@ BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
  SG_ A196_RADAR_FAULT : 8|1@0+ (1,0) [0|1] "" RADAR
  SG_ A196_B2_B4_RESERVED_ZERO18 : 23|18@0+ (1,0) [0|262143] "raw" RADAR
  SG_ A196_FIELD1_CODE6 : 37|6@0+ (1,0) [0|63] "code" RADAR
- SG_ A196_B5_UNKNOWN3 : 47|3@0+ (1,0) [0|7] "raw" RADAR
- SG_ A196_FIELD2_CODE5 : 44|5@0+ (1,0) [0|31] "code" RADAR
+ SG_ A196_B5_RESERVED_ZERO2 : 47|2@0+ (1,0) [0|3] "raw" RADAR
+ SG_ A196_FIELD2_CODE6 : 45|6@0+ (1,0) [0|63] "code" RADAR
  SG_ A196_B6_RESERVED_ZERO1 : 55|1@0+ (1,0) [0|1] "raw" RADAR
  SG_ A196_FIELD3_CODE7 : 54|7@0+ (1,0) [0|127] "code" RADAR
- SG_ A196_B7_UNKNOWN2 : 63|2@0+ (1,0) [0|3] "raw" RADAR
- SG_ A196_FIELD4_CODE6 : 61|6@0+ (1,0) [0|63] "code" RADAR
+ SG_ A196_B7_RESERVED_ZERO1 : 63|1@0+ (1,0) [0|1] "raw" RADAR
+ SG_ A196_FIELD4_CODE7 : 62|7@0+ (1,0) [0|127] "code" RADAR
 
 BO_ 407 ARS510_A197_CANDIDATE: 2 CAMERA
  SG_ A197_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
@@ -377,12 +377,12 @@ CM_ SG_ 406 A196_B1_RESERVED_ZERO7 "Always zero.";
 CM_ SG_ 406 A196_RADAR_FAULT "Radar fault: sets 0.3-0.4 s after the object list stops and clears with it; also set for the first cycle after power-up, so require two or more consecutive cycles (likely).";
 CM_ SG_ 406 A196_B2_B4_RESERVED_ZERO18 "Always zero.";
 CM_ SG_ 406 A196_FIELD1_CODE6 "Raw.";
-CM_ SG_ 406 A196_B5_UNKNOWN3 "Raw.";
-CM_ SG_ 406 A196_FIELD2_CODE5 "Raw.";
+CM_ SG_ 406 A196_B5_RESERVED_ZERO2 "Always zero.";
+CM_ SG_ 406 A196_FIELD2_CODE6 "Raw; byte 5 bits 0-5 (reaches 50; bit 5 is set on about 20 % of active frames).";
 CM_ SG_ 406 A196_B6_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 406 A196_FIELD3_CODE7 "Raw.";
-CM_ SG_ 406 A196_B7_UNKNOWN2 "Raw.";
-CM_ SG_ 406 A196_FIELD4_CODE6 "Raw.";
+CM_ SG_ 406 A196_B7_RESERVED_ZERO1 "Always zero.";
+CM_ SG_ 406 A196_FIELD4_CODE7 "Raw; byte 7 bits 0-6 (reaches 74-80; bit 6 is set on about 5 % of active frames).";
 CM_ SG_ 128 ID80_B0 "Raw transport byte 0 of the segmented 0x80 record.";
 CM_ SG_ 128 ID80_B1 "Raw transport byte 1 of the segmented 0x80 record.";
 CM_ SG_ 128 ID80_B2 "Raw transport byte 2 of the segmented 0x80 record.";

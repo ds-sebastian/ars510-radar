@@ -1,0 +1,49 @@
+{
+ "what": "0x196 byte 5 / byte 7 field widths: the DBC's 'unknown' bits are the top bits of the neighbouring corridor fields",
+ "active_frames": {
+  "owner": 2074,
+  "second": 731
+ },
+ "byte5_bit5_set_share": {
+  "owner": 0.203,
+  "second": 0.174
+ },
+ "byte5_when_bit5_set": {
+  "owner": [
+   32,
+   50
+  ],
+  "second": [
+   39,
+   50
+  ]
+ },
+ "byte7_bit6_set_share": {
+  "owner": 0.05,
+  "second": 0.038
+ },
+ "byte7_when_bit6_set": {
+  "owner": [
+   64,
+   75
+  ],
+  "second": [
+   64,
+   80
+  ]
+ },
+ "byte5_bits6_7": "always 0",
+ "byte7_bit7": "always 0",
+ "max": {
+  "byte4": 50,
+  "byte5": 50,
+  "byte6": [
+   74,
+   79
+  ],
+  "byte7": [
+   75,
+   80
+  ]
+ }
+}
