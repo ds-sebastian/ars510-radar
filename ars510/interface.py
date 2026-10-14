@@ -36,7 +36,7 @@ from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
 EGO_ACCEL_TAU_S = 0.3  # smoothing of the ego-speed derivative used for aRel
-ACCEL_SCALE = 0.075  # m/s^2 per code of 84|10 for the fork's aRel; ego-stopped estimates range 0.04-0.075 (docs/03), so approximate; while ego
+ACCEL_SCALE = 0.075  # m/s^2 per code of 84|10 for the fork's aRel; ego-stopped estimates range 0.04-0.09 (docs/03), so approximate; while ego
 # accelerates the code also carries about 0.4 of ego's acceleration, which this subtraction does not remove. No radard reads aRel.
 GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30

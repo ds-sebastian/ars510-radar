@@ -3831,5 +3831,19 @@
    "car_C": 50,
    "note": "not stable between cars"
   }
+ },
+ "accel_84_integral_scale": {
+  "what": "ego stopped: speed change of the slot's own 64|10 speed over 2 s windows vs the lag-shifted integral of (84|10 - 510.3); unseen drives",
+  "car_A": {
+   "windows": 79,
+   "ols": 0.0586,
+   "theil_sen": 0.086
+  },
+  "car_B": {
+   "windows": 41,
+   "ols": 0.081,
+   "theil_sen": 0.08
+  },
+  "reading": "per-code scale about 0.04-0.09 depending on drives and estimator"
  }
 }
