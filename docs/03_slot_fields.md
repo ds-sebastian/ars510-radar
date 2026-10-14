@@ -123,10 +123,18 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 | bits | field | decode | conf. |
 |---|---|---|---|
 | `128\|3` | **lane state** | 3 ego lane, 2 right lane, 4 left lane; 1 / 5 / 7 = all lane weights zero | ● structure, ◐ names |
+| `120\|3` | **ego-lane boundary crossing** | 0 none; 2 crossing the left boundary moving right (**cut-in from the left**), 3 the left boundary moving left, 4 the right boundary moving right, 5 the right boundary moving left (**cut-in from the right**); bit 120 = moving left | ◐ |
 | `148\|4` | **right-lane weight** | 0-15 | ◐ |
 | `152\|4` | **left-lane weight** | 0-15 | ◐ |
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
 | `131\|4` | dominant lane weight | the largest of the three weights or one less (99.6-99.7 % of samples with a nonzero weight) | ● derived |
+
+**Lane crossing `120|3`.** It is 0 except while a vehicle crosses a boundary of the ego lane (0.2 % of rows, runs of a few
+records): its lateral speed is three times the usual (median 0.68 against 0.23 m/s), the lane state changes within a second
+on 98 %, and the sign of the lateral speed matches the code on 92-98 %. A vehicle crossing the whole ego lane reads 2 then 4
+(left to right) or 5 then 3 (right to left), and the lane state before and after moves the same way. Values 2 and 5 are a
+radar-native cut-in flag. `NativeObject.lane_crossing_code`
+([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `lane_crossing_120`).
 
 The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples; all 54,191 nonzero rows of the bundled drives,
 [`midband_weight_triplet.json`](../data/analysis/summaries/midband_weight_triplet.json)): they behave like a
@@ -184,8 +192,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 step per cycle on 95-96 % of its changes. The class follows it: when a large vehicle is re-classified as a car, the value
 has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-5 before and 14-15 after on the middle
 80 %). A track promoted from class 1 to car typically starts at 15 (75 %), to large vehicle at 12. The decoder exposes it as
-`NativeObject.class_confidence_pct`; the three bits above it (`120|3`) are non-zero on 0.2 % of rows
-([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
+`NativeObject.class_confidence_pct`. The three bits above it (`120|3`) are the lane-crossing code in the lane section below.
 
 **About a quarter of new objects start with an initialization template.** On 5,774 of 22,501 age-1 outputs,
 the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and on all 1,253,081 occupied rows
@@ -319,7 +326,7 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 ## Raw and constant bits
 
-- **Raw (listed by bit):** 13, 15, 63, 106, `120|3`, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
+- **Raw (listed by bit):** 13, 15, 63, 106, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
 - **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
   `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 
