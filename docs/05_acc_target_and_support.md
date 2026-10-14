@@ -392,7 +392,7 @@ Its range is close to that state but not a rounding of it: on the ACC car it is 
 | `8\|13` | longitudinal distance, 1/32 m per code (0-256 m) | ● |
 | `21\|11` signed | lateral position, 0.015 m per code (the object list's unit), left positive | ◐ |
 | `32\|10` − 512 | speed over ground, 0.15 m/s per code | ◐ |
-| `42\|6` | **motion flags**: bit 0 stationary, bit 1 oncoming, bit 2 crossing (moving sideways), bit 3 seen moving (1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle); bits 4 and 5 (together) on near, wide-angle stationary objects | ◐; bits 2, 4, 5 ○ |
+| `42\|6` | **motion flags**: bit 0 stationary, bit 1 oncoming, bit 2 crossing (moving sideways), bit 3 seen moving (1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle); bits 4 and 5 not named | ◐; bit 2 ○ |
 | `48\|8` − 128 | lateral speed over ground, about 0.13-0.18 m/s per code (0.15 nominal) | ◐ |
 
 - **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
@@ -405,8 +405,9 @@ Its range is close to that state but not a rounding of it: on the ACC car it is 
   10 % of stationary objects, the stopped vehicles (on other drives the three shares are 98 %, 97 % and 72 %).
   `Object680.stationary`, `.oncoming` and `.seen_moving` expose them. Bit 2 (0.4 % of frames) goes with sideways motion:
   its objects have a lateral speed (median 16 codes against 0 for every other flag) and sit in ego's path on 39 % of frames, a
-  crossing object. Bits 4 and 5 are set together on stationary objects that are near and wide: among stationary objects
-  their share rises from 0.4 % below 6° of azimuth to 7 % beyond 30°, and falls from 10 % inside 10 m to 0.1 % beyond 80 m
+  crossing object. Bits 4 and 5 together (word 49) mark near, wide stationary objects (median 15 m at 28°); alone, bit 4 sits
+  on far same-direction movers and bit 5 on slower in-path or oncoming movers, so neither bit is named yet. The selector
+  values 0 and 1 interleave from frame to frame on stationary objects; 3 is a steady vehicle stream
   ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Lateral speed:** the code is 0 on stationary objects even while ego turns, so it is over ground like `74|10` of the
   object list.
