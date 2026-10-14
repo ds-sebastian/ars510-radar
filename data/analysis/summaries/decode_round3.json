@@ -3861,7 +3861,12 @@
    "ols": 0.081,
    "theil_sen": 0.08
   },
-  "reading": "per-code scale about 0.04-0.09 depending on drives and estimator"
+  "reading": "per-code scale about 0.04-0.09 depending on drives and estimator",
+  "car_C": {
+   "windows": 99,
+   "ols": 0.0669,
+   "theil_sen": 0.0741
+  }
  },
  "b33e_byte5_standstill_bicycle": {
   "what": "0x33E byte 5 (signed 6-bit) at ego standstill vs steering-wheel angle from 0x260 STEER_ANGLE (0.0573 deg); unseen drives, non-trivial codes 1-30",

@@ -27,7 +27,7 @@ from this radar's own data.
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
-| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.04-0.09 m/s² with ego stopped (the estimate depends on the drives and the estimator: 0.075 on launches of the first drive set, 0.035-0.086 on unseen drives of two cars, against ACC acceleration or the track's own speed change); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
+| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.04-0.09 m/s² with ego stopped (the estimate depends on the drives and the estimator: 0.075 on launches of the first drive set, 0.035-0.086 on unseen drives of three cars, against ACC acceleration or the track's own speed change); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
