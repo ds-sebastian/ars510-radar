@@ -1,0 +1,24 @@
+{
+ "description": "Car-bus 0x366 against the leaked DS11D71 layout, 24 segments on two cars (2,448 reports with an active ACC target), plus a scan of every stored log for byte 1 bit 2.",
+ "leaked_layout": {
+  "TGT_DIST_14bit_0.01m_best_median_error_m": 14.700000000000006,
+  "TGT_VGAP_11bit_0.025mps_best_median_error_mps": 12.599999999999994,
+  "repo_fields_median_error": {
+   "dist_med_abs": 0.18,
+   "speed_med_abs": 0.06
+  },
+  "TGT_POSX_bit40_median_error_m": 0.08
+ },
+ "target_id_32_5_equal_to_acc_target_id": 0.982,
+ "lateral_bits_45_47_constant": "010",
+ "lateral_step_fit_m": [
+  0.36,
+  0.38
+ ],
+ "pcs_alarm_13_1": {
+  "logs": 1907,
+  "frames": 547922,
+  "set": 5,
+  "all_inside": "U3 alarm 56.17-56.93 s (relative), extra frames on set and clear"
+ }
+}

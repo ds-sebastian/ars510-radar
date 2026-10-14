@@ -134,11 +134,8 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
   turns around surveyed reflectors, with yaw and the radar-to-reference lever arm measured, separate scale from origin
   ([T07](16_routes_and_tests.md#t07-lateral-motion-heading-and-turning)); gyro closure is a consistency check, and the
   physical zero and a per-cent calibration take the surveyed reference.
-- **`272|5` under a known overhead object.** *Which physical quantity is `272|5`?* Its ranking of pedestrians below cars
-  points to a size- or reflectivity-like quantity. *Data:* passes under a bridge or gantry of known clearance and past
-  parked vehicles of known height relate the code to height.
 - **0x85 curve cells: units and the remaining fields.** *What are the units of heading and curvature, and the roles of the
-  flag `79|1` and the structured fields `0|9`, `20|4`, `24|4`, `44|4` and `80|6`?* Heading `48|16` and curvature `64|15` are
+  flag `79|1` and the structured fields `20|4`, `24|4`, `44|4` and `80|6`, and the unit of the view range `0|9`?* Heading `48|16` and curvature `64|15` are
   bounded to 1.6-2.2e-5 rad and 2.0-2.7e-6 1/m per code ([04](04_metadata_record_0x85.md#lane--road-boundary-curves)).
   *Data:* a camera lane polynomial with matched timing, or a drive along a surveyed curve of known radius.
 - **Class 5.** *Is class 5 a cyclist?* *Data:* a few recorded passes of a cyclist and of a pedestrian test the bicycle

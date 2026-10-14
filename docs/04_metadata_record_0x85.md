@@ -79,7 +79,7 @@ A populated cell is one boundary curve, `y(x) = c0 + c1·x + c2·x²/2 + c3·x³
 | `48\|16` | **c1 heading**, left-positive tangent | `−1.8e-5 × (code − 31200)` rad per code, zero 31.1-31.3 k per cell | ◐ sign, zero; unit bounded 1.6-2.2e-5 |
 | `64\|15` | **c2 curvature**, left positive | `+2.5e-6 × (code − 16020)` 1/m per code | ◐ sign, zero; unit bounded 2.0-2.7e-6 |
 | `10\|10` | **c3 curvature rate** d(κ)/ds, offset binary | `+4e-6 × (code − 500)` 1/m² per code | ◐ sign, zero; unit order of magnitude |
-| `79\|1` | flag; the same in cells 2 and 3 on 99 % of rows | set on 79-80 % of cells 2/3 and 43-44 % of 8/9, rarely elsewhere | ○ |
+| `79\|1` | flag; the same in cells 2 and 3 on 99 % of rows | set on 79-80 % of cells 2/3 and 43-44 % of 8/9, rarely elsewhere; goes with higher speed, half the curvature and a longer `0\|9`. Not a model-order flag: the curvature rate `10\|10` sits at its zero equally often with it set or clear | ○ |
 | `30\|1` | parameters present | above | ● |
 
 Idle cells hold the defaults 900 at `48|16` and 500 at `64|15`; the conversions describe populated cells, and `ShellCell.heading_rad`,
@@ -121,7 +121,7 @@ group and cell scores (0.35 and 0.41 for the right-lane cells 3 and 9 on drive C
 Each cell describes a nearby boundary whose identity can change: during a lane change or at a turn pocket a cell
 keeps describing the old or a different boundary for a while, and single-cycle spikes of a few metres occur.
 
-The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` behaves like a distance (it falls about 4.1-4.4 codes per metre driven in monotone runs of cells 8 and 9); `80|6` is confidence-like (0-50; cell 1 holds 0, 15 or 50 on every row; cell 4 holds the same three values on 99.98 % of populated rows).
+The remaining cell fields (`0|9`, `20|4`, `24|4`, `44|4`, `80|6`) are raw. `0|9` reads as the curve's **view range** (◐): on the ego cells it falls 5.6 codes per metre driven, is extended in steps of 10-11 codes, never wraps (so it is not a dash phase), is longer at speed (r 0.50) and on straight roads (r −0.31 with curvature), and stays put at standstill, about 0.18 m per code from driven distance (median about 28 m; cells 8 and 9 fall 4.1-4.4 codes per metre in monotone runs); `80|6` is confidence-like (0-50; cell 1 holds 0, 15 or 50 on every row; cell 4 holds the same three values on 99.98 % of populated rows).
 
 **For in-path decisions, the yaw-rate path is the working predictor.** To decide whether an object 30-100 m ahead is in the ego lane (within 1.6 m of the path
 the car later drove), the car's own curvature, y(x) = (yaw rate / v) · x² / 2 with the yaw rate from Toyota 0x24, is scored on three drive sets

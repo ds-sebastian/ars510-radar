@@ -54,6 +54,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
 | tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `TRACKER_A`, `TRACKER_B` |
+| check byte | byte 0 of 0x235 / 0x237 / 0x239: CRC-8 (polynomial 0x1D) over the frame's signals serialized as zero-padded integers; `support.acc_check` | ● | `CHECK_BYTE` |
 | target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `STATE` (0x235), `PRESENT` (0x237) |
 
 `support.parse_acc_target(data235, data237)` returns all of them as one `AccTarget`; the single-field helpers
@@ -76,7 +77,23 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
   target, 128-135 for a steady mover, and climbs
   toward 240 within half a second of a maneuver. They follow the target's own acceleration (also when the relative speed
   is still zero because ego brakes with it) and are explained to 78-88 % by the target's kinematics: the tracker's
-  maneuver terms.
+  maneuver terms. They carry no information on how long the target has been tracked (rank correlation with target age
+  about 0), so they cannot say when the relative acceleration has converged; it rarely needs to: at a hand-over it already
+  carries about 0.8 of the maneuver and about 0.97 after a second.
+
+### Check bytes
+
+Byte 0 of 0x235, 0x237 and 0x239 is a CRC-8 with polynomial 0x1D (MSB first, the polynomial of 0x23B), computed over
+the frame's signals serialized as zero-padded integers (each signal in an 8-, 16- or 32-bit container, in payload
+order), not over the raw bytes; that is why CRC searches over bytes 1-7 find nothing. The padding shows as gaps in the
+register positions: 3 zero bits before the 13-bit distance, 4 before the 12-bit lateral position, 5 before each 11-bit
+speed. Being linear, it is stored as one column per payload bit plus a constant (`support.acc_check`). It holds on
+every frame: 1.69 M distinct payloads of two cars and 1.19 M frames of other drives, with no failure.
+
+Lateral speed (0x235) and lateral position (0x237) are one bit wider inside the radar than on the bus. When that bit
+is set the CAN field wraps, and the check byte differs by that bit's CRC term (0x9C and 0x14): `acc_check` returns
+`"wrapped"`, and the lateral speed is continuous with its neighbours only when 2048 codes are added
+([`acc_check_bytes.json`](../data/analysis/summaries/acc_check_bytes.json)).
 
 ### Units of the ACC target
 
@@ -92,6 +109,9 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 - **Relative acceleration** follows the derivative of the closing speed about 0.1-0.2 s behind it.
 - The **object-list** relative speed (`64|10` minus ego) is 0.87 of the same distance slope (IQR 0.77-0.96, every
   drive 0.78-0.94; 1,862 windows on 27 drives): on a moving car it reads about 13% smaller in magnitude than the ACC target (0.99).
+  It is a smaller gain, not a delay: the ratio stays 0.82-0.87 for every time shift from −0.5 s to +1 s, and when a lead
+  starts braking the object list follows within 0.02 s but by only about 0.84 of the change; the list's own range rate
+  reads 0.90-0.94 ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `list_speed_gain`).
 
 Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json), [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 
@@ -164,9 +184,12 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 | 0x23B | byte 1 low nibble + byte 2 (12 bits) | **target width in cm** | ◐ |
 
 - **Class.** Class 1 goes with the car template of the target summaries below and class 2 with the truck template in every
-  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives). Classes 0 and 6 appear mostly while ego is stopped
-  behind something within a few metres (6 with a car-sized width, 0 with a width of 10-50 cm); classes 4 and 5 carry
-  widths of 50-120 cm. Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s).
+  matched frame (329,612 of 329,612; 18,974 of 18,974 on other drives). Classes 0 and 6 are **stationary objects** (◐): close in, the radar
+  saw them move in 3-10 % of target runs against 61-67 % for class 1. Class 0 is narrow (median 33 cm), class 6 car-sized
+  (105-155 cm); they appear mostly while ego is stopped behind something within a few metres. All eight standstill holds
+  of `acc` on the replay drives face such an obstacle: a fence (class 0 at 33 cm, or class 1), a garage wall, a kerb
+  island across a T-junction and a car crossing it; seven of the eight have no object in the 0x80 list. Classes 4 and 5
+  carry widths of 50-120 cm ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `acc_class`). Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s).
 - **Small targets while driving.** Over every stored log (three cars), class 0 also appears with ego above 3 m/s. That
   includes stationary objects as narrow as 23 cm (median 50 cm, at a median 31 m, on 22 routes)
   ([`object_size_provenance.json`](../data/analysis/summaries/object_size_provenance.json)). The radar's target choice

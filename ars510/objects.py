@@ -101,9 +101,11 @@ UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "
 UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
 UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
 UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "likely")
-SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "obstacle_probability_candidate")
+# Track-confidence percent: 0 on a new track (age 0), then 90-99 and 100 within a few cycles; not an obstacle probability (docs/03).
+SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "track_confidence_likely")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
-HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "candidate")
+# Coarse length code, about length / 0.555 m (within one code on 91 %); the name is kept for compatibility (docs/03).
+HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "likely_length_class")
 # m or m/s per count; range_uncertainty_code is the overall 0.23 (0.24 below 40 m).
 UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
                          "lateral_speed_uncertainty_code": 0.37}
@@ -170,14 +172,14 @@ class NativeObject:
     object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
     length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
-    height_code: int | None = None  # 272|5, height-like size code (raw)
+    height_code: int | None = None  # 272|5, coarse length code, about length / 0.555 m (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
     vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10 (0.0062 m/s^2 per count)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
     orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
-    secondary_score_pct: int | None = None  # 184|8, percent-like, 100 on 98 % of rows (obstacle-probability candidate)
+    secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 at age 0, 100 on 98 % of rows
 
 
 def is_init_template(age: int, slot: bytes) -> bool:

@@ -223,7 +223,7 @@ contribution comes from a professional facility test or access to the actual inp
 
 ## T10: class, scores and dimensions
 
-**Targets:** existence `16|8`, candidate score `184|8`, class `163|3` / confidence `115|5`, length `56|7`, width `216|6`, size-like `272|5`.
+**Targets:** existence `16|8`, track confidence `184|8`, class `163|3` / confidence `115|5`, length `56|7` and its coarse code `272|5`, width `216|6`.
 
 1. With ego parked, independently label pedestrians, ridden bicycles, people walking bicycles, bicycles standing
    alone, motorcycles, cars and large vehicles where available. Pilot three distinct encounters per relevant category.
@@ -240,7 +240,7 @@ independently labelled held-out set, including negative cases and reference unce
 
 ## T11: lanes, curves and five-cycle patterns
 
-**Targets:** 0x85 curves/quality, lane weights/camera states, `168|10` / bit 183 ([04](04_metadata_record_0x85.md)).
+**Targets:** 0x85 curves/quality and the view-range unit of `0|9`, lane weights/camera states, and the scan timing behind the per-track five-cycle `168|10` / bit 183 schedule ([03](03_slot_fields.md), [04](04_metadata_record_0x85.md)).
 
 1. Select surveyed/mapped straight and curved lanes, unequal widths, merges and marking starts/ends. Record road
    geometry/grade and uncertainty; metric lane geometry comes from the survey, with video as context.
@@ -254,7 +254,7 @@ Cell roles and quality units take several lane geometries.
 
 ## T12: PCS and event reports
 
-**Targets:** 0x100, 0x195/196, 0x33E and car-bus PCS stages. Follow the professional/passive recording specification
+**Targets:** 0x100, 0x195/196, 0x33E, car-bus 0x366 byte 1 bit 2 (set during the recorded alarm) and car-bus PCS stages. Follow the professional/passive recording specification
 in [15](15_aeb_pcs.md#recording-pcs--aeb-events), including isolated target controls, synchronized reference/video, all-bus logs and driver actions.
 The recorded alarm stage covers the alarm; brake stages, disabled-radar signaling and target attribution take the events
 specified in [15](15_aeb_pcs.md#recording-pcs--aeb-events). Keep short-TTC states with PCS idle as controls. Brake requests come from

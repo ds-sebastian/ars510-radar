@@ -58,6 +58,11 @@ other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair f
 outputs idle: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
 [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json).
 
+**On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (◐, one event).** It is set in 5 of
+547,922 0x366 frames in every stored log, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
+it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
+[`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)).
+
 ## Relaying the radar's decision (○ theoretical)
 
 The disable silences the radar's car-bus side. On bus 1, which the comma reads, the radar keeps sending its object
