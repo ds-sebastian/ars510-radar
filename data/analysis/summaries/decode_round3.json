@@ -3115,5 +3115,146 @@
     "spearman": -0.435
    }
   }
+ },
+ "header_80_leftovers": {
+  "census": {
+   "rows": 94823,
+   "h0": {
+    "distinct": 1,
+    "top": {
+     "228": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h7": {
+    "distinct": 1,
+    "top": {
+     "0": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h8": {
+    "distinct": 16,
+    "top": {
+     "208": 5932,
+     "192": 5930,
+     "96": 5930,
+     "0": 5929
+    },
+    "change": 1.0,
+    "step": {
+     "16": 94721,
+     "208": 1,
+     "32": 1
+    },
+    "rho_v": -0.0,
+    "rho_absyaw": 0.001,
+    "rho_nocc": 0.0
+   },
+   "h9": {
+    "distinct": 1,
+    "top": {
+     "255": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h10": {
+    "distinct": 1,
+    "top": {
+     "255": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h11": {
+    "distinct": 1,
+    "top": {
+     "255": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h12": {
+    "distinct": 1,
+    "top": {
+     "0": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h15": {
+    "distinct": 1,
+    "top": {
+     "0": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   },
+   "h16": {
+    "distinct": 1,
+    "top": {
+     "0": 94823
+    },
+    "change": 0.0,
+    "step": {
+     "0": 94724
+    },
+    "rho_v": null,
+    "rho_absyaw": null,
+    "rho_nocc": null
+   }
+  },
+  "byte8_offset": {
+   "segments": 99,
+   "seg_constant_share_median": 1.0,
+   "seg_constant_share_min": 1.0,
+   "drives": 55,
+   "drive_constant_share_min": 0.5,
+   "offsets_by_drive": {
+    "4": 25,
+    "3": 19,
+    "2": 8,
+    "0": 2,
+    "1": 1
+   }
+  }
  }
 }
