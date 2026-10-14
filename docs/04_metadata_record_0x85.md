@@ -49,7 +49,7 @@ Bytes `[1:21]` of the record hold more than the clock and counter. Counts are ov
 | 16 (low 5 bits) | count-like quantity, 2-20 above a fixed `0x20`: correlates with ego speed (non-monotone: mean 3.5 at standstill, 10.4 at 14-22 m/s, 7.5 above 30 m/s), with the number of populated cells (ρ .58) and with 0x80 header byte 13 | ○ |
 | 17.2-3; 17.4-5, 17.7; 18.1, 18.3; 18.4, 18.6-7; 19.1-3; 19.4-7 | **inverted copies of the cell "parameters present" flag** of cells 3, 4, 5, 2, 1, 0: the bit is 1 exactly when bit 30 of that cell is 0, 2-4 bits per cell. The copies cover cells 0-5; the other bits of bytes 17-19 are constant 1. `shell85.prefix_flags_consistent` checks it, and it holds on all 1,309 bundled records | ● |
 | 9, 11, 13, 14 | count-down timers: zero on 99.5 % of records; after an onset bytes 9 / 11 count down by 6-7 per record and bytes 13 / 14 by 1-2. Bytes 9 and 13 start with cell 9 being dropped or re-added (5-10 × its usual rate on both cars), byte 14 with cell 8 (10-17 ×); byte 11 goes with cell 8 on one car only | ◐ |
-| 0, 8, 10, 12, 20 | constant: byte 0 = 0x90, byte 8 = 3 (rarely 0-2), bytes 10, 12, 20 = 0 | ● |
+| 0, 8, 10, 12, 20 | constant: byte 0 = 0x90, byte 8 = 3 (rarely 0-2), bytes 10, 12, 20 = 0 (three cars) | ● |
 
 Bits agree on all 677,754 records for cells 0, 2, 3, 4 and 5 and on all but 238 for cell 1 (a default block with a nonzero `32|12`);
 a fresh 114-segment set agrees the same way (cell 1 on 99.996 %), and 13,934 records decoded independently from 14 original-log segments agree on all but 12 of 236,878 tested bits
