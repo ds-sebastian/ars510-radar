@@ -331,3 +331,24 @@ def test_categorical_recoding_on_bundled_real_slots():
                 assert mapping[(raw[20] >> 3) & 7] == (raw[17] >> 4) & 7
                 checked += 1
     assert checked == 26180  # three bundled samples (drives A and E)
+
+
+def _motorola(data: bytes, start: int, length: int) -> int:
+    """DBC big-endian (@0) signal: start = MSB in byte*8 + bit numbering, then down through the byte and on to the next byte."""
+    value, pos = 0, start
+    for _ in range(length):
+        value = (value << 1) | ((data[pos // 8] >> (pos % 8)) & 1)
+        pos = pos - 1 if pos % 8 else pos + 15
+    return value
+
+
+def test_a196_corridor_fields_hold_whole_bytes() -> None:
+    """0x196 bytes 5 and 7 reach 50 and 74-80 on active frames (two cars), so their fields are 6 and 7 bits wide."""
+    import re
+    text = (Path(__file__).resolve().parents[1] / "dbc" / "ars510_radar_bus.dbc").read_text()
+    block = text.split("BO_ 406 ", 1)[1].split("\n\n", 1)[0]
+    sig = {m[0]: (int(m[1]), int(m[2])) for m in re.findall(r"SG_ (\w+) : (\d+)\|(\d+)@0", block)}
+    frame = bytes([12, 0, 0, 0, 50, 50, 74, 80])
+    assert _motorola(frame, *sig["A196_FIELD1_CODE6"]) == 50 and _motorola(frame, *sig["A196_FIELD2_CODE6"]) == 50
+    assert _motorola(frame, *sig["A196_FIELD3_CODE7"]) == 74 and _motorola(frame, *sig["A196_FIELD4_CODE7"]) == 80
+    assert _motorola(frame, *sig["A196_B5_RESERVED_ZERO2"]) == 0 and _motorola(frame, *sig["A196_B7_RESERVED_ZERO1"]) == 0
