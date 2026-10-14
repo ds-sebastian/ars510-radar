@@ -3756,5 +3756,43 @@
     "result": "pass"
    }
   }
+ },
+ "code264_covariance_state": {
+  "what": "Spearman of 264|8 (codes 1-254, age > 1) with 248|7 and with track age per range band, on drives not used before for this field (frozen claim: 248 coupling >= 0.4 in each band, age <= -0.3 beyond 20 m)",
+  "result": "pass",
+  "car_A": {
+   "0-20": {
+    "n": 56236,
+    "rho_age": -0.323,
+    "rho_248": 0.55
+   },
+   "20-40": {
+    "n": 88996,
+    "rho_age": -0.554,
+    "rho_248": 0.817
+   },
+   "40-80": {
+    "n": 130604,
+    "rho_age": -0.722,
+    "rho_248": 0.846
+   }
+  },
+  "car_B": {
+   "0-20": {
+    "n": 72623,
+    "rho_age": -0.317,
+    "rho_248": 0.431
+   },
+   "20-40": {
+    "n": 77188,
+    "rho_age": -0.598,
+    "rho_248": 0.777
+   },
+   "40-80": {
+    "n": 95860,
+    "rho_age": -0.761,
+    "rho_248": 0.862
+   }
+  }
  }
 }
