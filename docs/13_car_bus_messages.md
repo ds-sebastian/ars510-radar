@@ -53,8 +53,8 @@ This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for 
 | `4\|12` | time to collision | ≈ 1.6 ms (1/625 s) per code: `625 × TTC + 29` fits the ACC target's range / closing speed with r 0.93 below 5 s; 0xFFF = 6.55 s or more |
 | `16\|8` | motion-class flags | bit 0 (LSB) moving, bit 1 oncoming, bit 2 not moving in ego's direction (stationary or oncoming), bit 4 set on almost every report of the ACC target; e.g. 0x11 same-direction mover, 0x14 stationary, 0x47 oncoming |
 
-Between 5 and 6.5 s the time reads shorter than range / closing speed, so the radar's own TTC differs there; byte 5
-and the high nibble of byte 0 are not named ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
+The time is the plain range / closing speed (residual median +0.06 s, spread 0.085 s up to 6.55 s); a constant-
+acceleration time to collision fits far worse. Byte 5 (a signed lateral term) and the high nibble of byte 0 are not named ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
 
 ### 0x366: target report, the ACC target and other states (◐)
 
