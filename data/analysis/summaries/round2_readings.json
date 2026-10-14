@@ -106,25 +106,41 @@
   "lever_arm_fit_m": 3.6
  },
  "acc_lat_dist_wrap": {
-  "inpath_cycles": {
-   "owner": 46,
-   "second_car": 8
+  "scope": "every stored segment of three cars (38.2 h of radar cycles); wrap read from the check byte (residual 0x14)",
+  "active_cycles": 320,
+  "in_path_cycles": 227,
+  "episodes": 15,
+  "drives": 14,
+  "per_hour": {
+   "active": 8.4,
+   "in_path": 5.9
   },
-  "episodes": 7,
-  "ranges_m": [
-   60,
+  "episode_median_range_m": [
+   25,
    79
   ],
-  "cycles_per_hour": [
-   2.3,
-   4.0
+  "episode_median_lateral_m": [
+   21.0,
+   42.7
   ],
-  "negative_side": "clamps at -20.00 m"
+  "ego_speed_m_s": [
+   0.0,
+   16.9
+  ],
+  "situation": "ego turning or at a junction; the radar marks some of these targets in-path",
+  "camera_lead_at_target": "none: modelV2 lead probability median 0.005-0.11 on 13 episodes; on the other two the model lead is a different car 3-5 m to the side",
+  "radard_lead_on_wrapped_target_cycles": 0,
+  "negative_side": "stops at -20.00 m (code 0)"
  },
  "acc_target_id": {
   "same_track_return_same_id": "56/56",
   "other_track_return_new_id": "23/23",
-  "id31_active_share": 0.028
+  "id31_active_share": {
+   "owner": 0.017,
+   "second_car": 0.03,
+   "third_car": 0.031
+  },
+  "id31_scope": "active cycles over every stored segment (raw recheck); 0.028 on the owner atlas subset"
  },
  "obj680_is_track0": {
   "owner": "2073/2073",
