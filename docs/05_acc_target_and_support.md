@@ -48,9 +48,9 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | ● | `REL_SPEED` |
 | relative acceleration | 0x235 byte 2: `(code − 100) × 0.125` m/s², positive = opening | ● | `REL_ACCEL` |
 | distance | 0x237 bits 39-51: `code × 0.025` m | ● | `LONG_DIST` |
-| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
-| lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive | ◐ | `LAT_SPEED` |
-| target identity | 0x235 bits 0-4: constant while the radar follows one target | ◐ | `TARGET_ID` |
+| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when; this happens on the in-path target in left curves at 60-80 m, a few cycles per hour); on the right it stops at −20.00 m | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
+| lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive, **relative in the rotating ego frame**: stationary targets read about −1.1 to −1.2 × yaw rate × distance, and the lateral position changes by 0.98-1.00 × this speed. Crossing traffic beyond 12.8 m/s wraps the field | ● unit consistency, ◐ frame | `LAT_SPEED` |
+| target identity | 0x235 bits 0-4: the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2.8 % of active cycles); read idle from `STATE` | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
 | tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `TRACKER_A`, `TRACKER_B` |
@@ -177,7 +177,7 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 
 | frame | bits | field | conf. |
 |---|---|---|---|
-| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0, 4, 5, 6 other; 7 idle | ● 1 / 2, ○ others |
+| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0 narrow and 6 wide stationary object; 4 vehicle with an uncertain class; 5 crossing object; 7 idle; 3 never seen | ● 1 / 2, ◐ 0 / 6, ○ 4 / 5 |
 | 0x239 | bit 39 | the target also has an object in the 0x80 list | ◐ |
 | 0x239 | bit 35 | target present | ● |
 | 0x239 | bits 3-34 | **microsecond timestamp** of the radar cycle the target data belong to (the 0x190 clock) | ● |
@@ -188,8 +188,13 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
   saw them move in 3-10 % of target runs against 61-67 % for class 1. Class 0 is narrow (median 33 cm), class 6 car-sized
   (105-155 cm); they appear mostly while ego is stopped behind something within a few metres. All eight standstill holds
   of `acc` on the replay drives face such an obstacle: a fence (class 0 at 33 cm, or class 1), a garage wall, a kerb
-  island across a T-junction and a car crossing it; seven of the eight have no object in the 0x80 list. Classes 4 and 5
-  carry widths of 50-120 cm ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `acc_class`). Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s).
+  island across a T-junction and a car crossing it; seven of the eight have no object in the 0x80 list. Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s) with a fixed width of 120 or 50 cm: the
+  object list calls it a car on 79-95 % of matched cycles (never a two-wheeler), 89-90 % of its moving time is on targets
+  that are class 1 at other times, and on camera the checked cases are cars, one in heavy rain, so it reads as a vehicle whose
+  class is not settled (○), not the motorcycle of the ARS408 enum. Class 5 moves sideways (median 4.4 m/s) while ego is
+  mostly stopped; on camera these are cars crossing an intersection (○), not bicycles. Class 3 does not occur in about
+  860 k cycles of two cars ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `acc_class`;
+  [`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
 - **Small targets while driving.** Over every stored log (three cars), class 0 also appears with ego above 3 m/s. That
   includes stationary objects as narrow as 23 cm (median 50 cm, at a median 31 m, on 22 routes)
   ([`object_size_provenance.json`](../data/analysis/summaries/object_size_provenance.json)). The radar's target choice
@@ -305,7 +310,11 @@ non-idle samples, so recognise idle frames by the whole payload. `q10` is the lo
 
 0x196 byte 0 (signed) is a required deceleration of about 0.1 m/s² per code, close to the usual lead-moving / lead-stops
 formula with a 1-2 m margin (within one code on 92-98 % of active cycles, not exact; it relaxes while the driver brakes
-hard). Bytes 4-7 form two coupled pairs, capped at 50 / 62, and bytes 1-3 stay 0 while active, except one bit:
+hard). **Bytes 4-7 are two lateral pairs, not time thresholds (◐):** byte 6 − byte 4 and byte 7 − byte 5 are the lateral
+distances from the object to the left and right edges of a corridor around the predicted ego path, about 0.1 m per code,
+with the edges about 1.0-1.15 m either side of the path (R² 0.83 / 0.87 on the owner car; looser on the second car). Bytes
+4 and 5 clip at 50 and bytes 6 / 7 reach 74-80, so the "62" seen before was byte 4's clip plus a gap; what bytes 4 / 5
+themselves measure is open. Bytes 1-3 stay 0 while active, except one bit:
 **0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.4 s after the object list stops (two outages on a second
 car, together with 0x198 byte 0 changing 0x10 → 0x90), about 1.5 s before the car-bus 0x411 fault code, and clears with it.
 It marks the onset of an outage (5.6 and 22.6 s here), not a list that is missing from power-up, and it is also set for the
@@ -367,8 +376,10 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 
 ## 0x680: single-object stream
 
-Every 0.5 s the radar reports **one object from its function-level tracker**. On vehicles it shares with the ACC target its
-speed equals the ACC speed (median difference 0.09 m/s), so it likely comes from the tracker that feeds the ACC target (◐).
+Every 0.5 s the radar reports **one object from its function-level tracker: the track with number 0** (◐). It is the ACC
+target exactly when the ACC target's `TARGET_ID` is 0 (2,073 of 2,073 frames on the owner car, 81 of 85 on a second car;
+with any other ID it is a different object), so it does not rotate through the tracks; track 0 is reused quickly, mostly by
+roadside objects. On the ACC target its speed equals the ACC speed (median difference 0.09 m/s).
 Its range is close to that state but not a rounding of it: on the ACC car it is exact on about 21 % of frames and
 0.07-0.15 m RMS away ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 
@@ -414,8 +425,8 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
 - **0x202:** counter in byte 1 high nibble (+1 per frame); byte 0 is a fixed function of the counter (map in the DBC): a CRC-8 with
   polynomial 0x1D and the counter nibble processed first fits all 16 payloads (the fit identifies the counter dependence; the other
   bytes are constant).
-- **0x23B (50 Hz, 3 bytes, in received order):** byte 0 = **CRC-8** (polynomial 0x1D, MSB first, init 0, xor 0x59) over the
-  bit stream [counter 4 bits][0000][low nibble][byte 2]; byte 1 = rolling counter in the high nibble; the low nibble and
+- **0x23B (50 Hz, 3 bytes, in received order):** byte 0 = **CRC-8 SAE J1850** (polynomial 0x1D, init 0xFF, final xor 0xFF,
+  the AUTOSAR CRC8) over `[0x00][counter][width as 16 bits]`, the same serialization as the other ACC frames; byte 1 = rolling counter in the high nibble; the low nibble and
   byte 2 are the ACC target width ([above](#class-width-and-timestamp-0x239--0x23b)). 3,615 of 3,616 distinct payloads over
   2.05 M frames pass, and 30,056 of 30,058 frames on fresh drives (the exceptions are the startup frame `00 0f ff`).
 - **0x240 / 0x244 / 0x248:** camera-sent context frames ([above](#0x240-0x248-context-frames)).
