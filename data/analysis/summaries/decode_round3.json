@@ -3845,5 +3845,25 @@
    "theil_sen": 0.08
   },
   "reading": "per-code scale about 0.04-0.09 depending on drives and estimator"
+ },
+ "b33e_byte5_standstill_bicycle": {
+  "what": "0x33E byte 5 (signed 6-bit) at ego standstill vs steering-wheel angle from 0x260 STEER_ANGLE (0.0573 deg); unseen drives, non-trivial codes 1-30",
+  "prediction": "K = code x angle = -wheelbase x steering ratio x 57.3 / 256 m = -9.2",
+  "car_A": {
+   "rows": 905,
+   "drives": 10,
+   "sign_agree": 0.985,
+   "spearman_abs_inv": 0.972,
+   "K_median": -9.05,
+   "within1_at_K9_2": 0.95
+  },
+  "car_B": {
+   "rows": 1604,
+   "drives": 13,
+   "sign_agree": 0.999,
+   "spearman_abs_inv": 0.986,
+   "K_median": -8.82,
+   "within1_at_K9_2": 0.771
+  }
  }
 }
