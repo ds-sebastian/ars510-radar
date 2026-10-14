@@ -60,6 +60,8 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 | record counter | `int.from_bytes(record[5:7], "little") >> 1` | equals the 0x85 counter in the same cycle | ● |
 | timing offset | record bits 104-114 (bytes 13-14) | follows the record's arrival-time offset at 0.9-1.0 ms per count (record-to-record change r 0.98-0.99 on the three bundled drives, [`header_timing_offset.json`](../data/analysis/summaries/header_timing_offset.json)) | ◐ |
 | allocation count | `record[14] >> 3` | number of allocated slots: those whose index field equals their position, which are the slots with age ≥ 1; exact on all 1,309 bundled records ([`header_allocation_count.json`](../data/analysis/summaries/header_allocation_count.json)) | ● |
+| sequence counter | `record[8] >> 4` (low nibble 0) | a second 4-bit counter, +1 per record; its offset to the record counter is fixed within a drive segment (three cars) | ● |
+| constants | byte 0 = 0xE4; bytes 9-11 = 0xFF; bytes 7, 12, 15, 16 = 0x00 | unchanged on every record of 100 segments and of 49 logs from a third car | ● |
 
 Pairing 0x80 and 0x85 by clock and counter gives one 0x85 record per 0x80 record (99.97% of 0x80 records paired, each pair unique,
 [`prefix_alignment.json`](../data/analysis/summaries/prefix_alignment.json)); pairing by arrival time picks the neighbouring cycle 31-37% of the
