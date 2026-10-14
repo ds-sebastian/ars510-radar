@@ -54,9 +54,11 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
   at 30-100 m. **Against physical odometry the ACC distance is right (◐):** on 20 approaches to stopped cars that start at 60-80 m (two cars,
   ego up to 16 m/s), the ACC distance follows GNSS-scaled wheel odometry to a median +0.12 m (+0.1 %, IQR −0.16 to +0.40 m;
-  −0.15 m on 26 episodes with plain wheel odometry), while the object list reads −1.5 m (−3.4 %) and the vision lead −2.5 m
-  (−3.0 %) ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)). So the far shortfall is an error of
-  the object list, and vision is not a far-range reference. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
+  −0.15 m on 26 episodes with plain wheel odometry), while the object list reads 0.8-3 m short and the vision lead
+  about 2.5 m short, depending on whether each stream is anchored at the stop or at 30 m
+  ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)). The comparison tests the range scale on
+  stopped cars (each stream anchored on itself), not an absolute zero. It points to the object list, not the ACC distance,
+  as the short one, and vision is not a far-range reference. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to

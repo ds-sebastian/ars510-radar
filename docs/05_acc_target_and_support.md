@@ -310,9 +310,10 @@ non-idle samples, so recognise idle frames by the whole payload. `q10` is the lo
 
 0x196 byte 0 (signed) is a required deceleration of about 0.1 m/s² per code, close to the usual lead-moving / lead-stops
 formula with a 1-2 m margin (within one code on 92-98 % of active cycles, not exact; it relaxes while the driver brakes
-hard). **Bytes 4-7 are two lateral pairs, not time thresholds (◐):** byte 6 − byte 4 and byte 7 − byte 5 are the lateral
-distances from the object to the left and right edges of a corridor around the predicted ego path, about 0.1 m per code,
-with the edges about 1.0-1.15 m either side of the path (R² 0.83 / 0.87 on the owner car; looser on the second car). Bytes
+hard). **Bytes 4-7 are two lateral pairs, not time thresholds (◐ on the owner car, ○ beyond it):** byte 6 − byte 4 and byte 7 − byte 5
+behave like lateral distances from the object to the left and right edges of a corridor around the predicted ego path, about
+0.1 m per code, with the edges about 1.0-1.15 m either side of the path (R² 0.83 / 0.87 on the owner car). The fit does not
+transfer to the second car, and lateral-speed or time-to-collision alternatives fit comparably, so the edge values are not settled. Bytes
 4 and 5 clip at 50 and bytes 6 / 7 reach 74-80, so the "62" seen before was byte 4's clip plus a gap; what bytes 4 / 5
 themselves measure is open. Bytes 1-3 stay 0 while active, except one bit:
 **0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.4 s after the object list stops (two outages on a second
@@ -376,10 +377,11 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 
 ## 0x680: single-object stream
 
-Every 0.5 s the radar reports **one object from its function-level tracker: the track with number 0** (◐). It is the ACC
-target exactly when the ACC target's `TARGET_ID` is 0 (2,073 of 2,073 frames on the owner car, 81 of 85 on a second car;
-with any other ID it is a different object), so it does not rotate through the tracks; track 0 is reused quickly, mostly by
-roadside objects. On the ACC target its speed equals the ACC speed (median difference 0.09 m/s).
+Every 0.5 s the radar reports **one object from its function-level tracker: the track with number 0** (◐). It is the same car as
+the ACC target whenever the ACC target's `TARGET_ID` is 0 (range within 0.3 m on 98 % of frames; 173 of 173 on the owner car in a
+re-check from the original logs, 6 of 6 on a third car; with any other ID it is a different object), so it does not rotate
+through the tracks. The two ranges are a close copy, not always the same number, and few frames cover moving vehicles; track 0
+is reused quickly, mostly by roadside objects. On the ACC target its speed equals the ACC speed (median difference 0.09 m/s).
 Its range is close to that state but not a rounding of it: on the ACC car it is exact on about 21 % of frames and
 0.07-0.15 m RMS away ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 

@@ -56,8 +56,8 @@
    0.4
   ],
   "acc_relative": 0.001,
-  "object_list_median_m": -1.46,
-  "object_list_relative": -0.034,
+  "object_list_median_m": "-0.8 (anchored at the stop) to -3.1 (anchored at 30 m); first run -1.46",
+  "object_list_relative": "about -1 to -4 %",
   "vision_lead_median_m": -2.48,
   "vision_lead_relative": -0.03,
   "independent_raw_check": {
@@ -68,7 +68,8 @@
     0.15
    ],
    "odometry": "carState vEgo, no GNSS scaling"
-  }
+  },
+  "note": "each stream anchored on itself: tests the range scale on stopped cars, not an absolute zero; list result is anchor-dependent"
  },
  "far_range_list_vs_acc": {
   "relative_gap_beyond_45m_by_ego_speed": "-2 to -5 % at every ego speed 10-40 m/s, no step",
@@ -131,7 +132,8 @@
   "other_id_match_share": [
    0.0008,
    0.004
-  ]
+  ],
+  "note": "same car whenever ID 0 (173/173 original-log recheck, 6/6 third car); ranges are a close copy (tight copy 171/173), few moving-vehicle frames"
  },
  "acc_class": {
   "class3_cycles": 0,
@@ -172,7 +174,8 @@
   "byte6_7_max": [
    74,
    80
-  ]
+  ],
+  "note": "owner car only; fit does not transfer to the second car (R2 negative), lateral / TTC alternatives compete"
  },
  "check_23b": {
   "form": "CRC-8 SAE J1850 over [0x00][counter][width u16]",
