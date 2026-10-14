@@ -3724,5 +3724,37 @@
     "result": "pass"
    }
   }
+ },
+ "accel_scale_heldout": {
+  "c47_plain_ols": {
+   "owner": {
+    "rows": 8210,
+    "rows_abs_arel_gt_0p5": 189,
+    "slope": 0.0548,
+    "r": 0.76,
+    "result": "fail"
+   },
+   "second": {
+    "rows": 10655,
+    "rows_abs_arel_gt_0p5": 116,
+    "slope": 0.0352,
+    "r": 0.45,
+    "result": "fail"
+   }
+  },
+  "c48_lag_aligned_launches": {
+   "owner": {
+    "launch_rows": 220,
+    "slope": 0.0406,
+    "r": 0.818,
+    "result": "fail"
+   },
+   "second": {
+    "launch_rows": 238,
+    "slope": 0.0573,
+    "r": 0.802,
+    "result": "pass"
+   }
+  }
  }
 }

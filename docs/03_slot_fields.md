@@ -27,7 +27,7 @@ from this radar's own data.
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
-| `84\|10` | **ax over ground**, filtered | `(code − 510.3) × ≈ 0.075` m/s² with ego stopped (0.055-0.09 on two cars); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
+| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.04-0.075 m/s² with ego stopped (the estimate depends on the drives and the estimator: 0.075 on launches of the first drive set, 0.035-0.057 on unseen drives of two cars); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
@@ -248,7 +248,7 @@ coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`
 | distance, lateral position | `d_rel`, `y_rel` | `32\|12`, `44\|12` |
 | speed over ground (minus ego speed = relative speed) | `v_long_ground`, `vel_code` | `64\|10` |
 | lateral speed | `v_lat_ground`, `v_lat_code` | `74\|10` |
-| acceleration (filtered, raw code; about 0.075 m/s² per code with ego stopped) | `accel_like_code` | `84\|10` |
+| acceleration (filtered, raw code; about 0.04-0.075 m/s² per code with ego stopped) | `accel_like_code` | `84\|10` |
 | tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
 | existence probability | `existence_pct` | `16\|8` |
 | secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
