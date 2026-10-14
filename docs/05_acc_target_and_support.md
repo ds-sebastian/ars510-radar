@@ -394,6 +394,7 @@ Its range is close to that state but not a rounding of it: on the ACC car it is 
 | `32\|10` − 512 | speed over ground, 0.15 m/s per code | ◐ |
 | `42\|6` | **motion flags**: bit 0 stationary, bit 1 oncoming, bit 2 crossing (moving sideways), bit 3 seen moving (1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle); bits 4 and 5 not named | ◐; bit 2 ○ |
 | `48\|8` − 128 | lateral speed over ground, about 0.13-0.18 m/s per code (0.15 nominal) | ◐ |
+| `56\|8` | low nibble: 0xA for selector 0, 0xF for selectors 1 and 3 (exact on both cars); high nibble: four flags, 0xE on 98 % of selector-1 / 3 frames and varied on selector 0 (mostly three of four set), not related to position or speed | ● low nibble; ○ high nibble |
 
 - **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
   held-out segments).
