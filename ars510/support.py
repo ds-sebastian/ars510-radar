@@ -93,7 +93,8 @@ def parse_0x191(data: bytes) -> Target191 | None:
 class Object680:
     selector: int        # byte 0: 0 / 1 mostly stationary objects, 3 mostly same-direction vehicles
     d_rel: float         # m, longitudinal distance, 1/32 m per code
-    y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit)
+    y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit); 11 bits, so +-15.36 m: objects farther
+                         # to the side are not reported (no clipping at the edge)
     v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
     flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving; bits 2, 4, 5 raw
     lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.18 m/s per code (0 on stationary objects)
