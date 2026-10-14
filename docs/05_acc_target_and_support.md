@@ -445,9 +445,16 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
 - **0x500 (● observed regular payload):** a shared regular payload across the three recorded cars.
 - **0x502 (● layout, ○ interpretation):** byte 0 is a shared constant; bytes 4-7 are constant within each recorded car
   and differ between cars. Byte 1 and the big-endian word in bytes 2-3 are slowly varying numerical codes, updated
-  during motion and held during settled standstill.
+  during motion and held during settled standstill. Both behave like online alignment estimators: stored across power cycles, frozen
+  at standstill and paused in turns. **The word in bytes 2-3 follows vehicle pitch (◐, inferred):** it moves opposite to openpilot's
+  camera calibration pitch (per drive r −0.92 on the owner car, −0.39 on the second; every large step, 8 of 8, opposite a
+  0.2-0.6° pitch step; about 0.005-0.006° per code if both see the same body pitch), so it reads as the radar's elevation
+  alignment estimate. Byte 1 shows no link to the azimuth of stationary objects (○) ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 - **0x501 (● layout, ○ interpretation):** byte 5 bits 3-7 form one five-bit numerical code (`43|5@1+` in the DBC),
   including the carry from 15 to 16. Its low three bits are `100b` during active output and `000b` in the startup payload.
+  The code is a learned value kept across drives: after power-up the camera sends 31, then 16 for about 7 s, then the previous
+  drive's value; it changes only while driving, in single steps. It is not a reach, rain, light, temperature or speed-mode signal;
+  between drives it follows openpilot's calibration pitch weakly (○).
   Counts and scope for these register readings are in
   [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json).
 - **0x180, 0x198, 0x23D:** constants.
