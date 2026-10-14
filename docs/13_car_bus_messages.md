@@ -17,7 +17,7 @@ All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots
 | 0x343 | `ACC_CONTROL` / `ACC1S03` | 33 Hz, 8 | `00 00 43 00 00 00 00 91` at power-up | ACC acceleration request and ACC / HUD flags | ● |
 | 0x344 | `PRE_COLLISION_2` / `ACC1F01` | 20 Hz, 8 | `00 00 01 00 00 00 00 50` | PCS / AEB deceleration request, pre-fill and alarm triggers; idle with only `PCSOPR` (bit 16) set; PCS alarm: `PCSALM` (bit 17) also set, `00 00 03 … 52` (U3) | ● idle and alarm, ◐ other fields |
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking); PCS alarm: byte 5 = 0x02 (bit 41, `PCSNOCHG`), force and state 0 (U3) | ● idle and alarm, ◐ braking fields |
-| 0x33E | — | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
+| 0x33E | — | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | about the 0x366 target: time to collision (bytes 0-1, ≈ 1.6 ms per code) and motion-class flags (byte 2) | ◐ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
 | 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**: the ACC target while one exists, plus other states: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts; PCS alarm: `10 20 00 03 00 00 80 00` (FCW, byte 3 = 0x03; U3) | ● idle and FCW, ◐ alerts |
@@ -43,6 +43,18 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 | U1 (expressway, ≤ 37 m/s) | 0.997, 0.9992, 0.22 m | 0.995, 0.993, 0.27 km/h | 1,816 |
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
+
+### 0x33E: time to collision and motion class of the 0x366 target (◐)
+
+0x33E carries data only while 0x366 reports a target (byte 0's high nibble is 7 otherwise). Counting bits MSB-first:
+
+| bits | field | coding |
+|---|---|---|
+| `4\|12` | time to collision | ≈ 1.6 ms (1/625 s) per code: `625 × TTC + 29` fits the ACC target's range / closing speed with r 0.93 below 5 s; 0xFFF = 6.55 s or more |
+| `16\|8` | motion-class flags | bit 0 (LSB) moving, bit 1 oncoming, bit 2 not moving in ego's direction (stationary or oncoming), bit 4 set on almost every report of the ACC target; e.g. 0x11 same-direction mover, 0x14 stationary, 0x47 oncoming |
+
+Between 5 and 6.5 s the time reads shorter than range / closing speed, so the radar's own TTC differs there; byte 5
+and the high nibble of byte 0 are not named ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
 
 ### 0x366: target report, the ACC target and other states (◐)
 
