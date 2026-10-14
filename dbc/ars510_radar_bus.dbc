@@ -331,7 +331,7 @@ CM_ SG_ 569 STATE "Byte 2 bits 6-7: 1 with an ACC target, 2 idle.";
 CM_ BO_ 567 "The radar's ACC target, 50 Hz: distance, lateral position, in-path state and two tracker bytes (see 0x235).";
 CM_ SG_ 567 LAT_DIST "Lateral position of the ACC target, m, left positive: 12 bits, (code - 2000) * 0.01. One object-list lateral code is 1.5 of these codes (1.499-1.502 on five sets). Wraps above +20.95 m (in-path targets in left curves at 60-80 m; the check byte then differs by 0x14) and stops at -20.00 m.";
 CM_ SG_ 567 TRACKER_A "Raw tracker byte: 35-36 on a steady target, 44-50 while it accelerates, a median of 48-74 while it brakes.";
-CM_ SG_ 567 TRACKER_B "Raw tracker byte: about 86 for a stopped target, 128-135 for a steady mover, rises toward 240 (and wraps) while the target accelerates or brakes.";
+CM_ SG_ 567 TRACKER_B "Tracker byte: the TRACKER_A quantity at a finer scale; 2.5 x TRACKER_A (+-1) for a stopped target, 3.7-4.3 x for a mover (growing with range); rises toward 240 and wraps while the target accelerates or brakes.";
 CM_ SG_ 567 PRESENT "1 with an ACC target.";
 CM_ SG_ 567 IN_PATH "1 while the target is confirmed in the path (level 5).";
 CM_ SG_ 567 IN_PATH_CANDIDATE "1 while the target is a candidate (levels 4-2).";
