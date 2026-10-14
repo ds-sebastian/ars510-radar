@@ -27,7 +27,7 @@ from this radar's own data.
 | `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
-| `84\|10` | **ax over ground**, filtered | `(code − 511) × ~0.04` m/s²; follows vx by about 0.5 s | ◐ field; ○ scale |
+| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.04-0.09 m/s² with ego stopped (the estimate depends on the drives and the estimator: 0.075 on launches of the first drive set, 0.035-0.086 on unseen drives of three cars, against ACC acceleration or the track's own speed change); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
@@ -71,7 +71,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 0 new (exactly the age-0 rows), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
+| `0\|2` | **state** | 0 deleted (exactly the age-0 rows: the track's last record, existence 0; tracks are born at age 1), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
@@ -123,10 +123,18 @@ with an angle-state change. Counts are in [`heading_default_state.json`](../data
 | bits | field | decode | conf. |
 |---|---|---|---|
 | `128\|3` | **lane state** | 3 ego lane, 2 right lane, 4 left lane; 1 / 5 / 7 = all lane weights zero | ● structure, ◐ names |
+| `120\|3` | **ego-lane boundary crossing** | 0 none; 2 crossing the left boundary moving right (**cut-in from the left**), 3 the left boundary moving left, 4 the right boundary moving right, 5 the right boundary moving left (**cut-in from the right**); bit 120 = moving left | ◐ |
 | `148\|4` | **right-lane weight** | 0-15 | ◐ |
 | `152\|4` | **left-lane weight** | 0-15 | ◐ |
 | `156\|4` | **ego-lane weight** | 0-15 | ◐ |
 | `131\|4` | dominant lane weight | the largest of the three weights or one less (99.6-99.7 % of samples with a nonzero weight) | ● derived |
+
+**Lane crossing `120|3`.** It is 0 except while a vehicle crosses a boundary of the ego lane (0.2 % of rows, runs of a few
+records): its lateral speed is three times the usual (median 0.68 against 0.23 m/s), the lane state changes within a second
+on 98 %, and the sign of the lateral speed matches the code on 92-98 %. A vehicle crossing the whole ego lane reads 2 then 4
+(left to right) or 5 then 3 (right to left), and the lane state before and after moves the same way. Values 2 and 5 are a
+radar-native cut-in flag; the second car shows the same signs, lane states and order. `NativeObject.lane_crossing_code`
+([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `lane_crossing_120`).
 
 The three weights **sum to 15 or 16** whenever any is nonzero (191,151 of 191,153 samples; all 54,191 nonzero rows of the bundled drives,
 [`midband_weight_triplet.json`](../data/analysis/summaries/midband_weight_triplet.json)): they behave like a
@@ -150,7 +158,7 @@ as `raw_weight_state128`.
 |---|---|---|---|
 | `112\|3` | **camera-association state** | 0 = radar only; 1 (rarely 2-4) while the camera has the vehicle | ◐ |
 | `136\|4` | association confidence | 15 on 91 % of rows with `112\|3` = 0; restarts at 3-7 (median 4) when `112\|3` becomes non-zero (1,279 onsets on the bundled drives) and climbs to 14-15 | ◐ |
-| `181\|1` | daylight flag | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night | ○ |
+| `181\|1` | daylight flag on the five-cycle schedule | set on a quarter of mature vehicle rows by day, on 2 of 59,988 at night; inside a track it follows a five-cycle pattern locked to the track's age, like `168\|10` | ◐ schedule; ○ meaning |
 
 ![camera association by day and night](img/analysis/camera_association.png)
 
@@ -184,8 +192,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 step per cycle on 95-96 % of its changes. The class follows it: when a large vehicle is re-classified as a car, the value
 has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-5 before and 14-15 after on the middle
 80 %). A track promoted from class 1 to car typically starts at 15 (75 %), to large vehicle at 12. The decoder exposes it as
-`NativeObject.class_confidence_pct`; the three bits above it (`120|3`) are non-zero on 0.2 % of rows
-([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
+`NativeObject.class_confidence_pct`. The three bits above it (`120|3`) are the lane-crossing code in the lane section below.
 
 **About a quarter of new objects start with an initialization template.** On 5,774 of 22,501 age-1 outputs,
 the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and on all 1,253,081 occupied rows
@@ -241,7 +248,7 @@ coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`
 | distance, lateral position | `d_rel`, `y_rel` | `32\|12`, `44\|12` |
 | speed over ground (minus ego speed = relative speed) | `v_long_ground`, `vel_code` | `64\|10` |
 | lateral speed | `v_lat_ground`, `v_lat_code` | `74\|10` |
-| acceleration (filtered, raw code; about 0.04 m/s² per code) | `accel_like_code` | `84\|10` |
+| acceleration (filtered, raw code; about 0.04-0.09 m/s² per code with ego stopped) | `accel_like_code` | `84\|10` |
 | tracked / measured | `age`, `predicted` (Meas = 0), `movement_code` | `24\|7`, `107\|1`, `109\|3` |
 | existence probability | `existence_pct` | `16\|8` |
 | secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
@@ -258,12 +265,12 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 |---|---|---|---|
 | `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
 | `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
-| `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
-| `248\|7` | σ vy (≈ 0.37 m/s per count) | grows with \|yRel\|, shrinks with age | ◐ field; ○ unit |
+| `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35, pooled over range; within a fixed range band the grade depends on the drives, from flat to clearly rising) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
+| `248\|7` | σ vy | grows with \|yRel\|, shrinks with age; linear and the same on both cars. Against stationary objects (true lateral speed 0) about 0.085 + 0.03 m/s per count; on moving leads, against the ACC target's lateral speed, up to about 0.09 per count; the earlier 0.37 m/s per count was far too wide | ◐ field and form; ◐ unit (stationary objects) |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
-| `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
-| `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
-| `184\|8` | **track-confidence percent** | 0 on every new track (age 0), then 90-99 and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
+| `256\|8` | σ ax candidate | the spread between the track's acceleration `84\|10` and its own speed slope grows with the code on both cars (0.13-0.18 m/s² at code 6 to 1.6-1.9 at 24-27, about 0.06-0.07 per code, pooled over range); within a fixed range band it grades the spread at near range (within 20 m on three cars; 20-40 m on two of them) but not beyond (40-80 m: no grade), so range and stopped scenes confound the pooled slope; grows with range and with age | ○ candidate |
+| `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; behaves like a tracker covariance state: moves with `248\|7` in every range band (ρ 0.43-0.89) and shrinks with track age (ρ −0.55 to −0.81 beyond 20 m; median 11 at age 5-10, 2 from age 60) on three cars and unseen drives ([summary](../data/analysis/summaries/decode_round3.json)) | ○ |
+| `184\|8` | **track-confidence percent** | 0 on the deletion record (age 0), 90-99 on young tracks and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
 | `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
@@ -278,9 +285,13 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
   [07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The `fused` profile uses it this way
   (`speed_sigma_per_code = 0.045`).
+- **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
+  all ranges grows linearly with `224|7` (log-log slope 1.01; `232|7` 0.79), but within a fixed range band (beyond 15 m)
+  it grows about as √code on both cars (0.51 / 0.59 on fresh drives), because code and error both grow with range
+  ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
-  range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s. Relative units: the
+  range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s in this joint fit, which overstates it: per-code spreads against stationary objects (about 0.03) and on moving leads (about 0.09) are in the table. Relative units: the
   reference is the radar's own estimate.
 - **Axis check from the codes' own jitter:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
   `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). For `232|7` and `240|7` the
@@ -316,7 +327,7 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 ## Raw and constant bits
 
-- **Raw (listed by bit):** 13, 15, 63, 106, `120|3`, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
+- **Raw (listed by bit):** 13, 15, 63, 106, 182, 183, 239. Bits 15 and 239 are mostly active near track birth.
 - **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
   `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 

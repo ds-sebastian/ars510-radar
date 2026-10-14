@@ -26,3 +26,10 @@ def test_fields_do_not_overlap_the_decoded_kinematics():
 
 def test_documented_scales_are_labelled_per_count():
     assert UNCERTAINTY_PER_COUNT["vel_uncertainty_candidate"] == pytest.approx(0.043)
+
+
+def test_lane_crossing_code_120():
+
+    for code in (0, 2, 3, 4, 5):
+        slot = encode_slot(age_cycles=40, long_dist=640, lane_crossing_code=code)
+        assert decode_native_slot(0, slot).lane_crossing_code == code

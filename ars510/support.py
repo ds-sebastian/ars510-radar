@@ -93,7 +93,8 @@ def parse_0x191(data: bytes) -> Target191 | None:
 class Object680:
     selector: int        # byte 0: 0 / 1 mostly stationary objects, 3 mostly same-direction vehicles
     d_rel: float         # m, longitudinal distance, 1/32 m per code
-    y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit)
+    y_rel: float         # m, left positive, 0.015 m per code (the object list's lateral unit); 11 bits, so +-15.36 m: an object farther
+                         # to the side most likely wraps to the opposite side, so |y| above about 13 m is ambiguous
     v_ground: float      # m/s over ground, nominal 0.15 m/s per code (0 for a stationary object)
     flags: int           # motion flags: bit 0 stationary, bit 1 oncoming, bit 3 seen moving; bits 2, 4, 5 raw
     lat_speed_code: int  # centred lateral speed over ground, about 0.13-0.18 m/s per code (0 on stationary objects)
@@ -318,8 +319,8 @@ class Target366:
 
     @property
     def v_rel(self) -> float | None:
-        """Nominal relative speed for codes below 256 (0.5 km/h per code, zero 155); None from 256 (docs/13)."""
-        return (self.speed_code - 155) * 5 / 36 if self.speed_code < 256 else None
+        """Relative speed: the 9 bits are signed (codes from 256 are code - 512), 0.5 km/h per code, zero 155 (docs/13)."""
+        return ((self.speed_code - 512 if self.speed_code >= 256 else self.speed_code) - 155) * 5 / 36
 
     @property
     def d_rel(self) -> float:
