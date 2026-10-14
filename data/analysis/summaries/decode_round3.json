@@ -1819,6 +1819,28 @@
     "tight_zero_share": 1.0,
     "no_target_nonzero_share": 0.449
    }
+  },
+  "byte5_standstill": {
+   "owner": {
+    "C6_idle_equivalence": {
+     "n": 17960,
+     "share": 0.99031
+    },
+    "C7_zero_at_standstill": {
+     "n": 3309,
+     "share": 0.24086
+    }
+   },
+   "second": {
+    "C6_idle_equivalence": {
+     "n": 17130,
+     "share": 0.99212
+    },
+    "C7_zero_at_standstill": {
+     "n": 4759,
+     "share": 0.32129
+    }
+   }
   }
  },
  "sigma_256_self_consistency": {
