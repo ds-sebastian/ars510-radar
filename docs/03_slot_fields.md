@@ -71,7 +71,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 0 new (exactly the age-0 rows), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
+| `0\|2` | **state** | 0 deleted (exactly the age-0 rows: the track's last record, existence 0; tracks are born at age 1), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
@@ -270,7 +270,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
 | `256\|8` | σ ax candidate | follows the frame scatter of ax most closely on the 700-segment set (Spearman 0.15, others within ±0.06; weaker on fresh drives); grows with range and with age | ○ |
 | `264\|8` | σ ay candidate | follows the frame scatter of ay (0.29) and vy; shrinks with age (median 11 at age 5-10, 4 at 40-60, 2 from age 60) | ○ |
-| `184\|8` | **track-confidence percent** | 0 on every new track (age 0), then 90-99 and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
+| `184\|8` | **track-confidence percent** | 0 on the deletion record (age 0), 90-99 on young tracks and 100 within a few cycles; 100 on 98 % of rows. It dips more often on moving vehicles (5.2 % of rows) than on stationary roadside, narrow or driven-over objects (0.1-1.6 %), so it is not an obstacle probability | ◐ |
 | `168\|10` | first-detection pattern | all ones or all zeros; a per-track pattern of k cycles on in every 5, locked to the track's age; k follows the track's range at age 10 | ○ |
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors

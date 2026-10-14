@@ -101,7 +101,7 @@ UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "
 UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
 UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
 UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "likely")
-# Track-confidence percent: 0 on a new track (age 0), then 90-99 and 100 within a few cycles; not an obstacle probability (docs/03).
+# Track-confidence percent: 0 on the age-0 deletion record, 90-99 on young tracks, then 100; not an obstacle probability (docs/03).
 SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "track_confidence_likely")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
 # Coarse length code, about length / 0.555 m (within one code on 91 %); the name is kept for compatibility (docs/03).
@@ -182,7 +182,7 @@ class NativeObject:
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10 (0.0062 m/s^2 per count)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
     orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
-    secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 at age 0, 100 on 98 % of rows
+    secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 on the age-0 deletion record, 100 on 98 % of rows
     lane_crossing_code: int | None = None  # 120|3: 0 none, 2 / 5 cut-in from the left / right, 3 / 4 cut-out to the left / right
 
 
