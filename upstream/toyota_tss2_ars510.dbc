@@ -180,7 +180,7 @@ CM_ SG_ 571 WIDTH "Target width: 0 while idle, 140-220 cm for the car class, 200
 CM_ BO_ 1664 "One object from the radar's tracker every 0.5 s.";
 CM_ SG_ 1664 SELECTOR "0 / 1 mostly stationary objects, 3 mostly same-direction vehicles.";
 CM_ SG_ 1664 LONG_DIST "Longitudinal distance.";
-CM_ SG_ 1664 LAT_DIST "Lateral position, left positive.";
+CM_ SG_ 1664 LAT_DIST "Lateral position, left positive; covers +-15.36 m and most likely wraps beyond that.";
 CM_ SG_ 1664 SPEED "Speed over ground; 0 for stationary objects.";
 CM_ SG_ 1664 STATIONARY "1 for a stationary object.";
 CM_ SG_ 1664 ONCOMING "1 for an oncoming object.";
