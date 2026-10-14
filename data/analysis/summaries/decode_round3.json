@@ -3893,5 +3893,24 @@
     6203
    ]
   }
+ },
+ "b33e_byte2_bits456_values": {
+  "what": "0x33E byte 2 bits 4-6 joint value on unseen drives; values 0 and 7 never occur, bit 7 never set",
+  "car_A": {
+   "1": 3486,
+   "2": 14,
+   "3": 490,
+   "4": 157,
+   "5": 8,
+   "6": 53
+  },
+  "car_B": {
+   "1": 9671,
+   "2": 234,
+   "3": 1615,
+   "4": 38,
+   "5": 11,
+   "6": 315
+  }
  }
 }
