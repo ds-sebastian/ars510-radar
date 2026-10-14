@@ -3864,6 +3864,15 @@
    "spearman_abs_inv": 0.986,
    "K_median": -8.82,
    "within1_at_K9_2": 0.771
+  },
+  "car_C": {
+   "rows": 713,
+   "drives": 8,
+   "sign_agree_0x260": 0.999,
+   "sign_agree_0x25": 0.525,
+   "spearman_0x260": 0.856,
+   "spearman_0x25": 0.592,
+   "K_median": -9.0
   }
  }
 }
