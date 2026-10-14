@@ -177,7 +177,7 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 
 | frame | bits | field | conf. |
 |---|---|---|---|
-| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0 narrow and 6 wide stationary object; 4 vehicle with an uncertain class; 5 crossing object; 7 idle; 3 never seen | ● 1 / 2, ◐ 0 / 6, ○ 4 / 5 |
+| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0 narrow and 6 wide stationary object; 4 unclassified object (vehicles and stationary obstacles); 5 crossing object; 7 idle; 3 never seen | ● 1 / 2, ◐ 0 / 4 / 5 / 6 |
 | 0x239 | bit 39 | the target also has an object in the 0x80 list | ◐ |
 | 0x239 | bit 35 | target present | ● |
 | 0x239 | bits 3-34 | **microsecond timestamp** of the radar cycle the target data belong to (the 0x190 clock) | ● |
@@ -190,9 +190,10 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
   of `acc` on the replay drives face such an obstacle: a fence (class 0 at 33 cm, or class 1), a garage wall, a kerb
   island across a T-junction and a car crossing it; seven of the eight have no object in the 0x80 list. Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s) with a fixed width of 120 or 50 cm: the
   object list calls it a car on 79-95 % of matched cycles (never a two-wheeler), 89-90 % of its moving time is on targets
-  that are class 1 at other times, and on camera the checked cases are cars, one in heavy rain, so it reads as a vehicle whose
-  class is not settled (○), not the motorcycle of the ARS408 enum. Class 5 moves sideways (median 4.4 m/s) while ego is
-  mostly stopped; on camera these are cars crossing an intersection (○), not bicycles. Class 3 does not occur in about
+  that are class 1 at other times, and on camera the checked cases are cars, one in heavy rain, so it reads as an object whose
+  class is not settled (◐), not the motorcycle of the ARS408 enum: on seven more owner scenes it is also a low wall at 2-3 m,
+  a kerb island across a T-junction and crossing traffic at an intersection, besides vehicles ahead. Class 5 moves sideways (median 4.4 m/s) while ego is
+  mostly stopped; on camera these are cars crossing an intersection (◐, four scenes), not bicycles. Class 3 does not occur in about
   860 k cycles of two cars ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `acc_class`;
   [`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
 - **Small targets while driving.** Over every stored log (three cars), class 0 also appears with ego above 3 m/s. That
