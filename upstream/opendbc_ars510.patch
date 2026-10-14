@@ -345,7 +345,7 @@ index 00000000..9844ea20
 +CM_ SG_ 567 IN_PATH_CANDIDATE "1 while the target is a candidate (levels 4-2).";
 +CM_ BO_ 569 "ACC target, part 3: 50 Hz.";
 +CM_ SG_ 569 CHECK_BYTE "CRC-8 (polynomial 0x1D, MSB first) over the frame's signals serialized as zero-padded 8 / 16 / 32-bit integers, not over the raw bytes; as a 56-column table in ars510.support.acc_check (docs/05).";
-+CM_ SG_ 569 CLASS "Target class: 1 car, 2 truck, 0 narrow stationary object, 6 wide stationary object, 4 vehicle with an uncertain class, 5 crossing object, 7 idle, 15 start-up; 3 not seen.";
++CM_ SG_ 569 CLASS "Target class: 1 car, 2 truck, 0 narrow stationary object, 6 wide stationary object, 4 unclassified object, 5 crossing object, 7 idle, 15 start-up; 3 not seen.";
 +CM_ SG_ 569 STATE "1 with an ACC target, 2 idle.";
 +CM_ SG_ 569 IN_OBJECT_LIST "1 while the target also has an object in the 0x80 object list.";
 +CM_ SG_ 569 PRESENT "1 = target present.";
@@ -356,7 +356,7 @@ index 00000000..9844ea20
 +CM_ BO_ 1664 "One object from the radar's tracker every 0.5 s.";
 +CM_ SG_ 1664 SELECTOR "0 / 1 mostly stationary objects, 3 mostly same-direction vehicles.";
 +CM_ SG_ 1664 LONG_DIST "Longitudinal distance.";
-+CM_ SG_ 1664 LAT_DIST "Lateral position, left positive.";
++CM_ SG_ 1664 LAT_DIST "Lateral position, left positive; covers +-15.36 m and most likely wraps beyond that.";
 +CM_ SG_ 1664 SPEED "Speed over ground; 0 for stationary objects.";
 +CM_ SG_ 1664 STATIONARY "1 for a stationary object.";
 +CM_ SG_ 1664 ONCOMING "1 for an oncoming object.";

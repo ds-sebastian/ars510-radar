@@ -101,14 +101,17 @@ UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "
 UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
 UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
 UNC_ORIENT_200 = NativeField("orientation_uncertainty_code", 200, 7, 0.0, 1.0, "code", "likely")
-# Track-confidence percent: 0 on a new track (age 0), then 90-99 and 100 within a few cycles; not an obstacle probability (docs/03).
+# Track-confidence percent: 0 on the age-0 deletion record, 90-99 on young tracks, then 100; not an obstacle probability (docs/03).
 SECONDARY_SCORE_184 = NativeField("secondary_score_pct", 184, 8, 0.0, 1.0, "%", "track_confidence_likely")
 OBJECT_CLASS = NativeField("object_class", 163, 3, 0.0, 1.0, "code", "likely")
 # Coarse length code, about length / 0.555 m (within one code on 91 %); the name is kept for compatibility (docs/03).
 HEIGHT_LIKE_272 = NativeField("height_like_code", 272, 5, 0.0, 1.0, "code", "likely_length_class")
+# Ego-lane boundary crossing: 0 none; 2 / 3 crossing the left boundary moving right / left (2 = cut-in from the left),
+# 4 / 5 crossing the right boundary moving right / left (5 = cut-in from the right); bit 120 = moving left (docs/03).
+LANE_CROSSING_120 = NativeField("lane_crossing_code", 120, 3, 0.0, 1.0, "code", "likely")
 # m or m/s per count; range_uncertainty_code is the overall 0.23 (0.24 below 40 m).
 UNCERTAINTY_PER_COUNT = {"vel_uncertainty_candidate": 0.043, "lateral_uncertainty_code": 0.10, "range_uncertainty_code": 0.23,
-                         "lateral_speed_uncertainty_code": 0.37}
+                         "lateral_speed_uncertainty_code": 0.03}
 
 AGE_SATURATION = 126
 # |lateral code - 2048| >= this is a sentinel.
@@ -116,7 +119,7 @@ LAT_INVALID_ABS_CODE = 2000
 
 NAMED_FIELDS = (AGE, LONG_DIST, LAT_DIST, LONG_VEL_GROUND, LAT_VEL, ACCEL_LIKE, MOVE_STATE, MOVEMENT_CODE, RAW8_LOW5, RAW13_BIT, ONCOMING_FLAG, VEL_UNC_240, EXISTENCE, PREDICTED, RAW_WEIGHT_STATE128, RAW_WEIGHT_148, RAW_WEIGHT_152, RAW_WEIGHT_156,
                 CAMERA_ASSOC, CLASS_CONFIDENCE, LENGTH, WIDTH, UNC_RANGE_224, UNC_LATERAL_232, UNC_VLAT_248, UNC_AX_256, UNC_AY_264, UNC_ORIENT_200,
-                SECONDARY_SCORE_184, OBJECT_CLASS, HEIGHT_LIKE_272)
+                SECONDARY_SCORE_184, OBJECT_CLASS, HEIGHT_LIKE_272, LANE_CROSSING_120)
 
 
 def slot_bits(slot: bytes, start: int, length: int) -> int:
@@ -175,11 +178,12 @@ class NativeObject:
     height_code: int | None = None  # 272|5, coarse length code, about length / 0.555 m (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
-    vlat_unc_code: int | None = None  # 248|7 (about 0.37 m/s per count, unstable between cars)
+    vlat_unc_code: int | None = None  # 248|7 (about 0.085 + 0.03 m/s per count against stationary objects; the same form on both cars)
     accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10 (0.0062 m/s^2 per count)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
     orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
-    secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 at age 0, 100 on 98 % of rows
+    secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 on the age-0 deletion record, 100 on 98 % of rows
+    lane_crossing_code: int | None = None  # 120|3: 0 none, 2 / 5 cut-in from the left / right, 3 / 4 cut-out to the left / right
 
 
 def is_init_template(age: int, slot: bytes) -> bool:
@@ -227,6 +231,7 @@ def decode_native_slot(slot_index: int, slot: bytes) -> NativeObject:
         lateral_accel_unc_code=int(field_code(slot, UNC_AY_264)),
         orientation_unc_code=int(field_code(slot, UNC_ORIENT_200)),
         secondary_score_pct=int(field_code(slot, SECONDARY_SCORE_184)),
+        lane_crossing_code=int(field_code(slot, LANE_CROSSING_120)),
     )
 
 

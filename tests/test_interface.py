@@ -389,7 +389,7 @@ def test_yvrel_removes_ego_rotation_and_arel_subtracts_ego_accel() -> None:
         out = iface.update_many(frames(rec, t + 0.001))
     pt = out[-1]["radarData"]["points"][0]
     assert pt["yvRel"] == pytest.approx((531 - 510.5) * 0.15 - yaw * 40.0, abs=1e-6)
-    assert pt["aRel"] == pytest.approx((536 - 511) * 0.04 - 1.0, abs=0.1)
+    assert pt["aRel"] == pytest.approx((536 - 511) * 0.075 - 1.0, abs=0.1)
 
 
 def test_yvrel_is_nan_without_yaw_rate() -> None:

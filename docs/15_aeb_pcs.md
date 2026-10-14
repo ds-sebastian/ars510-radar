@@ -61,7 +61,10 @@ outputs idle: it is the radar's threat state, and 0x100 marks the decision to wa
 **On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (◐, one event).** It is set in 5 of
 547,922 0x366 frames in every stored log, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
 it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
-[`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)).
+[`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). 0x33E carries the same alarm in byte 6 bit 7 (5 of
+696,137 frames, all in this alarm) next to the radar's own time to collision of the target: 2.19 s just before the alarm and
+2.08 s in the frame that announces it, so this alarm started at a radar TTC of about 2.1 s
+([13](13_car_bus_messages.md), [`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
 
 ## Relaying the radar's decision (○ theoretical)
 

@@ -53,7 +53,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | target identity | 0x235 bits 0-4: the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
-| tracker bytes | 0x237 bits 19-26 and 11-18: rise while the target accelerates or brakes | ○ | `TRACKER_A`, `TRACKER_B` |
+| tracker bytes | 0x237 bits 19-26 and 11-18: one maneuver quantity in two encodings; both rise while the target accelerates or brakes. `TRACKER_A` sits at about 35 while the target's over-ground acceleration stays within ±1 m/s², steps to about 46 between 1 and 2 m/s² in either direction, and does not depend on range (three cars). For a stopped target `TRACKER_B` = 2.5 × `TRACKER_A` within one code (94-95 % on three cars); for a moving target the factor is larger (3.7-4.3, growing with range) and `TRACKER_B` wraps past 255 | ◐ | `TRACKER_A`, `TRACKER_B` |
 | check byte | byte 0 of 0x235 / 0x237 / 0x239: CRC-8 (polynomial 0x1D) over the frame's signals serialized as zero-padded integers; `support.acc_check` | ● | `CHECK_BYTE` |
 | target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `STATE` (0x235), `PRESENT` (0x237) |
 
@@ -177,7 +177,7 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
 
 | frame | bits | field | conf. |
 |---|---|---|---|
-| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0 narrow and 6 wide stationary object; 4 vehicle with an uncertain class; 5 crossing object; 7 idle; 3 never seen | ● 1 / 2, ◐ 0 / 6, ○ 4 / 5 |
+| 0x239 | byte 1 low nibble | **target class**: 1 car, 2 truck; 0 narrow and 6 wide stationary object; 4 unclassified object (vehicles and stationary obstacles); 5 crossing object; 7 idle; 3 never seen | ● 1 / 2, ◐ 0 / 4 / 5 / 6 |
 | 0x239 | bit 39 | the target also has an object in the 0x80 list | ◐ |
 | 0x239 | bit 35 | target present | ● |
 | 0x239 | bits 3-34 | **microsecond timestamp** of the radar cycle the target data belong to (the 0x190 clock) | ● |
@@ -190,9 +190,10 @@ Two companion frames at the same 50 Hz describe the same target (`support.parse_
   of `acc` on the replay drives face such an obstacle: a fence (class 0 at 33 cm, or class 1), a garage wall, a kerb
   island across a T-junction and a car crossing it; seven of the eight have no object in the 0x80 list. Class 4 is mostly a moving target (2,992 of 3,687 samples, median 50 m and 27 m/s) with a fixed width of 120 or 50 cm: the
   object list calls it a car on 79-95 % of matched cycles (never a two-wheeler), 89-90 % of its moving time is on targets
-  that are class 1 at other times, and on camera the checked cases are cars, one in heavy rain, so it reads as a vehicle whose
-  class is not settled (○), not the motorcycle of the ARS408 enum. Class 5 moves sideways (median 4.4 m/s) while ego is
-  mostly stopped; on camera these are cars crossing an intersection (○), not bicycles. Class 3 does not occur in about
+  that are class 1 at other times, and on camera the checked cases are cars, one in heavy rain, so it reads as an object whose
+  class is not settled (◐), not the motorcycle of the ARS408 enum: on seven more owner scenes it is also a low wall at 2-3 m,
+  a kerb island across a T-junction and crossing traffic at an intersection, besides vehicles ahead. Class 5 moves sideways (median 4.4 m/s) while ego is
+  mostly stopped; on camera these are cars crossing an intersection (◐, four scenes), not bicycles. Class 3 does not occur in about
   860 k cycles of two cars ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `acc_class`;
   [`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
 - **Small targets while driving.** Over every stored log (three cars), class 0 also appears with ego above 3 m/s. That
@@ -391,8 +392,9 @@ Its range is close to that state but not a rounding of it: on the ACC car it is 
 | `8\|13` | longitudinal distance, 1/32 m per code (0-256 m) | ● |
 | `21\|11` signed | lateral position, 0.015 m per code (the object list's unit), left positive | ◐ |
 | `32\|10` − 512 | speed over ground, 0.15 m/s per code | ◐ |
-| `42\|6` | **motion flags**: bit 0 stationary, bit 1 oncoming, bit 3 seen moving (1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle) | ◐ |
+| `42\|6` | **motion flags**: bit 0 stationary, bit 1 oncoming, bit 2 crossing (moving sideways), bit 3 seen moving (1 = stationary object, 8 = moving vehicle, 9 = stopped vehicle); bits 4 and 5 not named | ◐; bit 2 ○ |
 | `48\|8` − 128 | lateral speed over ground, about 0.13-0.18 m/s per code (0.15 nominal) | ◐ |
+| `56\|8` | low nibble: 0xA for selector 0, 0xF for selectors 1 and 3 (exact on three cars); high nibble: four flags, 0xE on 98 % of selector-1 / 3 frames and varied on selector 0 (mostly three of four set), not related to position or speed | ● low nibble; ○ high nibble |
 
 - **Distance scale:** stationary objects close at ego speed with 31.9 codes per metre (672 segments; 32.0 on 84
   held-out segments).
@@ -402,7 +404,12 @@ Its range is close to that state but not a rounding of it: on the ACC car it is 
 - **Motion flags:** bit 0 is set on 99 % of objects slower than 0.5 m/s over ground and on 1 % of moving ones; bit 1 on
   98 % of objects approaching faster than 3 m/s and on 1 % of the others; bit 3 on 86 % of same-direction movers and on
   10 % of stationary objects, the stopped vehicles (on other drives the three shares are 98 %, 97 % and 72 %).
-  `Object680.stationary`, `.oncoming` and `.seen_moving` expose them.
+  `Object680.stationary`, `.oncoming` and `.seen_moving` expose them. Bit 2 (0.4 % of frames) goes with sideways motion:
+  its objects have a lateral speed (median 16 codes against 0 for every other flag) and sit in ego's path on 39 % of frames, a
+  crossing object. Bits 4 and 5 together (word 49) mark near, wide stationary objects (median 15 m at 28°); alone, bit 4 sits
+  on far same-direction movers and bit 5 on slower in-path or oncoming movers, so neither bit is named yet. The selector
+  values 0 and 1 interleave from frame to frame on stationary objects; 3 is a steady vehicle stream
+  ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
 - **Lateral speed:** the code is 0 on stationary objects even while ego turns, so it is over ground like `74|10` of the
   object list.
 - **Which vehicles it reports:** of its moving-vehicle frames (13 % of frames while driving), 30 % are the ACC target,

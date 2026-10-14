@@ -17,7 +17,7 @@ All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots
 | 0x343 | `ACC_CONTROL` / `ACC1S03` | 33 Hz, 8 | `00 00 43 00 00 00 00 91` at power-up | ACC acceleration request and ACC / HUD flags | ● |
 | 0x344 | `PRE_COLLISION_2` / `ACC1F01` | 20 Hz, 8 | `00 00 01 00 00 00 00 50` | PCS / AEB deceleration request, pre-fill and alarm triggers; idle with only `PCSOPR` (bit 16) set; PCS alarm: `PCSALM` (bit 17) also set, `00 00 03 … 52` (U3) | ● idle and alarm, ◐ other fields |
 | 0x283 | `PRE_COLLISION` / `DS11F01` | 33 Hz, 7 | `00 00 00 00 00 00 8C` | AEB brake force and state (`STATE` 3 = emergency braking); PCS alarm: byte 5 = 0x02 (bit 41, `PCSNOCHG`), force and state 0 (U3) | ● idle and alarm, ◐ braking fields |
-| 0x33E | — | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | target-gated fields, one rising with ego speed | ○ |
+| 0x33E | — | 5 Hz, 7 | `7F FF 00 80 00 xx 00` | about the 0x366 target: relative acceleration (≈ 1 m/s² per code), time to collision (≈ 1.6 ms per code) and motion-class flags; ego path radius (≈ 256 m per code) | ◐ |
 | 0x365 | `DSU_CRUISE` / `DS11D70` | 5 Hz, 7 | `00 00 00 00 FC 00 00` | **ACC lead distance (m) and relative speed (km/h)** | ● |
 | 0x366 | `DS11D71` | 5 Hz, 7 | `50 00 7F FF 00 7A 00` | **target report**: the ACC target while one exists, plus other states: relative speed (0.5 km/h), distance (≈ 0.8 m), lateral offset (0.34 m per code) | ◐ |
 | 0x411 | `PCS_HUD` / `DS12F02` | 1 Hz, 8 | `00 20 00 00 00 00 80 00` | PCS state, sensitivity, FCW and the blocked-radar / temperature / beam-alignment alerts; PCS alarm: `10 20 00 03 00 00 80 00` (FCW, byte 3 = 0x03; U3) | ● idle and FCW, ◐ alerts |
@@ -44,13 +44,30 @@ signed, negative when closing. The other bytes are zero. Both fields match the A
 
 This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for byte 5.
 
+### 0x33E: time to collision and motion class of the 0x366 target, ego path radius (◐)
+
+0x33E carries target data only while 0x366 reports a target (byte 0's high nibble is 7 otherwise): that target's relative
+acceleration, time to collision and motion class, plus the radar's estimate of ego's own path radius, which is sent with or
+without a target. Counting bits MSB-first:
+
+| bits | field | coding |
+|---|---|---|
+| `0\|4` | relative acceleration | signed, about 1 m/s² per code (the ACC target's relative acceleration rounded); 7 = no target |
+| `4\|12` | time to collision | ≈ 1.6 ms (1/625 s) per code: `(code − 29) / 625` matches the ACC target's range / closing speed to a median +0.02 s (interquartile ±0.07 s) below 5 s on an independent sample of 300 segments; 0xFFF = 6.55 s or more (80 % of target frames beyond 6.6 s) |
+| `48\|1` | PCS alarm | byte 6 bit 7: set only during the radar's PCS alarm (5 of 696,137 frames in every stored log, all in U3) |
+| `42\|6` | ego path radius | signed 6 bits, about 256 m per code, positive = right turn; 0 = tighter than about 128 m; while moving the radius comes from the yaw rate, at standstill it is the bicycle-model radius from the steering-wheel angle: code ≈ −9.2 / angle in degrees (wheelbase × steering ratio / angle at 256 m per code), measured from the car's own straight-ahead zero taken from the EPS steering angle in 0x260 (on one car the 0x25 angle's zero is 3° away and its sign agrees only by chance); on unseen drives of three cars the factor is −8.8 to −9.1, and the unfitted −9.2 law lands within one code on 95 % / 77 % of standstill frames on two of them; ±31 = straight (about 7.8 km or more). Follows the yaw-rate radius `vEgo / yaw rate` (255-258 m per code; sign agrees 98-99 % on three cars), not the steering-angle radius |
+| `16\|8` | motion-class flags | bit 0 (LSB) moving, bit 1 oncoming, bit 2 not moving in ego's direction (stationary or oncoming), bit 4 set on almost every report of the ACC target, bit 6 set while an oncoming target is still far (98 % beyond 20 m, under 5 % within 10 m, both cars), bit 5 always set on an oncoming report without the moving bit, and otherwise mostly around a change of the reported target (21-37 % of reports within 1 s of the target appearing or dropping out vs 4-12 % in steady tracking, three cars; likely "not a steady track"); bits 4-6 are never all clear or all set and bit 7 is never set (20 k unseen reports, three cars), so bits 4-6 act like one six-valued state; e.g. 0x11 same-direction mover, 0x14 stationary, 0x47 oncoming and still far |
+
+The time is the plain range / closing speed (residual median +0.06 s, spread 0.085 s up to 6.55 s); a constant-
+acceleration time to collision fits far worse. Numbers are in ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
+
 ### 0x366: target report, the ACC target and other states (◐)
 
 Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` returns them (`None` for the `7FFF` idle word).
 
 | bits | field | coding |
 |---|---|---|
-| `16\|9` | relative speed | `(code − 155) × 0.5 km/h` for codes below 256; codes 442-506 (eight reports) fit `code − 512` and return `None` |
+| `16\|9` | relative speed | signed 9 bits: `(s − 155) × 0.5 km/h` with `s = code` below 256 and `code − 512` from 256 |
 | `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = idle target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = idle target, −16 = invalid (mostly a target beyond ±5 m) |
 | `32\|5` | target number | the ACC target's `TARGET_ID` on 98 % of reports (the rest are publication timing); `Target366.target_id` |
@@ -71,9 +88,18 @@ object-list track sit a median 4 m to the side, and their speeds correlate at 0.
 
 ![0x366 report coverage](img/analysis/target_366_coverage.png)
 
-**High speed codes.** Eight reports have codes 442-506; five same-tail steps among them close at 20-28 m/s by their distances; subtracting 512 counts
-fits them (mean difference 2.9 m/s). The parser returns a speed for codes below 256, the domain the ACC target confirms
-([domain](../data/analysis/summaries/target_366_speed_domain.json)).
+**The speed is signed.** Over 2,645 consecutive reports of the same target (0.2 s apart, two cars) the report's own range
+slope equals the signed speed with slope 1.000 (r 0.92). The eight reports with codes 442-506 close at 20-28 m/s by their own
+range, as `code − 512` gives. They are oncoming cars, not the ACC target
+([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), [domain](../data/analysis/summaries/target_366_speed_domain.json)).
+
+**Without an ACC target the report carries other objects (◐).** Of 339 reports sent while the ACC target is idle, 43 % are
+oncoming (over-ground speed below −2 m/s) and 43 % stationary; 3 % move in ego's direction, and 16 % carry a target number the
+ACC target has within 10 s. With an ACC target the report is that target (98 %). It reads as the car-bus collision-target
+report: the ACC target when there is one, otherwise the object with the shortest time to collision, with no path
+corridor: on 61 such reports that match one object of the object list, it is the shortest-TTC object on 93 % (chance 52 %),
+median 3.6 m to the side and 3.1 s away, i.e. oncoming traffic in the next lane. Three quarters of these reports match no
+listed object.
 
 It arrives about 90 ms after 0x365. Byte 0 is 0x50 or 0x52, byte 4 bits 3-7 are raw speed / range-dependent flags, and
 the low three bits of byte 5 are constant. The profiles read the same target from the 50 Hz ACC target frames.
