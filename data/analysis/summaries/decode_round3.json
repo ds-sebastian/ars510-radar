@@ -3582,5 +3582,71 @@
    "owner": 0.399,
    "second": 0.304
   }
+ },
+ "id85_prefix15_flags_start_timers": {
+  "owner_discovery": {
+   "b3": {
+    "flags_without_presence_change": 122,
+    "p_on9": [
+     0.041,
+     0.0083
+    ],
+    "p_on11": [
+     0.951,
+     0.0102
+    ],
+    "p_on13": [
+     0.057,
+     0.009
+    ],
+    "p_on14": [
+     1.0,
+     0.0138
+    ],
+    "p_any": [
+     1.0,
+     0.0212
+    ]
+   },
+   "b0": {
+    "flags_without_presence_change": 83,
+    "p_on9": [
+     0.988,
+     0.0072
+    ],
+    "p_on11": [
+     0.06,
+     0.012
+    ],
+    "p_on13": [
+     1.0,
+     0.0077
+    ],
+    "p_on14": [
+     0.072,
+     0.0161
+    ],
+    "p_any": [
+     1.0,
+     0.0223
+    ]
+   }
+  },
+  "heldout_c45": {
+   "second_pkg": {
+    "bit3": 124,
+    "bit3_with_14": 0.935,
+    "bit0": 87,
+    "bit0_with_13": 0.989,
+    "result": "pass"
+   },
+   "third_raw": {
+    "bit3": 61,
+    "bit3_with_14": 1.0,
+    "bit0": 27,
+    "bit0_with_13": 1.0,
+    "result": "pass"
+   }
+  }
  }
 }
