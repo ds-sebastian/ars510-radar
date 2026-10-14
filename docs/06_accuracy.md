@@ -51,7 +51,13 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   more than large vehicles), and about twice that on a second set of drives, with an interquartile spread of 8-11 m at
   60-100 m. openpilot's vision lead, a camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
-  at 30-100 m. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
+  at 30-100 m. On a separate cohort of 20 stopped-car approaches, GNSS-scaled ego odometry checks range changes
+  relative to a near anchor: the ACC far-range median residual is −0.03 m with a 30 m anchor and +0.21 m with a stop
+  anchor; the corresponding list medians are −3.13 m (16 supported approaches) and −0.81 m (12). Vision medians are
+  −2.42 m and −2.95 m on that cohort. These are anchor-dependent differential comparisons on selected stationary cars,
+  with a 0.15 s radar-output age, rather than an absolute range-zero calibration
+  ([`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json)).
+  The ACC distance supplies the selected-car range in `acc`; `fused` publishes it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to

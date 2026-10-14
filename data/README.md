@@ -80,3 +80,5 @@ sunnypilot drives); the JSON keys that contain `34_drives` hold that 27-drive se
 Per-bit statistics of the 0x80 slot (288 bits), the 0x80 header and the 0x85 record from 13 one-minute segments of
 drive A: flip rates, one-rates and the automatic carry-chain field split. `tools/build_cabana_route.py` builds the
 Cabana DBC's slot layout from it.
+
+[`register_structure_and_reference_scope.json`](analysis/summaries/register_structure_and_reference_scope.json) supplies the three-car slow-register layout/update counts, near-anchor range comparisons and original-transmission 0x680 copy residuals used in docs/05 and docs/06. Unit-identifying payloads and hashes stay private.
