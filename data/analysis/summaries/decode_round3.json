@@ -1769,6 +1769,56 @@
      1.67
     ]
    }
+  },
+  "byte5_path_radius": {
+   "owner": {
+    "n": 4923,
+    "fit_n": 1193,
+    "m_per_code_median": 258.3,
+    "m_per_code_by_code": {
+     "1": 291.0,
+     "2": 262.0,
+     "3": 246.0,
+     "4": 240.0,
+     "5": 217.0,
+     "6": 241.0,
+     "7": 228.0,
+     "8": 239.0,
+     "9": 293.0,
+     "10": 218.0
+    },
+    "sign_agree": 0.984,
+    "rank_r_signed": 0.9,
+    "straight_n": 443,
+    "straight_saturated_share": 0.628,
+    "tight_n": 657,
+    "tight_zero_share": 1.0,
+    "no_target_nonzero_share": 0.688
+   },
+   "second": {
+    "n": 1996,
+    "fit_n": 469,
+    "m_per_code_median": 254.9,
+    "m_per_code_by_code": {
+     "1": 325.0,
+     "2": 259.0,
+     "3": 255.0,
+     "4": 239.0,
+     "5": 249.0,
+     "6": 253.0,
+     "7": 281.0,
+     "8": 277.0,
+     "9": 253.0,
+     "10": 280.0
+    },
+    "sign_agree": 0.979,
+    "rank_r_signed": 0.883,
+    "straight_n": 434,
+    "straight_saturated_share": 0.691,
+    "tight_n": 313,
+    "tight_zero_share": 1.0,
+    "no_target_nonzero_share": 0.449
+   }
   }
  },
  "sigma_256_self_consistency": {
