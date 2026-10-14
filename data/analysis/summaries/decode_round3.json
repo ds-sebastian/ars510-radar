@@ -1841,6 +1841,24 @@
      "share": 0.32129
     }
    }
+  },
+  "byte5_standstill_steering_heldout": {
+   "owner": {
+    "n": 1173,
+    "n_sign": 542,
+    "rlogs": 12,
+    "sign_share": 0.919,
+    "rho_abs": -0.923,
+    "pass_": true
+   },
+   "second": {
+    "n": 2658,
+    "n_sign": 1810,
+    "rlogs": 15,
+    "sign_share": 0.934,
+    "rho_abs": -0.973,
+    "pass_": true
+   }
   }
  },
  "sigma_256_self_consistency": {
