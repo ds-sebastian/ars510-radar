@@ -381,10 +381,11 @@ All three switch once and stay, so they are a direct "radar running" signal and 
 Every 0.5 s the radar reports **one object from its function-level tracker: the track with number 0** (◐). It is the same car as
 the ACC target whenever the ACC target's `TARGET_ID` is 0 (range within 0.3 m on 98 % of frames; 173 of 173 on the owner car in a
 re-check from the original logs, 6 of 6 on a third car; with any other ID it is a different object), so it does not rotate
-through the tracks. The two ranges are a close copy, not always the same number, and few frames cover moving vehicles; track 0
-is reused quickly, mostly by roadside objects. On the ACC target its speed equals the ACC speed (median difference 0.09 m/s).
-Its range is close to that state but not a rounding of it: on the ACC car it is exact on about 21 % of frames and
-0.07-0.15 m RMS away ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
+through the tracks. Track 0 is reused quickly, mostly by roadside objects, so few frames cover moving vehicles. On the ACC target
+its speed equals the ACC speed (median difference 0.09 m/s), and its range is a close copy of the ACC distance, not a rounding of
+it: pairing each original 0x680 transmission with the preceding ACC frames gives 0.052 m RMS on 2,065 moving-object reports of the
+owner's car (0.091 m with the coarser per-cycle pairing; receipt alignment accounts for part of the difference;
+[`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json)). `support.parse_0x680` decodes it (big-endian fields, MSB-first start | length):
 
 | field | reading | conf. |
 |---|---|---|
@@ -440,7 +441,12 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
   2.05 M frames pass, and 30,056 of 30,058 frames on fresh drives (the exceptions are the startup frame `00 0f ff`).
 - **0x240 / 0x244 / 0x248:** camera-sent context frames ([above](#0x240-0x248-context-frames)).
 - **0x210:** copy of Toyota road-sign-assist data (speed-sign presence, `RSA1.SPDVAL1`, `RSA3.TSRMSW`).
-- **0x500 / 0x502:** unit-specific constants (redacted in the shared DBC; compare yours) and two slowly drifting codes
-  in 0x502 (temperature-like behaviour).
-- **0x501:** status nibble.
+- **0x500 (● observed regular payload):** a shared regular payload across the three recorded cars.
+- **0x502 (● layout, ○ interpretation):** byte 0 is a shared constant; bytes 4-7 are constant within each recorded car
+  and differ between cars. Byte 1 and the big-endian word in bytes 2-3 are slowly varying numerical codes, updated
+  during motion and held during settled standstill.
+- **0x501 (● layout, ○ interpretation):** byte 5 bits 3-7 form one five-bit numerical code (`43|5@1+` in the DBC),
+  including the carry from 15 to 16. Its low three bits are `100b` during active output and `000b` in the startup payload.
+  Counts and scope for these register readings are in
+  [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json).
 - **0x180, 0x198, 0x23D:** constants.

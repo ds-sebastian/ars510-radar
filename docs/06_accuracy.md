@@ -53,12 +53,14 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   60-100 m. openpilot's vision lead, a camera estimate, reads within 1 % of the ACC distance from 20 to 80 m on the
   700-segment set (5-7 % short at 60-80 m on the second set) and is nearer to it than to `dRel` on 71-79 % of samples
   at 30-100 m. **Against physical odometry the ACC distance is right (◐):** on 20 approaches to stopped cars that start at 60-80 m (two cars,
-  ego up to 16 m/s), the ACC distance follows GNSS-scaled wheel odometry to a median +0.12 m (+0.1 %, IQR −0.16 to +0.40 m;
-  −0.15 m on 26 episodes with plain wheel odometry), while the object list reads 0.8-3 m short and the vision lead
-  about 2.5 m short, depending on whether each stream is anchored at the stop or at 30 m
-  ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)). The comparison tests the range scale on
-  stopped cars (each stream anchored on itself), not an absolute zero. It points to the object list, not the ACC distance,
-  as the short one, and vision is not a far-range reference. The ACC distance is therefore the better far range for that car: `acc` publishes it, `fused` publishes it
+  ego up to 16 m/s), range changes measured from a near anchor are compared with GNSS-scaled wheel odometry. The ACC distance's
+  far-range median residual is −0.03 m with a 30 m anchor (20 approaches) and +0.21 m with a stop anchor (13; −0.15 m on 26 episodes with plain wheel
+  odometry); the object list reads −3.13 m (16 approaches) and −0.81 m (12), the vision lead −2.42 m and −2.95 m
+  ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json),
+  [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json)). These are differential comparisons on selected
+  stopped cars, with the radar's 0.15 s output age, not an absolute range-zero calibration. They point to the object list, not
+  the ACC distance, as the short one, and vision is not a far-range reference. The ACC distance is therefore the better far range
+  for that car: `acc` publishes it, `fused` publishes it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to

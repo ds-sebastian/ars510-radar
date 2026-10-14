@@ -1,0 +1,281 @@
+{
+  "scope": "Three recorded cars; original CAN frame order; register subset covers 360 rlogs. Counts omit missing/truncated tails. No public driving-profile change.",
+  "evidence_kind": "observed / derived",
+  "register_authority": "structure; carState and device thermal teacher for update associations",
+  "registers": {
+    "cars": 3,
+    "rlogs": 360,
+    "unit_A": {
+      "frames": 3414,
+      "segments": 177,
+      "quiet_stop_intervals": 641,
+      "quiet_stop_changes": 0,
+      "moving_intervals": 1686,
+      "moving_changes": 1266,
+      "w0_cpu_r2": 0.007567147959841497,
+      "w0_ambient_r2": 0.03260696949952933,
+      "w0_since_first_state_r2": 6.083377882120271e-06,
+      "w1_cpu_r2": 0.012296585674591522,
+      "w1_ambient_r2": 0.04971556339630973,
+      "w1_since_first_state_r2": 0.00013483731044211552,
+      "501": {
+        "active_frames": 20556,
+        "low3_not4": 0,
+        "code_min": 15,
+        "code_max": 20,
+        "steps": 89,
+        "unit_steps": 87,
+        "cross15_16": 0
+      }
+    },
+    "unit_B": {
+      "frames": 2627,
+      "segments": 133,
+      "quiet_stop_intervals": 479,
+      "quiet_stop_changes": 0,
+      "moving_intervals": 1442,
+      "moving_changes": 925,
+      "w0_cpu_r2": 0.029958055155445144,
+      "w0_ambient_r2": 5.086428871882148e-05,
+      "w0_since_first_state_r2": 0.00022322397682970834,
+      "w1_cpu_r2": 0.029146967156563234,
+      "w1_ambient_r2": 0.09692105147569319,
+      "w1_since_first_state_r2": 0.00017361243074768399,
+      "501": {
+        "active_frames": 15731,
+        "low3_not4": 0,
+        "code_min": 16,
+        "code_max": 20,
+        "steps": 96,
+        "unit_steps": 92,
+        "cross15_16": 0
+      }
+    },
+    "unit_C": {
+      "frames": 967,
+      "segments": 49,
+      "quiet_stop_intervals": 75,
+      "quiet_stop_changes": 0,
+      "moving_intervals": 492,
+      "moving_changes": 367,
+      "w0_cpu_r2": 0.2862141524948158,
+      "w0_ambient_r2": 0.49283037352798026,
+      "w0_since_first_state_r2": 0.00010540884151201697,
+      "w1_cpu_r2": 0.27739454758710047,
+      "w1_ambient_r2": 0.015643061268036242,
+      "w1_since_first_state_r2": 0.0012773947765563729,
+      "501": {
+        "active_frames": 5831,
+        "low3_not4": 0,
+        "code_min": 10,
+        "code_max": 13,
+        "steps": 27,
+        "unit_steps": 27,
+        "cross15_16": 0
+      }
+    },
+    "500_regular_common_frames": 42118,
+    "500_all_frames": 42123,
+    "500_rare_variants_frames": 5,
+    "500_shared_regular_payloads": 1,
+    "502_distinct_tail_per_car": 1,
+    "502_tail_shared_pairs": 0,
+    "501_field": {
+      "dbc_start": 43,
+      "width": 5,
+      "endianness": "little",
+      "low3_active": 4,
+      "low3_startup": 0,
+      "meaning": "candidate"
+    },
+    "501_carry_confirmation": {
+      "car": "unit_A",
+      "original_rlogs": 2,
+      "active_frames": 240,
+      "low3_4": 240,
+      "consecutive_15_16_carries": 12,
+      "coverage": "targeted carry-positive subset, independent original frame extraction; not population prevalence"
+    }
+  },
+  "range_anchor_scope": {
+    "authority": "GNSS-scaled ego odometry, conditional stationary queue-car identity; differential range from near anchors, not absolute zero calibration",
+    "radar_age_s": 0.15,
+    "30m": {
+      "acc_m": {
+        "n": 20,
+        "median": -0.03040853009521527,
+        "p10_p90": [
+          -0.7063738052134992,
+          0.3329220348720114
+        ]
+      },
+      "list_m": {
+        "n": 16,
+        "median": -3.1296091540649833,
+        "p10_p90": [
+          -10.923049193478834,
+          0.2698782020362849
+        ]
+      },
+      "vision_m": {
+        "n": 20,
+        "median": -2.421112121981423,
+        "p10_p90": [
+          -9.102743199030158,
+          0.5475278499986558
+        ]
+      },
+      "acc_pct": {
+        "n": 20,
+        "median": -0.04500054452563804,
+        "p10_p90": [
+          -1.0717173839769245,
+          0.45643062044452654
+        ]
+      },
+      "list_pct": {
+        "n": 16,
+        "median": -4.285904101570143,
+        "p10_p90": [
+          -15.8378585506799,
+          0.4056966182252787
+        ]
+      },
+      "vision_pct": {
+        "n": 20,
+        "median": -3.6054563091332694,
+        "p10_p90": [
+          -12.855902276989601,
+          0.7687804462723413
+        ]
+      }
+    },
+    "stop": {
+      "acc_m": {
+        "n": 13,
+        "median": 0.2095980605088954,
+        "p10_p90": [
+          -1.2936800207188326,
+          0.4218587550004315
+        ]
+      },
+      "list_m": {
+        "n": 12,
+        "median": -0.8128303877435794,
+        "p10_p90": [
+          -8.18208902542254,
+          1.4718312604897543
+        ]
+      },
+      "vision_m": {
+        "n": 13,
+        "median": -2.9546729462948633,
+        "p10_p90": [
+          -6.959040264723467,
+          0.6506209485473173
+        ]
+      },
+      "acc_pct": {
+        "n": 13,
+        "median": 0.34730415991531965,
+        "p10_p90": [
+          -1.902236671545319,
+          0.6307975084449386
+        ]
+      },
+      "list_pct": {
+        "n": 12,
+        "median": -1.1867658391646774,
+        "p10_p90": [
+          -11.02707025321742,
+          1.9678263879146747
+        ]
+      },
+      "vision_pct": {
+        "n": 13,
+        "median": -4.529259837786979,
+        "p10_p90": [
+          -10.045121419571297,
+          0.9681699585571936
+        ]
+      }
+    }
+  },
+  "680_moving_copy": {
+    "scope": "Owner moving-ground reports with ACC target number zero, paired at original transmission order",
+    "authority": "radar-witness (dependent)",
+    "all": {
+      "n": 2065,
+      "segments": 33,
+      "tight": 1424,
+      "range": {
+        "n": 2065,
+        "median": 0.018749999999997158,
+        "p10_p90": [
+          -0.025000000000005684,
+          0.05624999999999858
+        ]
+      },
+      "lateral": {
+        "n": 2065,
+        "median": 0.0,
+        "p10_p90": [
+          -0.009999999999999995,
+          0.009999999999999981
+        ]
+      },
+      "old_dt": {
+        "n": 2050,
+        "median": -0.020174269501524122,
+        "p10_p90": [
+          -0.040403062700926286,
+          0.0
+        ]
+      },
+      "range_error_rms": 0.05163013073308714,
+      "old_range_error_rms": 0.09077493826218688,
+      "lat_error_rms": 0.019185597907550814,
+      "old_lat_error_rms": 0.03185527116163431
+    },
+    "matched_legacy": {
+      "n": 2048,
+      "segments": 33,
+      "tight": 1414,
+      "range": {
+        "n": 2048,
+        "median": 0.018749999999997158,
+        "p10_p90": [
+          -0.025000000000005684,
+          0.05624999999999858
+        ]
+      },
+      "lateral": {
+        "n": 2048,
+        "median": 0.0,
+        "p10_p90": [
+          -0.009999999999999995,
+          0.009999999999999981
+        ]
+      },
+      "old_dt": {
+        "n": 2048,
+        "median": -0.020166402000029393,
+        "p10_p90": [
+          -0.04040347410072513,
+          0.0
+        ]
+      },
+      "range_error_rms": 0.051763708390604964,
+      "old_range_error_rms": 0.09077493826218688,
+      "lat_error_rms": 0.019261575760597845,
+      "old_lat_error_rms": 0.03185527116163431
+    }
+  },
+  "methods": [
+    "Use full raw carState intervals, not a nearest-speed sample, to select settled stop and moving 3-second code updates.",
+    "Decode 0x501 byte 5 directly; retain active five-bit value and startup low-bit difference.",
+    "Compare shared regular 0x500 payload and unit-associated 0x502 tails without exporting payloads or hashes.",
+    "Use near-anchored integrated GNSS-scaled ego motion on selected stationary-car approaches; report both stop and 30m anchors.",
+    "Pair 0x680 with preceding fresh matching-counter ACC frames in CAN event order."
+  ]
+}
