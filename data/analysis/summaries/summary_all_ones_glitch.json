@@ -236,5 +236,22 @@
     "bytes4_7_nonzero_share": 0.0
    }
   }
+ },
+ "open_loop_before_after": {
+  "what": "the acc_summaries profile on main vs this fix, fed the bus-1 frames of every stored rlog segment (three cars), every report compared",
+  "segments": 2427,
+  "reports": 2824564,
+  "reports_differing": 1790,
+  "reports_differing_pct": 0.0634,
+  "points_vrel_above_50_m_s": {
+   "before": 131,
+   "after": 0
+  },
+  "largest_vrel_before_m_s": 261.0,
+  "mechanisms": [
+   "one-cycle FF FF FF FF or range-jump words entering the slope history",
+   "both summary slots carrying the same pair code for two cars more than 5 m apart (codes are per slot): the old profile mixed both into one slope and published two points with the same trackId; the range-step guard drops them"
+  ],
+  "example_segment_same_code_cycles": 334
  }
 }

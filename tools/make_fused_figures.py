@@ -149,7 +149,7 @@ def layers() -> None:
         ax.text(-0.1, y + 0.5, name, ha="right", va="center", fontsize=8.8)
         if lines is not None:
             ax.text(4.1, y + 0.5, f"{lines} lines", ha="left", va="center", fontsize=8.3, color=INK2)
-    # acc: one file covering row 0; acc_summaries: one file covering rows 0-1 (its ACC part is inside its own 53 lines)
+    # acc: one file covering row 0; acc_summaries: one file covering rows 0-1 (its ACC part is inside its own lines)
     ax.add_patch(plt.Rectangle((0.08, top + 0.12), 0.84, 0.76, color=ACCP, lw=0))
     ax.text(0.5, top + 0.5, f"one file,\n{acc_n} lines in all", ha="center", va="center", fontsize=7.8, color="white", fontweight="bold")
     ax.add_patch(plt.Rectangle((0.08, top - 1 + 0.12), 0.84, 0.76, color="#efeee9", lw=0))

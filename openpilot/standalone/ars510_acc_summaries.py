@@ -12,7 +12,7 @@ from opendbc.car import structs
 from opendbc.car.interfaces import RadarInterfaceBase
 
 STALE_S, FAR_M, SLOPE_N, SLOPE_SPAN_S, SUMMARY_ID = 0.5, 60.0, 8, 0.6, 32  # summary trackIds: 32 + pair code
-JUMP_M = 5.0  # a range step this large between cycles is a glitch (2 in about 756 k summary frames) or a new car
+JUMP_M = 5.0  # a range step this large between cycles is a glitch, a new car, or two cars sharing a pair code (codes are per slot)
 
 
 def bits(b, start, length):
