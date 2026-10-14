@@ -57,8 +57,10 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    finite vRel. Forks whose RadarPoint still has the legacy fields (sunnypilot) also get:
    - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24; the radar
      filters it.
-   - `aRel`: the radar's filtered over-ground acceleration minus ego acceleration (from 0xB4). It is smoothed and
-     lags vRel by about 0.5 s.
+   - `aRel`: the radar's filtered over-ground acceleration (`84|10` × 0.075 m/s², the scale measured with ego stopped)
+     minus ego acceleration (from 0xB4). It is smoothed and lags vRel by about 0.5 s; while ego accelerates it still
+     carries part of ego's acceleration. No radard version we integrate reads it (openpilot, StarPilot and sunnypilot
+     take the lead acceleration from their own Kalman filter).
 
    - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
 
