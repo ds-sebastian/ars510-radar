@@ -1,0 +1,128 @@
+{
+ "what": "0x192 / 0x194 summary words: one-cycle FF FF FF FF glitch inside live tracks, and lateral clipping at code 0",
+ "summary_frames": {
+  "owner": {
+   "0x192": 366772,
+   "0x194": 241435
+  },
+  "second": {
+   "0x192": 83002,
+   "0x194": 65030
+  }
+ },
+ "all_ones_frames": {
+  "owner": {
+   "0x192": 12,
+   "0x194": 25
+  },
+  "second": {
+   "0x192": 6,
+   "0x194": 10
+  }
+ },
+ "all_ones_with_valid_companion": {
+  "owner": {
+   "0x192": 1,
+   "0x194": 3
+  },
+  "second": {
+   "0x192": 2,
+   "0x194": 1
+  }
+ },
+ "effect_without_fix": "one 501.9 m entry in the 8-sample range-slope window gives published vRel between +678 and -677 m/s for the next 8 reports of that car (about 0.5 s) when it is not the ACC car",
+ "lateral_limit_codes": {
+  "owner": {
+   "r192": {
+    "n": 366772,
+    "n_limit_any": 404,
+    "pairs": {
+     "(np.int64(8191), np.int64(8191))": 12,
+     "(np.int64(1514), np.int64(0))": 4,
+     "(np.int64(1038), np.int64(0))": 3,
+     "(np.int64(1108), np.int64(0))": 3
+    },
+    "first4_hex": {
+     "ffffffff": 12,
+     "05ea0000": 4,
+     "040e0000": 3
+    },
+    "within_60m_and_abs_y_gt_25": 467,
+    "within_60m_and_limit": 102,
+    "abs_y_gt_25_range_q": [
+     42.2,
+     76.2,
+     123.1
+    ]
+   },
+   "r194": {
+    "n": 241435,
+    "n_limit_any": 341,
+    "pairs": {
+     "(np.int64(8191), np.int64(8191))": 25,
+     "(np.int64(909), np.int64(0))": 3,
+     "(np.int64(1343), np.int64(0))": 3,
+     "(np.int64(1390), np.int64(0))": 3
+    },
+    "first4_hex": {
+     "ffffffff": 25,
+     "038d0000": 3,
+     "053f0000": 3
+    },
+    "within_60m_and_abs_y_gt_25": 264,
+    "within_60m_and_limit": 59,
+    "abs_y_gt_25_range_q": [
+     54.3,
+     87.1,
+     166.7
+    ]
+   }
+  },
+  "second": {
+   "r192": {
+    "n": 83002,
+    "n_limit_any": 134,
+    "pairs": {
+     "(np.int64(8191), np.int64(8191))": 6,
+     "(np.int64(1781), np.int64(0))": 2,
+     "(np.int64(912), np.int64(0))": 2,
+     "(np.int64(1018), np.int64(0))": 2
+    },
+    "first4_hex": {
+     "ffffffff": 6,
+     "06f50000": 2,
+     "03900000": 2
+    },
+    "within_60m_and_abs_y_gt_25": 394,
+    "within_60m_and_limit": 26,
+    "abs_y_gt_25_range_q": [
+     45.2,
+     76.4,
+     96.1
+    ]
+   },
+   "r194": {
+    "n": 65030,
+    "n_limit_any": 85,
+    "pairs": {
+     "(np.int64(8191), np.int64(8191))": 10,
+     "(np.int64(1465), np.int64(0))": 2,
+     "(np.int64(2652), np.int64(0))": 2,
+     "(np.int64(1517), np.int64(0))": 2
+    },
+    "first4_hex": {
+     "ffffffff": 10,
+     "05b90000": 2,
+     "0a5c0000": 2
+    },
+    "within_60m_and_abs_y_gt_25": 212,
+    "within_60m_and_limit": 3,
+    "abs_y_gt_25_range_q": [
+     47.4,
+     77.5,
+     94.8
+    ]
+   }
+  }
+ }
+}

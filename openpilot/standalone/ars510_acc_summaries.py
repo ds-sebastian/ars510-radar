@@ -51,7 +51,7 @@ class RadarInterface(RadarInterfaceBase):
           self.ident[address] = dat
         elif address in (0x192, 0x194) and len(dat) >= 4 and address - 1 in self.ident:  # range, lateral (left positive)
           ident, self.summaries[address] = self.ident[address - 1], None
-          if dat[0:4] != b"\x00\xff\x00\xff" and ident[0] >> 1 != 127:
+          if dat[0:4] not in (b"\x00\xff\x00\xff", b"\xff\xff\xff\xff") and ident[0] >> 1 != 127:  # FF.. = one-cycle glitch
             code, d = ident[3] >> 2, ((int.from_bytes(dat[0:2], "big") & 0x1FFF) - 160) / 16
             self.ranges.setdefault(code, deque(maxlen=SLOPE_N)).append((t, d))
             self.summaries[address] = (code, d, ((int.from_bytes(dat[2:4], "big") & 0x1FFF) - 2048) * 0.015, t)

@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from .objects import LATERAL_M_PER_CODE
 
 A192_SENTINEL = bytes.fromhex("00FF00FF")
+A192_ALL_ONES = bytes.fromhex("FFFFFFFF")  # one-cycle glitch inside a live track (7 of ~760 k summary frames, two cars)
 # Summary distance: (code - 160) / 16 m. The same numbers as the object list's LONG_DIST, but established independently:
 # the zero is pinned by the ACC target (summary code = 160 + floor(0.4 x ACC distance code), and the ACC distance has no
 # offset), while the object list's zero comes from vision. Kept separate on purpose, so a future object-list correction
@@ -40,7 +41,7 @@ class Target192:
 
 def parse_0x192(data: bytes) -> Target192 | None:
     """Raw 13-bit summary words; Target192.d_rel / .y_rel give metres in the object list's encoding."""
-    if len(data) < 4 or bytes(data[:4]) == A192_SENTINEL:
+    if len(data) < 4 or bytes(data[:4]) in (A192_SENTINEL, A192_ALL_ONES):
         return None
     return Target192(int.from_bytes(data[0:2], "big") & 0x1FFF,
                      int.from_bytes(data[2:4], "big") & 0x1FFF)

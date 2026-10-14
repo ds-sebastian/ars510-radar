@@ -231,7 +231,7 @@ class 2 with 22:23:120 in every frame, and the object list's own class for a cla
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
 [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 
-**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`):
+**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`; the radar also sends `FF FF FF FF` for a single cycle inside a live track, 7 of about 756 k summary frames on two cars, which `parse_0x192` and `acc_summaries` skip):
 
 | bytes | field |
 |---|---|
@@ -239,7 +239,8 @@ class 2 with 22:23:120 in every frame, and the object list's own class for a cla
 | 2-3 | big-endian 13-bit **lateral position**: `(code − 2048) × 0.015` m, left positive, the object list's encoding (● layout, ◐ unit; median residual 0.01 m) |
 
 Each summary is therefore the position of one target of the radar's internal tracker. Keep all 13 bits of the second
-word (it crosses 4096 continuously).
+word (it crosses 4096 continuously). The lateral word cannot go below code 0: targets more than 30.72 m to the right read
+exactly −30.72 m (clipped), while the left side runs on smoothly past +25 m.
 
 **They likely come from the radar's smooth internal tracker (◐).** The speed from a 1 s slope of the 0x192 range matches the radar's
 ACC speed when both describe the same car (correlation 0.98, median difference 0.18 m/s). During object-list velocity
