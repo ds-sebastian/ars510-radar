@@ -3794,5 +3794,42 @@
     "rho_248": 0.862
    }
   }
+ },
+ "tracker_a_dead_zone": {
+  "what": "median TRACKER_A by target over-ground acceleration (REL_ACCEL + ego), active ACC cycles; car C held out with a frozen claim",
+  "car_A": {
+   "abs_a_lt_0.3": 35,
+   "a_1_2": 46,
+   "a_m2_m1": 47,
+   "range_10_100m": [
+    35,
+    36
+   ]
+  },
+  "car_B": {
+   "abs_a_lt_0.3": 34,
+   "a_1_2": 47,
+   "a_m2_m1": 47,
+   "range_10_100m": [
+    35,
+    36
+   ]
+  },
+  "car_C": {
+   "cycles": 103079,
+   "abs_a_lt_0.3": 35,
+   "a_1_2": 46,
+   "a_m2_m1": 45,
+   "range_10_100m": [
+    34,
+    36
+   ]
+  },
+  "braking_beyond_2": {
+   "car_A": 61,
+   "car_B": 64,
+   "car_C": 50,
+   "note": "not stable between cars"
+  }
  }
 }
