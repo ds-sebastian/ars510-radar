@@ -153,7 +153,10 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   they arrive. The delay is on the radar side: carState trails the raw wheel-speed frames by only 2-4 ms, and the IMU
   agrees. A speed comparison that uses the current ego speed reads about −0.15 × ego acceleration too high; with the lag
   taken into account the ACC target's speed unit (0.125 m/s per code) is exact within about 0.5 % (stationary targets
-  read 1.004 × ego speed). The
+  read 1.004 × ego speed). Against wheel odometry on 21 braking approaches to stopped cars, the ACC distance is 0.15 s old
+  as well, and the object-list range is no older (0.09 s median; [`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
+  openpilot's native form of this age is `CP.radarDelay` (radard adds the ego speed from that long ago to vRel); the same
+  re-reference of `acc`'s speed left braking unchanged in replay, so the profiles keep the default 0. The
   profiles publish the radar's values as sent; predicting them 0.2 s ahead brakes 0.03 s earlier but turns some moderate
   requests into firmer ones ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json),
   [`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)).

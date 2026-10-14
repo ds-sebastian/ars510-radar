@@ -101,7 +101,8 @@
    1.0
   ],
   "wrap_episodes": 16,
-  "wrap_cause": "crossing traffic 12.8-20 m/s, 14 of 16 at ego standstill"
+  "wrap_cause": "crossing traffic 12.8-20 m/s, 14 of 16 at ego standstill",
+  "lever_arm_fit_m": 3.6
  },
  "acc_lat_dist_wrap": {
   "inpath_cycles": {
@@ -176,5 +177,18 @@
  "check_23b": {
   "form": "CRC-8 SAE J1850 over [0x00][counter][width u16]",
   "frames": 354413
+ },
+ "range_output_age_vs_odometry": {
+  "scope": "21 braking approaches to stopped cars, original logs, ranges 3-60 m, carState odometry",
+  "acc_distance_s": 0.15,
+  "object_list_range_s": 0.09,
+  "paired_list_minus_acc_s": {
+   "median": -0.09,
+   "iqr": [
+    -0.26,
+    0.15
+   ]
+  },
+  "list_older_share": "8/21"
  }
 }
