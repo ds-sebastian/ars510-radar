@@ -77,8 +77,9 @@ Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `
 On the RAV4 2022 / 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
 longitudinal (alpha long) switches the radar's car-bus output off with UDS CommunicationControl `28 01 01` (receive
 on, transmit off) to 0x750 / 0x0F, then keeps it off with tester-present `3E 00` every ~0.2 s. That request switches off bus 0
-only; **bus 1 keeps running unchanged** (●, one drive with the radar line unfiltered, firmware `8821F0R03100`;
-[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json)):
+only; **bus 1 keeps running unchanged** (●, all three stored disables on three cars, firmware `8821F0R03100`: a 26 min drive with the
+radar line unfiltered and two parked tests, one with a filter board fitted; 16.6 records/s and 0 CRC failures afterwards;
+[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json), [`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)):
 
 | | before the request | after (26 min, openpilot longitudinal engaged 8 min) |
 |---|---|---|

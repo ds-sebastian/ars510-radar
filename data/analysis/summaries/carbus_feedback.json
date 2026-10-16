@@ -1,0 +1,196 @@
+{
+ "description": "Car-bus feedback, PCS frame fields, cruise buttons, the filter board's 0x2FF and 0x343 handling, and the radar's UDS output-disable, from recorded drives (owner car, second car with and without its filter board, a third car without one). Drives anonymised: U1 stock ACC, U2 openpilot long with the radar disabled, U3 the stock PCS alarm, O5 a parked test, S# the second car.",
+ "permit_braking_feedback": {
+  "scope": "stock ACC with the radar's own 0x343 (filter out), engaged, no pedals, v > 2 m/s; 20 Hz grid",
+  "command_at_or_below_-1.0": {
+   "bit_set_s": 48.2,
+   "bit_clear_s": 18.45,
+   "brake_ecu_brkon_share": [
+    0.995,
+    0.005
+   ],
+   "acc_braking_share": [
+    0.995,
+    0.003
+   ],
+   "acc_brake_lights_share": [
+    0.993,
+    0.003
+   ]
+  },
+  "command_-1.0_to_-0.6": {
+   "bit_set_s": 54.0,
+   "bit_clear_s": 9.5,
+   "brkon_share": [
+    0.833,
+    0.005
+   ]
+  },
+  "command_-0.6_to_-0.3": {
+   "bit_set_s": 80.85,
+   "bit_clear_s": 5.7,
+   "brkon_share": [
+    0.072,
+    0.0
+   ]
+  },
+  "bit_flips_under_held_command": {
+   "drive": "S45",
+   "flips": 3,
+   "command_mps2": [
+    -1.0,
+    -0.8
+   ],
+   "brake_response_s": [
+    0.02,
+    0.12
+   ]
+  },
+  "friction_brakes_join_below_mps2": [
+   -0.8,
+   -0.6
+  ]
+ },
+ "u3_brakes": {
+  "gas_off_before_alarm_s": 0.64,
+  "pressure_from_s": 0.04,
+  "stop_switch_s": 0.11,
+  "abs_active_s": [
+   0.62,
+   1.26
+  ],
+  "peak_pressure_mpa": 2.38,
+  "system_stages": "0x283 FORCE / STATE, 0x344 DSS1GDRV / PREFILL, 0x320 BRKON, 0x226 FBA all 0",
+  "times": "relative to the alarm start"
+ },
+ "named_fields_never_set": {
+  "segments": 290,
+  "routes": 22,
+  "0x1D3_bit47_D2PRXMK_frames": 529280,
+  "never_nonzero": [
+   "0x1D3 D2PRXMK (opendbc ACC_FAULTED)",
+   "0x320 PCSBRSTA",
+   "0x320 PSBSTBY",
+   "0x228 ICBACT",
+   "0x226 FBA"
+  ],
+  "0x228_DVS0PCS": "the car's measured longitudinal acceleration (slope 0.95-1.03 vs carState aEgo, r >= 0.956, 18 drives), not a request"
+ },
+ "pcs_frames": {
+  "panda_content_checked": [
+   "0x343",
+   "0x283 (bytes 0-5 zero)",
+   "0x750"
+  ],
+  "panda_any_content": [
+   "0x344",
+   "0x366",
+   "0x33E",
+   "0x365",
+   "0x411"
+  ],
+  "0x344_frames": 297076,
+  "0x344_nonzero_fields_ever": [
+   "PCSALM (U3)",
+   "PCSOPR"
+  ],
+  "0x283_state4_in_park": {
+   "events": 4,
+   "cars": 2,
+   "duration_s": [
+    0.3,
+    0.7
+   ],
+   "object_ahead_m": [
+    2.4,
+    3.2
+   ],
+   "force": 0
+  }
+ },
+ "cruise_buttons": {
+  "0x365_button_bits_frames_zero": 74263,
+  "set_speed_steps": 385,
+  "engagements": 46,
+  "disengagements": 46,
+  "main_toggles": 67,
+  "raw_press_on_any_bus": false,
+  "0x1D2_cruise_state_9_10_on_steps": [
+   0.98,
+   0.92
+  ],
+  "follow_distance_via_radar_0x343_distance_steps": [
+   26,
+   26
+  ],
+  "lead_ms": [
+   20,
+   61
+  ],
+  "0x24D": "camera-sent constant 1 Hz frame on bus 1 (not the SecOC PCM_CRUISE_4 frame of the same ID)"
+ },
+ "filter_board_0x2ff": {
+  "frames": 679261,
+  "boards": 2,
+  "byte3": "Toyota checksum",
+  "state": {
+   "power_up_first_s": [
+    0.1,
+    0.4
+   ],
+   "power_up": 3,
+   "passing_radar_0x343": 0,
+   "after_radar_0x343_stops": 5,
+   "delay_s": [
+    0.47,
+    0.54
+   ],
+   "drive_starts": 99
+  },
+  "second_car_board_forces_acc_type_and_permit_braking": {
+   "frames": 55095,
+   "forced": 55095
+  },
+  "owner_board_passes": {
+   "acc_type_0_first_frames": [
+    22,
+    23
+   ],
+   "starts": 42,
+   "permit_braking_0_frames": 12206,
+   "of_frames": 12339
+  }
+ },
+ "stock_law_board_check": {
+  "time_gap_shift_s": 0.03,
+  "closing_gain_shift": 0.007,
+  "board_drive_r2_under_board_free_law": 0.7,
+  "board_free_drive_r2_range": [
+   -0.57,
+   0.73
+  ]
+ },
+ "radar_disables": {
+  "stored_segments": 2411,
+  "disables": 3,
+  "cars": 3,
+  "firmware": "8821F0R03100",
+  "car_bus_addresses_stopped": [
+   "0x283",
+   "0x33E",
+   "0x343",
+   "0x344",
+   "0x365",
+   "0x366",
+   "0x411",
+   "0x494",
+   "0x4FF"
+  ],
+  "stop_within_ms": 20,
+  "bus1_records_per_s_after": 16.6,
+  "bus1_records_after": 10458,
+  "crc_failures": 0,
+  "acc_frames_hz_after": 50
+ },
+ "source": "research workspace SCR-925..929 (car-bus census, raw-log verified with opendbc's DBC parser) and SCR-940..944 (filter board, disables)"
+}

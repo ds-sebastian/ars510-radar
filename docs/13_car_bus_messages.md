@@ -27,13 +27,16 @@ All nine stop when openpilot disables the radar ([01](01_radar_bus.md#openpilots
 Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x344 and 0x283 end in the Toyota
 checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
 (4.1 h of owner drives and U1; 0x411 over 752 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
-after each of 27 cold starts).
+after each of 27 cold starts). Parked in P with an object 2.4-3.2 m straight ahead, 0x283 has shown `STATE` 4 with no force
+(`00 00 00 00 10 00 9C`) for 0.3-0.7 s, four times on two cars; what triggers it is open.
 0x33E, 0x365 and 0x366 change with the lead.
 
 ### 0x365: lead distance and relative speed (●)
 
 Byte 4 is the distance to the radar's ACC target in metres, and 0xFC marks an idle target. Byte 5 is the relative speed in km/h,
-signed, negative when closing. The other bytes are zero. Both fields match the ACC target (0x235 / 0x237,
+signed, negative when closing. The other bytes are zero, including the DSU's RES / SET / CANCEL / MAIN button bits (0 on
+74,263 frames): no bus carries the raw cruise-button press on these cars, and the PCM's 0x1D2 `CRUISE_STATE` (9 / 10) shows the
++ / − steps. Both fields match the ACC target (0x235 / 0x237,
 [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237), 0.125 m/s and 0.025 m per code) on two owner drives and on a second car up to 37 m/s:
 
 | drive | distance: scale, r, MAD | speed: scale, r, MAD | frames |
@@ -114,8 +117,15 @@ presses. `RADAR_DIRTY`, `ACC_MALFUNCTION`, `ACC_CUT_IN` and `CANCEL_REQ` hold 0.
 `ALLOW_LONG_PRESS` 1.
 On a second car with a filter board (smartDSU-style) in the radar's car-bus line, the board passes `ACCEL_CMD` and `MINI_CAR` but
 forces `ACC_TYPE` 1 and `PERMIT_BRAKING` 1 whenever openpilot is not sending its own 0x343 (73,513 of 73,513 frames on 32 drives);
-without the board the same radar sends `PERMIT_BRAKING` 1 on 23-94 % of cruise-on frames per drive.
-**`PERMIT_BRAKING` allows the friction brakes (◐).** With stock ACC commanding −0.3 m/s² or more, the car reaches the
+without the board the same radar sends `PERMIT_BRAKING` 1 on 23-94 % of cruise-on frames per drive. The owner's board passes both
+bits as the radar sends them (`ACC_TYPE` 0 for the radar's first 22-23 frames on all 42 starts, `PERMIT_BRAKING` 0 on 12,206 of
+12,339 frames before openpilot takes over), so the forcing belongs to that board's firmware, not to every filter.
+**`PERMIT_BRAKING` allows the friction brakes (●).** The car's own feedback shows it: with stock ACC commanding −1.0 m/s² or
+stronger, the brake ECU's brakes-on flag (0x320 `BRKON`), the engine ECU's ACC-braking state (0x1D2 `ACC_BRAKING`), the ACC brake
+lights (0x3B7) and the brake amount (0xA6) are on for 99.5 % of 48 s with the bit set and for at most 1 % of 18 s with it clear,
+and when the radar sets or clears the bit under a held command the brakes apply or release within 0.02-0.12 s. With the bit set
+the friction brakes join only below about −0.6 to −0.8 m/s² ([`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)).
+With stock ACC commanding −0.3 m/s² or more, the car reaches the
 command 0.5 s later with the bit set (−0.83 → −0.86 m/s², 166 s) and only about −0.6 with it clear (−1.01 → −0.61, 32 s): with
 the bit clear the car brakes on regeneration and engine drag alone. The radar sets it for 99 % of targets within 20 m, 63 % at
 40-60 m and 17 % at 80-100 m, and keeps it for tens of seconds rather than following each command
@@ -131,7 +141,7 @@ bus, openpilot longitudinal needs one of two setups:
 
 | | radar CAN filter (smartDSU-style) | openpilot's radar disable (alpha long) |
 |---|---|---|
-| how | a board in the radar's line drops the radar's 0x343 while openpilot sends its own (and otherwise forces two of its bits, above); status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
+| how | a board in the radar's line drops the radar's 0x343 while openpilot sends its own (the second car's board otherwise forces two of its bits, above; the owner's passes them); status message 0x2FF (~51 Hz) lets forks detect it | UDS `28 01 01` to 0x750 / 0x0F switches off the radar's car-bus transmit |
 | radar's 0x343 | ends as openpilot's begins (3.487 s / 3.501 s after power-up, O4) | silent |
 | PCS / AEB (0x283 / 0x344) | **passed to the car**: the radar's AEB stays in place | **silent**: the radar's PCS / AEB request is off with its car-bus output |
 | 0x411 on the dash | the radar's: PCS on | openpilot's `40 20 00 00 10 01 00 00`: PCS off |
@@ -140,8 +150,12 @@ bus, openpilot longitudinal needs one of two setups:
 | follow-distance wheel button | **reported on 0x2FF** byte 0 bit 7 (below) | no frame carries it (◐) |
 
 **The filter also reports the follow-distance button (●).** The filter's 0x2FF heartbeat (4 bytes, ~51 Hz) is opendbc's `SDSU` message:
-byte 0 bit 7 is `FD_BUTTON`, "the follow distance button signal as forwarded by the sdsu". Byte 2 holds a state nibble (5 on 97 % of 12,388
-sampled frames) and a 4-bit counter, and byte 3 equals byte 2 + 5 on all of them. Over 663 owner segments (661 carry 0x2FF) the bit rose seven
+byte 0 bit 7 is `FD_BUTTON`, "the follow distance button signal as forwarded by the sdsu". Byte 2 holds opendbc's `STATE` nibble and a
+4-bit counter, and byte 3 is the Toyota checksum (on all 679,261 frames of two boards), which reads byte 2 + 5 while bytes 0-1 are
+zero. `STATE` reads 3 for the first 0.1-0.4 s after power-up, 0 while the board passes the radar's 0x343, and 5 (opendbc's
+`FAULT_TIMEOUT`) from 0.47-0.54 s after the last radar 0x343 it passed: the normal state once openpilot's 0x343 has taken over
+(99 drive starts on two boards; on one drive where openpilot's 0x343 never went out, the board kept passing the radar's and `STATE`
+stayed 0). Over 663 owner segments (661 carry 0x2FF) the bit rose seven
 times, each a 90-210 ms pulse, and every one followed the same chain
 ([`filter_follow_distance_button.json`](../data/analysis/summaries/filter_follow_distance_button.json)):
 
@@ -199,7 +213,7 @@ openpilot's Toyota longitudinal TX list (DSU-unplugged TSS-P support) already co
 | message | panda |
 |---|---|
 | 0x343 | allowed, `ACCEL_CMD` −3.5..+2.0 m/s² |
-| 0x344, 0x33E, 0x365, 0x366, 0x411 | allowed |
+| 0x344, 0x33E, 0x365, 0x366, 0x411 | allowed with any content (no content check; 0x344 carries the PCS deceleration, pre-fill and brake-assist fields, [15](15_aeb_pcs.md#what-the-pcs-frames-can-request)) |
 | 0x283 | allowed with bytes 0-5 zero (the idle frame) |
 | 0x494, 0x4FF | outside the TX list |
 

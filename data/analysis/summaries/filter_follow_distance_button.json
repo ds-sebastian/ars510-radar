@@ -132,7 +132,7 @@
   "length_bytes": 4,
   "byte0_bit7": "FD_BUTTON (button pressed = 1)",
   "byte2": "state nibble (high) + 4-bit counter",
-  "byte3": "byte 2 + 5 (mod 256) on all sampled frames",
+  "byte3": "Toyota checksum ((0x02 + 0xFF + length + bytes 0-2) & 0xFF) on all 679,261 frames of two boards; equals byte 2 + 5 while bytes 0-1 are zero (all 12,388 sampled frames here), byte 2 + 0x85 with the button bit set",
   "sampled_frames": 12388,
   "state_nibble_counts": {
    "5": 11977,

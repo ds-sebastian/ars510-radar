@@ -113,7 +113,7 @@ class NativeInterfaceConfig:
     # (measured: young tracks err more than 240|7 says); the radar's ACC target speed for the associated track by
     # acc_sigma_mps. The lead's speed may change with lead_accel_std_mps2 (process noise); a reading beyond innovation_gate_sigma standard deviations is clamped
     # to that bound (robust update). A track is first published once its speed std is below publish_speed_std_mps.
-    # Range stays outside the filter (the object list's range rate and speed disagree by 10-20 %, docs/12);
+    # Range stays outside the filter (on in-path tracks the object list's range rate and speed disagree by 10-20 %, docs/12);
     # range_fusion_gain smooths the published range separately.
     fused_speed_filter: bool = False
     speed_sigma_per_code: float = 0.045

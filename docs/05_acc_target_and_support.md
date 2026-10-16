@@ -113,6 +113,11 @@ read the 0x237 check byte this way and publish a wrapped lateral position with t
   It is a smaller gain, not a delay: the ratio stays 0.82-0.87 for every time shift from −0.5 s to +1 s, and when a lead
   starts braking the object list follows within 0.02 s but by only about 0.84 of the change; the list's own range rate
   reads 0.90-0.94 ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `list_speed_gain`).
+  The low gain sits on in-path tracks, the lead above all: over 5 s at 3-20 m the list speed integrates to 0.84-0.90 of the
+  lead's own range change and to 1.01-1.07 for other tracks, on three drive sets. It pulls toward zero relative speed, not
+  toward zero ground speed, and does not grow with the track's `240|7` uncertainty within a range band. Beyond 40 m part of
+  the low ratio is an additive closing offset of −0.2…−0.45 m/s on a multiplicative gain of 0.83-0.87
+  ([`list_speed_gain_tracks.json`](../data/analysis/summaries/list_speed_gain_tracks.json)).
 
 Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json), [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 

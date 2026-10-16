@@ -190,8 +190,8 @@ The two filters run in series, so all replay numbers include their combined effe
   output range    = predicted range + 0.1 × (object-list range − predicted range)
   ```
 
-  It cuts 1.5 s range walks by about a third. Range is its own estimate, separate from the speed state, because range rate and speed differ by
-  10-20 %. For the track the ACC target describes, the measurement is
+  It cuts 1.5 s range walks by about a third. Range is its own estimate, separate from the speed state, because on in-path tracks range rate and speed differ by
+  10-20 % (other tracks read close to one). For the track the ACC target describes, the measurement is
   the radar's ACC distance instead of the object-list range ([below](#matching-the-radars-trackers-to-tracks)).
 
 ## Matching the radar's trackers to tracks
