@@ -44,8 +44,9 @@ LONG_VEL_GROUND = NativeField("long_vel_over_ground", 64, 10, 510.5, 0.15, "m/s"
 # here (docs/03). Published as yvRel (minus yaw rate x range) to forks that
 # still carry that RadarPoint field (docs/08).
 LAT_VEL = NativeField("lat_vel_over_ground", 74, 10, 510.5, 0.15, "m/s", "likely")
-# Longitudinal acceleration over ground, filtered: zero code 511, about 0.04 m/s^2 per code, follows the velocity by about
-# 0.5 s. Kept in centred codes (docs/03).
+# Longitudinal acceleration over ground, filtered: (code - 510.3) x about 0.075 m/s^2 with ego stopped (0.035-0.086 by
+# drive set and estimator), trailing the track's own speed by about 0.3 s; while ego accelerates it also carries about 0.4
+# of ego's acceleration. Kept in codes centred on 511 (docs/03; data/reference/units.json).
 ACCEL_LIKE = NativeField("accel_like_84", 84, 10, 511.0, 1.0, "code", "likely")
 # Track age in radar cycles (~60 ms): 1 at birth, saturates at 126, 0 = slot being retired.
 AGE = NativeField("age_cycles", 24, 7, 0.0, 1.0, "cycles", "structure")
@@ -158,7 +159,7 @@ class NativeObject:
     accel_like_code: int  # centred code, unscaled
     move_state: int  # legacy low two bits; see movement_code for distinct full states
     oncoming_flag: bool  # raw oncoming-like state; can reset within the allocation
-    vel_unc_code: int  # velocity-uncertainty code (240|7), about 0.045 m/s per count
+    vel_unc_code: int  # velocity-uncertainty code (240|7), about 0.043-0.045 m/s per count against the ACC target
     geometry_valid: bool  # age >= 1 (age 0 carries stale geometry) and past the age-1 initialization template
     lateral_valid: bool  # lateral code differs from the sentinel
     movement_code: int | None = None  # full 109|3; None for legacy manually constructed objects
@@ -179,7 +180,7 @@ class NativeObject:
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
     lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
     vlat_unc_code: int | None = None  # 248|7 (about 0.085 + 0.03 m/s per count against stationary objects; the same form on both cars)
-    accel_unc_code: int | None = None  # 256|8, follows the frame scatter of 84|10 (0.0062 m/s^2 per count)
+    accel_unc_code: int | None = None  # 256|8, sigma of 84|10: about 0.06-0.07 m/s^2 per count within 20 m (range-confounded beyond)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter
     orientation_unc_code: int | None = None  # 200|7, 63 for stopped objects, 127 sentinel
     secondary_score_pct: int | None = None  # 184|8, track-confidence percent: 0 on the age-0 deletion record, 100 on 98 % of rows

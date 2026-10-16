@@ -240,7 +240,7 @@ the object-list steps belong to `raw` and `fused`.*
   converged and in path, with its fine distance (0.025 m), lateral position and closing speed. Toyota's ACC uses
   that same output. The radar's target ID is the track ID; every other car comes from the camera through radard's usual
   vision match. The protocol part: opendbc's CANParser on three DBC messages, the target-present flags, `canError` when
-  the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances).
+  the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances).
 - **`acc_summaries`** publishes the same ACC point and, from the target summaries 0x191-0x194, the radar's two nearest
   other moving cars within 60 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 32 + the summary's pair code,
   and a speed from the least-squares slope of that code's last 8 ranges. A summary within 1 m / 0.5 m of the ACC point

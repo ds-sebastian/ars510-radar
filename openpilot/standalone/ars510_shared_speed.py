@@ -46,7 +46,7 @@ class RadarInterface(RadarInterfaceBase):
       t = nanos * 1e-9
       for address, dat, src in frames:
         if src == CAR_BUS and address == SPEED_ADDR and len(dat) >= 7:
-          self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6)
+          self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6 / 0.9865)  # 0xB4 reads 1.35 % below carState.vEgo
         elif src == RADAR_BUS and address == ACC_SPEED_ADDR and len(dat) == 8:
           self.acc_speed = (be_bits(dat, 0, 5), (be_bits(dat, 29, 11) - 1024) * 0.125) if dat[1] & 0x0F == 5 else None
         elif src == RADAR_BUS and address == ACC_POS_ADDR and len(dat) == 8:
@@ -98,7 +98,7 @@ class RadarInterface(RadarInterfaceBase):
       if prev is None or t - prev[2] > STALE_S or not (age > prev[1] or age == prev[1] == 126):
         prev, self.next_tid = (self.next_tid, age, t), self.next_tid + 1
       self.slots[slot] = (prev[0], age, t)
-      out.append((prev[0], (bits(s, 32, 12) - 160) / 16, lat * 0.015, (bits(s, 64, 10) - 510.5) * 0.149,
+      out.append((prev[0], (bits(s, 32, 12) - 160) / 16, lat * 0.015, (bits(s, 64, 10) - 510.5) * 0.15,
                   SIGMA_PER_CODE * max(bits(s, 240, 7), 1)))
     return out
 

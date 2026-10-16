@@ -23,7 +23,7 @@ Sections 1-3 describe the object list that `fused` decodes; section 4 describes 
 ## 1. What the radar sends
 
 The ARS510 sends its object list on the private radar bus (bus 1) as one 742-byte **record** every ~60 ms
-(16.7 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 2 hold objects on average (p95 4, up to 7).
+(16.6 Hz), split over 106 CAN frames on 0x80 and closed by a CRC32; the parser reassembles it in code. Each record has 20 **slots**; on a highway about 2 hold objects on average (p95 4, up to 7).
 
 ![raw records](img/analysis/record_raster.png)
 
@@ -187,7 +187,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 
 | | value | source |
 |---|---|---|
-| object list | 16.7 Hz, 20 slots, ~2 objects per record on a highway (p95 4) | `stats.json` |
+| object list | 16.6 Hz, 20 slots, ~2 objects per record on a highway (p95 4) | `stats.json` |
 | published radar lead − camera range, 20-70 m (`fused` 2.1, owner's car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
@@ -217,7 +217,7 @@ hour against 255 for the rest. The other causes are the ACC target going idle (4
 
 | term | meaning |
 |---|---|
-| **record** | one complete object-list message: 742 bytes over 106 CAN frames on 0x80, ~16.7 per second |
+| **record** | one complete object-list message: 742 bytes over 106 CAN frames on 0x80, ~16.6 per second |
 | **slot** | one of the record's 20 fixed places for an object |
 | **track** | one object followed over time (slot + age counting up); openpilot's `trackId` |
 | **dRel / yRel / vRel** | distance ahead, lateral position (left positive), relative speed (negative = closing) |

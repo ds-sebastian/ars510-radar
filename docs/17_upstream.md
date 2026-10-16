@@ -42,7 +42,7 @@ commit:
 - **`radar_interface.py`:** for radar-ACC cars the Toyota `RadarInterface` publishes the ACC target as one point, once
   per radar cycle: after the stock trigger check (0x237 updated), the radar's cycle clock (0x239 `TIMESTAMP`) must have
   advanced. The frames repeat at 50 Hz, and radard accepts `liveTracks` only at 8-24 Hz. The clock advances once per
-  60 ms cycle, with or without a target, so reports go out at 16.7 Hz: empty when there is no target, nothing when the
+  60 ms cycle, with or without a target, so reports go out at 16.6 Hz: empty when there is no target, nothing when the
   radar stops sending. There is no point while the frames are invalid (a stale or bad counter).
 - **Lateral wrap: in the file, not in the patch.** `LAT_DIST` holds the low 12 bits of the radar's 13-bit lateral distance,
   so a target more than 20.95 m to the left reads 40.96 m too far right, and the frame's check byte then carries the hidden
@@ -194,7 +194,7 @@ Each part earns its line, by what breaks when it is removed (replays of every dr
 - **The radar's target-present flags.** They remove the point of an idle target; with the flags dropped it becomes a point at 0 m, which radard keeps
   switching to: lead flips 302 → 342 per hour, mild 30 → 32.
 - **One report per radar cycle.** The frames repeat at 50 Hz; on the car radard accepts radarTracks at 8-24 Hz, so a report
-  goes out when the radar's cycle clock (0x239) advances, every 60 ms (16.7 Hz). Replay runs radard in simulation mode,
+  goes out when the radar's cycle clock (0x239) advances, every 60 ms (16.6 Hz). Replay runs radard in simulation mode,
   where the rate check is off, and gives the same results at 20 Hz and per cycle.
 
 The hard, mild and onset numbers are independent of the oracle, whose reference lead takes its range mostly from the ACC

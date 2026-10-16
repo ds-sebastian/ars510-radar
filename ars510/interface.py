@@ -29,15 +29,16 @@ from collections.abc import Iterable
 
 from .constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS,
                         TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
-from .objects import NativeObject, decode_native_slot
+from .objects import ACCEL_LIKE, NativeObject, decode_native_slot
 from .record import id80_crc_ok, occupied_slots
 from .support import parse_acc_target_position, parse_acc_target_vrel
 from .tracks import NativeTrackIdAssigner
 from .transport import Id80RecordAssembler
 
 EGO_ACCEL_TAU_S = 0.3  # smoothing of the ego-speed derivative used for aRel
-ACCEL_SCALE = 0.075  # m/s^2 per code of 84|10 for the fork's aRel; ego-stopped estimates range 0.04-0.09 (docs/03), so approximate; while ego
-# accelerates the code also carries about 0.4 of ego's acceleration, which this subtraction does not remove. No radard reads aRel.
+ACCEL_SCALE, ACCEL_ZERO = 0.075, 510.3  # 84|10 for the fork's aRel: m/s^2 per code and zero code with ego stopped; the scale
+# is approximate (0.035-0.086 by drive set, docs/03); while ego accelerates the code also carries about 0.4 of ego's
+# acceleration, which this subtraction does not remove. No radard reads aRel.
 GUARD_ID_STRIDE = 10_000_000  # added to a trackId after a guard episode, so radard restarts that track's filter
 RELINK_MIN_LOST_AGE = 30
 RELINK_MIN_PUBLISH_AGE = 6
@@ -408,10 +409,10 @@ class Ars510NativeRadarInterface:
         return float(obj.v_lat_ground - w * obj.d_rel)
 
     def _a_rel(self, obj: NativeObject, v_ego: float | None) -> float:
-        """The radar's filtered over-ground acceleration minus ego acceleration (lags vRel by about 0.5 s)."""
+        """The radar's filtered over-ground acceleration minus ego acceleration (trails the track's speed by about 0.3 s)."""
         if v_ego is None or self._a_ego is None or obj.accel_like_code in (-511, 512):
             return nan
-        return float(obj.accel_like_code * ACCEL_SCALE - self._a_ego)
+        return float((obj.accel_like_code + ACCEL_LIKE.zero_code - ACCEL_ZERO) * ACCEL_SCALE - self._a_ego)
 
     def _payload(self, time_s: float, record: bytes) -> dict:
         cfg = self.config

@@ -16,7 +16,7 @@ It checks:
   - the radarUnavailableTemporary report at 20 Hz when records stop;
   - recovery when they resume.
 - for the `acc` profile instead: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
-  card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.7 Hz),
+  card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop, and
   recovery.
 - for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
@@ -57,7 +57,7 @@ def check_acc_profile(RI, check) -> None:
     if out is not None and k >= 50:  # skip the parser's first 0.5 s
       outs.append((out, parse_acc_target(last.get(0x235, b""), last.get(0x237, b""))))
   rate = len(outs) / ((max(steps) - 50) / 100)
-  check(14 <= rate <= 19, f"acc: RadarData once per radar cycle, ~16.7 Hz (got {rate:.1f} Hz)")
+  check(14 <= rate <= 19, f"acc: RadarData once per radar cycle, ~16.6 Hz (got {rate:.1f} Hz)")
   check(all(not any(o.errors.to_dict().values()) for o, _ in outs), "acc: no error flags while the target frames arrive")
   match = [len(o.points) == (want is not None) and (want is None or (o.points[0].trackId == want.target_id and
            abs(o.points[0].dRel - want.d_rel) < 0.03 and abs(o.points[0].yRel - want.y_rel) < 0.011 and

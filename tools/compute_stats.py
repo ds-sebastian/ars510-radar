@@ -101,7 +101,7 @@ def md(stats: dict) -> str:
     rows = [
         ("segments (1 min files)", lambda s: s["segments"]),
         ("minutes decoded", lambda s: s["minutes_decoded"]),
-        ("0x80 records with >= 1 object (rate /s; all records arrive at 16.7 /s)", lambda s: f"{s['records']:,} ({s['records_per_s']})"),
+        ("0x80 records with >= 1 object (rate /s; all records arrive at 16.6 /s)", lambda s: f"{s['records']:,} ({s['records_per_s']})"),
         ("object samples", lambda s: f"{s['object_samples']:,}"),
         ("objects per record: mean / p95 / max", lambda s: f"{s['objects_per_record']['mean']} / {s['objects_per_record']['p95']} / {s['objects_per_record']['max']}"),
         ("settled (age >= 60) objects per record, mean", lambda s: s["settled_objects_per_record_mean"]),

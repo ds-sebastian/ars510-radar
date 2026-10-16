@@ -21,7 +21,7 @@ part of the record a frame carries follows from its sequence nibble (which wraps
 raw `can_packets` card.py passes in, CRC-checked, and decoded in `ars510`. The DBCs in `dbc/` are for cabana; the `acc`
 profile parses its three 50 Hz ACC target messages with CANParser and `toyota_tss2_ars510.dbc`.
 
-Output cadence: one RadarData per completed record (~16.7 Hz, inside radard's 8-24 Hz radarTracks window).
+Output cadence: one RadarData per completed record (~16.6 Hz, inside radard's 8-24 Hz radarTracks window).
 - After power-up the radar sends its first object record ~6 s after first CAN. Until the first valid record, this
   behaves like openpilot's radarless default: empty RadarData at 20 Hz, error-free status, vision-only leads. A warning is
   logged when the record count is still 0 at NO_RECORD_WARN_S after start (e.g. wiring, or firmware that also silences bus 1 on

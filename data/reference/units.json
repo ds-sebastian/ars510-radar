@@ -1,0 +1,40 @@
+{
+  "description": "Current units, zero codes and constants of the decoded fields: the one place a unit correction is made first. tests/test_units_ledger.py checks ars510/ (objects, interface, constants), the profile files and docs/03 against it, and fails when a retired value comes back. Values are the current readings of docs/03, 05 and 06, with their confidence.",
+  "slot_fields": {
+    "LONG_DIST": {"bits": "32|12", "zero": 160.0, "scale": 0.0625, "unit": "m", "conf": "validated"},
+    "LAT_DIST": {"bits": "44|12", "zero": 2048.0, "scale": 0.015, "unit": "m", "conf": "validated sign, likely scale"},
+    "LONG_VEL_GROUND": {"bits": "64|10", "zero": 510.5, "scale": 0.15, "unit": "m/s", "conf": "nominal; the list reads relative motion low (docs/06)"},
+    "LAT_VEL": {"bits": "74|10", "zero": 510.5, "scale": 0.15, "unit": "m/s", "conf": "likely; 0.142-0.155 fitted"},
+    "ACCEL_LIKE": {"bits": "84|10", "zero": 510.3, "decoder_centre": 511.0, "scale": 0.075, "scale_range": [0.035, 0.086], "unit": "m/s^2",
+                   "lag_s": 0.3, "ego_share": 0.4, "conf": "field likely; scale approximate (ego stopped, depends on drive set and estimator)",
+                   "doc_text": "510.3"}
+  },
+  "uncertainty_codes": {
+    "range_unc_code": {"bits": "224|7", "per_count": [0.23, 0.24], "unit": "m", "doc_text": "0.24 m per count below 40 m, 0.23 overall"},
+    "lateral_unc_code": {"bits": "232|7", "per_count": [0.10, 0.10], "unit": "m", "doc_text": "0.10 m per count"},
+    "vel_unc_code": {"bits": "240|7", "per_count": [0.043, 0.045], "unit": "m/s", "doc_text": "0.043-0.045 m/s per count"},
+    "vlat_unc_code": {"bits": "248|7", "per_count": [0.03, 0.03], "offset": 0.085, "unit": "m/s", "doc_text": "0.085 + 0.03 m/s per count"},
+    "accel_unc_code": {"bits": "256|8", "per_count": [0.06, 0.07], "unit": "m/s^2", "scope": "within 20 m; pooled slope range-confounded", "doc_text": "0.06-0.07 per code"}
+  },
+  "acc_target": {
+    "REL_SPEED": {"scale": 0.125, "offset": -128.0, "unit": "m/s"},
+    "REL_ACCEL": {"scale": 0.125, "offset": -12.5, "unit": "m/s^2"},
+    "LONG_DIST": {"scale": 0.025, "offset": 0.0, "unit": "m"},
+    "LAT_DIST": {"scale": 0.01, "offset": -20.0, "unit": "m", "wrap_m": 40.96},
+    "LAT_SPEED": {"scale": 0.0125, "offset": -12.8, "unit": "m/s"}
+  },
+  "ego": {
+    "b4_over_vego": {"car_A": 0.9865, "car_B": 0.9872, "car_C": 0.9905},
+    "used": 0.9865,
+    "note": "the owner car's value; on the two other cars the object-list vRel then carries 0.07 % / 0.4 % of ego speed (0.12 m/s at 30 m/s on car C)"
+  },
+  "radar_cycle_s": {"value": 0.06028, "note": "long-run record period in log time, 0x80 header clock 603 x 100 us, 0x85 prefix clock 60,280 x 1 us per record, both cars; the median arrival interval reads 59.9 ms because arrivals jitter"},
+  "retired": [
+    {"pattern": "\\* *0\\.149\\b", "files": "py", "why": "empirical 0.149 m/s per code with unscaled 0xB4: replaced by 0.15 and 0xB4 / 0.9865 (2.6.1)"},
+    {"pattern": "1024\\) *\\* *0\\.1\\b", "files": "py", "why": "ACC target speed at 0.1 m/s per code: the unit is 0.125 (SCR-463)"},
+    {"pattern": "100\\) *\\* *0\\.1\\b", "files": "py", "why": "ACC target relative acceleration at 0.1 m/s^2 per code: the unit is 0.125"},
+    {"pattern": "0\\.0062", "files": "py", "why": "256|8 at 0.0062 m/s^2 per count was the frame jitter, not the code's unit (0.06-0.07 per count within 20 m)"},
+    {"pattern": "zero code 511, about 0\\.04", "files": "py", "why": "84|10: zero 510.3, about 0.075 m/s^2 per code with ego stopped"},
+    {"pattern": "RADAR_CYCLE_S = 0\\.06$", "files": "py", "why": "the record period is 60.28 ms"}
+  ]
+}
