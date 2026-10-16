@@ -89,11 +89,11 @@
   "acc_summaries": {
    "unnecessary": {
     "episodes": 6,
-    "seconds": 5.5
+    "seconds": 6.0
    },
    "missed": {
-    "episodes": 7,
-    "seconds": 8.4
+    "episodes": 8,
+    "seconds": 10.8
    }
   }
  },
@@ -205,5 +205,6 @@
  "note_2_4": "2.4 = 2.3 with the radar's target summaries off (the openpilot version's filter)",
  "note_2_5": "2.5 = 2.4 with the ACC target's speed weighted at 0.3 m/s (2.4: 0.5). The reference takes its range from the ACC target, so it partly favours a heavier ACC weight (acc_weight.json)",
  "note_2_6": "2.6 = 2.5 with only the ACC target's track beyond 60 m, stationary tracks path-gated close in, and the ACC target speed weighted at 0.13 m/s (far_acc_only.json)",
- "note_acc": "acc = the acc profile (upstream/ars510_acc_target.py): only the radar's ACC target as one point. Same fast-suite replays and scoring as the 2.6 rows. The reference takes its range from the ACC target, so it partly favours this profile; on the road set 2.35 of acc's 10.8 missed seconds are one cut-in where it asks -0.51 and 2.6 -0.53 m/s2 against the -0.5 threshold"
+ "note_acc": "acc = the acc profile (upstream/ars510_acc_target.py): only the radar's ACC target as one point. Same fast-suite replays and scoring as the 2.6 rows. The reference takes its range from the ACC target, so it partly favours this profile; on the road set 2.35 of acc's 10.8 missed seconds are one cut-in where it asks -0.51 and 2.6 -0.53 m/s2 against the -0.5 threshold",
+ "note_acc_summaries": "acc_summaries = the public 40 m profile (openpilot/standalone/ars510_acc_summaries.py since PR 194), same fast-suite replays and scoring; on the road set it equals acc, on the 27 replay drives too (the 60 m form had 5.5 / 8.4 s on the road set)"
 }

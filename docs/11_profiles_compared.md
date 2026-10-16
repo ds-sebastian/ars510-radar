@@ -2,7 +2,7 @@
 
 Three profiles carry the driving recommendation. **`acc`** (the install default, and the opendbc-compatible form)
 publishes the radar's ACC target as one radar point. **`acc_summaries`** (the main alternative) adds up to two more
-cars from the radar's own tracker within 60 m. **`fused`** publishes every radar car through one Kalman speed filter per
+cars from the radar's own tracker within 40 m. **`fused`** publishes every radar car through one Kalman speed filter per
 track. `raw` (the unfiltered decode) is the reference all three are measured against, and vision only (stock openpilot on
 this car) is the baseline.
 This page sets them side by side: how each works, replay numbers on the same drives, driving pros and cons, assumptions,
@@ -10,7 +10,7 @@ and how the code compares with openpilot's other radar interfaces.
 
 Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json),
 [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json),
-[`acc_summaries_profile.json`](../data/analysis/summaries/acc_summaries_profile.json),
+[`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json) (the 60 m form: [`acc_summaries_profile.json`](../data/analysis/summaries/acc_summaries_profile.json)),
 [`far_acc_only.json`](../data/analysis/summaries/far_acc_only.json),
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json). Figures: `tools/make_fused_figures.py`,
 `tools/make_profile_figures.py`.
@@ -41,35 +41,35 @@ oracle ([`oracle_reference.json`](../data/analysis/summaries/oracle_reference.js
 missed braking seconds. Hard = request ≤ −2 m/s² while vision only asks ≥ −0.5; mild = ≤ −1 while vision ≥ −0.3 (episodes);
 onset = first request ≤ −0.5 m/s² relative to vision (negative = earlier).
 Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) and
-`every_drive_set_by_set` in [`acc_summaries_profile.json`](../data/analysis/summaries/acc_summaries_profile.json).
+`fast_suite_by_set` in [`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json).
 
 | drive set (moving h) | profile | unnecessary braking s | missed braking s | lead flips per h | hard / mild episodes | onset vs vision |
 |---|---|---|---|---|---|---|
 | 27 replay drives (4.18) | vision only | 25.5 | 10.0 | 0 | 0 / 0 | 0 |
 | | `acc` | 3.3 | 2.5 | 338 | 13 / 17 | −0.069 s |
-| | `acc_summaries` | 3.3 | 2.5 | 362 | 13 / 19 | −0.065 s |
+| | `acc_summaries` | 3.3 | 2.5 | 351 | 13 / 18 | −0.069 s |
 | | `fused` | 2.2 | 3.1 | 383 | 8 / 10 | −0.062 s |
 | owner road drives + 2 second-car drives (6.07) | vision only | 7.2 | 10.3 | 0 | 0 / 0 | 0 |
 | | `acc` | 6.0 | 10.8 | 187 | 0 / 5 | +0.001 s |
-| | `acc_summaries` | 5.5 | 8.4 | 226 | 0 / 5 | −0.006 s |
+| | `acc_summaries` | 6.0 | 10.8 | 217 | 0 / 5 | +0.001 s |
 | | `fused` | 3.3 | 8.3 | 212 | 0 / 4 | −0.010 s |
 | second car, held out from tuning (6.19) | vision only | 56.5 | 10.4 | 0 | 0 / 0 | 0 |
 | | `acc` | 9.9 | 4.2 | 384 | 0 / 8 | +0.022 s |
-| | `acc_summaries` | 10.2 | 4.2 | 442 | 0 / 9 | +0.034 s |
+| | `acc_summaries` | 9.8 | 4.2 | 410 | 0 / 9 | +0.028 s |
 | | `fused` | 15.5 | 5.1 | 413 | 0 / 12 | +0.044 s |
 | fresh owner drives (0.47) | vision only | 0.0 | 0.0 | 0 | 0 / 0 | 0 |
 | | `acc` | 0.0 | 0.0 | 386 | 0 / 0 | +0.004 s |
-| | `acc_summaries` | 0.0 | 0.0 | 409 | 0 / 0 | +0.004 s |
+| | `acc_summaries` | 0.0 | 0.0 | 398 | 0 / 0 | +0.004 s |
 | | `fused` | 0.0 | 0.0 | 347 | 0 / 1 | +0.004 s |
 | **all sets (16.91)** | vision only | 89.2 | 30.8 | 0 | 0 / 0 | 0 |
-| | **`acc`** | **19.2** | 17.4 | **302** | 13 / 30 | −0.017 s |
-| | **`acc_summaries`** | **19.0** | **15.1** | 344 | 13 / 33 | −0.014 s |
-| | **`fused`** | 21.0 | 16.4 | 332 | 8 / 27 | −0.010 s |
+| | **`acc`** | 19.2 | 17.4 | **302** | 13 / 30 | −0.017 s |
+| | **`acc_summaries`** | **19.1** | 17.4 | 325 | 13 / 32 | −0.015 s |
+| | **`fused`** | 21.0 | **16.4** | 332 | 8 / 27 | −0.010 s |
 
 What the table shows:
 
-- **`acc_summaries` brakes like `acc` with less missed braking and more flips.** Over all sets it has the least unnecessary
-  (19.0 s) and missed (15.1 s) braking of the three, the same 13 hard episodes as `acc`, and 344 lead flips per hour
+- **`acc_summaries` brakes like `acc` and flips more.** Over all sets it has 19.1 s of unnecessary and 17.4 s of missed
+  braking (`acc` 19.2 / 17.4), the same 13 hard episodes as `acc`, one more mild episode, and 325 lead flips per hour
   against `acc`'s 302 (the summary cars give radard more radar points to switch between).
 - **`acc` and `fused` ask for nearly the same braking.** Over all sets they differ by more than 0.3 m/s² on 0.21 % of
   moving time, and where they differ `acc` is the closer to the oracle in 79 % of the time (95 % CI 73 … 85 %).
@@ -293,9 +293,9 @@ The 20-route "held-out" set (the name from the original radar-vs-vision test; de
 | hard radar-only braking ticks (≤ −2 m/s² while vision ≥ −0.5; while moving) | — | 66 (14) | 66 (14) | 16 (16) | 93 |
 | driver overrides (38): radar request closer / further than vision to what the driver then did | — | 7 / 0 | 7 / 0 | 7 / 0 | 7 / 2 |
 | request error vs the driver's acceleration 0.5 s later (RMS) | 0.409 m/s² | 0.411 | 0.411 | 0.412 | 0.422 |
-| request jerk (mean \|da/dt\|) | 1.003 | 0.985 | 0.984 | 0.993 | 1.029 |
-| share of lead time on a radar lead | 0 | 84.8 % | 86.8 % | 83.1 % | 86.6 % |
-| flips between a radar and a vision lead, per hour | 0 | 318 | 363 | 347 | 939 |
+| request jerk (mean \|da/dt\|) | 1.003 | 0.985 | 0.985 | 0.993 | 1.029 |
+| share of lead time on a radar lead | 0 | 84.8 % | 85.9 % | 83.1 % | 86.6 % |
+| flips between a radar and a vision lead, per hour | 0 | 318 | 345 | 347 | 939 |
 
 The median row uses each column's own paired set: 149 paired brake presses for `acc`, `acc_summaries` and `fused` (vision −0.58 s), 148
 for `raw` (vision −0.61 s).
@@ -308,7 +308,7 @@ What the radar adds, by profile:
   holds at standstill. On the 4 further drives it has one moving hard episode (7 ticks, a real object drifting a lane
   over at 82 m that radard matches to the camera's lead 27 m further on) and 12 ticks at standstill; `fused` has 0.
 - **`acc_summaries`** answers driver brakes exactly as `acc` does on these drives (same anticipation, misses, hard ticks
-  and overrides); radard follows a radar lead slightly more often (86.8 %) and flips more (363 per hour).
+  and overrides); radard follows a radar lead slightly more often (85.9 %) and flips more (345 per hour).
 - **`fused`** removes the object list's over-closing bias and with it all radar-only braking on the held-out drives
   (0 per hour). It starts braking when vision does on average (−0.01 s, 95 % CI −0.06 … +0.03): 18 of 149 paired
   driver brakes are answered earlier than vision and 12 later, and it asks for ≤ −1 m/s² before 44.9 % of brake presses
@@ -317,7 +317,7 @@ What the radar adds, by profile:
 - **`raw`** brakes 0.15 s earlier than vision on average and anticipates a few more driver brakes. Part of that head
   start is real (the radar sees closings through curves and before the camera's distance estimate settles); part is
   the object list's over-closing bias, which also causes its radar-only braking.
-- **Every radar profile follows a radar lead 83-87 % of the time a lead exists** (`acc` 84.8 %, `acc_summaries` 86.8 %, `fused` 83.1 %, `raw`
+- **Every radar profile follows a radar lead 83-87 % of the time a lead exists** (`acc` 84.8 %, `acc_summaries` 85.9 %, `fused` 83.1 %, `raw`
   86.6 %), so radard uses the radar distance for those leads. In both `acc` and `fused` the followed car is published at the
   radar's ACC distance, which agrees with the vision lead within a metre up to 90 m; in `fused` the ACC distance also cut
   the lead flips by 30 % when it was added in 2.1
@@ -338,7 +338,7 @@ whose lead comes from the object list alone.
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
 | `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and two road drives |
-| `acc_summaries` | 65 code lines, no DBC; braking as `acc` over all sets with less missed braking; radar backing 0.16 s earlier on close cut-ins | more lead flips; on held-out drives slightly more unnecessary and missed braking than `acc` through radard's second lead; no road drives yet |
+| `acc_summaries` | 65 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); no road drives yet |
 | `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
@@ -357,7 +357,7 @@ whose lead comes from the object list alone.
   held-out owner routes and the second car's routes. In the driver-brake table, at most 7 brake presses separate
   the columns in each row.
 - **Versions.** `fused` rows are release 2.6.0 (far rule, stationary path gate, ACC target weight 0.13 m/s, summaries
-  off). `acc_summaries` rows are `openpilot/standalone/ars510_acc_summaries.py` as it was before its summary-glitch guards (53 code lines; the guards change 0.06 % of reports, [`summary_all_ones_glitch.json`](../data/analysis/summaries/summary_all_ones_glitch.json)). `acc` rows are the public `upstream/ars510_acc_target.py` replayed through the same harness; the replayed
+  off). `acc_summaries` rows are the public `openpilot/standalone/ars510_acc_summaries.py` with its 40 m limit and summary-glitch guards ([`summary_all_ones_glitch.json`](../data/analysis/summaries/summary_all_ones_glitch.json)). `acc` rows are the public `upstream/ars510_acc_target.py` replayed through the same harness; the replayed
   file is a hand-decoded version that publishes the same points as the current DBC file (45 code lines) on
   all 11,028 bundled reports; the file's lateral-wrap unwrap changes no planner tick in the replay
   ([`acc_lat_dist_wrap.json`](../data/analysis/summaries/acc_lat_dist_wrap.json)).

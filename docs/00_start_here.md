@@ -162,8 +162,8 @@ controlling speed):
 | already asking ≤ −1 m/s² around the driver's brake | 40.1 % | 44.3 % | 44.9 % | 44.9 % | 44.9 % |
 | braking only the radar asked for, per hour | 0 | 1.75 | 0 | 0 | 0 |
 | hard radar-only ticks (while moving) | 0 | 93 | 16 (16) | 66 (14) | 66 (14) |
-| share of lead time on a radar lead | 0 | 86.6 % | 83.1 % | 84.8 % | 86.8 % |
-| flips between a radar and a vision lead, per hour | 0 | 939 | 347 | 318 | 363 |
+| share of lead time on a radar lead | 0 | 86.6 % | 83.1 % | 84.8 % | 85.9 % |
+| flips between a radar and a vision lead, per hour | 0 | 939 | 347 | 318 | 345 |
 
 The `acc` profiles' extra hard ticks are holds at standstill (52 of 66): a stopped car 0.7-4.8 m behind an object the radar sees
 and the camera leaves out of its lead (a wall, a fence), where radard's low-speed rule holds it stopped.
@@ -174,10 +174,10 @@ below. Its reference range comes mostly from the ACC target, which can favour de
 
 | unnecessary / missed braking, seconds (set) | vision only | `fused` | `acc` | `acc_summaries` | source |
 |---|---|---|---|---|---|
-| owner road drives and a second car's two drives (7.65 h) | 10.2 / 10.3 | 3.3 / 8.2 | 6.0 / 10.8 | 5.5 / 8.4 | `oracle_reference.json` |
+| owner road drives and a second car's two drives (7.65 h) | 10.2 / 10.3 | 3.3 / 8.2 | 6.0 / 10.8 | 6.0 / 10.8 | `oracle_reference.json` |
 | 27 replay drives (6.72 h) | 31.9 / 10.0 | 2.2 / 3.1 | 3.3 / 2.5 | 3.3 / 2.5 | `oracle_reference.json` |
-| every drive set incl. the second car's 8.8 h (16.9 moving h) | 89.2 / 30.8 | 21.0 / 16.4 | 19.2 / 17.4 | 19.0 / 15.1 | `acc_target_parser.json`, `acc_summaries_profile.json` |
-| 26 held-out owner routes (2.56 moving h) | 40.1 / 9.9 | 11.4 / 3.6 | 7.7 / 5.3 | 9.2 / 7.6 | `acc_target_parser.json`, `acc_summaries_profile.json` |
+| every drive set incl. the second car's 8.8 h (16.9 moving h) | 89.2 / 30.8 | 21.0 / 16.4 | 19.2 / 17.4 | 19.1 / 17.4 | `acc_target_parser.json`, `acc_summaries_40m.json` |
+| 26 held-out owner routes (2.56 moving h) | 40.1 / 9.9 | 11.4 / 3.6 | 7.7 / 5.3 | 7.7 / 5.5 | `acc_target_parser.json`, `acc_summaries_40m.json` |
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
@@ -193,7 +193,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
 | code size | `acc` 45 code lines reading 7 DBC signals; `acc_summaries` 65 code lines; `fused` 187 code lines | `acc_target_parser.json`, `acc_summaries_profile.json`, `openpilot_file_parts.json` |
 | every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
-| lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 344 | `acc_target_parser.json`, `acc_summaries_profile.json` |
+| lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 325 | `acc_target_parser.json`, `acc_summaries_40m.json` |
 
 A flip is radard switching between a radar-backed and a vision-only lead. About 80 % of `acc`'s flips (241 per moving hour) are radard's
 distance check (radar within the larger of 25 % and 5 m of the camera lead) failing and recovering. On 70 % of those the ACC target is

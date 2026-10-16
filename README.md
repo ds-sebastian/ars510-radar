@@ -64,16 +64,16 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 
 | replay result | vision only | `acc` | `acc_summaries` | `fused` |
 |---|---|---|---|---|
-| radar lead share of lead time, 20 held-out routes | 0 % | 84.8 % | 86.8 % | 83.1 % |
+| radar lead share of lead time, 20 held-out routes | 0 % | 84.8 % | 85.9 % | 83.1 % |
 | first braking request vs vision, mean (95 % CI) | — | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) |
 | brake presses already answered with ≤ −1 m/s² (167) | 40.1 % | 44.9 % | 44.9 % | 44.9 % |
 | braking only the radar asked for, per hour | 0 | 0 | 0 | 0 |
-| unnecessary braking against the hindsight lead, all drives (16.9 moving h) | 89.2 s | 19.2 s | 19.0 s | 21.0 s |
-| missed braking against the hindsight lead, all drives | 30.8 s | 17.4 s | 15.1 s | 16.4 s |
-| lead flips between radar and vision, per hour | 0 | 302 | 344 | 332 |
-| 26 owner routes held out from every replay (2.56 moving h): unnecessary / missed braking | 40.1 s / 9.9 s | 7.7 s / 5.3 s | 9.2 s / 7.6 s | 11.4 s / 3.6 s |
+| unnecessary braking against the hindsight lead, all drives (16.9 moving h) | 89.2 s | 19.2 s | 19.1 s | 21.0 s |
+| missed braking against the hindsight lead, all drives | 30.8 s | 17.4 s | 17.4 s | 16.4 s |
+| lead flips between radar and vision, per hour | 0 | 302 | 325 | 332 |
+| 26 owner routes held out from every replay (2.56 moving h): unnecessary / missed braking | 40.1 s / 9.9 s | 7.7 s / 5.3 s | 7.7 s / 5.5 s | 11.4 s / 3.6 s |
 
-- **The radar's measured distance reaches radard** for about 83-87 % of the time a lead exists. Beyond 60 m all three
+- **The radar's measured distance reaches radard** for about 83-87 % of the time a lead exists. Beyond 60 m (40 m for `acc_summaries`) all three
   profiles publish only the car the radar's own ACC follows, as Toyota's ACC uses it; other far cars come from the camera.
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
   lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
@@ -142,7 +142,7 @@ The code comes in two versions that drive identically:
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point (45 code lines and a DBC; the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
-| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from their range slope; 65 code lines) | the main alternative: least missed braking over all replays, cut-ins radar-backed 0.16 s earlier; no road drives yet ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
+| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from their range slope; 65 code lines) | the main alternative: brakes like `acc` over every replay, cut-ins radar-backed 0.09 s earlier; no road drives yet ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 | `fused` | `--profile fused` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | every radar car within 60 m, with the longest road record |
 | `raw` | `--profile raw` | the unfiltered radar decode, with the validity rules radard needs | research and comparison: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot in all-tracks form |

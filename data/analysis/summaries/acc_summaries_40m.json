@@ -1603,5 +1603,128 @@
     "flips_per_h": 325
    }
   }
- }
+ },
+ "fast_suite_by_set": {
+  "suite": {
+   "name": "27 replay drives",
+   "acc": {
+    "moving_h": 4.18,
+    "hard": 13,
+    "mild": 17,
+    "unnecessary_s": 3.3,
+    "missed_s": 2.5,
+    "flips_per_h": 338,
+    "onset_s": -0.069
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 4.18,
+    "hard": 13,
+    "mild": 19,
+    "unnecessary_s": 3.3,
+    "missed_s": 2.5,
+    "flips_per_h": 362,
+    "onset_s": -0.065
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 4.18,
+    "hard": 13,
+    "mild": 18,
+    "unnecessary_s": 3.3,
+    "missed_s": 2.5,
+    "flips_per_h": 351,
+    "onset_s": -0.069
+   }
+  },
+  "road": {
+   "name": "owner road drives + 2 second-car drives",
+   "acc": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "mild": 5,
+    "unnecessary_s": 6.0,
+    "missed_s": 10.8,
+    "flips_per_h": 187,
+    "onset_s": 0.001
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "mild": 5,
+    "unnecessary_s": 5.5,
+    "missed_s": 8.4,
+    "flips_per_h": 226,
+    "onset_s": -0.006
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 6.07,
+    "hard": 0,
+    "mild": 5,
+    "unnecessary_s": 6.0,
+    "missed_s": 10.8,
+    "flips_per_h": 217,
+    "onset_s": 0.001
+   }
+  },
+  "second": {
+   "name": "second car, held out from tuning",
+   "acc": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "mild": 8,
+    "unnecessary_s": 9.9,
+    "missed_s": 4.2,
+    "flips_per_h": 384,
+    "onset_s": 0.022
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "mild": 9,
+    "unnecessary_s": 10.2,
+    "missed_s": 4.2,
+    "flips_per_h": 442,
+    "onset_s": 0.034
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 6.19,
+    "hard": 0,
+    "mild": 9,
+    "unnecessary_s": 9.8,
+    "missed_s": 4.2,
+    "flips_per_h": 410,
+    "onset_s": 0.028
+   }
+  },
+  "fresh": {
+   "name": "fresh owner drives",
+   "acc": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "mild": 0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "flips_per_h": 386,
+    "onset_s": 0.004
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "mild": 0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "flips_per_h": 409,
+    "onset_s": 0.004
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 0.47,
+    "hard": 0,
+    "mild": 0,
+    "unnecessary_s": 0.0,
+    "missed_s": 0.0,
+    "flips_per_h": 398,
+    "onset_s": 0.004
+   }
+  }
+ },
+ "fast_suite_by_set_note": "the fast suite split into the four drive sets of docs/11's head-to-head table (each set's score.py metrics, as by_set); acc is the N1 run (identical requests to N2, see method). Recounted with a second scorer (score_eps.py copy): same totals."
 }

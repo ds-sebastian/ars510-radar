@@ -114,7 +114,7 @@ on the same drives.
 | profile | what it is | when to use |
 |---|---|---|
 | **`acc`** (default) | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), 45 code lines, opendbc's CANParser; the upstream proposal): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([17](17_upstream.md#the-acc-target-alone--candidate)) | everyday driving and the opendbc-compatible upstream proposal: braking equal to `fused` in replay (0.21 % of moving time differs), less unnecessary braking and fewer lead flips on held-out drives ([11](11_profiles_compared.md#why-acc-is-the-default)) |
-| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker: the target summaries 0x191-0x194 within 40 m, with the ACC car published once and a speed from each summary's range slope ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 65 code lines) | the main alternative: braking as `acc` over all replays with the least missed braking, radar-backed cut-ins 0.16 s earlier, more lead flips; on held-out drives slightly more braking than `acc`; no road drives yet ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
+| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker: the target summaries 0x191-0x194 within 40 m, with the ACC car published once and a speed from each summary's range slope ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 65 code lines) | the main alternative: braking as `acc` over every replay, held-out drives included; radar-backed cut-ins 0.09 s earlier, more lead flips; no road drives yet ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 | `fused` | `FUSED_CONFIG`: the `raw` decode with range fusion and one Kalman speed filter that weights the object list and the radar's ACC target by their own uncertainty ([12](12_kalman_filter.md#the-model)), plus a path gate against next-lane leads ([12](12_kalman_filter.md#path-gate)); the filter makes `raw`'s relink and saturation guard redundant | every radar car within 60 m, with the longest road record and 0 radar-only braking per hour on the held-out drives ([11](11_profiles_compared.md)) |
 | `openpilot` | `fused` in one file ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)): opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only ([17](17_upstream.md#towards-an-upstream-comma-interface)) | driving the all-tracks upstream alternative |
 | `raw` | `BASE_CONFIG`: the unfiltered radar decode plus what radard needs (tracks from age 60, ego-speed subtraction, invalid-code guard) | research and comparison; velocity excursions reach the planner |
@@ -197,8 +197,8 @@ unchanged openpilot card → radard → planner; details, driving pros and cons 
 | already asking ≤ −1.0 m/s² from 3 s before to 0.5 s after a brake press | 40.1 % | 44.9 % | 44.9 % | 44.9 % | 44.3 % |
 | hard slowdowns missed (request stayed above −1 m/s², of 47) | 10 | 9 | 9 | 10 | 9 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
-| request jerk, mean \|da/dt\| | 1.003 | 0.985 | 0.984 | 0.993 | 1.029 |
-| flips between a radar and a vision lead, per hour | 0 | 318 | 363 | 347 | 939 |
+| request jerk, mean \|da/dt\| | 1.003 | 0.985 | 0.985 | 0.993 | 1.029 |
+| flips between a radar and a vision lead, per hour | 0 | 318 | 345 | 347 | 939 |
 | forward-collision warnings | 0 | 0 | 0 | 0 | 0 |
 
 `raw`'s earlier reactions come partly from real head starts (closings through curves, far away) and
