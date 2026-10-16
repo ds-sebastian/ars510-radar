@@ -38,12 +38,16 @@ actuate, so AEB or relay work treats them as commands, not status
 
 | frame | fields that request braking (Toyota names) | recorded: idle → U3 alarm | panda |
 |---|---|---|---|
-| 0x344 `ACC1F01` (20 Hz) | `DSS1GDRV` deceleration (0.1 m/s²), `PREFILL` / `PBPREPMP` pre-fill, `PBATRGR` / `PBRTRGR` / `IBTRGR` brake-assist triggers, `PCSABK` autobrake, `BRKHLD` hold | all 0 → 0; `PCSALM` 0 → 1, `PCSOPR` 1 throughout | any content |
-| 0x283 `DS11F01` (33 Hz) | `FORCE` (2 N), `STATE` (3 = braking), `BRAKE_STATUS`, `PCSABK2`, `PBRTRGR2` | 0 → 0; `PCSNOCHG` 0 → 1; `STATE` 4 for 0.3-0.7 s in Park ([13](13_car_bus_messages.md)) | bytes 0-5 zero |
+| 0x344 `ACC1F01` (20 Hz) | `DSS1GDRV` deceleration (0.1 m/s²), `PREFILL` / `PBPREPMP` pre-fill, `PBATRGR` / `PBRTRGR` / `IBTRGR` brake-assist triggers, `PCSABK` autobrake, `BRKHLD` hold | all 0 → 0; `PCSALM` 0 → 1, `PCSOPR` 1 throughout; fleet: `PBATRGR` in 4 events (below) | any content |
+| 0x283 `DS11F01` (33 Hz) | `FORCE` (2 N), `STATE` (3 = braking), `BRAKE_STATUS`, `PCSABK2`, `PBRTRGR2` | 0 → 0; `PCSNOCHG` 0 → 1; `STATE` 4 for 0.3-2.5 s in Park ([13](13_car_bus_messages.md)) | bytes 0-5 zero |
 | 0x366 `DS11D71` (5 Hz) | the reference DBC's alarm / autobrake / pre-brake request bits; on this radar those positions carry its target fields, and the PCS alarm is bit 13 | alarm bit 0 → 1 | any content |
 
-In 297,076 recorded 0x344 frames only `PCSALM` (the U3 alarm) and `PCSOPR` were ever non-zero, so whether a non-idle 0x344
-alone brakes the car is untested.
+In our 297,076 0x344 frames and in comma's public fleet logs of radar-ACC cars (7,865 one-minute segments, 108 moving hours
+with the radar on, [`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)) the only non-zero fields are `PCSOPR`,
+`PCSALM` (the alarms) and `PBATRGR`, the pre-collision brake-assist trigger (◐). `PBATRGR` came in 4 segments on 4 cars:
+twice inside an alarm once the driver braked, once 0.36 s before an alarm with no pedal pressed, and once on its own for
+1.9 s while the driver was braking hard behind a closing lead, with no alarm. No deceleration, pre-fill, autobrake or hold
+field and no 0x283 force was ever set, so whether a non-idle 0x344 alone brakes the car is untested.
 
 ## A recorded stock PCS alarm (U3)
 
@@ -84,19 +88,28 @@ inflatable's empty object-list position is consistent with a weak reflection at 
 | 56.913-56.922 | 0x100 → 0 | 0x411, 0x283, 0x344 back to idle |
 | 57.18 | event pair back to idle | |
 
-**0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (◐, one event).** It starts and ends with the car-bus
+**0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (●, 8 alarms on 7 cars).** It starts and ends with the car-bus
 alarm, and in every stored log (1,597 rlogs, 936,440 0x100 frames, three cars) it occurs in exactly these 9 frames. The
 other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair fires in many drives with the PCS
 outputs idle: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
-[`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json).
+[`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json). comma's public fleet logs hold 7 more stock
+alarms (6 cars, all radar firmware 8821F0R03100). In each, 0x100 = 0x02 starts in the same CAN tick as 0x283 `PCSNOCHG` and
+0x411 FCW, with 0x344 `PCSALM` within 41 ms. The event pair led the alarm by 0.02-1.27 s in 6 of them; the seventh came
+during hard stock-ACC braking with the pair idle. Firmware 8821F0R01100 raised no alarm in 34.8 moving hours (0 of 75
+comparable threat moments, P = 0.03 at the 03100 rate) with the same PCS sensitivity settings: a candidate (○) firmware
+difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)).
 
-**On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (◐, one event).** It is set in 5 of
+**On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (●, 8 alarms).** It is set in 5 of
 547,922 0x366 frames in every stored log, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
 it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
-[`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). 0x33E carries the same alarm in byte 6 bit 7 (5 of
-696,137 frames, all in this alarm) next to the radar's own time to collision of the target: 2.19 s just before the alarm and
-2.08 s in the frame that announces it, so this alarm started at a radar TTC of about 2.1 s
-([13](13_car_bus_messages.md), [`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
+[`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). In the fleet logs it sets 20 ms after
+the 0x100 onset in all 7 alarms and stays clear in the brake-assist event without an alarm.
+
+**0x33E byte 6 bit 7 marks PCS activity (◐).** It is set in this alarm (5 of 696,137 frames), next to the radar's own time to
+collision of the target: 2.19 s just before the alarm and 2.08 s in the frame that announces it, so this alarm started at a
+radar TTC of about 2.1 s ([13](13_car_bus_messages.md), [`decode_round3.json`](../data/analysis/summaries/decode_round3.json),
+block `car_bus_0x33e`). In the fleet logs it is set in every alarm and also with the 0x344 brake-assist trigger, once
+0.36 s before an alarm and once for 1.9 s with no alarm, so it is not alarm-only.
 
 ## Relaying the radar's decision (○ theoretical)
 
@@ -159,8 +172,8 @@ with a covered or dirty radar shows which candidate reacts, and "PCS on" reports
 | relay stage | radar bus (input) | car bus (output) | status |
 |---|---|---|---|
 | idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), continuous | ● recorded (O5) |
-| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ◐ one event (U3); the 0x100 flag of a disabled radar is a recording to make |
-| pre-fill, brake assist | to record | to record | ○ |
+| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the 0x100 flag of a disabled radar is a recording to make |
+| pre-fill, brake assist | none found (only the event pair was active) | 0x344 `PBATRGR` with 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill never seen | ◐ brake-assist trigger on the car bus |
 | autonomous braking | to record | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence to record | ○ |
 
 What this means for a build today:
@@ -172,7 +185,7 @@ What this means for a build today:
   `PCSALM`, 0x283 `PCSNOCHG`) may also prime brake assist in the brake system, so their effect is the first thing to
   record.
 - **0x283 has a low-speed state the relay must also carry.** In Park with a stationary object 2-3 m ahead the radar has sent
-  `STATE` 4 with no force for 0.3-0.7 s (four times, two cars; its meaning is open). Upstream panda lets openpilot send 0x283
+  `STATE` 4 with no force for 0.3-2.5 s (five times, three cars; its meaning is open). Upstream panda lets openpilot send 0x283
   only with bytes 0-5 zero, so even this frame needs the relay's own panda rule.
 - **A passive watcher is the safe first build.** Read 0x100 on bus 1 while the radar is disabled, log it, and raise
   openpilot's existing FCW alert when it fires. It stays read-only on the car bus and tests the signal on
@@ -199,7 +212,10 @@ The professional / passive recording specification, target controls and required
 These are facility-managed engineering tasks.
 
 1. **The alarm with the radar disabled:** a facility-managed comparison with the radar's car-bus output disabled and
-   bus 1 logged. A repeated 0x100 alarm association qualifies that signalling path.
+   bus 1 logged. A repeated 0x100 alarm association qualifies that signalling path. Ordinary driving can also settle it:
+   the fleet logs hold 2.4 moving hours with the radar disabled and no alarm, but at the stock rate on firmware 03100
+   (0.098 alarms per moving hour) that is expected (0.08 alarms). About 30 moving hours (15-76) of disabled driving on
+   that firmware, with bus 1 logged, would show whether the alarm survives the disable.
 2. **A stock activation that reaches braking**, with bus 0 and bus 1 logged, a validated soft target, independent
    actuator / driver-action labels, and the radar enabled. Bus 0 gives the braking sequence in 0x283 / 0x344; bus 1 shows
    which radar-bus values mark it, next to 0x100. The target is a radar-reflective soft target of the kind made for

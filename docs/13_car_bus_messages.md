@@ -28,7 +28,7 @@ Toyota names come from the leaked `toyota_2017_ref_pt.dbc` in opendbc. 0x343, 0x
 checksum: (address high byte + low byte + DLC + data bytes) & 0xFF. In normal driving 0x283, 0x344, 0x411, 0x494 and 0x4FF hold their idle payloads
 (4.1 h of owner drives and U1; 0x411 over 752 owner segments, where it reads `40 20 …`, `PCS_INDICATOR` 1, from about 0.2 s to 3 s
 after each of 27 cold starts). Parked in P with an object 2.4-3.2 m straight ahead, 0x283 has shown `STATE` 4 with no force
-(`00 00 00 00 10 00 9C`) for 0.3-0.7 s, four times on two cars; what triggers it is open.
+(`00 00 00 00 10 00 9C`) for 0.3-2.5 s, five times on three cars (one in comma's fleet logs); what triggers it is open.
 0x33E, 0x365 and 0x366 change with the lead.
 
 ### 0x365: lead distance and relative speed (●)
@@ -57,7 +57,7 @@ the acceleration nibble also uses code 7 for a live target. Counting bits MSB-fi
 |---|---|---|
 | `0\|4` | relative acceleration | signed, about 1 m/s² per code (the ACC target's relative acceleration rounded); 7 occurs both at idle and on a live target at high positive acceleration (◐ upper-end saturation) |
 | `4\|12` | time to collision | ≈ 1.6 ms (1/625 s) per code: `(code − 29) / 625` matches the ACC target's range / closing speed to a median +0.02 s (interquartile ±0.07 s) below 5 s on an independent sample of 300 segments; 0xFFF = 6.55 s or more (80 % of target frames beyond 6.6 s) |
-| `48\|1` | PCS alarm | byte 6 bit 7: set only during the radar's PCS alarm (5 of 696,137 frames in every stored log, all in U3) |
+| `48\|1` | PCS active | byte 6 bit 7: set during the radar's PCS alarm (5 of 696,137 frames in every stored log, all in U3) and, in comma's fleet logs, also with the 0x344 brake-assist trigger `PBATRGR`, once for 1.9 s without an alarm ([15](15_aeb_pcs.md)) |
 | `42\|6` | ego path radius | signed 6 bits, about 256 m per code, positive = right turn; 0 = tighter than about 128 m; while moving the radius comes from the yaw rate, at standstill it is the bicycle-model radius from the steering-wheel angle: code ≈ −9.2 / angle in degrees (wheelbase × steering ratio / angle at 256 m per code), measured from the car's own straight-ahead zero taken from the EPS steering angle in 0x260 (on one car the 0x25 angle's zero is 3° away and its sign agrees only by chance); on unseen drives of three cars the factor is −8.8 to −9.1, and the unfitted −9.2 law lands within one code on 95 % / 77 % of standstill frames on two of them; ±31 = straight (about 7.8 km or more). Follows the yaw-rate radius `vEgo / yaw rate` (255-258 m per code; sign agrees 98-99 % on three cars), not the steering-angle radius |
 | `16\|8` | motion-class flags | bit 0 (LSB) moving, bit 1 oncoming, bit 2 not moving in ego's direction (stationary or oncoming), bit 4 set on almost every report of the ACC target, bit 6 set while an oncoming target is still far (98 % beyond 20 m, under 5 % within 10 m, both cars), bit 5 always set on an oncoming report without the moving bit, and otherwise mostly around a change of the reported target (21-37 % of reports within 1 s of the target appearing or dropping out vs 4-12 % in steady tracking, three cars; likely "not a steady track"); bits 4-6 are never all clear or all set and bit 7 is never set (20 k unseen reports, three cars), so bits 4-6 act like one six-valued state; e.g. 0x11 same-direction mover, 0x14 stationary, 0x47 oncoming and still far |
 

@@ -1,0 +1,193 @@
+{
+ "source": "comma commaCarSegments (public), radar-ACC Toyota platforms (RAV4 2022 / 2023, C-HR, Yaris); stripped rlogs, speed and pedals from the car bus",
+ "segments": 7865,
+ "segments_with_bus1": 7807,
+ "hours_by_state": {
+  "disabled": {
+   "hours": 2.77,
+   "moving_h": 2.43
+  },
+  "radar_on": {
+   "hours": 127.22,
+   "moving_h": 108.0
+  },
+  "unknown": {
+   "hours": 0.15,
+   "moving_h": 0.0
+  }
+ },
+ "alarm_rate_by_firmware": {
+  "8821F0R03100": {
+   "stock_alarm_episodes": 7,
+   "radar_on_moving_h": 71.7,
+   "rate_per_moving_h": 0.0976,
+   "rate_95ci": [
+    0.0393,
+    0.2011
+   ],
+   "disabled_moving_h": 0.82
+  },
+  "8821F0R01100": {
+   "stock_alarm_episodes": 0,
+   "radar_on_moving_h": 34.77,
+   "rate_per_moving_h": 0.0,
+   "rate_95ci": [
+    0.0,
+    0.1061
+   ],
+   "disabled_moving_h": 1.61
+  }
+ },
+ "alarm_under_disable": {
+  "alarms": 0,
+  "disabled_moving_h": 2.43,
+  "expected_if_unaffected": 0.08,
+  "p_zero_if_unaffected": 0.923,
+  "moving_h_needed_on_03100": 30.7,
+  "moving_h_needed_range": [
+   14.9,
+   76.4
+  ]
+ },
+ "stock_alarms": [
+  {
+   "fw": "8821F0R03100",
+   "v": 11.64,
+   "pedal_free_before_s": 3.54,
+   "pair_active": true,
+   "pair_lead_s": 0.77,
+   "ttc195": 2.69,
+   "ttc_acc": 2.67,
+   "req_decel": -3.1,
+   "closing": 6.83,
+   "duration_s": 2.35,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.021,
+   "dt_33e_bit48": 0.021,
+   "dt_366_bit13": 0.021,
+   "dt_344_pbatrgr": 0.24
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 24.66,
+   "pedal_free_before_s": 17.46,
+   "pair_active": false,
+   "pair_lead_s": NaN,
+   "ttc195": NaN,
+   "ttc_acc": 7.45,
+   "req_decel": NaN,
+   "closing": NaN,
+   "duration_s": 3.93,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.0,
+   "dt_33e_bit48": 0.02,
+   "dt_366_bit13": 0.02,
+   "dt_344_pbatrgr": NaN
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 7.26,
+   "pedal_free_before_s": 13.84,
+   "pair_active": true,
+   "pair_lead_s": 1.03,
+   "ttc195": 2.35,
+   "ttc_acc": 2.31,
+   "req_decel": -2.1,
+   "closing": 6.51,
+   "duration_s": 1.69,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.01,
+   "dt_33e_bit48": 0.02,
+   "dt_366_bit13": 0.02,
+   "dt_344_pbatrgr": NaN
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 19.52,
+   "pedal_free_before_s": 6.92,
+   "pair_active": true,
+   "pair_lead_s": 0.99,
+   "ttc195": 2.57,
+   "ttc_acc": 2.46,
+   "req_decel": -4.8,
+   "closing": 12.27,
+   "duration_s": 1.83,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.0,
+   "dt_33e_bit48": -0.359,
+   "dt_366_bit13": 0.02,
+   "dt_344_pbatrgr": -0.359
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 8.02,
+   "pedal_free_before_s": 0.05,
+   "pair_active": true,
+   "pair_lead_s": 0.02,
+   "ttc195": 3.31,
+   "ttc_acc": 3.36,
+   "req_decel": -1.6,
+   "closing": 2.21,
+   "duration_s": 0.58,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.041,
+   "dt_33e_bit48": 0.02,
+   "dt_366_bit13": 0.02,
+   "dt_344_pbatrgr": NaN
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 20.77,
+   "pedal_free_before_s": 0.89,
+   "pair_active": true,
+   "pair_lead_s": 1.07,
+   "ttc195": 2.35,
+   "ttc_acc": 2.39,
+   "req_decel": -1.9,
+   "closing": 7.76,
+   "duration_s": 2.01,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.03,
+   "dt_33e_bit48": 0.02,
+   "dt_366_bit13": 0.02,
+   "dt_344_pbatrgr": 0.36
+  },
+  {
+   "fw": "8821F0R03100",
+   "v": 20.79,
+   "pedal_free_before_s": 0.01,
+   "pair_active": true,
+   "pair_lead_s": 1.27,
+   "ttc195": 1.63,
+   "ttc_acc": 1.64,
+   "req_decel": -3.1,
+   "closing": 7.79,
+   "duration_s": 0.53,
+   "dt_283_pcsnochg": 0.0,
+   "dt_411_fcw": 0.0,
+   "dt_344_pcsalm": 0.0,
+   "dt_33e_bit48": 0.021,
+   "dt_366_bit13": 0.021,
+   "dt_344_pbatrgr": NaN
+  }
+ ],
+ "stage_field_counts": {
+  "0x283 DSS1STAT=4": 86,
+  "0x283 PCSNOCHG=1": 432,
+  "0x33e alarm_bit48": 82,
+  "0x344 PBATRGR=1": 48,
+  "0x344 PCSALM=1": 194,
+  "0x344 PCSALM=1;PBATRGR=1": 64,
+  "0x366 alarm_bit13": 76,
+  "0x411 PCSWM=1;PCSEXIST=1;PCSWDS=1": 7,
+  "0x411 PCSWM=1;PCSEXIST=1;PCSWDS=2": 9,
+  "0x411 PCSWM=1;PCSEXIST=1;PCSWDS=3": 5
+ },
+ "note": "dt_* = seconds from the 0x100 byte 0 = 0x02 onset; 0x33E bit 48 = byte 6 bit 7 and 0x366 bit 13 = byte 1 bit 2 (MSB-first numbering)"
+}
