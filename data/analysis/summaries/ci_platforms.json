@@ -207,5 +207,214 @@
   "rav4_target_cycles": 1243473,
   "check_byte": "with the sixth ID bit's own CRC column (0x75, the CRC-sequence predecessor of the next column) every 0x235 frame of all routes passes; the 5-bit table failed exactly these 329"
  },
- "acc_check_note": "0x235 'bad' counts above are from the previous table, before the sixth TARGET_ID bit had its own column"
+ "acc_check_note": "0x235 'bad' counts above are from the previous table, before the sixth TARGET_ID bit had its own column",
+ "boot_bytes": {
+  "note": "segment 0 of each opendbc test route: 0x101 byte 0 and 0x197 bit 8 (camera-sent), 0x24F bit 6 (radar-sent); values with frame counts and the first changes (s from the segment start)",
+  "routes": {
+   "Yaris (8821F0D05300)": [
+    {
+     "0x24F_bit6": {
+      "values": {
+       "0": 24,
+       "1": 2020
+      },
+      "first_changes_s": [
+       [
+        0.721,
+        1
+       ]
+      ]
+     },
+     "0x101_b0": {
+      "values": {
+       "0x1d": 54,
+       "0x11": 556
+      },
+      "first_changes_s": [
+       [
+        5.801,
+        "0x11"
+       ]
+      ]
+     },
+     "0x197_bit8": {
+      "values": {
+       "0": 89,
+       "1": 926
+      },
+      "first_changes_s": [
+       [
+        5.801,
+        1
+       ]
+      ]
+     }
+    }
+   ],
+   "RAV4 Hybrid 2022 (8821F0R01100)": [
+    {
+     "0x101_b0": {
+      "values": {
+       "0x1d": 44,
+       "0x11": 573
+      },
+      "first_changes_s": [
+       [
+        4.371,
+        "0x11"
+       ]
+      ]
+     },
+     "0x24F_bit6": {
+      "values": {
+       "1": 2050
+      },
+      "first_changes_s": []
+     },
+     "0x197_bit8": {
+      "values": {
+       "0": 1025
+      },
+      "first_changes_s": []
+     }
+    }
+   ],
+   "C-HR Hybrid (8821FF410500)": [
+    {
+     "0x24F_bit6": {
+      "values": {
+       "1": 1983
+      },
+      "first_changes_s": []
+     },
+     "0x197_bit8": {
+      "values": {
+       "0": 43,
+       "1": 949
+      },
+      "first_changes_s": [
+       [
+        2.58,
+        1
+       ]
+      ]
+     },
+     "0x101_b0": {
+      "values": {
+       "0x1d": 25,
+       "0x15": 571
+      },
+      "first_changes_s": [
+       [
+        2.51,
+        "0x15"
+       ]
+      ]
+     }
+    },
+    {
+     "0x24F_bit6": {
+      "values": {
+       "0": 20,
+       "1": 2025
+      },
+      "first_changes_s": [
+       [
+        0.6,
+        1
+       ]
+      ]
+     },
+     "0x101_b0": {
+      "values": {
+       "0x1d": 54,
+       "0x15": 557
+      },
+      "first_changes_s": [
+       [
+        5.731,
+        "0x15"
+       ]
+      ]
+     },
+     "0x197_bit8": {
+      "values": {
+       "1": 927,
+       "0": 89
+      },
+      "first_changes_s": [
+       [
+        0.44,
+        0
+       ],
+       [
+        5.782,
+        1
+       ]
+      ]
+     }
+    }
+   ],
+   "RAV4 2022 (8821F0R01100)": [
+    {
+     "0x24F_bit6": {
+      "values": {
+       "1": 2049
+      },
+      "first_changes_s": []
+     },
+     "0x197_bit8": {
+      "values": {
+       "0": 1023,
+       "1": 1
+      },
+      "first_changes_s": [
+       [
+        4.06,
+        1
+       ],
+       [
+        4.121,
+        0
+       ]
+      ]
+     },
+     "0x101_b0": {
+      "values": {
+       "0x1d": 40,
+       "0x11": 575
+      },
+      "first_changes_s": [
+       [
+        3.991,
+        "0x11"
+       ]
+      ]
+     }
+    }
+   ],
+   "C-HR 2021 (8821FF410300)": [
+    {
+     "0x24F_bit6": {
+      "values": {
+       "1": 1988
+      },
+      "first_changes_s": []
+     },
+     "0x101_b0": {
+      "values": {
+       "0x15": 596
+      },
+      "first_changes_s": []
+     },
+     "0x197_bit8": {
+      "values": {
+       "1": 994
+      },
+      "first_changes_s": []
+     }
+    }
+   ]
+  }
+ }
 }

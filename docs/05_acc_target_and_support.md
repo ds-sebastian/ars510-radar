@@ -394,10 +394,13 @@ The night mode matters for the object list: two slot fields change with it ([03]
 | 0x197 bit 8 | 0 | 1 (60 ms after 0x101 switches) |
 | 0x24F bit 6 | 0 | 1 |
 
-All three switch once after boot and stay, also through object-list outages (about 1,300 s without a record on the second car,
-[`radar_health.json`](../data/analysis/summaries/radar_health.json)): they mark that the radar has booted, not that it or its
-object list is healthy now. 0x101 and 0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27
-of 27 cold starts (spread 7 and 14 ms): they behave as the camera's acknowledgement of the first object record (◐).
+On the owner car and the Yaris all three switch once after boot and stay, also through object-list outages (about 1,300 s
+without a record on the second car, [`radar_health.json`](../data/analysis/summaries/radar_health.json)): they mark that the
+radar has booted, not that it or its object list is healthy now. 0x101 and 0x197 are sent by the camera and follow the first
+0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread 7 and 14 ms): they behave as the camera's acknowledgement of
+the first object record (◐). The camera's two differ between cars on opendbc's test routes: the C-HR camera sends 0x15 in
+0x101 once the radar runs, and the 2022 RAV4's (radar firmware 8821F0R01100) sets 0x197 bit 8 for one frame or not at all.
+The radar's own 0x24F bit 6 switches the same way on every car, so it is the one in the upstream DBC.
 
 ## 0x680: single-object stream
 
