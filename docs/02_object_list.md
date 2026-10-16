@@ -23,7 +23,8 @@ flowchart LR
     C -- yes --> S["20 slots × 36 bytes<br/>bytes 17..736"]
 ```
 
-- **First frame:** bytes 0-1 are `12 E4`, an ISO-TP first frame of length 0x2E4.
+- **First frame:** bytes 0-1 are `12 E4`, an ISO-TP first frame of length 0x2E4 (740 bytes, on every one of 2.27 M first frames of
+  three cars). The receiver answers with flow control on 0x81 and the radar then sends the rest ([01](01_radar_bus.md#who-sends-the-object-list)).
 - **Following frames:** byte 0 is `2x`, where x is a sequence nibble that wraps every 16 frames.
 - **Reassembly:** append bytes 1..7 of every frame, the first included, until 106 frames have arrived. Record byte 0 is `E4`.
 - **CRC (●):** `zlib.crc32(record[1:737])`, stored little-endian at `record[737:741]`. The CRC passes on all 1,309 bundled records
@@ -44,7 +45,7 @@ chains mark the field boundaries.*
 | 1-16 | header |
 | 17-736 | 20 object slots × 36 bytes |
 | 737-740 | CRC32, little-endian |
-| 741 | trailing byte |
+| 741 | ISO-TP padding (0x00), outside the 740-byte transfer |
 
 An unoccupied slot holds exactly this idle template:
 

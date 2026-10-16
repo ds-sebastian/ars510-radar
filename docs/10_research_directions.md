@@ -16,7 +16,7 @@ one. The upstream proposals, the parts ledger and the evidence for the ACC targe
    distance?* The object list reads far cars 5-8% short of the radar's own ACC distance at 50-100 m, and the vision lead
    agrees with the ACC distance ([06](06_accuracy.md#distance)). `acc` publishes the ACC distance; `fused` takes it for the
    car the radar follows, publishes only that car beyond 60 m, and smooths the other tracks' object-list range separately
-   from the speed filter (the object list's range rate and speed disagree by 10-20%,
+   from the speed filter (on in-path tracks the object list's range rate and speed disagree by 10-20%,
    [12](12_kalman_filter.md#what-runs-before-and-around-the-filter)). *Data:* a drive behind a second car with a GNSS
    logger gives the true far distance ([T03/T04](16_routes_and_tests.md)).
 2. **More of the lead covered by the radar's own trackers.** *When and why does the radar drop or delay its ACC target?*

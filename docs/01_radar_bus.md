@@ -26,9 +26,9 @@ segmented record on 0x80, and 0x191-0x194 carry two target summaries from the ra
 | addr | DLC | rate | content | doc |
 |---|---|---|---|---|
 | **0x80** | 8 | 106 frames / 60 ms | **object list**: 742-byte record, 20 object slots × 36 bytes + CRC32 | [02](02_object_list.md), [03](03_slot_fields.md) |
-| 0x81 | 8 | 16.6 Hz | record-cycle marker `30 00 …` after each 0x80 record start | |
+| 0x81 | 8 | 16.6 Hz | ISO-TP flow control `30 00 …` (clear to send, block size 0, STmin 0) for each 0x80 transfer, from its receiver (the camera, inferred): the radar sends the rest of the record only after it ([below](#who-sends-the-object-list)) | |
 | **0x85** | 8 | 21 frames / 60 ms | metadata record: 147 bytes, ten 12-byte cells (lane / road-boundary curves: offset, heading, curvature) + CRC32 | [04](04_metadata_record_0x85.md) |
-| 0x86 | 8 | 16.6 Hz | record-cycle marker for 0x85 | |
+| 0x86 | 8 | 16.6 Hz | ISO-TP flow control for each 0x85 transfer | |
 | 0x100-0x103 | 7/6/3/2 | 10 Hz | startup state: 0x101 goes 0x1D → 0x11 when the radar is running; 0x100 byte 0 = 0x02 during a PCS alarm ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3)) | [05](05_acc_target_and_support.md#startup-and-readiness) |
 | 0x180 | 5 | 16.6 Hz | constant `CF C0 00 00 00` | |
 | 0x190 | 7 | 16.6 Hz | cycle header: number of target summaries, µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
@@ -51,14 +51,32 @@ carries 0x100, 0x103, 0x190-0x196, 0x198, 0x202, 0x24F, 0x680 and the ACC target
 
 Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) with a one-line comment per signal.
 
+### Who sends the object list
+
+The object list (0x80) and the metadata record (0x85) are ISO-TP transfers from the radar to their receiver, most likely the
+factory camera (●, three cars, 2.27 M transfers, [`bus1_transport.json`](../data/analysis/summaries/bus1_transport.json)):
+
+- every first frame carries the length: 740 bytes for 0x80 (`12 E4`) and 144 for 0x85 (`10 90`);
+- the receiver answers each first frame about 0.35 ms later with one flow-control frame `30 00 …` on 0x81 / 0x86 (clear to
+  send, no block limit, no minimum gap), and the radar sends the consecutive frames only after it: when another frame delays
+  the flow control, the first consecutive frame moves by the same amount;
+- a first frame left unanswered loses that record, and the radar tries again on a later cycle. The second car's two
+  object-list outages are this case: radar and camera kept every other frame at full rate, and only the flow control stopped
+  ([05](05_acc_target_and_support.md#0x195--0x196-event-pair));
+- the records follow a 60.28 ms cycle whose clock (the 0x80 header and 0x85 prefix clocks) runs at the camera's oscillator
+  rate (◐, 87 routes), while the 0x190 / 0x239 µs stamps run on the radar's own.
+
+The sender of 0x81 / 0x86 is inferred from the protocol (the receiver sends flow control) and from the link carrying only the
+radar and the camera.
+
 ## Power-up
 
 | time after the first CAN frame | event |
 |---|---|
-| 0.2 s (median 0.23 s, 0.15-0.46 s on 26 of 27 cold starts) | 0x235 / 0x237 (ACC target frames), 0x191 target summaries and 0x680 frames start |
+| 0.26 s (median; 0.14-1.01 s on 74 cold starts) | 0x235 / 0x237 / 0x239 (ACC target frames), 0x190 / 0x191 cycle header and target summaries, and 0x680 frames start |
 | 0.8 s (median; 0.65-1.3 s on 24 of 27) | 0x680 reports its first tracked object |
 | 3.3-4.2 s (14 cold starts, current openpilot) | openpilot's fingerprinting is done and it starts transmitting |
-| **5.83-6.12 s** | **0x80 / 0x85 object records start** (27 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)) |
+| **5.80-6.16 s** | **0x80 / 0x85 object records start** (74 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json), [`radar_health.json`](../data/analysis/summaries/radar_health.json)) |
 
 Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `decode_claim_sources.json` (0x235 / 0x680 / sendcan, recomputed from the research captures).
 
@@ -67,7 +85,9 @@ Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `
   early frames (0x190, 0x191 / 0x193, 0x235 / 0x237 / 0x239) are in the bus-1 fingerprint: they were on all 74 recorded
   cold starts ([08](08_openpilot_integration.md), [radar firmware](#radar-firmware)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record (spread 7 ms) and 0x197 bit 8 sets 60 ms later (0.20 s, spread 14 ms) on
-  27 of 27 cold starts: both behave as the camera's acknowledgement of the object list (◐) and serve as "radar running" signals.
+  27 of 27 cold starts: both behave as the camera's acknowledgement of the first object record (◐). They switch once after boot
+  and stay through object-list outages (about 1,300 s without a record on the second car), so they are boot flags, not live
+  radar or list health.
 - 0x680 reports tracked objects 5 s before the object list starts.
 - 0x100 sends `FFFF…` in its first frame ([DBC](../dbc/ars510_radar_bus.dbc)).
 - Age-1 placeholder objects at 0 m (the initialization template, [03](03_slot_fields.md#class-and-size)) are marked `geometry_valid = False`, and the decoder withholds them.
@@ -77,8 +97,9 @@ Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `
 On the RAV4 2022 / 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
 longitudinal (alpha long) switches the radar's car-bus output off with UDS CommunicationControl `28 01 01` (receive
 on, transmit off) to 0x750 / 0x0F, then keeps it off with tester-present `3E 00` every ~0.2 s. That request switches off bus 0
-only; **bus 1 keeps running unchanged** (●, one drive with the radar line unfiltered, firmware `8821F0R03100`;
-[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json)):
+only; **bus 1 keeps running unchanged** (●, all three stored disables on three cars, firmware `8821F0R03100`: a 26 min drive with the
+radar line unfiltered and two parked tests, one with a filter board fitted; 16.6 records/s and 0 CRC failures afterwards;
+[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json), [`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)):
 
 | | before the request | after (26 min, openpilot longitudinal engaged 8 min) |
 |---|---|---|

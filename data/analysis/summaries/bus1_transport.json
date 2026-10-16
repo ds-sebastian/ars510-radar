@@ -1,0 +1,53 @@
+{
+ "description": "The object list (0x80) and metadata record (0x85) as ISO-TP transfers on the radar bus, the clock the records follow, and whether the uncertainty codes behave like sigma or variance. Three cars, 2,370 segments; drives anonymised.",
+ "transfers": {
+  "cars": 3,
+  "transfers_0x80": 2267944,
+  "transfers_0x85": 2267902,
+  "first_frame_length_bytes": {
+   "0x80": 740,
+   "0x85": 144
+  },
+  "flow_control_payload": "30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0)",
+  "flow_control_per_transfer": 1,
+  "first_frame_to_flow_control_ms": [
+   0.28,
+   0.35
+  ],
+  "consecutive_frames_after_flow_control": "every transfer",
+  "delayed_flow_control_moves_first_consecutive_frame": {
+   "flow_control_1_frame_later_ms": 0.58,
+   "2_frames_later_ms": 0.92
+  },
+  "unanswered_first_frames_mid_stream": 20,
+  "of_them_without_consecutive_frames": 19,
+  "retry_after_ms": [
+   70,
+   130
+  ],
+  "padding_beyond_length": "0x00",
+  "fixed_frame_assembly_misassembled_records": 0,
+  "second_car_list_outages": "radar and camera kept every other frame at full rate; only the flow control stopped"
+ },
+ "record_clock": {
+  "cycle_ms": 60.28,
+  "routes": 87,
+  "record_clock_rate_vs_radar": "1.008 x (camera - radar) oscillator difference, r 0.94",
+  "0x190_0x239_stamps": "radar oscillator"
+ },
+ "uncertainty_form": {
+  "model": "rms^2 = floor_band^2 + (k code)^2 (sigma) vs floor_band^2 + k code (variance), 5 m bands, same parameter count, leave-one-band-out",
+  "sigma_fits_better": [
+   "240|7",
+   "248|7",
+   "232|7"
+  ],
+  "open": [
+   "224|7"
+  ],
+  "reference": "ACC target (dependent)",
+  "parked_static_windows": 1416,
+  "parked": "standstill codes span 1-9 only: sigma and variance not separable; 240|7 codes 1-5 do not grade the speed noise (0.05-0.07 m/s)"
+ },
+ "source": "research workspace SCR-945..949"
+}

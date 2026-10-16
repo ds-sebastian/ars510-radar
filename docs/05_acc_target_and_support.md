@@ -113,6 +113,11 @@ read the 0x237 check byte this way and publish a wrapped lateral position with t
   It is a smaller gain, not a delay: the ratio stays 0.82-0.87 for every time shift from −0.5 s to +1 s, and when a lead
   starts braking the object list follows within 0.02 s but by only about 0.84 of the change; the list's own range rate
   reads 0.90-0.94 ([`field_readings.json`](../data/analysis/summaries/field_readings.json), block `list_speed_gain`).
+  The low gain sits on in-path tracks, the lead above all: over 5 s at 3-20 m the list speed integrates to 0.84-0.90 of the
+  lead's own range change and to 1.01-1.07 for other tracks, on three drive sets. It pulls toward zero relative speed, not
+  toward zero ground speed, and does not grow with the track's `240|7` uncertainty within a range band. Beyond 40 m part of
+  the low ratio is an additive closing offset of −0.2…−0.45 m/s on a multiplicative gain of 0.83-0.87
+  ([`list_speed_gain_tracks.json`](../data/analysis/summaries/list_speed_gain_tracks.json)).
 
 Numbers: [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json), [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 
@@ -329,11 +334,14 @@ behave like lateral distances from the object to the left and right edges of a c
 transfer to the second car, and lateral-speed or time-to-collision alternatives fit comparably, so the edge values are not settled. Bytes
 4 and 5 clip at 50 and bytes 6 / 7 reach 74-80, so the "62" seen before was byte 4's clip plus a gap; what bytes 4 / 5
 themselves measure is open. Bytes 1-3 stay 0 while active, except one bit:
-**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.4 s after the object list stops (two outages on a second
+**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.65 s after the object list stops (two outages on a second
 car, together with 0x198 byte 0 changing 0x10 → 0x90), about 1.5 s before the car-bus 0x411 fault code, and clears with it.
-It marks the onset of an outage (5.6 and 22.6 s here), not a list that is missing from power-up, and it is also set for the
-first cycle after every power-up, so a reader should require two or more consecutive cycles. No false alarm in 14.4 h of
-normal driving ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)). 0x195 is active on only
+The list stopped there because its receiver stopped answering the radar's first frames with flow control
+([01](01_radar_bus.md#who-sends-the-object-list)). The flag marks the onset of an outage (5.6 and 22.6 s of 150 s outages
+here), not a list that is absent from the start of a drive, and it comes no earlier than a 0.5 s staleness rule on the list
+itself. Its power-up frame is 0x196 byte 1 = 0xFF; read as 0x198 byte 0 bit 7 it has none. No false alarm in 37.9 h on three
+cars ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json),
+[`radar_health.json`](../data/analysis/summaries/radar_health.json)). The ACC target kept reporting through both outages. 0x195 is active on only
 0.5-0.6 % of moving cycles ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
 The DBC keeps the remaining sub-fields as raw codes.
 
@@ -384,9 +392,10 @@ The night mode matters for the object list: two slot fields change with it ([03]
 | 0x197 bit 8 | 0 | 1 (60 ms after 0x101 switches) |
 | 0x24F bit 6 | 0 | 1 |
 
-All three switch once and stay, so they are a direct "radar running" signal and a radar-reboot detector. 0x101 and
-0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread
-7 and 14 ms): they behave as the camera's acknowledgement of the object list (◐).
+All three switch once after boot and stay, also through object-list outages (about 1,300 s without a record on the second car,
+[`radar_health.json`](../data/analysis/summaries/radar_health.json)): they mark that the radar has booted, not that it or its
+object list is healthy now. 0x101 and 0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27
+of 27 cold starts (spread 7 and 14 ms): they behave as the camera's acknowledgement of the first object record (◐).
 
 ## 0x680: single-object stream
 

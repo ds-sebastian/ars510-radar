@@ -16,6 +16,33 @@ moment it decides to brake, and the brake system acts on them. UDS communication
 radar's normal car-bus messages at once, 0x283 / 0x344 included: after the request on U2 (12.50 s) the 26 min log holds 0 frames of
 0x283 and 0 of 0x344 ([`radar_car_bus_messages.json`](../data/analysis/summaries/radar_car_bus_messages.json)).
 
+**How other openpilot cars keep AEB (◐, opendbc source).** openpilot longitudinal replaces only the ACC command, and panda
+forwards every other message from the camera side of the harness, so a stock AEB request in a message of its own keeps reaching
+the brakes: Ford `ACCDATA_2` (panda also keeps `CmbbDeny_B_Actl` at 0), Rivian `ACM_AebRequest`, VW MQB `ACC_10` and MEB
+`AWV_03`, the `FCA11` / `FCA12` of Hyundai CAN cars whose camera runs SCC, and 0x283 / 0x344 / 0x411 on Toyota TSS2 cars whose
+camera sends `ACC_CONTROL`. Where openpilot switches off the ECU that runs ACC (Hyundai radar-SCC and CAN FD ADAS-ECU cars,
+Toyota radar-ACC), that ECU's AEB goes with it; opendbc's `disable_ecu` says so in its docstring. On the radar-ACC RAV4 the
+radar's car-bus messages reach the car on a path that bypasses the panda
+([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)), so panda cannot take over 0x343 alone: a CAN filter in
+the radar's line does that in hardware and keeps the radar's AEB, and a relay of the radar's bus-1 decision would be the
+software route ([below](#relaying-the-radars-decision--theoretical)).
+
+## What the PCS frames can request
+
+Panda passes 0x344 and 0x366 with any content and checks only 0x343 (`ACCEL_CMD` range) and 0x283 (bytes 0-5 zero). The brake
+system reads 0x344: without it, 0x320 bit 13 sets ([13](13_car_bus_messages.md)). By their Toyota names both frames can
+actuate, so AEB or relay work treats them as commands, not status
+([`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)):
+
+| frame | fields that request braking (Toyota names) | recorded: idle → U3 alarm | panda |
+|---|---|---|---|
+| 0x344 `ACC1F01` (20 Hz) | `DSS1GDRV` deceleration (0.1 m/s²), `PREFILL` / `PBPREPMP` pre-fill, `PBATRGR` / `PBRTRGR` / `IBTRGR` brake-assist triggers, `PCSABK` autobrake, `BRKHLD` hold | all 0 → 0; `PCSALM` 0 → 1, `PCSOPR` 1 throughout | any content |
+| 0x283 `DS11F01` (33 Hz) | `FORCE` (2 N), `STATE` (3 = braking), `BRAKE_STATUS`, `PCSABK2`, `PBRTRGR2` | 0 → 0; `PCSNOCHG` 0 → 1; `STATE` 4 for 0.3-0.7 s in Park ([13](13_car_bus_messages.md)) | bytes 0-5 zero |
+| 0x366 `DS11D71` (5 Hz) | the reference DBC's alarm / autobrake / pre-brake request bits; on this radar those positions carry its target fields, and the PCS alarm is bit 13 | alarm bit 0 → 1 | any content |
+
+In 297,076 recorded 0x344 frames only `PCSALM` (the U3 alarm) and `PCSOPR` were ever non-zero, so whether a non-idle 0x344
+alone brakes the car is untested.
+
 ## A recorded stock PCS alarm (U3)
 
 ![U3: stock PCS alarm against the radar's bus-1 0x100](img/analysis/pcs_activation_u3.png)
@@ -23,9 +50,12 @@ radar's normal car-bus messages at once, 0x283 / 0x344 included: after the reque
 U3 is a deliberate test on the second car (stock ACC, radar enabled, radar line unfiltered), approached at 7 m/s: an inflatable
 decoration stood in the lane, with a pickup parked a few metres behind it. **The radar tracked the pickup.** Its only
 object and its ACC target (one ID throughout) read 8 m at the stop, while the inflatable was at the bumper; the
-object list held the pickup alone. The radar's **PCS alarm stage** ran from 56.151 to 56.922 s. The driver
-braked 0.12 s later and stopped with the inflatable at the bumper; the braking stages (0x283 `FORCE` / `STATE`, 0x344
-`DSS1GDRV`) stayed at 0 ([`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json)).
+object list held the pickup alone. The radar's **PCS alarm stage** ran from 56.151 to 56.922 s. The driver, off the gas
+0.64 s before the alarm, was already braking: master-cylinder pressure rose from 0.04 s after the alarm start, the stop switch
+closed at 0.11 s, and ABS was active from 0.62 to 1.26 s after it (peak 2.38 MPa); the car stopped with the inflatable at the
+bumper. The radar's braking stages (0x283 `FORCE` / `STATE`, 0x344 `DSS1GDRV`, pre-fill) stayed at 0, and the brake system
+reported no system braking or brake assist (0x320 `BRKON`, 0x226 `FBA`)
+([`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), [`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)).
 
 **The alarm was most likely for the pickup (◐).** At the alarm the pickup was at 14.5 m, a time to collision of 2.1 s.
 - **The in-path object is a vehicle.** The pickup was the only tracked object (object-list object 2, in path,
@@ -107,8 +137,9 @@ openpilot's "PCS off" 0x411 (from 0.49 s after the radar's last one) showed only
 | any part unhealthy, or the relay unvalidated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
 | openpilot stopped | malfunction | the car's own check reports it |
 
-"PCS on" also carries the radar's real alerts. The radar's own 0x411 reports a blocked or dirty sensor
-(`PCS_DUST2`) and faults (`PCS_INDICATOR` 2). When its object-list output on bus 1 stops (a wiring fault on a second car),
+"PCS on" also carries the radar's real alerts. By Toyota's DBC, 0x411 has a blocked-sensor bit (`PCS_DUST2`) and a fault state
+(`PCS_INDICATOR` 2); neither has appeared in 2,370 recorded segments, which is what the covered-radar test (T01) is for. When
+its object-list output on bus 1 stops (on a second car, when the receiver stopped answering the radar's transfers),
 it sets 0x411 byte 0 to `0x48` (`PCS_INDICATOR` 1 plus bit 3) 2.0-2.2 s later for 4-21 s, not latched; `0x40` for the first frames after
 power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1
 signals for blockage and faults are listed in [17](17_upstream.md#what-radard-gets-from-other-radars); a drive

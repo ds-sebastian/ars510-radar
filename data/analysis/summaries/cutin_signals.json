@@ -1,0 +1,45 @@
+{
+ "description": "When the radar's own signals name a cutting-in car, against openpilot's camera model and radard. Cut-ins: an object-list track moves from the adjacent lane into the camera's ego lane 5-80 m ahead and becomes the nearest in-lane mover (two cars, 16.9 lane-valid moving h; 6 of 6 checked on video). Times are medians relative to the car's centre crossing the lane line.",
+ "cutins": 111,
+ "cars": 2,
+ "first_contact_median_s": {
+  "120_3_lane_crossing_code": -0.72,
+  "156_4_weight_ge_4": -0.66,
+  "acc_target_id_switch": -0.12,
+  "lane_state_ego": -0.09,
+  "in_path_level_5": 0.05,
+  "acc_radard_lead": 0.11,
+  "vision_only_radard_lead": 0.28,
+  "model_lead": [
+   0.42,
+   0.6
+  ]
+ },
+ "fires_on_share": {
+  "120_3": 0.6,
+  "156_4_ge_4": 0.83,
+  "acc_target_id_switch": 0.92,
+  "in_path_level_5": 0.9
+ },
+ "acc_switch_before_model": {
+  "median_s": 0.52,
+  "share_first": 0.73,
+  "share_more_than_0p5s": 0.5,
+  "model_first_more_than_0p5s": 0.16
+ },
+ "acc_radard_after_switch_s": 0.04,
+ "120_3_when_fires": {
+  "before_model_s": 1.46,
+  "p10_p90": [
+   0.69,
+   2.45
+  ],
+  "before_acc_switch_s": 0.48,
+  "misses_share": 0.4,
+  "misses_beyond_60m_share": 0.73,
+  "no_entry_onsets_per_moving_h": 18,
+  "precision": 0.2
+ },
+ "in_path_fields": "describe the already selected ACC target; 21 % of cut-in acquisitions start at level 3-4 and reach 5 a median 0.76 s later",
+ "source": "research workspace SCR-935..939; exploratory, not preregistered"
+}

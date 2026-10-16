@@ -33,7 +33,7 @@ BO_ 133 ARS510_ID85_SEGMENT: 8 RADAR
  SG_ ID85_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ ID85_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 129 ARS510_ID80_RECORD_CYCLE_MARKER: 8 RADAR
+BO_ 129 ARS510_ID80_RECORD_CYCLE_MARKER: 8 CAMERA
  SG_ A081_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A081_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A081_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
@@ -43,7 +43,7 @@ BO_ 129 ARS510_ID80_RECORD_CYCLE_MARKER: 8 RADAR
  SG_ A081_B6 : 48|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A081_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
-BO_ 134 ARS510_ID85_RECORD_CYCLE_MARKER: 8 RADAR
+BO_ 134 ARS510_ID85_RECORD_CYCLE_MARKER: 8 CAMERA
  SG_ A086_B0 : 0|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A086_B1 : 8|8@1+ (1,0) [0|255] "raw" RADAR
  SG_ A086_B2 : 16|8@1+ (1,0) [0|255] "raw" RADAR
@@ -303,8 +303,8 @@ BO_ 573 ARS510_A23D_COMPANION: 8 RADAR
 CM_ "ARS510 radar bus (comma harness bus 1), frame-local view. The 0x80 object list and 0x85 metadata record are segmented over many frames and are reassembled in code (ars510.transport); their frames appear here only as raw bytes. Decoded objects are in ars510_objects_vbus.dbc. Documentation: github.com/ds-sebastian/ars510-radar docs/.";
 CM_ BO_ 128 "0x80 object-list transport: a 742-byte record (20 object slots + CRC32) sent every 60 ms as 106 ISO-TP-like frames. First frame starts 12 E4; bytes 1-7 of each frame are appended.";
 CM_ BO_ 133 "0x85 metadata-record transport: a 147-byte record (prefix, ten 12-byte cells, CRC32) sent every 60 ms as 21 frames. First frame starts 10 90.";
-CM_ BO_ 129 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x80 record start.";
-CM_ BO_ 134 "Record-cycle marker: 30 00 00 00 00 00 00 00 within 20 ms after each 0x85 record start.";
+CM_ BO_ 129 "ISO-TP flow control for each 0x80 transfer: 30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0) about 0.35 ms after the first frame; the radar sends the consecutive frames only after it. Sender inferred: the transfer's receiver, the camera.";
+CM_ BO_ 134 "ISO-TP flow control for each 0x85 transfer: 30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0) about 0.35 ms after the first frame; the radar sends the consecutive frames only after it. Sender inferred: the transfer's receiver, the camera.";
 CM_ BO_ 256 "Startup context: word 0 is 0xFFFF in the first frame after power-up, zero afterwards; byte 0 = 0x02 during a PCS alarm.";
 CM_ BO_ 257 "Camera-sent radar-running state: 0x1D while the radar boots, 0x11 once its object list arrives (switches 60 ms before 0x197 bit 8 sets).";
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";

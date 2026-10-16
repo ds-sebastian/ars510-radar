@@ -1,7 +1,8 @@
 """Reassembly of the segmented 0x80 / 0x85 records.
 
-Each record starts with a first frame whose bytes 0-1 are a fixed marker (0x12 0xE4 for 0x80, 0x10 0x90 for
-0x85). Consecutive frames follow; bytes 1..7 of every frame, first frame included, are appended. The
+Each record is an ISO-TP transfer: a first frame whose bytes 0-1 carry the length (0x12 0xE4 = 740 bytes for 0x80,
+0x10 0x90 = 144 for 0x85, on every recorded transfer), the receiver's flow control on 0x81 / 0x86, then the consecutive
+frames. Bytes 1..7 of every frame, first frame included, are appended (so record byte 0 is the length's low byte). The
 consecutive-frame sequence nibble wraps every 16 frames, so each record is reassembled in code, which tracks which part
 of the record a frame carries.
 """

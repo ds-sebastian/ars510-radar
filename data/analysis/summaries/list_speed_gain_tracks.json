@@ -1,0 +1,100 @@
+{
+ "description": "Which object-list tracks read a low relative speed, and how: list speed integrated over 5 s against each track's own range change, the lead's list speed against the ACC target by range band, and what the gain does or does not depend on. Owner drive set (discovery) and held-out owner and second-car drives.",
+ "integrated_speed_over_own_range_change_3_20m": {
+  "lead": {
+   "discovery": 0.9,
+   "owner_heldout": 0.9,
+   "second_car": 0.84
+  },
+  "other_tracks": {
+   "discovery": 1.04,
+   "owner_heldout": 1.07,
+   "second_car": 1.01
+  }
+ },
+ "lead_gain_vs_acc_speed": {
+  "5_20m": [
+   0.93,
+   0.95
+  ],
+  "beyond_20m": [
+   0.83,
+   0.89
+  ],
+  "heldout_range": [
+   0.8,
+   0.95
+  ],
+  "steady_speed_windows": [
+   0.82,
+   0.89
+  ]
+ },
+ "toward": {
+  "zero_relative_speed": true,
+  "ego_speed_coefficient_heldout": [
+   -0.005,
+   -0.002
+  ],
+  "zero_ground_speed_prior_would_give": -0.12
+ },
+ "uncertainty_240_7_within_range_band": {
+  "gain_change_per_iqr_discovery": [
+   0.02,
+   0.07
+  ],
+  "heldout": [
+   -0.02,
+   0.03
+  ],
+  "noise_weighted_shrinkage_predicts": "falling gain"
+ },
+ "beyond_40m": {
+  "closing_offset_mps": [
+   -0.45,
+   -0.2
+  ],
+  "multiplicative_gain": [
+   0.83,
+   0.87
+  ]
+ },
+ "in_path_vs_acc_target": {
+  "non_acc_in_path_15_40m": 0.9,
+  "non_acc_in_path_40_60m": [
+   0.7,
+   0.77
+  ],
+  "acc_target_off_path": 0.99,
+  "chunks_per_cell": [
+   11,
+   39
+  ]
+ },
+ "range_shortfall": {
+  "independent_of_speed_gain": true,
+  "list_range_rate_vs_acc_speed": [
+   0.98,
+   1.03
+  ],
+  "at_zero_relative_speed_m": {
+   "30_40m": -0.9,
+   "80_100m": -6.8
+  },
+  "heldout_40_60m_m": {
+   "owner": -1.1,
+   "second_car": -0.25
+  }
+ },
+ "fused_near_path_tracks": {
+  "15_40m": [
+   0.98,
+   1.0
+  ],
+  "40_60m": 0.87,
+  "speed_error_at_5mps_mps": 0.65,
+  "filter_sigma_there_mps": 1.0,
+  "correction": "not justified on this evidence"
+ },
+ "source": "research workspace SCR-930..934; references are the radar's ACC target and the list's own range channel (dependent witnesses), mechanism unknown"
+}

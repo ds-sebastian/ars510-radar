@@ -139,6 +139,12 @@ flips rise most here (+31 per hour on the owner routes, +112 on the 13 routes).
   cutting car after a median 0.2 s (0.33 s for a cutting car that is opening, 120 cases). The median minimum request
   is −0.81 m/s² (`acc`), −0.85 (`fused`) and −0.80 (vision only); for the opening cars all three request about
   −0.15 m/s².
+- **The radar names a cutting-in car before the camera does.** On 111 cut-ins found from the object list's geometry against
+  the camera's lane lines (two cars), the ACC target switches to the cutting car a median 0.52 s before the camera model's
+  lead does (first on 73 %, by more than 0.5 s on 50 %); the camera is first by more than 0.5 s on 16 %, mostly far cars.
+  `acc`'s radard lead follows the switch within 0.04 s. The radar's own lane-crossing code (`120|3`) comes earlier still
+  when it fires, but it misses 40 % of cut-ins and fires about four times per real cut-in on cars that never enter the lane
+  ([`cutin_signals.json`](../data/analysis/summaries/cutin_signals.json)).
 
 ## Why `acc` is the default
 

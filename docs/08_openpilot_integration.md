@@ -255,7 +255,8 @@ Numbers: [`road_v21.json`](../data/analysis/summaries/road_v21.json).
 ## Checking a new install on the car
 
 1. **Parked, ignition on:** `install.py --check` shows the hook as present; in the log, `carParams.radarUnavailable` is
-   false and `radarTracks` (or `liveTracks`) arrive at ~16.6 Hz with points after ~6 s. (`carParams.flags` stays as the
+   false and `radarTracks` (or `liveTracks`) arrive at ~16.6 Hz: with `acc` from card's first update (the ACC frames start
+   0.14-1.0 s after power-up), with the object-list profiles with points after ~6 s. (`carParams.flags` stays as the
    fork sets it.)
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
