@@ -74,11 +74,12 @@ def _cycle(k, acc_m, cars):
   return [(int(k * 0.06e9 + i * 1e6), [(a, d, 1)]) for i, (a, d) in enumerate(frames)]
 
 
-def test_acc_summaries_adds_summary_cars_once_and_within_60_m(mod):
+def test_acc_summaries_adds_summary_cars_once_and_within_40_m(mod):
   if not hasattr(mod, "SUMMARY_ID"):
     pytest.skip("acc_summaries only")
   for cars, n_extra in (([(3, None, 0.0), (9, 40.0, 3.6)], 1),   # summary 1 is the ACC car, summary 2 another car at 40 m
-                        ([(3, None, 0.0), (9, 80.0, 3.6)], 0)):  # beyond 60 m: not published
+                        ([(3, None, 0.0), (9, 60.0, 3.6)], 0),   # 60 -> 49.6 m: beyond 40 m, not published
+                        ([(3, None, 0.0), (9, 80.0, 3.6)], 0)):  # far beyond: not published
     ri, last = mod.RadarInterface(None), None
     for k in range(30):
       for pk in _cycle(k, 30.0 - 0.24 * k, [(c, d if d is None else d - 0.36 * k, y) for c, d, y in cars]):

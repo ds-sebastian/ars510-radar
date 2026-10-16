@@ -1215,11 +1215,11 @@ def acc_summaries_sweep():
         if bound is not None:
             a.axhline(bound, color=S2, lw=1, ls="--", label="owner's bound")
             a.legend(loc="upper left", fontsize=8)
-        a.axvline(60, color=INK2, lw=0.8, ls=":")
+        a.axvline(40, color=INK2, lw=0.8, ls=":")
         a.set_xticks(xs, labels, fontsize=8); a.set_xlabel("summary range limit"); a.set_title(lab, fontsize=9.5)
-    fig.suptitle("acc_summaries minus acc as the range limit varies (95 % route-bootstrap CI; shipped: 60 m)", fontsize=11)
+    fig.suptitle("acc_summaries minus acc as the range limit varies (95 % route-bootstrap CI; shipped: 40 m)", fontsize=11)
     fig.tight_layout()
-    save(fig, "acc_summaries_sweep", "Every drive set, 313 chunks, 18.84 moving h; design set (60 m was chosen on these drives). "
+    save(fig, "acc_summaries_sweep", "Every drive set, 313 chunks, 18.84 moving h; design set. 40 m was chosen after held-out drives (acc_summaries_40m.json). "
          "Numbers: data/analysis/summaries/acc_summaries_profile.json.")
 
 

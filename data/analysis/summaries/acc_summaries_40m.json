@@ -1,0 +1,1607 @@
+{
+ "method": "open-loop replay through pinned openpilot radard + planner; per moving hour, route-block bootstrap 95 % CI; hard: request <= -2 while vision-only >= -0.5; mild: <= -1 while vision >= -0.3; unnecessary / missed: against the hindsight-lead oracle; flips: radar <-> vision lead source switches",
+ "labels": {
+  "N2": "acc",
+  "AS1": "acc_summaries 60 m (previous)",
+  "A40": "acc_summaries 40 m (published)",
+  "AN40": "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)"
+ },
+ "sets": {
+  "fast": "fast suite, 278 chunks of 27 drives (16.91 moving h; design set of earlier rounds)",
+  "held": "26 owner routes outside every replay set (2.56 moving h)",
+  "conf": "12 second-car routes + 1 owner route (1.98 moving h)",
+  "new": "every captured drive no replay set had used (18 routes, 1.58 moving h)"
+ },
+ "by_set": {
+  "new": {
+   "acc": {
+    "moving_h": 1.58,
+    "hard": 0,
+    "mild": 3,
+    "unnecessary_s": 3.8,
+    "missed_s": 8.0,
+    "flips_per_h": 244,
+    "onset_s": -0.09,
+    "closings": 48,
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -32.353,
+      "ci95": [
+       -64.382,
+       5.26
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    }
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 1.58,
+    "hard": 0,
+    "mild": 3,
+    "unnecessary_s": 3.8,
+    "missed_s": 8.0,
+    "flips_per_h": 277,
+    "onset_s": -0.093,
+    "closings": 48,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 32.353,
+      "ci95": [
+       -5.136,
+       65.056
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    }
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 1.58,
+    "hard": 0,
+    "mild": 3,
+    "unnecessary_s": 3.8,
+    "missed_s": 7.0,
+    "flips_per_h": 266,
+    "onset_s": -0.09,
+    "closings": 48,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.634,
+      "ci95": [
+       -1.675,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 22.203,
+      "ci95": [
+       -7.596,
+       36.007
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.634,
+      "ci95": [
+       -1.668,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -10.15,
+      "ci95": [
+       -28.372,
+       2.743
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    }
+   },
+   "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+    "moving_h": 1.58,
+    "hard": 0,
+    "mild": 3,
+    "unnecessary_s": 3.8,
+    "missed_s": 8.0,
+    "flips_per_h": 258,
+    "onset_s": -0.09,
+    "closings": 48,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 13.322,
+      "ci95": [
+       -8.446,
+       27.033
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -19.031,
+      "ci95": [
+       -37.448,
+       -1.707
+      ]
+     },
+     "routes": 9,
+     "moving_h": 1.58
+    }
+   }
+  },
+  "held": {
+   "acc": {
+    "moving_h": 2.56,
+    "hard": 1,
+    "mild": 9,
+    "unnecessary_s": 7.7,
+    "missed_s": 5.3,
+    "flips_per_h": 323,
+    "onset_s": -0.053,
+    "closings": 130,
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.607,
+      "ci95": [
+       -1.791,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.899,
+      "ci95": [
+       -2.505,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -31.217,
+      "ci95": [
+       -49.135,
+       -16.212
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    }
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 2.56,
+    "hard": 1,
+    "mild": 9,
+    "unnecessary_s": 9.2,
+    "missed_s": 7.6,
+    "flips_per_h": 354,
+    "onset_s": -0.032,
+    "closings": 130,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.607,
+      "ci95": [
+       0.0,
+       1.887
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.899,
+      "ci95": [
+       0.0,
+       2.609
+      ]
+     },
+     "flips": {
+      "per_h": 31.217,
+      "ci95": [
+       16.529,
+       48.642
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    }
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 2.56,
+    "hard": 1,
+    "mild": 9,
+    "unnecessary_s": 7.7,
+    "missed_s": 5.5,
+    "flips_per_h": 339,
+    "onset_s": -0.052,
+    "closings": 130,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.08,
+      "ci95": [
+       0.0,
+       0.252
+      ]
+     },
+     "flips": {
+      "per_h": 15.999,
+      "ci95": [
+       6.818,
+       26.187
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.607,
+      "ci95": [
+       -1.846,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.819,
+      "ci95": [
+       -2.494,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -15.218,
+      "ci95": [
+       -27.505,
+       -2.637
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    }
+   },
+   "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+    "moving_h": 2.56,
+    "hard": 1,
+    "mild": 9,
+    "unnecessary_s": 7.7,
+    "missed_s": 5.3,
+    "flips_per_h": 335,
+    "onset_s": -0.052,
+    "closings": 130,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 11.706,
+      "ci95": [
+       1.975,
+       23.006
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.607,
+      "ci95": [
+       -1.814,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.899,
+      "ci95": [
+       -2.486,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -19.51,
+      "ci95": [
+       -30.246,
+       -7.961
+      ]
+     },
+     "routes": 19,
+     "moving_h": 2.56
+    }
+   }
+  },
+  "conf": {
+   "acc": {
+    "moving_h": 1.98,
+    "hard": 0,
+    "mild": 1,
+    "unnecessary_s": 1.1,
+    "missed_s": 0.0,
+    "flips_per_h": 474,
+    "onset_s": 0.069,
+    "closings": 49,
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": -0.506,
+      "ci95": [
+       -1.938,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.608,
+      "ci95": [
+       -1.845,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -112.32,
+      "ci95": [
+       -178.073,
+       -50.157
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    }
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 1.98,
+    "hard": 0,
+    "mild": 2,
+    "unnecessary_s": 2.3,
+    "missed_s": 0.0,
+    "flips_per_h": 586,
+    "onset_s": 0.091,
+    "closings": 49,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.506,
+      "ci95": [
+       0.0,
+       1.837
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.608,
+      "ci95": [
+       0.0,
+       1.713
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 112.32,
+      "ci95": [
+       47.706,
+       178.318
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    }
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 1.98,
+    "hard": 0,
+    "mild": 2,
+    "unnecessary_s": 1.6,
+    "missed_s": 0.0,
+    "flips_per_h": 543,
+    "onset_s": 0.091,
+    "closings": 49,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.506,
+      "ci95": [
+       0.0,
+       1.959
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.229,
+      "ci95": [
+       0.0,
+       0.887
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 69.314,
+      "ci95": [
+       31.087,
+       114.449
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.379,
+      "ci95": [
+       -1.333,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -43.005,
+      "ci95": [
+       -82.343,
+       -12.759
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    }
+   },
+   "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+    "moving_h": 1.98,
+    "hard": 0,
+    "mild": 2,
+    "unnecessary_s": 1.6,
+    "missed_s": 0.0,
+    "flips_per_h": 535,
+    "onset_s": 0.091,
+    "closings": 49,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.506,
+      "ci95": [
+       0.0,
+       1.873
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.229,
+      "ci95": [
+       0.0,
+       0.848
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 61.219,
+      "ci95": [
+       23.512,
+       112.918
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.379,
+      "ci95": [
+       -1.37,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": -51.1,
+      "ci95": [
+       -97.079,
+       -18.581
+      ]
+     },
+     "routes": 13,
+     "moving_h": 1.98
+    }
+   }
+  },
+  "fast": {
+   "acc": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "mild": 30,
+    "unnecessary_s": 19.2,
+    "missed_s": 17.4,
+    "flips_per_h": 302,
+    "onset_s": -0.017,
+    "closings": 638,
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": -0.177,
+      "ci95": [
+       -0.432,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.012,
+      "ci95": [
+       -0.07,
+       0.078
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.139,
+      "ci95": [
+       0.0,
+       0.403
+      ]
+     },
+     "flips": {
+      "per_h": -41.74,
+      "ci95": [
+       -59.703,
+       -28.505
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    }
+   },
+   "acc_summaries 60 m (previous)": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "mild": 33,
+    "unnecessary_s": 19.0,
+    "missed_s": 15.1,
+    "flips_per_h": 344,
+    "onset_s": -0.014,
+    "closings": 638,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.177,
+      "ci95": [
+       0.0,
+       0.423
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.012,
+      "ci95": [
+       -0.079,
+       0.067
+      ]
+     },
+     "missed_s": {
+      "per_h": -0.139,
+      "ci95": [
+       -0.389,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 41.74,
+      "ci95": [
+       28.696,
+       59.797
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    }
+   },
+   "acc_summaries 40 m (published)": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "mild": 32,
+    "unnecessary_s": 19.1,
+    "missed_s": 17.4,
+    "flips_per_h": 325,
+    "onset_s": -0.015,
+    "closings": 638,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.118,
+      "ci95": [
+       0.0,
+       0.313
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": -0.006,
+      "ci95": [
+       -0.021,
+       0.0
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 23.471,
+      "ci95": [
+       15.576,
+       34.308
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": -0.059,
+      "ci95": [
+       -0.212,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.006,
+      "ci95": [
+       -0.08,
+       0.077
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.139,
+      "ci95": [
+       0.0,
+       0.401
+      ]
+     },
+     "flips": {
+      "per_h": -18.269,
+      "ci95": [
+       -28.195,
+       -10.664
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    }
+   },
+   "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+    "moving_h": 16.91,
+    "hard": 13,
+    "mild": 32,
+    "unnecessary_s": 19.5,
+    "missed_s": 17.4,
+    "flips_per_h": 323,
+    "onset_s": -0.014,
+    "closings": 638,
+    "vs_N2": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": 0.118,
+      "ci95": [
+       0.0,
+       0.319
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.018,
+      "ci95": [
+       0.0,
+       0.06
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "flips": {
+      "per_h": 20.87,
+      "ci95": [
+       12.427,
+       31.915
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    },
+    "vs_AS1": {
+     "hard": {
+      "per_h": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     },
+     "mild": {
+      "per_h": -0.059,
+      "ci95": [
+       -0.221,
+       0.0
+      ]
+     },
+     "unnecessary_s": {
+      "per_h": 0.03,
+      "ci95": [
+       -0.062,
+       0.113
+      ]
+     },
+     "missed_s": {
+      "per_h": 0.139,
+      "ci95": [
+       0.0,
+       0.408
+      ]
+     },
+     "flips": {
+      "per_h": -20.87,
+      "ci95": [
+       -32.713,
+       -12.013
+      ]
+     },
+     "routes": 62,
+     "moving_h": 16.91
+    }
+   }
+  }
+ },
+ "pooled": {
+  "acc": {
+   "moving_h": 23.03,
+   "hard": 14,
+   "mild": 43,
+   "unnecessary_s": 31.8,
+   "missed_s": 30.7,
+   "flips_per_h": 315,
+   "onset_s": -0.021,
+   "closings": 865,
+   "vs_AS1": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": -0.174,
+     "ci95": [
+      -0.385,
+      -0.036
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": -0.111,
+     "ci95": [
+      -0.298,
+      0.021
+     ]
+    },
+    "missed_s": {
+     "per_h": 0.002,
+     "ci95": [
+      -0.282,
+      0.251
+     ]
+    },
+    "flips": {
+     "per_h": -45.984,
+     "ci95": [
+      -61.169,
+      -33.449
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   }
+  },
+  "acc_summaries 60 m (previous)": {
+   "moving_h": 23.03,
+   "hard": 14,
+   "mild": 47,
+   "unnecessary_s": 34.4,
+   "missed_s": 30.7,
+   "flips_per_h": 361,
+   "onset_s": -0.015,
+   "closings": 865,
+   "vs_N2": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": 0.174,
+     "ci95": [
+      0.036,
+      0.381
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": 0.111,
+     "ci95": [
+      -0.023,
+      0.319
+     ]
+    },
+    "missed_s": {
+     "per_h": -0.002,
+     "ci95": [
+      -0.256,
+      0.279
+     ]
+    },
+    "flips": {
+     "per_h": 45.984,
+     "ci95": [
+      33.563,
+      60.963
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   }
+  },
+  "acc_summaries 40 m (published)": {
+   "moving_h": 23.03,
+   "hard": 14,
+   "mild": 46,
+   "unnecessary_s": 32.2,
+   "missed_s": 29.9,
+   "flips_per_h": 342,
+   "onset_s": -0.019,
+   "closings": 865,
+   "vs_N2": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": 0.13,
+     "ci95": [
+      0.0,
+      0.311
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": 0.015,
+     "ci95": [
+      -0.011,
+      0.063
+     ]
+    },
+    "missed_s": {
+     "per_h": -0.035,
+     "ci95": [
+      -0.133,
+      0.023
+     ]
+    },
+    "flips": {
+     "per_h": 26.487,
+     "ci95": [
+      18.602,
+      36.038
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   },
+   "vs_AS1": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": -0.043,
+     "ci95": [
+      -0.148,
+      0.0
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": -0.096,
+     "ci95": [
+      -0.283,
+      0.029
+     ]
+    },
+    "missed_s": {
+     "per_h": -0.033,
+     "ci95": [
+      -0.334,
+      0.24
+     ]
+    },
+    "flips": {
+     "per_h": -19.496,
+     "ci95": [
+      -28.362,
+      -12.766
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   }
+  },
+  "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+   "moving_h": 23.03,
+   "hard": 14,
+   "mild": 46,
+   "unnecessary_s": 32.6,
+   "missed_s": 30.7,
+   "flips_per_h": 338,
+   "onset_s": -0.018,
+   "closings": 865,
+   "vs_N2": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": 0.13,
+     "ci95": [
+      0.0,
+      0.309
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": 0.033,
+     "ci95": [
+      0.0,
+      0.088
+     ]
+    },
+    "missed_s": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "flips": {
+     "per_h": 22.797,
+     "ci95": [
+      15.034,
+      31.986
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   },
+   "vs_AS1": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "mild": {
+     "per_h": -0.043,
+     "ci95": [
+      -0.152,
+      0.0
+     ]
+    },
+    "unnecessary_s": {
+     "per_h": -0.078,
+     "ci95": [
+      -0.281,
+      0.057
+     ]
+    },
+    "missed_s": {
+     "per_h": 0.002,
+     "ci95": [
+      -0.309,
+      0.259
+     ]
+    },
+    "flips": {
+     "per_h": -23.187,
+     "ci95": [
+      -33.983,
+      -15.504
+     ]
+    },
+    "routes": 103,
+    "moving_h": 23.03
+   }
+  }
+ },
+ "close_cutins": {
+  "definition": "fused lead jumps >= 5 m closer within 0.5 s to < 35 m, ego > 5 m/s; first tick radard lead is radar-backed within max(3 m, 10 %) of that lead for 0.3 s; minus acc",
+  "events": 388,
+  "base": "N2",
+  "acc_summaries 60 m (previous)": {
+   "n": 276,
+   "mean_minus_base_s": -0.096,
+   "ci95": [
+    -0.154,
+    -0.051
+   ],
+   "earlier": 26,
+   "later": 9
+  },
+  "acc_summaries 40 m (published)": {
+   "n": 276,
+   "mean_minus_base_s": -0.086,
+   "ci95": [
+    -0.135,
+    -0.044
+   ],
+   "earlier": 24,
+   "later": 3
+  },
+  "AN40: 40 m without an ACC car, else only cars nearer than it (not adopted)": {
+   "n": 277,
+   "mean_minus_base_s": -0.082,
+   "ci95": [
+    -0.132,
+    -0.041
+   ],
+   "earlier": 23,
+   "later": 0
+  }
+ },
+ "an40_minus_40m": {
+  "fast": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "mild": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "unnecessary_s": {
+    "per_h": 0.024,
+    "ci95": [
+     0.0,
+     0.081
+    ]
+   },
+   "missed_s": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "flips": {
+    "per_h": -2.601,
+    "ci95": [
+     -8.666,
+     2.53
+    ]
+   },
+   "routes": 62,
+   "moving_h": 16.91
+  },
+  "pooled": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "mild": {
+    "per_h": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "unnecessary_s": {
+    "per_h": 0.017,
+    "ci95": [
+     0.0,
+     0.058
+    ]
+   },
+   "missed_s": {
+    "per_h": 0.035,
+    "ci95": [
+     -0.026,
+     0.136
+    ]
+   },
+   "flips": {
+    "per_h": -3.691,
+    "ci95": [
+     -8.168,
+     0.127
+    ]
+   },
+   "routes": 103,
+   "moving_h": 23.03
+  }
+ },
+ "held_out_mechanism": "the 60 m form differed from acc in 3 held-out chunks; in both braking windows radard took lead one from a summary car at 47-58 m (no ACC target yet) matched to a camera lead 10-14 m away; the 40 m limit removes both",
+ "independent_recount": {
+  "new": {
+   "acc": {
+    "hard": 0,
+    "mild": 3,
+    "flips": 385,
+    "moving_h": 1.58,
+    "flips_per_h": 244
+   },
+   "acc_summaries 60 m (previous)": {
+    "hard": 0,
+    "mild": 3,
+    "flips": 436,
+    "moving_h": 1.58,
+    "flips_per_h": 277
+   },
+   "acc_summaries 40 m (published)": {
+    "hard": 0,
+    "mild": 3,
+    "flips": 420,
+    "moving_h": 1.58,
+    "flips_per_h": 266
+   }
+  },
+  "held": {
+   "acc": {
+    "hard": 1,
+    "mild": 9,
+    "flips": 828,
+    "moving_h": 2.56,
+    "flips_per_h": 323
+   },
+   "acc_summaries 60 m (previous)": {
+    "hard": 1,
+    "mild": 9,
+    "flips": 908,
+    "moving_h": 2.56,
+    "flips_per_h": 354
+   },
+   "acc_summaries 40 m (published)": {
+    "hard": 1,
+    "mild": 9,
+    "flips": 869,
+    "moving_h": 2.56,
+    "flips_per_h": 339
+   }
+  },
+  "conf": {
+   "acc": {
+    "hard": 0,
+    "mild": 1,
+    "flips": 936,
+    "moving_h": 1.98,
+    "flips_per_h": 474
+   },
+   "acc_summaries 60 m (previous)": {
+    "hard": 0,
+    "mild": 2,
+    "flips": 1158,
+    "moving_h": 1.98,
+    "flips_per_h": 586
+   },
+   "acc_summaries 40 m (published)": {
+    "hard": 0,
+    "mild": 2,
+    "flips": 1073,
+    "moving_h": 1.98,
+    "flips_per_h": 543
+   }
+  },
+  "fast": {
+   "acc": {
+    "hard": 13,
+    "mild": 30,
+    "flips": 5108,
+    "moving_h": 16.91,
+    "flips_per_h": 302
+   },
+   "acc_summaries 60 m (previous)": {
+    "hard": 13,
+    "mild": 33,
+    "flips": 5814,
+    "moving_h": 16.91,
+    "flips_per_h": 344
+   },
+   "acc_summaries 40 m (published)": {
+    "hard": 13,
+    "mild": 32,
+    "flips": 5505,
+    "moving_h": 16.91,
+    "flips_per_h": 325
+   }
+  }
+ }
+}
