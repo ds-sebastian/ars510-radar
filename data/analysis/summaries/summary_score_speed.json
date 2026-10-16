@@ -1,0 +1,72 @@
+{
+ "description": "The target summaries' score (0x191 / 0x193 byte 0 >> 1) against the summary car's over-ground speed (its own range slope plus ego speed), and the search for a summary-car speed field. Owner car (608 k summary rows) and second car (3 h).",
+ "score_by_speed_mature_tracks_owner": {
+  "1-5": 95,
+  "5-10": 98,
+  "10-15": 99,
+  "15-20": 100,
+  "above_20": 100,
+  "share_100_at_10_15": 0.174,
+  "share_100_at_15_20": 0.86
+ },
+ "speed_by_score_owner_mature": {
+  "91": [
+   2.57,
+   3.09,
+   4.18
+  ],
+  "93": [
+   2.96,
+   3.45,
+   4.83
+  ],
+  "95": [
+   3.7,
+   4.52,
+   5.96
+  ],
+  "97": [
+   4.83,
+   6.05,
+   7.93
+  ],
+  "98": [
+   6.12,
+   7.89,
+   10.44
+  ],
+  "99": [
+   9.14,
+   12.34,
+   16.67
+  ],
+  "100": [
+   17.92,
+   28.06,
+   34.23
+  ],
+  "columns": "p10, median, p90 of the over-ground speed, m/s"
+ },
+ "target_vs_ego_below_15mps": {
+  "coef_target_per_mps": 0.472,
+  "coef_ego_per_mps": -0.045,
+  "where_they_differ_by_5": {
+   "corr_target": 0.716,
+   "corr_ego": -0.542
+  }
+ },
+ "second_car_mature": {
+  "1-5": 94,
+  "5-10": 98,
+  "10-15": 99,
+  "above_15": 100
+ },
+ "speed_field_search": {
+  "0x192_0x194": "4-byte range + lateral only",
+  "0x191_0x193": "every bit-field tested; only the score follows speed",
+  "0x23D": "all zero on 620,654 frames",
+  "0x680_on_non_acc_summary_car_frames_in_3h": 68,
+  "0x680_speed_r_when_it_does": 0.9
+ },
+ "source": "research workspace SCR-966..968"
+}

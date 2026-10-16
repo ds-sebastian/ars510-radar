@@ -498,7 +498,7 @@ CM_ SG_ 1664 A680_LAT_SPEED_CODE "Lateral speed over ground, left positive, abou
 CM_ SG_ 1664 A680_B7_HIGH4 "14 on most frames.";
 CM_ SG_ 1664 A680_B7_LOW4 "0xA with selector 0, 0xF with selector 1 / 3.";
 CM_ SG_ 401 A191_B0_RESERVED0 "Always zero.";
-CM_ SG_ 401 A191_PAIR_SCORE_CODE7 "Target score: 91-100 while active, 127 in the sentinel.";
+CM_ SG_ 401 A191_PAIR_SCORE_CODE7 "Target score: 91-100 while active, rising with the target's own over-ground speed (100 above about 15 m/s) and slightly with track maturity: a moving-vehicle confidence, not a speed; 127 in the sentinel.";
 CM_ SG_ 401 A191_B1_RESERVED0 "Always zero.";
 CM_ SG_ 401 A191_PAIR_TRACK_AGE7 "Target age in radar cycles, saturates at 126; 127 in the sentinel.";
 CM_ SG_ 401 A191_B3_RESERVED0_2 "Always zero.";
@@ -515,7 +515,7 @@ CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (co
 CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "Always zero.";
 CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) * 0.015 m, left positive; keep all 13 bits.";
 CM_ SG_ 403 A193_B0_RESERVED0 "Always zero.";
-CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "Target score: 91-100 while active, 127 in the sentinel.";
+CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "Target score: 91-100 while active, rising with the target's own over-ground speed (100 above about 15 m/s) and slightly with track maturity: a moving-vehicle confidence, not a speed; 127 in the sentinel.";
 CM_ SG_ 403 A193_B1_RESERVED0 "Always zero.";
 CM_ SG_ 403 A193_PAIR_TRACK_AGE7 "Target age in radar cycles, saturates at 126; 127 in the sentinel.";
 CM_ SG_ 403 A193_B3_RESERVED0_2 "Always zero.";
