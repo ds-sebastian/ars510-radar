@@ -23,7 +23,7 @@ all-tracks candidate.
 |---|---|---|
 | files | [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) + [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), as [`opendbc_ars510.patch`](../upstream/opendbc_ars510.patch) | [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), routed by [`toyota_routing.patch`](../upstream/toyota_routing.patch) |
 | size | 45 code lines (68 in the file); reads 7 DBC signals of three messages plus their rolling counters | 187 code lines (227 in the file) |
-| constants / state attributes / conditions / functions | 1 / 4 / 5 / 2 | 28 / 15 / 85 / 13 |
+| constants / state attributes / conditions / functions | 3 / 5 / 9 / 3 | 28 / 15 / 85 / 13 |
 | radar available when | the car model: every radar-ACC platform (RAV4 2022 and 2023-25, C-HR, Yaris) | the car model: the radar-ACC RAV4 2022 and 2023-25 platforms |
 | evidence | [below](#the-acc-target-alone--candidate) | [parts ledger](#parts-of-the-openpilot-file) |
 
@@ -44,6 +44,12 @@ commit:
   advanced. The frames repeat at 50 Hz, and radard accepts `liveTracks` only at 8-24 Hz. The clock advances once per
   60 ms cycle, with or without a target, so reports go out at 16.7 Hz: empty when there is no target, nothing when the
   radar stops sending. There is no point while the frames are invalid (a stale or bad counter).
+- **Lateral wrap: in the file, not in the patch.** `LAT_DIST` holds the low 12 bits of the radar's 13-bit lateral distance,
+  so a target more than 20.95 m to the left reads 40.96 m too far right, and the frame's check byte then carries the hidden
+  bit's term 0x14 ([05](05_acc_target_and_support.md#check-bytes)). `upstream/ars510_acc_target.py` reads the raw 0x237 frame and
+  adds the 40.96 m back (12 of its 45 code lines). In opendbc that check belongs to a checksum type for this DBC, which
+  CANParser selects by DBC name, rather than to the radar interface, so the patch leaves it out. The wrapped targets sit
+  21-43 m to the side in turns and at junctions, and radard never took one as its lead in the recorded drives.
 - **Tests:** two in the existing `opendbc/car/toyota/tests/test_toyota.py`: every radar-ACC car gets the ARS510, and
   50 Hz frames give one report per radar cycle (radard's frequency check is off in replay, so only this test guards it).
   opendbc's generic tests cover the rest: `test_car_interfaces.py` runs every platform's `RadarInterface`, and
