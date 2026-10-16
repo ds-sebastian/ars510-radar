@@ -236,7 +236,7 @@ When a summary and the ACC target describe the same car, the summary range is th
 
 | bits (LE) | field |
 |---|---|
-| `1\|7` | score: 91-99 on a young target, then 100; 127 idle |
+| `1\|7` | score, 91-100: rises with the car's own over-ground speed, not ego's (mature tracks: 95 at 1-5 m/s, 98 at 5-10, 99 at 10-15, 100 above about 15 m/s; two cars), and a little with track maturity. It reads as a moving-vehicle confidence and is too coarse for a speed (98 spans 6-10 m/s); the summary frames carry no speed field ([`summary_score_speed.json`](../data/analysis/summaries/summary_score_speed.json)); 127 idle |
 | `9\|7` | target age in cycles, saturates at 126 |
 | `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames. Not the ACC `TARGET_ID` (equal on 1-9 % of frames where both describe the same car), but kept when the car becomes the ACC target |
 | `17\|7` | 100 while a target is present |
