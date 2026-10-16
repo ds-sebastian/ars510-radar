@@ -39,7 +39,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    fingerprints (`8821F0R01100`, `8821F0R03100`) are the ARS510 ([01](01_radar_bus.md#radar-firmware)). The hook also
    requires the radar's early bus-1 frames in the fingerprint (cycle header 0x190, target summaries 0x191 / 0x193, ACC target
    0x235 / 0x237 / 0x239). They start 0.14-1.0 s after the first CAN frame and were in the fingerprint window on all 74
-   recorded cold starts, while the object list starts only ~5.9 s after power-up. Without them, the car keeps stock's
+   recorded cold starts ([`radar_health.json`](../data/analysis/summaries/radar_health.json)), while the object list starts only ~5.9 s after power-up. Without them, the car keeps stock's
    radarless setup with vision leads: a radar that is declared but never reports would leave radarState invalid, and
    openpilot would refuse to engage at all (`commIssue`). A fork whose hook passes no fingerprint gets the car model alone. The C-HR
    (`TOYOTA_CHR_TSS2`) and Yaris (`TOYOTA_YARIS`) are in `ARS510_PLATFORMS` for testing: their radars send the same
@@ -77,7 +77,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
 | between completed records, last record still fresh | `None` returned | radard retains the last scan; a genuinely empty completed scan still clears its tracks |
 | before the first record (boot ~6 s) | empty list | vision-only leads, as on a radarless car |
 | last record older than 0.5 s (after the first) | `radarUnavailableTemporary` | `radarTempUnavailable` with openpilot long, and in every mode on sunnypilot, StarPilot and openpilot before 2026-09; otherwise radarState invalid → `commIssue` (lateral too) |
-| `acc`: the ACC frames stop | nothing returned | radarTracks stop → radarState invalid → `commIssue` (every fork and mode); in 38.4 replayed hours on three cars the ACC frames never stopped while the radar ran, list outages included |
+| `acc`: the ACC frames stop | nothing returned | radarTracks stop → radarState invalid → `commIssue` (every fork and mode); in 38.4 replayed hours on three cars the ACC frames never stopped while the radar ran, list outages included, and `acc` raised no `canError` ([`radar_health.json`](../data/analysis/summaries/radar_health.json)) |
 | record with a bad CRC | dropped | the 0.5 s rule covers sustained loss |
 
 ### Built into a fork's opendbc (car-model routing)
