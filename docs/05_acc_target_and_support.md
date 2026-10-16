@@ -161,7 +161,7 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
   farthest are 78-80 m below 20 m/s, 100 m at 20-25, 111 m at 25-30 and 129 m at 30-40 m/s; 0.2 % lie beyond max(80 m, 4 s × vEgo).
   The limit is on acquisition, not on keeping a target: in-lane camera leads beyond 80 m are covered 78-90 % inside it and 32-53 %
   outside it (targets taken nearer and kept as they pull away). Below 20 m/s a lead beyond 80 m is the ACC target only if it was
-  acquired nearer; otherwise only vision supplies it (`acc_summaries` publishes summaries within 60 m). With cruise off the same limit
+  acquired nearer; otherwise only vision supplies it (`acc_summaries` publishes summaries within 40 m). With cruise off the same limit
   holds (1 of 277 acquisitions beyond it, 0 of 153 with cruise engaged) ([summary](../data/analysis/summaries/acc_horizon_and_flips.json)).
 
 ![sender clock](img/analysis/acc_sender_clock.png)
@@ -292,7 +292,7 @@ a median 0.7-1.3 s before ([`function_tracker_outputs.json`](../data/analysis/su
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. `acc_summaries` publishes the non-ACC
-summaries within 60 m as radar points of their own, with a speed from the slope of their last 8 ranges
+summaries within 40 m as radar points of their own, with a speed from the slope of their last 8 ranges
 ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)); `fused` and `acc` do not read them
 (`fused` 2.0-2.3 used them inside its filter: [12](12_kalman_filter.md#what-the-summaries-do)).
 

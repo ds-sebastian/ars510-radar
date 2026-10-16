@@ -19,12 +19,12 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 | | `acc` (default) | `acc_summaries` | `fused` | `raw` |
 |---|---|---|---|---|
-| radar cars published | the one car the radar's ACC function follows | the ACC car plus the radar's two nearest other moving cars (summaries), within 60 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
+| radar cars published | the one car the radar's ACC function follows | the ACC car plus the radar's two nearest other moving cars (summaries), within 40 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
 | source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from the range slope | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
 | code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 65 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
-| tuned constants | protocol values only | 60 m limit, 8-range slope, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
+| tuned constants | protocol values only | 40 m limit, 8-range slope, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
 | first braking request vs vision only (95 % CI) | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) | −0.15 s (−0.26 … −0.05) |
@@ -103,11 +103,11 @@ What the table shows:
 |---|---|---|---|---|---|
 | 26 owner routes outside every replay set (4.28 h, 2.56 h moving) | vision only | 40.1 | 9.9 | 0 | 0 / 0 |
 | | `acc` | 7.7 | 5.3 | 323 | 1 / 9 |
-| | `acc_summaries` | 9.2 | 7.6 | 354 | 1 / 9 |
+| | `acc_summaries` | 7.7 | 5.5 | 339 | 1 / 9 |
 | | `fused` | 11.4 | 3.6 | 345 | 0 / 7 |
 | 12 second-car routes + 1 owner route held out from every parser decision (1.98 moving h) | vision only | — | — | 0 | — |
 | | `acc` | 1.1 | 0.0 | 474 | 0 / 1 |
-| | `acc_summaries` | 2.3 | 0.0 | 586 | 0 / 2 |
+| | `acc_summaries` | 1.6 | 0.0 | 543 | 0 / 2 |
 | | `fused` | 1.6 | 0.0 | 433 | 0 / 2 |
 
 On the 26 held-out owner routes `acc` minus `fused` per moving hour (route-bootstrap 95 % CI, 19 routes) is −1.45 s of
@@ -120,14 +120,12 @@ measure (hard 1 against 1, the same real closing; mild 5 against 4; unnecessary 
 [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (94 routes, 21.45 moving h) the
 unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the flip difference −22 per hour (−35.9 … −7.4).
 
-**`acc_summaries` on these drives.** On both held-out sets it brakes a little more than `acc` (per moving hour,
-`acc_summaries` minus `acc`): on the 26 owner routes unnecessary +0.61 s (0 … +1.88), missed +0.90 s (0 … +2.57), hard
-and mild identical; on the 13 routes unnecessary +0.61 s (0 … +1.77), mild +0.51 (0 … +1.84). Three upper bounds exceed
-the +1.0 s per hour non-inferiority margin used for the design-set comparison, on small samples (2.56 and 1.98 moving
-h), so these drives do not show it is as good as `acc`. The differences sit in 4 chunks. Lead one is the same ACC car in both profiles; the request differs through radard's
-second lead (a summary car where `acc` has the camera's) and the planner's state that follows. Against `fused` on the
-26 owner routes it has less unnecessary braking (−0.84 s, −1.73 … 0) and more missed (+1.54 s, 0 … +3.40). Its lead
-flips rise most here (+31 per hour on the owner routes, +112 on the 13 routes).
+**`acc_summaries` on these drives.** On the 26 owner routes it brakes like `acc` (per moving hour, `acc_summaries` minus
+`acc`): unnecessary equal, missed +0.08 s (0 … +0.26), hard and mild identical. On the 13 routes one more mild request
+remains, with unnecessary +0.23 s (0 … +0.85). Lead flips rise by 16 per hour on the owner routes and 69 on the 13 routes.
+The earlier 60 m limit braked more on both sets (unnecessary +0.61 s per hour on each, missed +0.90 s on the owner
+routes): radard took a summary car at 47-58 m as its lead before the radar's ACC picked the real one
+([above](#acc_summaries-acc-plus-the-summary-cars)).
 
 ### Stock ACC span and cut-ins
 
@@ -177,45 +175,40 @@ no DBC) publishes them next to the ACC target:
 - **Identity and speed.** Every other summary is `trackId 64 + code` (its pair code). Its speed is the least-squares
   slope of that code's last 8 ranges over CAN time, published once the 8 span less than 0.6 s, so a code that returns
   after a gap does not mix old and new ranges.
-- **Within 60 m.** Beyond 60 m only the ACC target is published, the same far rule as `fused`. A first version without
-  it gave two hard spikes from cars 7 m to the side at 86-93 m, which radard matched to the camera's far lead.
+- **Within 40 m.** Beyond 40 m only the ACC target is published. Further out radard can take a summary car in the next
+  lane as the camera's lead before the radar's ACC has picked the real one: on held-out owner routes it took cars at
+  47-58 m, 10-14 m off the camera's lead range, once braking for the wrong car and once missing a slowing lead. Without
+  any limit it gave two hard spikes from cars 7 m to the side at 86-93 m.
 
-Replayed against `acc` on every drive set (313 chunks, 74 routes, 18.8 moving hours; route-bootstrap 95 % CI of the
-difference per moving hour,
-[`acc_summaries_profile.json`](../data/analysis/summaries/acc_summaries_profile.json)):
+Replayed against `acc` on the fast suite, both held-out sets and every captured drive no replay set had used (103 routes,
+23.0 moving hours; route-bootstrap 95 % CI of the difference per moving hour,
+[`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json)):
 
 | | `acc` | `acc_summaries` | difference per moving h |
 |---|---|---|---|
-| hard episodes (moving) | 14 (6) | 14 (6) | 0 [0, 0]; no new episode |
-| mild episodes (moving) | 35 (27) | 37 (29) | +0.11 [−0.10, +0.33] |
-| oracle unnecessary braking | 24.4 s | 24.2 s | −0.01 [−0.08, +0.07] s |
-| oracle missed braking | 19.4 s | 17.1 s | −0.13 [−0.36, 0] s |
-| first braking on real closings, paired | | | +0.004 [−0.002, +0.012] s |
-| lead flips per hour | 294 | 335 | |
+| hard episodes | 14 | 14 | 0 [0, 0]; no new episode |
+| mild episodes | 43 | 46 | +0.13 [0, +0.31] |
+| oracle unnecessary braking | 31.8 s | 32.2 s | +0.02 [−0.01, +0.06] s |
+| oracle missed braking | 30.7 s | 29.9 s | −0.04 [−0.13, +0.02] s |
+| lead flips per hour | 315 | 342 | +26 [+19, +36] |
 
-- **Against `fused`** on the same 313 chunks: moving hard 6 against 9, mild 29 against 31, unnecessary 24.2 against 26.6 s,
-  missed 17.1 against 19.0 s (−0.10 s per hour, −0.24 … −0.01), lead flips 335 against 319 per hour.
-- **Earlier radar backing.** On 434 close cut-ins radard's lead switches 0.16 s earlier [−0.24, −0.09], with the same
-  braking. When the camera first sees a lead it is radar-backed 0.41 s earlier [−0.54, −0.30].
+- **Earlier radar backing.** On 276 close cut-ins in the fast suite radard's lead becomes radar-backed 0.09 s earlier than
+  with `acc` [−0.14, −0.04]: earlier on 24, later on 3.
+- **Against the 60 m limit** on the same drives: mild −0.04 per hour (−0.15 … 0), unnecessary −0.10 s (−0.28 … +0.03),
+  missed −0.03 s (−0.33 … +0.24), lead flips −19 per hour (−28 … −13); the cut-in head start goes from 0.10 to 0.09 s.
+  On the three sets outside the design drives (6.1 moving h) the 60 m limit gave +0.45 s of unnecessary and +0.38 s of
+  missed braking per hour against `acc`; at 40 m they are +0.07 and −0.13 s.
 - **The short form drives like the longer first version.** An 82-line version that tracked each summary on the radar
   clock, restarted it on range jumps and matched the ACC car by its exact rounding gives the same braking on every
   measure (hard, mild and missed identical; unnecessary −0.02 s/h [−0.07, +0.02]); its speeds were slightly cleaner
   offline (0.18 against 0.21 m/s RMS against the ACC speed).
-- **How often it matters.** radard takes its lead from a summary point on 1.1 % of moving lead time.
-- **Against a camera-only reference** the tie with `acc` shifts slightly: +0.29 s of unnecessary braking per moving hour
-  (+0.01 … +0.61) for `acc_summaries` ([`yardstick_check.json`](../data/analysis/summaries/yardstick_check.json)).
-- **Choice of the 60 m rule.** It is `fused`'s far rule, applied after the first version's failures on these same drives,
-  so this is a design-set pass. The result does not hinge on the exact value: every limit from 40 to 80 m passes, braking
-  and the cut-in gain stay flat, and the limit mainly trades lead flips (+22 per hour at 40 m, +69 at 80 m) against how
-  early a camera lead becomes radar-backed.
-- **Drives held back from the alternative design** (owner road drives, the second car's held-out set and its later drives,
-  14.2 moving h): `acc` / `acc_summaries` moving hard 1 / 1, mild 18 / 18, unnecessary 21.2 / 20.6 s, missed 17.0 / 14.6 s,
-  cut-in lead switch 0.16 s earlier [−0.23, −0.09] on 321 cut-ins. Publishing the summary cars only while an ACC target
-  exists brakes the same but loses that gain (+0.04 s), so the profile keeps the 60 m form.
+- **Choice of 40 m.** On the design drives every limit from 40 to 80 m brakes alike and the limit mainly trades lead flips
+  against how early a camera lead becomes radar-backed; the held-out drives place the mismatches beyond 40 m. Also leaving
+  out cars beyond the ACC car does not brake better (unnecessary +0.02 s per hour, flips −4), and publishing the summary
+  cars only while an ACC target exists loses the cut-in gain, so the profile keeps one range limit.
 - **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
   the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
-  default; `acc_summaries` is the recommended alternative until road drives settle the held-out difference
-  ([above](#drives-held-out-from-every-choice)).
+  default; `acc_summaries` is the recommended alternative until road drives exist.
 
 ![acc_summaries against the range limit](img/analysis/acc_summaries_sweep.png)
 
@@ -248,7 +241,7 @@ the object-list steps belong to `raw` and `fused`.*
   vision match. The protocol part: opendbc's CANParser on three DBC messages, the target-present flags, `canError` when
   the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances).
 - **`acc_summaries`** publishes the same ACC point and, from the target summaries 0x191-0x194, the radar's two nearest
-  other moving cars within 60 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 64 + the summary's pair code,
+  other moving cars within 40 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 64 + the summary's pair code,
   and a speed from the least-squares slope of that code's last 8 ranges. A summary within 1 m / 0.5 m of the ACC point
   is the ACC car and is skipped. Details [above](#acc_summaries-acc-plus-the-summary-cars).
 - **`fused`** adds range fusion and **one Kalman filter per track** on the lead's over-ground speed

@@ -3,15 +3,15 @@
 The radar's ACC target (0x235 / 0x237) is published as in `acc`. The target summaries add up to two more moving cars from
 the same tracker: range and lateral in 0x192 / 0x194, a pair code in 0x191 / 0x193 (trackId 64 + code). A summary within
 1 m / 0.5 m of the ACC point is that car and is skipped. vRel is the least-squares slope of the code's last 8 ranges
-over CAN time (the 8 must span less than 0.6 s). Summaries beyond 60 m are left out: radard cannot tell a neighbouring
-lane from the camera's far lead there. Evidence and replay numbers: docs/11 ("acc_summaries").
+over CAN time (the 8 must span less than 0.6 s). Summaries beyond 40 m are left out: radard cannot tell a neighbouring
+lane from the camera's farther lead there (at 47-58 m it took such a car as the lead before the radar's ACC picked the real one). Evidence and replay numbers: docs/11 ("acc_summaries").
 """
 from collections import deque
 
 from opendbc.car import structs
 from opendbc.car.interfaces import RadarInterfaceBase
 
-STALE_S, FAR_M, SLOPE_N, SLOPE_SPAN_S, SUMMARY_ID = 0.5, 60.0, 8, 0.6, 64  # summary trackIds: 64 + pair code (ACC ids are 6 bits)
+STALE_S, FAR_M, SLOPE_N, SLOPE_SPAN_S, SUMMARY_ID = 0.5, 40.0, 8, 0.6, 64  # summary trackIds: 64 + pair code (ACC ids are 6 bits)
 JUMP_M = 5.0  # a range step this large between cycles is a glitch, a new car, or two cars sharing a pair code (codes are per slot)
 # 0x237's lateral field is the low 12 bits of a 13-bit value: beyond 20.95 m left it wraps by 40.96 m. Its check byte (CRC-8
 # over the signals, linear: one column per payload bit from byte 1 bit 7, constant 0xFE; docs/05) is then off by 0x14.
