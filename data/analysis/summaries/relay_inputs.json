@@ -1,0 +1,72 @@
+{
+ "description": "The radar's inputs and threat logic while openpilot's UDS disable has cut its car-bus output: what a relay of its own PCS decision would rely on. Drives anonymised: U2 (third car, 8821F0R03100) and opendbc's public C-HR Hybrid route recorded with openpilot longitudinal and the radar disabled (8821FF410500); radar-on drives of the same cars for comparison.",
+ "after_disable": {
+  "U2": {
+   "moving_h": 0.163,
+   "curvature_vs_yaw_over_speed": {
+    "r": 0.968,
+    "slope": 1.053,
+    "frames": 41
+   },
+   "stationary_object_speed_median_mps": 0.0,
+   "event_pair_active_frames_per_moving_h": 252.3,
+   "required_decel_min_mps2": -1.8,
+   "alarm_0x100": 0
+  },
+  "C-HR Hybrid": {
+   "moving_h": 0.336,
+   "curvature_vs_yaw_over_speed": {
+    "r": 0.973,
+    "slope": 1.042,
+    "frames": 111
+   },
+   "curvature_vs_steering_check": {
+    "r": 0.956,
+    "slope": 1.033
+   },
+   "stationary_object_speed_median_mps": 0.0,
+   "event_pair_active_frames_per_moving_h": 330.7,
+   "required_decel_min_mps2": -2.8,
+   "alarm_0x100": 0
+  }
+ },
+ "radar_on": {
+  "curvature_r_range": [
+   0.778,
+   0.913
+  ],
+  "event_pair_active_frames_per_moving_h_range": [
+   75.9,
+   485.5
+  ]
+ },
+ "alarm_reference_u3": {
+  "onset_ttc_s": 2.3,
+  "onset_required_decel_mps2": -1.8,
+  "closing_mps": 6.86,
+  "pedal_free_before_onset_s": 0.6
+ },
+ "closest_moment_under_disable": {
+  "ttc_s": 2.19,
+  "required_decel_mps2": -2.7,
+  "closing_mps": 9.86,
+  "event_pair_frames": 2,
+  "alarm_0x100": 0,
+  "reading": "too brief to show suppression"
+ },
+ "state4_0x283": {
+  "events": 4,
+  "cars": 2,
+  "duration_s": [
+   0.3,
+   0.7
+  ],
+  "object_m": [
+   2.4,
+   3.2
+  ],
+  "force": 0,
+  "panda": "blocked from openpilot (bytes 0-5 must be zero)"
+ },
+ "source": "research workspace SCR-962..965"
+}
