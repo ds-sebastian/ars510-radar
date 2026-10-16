@@ -22,7 +22,7 @@ all-tracks candidate.
 | | `acc`: the ACC target alone (proposal) | `fused`: every track (single file) |
 |---|---|---|
 | files | [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) + [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), as [`opendbc_ars510.patch`](../upstream/opendbc_ars510.patch) | [`upstream/ars510_radar.py`](../upstream/ars510_radar.py), routed by [`toyota_routing.patch`](../upstream/toyota_routing.patch) |
-| size | 33 code lines (50 in the file); reads 7 DBC signals of three messages plus their rolling counters | 187 code lines (227 in the file) |
+| size | 45 code lines (68 in the file); reads 7 DBC signals of three messages plus their rolling counters | 187 code lines (227 in the file) |
 | constants / state attributes / conditions / functions | 1 / 4 / 5 / 2 | 28 / 15 / 85 / 13 |
 | radar available when | the car model: every radar-ACC platform (RAV4 2022 and 2023-25, C-HR, Yaris) | the car model: the radar-ACC RAV4 2022 and 2023-25 platforms |
 | evidence | [below](#the-acc-target-alone--candidate) | [parts ledger](#parts-of-the-openpilot-file) |
@@ -94,7 +94,7 @@ What upstream review is likely to ask, from recent openpilot / opendbc radar PRs
 
 Each part of [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (`fused`), its code lines (statements only, comments, docstrings and
 blank lines left out of the count; shared constants counted once, counted as `tests/test_openpilot_file_ledger.py` does), what removing it costs
-on the 27 replay drives, and its status for an upstream PR. The `acc` file has 33 code lines counted the same way.
+on the 27 replay drives, and its status for an upstream PR. The `acc` file has 45 code lines counted the same way.
 
 | part | code lines | since | cost of removal | for upstream |
 |---|---|---|---|---|
@@ -120,7 +120,7 @@ each part.
 [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) publishes only the radar's ACC target
 (0x235 / 0x237: distance, lateral position, closing speed, target id) as openpilot's one radar point, the way Toyota's
 own ACC uses the radar ([05](05_acc_target_and_support.md)). It is a CANParser on three messages, the target-present flags and
-one point: 33 code lines (50 in the file) reading 7 DBC signals, against 187 lines, 1 constant against 28, 5 conditions against 85.
+one point: 45 code lines (68 in the file) reading 7 DBC signals, against 187 lines, 3 constants against 28, 9 conditions against 85.
 The replay numbers below come from a hand-decoded version that decodes the same values (all 11,028 bundled reports
 identical) and reported every fifth card update. Reporting once per radar cycle instead gives the same results on every
 measure (hard 13 against 13, mild 32 against 30, unnecessary 19.3 against 19.2 s, missed 17.4 against 17.4 s; every

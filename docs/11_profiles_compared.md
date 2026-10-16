@@ -23,7 +23,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from the range slope | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
-| code | 33 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 57 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 65 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
 | tuned constants | protocol values only | 60 m limit, 8-range slope, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
@@ -155,7 +155,7 @@ flips rise most here (+31 per hour on the owner routes, +112 on the 13 routes).
   with the radar's range; vision put the lead 3-4 m closer
   ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3);
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
-- **Small and auditable.** 33 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
+- **Small and auditable.** 45 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
 - **Replay evidence on 21.45 moving hours.** `fused` also has road drives (sunnypilot and a second driver's car,
   [08](08_openpilot_integration.md#on-the-road)); `acc`'s first two road drives (1.4 h) had the radar lead on 95 % of
@@ -165,7 +165,7 @@ flips rise most here (+31 per hour on the owner routes, +112 on the 13 routes).
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 57 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 65 code lines,
 no DBC) publishes them next to the ACC target:
 - **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
 - **Identity and speed.** Every other summary is `trackId 32 + code` (its pair code). Its speed is the least-squares
@@ -338,8 +338,8 @@ whose lead comes from the object list alone.
 | profile | pros | cons |
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
-| `acc` | a DBC and 33 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and two road drives |
-| `acc_summaries` | 57 code lines, no DBC; braking as `acc` over all sets with less missed braking; radar backing 0.16 s earlier on close cut-ins | more lead flips; on held-out drives slightly more unnecessary and missed braking than `acc` through radard's second lead; no road drives yet |
+| `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and two road drives |
+| `acc_summaries` | 65 code lines, no DBC; braking as `acc` over all sets with less missed braking; radar backing 0.16 s earlier on close cut-ins | more lead flips; on held-out drives slightly more unnecessary and missed braking than `acc` through radard's second lead; no road drives yet |
 | `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
@@ -359,7 +359,7 @@ whose lead comes from the object list alone.
   the columns in each row.
 - **Versions.** `fused` rows are release 2.6.0 (far rule, stationary path gate, ACC target weight 0.13 m/s, summaries
   off). `acc_summaries` rows are `openpilot/standalone/ars510_acc_summaries.py` as it was before its summary-glitch guards (53 code lines; the guards change 0.06 % of reports, [`summary_all_ones_glitch.json`](../data/analysis/summaries/summary_all_ones_glitch.json)). `acc` rows are the public `upstream/ars510_acc_target.py` replayed through the same harness; the replayed
-  file is a hand-decoded version that publishes the same points as the current DBC file (33 code lines) on
+  file is a hand-decoded version that publishes the same points as the current DBC file (45 code lines) on
   all 11,028 bundled reports.
 - **Definitions.** Hard radar-only tick: planner ≤ −2 m/s² while vision only asks ≥ −0.5. Driver-brake metrics use
   [−3, +0.5] s (anticipation), [−3, +2] s (first request) and [−3, +1] s (missed hard slowdown) around the brake press.
