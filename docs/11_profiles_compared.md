@@ -360,7 +360,8 @@ whose lead comes from the object list alone.
 - **Versions.** `fused` rows are release 2.6.0 (far rule, stationary path gate, ACC target weight 0.13 m/s, summaries
   off). `acc_summaries` rows are `openpilot/standalone/ars510_acc_summaries.py` as it was before its summary-glitch guards (53 code lines; the guards change 0.06 % of reports, [`summary_all_ones_glitch.json`](../data/analysis/summaries/summary_all_ones_glitch.json)). `acc` rows are the public `upstream/ars510_acc_target.py` replayed through the same harness; the replayed
   file is a hand-decoded version that publishes the same points as the current DBC file (45 code lines) on
-  all 11,028 bundled reports.
+  all 11,028 bundled reports; the file's lateral-wrap unwrap changes no planner tick in the replay
+  ([`acc_lat_dist_wrap.json`](../data/analysis/summaries/acc_lat_dist_wrap.json)).
 - **Definitions.** Hard radar-only tick: planner ≤ −2 m/s² while vision only asks ≥ −0.5. Driver-brake metrics use
   [−3, +0.5] s (anticipation), [−3, +2] s (first request) and [−3, +1] s (missed hard slowdown) around the brake press.
 

@@ -49,7 +49,9 @@ commit:
   bit's term 0x14 ([05](05_acc_target_and_support.md#check-bytes)). `upstream/ars510_acc_target.py` reads the raw 0x237 frame and
   adds the 40.96 m back (12 of its 45 code lines). In opendbc that check belongs to a checksum type for this DBC, which
   CANParser selects by DBC name, rather than to the radar interface, so the patch leaves it out. The wrapped targets sit
-  21-43 m to the side in turns and at junctions, and radard never took one as its lead in the recorded drives.
+  21-53 m to the side in turns and at junctions (14 of 320 wrapped cycles were published within 2 m of the path, at
+  77-81 m). radard never took one as its lead in the recorded drives, and in the fast-suite replay the unwrap changes
+  no planner tick ([`acc_lat_dist_wrap.json`](../data/analysis/summaries/acc_lat_dist_wrap.json)).
 - **Tests:** two in the existing `opendbc/car/toyota/tests/test_toyota.py`: every radar-ACC car gets the ARS510, and
   50 Hz frames give one report per radar cycle (radard's frequency check is off in replay, so only this test guards it).
   opendbc's generic tests cover the rest: `test_car_interfaces.py` runs every platform's `RadarInterface`, and
