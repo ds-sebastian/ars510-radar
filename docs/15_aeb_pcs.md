@@ -25,7 +25,9 @@ Toyota radar-ACC), that ECU's AEB goes with it; opendbc's `disable_ecu` says so 
 radar's car-bus messages reach the car on a path that bypasses the panda
 ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)), so panda cannot take over 0x343 alone: a CAN filter in
 the radar's line does that in hardware and keeps the radar's AEB, and a relay of the radar's bus-1 decision would be the
-software route ([below](#relaying-the-radars-decision--theoretical)).
+software route ([below](#relaying-the-radars-decision--theoretical)). The route other cars use to keep stock ACC (with its
+AEB) under openpilot speed control, stepping the stock set speed with emulated cruise buttons, is closed here: the cruise
+lever never appears on CAN, only its effects ([13](13_car_bus_messages.md#0x365-lead-distance-and-relative-speed-)).
 
 ## What the PCS frames can request
 
@@ -99,9 +101,16 @@ it sets and when it clears; the report holds the alarm's target (id 6, the picku
 ## Relaying the radar's decision (○ theoretical)
 
 The disable silences the radar's car-bus side. On bus 1, which the comma reads, the radar keeps sending its object
-list, ACC target and threat states at full rate ([01](01_radar_bus.md#openpilots-radar-disable)). On U2 its short
-time-to-collision event pair (0x195 / 0x196, [05](05_acc_target_and_support.md#0x195--0x196-event-pair)) kept firing
-while it was disabled. The radar's PCS logic appears to keep running with only its output to the car cut. A relay would
+list, ACC target and threat states at full rate ([01](01_radar_bus.md#openpilots-radar-disable)). Two drives with the disable
+active, U2 and opendbc's C-HR Hybrid "radar disabled" route on another radar firmware, show the radar still working (◐,
+[`relay_inputs.json`](../data/analysis/summaries/relay_inputs.json)):
+- **It still receives the car's yaw rate and speed.** The ego path curvature it reports in 0x195 follows yaw rate / speed with
+  r 0.97 (slope 1.04-1.05), and the objects it flags stationary read 0 m/s over ground.
+- **Its short time-to-collision event pair (0x195 / 0x196, [05](05_acc_target_and_support.md#0x195--0x196-event-pair)) keeps
+  firing**, at 250-330 active frames per moving hour, with required decelerations down to −2.8 m/s².
+
+So its PCS logic keeps running with only its output to the car cut. Whether its alarm stage (0x100) still fires there is not
+recorded: the one comparable moment, at a time to collision of 2.2 s, lasted 0.06 s. A relay would
 reconnect that output through openpilot, so Toyota's own tuned decision logic still decides when to brake.
 
 How it would work:
@@ -162,6 +171,9 @@ What this means for a build today:
   FCW in 0x411 under alpha long; a relay would swap in Toyota's decision for openpilot's. The alarm-stage frames (0x344
   `PCSALM`, 0x283 `PCSNOCHG`) may also prime brake assist in the brake system, so their effect is the first thing to
   record.
+- **0x283 has a low-speed state the relay must also carry.** In Park with a stationary object 2-3 m ahead the radar has sent
+  `STATE` 4 with no force for 0.3-0.7 s (four times, two cars; its meaning is open). Upstream panda lets openpilot send 0x283
+  only with bytes 0-5 zero, so even this frame needs the relay's own panda rule.
 - **A passive watcher is the safe first build.** Read 0x100 on bus 1 while the radar is disabled, log it, and raise
   openpilot's existing FCW alert when it fires. It stays read-only on the car bus and tests the signal on
   real drives.
