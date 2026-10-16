@@ -4,51 +4,65 @@ This guide describes the captures that improve the ARS510 decode and its openpil
 smallest session that separates your question; one route can cover several tests. Session lengths and repeat
 counts below are planning suggestions; a field or profile passes validation through the checks at the end of this page.
 
-**For most testers, start with T08 stock-ACC driving and T13 fresh road reports.** Parked diagnostics (T01/T02)
-run with a maintainer-assisted read-only acquisition setup. Physical calibration comes from measured target geometry
-(T03) or independently logged motion of both cars (T04).
+**For most testers, start with the first item under each goal below:** engaged drives with `acc` or `acc_summaries`
+installed (T13), and, on an unfiltered radar line, openpilot longitudinal drives with both buses logged. Parked
+diagnostics (T01/T02) run with a maintainer-assisted read-only acquisition setup. Physical calibration comes from
+measured target geometry (T03) or independently logged motion of both cars (T04).
 
-### Captures most useful now
+### Priorities
 
-Two goals set the current requests: better `acc` / `acc_summaries` behaviour on the road, and keeping AEB under
-openpilot longitudinal ([15](15_aeb_pcs.md)). The first five rows need nothing beyond full logging.
+Two goals set the order: better `acc` / `acc_summaries` behaviour on the road, and keeping AEB under openpilot
+longitudinal ([15](15_aeb_pcs.md)). Each list starts with what settles the most per hour of effort; the first two items
+of each need nothing beyond full logging.
 
-| What you can offer | Session to choose | What makes it useful |
-|---|---|---|
-| Normal driving and full rlogs, stock or any installed profile | T08 + T13 + [T14](#t14-follow-one-target-through-selection-changes) | city queues, ordinary lead exits/switches and curves; uninterrupted video/CAN before and after each event. Every profile replays on the same CAN, so three moving hours per car, one of them above 20 m/s, give a profile comparison |
-| Drives with `acc` or `acc_summaries` installed | T13 | closed-loop behaviour: bookmark unwanted, late or jerky braking and lead switches, and name the profile and version |
-| openpilot longitudinal on an unfiltered radar line (openpilot disables the radar from startup) | T13 + [T12](#t12-pcs-and-event-reports), natural events only | bookmark each moment you brake hard for something ahead and keep both buses: shows whether the disabled radar still raises its PCS alarm (0x100) on bus 1, the first step of an AEB relay ([15](15_aeb_pcs.md#recordings-that-settle-the-open-stages)); about 30 moving hours on radar firmware 8821F0R03100 settle it |
-| A car that keeps stock PCS (stock, or openpilot behind a radar-line filter) | [T12](#t12-pcs-and-event-reports), natural events only | if PCS ever warns or brakes, keep that rlog with bus 0 and bus 1: the braking-stage frames a relay needs |
-| Another radar-ACC model or radar firmware (C-HR, Yaris, other RAV4 radar firmware) | T08 + T13 | bus 1 from more cars and firmware shows whether the profiles transfer |
-| A second cooperative car and qualified motion references | T03 + T04 + T07 | the same target near/far and in several motion conditions, with measured timing, origins and reference error |
-| A maintainer-assisted read-only diagnostic setup | T01 + T02 | radar-reported ego speed, alignment/temperature and status alongside the original broadcast frames; while parked, also press each cruise control a few times (no frame is known to carry the lever) |
-| A surveyed site and identifiable target | T03 + T06 + T10 | distance zero, target identity through loss/recovery, and motion/class confidence on one known object |
-| A spare sensor and instrumented bench | T09, arranged with the maintainer | distinguish camera input from receiver/transport availability with a stock startup baseline |
-| A professional PCS facility | T12 | independently labelled warning, assist and braking stages, all buses and actual actuator response; the alarm with the radar disabled |
+**Goal 1: `acc` and `acc_summaries`**
 
-The PCS rows collect events that happen anyway in normal driving or at a facility; never provoke one (Toyota advises
-leaving PCS testing to professionals). Ordinary routes can contribute without changing the installed profile. In the report, name the test IDs, give
-times relative to the session and offer complete logs privately. A short pilot with the maintainer helps establish
-that the requested signals and reference are present before a longer controlled acquisition.
+| # | Capture | Tests | What it settles |
+|---|---|---|---|
+| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has few engaged road hours, `acc_summaries` none (its evidence is replay). Stops behind a lead and far leads are the cases most missing |
+| 2 | Stock-ACC drives through lead exits, lead switches and cut-ins | [T08](#t08-stock-acc-and-additional-target-reports) + [T14](#t14-follow-one-target-through-selection-changes) | Toyota's own controller acting on the same target: the reference for when radard should follow the ACC target at a cut-in (the ACC target switches before the camera model does) |
+| 3 | A second cooperative car, both cars with GNSS or another qualified motion reference | [T04](#t04-independent-lead-speed-and-acceleration) (+ T03, T07) | physical lead speed and acceleration: how good the summary cars' range-slope speed is, and whether the far-range shortfall matters |
+
+**Goal 2: AEB under openpilot longitudinal**
+
+| # | Capture | Tests | What it settles |
+|---|---|---|---|
+| 1 | openpilot longitudinal on an unfiltered radar line (openpilot disables the radar from startup), both buses logged. Bookmark each moment you brake hard for something ahead | [T13](#t13-fresh-road-and-parser-validation) + [T12](#t12-pcs-and-event-reports), natural events only | whether the disabled radar still raises its PCS alarm (0x100) on bus 1: the go / no-go for an AEB relay ([15](15_aeb_pcs.md#recordings-that-settle-the-open-stages)). About 30 moving hours on radar firmware 8821F0R03100 settle it |
+| 2 | A professional PCS facility | [T12](#t12-pcs-and-event-reports) | the braking stages and the alarm with the radar disabled, against a validated soft target, with the actuator response |
+| 3 | Any PCS warning or braking on a car that keeps stock PCS (stock, or openpilot behind a radar-line filter), both buses logged | [T12](#t12-pcs-and-event-reports), natural events only | the braking-stage frames a relay needs; recorded so far are the alarm and the brake-assist trigger only |
+
+**Also useful for both goals.** Any ordinary drive with full rlogs, stock or with any profile: every profile replays on
+the same CAN, so three moving hours per car, one of them above 20 m/s, give a profile comparison. Drives from another
+radar-ACC model or radar firmware (C-HR, Yaris, other RAV4 radar firmware; T08 + T13) show whether the profiles transfer.
+
+**Decode work, not needed for these goals:** T01 / T02 (startup, status and radar-reported ego speed with the maintainer's
+read-only diagnostic kit; while parked, also press each cruise control a few times, as no frame is known to carry the
+lever), T03 / T05-T07 (surveyed geometry, uncertainty, identity, lateral motion), T09 (factory-camera dependence, with a
+spare sensor and bench arranged with the maintainer), T10 / T11 (class, scores, lanes and curves).
+
+The PCS items collect events that happen anyway in normal driving or at a facility; never provoke one (Toyota advises
+leaving PCS testing to professionals). Ordinary routes can contribute without changing the installed profile. In the
+report, name the test IDs, give times relative to the session and offer complete logs privately. A short pilot with the
+maintainer helps establish that the requested signals and reference are present before a longer controlled acquisition.
 
 ## Choose a session
 
-| Test | Setup / suggested time | Question it addresses |
-|---|---|---|
-| [T01](#t01-parked-startup-and-status) | parked, diagnostic kit; 10–15 min | startup, blockage/recovery, supported diagnostic DIDs |
-| [T02](#t02-radar-reported-ego-speed) | stock/manual drive, passenger + diagnostic kit; 10–15 min | radar-reported ego speed versus B4 |
-| [T03](#t03-surveyed-range-and-lateral-position) | surveyed closed site, helper; 30–60 min | distance zero/scale, lateral frame, far bias/jitter |
-| [T04](#t04-independent-lead-speed-and-acceleration) | two instrumented cars, controlled site; 45–60 min | native speed, ego compensation, excursions, acceleration |
-| [T05](#t05-physical-uncertainty) | repetitions of T03/T04/T07 | uncertainty units, covariance and measurement/track basis |
-| [T06](#t06-identity-prediction-and-lifecycle) | parked ego, known target/occluder; 20–30 min | physical identity versus slots, prediction/reacquisition |
-| [T07](#t07-lateral-motion-heading-and-turning) | surveyed target path and ego turns; 20–30 min | lateral motion/heading scale, frame and delay |
-| [T08](#t08-stock-acc-and-additional-target-reports) | ordinary stock-ACC drive; 30–60 min | controller, target switches, ACC side fields, 0x366/0x680 |
-| [T09](#t09-factory-camera-dependence) | parked ego, paired controlled-site conditions | factory-camera contribution to target selection/kinematics |
-| [T10](#t10-class-scores-and-dimensions) | labelled/measured targets, parked ego; 30–45 min | class 5, score/probability meaning and target size |
-| [T11](#t11-lanes-curves-and-five-cycle-patterns) | surveyed lanes/curves plus day/night routes | 0x85, lane/camera fields, duty pattern |
-| [T12](#t12-pcs-and-event-reports) | incidental event or professional facility | warning/braking stages, 0x100/195/196/33E |
-| [T13](#t13-fresh-road-and-parser-validation) | fresh ordinary drives and offline replay | installation, road behavior and transfer to other cars/forks |
-| [T14](#t14-follow-one-target-through-selection-changes) | ordinary manual/stock-ACC route, or controlled target path | separate selection/path changes from changes in the target population |
+| Test | Setup / suggested time | Question it addresses | Priority |
+|---|---|---|---|
+| [T01](#t01-parked-startup-and-status) | parked, diagnostic kit; 10–15 min | startup, blockage/recovery, supported diagnostic DIDs | decode |
+| [T02](#t02-radar-reported-ego-speed) | stock/manual drive, passenger + diagnostic kit; 10–15 min | radar-reported ego speed versus B4 | decode |
+| [T03](#t03-surveyed-range-and-lateral-position) | surveyed closed site, helper; 30–60 min | distance zero/scale, lateral frame, far bias/jitter | acc 3 (with T04) |
+| [T04](#t04-independent-lead-speed-and-acceleration) | two instrumented cars, controlled site; 45–60 min | native speed, ego compensation, excursions, acceleration | acc 3 |
+| [T05](#t05-physical-uncertainty) | repetitions of T03/T04/T07 | uncertainty units, covariance and measurement/track basis | decode |
+| [T06](#t06-identity-prediction-and-lifecycle) | parked ego, known target/occluder; 20–30 min | physical identity versus slots, prediction/reacquisition | decode |
+| [T07](#t07-lateral-motion-heading-and-turning) | surveyed target path and ego turns; 20–30 min | lateral motion/heading scale, frame and delay | acc 3 (with T04) |
+| [T08](#t08-stock-acc-and-additional-target-reports) | ordinary stock-ACC drive; 30–60 min | controller, target switches, ACC side fields, 0x366/0x680 | acc 2 |
+| [T09](#t09-factory-camera-dependence) | parked ego, paired controlled-site conditions | factory-camera contribution to target selection/kinematics | decode |
+| [T10](#t10-class-scores-and-dimensions) | labelled/measured targets, parked ego; 30–45 min | class 5, score/probability meaning and target size | decode |
+| [T11](#t11-lanes-curves-and-five-cycle-patterns) | surveyed lanes/curves plus day/night routes | 0x85, lane/camera fields, duty pattern | decode |
+| [T12](#t12-pcs-and-event-reports) | incidental event or professional facility | warning/braking stages, 0x100/195/196/33E | AEB 1-3 |
+| [T13](#t13-fresh-road-and-parser-validation) | fresh ordinary drives and offline replay | installation, road behavior and transfer to other cars/forks | acc 1, AEB 1 |
+| [T14](#t14-follow-one-target-through-selection-changes) | ordinary manual/stock-ACC route, or controlled target path | separate selection/path changes from changes in the target population | acc 2 |
 
 ### Conditions for recording
 

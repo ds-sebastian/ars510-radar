@@ -52,9 +52,10 @@ sudo reboot                                                          # required:
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
 For the routes and controlled captures that help most, see [16: Routes and tests](docs/16_routes_and_tests.md).
-The [current capture requests](docs/16_routes_and_tests.md#captures-most-useful-now) include ordinary lead-switch
-routes, fresh city/highway logs (any profile), drives under openpilot longitudinal with the radar disabled, any PCS event
-with both buses logged, measured target motion and maintainer-assisted ego/alignment diagnostics.
+The [test priorities](docs/16_routes_and_tests.md#priorities) are ordered by the two current goals: for `acc` /
+`acc_summaries`, engaged drives with the profile installed, then stock-ACC drives through cut-ins, then two-car motion
+references; for AEB, openpilot longitudinal drives with the radar disabled and both buses logged, then facility tests, then
+any natural PCS event with both buses.
 
 ## What to expect on the road
 
