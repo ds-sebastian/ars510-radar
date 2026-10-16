@@ -27,7 +27,9 @@ ID85_FIRST_FRAME = (0x10, 0x90)  # length 0x090 = 144
 ID85_RECORD_FRAMES = 21
 ID85_RECORD_LEN = 147
 
-# Each record start is followed within ~20 ms by a fixed marker frame 30 00 00 00 00 00 00 00.
+# Each record is an ISO-TP transfer from the radar to the camera: the camera answers every first frame (0x80: length 740,
+# 0x85: 144) with one flow-control frame 30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0) about 0.35 ms
+# later, and the radar sends the consecutive frames only after it (docs/01). The names below are kept for compatibility.
 ID80_MARKER_ADDR = 0x81
 ID85_MARKER_ADDR = 0x86
 RECORD_MARKER_PAYLOAD = bytes.fromhex("3000000000000000")

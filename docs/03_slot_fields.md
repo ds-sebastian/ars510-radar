@@ -294,7 +294,10 @@ event happened at some time on that phase; the record where a phase newly sets i
 - **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
   all ranges grows linearly with `224|7` (log-log slope 1.01; `232|7` 0.79), but within a fixed range band (beyond 15 m)
   it grows about as √code on both cars (0.51 / 0.59 on fresh drives), because code and error both grow with range
-  ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)).
+  ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)). Allowing each 5 m range band its own error floor,
+  a σ code fits better than a variance code for `240|7`, `248|7` and `232|7` on both cars: the √-like slope is what a σ code
+  looks like on top of a floor. `224|7` stays open. The reference is the ACC target, which is not independent
+  ([`bus1_transport.json`](../data/analysis/summaries/bus1_transport.json), block `uncertainty_form`).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
   [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
   range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s in this joint fit, which overstates it: per-code spreads against stationary objects (about 0.03) and on moving leads (about 0.09) are in the table. Relative units: the

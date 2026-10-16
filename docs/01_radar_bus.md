@@ -26,9 +26,9 @@ segmented record on 0x80, and 0x191-0x194 carry two target summaries from the ra
 | addr | DLC | rate | content | doc |
 |---|---|---|---|---|
 | **0x80** | 8 | 106 frames / 60 ms | **object list**: 742-byte record, 20 object slots × 36 bytes + CRC32 | [02](02_object_list.md), [03](03_slot_fields.md) |
-| 0x81 | 8 | 16.6 Hz | record-cycle marker `30 00 …` after each 0x80 record start | |
+| 0x81 | 8 | 16.6 Hz | ISO-TP flow control `30 00 …` (clear to send, block size 0, STmin 0) for each 0x80 transfer, from its receiver (the camera, inferred): the radar sends the rest of the record only after it ([below](#who-sends-the-object-list)) | |
 | **0x85** | 8 | 21 frames / 60 ms | metadata record: 147 bytes, ten 12-byte cells (lane / road-boundary curves: offset, heading, curvature) + CRC32 | [04](04_metadata_record_0x85.md) |
-| 0x86 | 8 | 16.6 Hz | record-cycle marker for 0x85 | |
+| 0x86 | 8 | 16.6 Hz | ISO-TP flow control for each 0x85 transfer | |
 | 0x100-0x103 | 7/6/3/2 | 10 Hz | startup state: 0x101 goes 0x1D → 0x11 when the radar is running; 0x100 byte 0 = 0x02 during a PCS alarm ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3)) | [05](05_acc_target_and_support.md#startup-and-readiness) |
 | 0x180 | 5 | 16.6 Hz | constant `CF C0 00 00 00` | |
 | 0x190 | 7 | 16.6 Hz | cycle header: number of target summaries, µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
@@ -50,6 +50,24 @@ carries 0x100, 0x103, 0x190-0x196, 0x198, 0x202, 0x24F, 0x680 and the ACC target
 0x197, 0x210, 0x240-0x248, 0x24D, 0x500 and 0x501.
 
 Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) with a one-line comment per signal.
+
+### Who sends the object list
+
+The object list (0x80) and the metadata record (0x85) are ISO-TP transfers from the radar to their receiver, most likely the
+factory camera (●, three cars, 2.27 M transfers, [`bus1_transport.json`](../data/analysis/summaries/bus1_transport.json)):
+
+- every first frame carries the length: 740 bytes for 0x80 (`12 E4`) and 144 for 0x85 (`10 90`);
+- the receiver answers each first frame about 0.35 ms later with one flow-control frame `30 00 …` on 0x81 / 0x86 (clear to
+  send, no block limit, no minimum gap), and the radar sends the consecutive frames only after it: when another frame delays
+  the flow control, the first consecutive frame moves by the same amount;
+- a first frame left unanswered loses that record, and the radar tries again on a later cycle. The second car's two
+  object-list outages are this case: radar and camera kept every other frame at full rate, and only the flow control stopped
+  ([05](05_acc_target_and_support.md#0x195--0x196-event-pair));
+- the records follow a 60.28 ms cycle whose clock (the 0x80 header and 0x85 prefix clocks) runs at the camera's oscillator
+  rate (◐, 87 routes), while the 0x190 / 0x239 µs stamps run on the radar's own.
+
+The sender of 0x81 / 0x86 is inferred from the protocol (the receiver sends flow control) and from the link carrying only the
+radar and the camera.
 
 ## Power-up
 

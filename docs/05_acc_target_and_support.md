@@ -334,11 +334,14 @@ behave like lateral distances from the object to the left and right edges of a c
 transfer to the second car, and lateral-speed or time-to-collision alternatives fit comparably, so the edge values are not settled. Bytes
 4 and 5 clip at 50 and bytes 6 / 7 reach 74-80, so the "62" seen before was byte 4's clip plus a gap; what bytes 4 / 5
 themselves measure is open. Bytes 1-3 stay 0 while active, except one bit:
-**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.4 s after the object list stops (two outages on a second
+**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.65 s after the object list stops (two outages on a second
 car, together with 0x198 byte 0 changing 0x10 → 0x90), about 1.5 s before the car-bus 0x411 fault code, and clears with it.
-It marks the onset of an outage (5.6 and 22.6 s here), not a list that is missing from power-up, and it is also set for the
-first cycle after every power-up, so a reader should require two or more consecutive cycles. No false alarm in 14.4 h of
-normal driving ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)). 0x195 is active on only
+The list stopped there because its receiver stopped answering the radar's first frames with flow control
+([01](01_radar_bus.md#who-sends-the-object-list)). The flag marks the onset of an outage (5.6 and 22.6 s of 150 s outages
+here), not a list that is absent from the start of a drive, and it comes no earlier than a 0.5 s staleness rule on the list
+itself. Its power-up frame is 0x196 byte 1 = 0xFF; read as 0x198 byte 0 bit 7 it has none. No false alarm in 37.9 h on three
+cars ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json),
+[`radar_health.json`](../data/analysis/summaries/radar_health.json)). The ACC target kept reporting through both outages. 0x195 is active on only
 0.5-0.6 % of moving cycles ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
 The DBC keeps the remaining sub-fields as raw codes.
 

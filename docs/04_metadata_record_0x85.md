@@ -1,7 +1,7 @@
 # 04. The metadata record (0x85)
 
 0x85 carries a second segmented record at the radar cycle rate. The first frame starts `10 90`; keeping bytes 1..7 of
-each of 21 frames gives **147 bytes**. A fixed marker follows on 0x86. It comes with every 0x80 record on both RAV4 radar firmwares
+each of 21 frames gives **147 bytes**. The receiver answers its first frame with ISO-TP flow control on 0x86 ([01](01_radar_bus.md#who-sends-the-object-list)). It comes with every 0x80 record on both RAV4 radar firmwares
 ([01](01_radar_bus.md#radar-firmware)); the lane cells below serve analysis and in-path research
 ([10](10_research_directions.md#for-the-decode)).
 
@@ -13,7 +13,7 @@ each of 21 frames gives **147 bytes**. A fixed marker follows on 0x86. It comes 
 | `[1:21]` | prefix: fine clock (bytes 1-4, LE), counter (bytes 5-6 >> 1), other raw bytes | ● clock and counter |
 | `[21:141]` | **ten 12-byte cells**: lane / road-boundary curves (offset, heading, curvature) | ◐ |
 | `[141:145]` | CRC-32/ISO-HDLC, little-endian, over `[1:141]` | ● |
-| `[145:147]` | trailer, zero | ● |
+| `[145:147]` | ISO-TP padding (0x00) beyond the 144-byte transfer | ● |
 
 ```python
 crc_ok = int.from_bytes(record[141:145], "little") == zlib.crc32(record[1:141])
