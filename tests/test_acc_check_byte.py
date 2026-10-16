@@ -50,6 +50,6 @@ def test_0x366_target_id_and_pcs_alarm():
 def test_target_id_is_six_bits_and_its_top_bit_has_its_own_column():
   # a C-HR 2021 radar (8821FF410300) frame with track number 32: byte 7 bit 5 set alone, which the RAV4 radars never sent
   # (bits 7-5 of byte 7 were 000 with a target and 111 idle), so only the three columns' sum was known before
-  chr_frame = bytes.fromhex("116569820b347d20")
+  chr_frame = bytes.fromhex("116569820B347D20")
   assert acc_check(0x235, chr_frame) == "ok"
   assert parse_acc_target(chr_frame, bytes.fromhex("AD026580F2E8C550")).target_id == 32
