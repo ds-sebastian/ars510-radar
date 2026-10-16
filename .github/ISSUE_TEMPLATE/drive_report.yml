@@ -36,12 +36,22 @@ body:
     id: profile
     attributes:
       label: Profile
-      options: [acc (default), fused, openpilot (single-file version), raw, an experimental profile (name it below), an older install (anchor / steady), not sure]
+      options: [acc (default), acc_summaries, fused, openpilot (single-file version), raw, an experimental profile (name it below), an older install (anchor / steady), not sure]
   - type: input
     id: driving
     attributes:
       label: Driving (duration, road types, conditions)
       placeholder: 1.5 h, highway and city, dry, night
+  - type: input
+    id: capture_tests
+    attributes:
+      label: Capture test IDs (if following the route guide)
+      placeholder: T08 + T13 + T14; stock ACC, natural lead exits and city queues
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Controller and logging configuration
+      description: Stock/manual or openpilot longitudinal, CAN filter/DSU if fitted, complete rlogs and video available, and any independent reference. Keep identifying details private.
   - type: textarea
     id: moments
     attributes:

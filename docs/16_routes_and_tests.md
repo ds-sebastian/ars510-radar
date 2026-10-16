@@ -8,6 +8,21 @@ counts below are planning suggestions; a field or profile passes validation thro
 run with a maintainer-assisted read-only acquisition setup. Physical calibration comes from measured target geometry
 (T03) or independently logged motion of both cars (T04).
 
+### Captures most useful now
+
+| What you can offer | Session to choose | What makes it useful |
+|---|---|---|
+| Normal driving and full rlogs | T08 + T13 + [T14](#t14-follow-one-target-through-selection-changes) | city queues, ordinary lead exits/switches and curves; uninterrupted video/CAN before and after each event |
+| A second cooperative car and qualified motion references | T03 + T04 + T07 | the same target near/far and in several motion conditions, with measured timing, origins and reference error |
+| A maintainer-assisted read-only diagnostic setup | T01 + T02 | radar-reported ego speed, alignment/temperature and status alongside the original broadcast frames |
+| A surveyed site and identifiable target | T03 + T06 + T10 | distance zero, target identity through loss/recovery, and motion/class confidence on one known object |
+| A spare sensor and instrumented bench | T09, arranged with the maintainer | distinguish camera input from receiver/transport availability with a stock startup baseline |
+| A professional PCS facility | T12 | independently labelled warning, assist and braking stages, all buses and actual actuator response |
+
+Ordinary routes can contribute without changing the installed profile. In the report, name the test IDs, give
+times relative to the session and offer complete logs privately. A short pilot with the maintainer helps establish
+that the requested signals and reference are present before a longer controlled acquisition.
+
 ## Choose a session
 
 | Test | Setup / suggested time | Question it addresses |
@@ -25,6 +40,7 @@ run with a maintainer-assisted read-only acquisition setup. Physical calibration
 | [T11](#t11-lanes-curves-and-five-cycle-patterns) | surveyed lanes/curves plus day/night routes | 0x85, lane/camera fields, duty pattern |
 | [T12](#t12-pcs-and-event-reports) | incidental event or professional facility | warning/braking stages, 0x100/195/196/33E |
 | [T13](#t13-fresh-road-and-parser-validation) | fresh ordinary drives and offline replay | installation, road behavior and transfer to other cars/forks |
+| [T14](#t14-follow-one-target-through-selection-changes) | ordinary manual/stock-ACC route, or controlled target path | separate selection/path changes from changes in the target population |
 
 ### Conditions for recording
 
@@ -44,7 +60,7 @@ Keep complete **rlogs**, with adjacent segments before/after each event, and roa
 and SOF timestamps. Original full-CAN rlogs carry the evidence; qlogs, screenshots and decoded lead CSVs serve as indexes
 into them. Preserve every bus/address, including lead-free periods. Particularly useful groups are:
 
-- Radar bus: `0x80/85`, `0x100`, `0x190`–`0x196`, `0x235/237/239/23B`, `0x680`, camera/context messages.
+- Radar bus: `0x80/81/85/86`, `0x100`, `0x190`–`0x198`, `0x235/237/239/23B`, `0x501/502`, `0x680`, camera/context messages.
 - Car bus: `0xB4`, `0x343/344`, `0x283`, `0x320`, `0x33E/365/366/411`.
 - Other log data: carParams/carState, radarState/liveTracks where present, model/planner/control outputs,
   calibration, pose/IMU, engagement, driver actions and bookmarks.
@@ -94,7 +110,8 @@ own events cover electrical faults.
 
 ## T02: radar-reported ego speed
 
-**Target:** DID `0x1018` versus original `0xB4`, then an independent ego-motion reference where available.
+**Targets:** DID `0x1018` versus original `0xB4`, then an independent ego-motion reference where available;
+alignment `0x2009`, temperature `0x1017` and observers `0x1033` when supported by the maintainer's acquisition kit.
 
 1. Confirm the diagnostic setup can read 1018 while parked. With clear sensors, use an owner-approved stock/manual
    configuration and a passenger operating the equipment; run a Panda-owning probe with openpilot stopped.
@@ -102,9 +119,14 @@ own events cover electrical faults.
    Include both increasing/decreasing speeds, since speed changes identify lag. Ten minutes is a useful pilot.
 3. Keep query/response latency, cadence, B4 and clock mappings. Compare offset, scale and apparent delay separately,
    including by direction of speed change. Report timing uncertainty alongside any lag.
+4. Keep early-drive and warmed-up observations, including stops. Preserve original `0x501/502`, calibration/pose
+   and reported diagnostic state where the logging setup supports them. Record the achieved cadence for each DID;
+   polling several fields shares the acquisition budget. Use a separate compatible passive logger if needed.
 
 Agreement qualifies the **reported representation**; the internal ego-speed producer, compensation path and per-object
 acquisition time are measured in T04, which also calibrates native object speed.
+Reported alignment angle, confidence/convergence and temperature are separate comparisons; a learned broadcast
+value needs a matching diagnostic observation before it receives one of those names.
 
 ## T03: surveyed range and lateral position
 
@@ -125,7 +147,8 @@ Code 160 is the initialization code; the measured zero comes from this survey. A
 
 ## T04: independent lead speed and acceleration
 
-**Targets:** `64|10` nominal .15/510.5, empirical .149/.15 adjustment, real/false closing, `84|10` zero 511 / .04 and timing.
+**Targets:** `64|10` nominal .15/510.5, ego compensation, real/false closing, and `84|10` acceleration-like codes and timing
+([03](03_slot_fields.md)). Compare nominal decoding and empirical parser adjustments separately.
 
 1. Use two cooperative instrumented vehicles on a controlled site. Record independently qualified motion of both,
    sensor origins, clock mappings and target identity. Pilot one minute of steady following before a long acquisition.
@@ -133,12 +156,18 @@ Code 160 is the initialization code; the measured zero comes from this survey. A
    60–120 seconds steady in each band, then three gentle speed-change/recovery repetitions where practical.
 3. Separate causes: lead steady/ego changes, ego approximately steady/lead changes, both steady. Include natural
    ACC-target idle spans, competing targets and switches; retain every disagreement and every dropped output.
+   Add parked ego with the target moving on a measured path, then moving ego with a stationary target. Observe the
+   same identifiable target across near/far distances and modest left/right offsets; vary separation separately
+   from relative speed rather than letting every far encounter also be a high-speed encounter.
 4. Project physical motion into the declared radar axes. Compare fixed equations, zero, scale, bias, tails and delay
    separately. Relative acceleration requires the ego acceleration term and a qualified derivative/integrated reference.
 
 An ego-only speed change separates a structurally motivated relative-speed candidate from a ground-speed
 component; a broad field sweep needs a new candidate or source. Use held-out encounters
 before changing constants; nominal decoding, physical calibration and parser tuning are three separate claims.
+For absolute separation, survey the target/reference/sensor origins and qualify differential position error:
+two independent GNSS logs can supply useful velocity while their position difference is too uncertain for a
+range-scale test. Record the target's measured extent/orientation and plausible reflecting surface.
 
 ## T05: physical uncertainty
 
@@ -152,6 +181,8 @@ before changing constants; nominal decoding, physical calibration and parser tun
    comes from the native-minus-truth error; disagreement widths and second-difference scatter describe scatter.
 4. Use T06 to examine update behavior. Observation-free intervals come from authenticated metadata or an independently
    established observation-free state; visual occlusion and `107|1` are indicators for it.
+5. Preserve both velocity components, target bearing and measured ego yaw/lever arm. Joint signed errors allow a
+   comparison along/across the line of sight and between axes, rather than assuming independent scalar errors.
 
 Calibration covers the exercised axes and codes; acceleration and heading units come from their own measurements.
 
@@ -217,6 +248,13 @@ independence are three separate questions, and physical truth comes from the T03
 3. If functional outputs exist in both conditions, repeat matched target paths clear–covered–covered–clear,
    acquiring fresh tracks. Compare selection separately from kinematic errors against the independent reference.
 
+Preserve `0x81/86` receiver flow control alongside `0x80/85` first and consecutive frames. A missing list can
+reflect transport participation as well as function restriction. A spare-sensor bench investigation first records
+stock wiring, power-up and motion inputs, then separates camera-input conditions from receiver availability.
+Arrange that investigation with the maintainer; an extra flow-control sender belongs on an isolated bench, not
+on the installed car. A flow-control response continues a transfer already offered by the sender; startup has its
+own prerequisites.
+
 Function shutdown is evidence of dependency. The owner-car association transitions fit every camera weight from 0 to 0.9 equally
 (maximum error 7e-15 on 2,501 rows; [`acc_camera_identifiability.json`](../data/analysis/summaries/acc_camera_identifiability.json)), so the camera's total
 contribution comes from a professional facility test or access to the actual input channel when a parked case is unexercised.
@@ -234,6 +272,10 @@ contribution comes from a professional facility test or access to the actual inp
    Define what makes a control a non-obstacle (a stationary object can still be an obstacle). Keep volunteers out of any approach path ([15](15_aeb_pcs.md#recording-pcs--aeb-events)).
 4. Keep early life, class changes, confidence changes, score drops and dropped outputs. Label blind to the radar
    codes. Class 5 cyclist/person hypotheses come with counterexamples as well as an overlapping projection.
+5. For summary confidence (`0x191/193`), follow the same target through gentle acceleration, slowing and stopping
+   on a controlled site, with independent motion when available. Compare the same speeds on acceleration and
+   deceleration after the track matures. This distinguishes speed dependence from accumulated motion evidence;
+   retain target age, both summary slots and the ACC reports throughout.
 
 A few encounters test availability. Reliability/coverage and probability calibration use a larger
 independently labelled held-out set, including negative cases and reference uncertainty.
@@ -268,11 +310,35 @@ decoded stock events, and a replica that substitutes for a message is described 
    periods and bookmarked unwanted braking, sticky/adjacent leads, far pickup, loss and recovery.
 3. Assign discovery/confirmation roles before reviewing error results. Freeze proposed behavior/gates before
    confirmation; previously tuned routes count as tuning data. Keep consumers unchanged for comparisons.
+   For the next `acc_summaries` comparison, the collection target is at least three moving hours, including one
+   hour above 20 m/s where normal traffic and posted limits permit, with city/queue coverage too. Contributions
+   can be combined; send shorter useful drives as well. Any installed profile can supply the original CAN for
+   an offline comparison. Let the maintainer reserve confirmation drives before inspecting errors.
 4. Developers replay current baseline/candidate on identical routes, score per-event response/braking/switches,
    coverage and regressions, then confirm on the actual fork as required. Follow [09](09_tools_and_data.md#developing-and-testing-a-change).
 
 Physical calibration, consumer replay and closed-loop road behavior are three deliverables. A field or profile
 qualifies through per-event response, coverage and regressions on held-out routes.
+
+## T14: follow one target through selection changes
+
+**Targets:** object-list speed behavior on in-path versus other targets, ACC selection/release, summary continuity
+and camera/path association. This requires the same identifiable object before and after the transition.
+
+1. On an ordinary manual or stock-ACC route, keep full CAN and synchronized road video through naturally occurring
+   lead exits, lead switches, lane changes and curves. A passenger bookmarks the target and action; keep several
+   seconds before/after, including periods when ACC has no selected target. Keep the installed profile unchanged.
+2. Describe which visible target continued, exited or was replaced, using anonymous target labels. Include a
+   comparable stretch where that target stays selected. Record controller mode and driver actions separately
+   from the radar's target choice.
+3. On a controlled site, a cooperative instrumented target can repeat the same path inside/outside the ego
+   corridor, with ego stationary where appropriate. Use T04/T07 references to qualify motion and identity.
+4. Keep complete records across segment edges and original `0x235/237/239`, `0x191`–`0x194` and camera/context
+   traffic. Developers distinguish actual TARGET_ID/state changes from matching-gate crossings, stale frames,
+   slot reuse and disappearance. A continuing slot/age alone does not establish physical continuity.
+
+No maneuver needs to manufacture a short gap or sudden cut-in. Natural road examples establish availability;
+controlled references determine whether the same target's motion estimate changes with path or selection state.
 
 ## Which tests answer which open question
 
@@ -288,6 +354,7 @@ qualifies through per-event response, coverage and regressions on held-out route
 | additional targets, selectors and camera dependence | T04/T07/T08/T09 |
 | class, probability and measured size | T10 + T03/T06 |
 | lane/curve/camera/duty/event context | T11/T12 + T06 |
+| selection/path-conditioned object-list behavior | T14 + T04/T07 |
 
 ## Decode a pilot and share the result
 
