@@ -5,9 +5,9 @@ installed into, using a Python that has pycapnp (for example openpilot's .venv):
     $OP/.venv/bin/python openpilot/check_integration.py --opendbc $OP/opendbc_repo
 
 It checks:
-- detection: the RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False from the car model alone (either radar
-  firmware, also at a cold start); the radar-ACC C-HR keeps the fork's behaviour, and every other Toyota keeps the fork's
-  own RadarInterface;
+- detection: the RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False from the car model and the radar's early
+  bus-1 frames (either radar firmware, also at a cold start, before the object list starts), and stay radarless without
+  them; C-HR and Yaris likewise; every other Toyota keeps the fork's own RadarInterface;
 - the RadarInterface path card.py uses: synthetic 0x80 records are fed as card.py's (address, data, src) tuples and
   as CanData, and it checks
   - the RadarData points (units, sign, ego-speed subtraction, age gate);
@@ -84,12 +84,20 @@ def check_acc_summaries_profile(RI, check) -> None:
   """`acc_summaries`: the ACC target plus the target-summary cars within 60 m. Synthetic radar cycles (0x190 clock, ACC
   target at 30 m, summary 1 on the ACC car, summary 2 a car at 40 m closing at 6 m/s, then one at 80 m) are fed at
   card.py's 100 Hz: the ACC car once, the 40 m car with its slope speed, nothing beyond 60 m, staleness and recovery."""
+  from opendbc.car.toyota.ars510.support import ACC_CHECK
+
+  def checked(address, frame):  # byte 0 = the radar's check byte, as on every recorded frame (the profile reads it)
+    crc = ACC_CHECK[address][0]
+    for i, col in enumerate(ACC_CHECK[address][2]):
+      crc ^= col if frame[1 + i // 8] >> (7 - i % 8) & 1 else 0
+    return bytes([crc]) + frame[1:]
+
   def cycle(n, k, far):  # n: radar cycle number (clock), k: cycle within the run (geometry)
     ts, acc_code = 1_000_000 + 60_000 * n, round((30.0 - 0.24 * k) / 0.025)
     other = (80.0 if far else 40.0) - 0.36 * k
     return [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00", 1),
             (0x235, ((1 << 59) | (5 << 48) | (1056 << 29) | 7).to_bytes(8, "big"), 1),
-            (0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big"), 1),
+            (0x237, checked(0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big")), 1),
             (0x191, bytes([182, 0, 0, 3 << 2, 0, 0, 0, 0]), 1), (0x192, (160 + (2 * acc_code) // 5).to_bytes(2, "big") + (2048).to_bytes(2, "big"), 1),
             (0x193, bytes([182, 0, 0, 9 << 2, 0, 0, 0, 0]), 1), (0x194, round(other * 16 + 160).to_bytes(2, "big") + (2288).to_bytes(2, "big"), 1)]
   t_ns, outs = 1_000_000_000, {False: [], True: []}
@@ -148,12 +156,14 @@ def main() -> int:
     car_fw = [] if radar_fw is None else [structs.CarParams.CarFw(ecu="fwdRadar", fwVersion=radar_fw, address=0x750, subAddress=0xf)]
     return CarInterface.get_params(car, fp, car_fw, alpha_long=False, is_release=False, docs=False)
 
-  ars_bus1 = {0x80: 8, 0x85: 8, 0x81: 8, 0x86: 8}
+  ars_bus1 = {0x80: 8, 0x85: 8, 0x81: 8, 0x86: 8, 0x190: 7, 0x191: 8, 0x235: 8, 0x237: 8, 0x239: 8}  # a running radar
   cold_bus1 = {0x191: 8, 0x192: 4, 0x180: 5}  # first ~1 s after power-up: target summaries, no 0x80 / 0x85 yet
   for car in (CAR.TOYOTA_RAV4_TSS2_2022, CAR.TOYOTA_RAV4_TSS2_2023):
     for fw in (b'\x018821F0R01100\x00\x00\x00\x00', b'\x018821F0R03100\x00\x00\x00\x00'):
       CP = params(car, cold_bus1, fw)
       check(is_ars510(CP), f"{car}: ARS510 from the car model (radar FW {fw[1:13].decode()}, cold start)")
+    CP = params(car, {})
+    check(not is_ars510(CP), f"{car}: no radar frames on bus 1 at fingerprinting -> radarless (vision leads), not a silent radar")
   extra = (structs.CarParamsSP(),) if hasattr(structs, "CarParamsSP") else ()  # sunnypilot passes CP_SP
   for name in ("TOYOTA_CHR_TSS2", "TOYOTA_YARIS"):
     car = getattr(CAR, name, None)

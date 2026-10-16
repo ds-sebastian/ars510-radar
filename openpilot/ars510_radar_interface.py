@@ -4,8 +4,8 @@ Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interfac
 decoder package as `opendbc/car/toyota/ars510/`. The installer appends a marked block to the end of
 `opendbc/car/toyota/interface.py` that calls `hook_car_interface(CarInterface)`; every other file of the fork stays as shipped,
 so the same install works on openpilot and its forks (sunnypilot, StarPilot, CarrotPilot, FrogPilot-style trees):
-  - detection: the radar-ACC platforms (ARS510_PLATFORMS: RAV4 2022 and 2023-25, C-HR, Yaris) get
-    radarUnavailable = False (stock keeps radar-ACC Toyotas radar-unavailable);
+  - detection: the radar-ACC platforms (ARS510_PLATFORMS: RAV4 2022 and 2023-25, C-HR, Yaris) whose radar frames
+    reach bus 1 during fingerprinting get radarUnavailable = False (stock keeps radar-ACC Toyotas radar-unavailable);
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. ToyotaFlags stays as shipped, so fork flag bits stay free.
 Worth knowing (docs/07, docs/08, docs/12):
@@ -160,9 +160,19 @@ def _radar_acc(flags) -> bool:
   return bool(int(flags) & ToyotaFlags.RADAR_ACC)
 
 
+# The radar's cycle frames on bus 1 (cycle header, target summaries, ACC target) start 0.14-1.0 s after the first CAN frame,
+# inside openpilot's fingerprint window on all 74 recorded cold starts; the object list (0x80) starts only after ~6 s.
+RADAR_BUS1_EARLY = {0x190, 0x191, 0x193, ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR, 0x239}
+
+
 def detect(ret, fingerprint, car_fw) -> bool:
-  """ARS510: a radar-ACC RAV4 2022 / 2023-25, C-HR or Yaris (the car model; works at a cold start, before the radar sends)."""
-  return _radar_acc(ret.flags) and str(ret.carFingerprint) in ARS510_PLATFORMS
+  """ARS510: a radar-ACC RAV4 2022 / 2023-25, C-HR or Yaris (the car model) whose radar frames reach bus 1. Without them
+  (wiring, harness) the car keeps stock's radarless setup with vision leads: a radar that is declared but never reports
+  leaves radarState invalid, and openpilot then refuses to engage (commIssue). A fork that passes no fingerprint gets the
+  car model alone."""
+  if not (_radar_acc(ret.flags) and str(ret.carFingerprint) in ARS510_PLATFORMS):
+    return False
+  return fingerprint is None or bool(RADAR_BUS1_EARLY & set(fingerprint.get(RADAR_BUS, {})))
 
 
 def is_ars510(CP) -> bool:

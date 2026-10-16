@@ -1,0 +1,67 @@
+{
+ "description": "Radar health as openpilot sees it: when the radar's bus-1 frames start after power-up (against openpilot's fingerprinting and card start), whether the ACC target ever stops while the radar runs, how often the acc profile raises canError, and which recorded status bits mark a fault. Three cars, 123 routes, 2,370 segments; drives anonymised (S# second car).",
+ "cold_starts": {
+  "n": 74,
+  "bus1_cycle_frames_start_s": {
+   "min": 0.13,
+   "median": 0.26,
+   "max": 1.02
+  },
+  "acc_target_frames_start_s": {
+   "min": 0.14,
+   "median": 0.26,
+   "max": 1.01
+  },
+  "object_list_first_record_s": {
+   "min": 5.8,
+   "median": 5.93,
+   "max": 6.16
+  },
+  "card_start_s": {
+   "min": 1.18,
+   "median": 2.95,
+   "max": 7.06
+  },
+  "acc_frames_before_card_start_s_min": 0.99
+ },
+ "acc_target_while_radar_runs": {
+  "segments": 2367,
+  "segments_with_acc_frames": 2367,
+  "acc_only_gaps": 0,
+  "clock_freezes": 0,
+  "report_hz_during_list_outages": [
+   15.9,
+   16.9
+  ]
+ },
+ "acc_canError": {
+  "replayed_h": 38.37,
+  "canError_reports": 0,
+  "owner_acc_road_h": 1.42,
+  "logged_vs_replayed_reports": [
+   85050,
+   85049
+  ],
+  "logged_errors": 0
+ },
+ "missing_bus1_before_fix": {
+  "reports": 0,
+  "radarState_invalid_share": 1.0,
+  "selfdrived": "commIssue: no entry and soft disable, lateral-only included"
+ },
+ "status_bits": {
+  "radar_running_h": 37.87,
+  "0x196_fault_bit_false_alarms": 0,
+  "0x196_fault_bit_vs_staleness": "sets +0.44 / +0.65 s after the last object-list frame on two outages; fused's 0.5 s rule reported +0.39 / +0.46 s and covered the whole outage",
+  "0x101_0x197_0x24F": "set once after boot and held through ~1,300 s of object-list faults: boot flags, not live health",
+  "car_0x411_0x48": "about 2 s after an object-list outage, also with a camera-side state and for 1.5 s after a radar re-enable; not sent while the radar is disabled over UDS",
+  "0x411_dust_temperature_alignment_bits_set": 0
+ },
+ "parked_baseline": {
+  "hours": 7.75,
+  "within_1p5m_of_an_obstacle_h": 1.02,
+  "0x411": "00 20 00 00 00 00 80 00",
+  "fault_bits_set": 0
+ },
+ "source": "research workspace SCR-920..924 (scan of every stored segment; acc file run through opendbc's CANParser at card's batching)"
+}
