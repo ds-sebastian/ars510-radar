@@ -1,0 +1,30 @@
+{
+  "claim_kind": "observed/derived",
+  "authority": "structure/radar-witness",
+  "scope": {
+    "cars": 3,
+    "segments_with_33e_and_reference_cache": 263,
+    "frames_33e": 75178,
+    "high_nibble_7": 36219,
+    "high_nibble_7_with_finite_ttc": 1
+  },
+  "live_target_witness": {
+    "drive": "U3",
+    "raw_33e": "763f3480003400",
+    "acceleration_nibble": 7,
+    "ttc_code": 1599,
+    "preceding_acc_state": 5,
+    "preceding_acc_position_present": true,
+    "preceding_acc_relative_acceleration_mps2": 8.125,
+    "preceding_acc_range_m": 9.3,
+    "preceding_acc_target_id": 6,
+    "preceding_366_target_id": 6,
+    "references": "Original CAN event order; ACC age below 0.1 s, 0x366 age below 0.25 s. Independent scalar extraction confirms the witness."
+  },
+  "interpretation": {
+    "code_7": "Shared by idle and a live high-positive-acceleration target; target availability must be qualified separately.",
+    "upper_end_saturation": "candidate",
+    "physical_acceleration_calibration": "unverified",
+    "profile_output_change": false
+  }
+}

@@ -89,3 +89,5 @@ drive A: flip rates, one-rates and the automatic carry-chain field split. `tools
 Cabana DBC's slot layout from it.
 
 [`register_structure_and_reference_scope.json`](analysis/summaries/register_structure_and_reference_scope.json) supplies the three-car slow-register layout/update counts, near-anchor range comparisons and original-transmission 0x680 copy residuals used in docs/05 and docs/06. Unit-identifying payloads and hashes stay private.
+
+[`car_bus_0x33e_boundary.json`](analysis/summaries/car_bus_0x33e_boundary.json) supplies the code-7 idle/numeric-domain witness in docs/13: finite TTC and a live matching target at high reported positive acceleration. Saturation remains a candidate interpretation.
