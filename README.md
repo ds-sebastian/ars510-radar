@@ -52,6 +52,8 @@ sudo reboot                                                          # required:
 
 More on installing, the self-check and troubleshooting: [`openpilot/README.md`](openpilot/README.md).
 For the routes and controlled captures that help most, see [16: Routes and tests](docs/16_routes_and_tests.md).
+The [current capture requests](docs/16_routes_and_tests.md#captures-most-useful-now) include ordinary lead-switch
+routes, fresh city/highway logs, measured target motion and maintainer-assisted ego/alignment diagnostics.
 
 ## What to expect on the road
 
@@ -269,7 +271,7 @@ numbers and a glossary.
 | [13 Car-bus messages](docs/13_car_bus_messages.md) | the radar's nine Toyota driving-support messages on bus 0 (ACC command, PCS / AEB, lead distance), CAN filter versus radar disable, what happens to AEB |
 | [14 Forks](docs/14_forks.md) | what sunnypilot, FrogPilot and StarPilot do with the radar lead, and what that does with this radar (replays of their own radard and MPC lead code) |
 | [15 AEB and PCS](docs/15_aeb_pcs.md) | the recorded stock PCS alarm, AEB on an unfiltered radar line, relaying the radar's decision, open questions, and the professional/passive recording specification |
-| [16 Routes and tests](docs/16_routes_and_tests.md) | thirteen capture procedures: ordinary routes, parked diagnostics, physical references, lifecycle/class/lane tests and what to send back |
+| [16 Routes and tests](docs/16_routes_and_tests.md) | fourteen capture procedures and current requests: ordinary routes, diagnostics, measured references, selection/identity/class/lane tests and what to send back |
 | [17 Upstream proposals](docs/17_upstream.md) | the `acc` and `fused` opendbc branches, the parts ledger of the openpilot file, the evidence for the ACC target alone, what review will ask, other radar interfaces |
 
 ## Repository layout

@@ -19,6 +19,11 @@ body:
     attributes:
       label: Evidence
       description: Drives used (anonymous), what counted as a pass before you looked, results including negatives, and how to reproduce.
+  - type: textarea
+    id: capture_reference
+    attributes:
+      label: Capture and reference (for a recorded test)
+      description: Test IDs from the route guide, anonymous target labels, relative event times, controller/filter configuration, reference method and uncertainty, clock mapping, and whether complete logs can be shared privately. State if the intended condition was unexercised.
   - type: dropdown
     id: confidence
     attributes:
