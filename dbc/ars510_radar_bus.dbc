@@ -306,7 +306,7 @@ CM_ BO_ 133 "0x85 metadata-record transport: a 147-byte record (prefix, ten 12-b
 CM_ BO_ 129 "ISO-TP flow control for each 0x80 transfer: 30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0) about 0.35 ms after the first frame; the radar sends the consecutive frames only after it. Sender inferred: the transfer's receiver, the camera.";
 CM_ BO_ 134 "ISO-TP flow control for each 0x85 transfer: 30 00 00 00 00 00 00 00 (clear to send, block size 0, STmin 0) about 0.35 ms after the first frame; the radar sends the consecutive frames only after it. Sender inferred: the transfer's receiver, the camera.";
 CM_ BO_ 256 "Startup context: word 0 is 0xFFFF in the first frame after power-up, zero afterwards; byte 0 = 0x02 during a PCS alarm.";
-CM_ BO_ 257 "Camera-sent radar-running state: 0x1D while the radar boots, 0x11 once its object list arrives (switches 60 ms before 0x197 bit 8 sets).";
+CM_ BO_ 257 "Camera-sent radar-running state: 0x1D while the radar boots, 0x11 once its object list arrives (switches 60 ms before 0x197 bit 8 sets); the C-HR camera sends 0x15 instead of 0x11.";
 CM_ BO_ 258 "Sparse state bits 11, 14 and 21.";
 CM_ BO_ 259 "Always zero.";
 CM_ BO_ 384 "Constant CF C0 00 00 00.";
@@ -448,7 +448,7 @@ CM_ SG_ 514 A202_COUNTER4 "Counter mod 16, +1 per frame.";
 CM_ SG_ 400 A190_TIMESTAMP_US "Radar cycle timestamp, microseconds (big-endian).";
 CM_ SG_ 400 A190_COUNTER_RESERVED0 "Always zero.";
 CM_ SG_ 400 A190_COUNTER4 "Cycle counter mod 16, +3 per cycle; use it to detect dropped cycles.";
-CM_ SG_ 407 A197_STARTUP_PHASE1 "0 while the radar starts up, 1 once running (stays 1).";
+CM_ SG_ 407 A197_STARTUP_PHASE1 "0 while the radar starts up, 1 once running (stays 1 on the owner car and the Yaris; the 2022 RAV4 camera sets it for one frame or not at all).";
 CM_ SG_ 407 A197_B1_RESERVED1_7 "Always zero.";
 CM_ SG_ 400 A190_STATUS_0_4 "Byte 0 low nibble: summary count << 2 | 2 (values 2, 6, 10).";
 CM_ SG_ 400 A190_ACTIVE_SUMMARIES "Number of target summaries in this cycle (0-2): 0x191/0x192 fill first, then 0x193/0x194.";

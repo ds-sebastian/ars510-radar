@@ -34,9 +34,12 @@ The `acc` proposal, [`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510
 commit:
 - **DBC:** `opendbc/dbc/toyota_tss2_ars510.dbc` with the ACC target frames `ACC_TARGET_1`-`4` (0x235 / 0x237 / 0x239 /
   0x23B), every field documented, and the radar's other support frames for completeness: the cycle header (0x190), the
-  target summaries (0x191-0x194), the event pair (0x195 / 0x196, with the fault bit) and the object stream (0x680),
-  confirmed and likely fields only, with approximate units marked. The interface reads seven signals; through CANParser every signal equals the
-  reference decoder on 9,574 frame sets.
+  target summaries (0x191-0x194), the event pair (0x195 / 0x196, with the fault bit), the object stream (0x680), the PCS
+  alarm flag (0x100), the alive frame (0x202) and the boot bit (0x24F), confirmed and likely fields only, with approximate
+  units marked. `TARGET_ID` is 6 bits (a C-HR radar numbers its tracks up to 37). Values that need more than one frame (the
+  0x80 / 0x85 ISO-TP records) or a computation (a summary's speed, `LAT_DIST`'s 13th bit) are explained in comments, not
+  given as signals. The interface reads seven signals; through CANParser every signal equals the reference decoder on 9,574
+  frame sets, and the newer ones decode as documented on opendbc's 61 radar-ACC test-route segments.
 - **`values.py`:** the radar-ACC platforms (RAV4 2022 and 2023-25, C-HR, Yaris) get `toyota_tss2_ars510` as their radar
   DBC instead of none, two lines in the TSS2 and SecOC platform configs. So the car model selects the parser.
 - **`radar_interface.py`:** for radar-ACC cars the Toyota `RadarInterface` publishes the ACC target as one point, once
