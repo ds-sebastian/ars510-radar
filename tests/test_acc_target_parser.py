@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from ars510.support import parse_acc_target
+from ars510.support import acc_check, parse_acc_target
 from test_upstream_candidate import _fake_opendbc
 
 REPO = Path(__file__).resolve().parents[1]
@@ -126,6 +126,23 @@ def test_no_target_reports_keep_coming_and_a_silent_radar_publishes_nothing(mod)
   outs = [o for o in outs if o is not None]
   assert len(outs) == 10 and all(o.points == [] and not o.errors.canError for o in outs)  # no target: empty reports, no error
   assert all(ri.update([(int(1e9 + i * 1e7), [(0x100, bytes(8), 0)])]) is None for i in range(100))
+
+
+WRAPPED_237, PRESENT_235 = bytes.fromhex("AD026580F2E8C550"), bytes.fromhex("EA056C81CBDFAA1B")  # recorded; LAT_DIST reads -19.70 m
+
+
+def test_a_wrapped_lat_dist_is_published_40_96_m_further_left(mod):
+  ri = mod.RadarInterface(None)
+  (p,) = ri.update([(int(6e7), [(0x235, PRESENT_235, 1), (0x237, WRAPPED_237, 1), (0x239, clock(60000), 1)])]).points
+  assert p.yRel == pytest.approx(-19.70 + 40.96) and p.dRel == pytest.approx(30.675)
+
+
+def test_the_wrap_check_matches_the_decoders_check_byte_on_every_bundled_frame(mod):
+  frames = [bytes.fromhex(r["data_hex"]) for path in sorted((REPO / "data" / "sample").glob("*.csv.gz"))
+            for r in csv.DictReader(gzip.open(path, "rt")) if r["bus"] == "1" and int(r["address"], 16) == 0x237]
+  frames.append(WRAPPED_237)
+  assert len(frames) > 1000
+  assert all(mod.lat_dist_wrapped(d) == (acc_check(0x237, d) == "wrapped") for d in frames)
 
 
 def test_opendbc_patch_carries_the_dbc_and_the_same_logic():
