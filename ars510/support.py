@@ -184,7 +184,7 @@ def parse_acc_target_range_code(data: bytes) -> int | None:
 
 @dataclass(frozen=True)
 class AccTarget:
-    target_id: int        # 0x235 bits 0-4: constant while the radar follows one target
+    target_id: int        # 0x235 bits 0-5 (6 bits; 32-63 on a C-HR radar): constant while the radar follows one target
     d_rel: float          # m, 0.025 m per code
     y_rel: float          # m, left positive, 12-bit (code - 2000) * 0.01
     v_rel: float          # m/s, negative = closing
@@ -204,7 +204,7 @@ def parse_acc_target(data235: bytes, data237: bytes) -> AccTarget | None:
     if len(data235) != 8 or len(data237) != 8 or data235[1] & 0x0F != 5 or not _be_field(data237, 10, 1):
         return None
     d_rel, y_rel = parse_acc_target_position(data237)
-    return AccTarget(target_id=_be_field(data235, 0, 5), d_rel=d_rel, y_rel=y_rel, v_rel=parse_acc_target_vrel(data235),
+    return AccTarget(target_id=_be_field(data235, 0, 6), d_rel=d_rel, y_rel=y_rel, v_rel=parse_acc_target_vrel(data235),
                      a_rel=parse_acc_target_arel(data235), v_lat=(_be_field(data235, 8, 11) - 1024) * 0.0125,
                      a_lat=(_be_field(data235, 19, 8) - 100) * 0.125, in_path=bool(_be_field(data237, 8, 1)),
                      in_path_level=_be_field(data237, 4, 3), tracker_codes=(_be_field(data237, 19, 8), _be_field(data237, 11, 8)))
@@ -241,7 +241,7 @@ ACC_CHECK_235 = (0xDF, 0x9C, (
     0x69, 0xBA, 0x5D, 0x8C, 0x46, 0x23, 0x9F, 0xC1,
     0xEE, 0x77, 0xB5, 0xD4, 0x6A, 0x4E, 0x27, 0x9D,
     0xC0, 0x60, 0x30, 0x18, 0x0C, 0x06, 0x03, 0x8F,
-    0x74, 0x3A, 0x1D, 0xB4, 0x5A, 0x2D, 0x98, 0x4C))
+    0xCF, 0xE9, 0x75, 0xB4, 0x5A, 0x2D, 0x98, 0x4C))
 ACC_CHECK_237 = (0xFE, 0x14, (
     0x0F, 0x89, 0xCA, 0x65, 0x99, 0xC2, 0x61, 0xBE,
     0x5F, 0xA1, 0xDE, 0x6F, 0xB9, 0xD2, 0x69, 0xBA,

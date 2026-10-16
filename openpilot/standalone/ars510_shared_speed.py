@@ -48,7 +48,7 @@ class RadarInterface(RadarInterfaceBase):
         if src == CAR_BUS and address == SPEED_ADDR and len(dat) >= 7:
           self.v_ego = (t, int.from_bytes(dat[5:7], "big") * 0.01 / 3.6 / 0.9865)  # 0xB4 reads 1.35 % below carState.vEgo
         elif src == RADAR_BUS and address == ACC_SPEED_ADDR and len(dat) == 8:
-          self.acc_speed = (be_bits(dat, 0, 5), (be_bits(dat, 29, 11) - 1024) * 0.125) if dat[1] & 0x0F == 5 else None
+          self.acc_speed = (be_bits(dat, 0, 6), (be_bits(dat, 29, 11) - 1024) * 0.125) if dat[1] & 0x0F == 5 else None
         elif src == RADAR_BUS and address == ACC_POS_ADDR and len(dat) == 8:
           self.acc_pos = (be_bits(dat, 39, 13) * 0.025, (be_bits(dat, 27, 12) - 2000) * 0.01) if be_bits(dat, 10, 1) else None
         elif src == RADAR_BUS and address == OBJECTS_ADDR and len(dat) == 8:

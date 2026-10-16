@@ -54,7 +54,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    reassemble 0x80 records, check the CRC32 and decode the 20 slots; ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost of the object-list decode: about 6-14 µs per 10 ms call on a desktop CPU.
 4. **Output.** `acc`: one `RadarPoint(trackId, dRel, yRel, vRel)` for the radar's ACC target while its target-present
-   flags are set, reported once per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances). `acc_summaries`: that point plus up to two summary cars within 60 m (`trackId` 32 + pair code, speed from
+   flags are set, reported once per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances). `acc_summaries`: that point plus up to two summary cars within 60 m (`trackId` 64 + pair code, speed from
    the slope of the last 8 ranges), reported every fifth card update (20 Hz). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
    for tracks aged ≥ 60 cycles (with `fused`, also once the filter's speed standard deviation is at most 0.75 m/s), with
    the radar's own track IDs (`raw` also re-links them across short losses), published while a fresh ego speed gives a

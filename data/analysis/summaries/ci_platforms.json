@@ -1,0 +1,211 @@
+{
+ "description": "opendbc's public test routes for the other radar-ACC platforms, read in full (61 one-minute segments), through the repo's decoder: object records, ISO-TP transfers, ACC target check bytes and track numbers, a recorded openpilot radar disable on the C-HR, and cold-start timing of the radar's bus-1 frames against the first carState.",
+ "routes": {
+  "Yaris": {
+   "radar_fw": [
+    "8821F0D05300"
+   ],
+   "segments": 10,
+   "minutes": 9.4,
+   "rec80": 9286,
+   "crc80_bad": 0,
+   "rec85": 9290,
+   "crc85_bad": 0,
+   "records_per_s": 16.39,
+   "ff80_len": {
+    "740": 9294
+   },
+   "ff85_len": {
+    "144": 9292
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 15.86,
+   "flow_control_frames": 18586,
+   "acc_check": {
+    "0x235 ok": 28293,
+    "0x237 ok": 28293,
+    "0x239 ok": 28294
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 0.101,
+    "first_0x80_record_s": 5.791,
+    "first_carState_s": 1.189
+   }
+  },
+  "RAV4 Hybrid 2022": {
+   "radar_fw": [
+    "8821F0R01100"
+   ],
+   "segments": 4,
+   "minutes": 3.3,
+   "rec80": 3109,
+   "crc80_bad": 0,
+   "rec85": 3111,
+   "crc85_bad": 0,
+   "records_per_s": 15.9,
+   "ff80_len": {
+    "740": 3112
+   },
+   "ff85_len": {
+    "144": 3111
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 15.19,
+   "flow_control_frames": 6223,
+   "acc_check": {
+    "0x235 ok": 9590,
+    "0x237 ok": 9590,
+    "0x239 ok": 9590
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 0.09,
+    "first_0x80_record_s": 4.341,
+    "first_carState_s": 0.262
+   }
+  },
+  "C-HR Hybrid (stock longitudinal)": {
+   "radar_fw": [
+    "8821FF410500"
+   ],
+   "segments": 6,
+   "minutes": 6.0,
+   "rec80": 5836,
+   "crc80_bad": 0,
+   "rec85": 5837,
+   "crc85_bad": 0,
+   "records_per_s": 16.16,
+   "ff80_len": {
+    "740": 5838
+   },
+   "ff85_len": {
+    "144": 5838
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 15.99,
+   "flow_control_frames": 11676,
+   "acc_check": {
+    "0x235 ok": 17715,
+    "0x237 ok": 17714,
+    "0x239 ok": 17714
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 1.711,
+    "first_0x80_record_s": 4.121,
+    "first_carState_s": 2.762
+   }
+  },
+  "C-HR Hybrid (openpilot longitudinal, radar disabled)": {
+   "radar_fw": [
+    "8821FF410500"
+   ],
+   "segments": 22,
+   "minutes": 21.7,
+   "rec80": 21442,
+   "crc80_bad": 0,
+   "rec85": 21457,
+   "crc85_bad": 0,
+   "records_per_s": 16.5,
+   "ff80_len": {
+    "740": 21457
+   },
+   "ff85_len": {
+    "144": 21458
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 15.94,
+   "flow_control_frames": 42915,
+   "acc_check": {
+    "0x235 ok": 64956,
+    "0x237 ok": 64956,
+    "0x239 ok": 64955
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 0.01,
+    "first_0x80_record_s": 5.631,
+    "first_carState_s": 1.639
+   },
+   "radar_disable": {
+    "car_bus_frames_per_address_after": "0 for 0x283, 0x33E, 0x343, 0x344, 0x365, 0x366, 0x411, 0x494, 0x4FF",
+    "later_segments": 21,
+    "records_after": 20518,
+    "crc_failures_after": 0,
+    "acc_0x235_frames_after": 61889
+   }
+  },
+  "RAV4 2022": {
+   "radar_fw": [
+    "8821F0R01100"
+   ],
+   "segments": 6,
+   "minutes": 5.1,
+   "rec80": 4982,
+   "crc80_bad": 0,
+   "rec85": 4984,
+   "crc85_bad": 0,
+   "records_per_s": 16.15,
+   "ff80_len": {
+    "740": 4986
+   },
+   "ff85_len": {
+    "144": 4985
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 16.0,
+   "flow_control_frames": 9971,
+   "acc_check": {
+    "0x235 ok": 15219,
+    "0x237 ok": 15219,
+    "0x239 ok": 15219
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 0.37,
+    "first_0x80_record_s": 4.261,
+    "first_carState_s": 0.474
+   }
+  },
+  "C-HR 2021": {
+   "radar_fw": [
+    "8821FF410300"
+   ],
+   "segments": 13,
+   "minutes": 13.0,
+   "rec80": 12826,
+   "crc80_bad": 0,
+   "rec85": 12829,
+   "crc85_bad": 0,
+   "records_per_s": 16.46,
+   "ff80_len": {
+    "740": 12831
+   },
+   "ff85_len": {
+    "144": 12830
+   },
+   "lat_dist_wraps": 0,
+   "clock_changes_per_s": 15.47,
+   "flow_control_frames": 25661,
+   "acc_check": {
+    "0x235 ok": 38342,
+    "0x237 ok": 38671,
+    "0x239 ok": 38671,
+    "0x235 bad": 329
+   },
+   "cold_start_seg0_s": {
+    "first_bus1_radar_frame_s": 1.74,
+    "first_0x80_record_s": 1.79,
+    "first_carState_s": 2.801
+   }
+  }
+ },
+ "target_id_6_bits": {
+  "c_hr_2021_frames_with_track_numbers_32_63": 329,
+  "numbers": [
+   32,
+   33,
+   37
+  ],
+  "rav4_target_cycles_with_numbers_above_31": 0,
+  "rav4_target_cycles": 1243473,
+  "check_byte": "with the sixth ID bit's own CRC column (0x75, the CRC-sequence predecessor of the next column) every 0x235 frame of all routes passes; the 5-bit table failed exactly these 329"
+ },
+ "acc_check_note": "0x235 'bad' counts above are from the previous table, before the sixth TARGET_ID bit had its own column"
+}

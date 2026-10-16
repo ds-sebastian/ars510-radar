@@ -50,7 +50,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | distance | 0x237 bits 39-51: `code × 0.025` m | ● | `LONG_DIST` |
 | lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when); on the right it stops at −20.00 m. Wraps occur about 8 cycles per hour, on targets 25-80 m out and 21-53 m to the left while ego turns or waits at a junction; the radar marks some of them in-path, but the camera has no lead there, so radard never used them in the logs; `acc` and `acc_summaries` add the 40.96 m back ([check bytes](#check-bytes)) | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
 | lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive, **relative in the rotating ego frame**: stationary targets read about −1.1 to −1.2 × yaw rate × distance, and the lateral position changes by 0.98-1.00 × this speed. Crossing traffic beyond 12.8 m/s wraps the field | ● unit consistency, ◐ frame | `LAT_SPEED` |
-| target identity | 0x235 bits 0-4: the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` | ◐ | `TARGET_ID` |
+| target identity | 0x235 bits 0-5 (6 bits; numbers 32-63 in use on a C-HR 2021 radar, 0-31 on every recorded RAV4 target): the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` (idle sends 63) | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
 | tracker bytes | 0x237 bits 19-26 and 11-18: one maneuver quantity in two encodings; both rise while the target accelerates or brakes. `TRACKER_A` sits at about 35 while the target's over-ground acceleration stays within ±1 m/s², steps to about 46 between 1 and 2 m/s² in either direction, and does not depend on range (three cars). For a stopped target `TRACKER_B` = 2.5 × `TRACKER_A` within one code (94-95 % on three cars); for a moving target the factor is larger (3.7-4.3, growing with range) and `TRACKER_B` wraps past 255 | ◐ | `TRACKER_A`, `TRACKER_B` |
@@ -88,7 +88,9 @@ the frame's signals serialized as zero-padded integers (each signal in an 8-, 16
 order), not over the raw bytes; that is why CRC searches over bytes 1-7 find nothing. The padding shows as gaps in the
 register positions: 3 zero bits before the 13-bit distance, 4 before the 12-bit lateral position, 5 before each 11-bit
 speed. Being linear, it is stored as one column per payload bit plus a constant (`support.acc_check`). It holds on
-every frame: 1.69 M distinct payloads of two cars and 1.19 M frames of other drives, with no failure.
+every frame: 1.69 M distinct payloads of two cars and 1.19 M frames of other drives, with no failure, and on all 0x235 / 0x237 /
+0x239 frames of the C-HR and Yaris test routes once the sixth `TARGET_ID` bit has its own column (0x75; the RAV4 data only fixed the
+sum of byte 7's top three columns, [`ci_platforms.json`](../data/analysis/summaries/ci_platforms.json)).
 
 Lateral speed (0x235) and lateral position (0x237) are one bit wider inside the radar than on the bus. When that bit
 is set the CAN field wraps, and the check byte differs by that bit's CRC term (0x9C and 0x14): `acc_check` returns

@@ -3,7 +3,7 @@ import csv
 import gzip
 from pathlib import Path
 
-from ars510.support import acc_check, parse_0x366
+from ars510.support import acc_check, parse_0x366, parse_acc_target
 
 SAMPLES = sorted((Path(__file__).resolve().parents[1] / "data" / "sample").glob("*.csv.gz"))
 
@@ -45,3 +45,11 @@ def test_0x366_target_id_and_pcs_alarm():
   assert t is not None and t.pcs_alarm and t.target_id == 6
   t = parse_0x366(bytes.fromhex("5000341B301200"))  # same target, no alarm
   assert t is not None and not t.pcs_alarm and t.target_id == 6
+
+
+def test_target_id_is_six_bits_and_its_top_bit_has_its_own_column():
+  # a C-HR 2021 radar (8821FF410300) frame with track number 32: byte 7 bit 5 set alone, which the RAV4 radars never sent
+  # (bits 7-5 of byte 7 were 000 with a target and 111 idle), so only the three columns' sum was known before
+  chr_frame = bytes.fromhex("116569820B347D20")
+  assert acc_check(0x235, chr_frame) == "ok"
+  assert parse_acc_target(chr_frame, bytes.fromhex("AD026580F2E8C550")).target_id == 32
