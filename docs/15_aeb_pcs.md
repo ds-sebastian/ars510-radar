@@ -137,8 +137,9 @@ openpilot's "PCS off" 0x411 (from 0.49 s after the radar's last one) showed only
 | any part unhealthy, or the relay unvalidated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
 | openpilot stopped | malfunction | the car's own check reports it |
 
-"PCS on" also carries the radar's real alerts. The radar's own 0x411 reports a blocked or dirty sensor
-(`PCS_DUST2`) and faults (`PCS_INDICATOR` 2). When its object-list output on bus 1 stops (a wiring fault on a second car),
+"PCS on" also carries the radar's real alerts. By Toyota's DBC, 0x411 has a blocked-sensor bit (`PCS_DUST2`) and a fault state
+(`PCS_INDICATOR` 2); neither has appeared in 2,370 recorded segments, which is what the covered-radar test (T01) is for. When
+its object-list output on bus 1 stops (on a second car, when the receiver stopped answering the radar's transfers),
 it sets 0x411 byte 0 to `0x48` (`PCS_INDICATOR` 1 plus bit 3) 2.0-2.2 s later for 4-21 s, not latched; `0x40` for the first frames after
 power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1
 signals for blockage and faults are listed in [17](17_upstream.md#what-radard-gets-from-other-radars); a drive

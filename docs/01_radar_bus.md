@@ -73,10 +73,10 @@ radar and the camera.
 
 | time after the first CAN frame | event |
 |---|---|
-| 0.2 s (median 0.23 s, 0.15-0.46 s on 26 of 27 cold starts) | 0x235 / 0x237 (ACC target frames), 0x191 target summaries and 0x680 frames start |
+| 0.26 s (median; 0.14-1.01 s on 74 cold starts) | 0x235 / 0x237 / 0x239 (ACC target frames), 0x190 / 0x191 cycle header and target summaries, and 0x680 frames start |
 | 0.8 s (median; 0.65-1.3 s on 24 of 27) | 0x680 reports its first tracked object |
 | 3.3-4.2 s (14 cold starts, current openpilot) | openpilot's fingerprinting is done and it starts transmitting |
-| **5.83-6.12 s** | **0x80 / 0x85 object records start** (27 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json)) |
+| **5.80-6.16 s** | **0x80 / 0x85 object records start** (74 cold starts, [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0x680.json), [`radar_health.json`](../data/analysis/summaries/radar_health.json)) |
 
 Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `decode_claim_sources.json` (0x235 / 0x680 / sendcan, recomputed from the research captures).
 
@@ -85,7 +85,9 @@ Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `
   early frames (0x190, 0x191 / 0x193, 0x235 / 0x237 / 0x239) are in the bus-1 fingerprint: they were on all 74 recorded
   cold starts ([08](08_openpilot_integration.md), [radar firmware](#radar-firmware)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record (spread 7 ms) and 0x197 bit 8 sets 60 ms later (0.20 s, spread 14 ms) on
-  27 of 27 cold starts: both behave as the camera's acknowledgement of the object list (◐) and serve as "radar running" signals.
+  27 of 27 cold starts: both behave as the camera's acknowledgement of the first object record (◐). They switch once after boot
+  and stay through object-list outages (about 1,300 s without a record on the second car), so they are boot flags, not live
+  radar or list health.
 - 0x680 reports tracked objects 5 s before the object list starts.
 - 0x100 sends `FFFF…` in its first frame ([DBC](../dbc/ars510_radar_bus.dbc)).
 - Age-1 placeholder objects at 0 m (the initialization template, [03](03_slot_fields.md#class-and-size)) are marked `geometry_valid = False`, and the decoder withholds them.

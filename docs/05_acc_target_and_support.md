@@ -392,9 +392,10 @@ The night mode matters for the object list: two slot fields change with it ([03]
 | 0x197 bit 8 | 0 | 1 (60 ms after 0x101 switches) |
 | 0x24F bit 6 | 0 | 1 |
 
-All three switch once and stay, so they are a direct "radar running" signal and a radar-reboot detector. 0x101 and
-0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread
-7 and 14 ms): they behave as the camera's acknowledgement of the object list (◐).
+All three switch once after boot and stay, also through object-list outages (about 1,300 s without a record on the second car,
+[`radar_health.json`](../data/analysis/summaries/radar_health.json)): they mark that the radar has booted, not that it or its
+object list is healthy now. 0x101 and 0x197 are sent by the camera and follow the first 0x80 record by 0.14 s and 0.20 s on 27
+of 27 cold starts (spread 7 and 14 ms): they behave as the camera's acknowledgement of the first object record (◐).
 
 ## 0x680: single-object stream
 
