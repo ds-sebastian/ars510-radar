@@ -24,6 +24,9 @@ def _fake_opendbc() -> dict:
   class Point:
     trackId, dRel, yRel, vRel = 0, 0.0, 0.0, 0.0
 
+    def __init__(self, **fields):  # RadarPoint(trackId=..., ...) as with opendbc's capnp structs
+      self.__dict__.update(fields)
+
   class Errors:
     radarUnavailableTemporary = canError = False
 
