@@ -110,7 +110,7 @@ def check_acc_summaries_profile(RI, check) -> None:
           outs[far].append(out)
   near = outs[False]
   check(all(not any(o.errors.to_dict().values()) for o in near), "acc_summaries: no error flags while the frames arrive")
-  ok = [sorted(p.trackId for p in o.points) == [7, 41] and abs(next(p for p in o.points if p.trackId == 41).vRel + 6.0) < 0.1 for o in near]
+  ok = [sorted(p.trackId for p in o.points) == [7, 73] and abs(next(p for p in o.points if p.trackId == 73).vRel + 6.0) < 0.1 for o in near]
   check(bool(near) and all(ok), f"acc_summaries: the ACC target once plus the 40 m summary car with its slope speed ({sum(ok)}/{len(ok)})")
   check(all([p.trackId for p in o.points] == [7] for o in outs[True]), "acc_summaries: summary cars beyond 60 m are not published")
   silent = [o for o in (RI.update([(t_ns + i * 10_000_000, [])]) for i in range(1, 101)) if o is not None]

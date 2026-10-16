@@ -174,7 +174,7 @@ nearest moving vehicles of the same internal tracker that drives the ACC target.
 ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 65 code lines,
 no DBC) publishes them next to the ACC target:
 - **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
-- **Identity and speed.** Every other summary is `trackId 32 + code` (its pair code). Its speed is the least-squares
+- **Identity and speed.** Every other summary is `trackId 64 + code` (its pair code). Its speed is the least-squares
   slope of that code's last 8 ranges over CAN time, published once the 8 span less than 0.6 s, so a code that returns
   after a gap does not mix old and new ranges.
 - **Within 60 m.** Beyond 60 m only the ACC target is published, the same far rule as `fused`. A first version without
@@ -248,7 +248,7 @@ the object-list steps belong to `raw` and `fused`.*
   vision match. The protocol part: opendbc's CANParser on three DBC messages, the target-present flags, `canError` when
   the ACC frames stop (CANParser's timeout), and one report per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances).
 - **`acc_summaries`** publishes the same ACC point and, from the target summaries 0x191-0x194, the radar's two nearest
-  other moving cars within 60 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 32 + the summary's pair code,
+  other moving cars within 60 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 64 + the summary's pair code,
   and a speed from the least-squares slope of that code's last 8 ranges. A summary within 1 m / 0.5 m of the ACC point
   is the ACC car and is skipped. Details [above](#acc_summaries-acc-plus-the-summary-cars).
 - **`fused`** adds range fusion and **one Kalman filter per track** on the lead's over-ground speed

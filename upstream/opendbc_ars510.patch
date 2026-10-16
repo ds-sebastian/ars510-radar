@@ -260,7 +260,7 @@ index 00000000..9844ea20
 + SG_ REL_SPEED : 31|11@0+ (0.125,-128) [-128|127.875] "m/s" XXX
 + SG_ LAT_ACCEL : 34|8@0+ (0.125,-12.5) [-12.5|19.375] "m/s^2" XXX
 + SG_ LAT_SPEED : 42|11@0+ (0.0125,-12.8) [-12.8|12.7875] "m/s" XXX
-+ SG_ TARGET_ID : 60|5@0+ (1,0) [0|31] "" XXX
++ SG_ TARGET_ID : 61|6@0+ (1,0) [0|63] "" XXX
 +
 +BO_ 567 ACC_TARGET_2: 8 XXX
 + SG_ CHECK_BYTE : 7|8@0+ (1,0) [0|255] "" XXX
@@ -332,7 +332,7 @@ index 00000000..9844ea20
 +CM_ SG_ 565 REL_SPEED "Closing speed relative to ego, negative = closing.";
 +CM_ SG_ 565 LAT_ACCEL "Relative lateral acceleration, left positive (nominal unit). Mostly minus ego's own lateral acceleration.";
 +CM_ SG_ 565 LAT_SPEED "Lateral speed of the target relative to ego in the rotating ego frame, left positive (about 0.0125 m/s per code). Wraps above the top code (crossing traffic); the check byte then differs by 0x9C.";
-+CM_ SG_ 565 TARGET_ID "The radar tracker's track number: changes when the radar switches to a different target, kept when it re-acquires the same one. 31 in the idle payload but also an ordinary number; idle is STATE = 1.";
++CM_ SG_ 565 TARGET_ID "The radar tracker's track number, 6 bits: changes when the radar switches to a different target, kept when it re-acquires the same one. Numbers 32-63 are in use on a C-HR 2021 radar (8821FF410300); the RAV4 radars sent 0-31 in every recorded drive. 63 in the idle payload; idle is STATE = 1.";
 +CM_ BO_ 567 "ACC target, part 2: 50 Hz.";
 +CM_ SG_ 567 CHECK_BYTE "CRC-8 (polynomial 0x1D, MSB first) over the frame's signals serialized as zero-padded 8 / 16 / 32-bit integers, not over the raw bytes; as a 56-column table in ars510.support.acc_check (docs/05).";
 +CM_ SG_ 567 LONG_DIST "Distance from the radar.";

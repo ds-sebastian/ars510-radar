@@ -97,9 +97,12 @@ Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `
 On the RAV4 2022 / 2023 the radar itself sends the car's ACC command: opendbc marks the platform `RADAR_ACC`, so openpilot
 longitudinal (alpha long) switches the radar's car-bus output off with UDS CommunicationControl `28 01 01` (receive
 on, transmit off) to 0x750 / 0x0F, then keeps it off with tester-present `3E 00` every ~0.2 s. That request switches off bus 0
-only; **bus 1 keeps running unchanged** (●, all three stored disables on three cars, firmware `8821F0R03100`: a 26 min drive with the
-radar line unfiltered and two parked tests, one with a filter board fitted; 16.6 records/s and 0 CRC failures afterwards;
-[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json), [`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json)):
+only; **bus 1 keeps running unchanged** (●, all three stored disables on three RAV4s, firmware `8821F0R03100`: a 26 min drive with the
+radar line unfiltered and two parked tests, one with a filter board fitted; 16.6 records/s and 0 CRC failures afterwards; and a C-HR
+Hybrid, `8821FF410500`, on opendbc's 22 min "openpilot longitudinal, radar disabled" test route: the nine car-bus frames stop, bus 1
+continues with 20,518 records, 0 CRC failures and the ACC target at 50 Hz;
+[`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json), [`carbus_feedback.json`](../data/analysis/summaries/carbus_feedback.json),
+[`ci_platforms.json`](../data/analysis/summaries/ci_platforms.json)):
 
 | | before the request | after (26 min, openpilot longitudinal engaged 8 min) |
 |---|---|---|
@@ -125,7 +128,7 @@ openpilot's fingerprints list two radar firmwares for the radar-ACC RAV4 (fwdRad
 (the original 2022 ports, RAV4 Hybrid 2022 and RAV4 2022) and `8821F0R03100` (the 2023-25 platform; also the owner's car,
 which fingerprints as 2022). Both are the ARS510 and send the same bus (●, [`rav4_radar_firmware.json`](../data/analysis/summaries/rav4_radar_firmware.json)):
 
-| | `8821F0R01100` (opendbc's 2022 test routes, Hybrid / ICE, 1 min each) | `8821F0R03100` (owner's car) |
+| | `8821F0R01100` (opendbc's two 2022 test routes, Hybrid / ICE; 1 min each below, 8.4 min in total in [`ci_platforms.json`](../data/analysis/summaries/ci_platforms.json): 0 CRC failures, every ACC check byte valid) | `8821F0R03100` (owner's car) |
 |---|---|---|
 | bus-1 addresses | 36 / 36 | the same set |
 | 0x80 / 0x85 records | 995 CRC-valid records per minute (16.6 / s), 0x85 with each | 16.7 / s |
@@ -140,8 +143,9 @@ clock stays inside radard's 8-24 Hz window on both.
 
 ### C-HR and Yaris
 
-The two other radar-ACC Toyotas have different radar part numbers but carry the same ARS510 bus (◐: one minute of an
-opendbc test route each, mostly parked or on an empty road; [`chr_yaris_radar.json`](../data/analysis/summaries/chr_yaris_radar.json)):
+The two other radar-ACC Toyotas have different radar part numbers but carry the same ARS510 bus (◐: opendbc's test routes, 6-22
+minutes each, 50.1 min in all; [`chr_yaris_radar.json`](../data/analysis/summaries/chr_yaris_radar.json) for the table below,
+[`ci_platforms.json`](../data/analysis/summaries/ci_platforms.json) for the full routes):
 
 | | C-HR 2021 (`8821FF410300`) | C-HR Hybrid (`8821FF410500`) | Yaris (`8821F0D05300`) |
 |---|---|---|---|
@@ -152,7 +156,11 @@ opendbc test route each, mostly parked or on an empty road; [`chr_yaris_radar.js
 | `acc` interface | 16.4 reports per s; 413 points, all equal the reference decoder | 16.4 per s, no target | 17.1 per s; 19 points, all equal |
 
 On the C-HR the camera's lead sits a steady 1.7-2.2 m beyond the ACC target's distance at 3-20 m, the camera-to-bumper
-offset, so the distance unit holds there too. The `fused` decoder reads the object list on all three, but the Yaris
+offset, so the distance unit holds there too. Over the full routes every object record passes its CRC (0 failures in 50.1 min),
+every first frame carries the 740 / 144-byte length with one flow-control frame, and every ACC check byte is valid once
+`TARGET_ID` is read as 6 bits: the C-HR 2021 radar numbers its tracks beyond 31 (32, 33 and 37 here), which the RAV4 radars
+never did in 1.24 M target cycles ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)). The radar's bus-1
+frames came before the first `carState` on every route (by 0.1-1.6 s), so the integration's bus-1 check finds them. The `fused` decoder reads the object list on all three, but the Yaris
 sends no 0xB4 wheel-speed frame, so the filter has no ego speed on that car. The integration enables both
 platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, the Yaris with `acc` whatever the profile, and the upstream
 `acc` proposal includes them ([17](17_upstream.md)); drives in traffic on those cars are still to come.
