@@ -1,7 +1,7 @@
 # 01. The radar bus
 
 The ARS510 talks to the camera over a private CAN link, which the comma harness exposes as **bus 1** (`src == 1` in openpilot logs).
-The radar runs a **60 ms cycle (16.7 Hz)**. The `raw` and `fused` decodes take ego speed from the car bus (bus 0, Toyota `SPEED` 0xB4);
+The radar runs a **60.28 ms cycle (16.6 Hz)**: its record clocks advance 60.28 ms per record and keep the logger's time. The `raw` and `fused` decodes take ego speed from the car bus (bus 0, Toyota `SPEED` 0xB4);
 the `acc` profile reads the radar's ACC target (0x235 / 0x237), which carries its own closing speed.
 
 ```mermaid
@@ -26,21 +26,21 @@ segmented record on 0x80, and 0x191-0x194 carry two target summaries from the ra
 | addr | DLC | rate | content | doc |
 |---|---|---|---|---|
 | **0x80** | 8 | 106 frames / 60 ms | **object list**: 742-byte record, 20 object slots × 36 bytes + CRC32 | [02](02_object_list.md), [03](03_slot_fields.md) |
-| 0x81 | 8 | 16.7 Hz | record-cycle marker `30 00 …` after each 0x80 record start | |
+| 0x81 | 8 | 16.6 Hz | record-cycle marker `30 00 …` after each 0x80 record start | |
 | **0x85** | 8 | 21 frames / 60 ms | metadata record: 147 bytes, ten 12-byte cells (lane / road-boundary curves: offset, heading, curvature) + CRC32 | [04](04_metadata_record_0x85.md) |
-| 0x86 | 8 | 16.7 Hz | record-cycle marker for 0x85 | |
+| 0x86 | 8 | 16.6 Hz | record-cycle marker for 0x85 | |
 | 0x100-0x103 | 7/6/3/2 | 10 Hz | startup state: 0x101 goes 0x1D → 0x11 when the radar is running; 0x100 byte 0 = 0x02 during a PCS alarm ([15](15_aeb_pcs.md#a-recorded-stock-pcs-alarm-u3)) | [05](05_acc_target_and_support.md#startup-and-readiness) |
-| 0x180 | 5 | 16.7 Hz | constant `CF C0 00 00 00` | |
-| 0x190 | 7 | 16.7 Hz | cycle header: number of target summaries, µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
-| 0x191 / 0x193 | 8 | 16.7 Hz | selected-target companions: score, age, track code, class template (width, height, length) | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
-| 0x192 / 0x194 | 4 | 16.7 Hz | target summaries: distance and lateral position of one internal-tracker target each | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
-| 0x195 / 0x196 | 8 | 16.7 Hz | paired event frames; exact idle payloads in 99.67% of recorded frames | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
-| 0x197 / 0x198 | 2 / 1 | 16.7 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
-| 0x202 | 5 | 16.7 Hz | counter + check byte | |
+| 0x180 | 5 | 16.6 Hz | constant `CF C0 00 00 00` | |
+| 0x190 | 7 | 16.6 Hz | cycle header: number of target summaries, µs timestamp and a mod-16 cycle counter | [05](05_acc_target_and_support.md#0x190-cycle-header) |
+| 0x191 / 0x193 | 8 | 16.6 Hz | selected-target companions: score, age, track code, class template (width, height, length) | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
+| 0x192 / 0x194 | 4 | 16.6 Hz | target summaries: distance and lateral position of one internal-tracker target each | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
+| 0x195 / 0x196 | 8 | 16.6 Hz | paired event frames; exact idle payloads in 99.67% of recorded frames | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
+| 0x197 / 0x198 | 2 / 1 | 16.6 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
+| 0x202 | 5 | 16.6 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
 | **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (fields ●, sender the radar ◐): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
 | 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | ACC target companions: 0x239 = class, object-list flag, µs timestamp; 0x23B = width in cm + counter + CRC-8; 0x23D all zero | [05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b) |
-| 0x240 / 0x241 / 0x244 / 0x245 / 0x248 | 8 | 16.7 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
+| 0x240 / 0x241 / 0x244 / 0x245 / 0x248 | 8 | 16.6 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
 | 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
 | 0x680 | 8 | 2 Hz | one tracked object: distance, lateral position, over-ground speed; mostly a stationary roadside object | [05](05_acc_target_and_support.md#0x680-single-object-stream) |

@@ -75,6 +75,13 @@ replay routes and closed-loop drives. The full captures are held in the research
 of the research workspace's runs. Drive counts: the replays use 27 drives (20 held-out routes, 4 further drives, 3 owner
 sunnypilot drives); the JSON keys that contain `34_drives` hold that 27-drive set.
 
+## `reference/units.json`
+
+The current unit, zero code and confidence of every scaled field (object-list slot fields, uncertainty codes, ACC target
+signals), the 0xB4 ego factor per car and the radar cycle (60.28 ms), plus retired values with the reason they were
+retired. A correction starts here: `tests/test_units_ledger.py` fails until `ars510/`, the profile files and docs/03
+agree with it, and fails when a retired value reappears in the code.
+
 ## `reference/slot_bit_map.json`
 
 Per-bit statistics of the 0x80 slot (288 bits), the 0x80 header and the 0x85 record from 13 one-minute segments of

@@ -12,7 +12,7 @@ flowchart LR
         card --> RI["toyota RadarInterface.update()"]
         RI -- "ARS510 detected" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>acc_summaries: + target summaries<br/>fused: reassemble · CRC · decode · filter · track IDs"]
     end
-    A -- "RadarData: acc 16.7 Hz, acc_summaries 20 Hz, fused ~16.7 Hz" --> T["radarTracks / liveTracks"]
+    A -- "RadarData: acc 16.6 Hz, acc_summaries 20 Hz, fused ~16.6 Hz" --> T["radarTracks / liveTracks"]
     T --> radard --> RS["radarState leads"] --> P[longitudinal planner]
     V["modelV2 vision leads"] --> radard
 ```
@@ -50,14 +50,14 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    reassemble 0x80 records, check the CRC32 and decode the 20 slots; ego speed for vRel comes from 0xB4 on bus 0 in
    the same packets. Cost of the object-list decode: about 6-14 µs per 10 ms call on a desktop CPU.
 4. **Output.** `acc`: one `RadarPoint(trackId, dRel, yRel, vRel)` for the radar's ACC target while its target-present
-   flags are set, reported once per radar cycle (16.7 Hz, when the radar's cycle clock in 0x239 advances). `acc_summaries`: that point plus up to two summary cars within 60 m (`trackId` 32 + pair code, speed from
+   flags are set, reported once per radar cycle (16.6 Hz, when the radar's cycle clock in 0x239 advances). `acc_summaries`: that point plus up to two summary cars within 60 m (`trackId` 32 + pair code, speed from
    the slope of the last 8 ranges), reported every fifth card update (20 Hz). Object-list profiles: `RadarPoint(trackId, dRel, yRel, vRel)`
    for tracks aged ≥ 60 cycles (with `fused`, also once the filter's speed standard deviation is at most 0.75 m/s), with
    the radar's own track IDs (`raw` also re-links them across short losses), published while a fresh ego speed gives a
    finite vRel. Forks whose RadarPoint still has the legacy fields (sunnypilot) also get:
    - `yvRel`: the radar's lateral ground velocity minus yaw rate × range, with the yaw rate from Toyota 0x24; the radar
      filters it.
-   - `aRel`: the radar's filtered over-ground acceleration (`84|10` × 0.075 m/s²; ego-stopped estimates range 0.04-0.09, so treat the scale as approximate)
+   - `aRel`: the radar's filtered over-ground acceleration ((`84|10` − 510.3) × 0.075 m/s²; ego-stopped estimates range 0.035-0.086 by drive set, so treat the scale as approximate)
      minus ego acceleration (from 0xB4). It is smoothed and lags vRel by about 0.5 s; while ego accelerates it still
      carries part of ego's acceleration. No radard version we integrate reads it (openpilot, StarPilot and sunnypilot
      take the lead acceleration from their own Kalman filter).
@@ -69,7 +69,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
 
 | situation | RadarData | effect in openpilot |
 |---|---|---|
-| record completed (~16.7 Hz) | points | radard fuses them with the vision leads |
+| record completed (~16.6 Hz) | points | radard fuses them with the vision leads |
 | between completed records, last record still fresh | `None` returned | radard retains the last scan; a genuinely empty completed scan still clears its tracks |
 | before the first record (boot ~6 s) | empty list | vision-only leads, as on a radarless car |
 | last record older than 0.5 s (after the first) | `radarUnavailableTemporary` | radarState invalid → `commIssue` (lateral too); with openpilot long also `radarTempUnavailable` |
@@ -176,7 +176,7 @@ radard (openpilot, September 2026) runs at the model's 20 Hz:
 
 - **Low-speed override** (ego < 4 m/s): a radar-only lead within ±1 m laterally and 0.75-25 m ahead is accepted
   on the radar alone.
-- **16.7 Hz into 20 Hz.** radard re-uses the latest radar record on every tick, so 17.5% of ticks repeat the previous
+- **16.6 Hz into 20 Hz.** radard re-uses the latest radar record on every tick, so 17.5% of ticks repeat the previous
   vRel; this adds about 1% to `aLeadK` roughness.
 - **Stopped vehicles** first seen stopped come mostly from vision ([02](02_object_list.md#what-the-radar-lists)).
 
@@ -250,11 +250,11 @@ Numbers: [`road_v21.json`](../data/analysis/summaries/road_v21.json).
 ## Checking a new install on the car
 
 1. **Parked, ignition on:** `install.py --check` shows the hook as present; in the log, `carParams.radarUnavailable` is
-   false and `radarTracks` (or `liveTracks`) arrive at ~16.7 Hz with points after ~6 s. (`carParams.flags` stays as the
+   false and `radarTracks` (or `liveTracks`) arrive at ~16.6 Hz with points after ~6 s. (`carParams.flags` stays as the
    fork sets it.)
 2. **Stock ACC, openpilot lateral only:** radar tracks feed radarState and the UI lead; compare leads with the video
    and look for `commIssue` events.
 3. **openpilot longitudinal:** alpha long sends the radar a UDS "disable transmit" (`28 01 01`) at startup. That stops
    only the radar's car-bus messages; 0x80 keeps arriving on bus 1 on an unfiltered radar line, so radar tracks continue
    ([01](01_radar_bus.md#openpilots-radar-disable)). Check that the radar answers `68 01` and that `radarTracks` stay at
-   ~16.7 Hz after it.
+   ~16.6 Hz after it.

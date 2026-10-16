@@ -201,7 +201,7 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 flowchart LR
     CAN["CAN: bus 1 radar<br/>+ bus 0 wheel speed, yaw rate"] --> card --> RI["Toyota RadarInterface"]
     RI -- "radar-ACC Toyota<br/>(car model)" --> A["Ars510RadarInterface<br/>acc: ACC target frames<br/>acc_summaries: + target summaries<br/>fused: reassemble · CRC · decode · Kalman speed filter"]
-    A -- "RadarPoints: acc 16.7 Hz, acc_summaries 20 Hz, fused 16.7 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
+    A -- "RadarPoints: acc 16.6 Hz, acc_summaries 20 Hz, fused 16.6 Hz" --> radard["radard (unchanged)"] --> planner["planner (unchanged)"]
 ```
 
 The installer adds the decoder package and appends one hook block to the end of Toyota's `interface.py`. The rest of

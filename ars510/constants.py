@@ -42,5 +42,6 @@ ACC_TARGET_VREL_ADDR = 0x235
 ACC_TARGET_POS_ADDR = 0x237
 SUMMARY_ADDRS = (0x192, 0x194)  # the radar's selected-target range summaries (docs/05)
 
-# Radar cycle is ~60 ms (records arrive at ~16.7 Hz).
-RADAR_CYCLE_S = 0.06
+# Radar cycle: one record every 60.28 ms (16.6 Hz): the record clocks advance 603 x 100 us (0x80 header) and
+# 60,280 x 1 us (0x85 prefix) per record and keep log time on both cars; arrival intervals jitter around a 59.9 ms median.
+RADAR_CYCLE_S = 0.06028

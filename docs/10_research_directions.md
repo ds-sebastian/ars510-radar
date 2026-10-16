@@ -121,7 +121,7 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
    independent of the camera.
 2. **The first second of an excursion.** *Do velocity steps at onset share a size and sign?* Steps of a consistent size
    and sign indicate wrong-branch Doppler measurements leaking into the tracker; ordinary-sized steps indicate low-SNR
-   tracking ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)). *Data:* the 16.7 Hz records of the first
+   tracking ([07](07_velocity_excursions.md#what-the-radars-waveform-allows)). *Data:* the 16.6 Hz records of the first
    second of logged excursions, binned by size and sign.
 3. **Ego-speed waveform modes.** *Does the range noise floor step at the ego speeds where the handbook table's three
    bandwidths change?* Finding the steps, and the excursion rate in each mode, ties drift risk to a radar setting. *Data:*

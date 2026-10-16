@@ -41,7 +41,7 @@ def _box(ax, x, y, w, h, title, body, color):
 def pipeline() -> None:
   """CAN frames to radard, one box per stage with its key numbers."""
   stages = [
-    ("1  Radar bus", "0x80 frames on bus 1\n106 frames = 1 record\nevery ~60 ms (16.7 Hz)", GRAY),
+    ("1  Radar bus", "0x80 frames on bus 1\n106 frames = 1 record\nevery ~60 ms (16.6 Hz)", GRAY),
     ("2  Reassemble", "742-byte record\nCRC32 check\nbad records dropped", GRAY),
     ("3  Decode slots", "20 slots, ~2 objects\ndRel, yRel, ground speed,\nage, uncertainty 240|7", GRAY),
     ("4  Track IDs", "slot + age counting up\n= one radar track", GRAY),
