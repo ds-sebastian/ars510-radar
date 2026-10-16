@@ -10,16 +10,24 @@ run with a maintainer-assisted read-only acquisition setup. Physical calibration
 
 ### Captures most useful now
 
+Two goals set the current requests: better `acc` / `acc_summaries` behaviour on the road, and keeping AEB under
+openpilot longitudinal ([15](15_aeb_pcs.md)). The first five rows need nothing beyond full logging.
+
 | What you can offer | Session to choose | What makes it useful |
 |---|---|---|
-| Normal driving and full rlogs | T08 + T13 + [T14](#t14-follow-one-target-through-selection-changes) | city queues, ordinary lead exits/switches and curves; uninterrupted video/CAN before and after each event |
+| Normal driving and full rlogs, stock or any installed profile | T08 + T13 + [T14](#t14-follow-one-target-through-selection-changes) | city queues, ordinary lead exits/switches and curves; uninterrupted video/CAN before and after each event. Every profile replays on the same CAN, so three moving hours per car, one of them above 20 m/s, give a profile comparison |
+| Drives with `acc` or `acc_summaries` installed | T13 | closed-loop behaviour: bookmark unwanted, late or jerky braking and lead switches, and name the profile and version |
+| openpilot longitudinal on an unfiltered radar line (openpilot disables the radar from startup) | T13 + [T12](#t12-pcs-and-event-reports), natural events only | bookmark each moment you brake hard for something ahead and keep both buses: shows whether the disabled radar still raises its PCS alarm (0x100) on bus 1, the first step of an AEB relay ([15](15_aeb_pcs.md#where-a-relay-stands-for-developers)) |
+| A car that keeps stock PCS (stock, or openpilot behind a radar-line filter) | [T12](#t12-pcs-and-event-reports), natural events only | if PCS ever warns or brakes, keep that rlog with bus 0 and bus 1: the braking-stage frames a relay needs |
+| Another radar-ACC model or radar firmware (C-HR, Yaris, other RAV4 radar firmware) | T08 + T13 | bus 1 from more cars and firmware shows whether the profiles transfer |
 | A second cooperative car and qualified motion references | T03 + T04 + T07 | the same target near/far and in several motion conditions, with measured timing, origins and reference error |
-| A maintainer-assisted read-only diagnostic setup | T01 + T02 | radar-reported ego speed, alignment/temperature and status alongside the original broadcast frames |
+| A maintainer-assisted read-only diagnostic setup | T01 + T02 | radar-reported ego speed, alignment/temperature and status alongside the original broadcast frames; while parked, also press each cruise control a few times (no frame is known to carry the lever) |
 | A surveyed site and identifiable target | T03 + T06 + T10 | distance zero, target identity through loss/recovery, and motion/class confidence on one known object |
 | A spare sensor and instrumented bench | T09, arranged with the maintainer | distinguish camera input from receiver/transport availability with a stock startup baseline |
-| A professional PCS facility | T12 | independently labelled warning, assist and braking stages, all buses and actual actuator response |
+| A professional PCS facility | T12 | independently labelled warning, assist and braking stages, all buses and actual actuator response; the alarm with the radar disabled |
 
-Ordinary routes can contribute without changing the installed profile. In the report, name the test IDs, give
+The PCS rows collect events that happen anyway in normal driving or at a facility; never provoke one (Toyota advises
+leaving PCS testing to professionals). Ordinary routes can contribute without changing the installed profile. In the report, name the test IDs, give
 times relative to the session and offer complete logs privately. A short pilot with the maintainer helps establish
 that the requested signals and reference are present before a longer controlled acquisition.
 
@@ -301,6 +309,9 @@ in [15](15_aeb_pcs.md#recording-pcs--aeb-events), including isolated target cont
 The recorded alarm stage covers the alarm; brake stages, disabled-radar signaling and target attribution take the events
 specified in [15](15_aeb_pcs.md#recording-pcs--aeb-events). Keep short-TTC states with PCS idle as controls. Brake requests come from
 decoded stock events, and a replica that substitutes for a message is described as a replica.
+
+Ordinary drives under openpilot longitudinal on an unfiltered radar line can catch the disabled radar's alarm without a
+test: keep full logs of both buses and bookmark each moment you brake hard for something ahead.
 
 ## T13: fresh road and parser validation
 
