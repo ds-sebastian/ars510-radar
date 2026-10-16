@@ -7,7 +7,7 @@
   "fused": "FUSED_CONFIG",
   "fused_no_trackers": "FUSED_CONFIG of 2.0 with the ACC target and summary readings at sigma 1e4: the Kalman filter on the object list alone",
   "acc": "the acc profile (upstream/ars510_acc_target.py, install.py --profile acc): only the radar's ACC target (0x235 / 0x237) as one point, read straight from the two frames",
-  "acc_summaries": "the acc_summaries profile (openpilot/standalone/ars510_acc_summaries.py, install.py --profile acc_summaries): the ACC target plus the radar's target summaries within 60 m"
+  "acc_summaries": "the acc_summaries profile (openpilot/standalone/ars510_acc_summaries.py, install.py --profile acc_summaries): the ACC target plus the radar's target summaries within 40 m (since PR 194; the 60 m form gave identical brake-press, override, hard-tick and FCW numbers, lead share 86.8 %, 363 flips per h)"
  },
  "heldout_events": {
   "anchor": {
@@ -473,9 +473,9 @@
   },
   "acc_summaries": {
    "request_rmse_vs_driver_mps2": 0.411,
-   "mean_abs_jerk_mps3": 0.984,
-   "radar_lead_share_of_lead_time": 0.868,
-   "lead_source_switches_per_h": 362.8,
+   "mean_abs_jerk_mps3": 0.985,
+   "radar_lead_share_of_lead_time": 0.859,
+   "lead_source_switches_per_h": 344.8,
    "hours": 2.66
   }
  },
@@ -565,7 +565,7 @@
   "acc_summaries": {
    "measured_or_physical": [],
    "chosen": [
-    "60 m summary range limit (fused far rule)",
+    "40 m summary range limit (radard took summary cars at 47-58 m as its lead on held-out drives; acc_summaries_40m.json)",
     "8-range slope window",
     "ACC match 1 m / 0.5 m"
    ],

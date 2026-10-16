@@ -129,7 +129,7 @@ def layers() -> None:
     # columns: acc, acc_summaries, fused, raw (the recommended order)
     acc_n, accs_n = acc_lines(), acc_lines("openpilot/standalone/ars510_acc_summaries.py")
     rows = [("ACC target (0x235 / 0x237) as a point", None, (1, 1, 0, 0)),
-            ("summary cars (0x191-0x194) within 60 m, range-slope speed", None, (0, 1, 0, 0)),
+            ("summary cars (0x191-0x194) within 40 m, range-slope speed", None, (0, 1, 0, 0)),
             ("object list: validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (0, 0, 1, 1)),
             ("track-ID relink across short losses", n(I._relink), (0, 0, 0, 1)),
             ("saturation guard", n(I._guard), (0, 0, 0, 1)),
