@@ -9,14 +9,14 @@
    "functions": 13
   },
   "ACC target only": {
-   "code_lines": 33,
-   "constants": 1,
-   "state_attributes": 4,
-   "conditions": 5,
-   "functions": 2,
+   "code_lines": 45,
+   "constants": 3,
+   "state_attributes": 5,
+   "conditions": 9,
+   "functions": 3,
    "dbc_signals": 8,
-   "note": "upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc (opendbc CANParser; ACC_TARGET_1/2/3, plus two rolling counters); one report per radar cycle (0x239 clock); the replays ran a hand-decoded version with the same points",
-   "file_lines": 50
+   "note": "upstream/ars510_acc_target.py with toyota_tss2_ars510.dbc (opendbc CANParser; ACC_TARGET_1/2/3, plus two rolling counters); one report per radar cycle (0x239 clock); LAT_DIST unwrapped by 40.96 m when the 0x237 check byte carries the wrapped bit (12 of the 45 code lines); the replays ran a hand-decoded version with the same points",
+   "file_lines": 68
   }
  },
  "by_version_and_set": {

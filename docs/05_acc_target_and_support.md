@@ -48,7 +48,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | ● | `REL_SPEED` |
 | relative acceleration | 0x235 byte 2: `(code − 100) × 0.125` m/s², positive = opening | ● | `REL_ACCEL` |
 | distance | 0x237 bits 39-51: `code × 0.025` m | ● | `LONG_DIST` |
-| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when); on the right it stops at −20.00 m. Wraps occur about 8 cycles per hour, on targets 25-80 m out and 21-43 m to the left while ego turns or waits at a junction; the radar marks some of them in-path, but the camera has no lead there, so radard never used them in the logs | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
+| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when); on the right it stops at −20.00 m. Wraps occur about 8 cycles per hour, on targets 25-80 m out and 21-53 m to the left while ego turns or waits at a junction; the radar marks some of them in-path, but the camera has no lead there, so radard never used them in the logs; `acc` and `acc_summaries` add the 40.96 m back ([check bytes](#check-bytes)) | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
 | lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive, **relative in the rotating ego frame**: stationary targets read about −1.1 to −1.2 × yaw rate × distance, and the lateral position changes by 0.98-1.00 × this speed. Crossing traffic beyond 12.8 m/s wraps the field | ● unit consistency, ◐ frame | `LAT_SPEED` |
 | target identity | 0x235 bits 0-4: the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
@@ -93,7 +93,8 @@ every frame: 1.69 M distinct payloads of two cars and 1.19 M frames of other dri
 Lateral speed (0x235) and lateral position (0x237) are one bit wider inside the radar than on the bus. When that bit
 is set the CAN field wraps, and the check byte differs by that bit's CRC term (0x9C and 0x14): `acc_check` returns
 `"wrapped"`, and the lateral speed is continuous with its neighbours only when 2048 codes are added
-([`acc_check_bytes.json`](../data/analysis/summaries/acc_check_bytes.json)).
+([`acc_check_bytes.json`](../data/analysis/summaries/acc_check_bytes.json)). The `acc` and `acc_summaries` profiles
+read the 0x237 check byte this way and publish a wrapped lateral position with the 40.96 m added back.
 
 ### Units of the ACC target
 

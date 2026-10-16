@@ -1,0 +1,25 @@
+{
+ "description": "ACC target lateral distance (0x237 LAT_DIST) wrap: how often it occurs, where a wrapped target was published, and the replay of the acc profile with the check-byte unwrap against the same parser without it. LAT_DIST is the low 12 bits of the radar's 13-bit lateral distance; when the hidden bit is set the check byte's remainder is 0x14 (acc_check_bytes.json).",
+ "wrapped_active_cycles": {
+  "cycles": 320,
+  "hours_of_radar_cycles": 38.2,
+  "cars": 3,
+  "true_lateral_m": [20.96, 53.26],
+  "published_lateral_m_before_the_guard": [-20.0, 12.3],
+  "published_by_band_m": {"(-21,-15]": 178, "(-15,-10]": 51, "(-10,-5]": 46, "(-5,-2]": 10, "(-2,0]": 3, "(0,2]": 12, "(2,3]": 4},
+  "published_within_2m_of_path": {"cycles": 14, "episodes": 2, "range_m": [77.0, 80.6]},
+  "logged_radar_lead_on_a_wrapped_target": 0
+ },
+ "replay": {
+  "what": "fast suite: 278 six-segment chunks, 22.8 h, 16.9 moving h (27 replay drives, owner road, second car, fresh), unchanged pinned openpilot; the hand-decoded acc parser with and without the unwrap",
+  "wrapped_cycles_in_replay": 265,
+  "chunks_with_wraps": 10,
+  "ticks_compared": 1809325,
+  "ticks_differing": 0,
+  "gates_without_unwrap": {"hard": 13, "hard_ticks": 72, "mild": 30, "unnecessary_s": 19.2, "missed_s": 17.4, "flips_per_moving_h": 302, "onset_vs_vision_s": -0.017},
+  "gates_with_unwrap": {"hard": 13, "hard_ticks": 72, "mild": 30, "unnecessary_s": 19.2, "missed_s": 17.4, "flips_per_moving_h": 302, "onset_vs_vision_s": -0.017}
+ },
+ "example": {"published_without_guard_m": -19.7, "published_with_guard_m": 21.26, "range_m": 30.7},
+ "code_lines": {"acc": [33, 45], "acc_summaries": [57, 65]},
+ "source": "research workspace SCR-950 (replay, unit check) and SCR-672 (wrap census)"
+}

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from ars510.support import ACC_CHECK
 from test_upstream_candidate import _fake_opendbc
 
 REPO = Path(__file__).resolve().parents[1]
@@ -51,13 +52,21 @@ def _is_acc_point(mod, p):
   return p.trackId >= mod.ACC_TRACK if hasattr(mod, "ACC_TRACK") else p.trackId < mod.SUMMARY_ID
 
 
+def _with_check_byte(address, frame):
+  """The frame with the radar's check byte in byte 0 (ars510.support.acc_check's table), as every recorded frame has."""
+  const, _, cols = ACC_CHECK[address]
+  for i, col in enumerate(cols):
+    const ^= col if frame[1 + i // 8] >> (7 - i % 8) & 1 else 0
+  return bytes([const]) + frame[1:]
+
+
 def _cycle(k, acc_m, cars):
   """One 60 ms radar cycle as CAN frames: the 0x190 clock, the ACC target (0x235 / 0x237) at acc_m and the summaries in cars
   [(code, range m, lateral m), ...] in 0x191 / 0x192 and 0x193 / 0x194."""
   ts = 1_000_000 + 60_000 * k
   acc_code = round(acc_m / 0.025)
   f235 = ((1 << 59) | (5 << 48) | (1056 << 29) | 7).to_bytes(8, "big")  # status 5, id 7, vRel +4 m/s
-  f237 = ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big")
+  f237 = _with_check_byte(0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big"))
   frames = [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00"), (0x235, f235), (0x237, f237)]
   for (code, d, y), (ia, pa) in zip(cars, ((0x191, 0x192), (0x193, 0x194))):
     rc = 160 + (2 * acc_code) // 5 if d is None else round(d * 16 + 160)
@@ -113,3 +122,14 @@ def test_acc_summaries_restarts_the_speed_after_a_one_cycle_range_jump(mod):
       if out is not None:
         speeds += [(k, p.vRel) for p in out.points if p.trackId >= mod.SUMMARY_ID]
   assert all(abs(v - (-6.0)) < 0.5 for _, v in speeds) and any(k > 32 for k, _ in speeds)
+
+
+def test_acc_summaries_unwraps_a_wrapped_acc_lateral_distance(mod):
+  if mod.__name__ != "ars510_acc_summaries":
+    pytest.skip("acc_summaries only")
+  # a recorded 0x237 whose check byte carries the hidden 13th lateral bit: LAT_DIST reads -19.70 m, the target is 21.26 m left
+  wrapped, present_235 = bytes.fromhex("AD026580F2E8C550"), bytes.fromhex("EA056C81CBDFAA1B")
+  ri = mod.RadarInterface(None)
+  outs = [ri.update([(int(i * 1e7), [(0x235, present_235, 1), (0x237, wrapped, 1)])]) for i in range(1, 6)]
+  (p,) = [o for o in outs if o is not None][-1].points
+  assert p.yRel == pytest.approx(-19.70 + 40.96)

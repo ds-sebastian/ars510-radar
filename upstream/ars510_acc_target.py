@@ -6,14 +6,27 @@ distance, lateral position, closing speed and an ID that changes when the radar 
 this target alone. This interface publishes that target as openpilot's only radar point; radard matches it to the
 camera's lead as for any radar, and every other car comes from the camera. The frames repeat at 50 Hz; a report goes out
 once per 60 ms radar cycle, when the radar's cycle clock (ACC_TARGET_3) advances, with or without a target. Standalone
-form of the radar_interface.py change in ars510-radar's upstream/opendbc_ars510.patch; docs/17 ("The ACC target alone")
-has the evidence.
+form of the radar_interface.py change in ars510-radar's upstream/opendbc_ars510.patch, plus one guard the patch leaves out:
+LAT_DIST holds the low 12 bits of the radar's 13-bit lateral distance, so a target more than 20.95 m to the left (in turns
+and at junctions) reads 40.96 m too far right; the frame's check byte tells when, and the 40.96 m is added back. docs/17
+("The ACC target alone") has the evidence.
 """
 from opendbc.can import CANParser
 from opendbc.car.structs import RadarData
 from opendbc.car.interfaces import RadarInterfaceBase
 
 RADAR_DBC = "toyota_tss2_ars510"
+# ACC_TARGET_2's CHECK_BYTE is a CRC-8 over the frame's signals, linear in the payload bits: one column per bit (byte 1
+# bit 7 first) and a constant 0xFE (docs/05). When LAT_DIST has wrapped, the remainder is the hidden 13th bit's column 0x14.
+LAT_CHECK = bytes.fromhex("0f89ca6599c261be5fa1de6fb9d269ba5d0a058c46239fc1ee77b5d46a35944a259c4e279dc06030180c06038f272c2eefef9898771d3a74")
+LAT_WRAP_M = 40.96
+
+
+def lat_dist_wrapped(dat: bytes) -> bool:
+  crc = 0xFE ^ dat[0]
+  for i, column in enumerate(LAT_CHECK):
+    crc ^= column if dat[1 + i // 8] >> (7 - i % 8) & 1 else 0
+  return crc == 0x14
 
 
 class RadarInterface(RadarInterfaceBase):
@@ -23,9 +36,14 @@ class RadarInterface(RadarInterfaceBase):
     self.trigger_msg = 0x237
     self.updated_messages = set()
     self.cycle = 0
+    self.lat_wrapped = False
 
   def update(self, can_strings):
     self.updated_messages.update(self.rcp.update(can_strings))
+    for _, frames in can_strings:  # CANParser keeps signals, not the payload the check byte covers
+      for address, dat, src in frames:
+        if address == self.trigger_msg and src == 1 and len(dat) == 8:
+          self.lat_wrapped = lat_dist_wrapped(dat)
     if self.trigger_msg not in self.updated_messages:
       return None
     cycle = self.rcp.vl["ACC_TARGET_3"]["TIMESTAMP"]
@@ -44,7 +62,7 @@ class RadarInterface(RadarInterfaceBase):
       pt = RadarData.RadarPoint()
       pt.trackId = int(target["TARGET_ID"])
       pt.dRel = position["LONG_DIST"]
-      pt.yRel = position["LAT_DIST"]
+      pt.yRel = position["LAT_DIST"] + LAT_WRAP_M * self.lat_wrapped
       pt.vRel = target["REL_SPEED"]
       ret.points = [pt]  # assigned as a list: forks with capnp-backed structs (sunnypilot) take list assignment only
     return ret

@@ -160,7 +160,7 @@ CM_ SG_ 565 TARGET_ID "The radar tracker's track number: changes when the radar 
 CM_ BO_ 567 "ACC target, part 2: 50 Hz.";
 CM_ SG_ 567 CHECK_BYTE "CRC-8 (polynomial 0x1D, MSB first) over the frame's signals serialized as zero-padded 8 / 16 / 32-bit integers, not over the raw bytes; as a 56-column table in ars510.support.acc_check (docs/05).";
 CM_ SG_ 567 LONG_DIST "Distance from the radar.";
-CM_ SG_ 567 LAT_DIST "Lateral position, left positive. Wraps beyond the top code (+20.95 m; seen on turning / junction targets 21-43 m to the left), the check byte then differs by 0x14; stops at -20.00 m on the right.";
+CM_ SG_ 567 LAT_DIST "Lateral position, left positive. Wraps beyond the top code (+20.95 m; seen on turning / junction targets 21-53 m to the left), the check byte then differs by 0x14; stops at -20.00 m on the right.";
 CM_ SG_ 567 TRACKER_A "Raw tracker byte: about 35 on a steady target, higher while it accelerates or brakes.";
 CM_ SG_ 567 TRACKER_B "Raw tracker byte: about 86 for a stopped target, 128-135 for a steady mover, rises (and wraps) while it accelerates or brakes.";
 CM_ SG_ 567 IN_PATH "1 while the target is confirmed in the path (level 5).";
