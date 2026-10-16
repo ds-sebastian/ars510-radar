@@ -49,17 +49,22 @@ This is opendbc's `DSU_CRUISE.LEAD_DISTANCE`, plus the Toyota name `D_VRCC` for 
 
 ### 0x33E: time to collision and motion class of the 0x366 target, ego path radius (◐)
 
-0x33E carries target data only while 0x366 reports a target (byte 0's high nibble is 7 otherwise): that target's relative
-acceleration, time to collision and motion class, plus the radar's estimate of ego's own path radius, which is sent with or
-without a target. Counting bits MSB-first:
+0x33E reports the 0x366 target's relative acceleration, time to collision and motion class, plus the radar's estimate
+of ego's own path radius, which is sent with or without a target. Target availability comes from the target report;
+the acceleration nibble also uses code 7 for a live target. Counting bits MSB-first:
 
 | bits | field | coding |
 |---|---|---|
-| `0\|4` | relative acceleration | signed, about 1 m/s² per code (the ACC target's relative acceleration rounded); 7 = no target |
+| `0\|4` | relative acceleration | signed, about 1 m/s² per code (the ACC target's relative acceleration rounded); 7 occurs both at idle and on a live target at high positive acceleration (◐ upper-end saturation) |
 | `4\|12` | time to collision | ≈ 1.6 ms (1/625 s) per code: `(code − 29) / 625` matches the ACC target's range / closing speed to a median +0.02 s (interquartile ±0.07 s) below 5 s on an independent sample of 300 segments; 0xFFF = 6.55 s or more (80 % of target frames beyond 6.6 s) |
 | `48\|1` | PCS alarm | byte 6 bit 7: set only during the radar's PCS alarm (5 of 696,137 frames in every stored log, all in U3) |
 | `42\|6` | ego path radius | signed 6 bits, about 256 m per code, positive = right turn; 0 = tighter than about 128 m; while moving the radius comes from the yaw rate, at standstill it is the bicycle-model radius from the steering-wheel angle: code ≈ −9.2 / angle in degrees (wheelbase × steering ratio / angle at 256 m per code), measured from the car's own straight-ahead zero taken from the EPS steering angle in 0x260 (on one car the 0x25 angle's zero is 3° away and its sign agrees only by chance); on unseen drives of three cars the factor is −8.8 to −9.1, and the unfitted −9.2 law lands within one code on 95 % / 77 % of standstill frames on two of them; ±31 = straight (about 7.8 km or more). Follows the yaw-rate radius `vEgo / yaw rate` (255-258 m per code; sign agrees 98-99 % on three cars), not the steering-angle radius |
 | `16\|8` | motion-class flags | bit 0 (LSB) moving, bit 1 oncoming, bit 2 not moving in ego's direction (stationary or oncoming), bit 4 set on almost every report of the ACC target, bit 6 set while an oncoming target is still far (98 % beyond 20 m, under 5 % within 10 m, both cars), bit 5 always set on an oncoming report without the moving bit, and otherwise mostly around a change of the reported target (21-37 % of reports within 1 s of the target appearing or dropping out vs 4-12 % in steady tracking, three cars; likely "not a steady track"); bits 4-6 are never all clear or all set and bit 7 is never set (20 k unseen reports, three cars), so bits 4-6 act like one six-valued state; e.g. 0x11 same-direction mover, 0x14 stationary, 0x47 oncoming and still far |
+
+**Code 7 shares the idle and numeric domains.** One recorded frame has code 7, finite TTC code 1599 and a live target
+whose preceding ACC report reads +8.125 m/s²; the preceding 0x366 report has the same target number. The observations
+support upper-end saturation as a candidate interpretation, with target presence qualified separately
+([`car_bus_0x33e_boundary.json`](../data/analysis/summaries/car_bus_0x33e_boundary.json)).
 
 The time is the plain range / closing speed (residual median +0.06 s, spread 0.085 s up to 6.55 s); a constant-
 acceleration time to collision fits far worse. Numbers are in ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json), block `car_bus_0x33e`).
