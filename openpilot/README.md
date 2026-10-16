@@ -67,7 +67,9 @@ record in Python. The only DBC installed on the device is `toyota_tss2_ars510.db
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 - **detection** in `_get_params`: a radar-ACC RAV4 2022 or 2023-25 gets `radarUnavailable = False` from the car model
-  (both radar firmwares in openpilot's fingerprints are the ARS510, [docs/01](../docs/01_radar_bus.md#radar-firmware));
+  (both radar firmwares in openpilot's fingerprints are the ARS510, [docs/01](../docs/01_radar_bus.md#radar-firmware))
+  when the radar's early bus-1 frames (0x190 / 0x191 / 0x235 …, from 0.2 s after power-up) are in the fingerprint;
+  without them the car stays radarless with vision leads instead of a radar that never reports;
   the C-HR and Yaris are enabled for testing (same radar frames, [docs/01](../docs/01_radar_bus.md#c-hr-and-yaris)), the
   Yaris always with `acc` because it sends no 0xB4 wheel speed;
 - **tracks** through `CarInterface.RadarInterface`: `Ars510RadarInterface` for that car, the fork's own

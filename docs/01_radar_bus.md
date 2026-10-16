@@ -63,8 +63,9 @@ Every frame above is in [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc
 Start-up times: `object_stream_0x680.json` (object records, 0x101 / 0x197) and `decode_claim_sources.json` (0x235 / 0x680 / sendcan, recomputed from the research captures).
 
 - The object list starts after openpilot's fingerprinting has finished, so the openpilot integration selects the
-  radar by the car model, the radar-ACC platforms (RAV4 2022 and 2023-25, C-HR, Yaris) ([08](08_openpilot_integration.md),
-  [radar firmware](#radar-firmware)).
+  radar by the car model, the radar-ACC platforms (RAV4 2022 and 2023-25, C-HR, Yaris), and checks that the radar's
+  early frames (0x190, 0x191 / 0x193, 0x235 / 0x237 / 0x239) are in the bus-1 fingerprint: they were on all 74 recorded
+  cold starts ([08](08_openpilot_integration.md), [radar firmware](#radar-firmware)).
 - 0x101 switches 0x1D → 0x11 0.14 s after the first 0x80 record (spread 7 ms) and 0x197 bit 8 sets 60 ms later (0.20 s, spread 14 ms) on
   27 of 27 cold starts: both behave as the camera's acknowledgement of the object list (◐) and serve as "radar running" signals.
 - 0x680 reports tracked objects 5 s before the object list starts.
