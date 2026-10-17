@@ -59,17 +59,20 @@ and to keep the installed profile afterwards (`--profile acc` switches back to `
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
 | `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the single-file `fused` (used by `--profile openpilot`) |
 | `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone (used by `--profile acc`) |
-| `../upstream/toyota_tss2_ars510.dbc` | `opendbc/dbc/toyota_tss2_ars510.dbc` | its DBC: the four ACC target messages |
-| 4-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)` |
+| `../upstream/toyota_tss2_ars510.dbc` | `opendbc/dbc/ars510_acc_target.dbc` | its DBC: the ACC target messages, under a name of its own so opendbc's `toyota_tss2_ars510.dbc` ([commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) stays as shipped |
+| 8-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)`; on any error it logs and leaves Toyota as shipped |
 
 The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC; the decoder reassembles the 106-frame
-record in Python. The only DBC installed on the device is `toyota_tss2_ars510.dbc`, which the `acc` profile parses.
+record in Python. The only DBC installed on the device is `ars510_acc_target.dbc`, which the `acc` profiles parse.
+The installer never overwrites or removes a file the fork's git tracks; if the fork ships a file under one of the
+names above, the install stops before changing anything (`--check` lists it).
 
 The hook wraps the fork's own Toyota `CarInterface` after it is defined:
 - **detection** in `_get_params`: a radar-ACC RAV4 2022 or 2023-25 gets `radarUnavailable = False` from the car model
   (both radar firmwares in openpilot's fingerprints are the ARS510, [docs/01](../docs/01_radar_bus.md#radar-firmware))
   when the radar's early bus-1 frames (0x190 / 0x191 / 0x235 …, from 0.2 s after power-up) are in the fingerprint;
-  without them the car stays radarless with vision leads instead of a radar that never reports;
+  without them the car is radarless with vision leads instead of a radar that never reports, also when opendbc
+  declares the radar itself;
   the C-HR and Yaris are enabled for testing (same radar frames, [docs/01](../docs/01_radar_bus.md#c-hr-and-yaris)), the
   Yaris always with `acc` because it sends no 0xB4 wheel speed;
 - **tracks** through `CarInterface.RadarInterface`: `Ars510RadarInterface` for that car, the fork's own

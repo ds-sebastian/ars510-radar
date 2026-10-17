@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 import subprocess
 import sys
+import types
+from unittest import mock
 
 from ars510 import BASE_CONFIG
 
@@ -58,8 +60,10 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510_upstream.py").read_text() == (REPO / "upstream" / "ars510_radar.py").read_text()
   assert _install(tmp_path, "--profile", "acc").returncode == 0
   assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert (toyota / "ars510_acc_target.py").read_text() == (REPO / "upstream" / "ars510_acc_target.py").read_text()
-  assert (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").read_text() == (REPO / "upstream" / "toyota_tss2_ars510.dbc").read_text()
+  acc_target = (REPO / "upstream" / "ars510_acc_target.py").read_text()  # parses the DBC under the installer's own name
+  assert (toyota / "ars510_acc_target.py").read_text() == acc_target.replace('RADAR_DBC = "toyota_tss2_ars510"', 'RADAR_DBC = "ars510_acc_target"')
+  assert (toyota.parents[1] / "dbc" / "ars510_acc_target.dbc").read_text() == (REPO / "upstream" / "toyota_tss2_ars510.dbc").read_text()
+  assert not (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").exists()
   for name in ("shared_speed", "shared_range"):  # research profiles: installed with a warning
     r = _install(tmp_path, "--profile", name)
     assert r.returncode == 0 and "research profile" in r.stdout
@@ -76,7 +80,71 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
   assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_acc_target.py", "ars510_acc_summaries.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
-  assert not (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").exists()
+  assert not (toyota.parents[1] / "dbc" / "ars510_acc_target.dbc").exists()
+
+
+def test_installer_leaves_opendbcs_own_ars510_dbc(tmp_path):
+  """Once commaai/opendbc#3860 is merged, toyota_tss2_ars510.dbc is opendbc's: kept on install and uninstall. Without that,
+  the same file is an older install's copy and is removed."""
+  toyota, _ = _fake_opendbc(tmp_path)
+  dbc = toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc"
+  dbc.write_text("an older install's copy")
+  assert _install(tmp_path).returncode == 0
+  assert not dbc.exists()
+  (toyota / "values.py").write_text("ARS510 = dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_ars510')\n")
+  dbc.write_text("opendbc's own")
+  r = _install(tmp_path, "--check")
+  assert "opendbc ships toyota_tss2_ars510.dbc" in r.stdout and "leftover" not in r.stdout
+  for args in ((), ("--profile", "acc_summaries"), ("--uninstall",)):
+    assert _install(tmp_path, *args).returncode == 0
+    assert dbc.read_text() == "opendbc's own"
+
+
+def _git(cwd, *args):
+  subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=True, capture_output=True)
+
+
+def test_installer_never_overwrites_files_the_fork_tracks(tmp_path):
+  toyota, original = _fake_opendbc(tmp_path)
+  root = tmp_path / "opendbc_repo"
+  (toyota / "ars510_acc_target.py").write_text("the fork's own file\n")
+  _git(root, "init")
+  _git(root, "add", ".")
+  _git(root, "commit", "-m", "fork")
+  r = _install(tmp_path)
+  assert r.returncode == 1 and "ars510_acc_target.py" in r.stderr
+  assert (toyota / "ars510_acc_target.py").read_text() == "the fork's own file\n"
+  assert (toyota / "interface.py").read_text() == original and not (toyota / "ars510").exists()
+  assert "install stops" in _install(tmp_path, "--check").stdout
+  r = _install(tmp_path, "--uninstall")
+  assert r.returncode == 0 and (toyota / "ars510_acc_target.py").read_text() == "the fork's own file\n"
+
+
+def test_installer_updates_a_fork_that_commits_the_install(tmp_path):
+  toyota, _ = _fake_opendbc(tmp_path)
+  root = tmp_path / "opendbc_repo"
+  assert _install(tmp_path).returncode == 0
+  _git(root, "init")
+  _git(root, "add", ".")
+  _git(root, "commit", "-m", "fork with the install committed")
+  r = _install(tmp_path, "--profile", "fused")
+  assert r.returncode == 0, r.stderr
+  assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
+
+
+def test_hook_keeps_toyota_importable_when_it_fails():
+  import importlib.util
+  spec = importlib.util.spec_from_file_location("ars510_install", REPO / "openpilot" / "install.py")
+  install = importlib.util.module_from_spec(spec)
+  spec.loader.exec_module(install)
+  logged = []
+  carlog = types.ModuleType("opendbc.car.carlog")
+  carlog.carlog = types.SimpleNamespace(exception=logged.append)
+  modules = {"opendbc": types.ModuleType("opendbc"), "opendbc.car": types.ModuleType("opendbc.car"), "opendbc.car.carlog": carlog}
+  with mock.patch.dict(sys.modules, modules):  # opendbc without the installed interface file: the import fails
+    namespace = {"CarInterface": "the fork's CarInterface"}
+    exec(install.HOOK, namespace)
+  assert namespace["CarInterface"] == "the fork's CarInterface" and "Toyota runs as shipped" in logged[0]
 
 
 def test_legacy_patches_are_kept_for_upgrades():
@@ -86,7 +154,7 @@ def test_legacy_patches_are_kept_for_upgrades():
 
 def test_installer_uses_opendbc_repo_behind_the_openpilot_symlink(tmp_path):
   # real openpilot checkouts have a top-level `opendbc` symlink into opendbc_repo
-  toyota, original = _fake_opendbc(tmp_path)
+  toyota, _ = _fake_opendbc(tmp_path)
   (tmp_path / "opendbc").symlink_to("opendbc_repo/opendbc")
   r = _install(tmp_path, "--check")
   assert r.returncode == 0 and f"opendbc: {(tmp_path / 'opendbc_repo').resolve()}" in r.stdout

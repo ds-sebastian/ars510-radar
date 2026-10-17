@@ -13,12 +13,14 @@ StarPilot, CarrotPilot and other forks: the installer adds new files and one mar
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
   - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
   - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by --profile acc)
-    and its DBC to                       opendbc/dbc/toyota_tss2_ars510.dbc
+    and its DBC to                       opendbc/dbc/ars510_acc_target.dbc (a name of its own: opendbc's
+    toyota_tss2_ars510.dbc, once commaai/opendbc#3860 is merged, stays opendbc's and as shipped)
   - copies the acc_summaries file to    opendbc/car/toyota/ars510_acc_summaries.py (--profile acc_summaries)
   - copies two research files to         opendbc/car/toyota/ars510_shared_{speed,range}.py (--profile shared_speed / shared_range)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
-An install made with an older, patch-based version of this installer is removed first.
+An install made with an older, patch-based version of this installer is removed first. Files the fork's git tracks
+are never overwritten or removed: an install whose file names the fork already ships stops before changing anything.
 
 Profiles (docs/08 has the details and replay numbers):
   acc       (default, opendbc-compatible) the radar's ACC target alone as one point (upstream/ars510_acc_target.py with
@@ -64,12 +66,22 @@ PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
 PROFILE_NAMES = ("acc", "acc_summaries", "fused", "openpilot", "raw", "shared_speed", "shared_range")
 LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "colored": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ serves Cabana on a PC and stays in the repo
+# The acc DBC is upstream's toyota_tss2_ars510.dbc, installed under its own name so the acc profiles keep parsing with
+# this checkout's signals whatever opendbc ships under the upstream name. Older installs copied it to the upstream name.
+FORK_DBC = "toyota_tss2_ars510.dbc"
+ACC_DBC_LINE = 'RADAR_DBC = "toyota_tss2_ars510"'
+ACC_DBC_INSTALLED = 'RADAR_DBC = "ars510_acc_target"'
 BEGIN = "# >>> ars510-radar: added by ars510-radar/openpilot/install.py; remove with install.py --uninstall"
 END = "# <<< ars510-radar"
+# A hook that fails (a fork or opendbc change it does not fit) leaves Toyota as shipped instead of breaking its import.
 HOOK = f"""
 {BEGIN}
-from opendbc.car.toyota.ars510_radar_interface import hook_car_interface as _ars510_hook_car_interface  # noqa: E402
-CarInterface = _ars510_hook_car_interface(CarInterface)
+try:
+  from opendbc.car.toyota.ars510_radar_interface import hook_car_interface as _ars510_hook_car_interface  # noqa: E402
+  CarInterface = _ars510_hook_car_interface(CarInterface)
+except Exception:
+  from opendbc.car.carlog import carlog  # noqa: E402
+  carlog.exception("ARS510: hook not installed, Toyota runs as shipped; run ars510-radar/openpilot/install.py again")
 {END}
 """
 
@@ -90,12 +102,49 @@ def targets(root: Path) -> dict[str, Path]:
           "upstream": toyota / "ars510_upstream.py", "acc_target": toyota / "ars510_acc_target.py",
           "shared_speed": toyota / "ars510_shared_speed.py", "shared_range": toyota / "ars510_shared_range.py",
           "acc_summaries": toyota / "ars510_acc_summaries.py",
-          "acc_dbc": root / "opendbc" / "dbc" / "toyota_tss2_ars510.dbc"}
+          "acc_dbc": root / "opendbc" / "dbc" / "ars510_acc_target.dbc"}
+
+
+def tracked(root: Path, paths) -> set[Path]:
+  """The paths (files, or directories holding files) the fork's git tracks: files the fork or opendbc ship. Empty
+  without git."""
+  paths = list(paths)
+  try:
+    r = subprocess.run(["git", "ls-files", "-z", "--", *map(str, paths)], cwd=root, capture_output=True, text=True, check=False)
+  except OSError:
+    return set()
+  if r.returncode != 0:
+    return set()
+  files = {(root / f).resolve() for f in r.stdout.split("\0") if f}
+  return {p for p in paths if any(f == p.resolve() or p.resolve() in f.parents for f in files)}
+
+
+def fork_dbc_owned(root: Path) -> bool:
+  """Whether toyota_tss2_ars510.dbc is opendbc's own (commaai/opendbc#3860 merged) rather than an older install's copy."""
+  values = root / "opendbc" / "car" / "toyota" / "values.py"
+  dbc = root / "opendbc" / "dbc" / FORK_DBC
+  return (values.exists() and "toyota_tss2_ars510" in values.read_text()) or bool(tracked(root, [dbc]))
 
 
 def old_dbcs(root: Path) -> list[Path]:
-  """Cabana DBCs that older versions of this installer copied into the fork; parsing reads the decoder package alone."""
-  return [p for p in (root / "opendbc" / "dbc" / dbc for dbc in DBCS) if p.exists()]
+  """DBCs that older versions of this installer copied into the fork: the Cabana DBCs (parsing reads the decoder package
+  alone) and the acc DBC under the upstream name, unless opendbc now ships that file itself."""
+  old = [root / "opendbc" / "dbc" / dbc for dbc in DBCS]
+  if not fork_dbc_owned(root):
+    old.append(root / "opendbc" / "dbc" / FORK_DBC)
+  return [p for p in old if p.exists()]
+
+
+def conflicts(root: Path, t: dict[str, Path], text: str) -> list[Path]:
+  """Targets the fork's git tracks, which an install would overwrite. A fork that commits this install (the hook block
+  in its committed interface.py) owns copies of these files and gets them updated."""
+  owned = sorted(tracked(root, [p for p in t.values() if p.exists()]))
+  if owned and BEGIN in text:
+    interface = Path("opendbc") / "car" / "toyota" / "interface.py"
+    r = subprocess.run(["git", "show", f"HEAD:./{interface.as_posix()}"], cwd=root, capture_output=True, text=True, check=False)
+    if r.returncode == 0 and BEGIN in r.stdout:
+      return []
+  return owned
 
 
 def git_apply(root: Path, patch: Path, *args: str) -> bool:
@@ -141,6 +190,9 @@ def stale(t: dict[str, Path]) -> list[str]:
       txt = dst.read_text()
       prof = next((k for k in PROFILE_NAMES if f'PROFILE = PROFILES["{k}"]' in txt), None)
       if prof is None or txt.replace(f'PROFILE = PROFILES["{prof}"]', PROFILE_LINE) != src.read_text():
+        out.append(name)
+    elif name == "acc_target":
+      if dst.read_text() != src.read_text().replace(ACC_DBC_LINE, ACC_DBC_INSTALLED):
         out.append(name)
     elif src.read_bytes() != dst.read_bytes():
       out.append(name)
@@ -232,6 +284,11 @@ def main() -> int:
   interface_py = root / "opendbc" / "car" / "toyota" / "interface.py"
   text = interface_py.read_text()
   legacy = legacy_patch(root)
+  owned = conflicts(root, t, text)
+  if owned and not args.check and not args.uninstall:
+    print("the fork's git tracks files this installer would overwrite; the checkout stays as it was:\n  " +
+          "\n  ".join(map(str, owned)) + "\nupdate ars510-radar (git pull) or report it as an issue", file=sys.stderr)
+    return 1
 
   if args.check:
     print(f"opendbc: {root}")
@@ -246,6 +303,10 @@ def main() -> int:
       print(f"{name}: {'present' if p.exists() else 'to be installed'} ({p})")
     for p in old_dbcs(root):
       print(f"leftover from an older install (removed on the next install): {p}")
+    if fork_dbc_owned(root):
+      print(f"opendbc ships {FORK_DBC} (left as shipped; the acc profiles parse ars510_acc_target.dbc)")
+    for p in conflicts(root, t, text):
+      print(f"shipped by the fork under an installer name (install stops): {p}")
     if t["interface"].exists():
       diff = stale(t)
       print("installed files: " + ("match this checkout" if not diff else
@@ -261,7 +322,12 @@ def main() -> int:
 
   if args.uninstall:
     interface_py.write_text(text)
+    keep = tracked(root, [p for p in t.values() if p.exists()])
+    for p in sorted(keep):
+      print(f"left as shipped by the fork: {p}")
     for p in t.values():
+      if p in keep:
+        continue
       if p.is_dir():
         shutil.rmtree(p)
       elif p.exists():
@@ -279,7 +345,9 @@ def main() -> int:
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
   shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
-  shutil.copyfile(REPO / "upstream" / "ars510_acc_target.py", t["acc_target"])
+  acc_target = (REPO / "upstream" / "ars510_acc_target.py").read_text()
+  assert acc_target.count(ACC_DBC_LINE) == 1
+  t["acc_target"].write_text(acc_target.replace(ACC_DBC_LINE, ACC_DBC_INSTALLED))
   shutil.copyfile(REPO / "upstream" / "toyota_tss2_ars510.dbc", t["acc_dbc"])
   for name in ("acc_summaries", "shared_speed", "shared_range"):
     shutil.copyfile(HERE / "standalone" / f"ars510_{name}.py", t[name])

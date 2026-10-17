@@ -19,7 +19,8 @@ The object-list profiles (`fused`, `raw`) parse from card's raw `can_packets`: t
 ~60 ms. CANParser keeps the latest value per address (or a per-call list in vl_all), and a DBC maps address and bits, while the
 part of the record a frame carries follows from its sequence nibble (which wraps every 16 frames). The frames are reassembled from the
 raw `can_packets` card.py passes in, CRC-checked, and decoded in `ars510`. The DBCs in `dbc/` are for cabana; the `acc`
-profile parses its three 50 Hz ACC target messages with CANParser and `toyota_tss2_ars510.dbc`.
+profile parses its three 50 Hz ACC target messages with CANParser and `toyota_tss2_ars510.dbc` (installed as
+`ars510_acc_target.dbc`, so opendbc's own copy of that DBC stays as shipped).
 
 Output cadence: one RadarData per completed record (~16.6 Hz, inside radard's 8-24 Hz radarTracks window).
 - After power-up the radar sends its first object record ~6 s after first CAN. Until the first valid record, this
@@ -165,19 +166,24 @@ def _radar_acc(flags) -> bool:
 RADAR_BUS1_EARLY = {0x190, 0x191, 0x193, ACC_TARGET_VREL_ADDR, ACC_TARGET_POS_ADDR, 0x239}
 
 
+def ars510_platform(CP) -> bool:
+  return _radar_acc(CP.flags) and str(CP.carFingerprint) in ARS510_PLATFORMS
+
+
 def detect(ret, fingerprint, car_fw) -> bool:
   """ARS510: a radar-ACC RAV4 2022 / 2023-25, C-HR or Yaris (the car model) whose radar frames reach bus 1. Without them
-  (wiring, harness) the car keeps stock's radarless setup with vision leads: a radar that is declared but never reports
+  (wiring, harness) the car gets a radarless setup with vision leads: a radar that is declared but never reports
   leaves radarState invalid, and openpilot then refuses to engage (commIssue). A fork that passes no fingerprint gets the
   car model alone."""
-  if not (_radar_acc(ret.flags) and str(ret.carFingerprint) in ARS510_PLATFORMS):
+  if not ars510_platform(ret):
     return False
   return fingerprint is None or bool(RADAR_BUS1_EARLY & set(fingerprint.get(RADAR_BUS, {})))
 
 
 def is_ars510(CP) -> bool:
-  """Stock marks every radar-ACC Toyota radar-unavailable; only the hook clears it, and only for an ARS510."""
-  return _radar_acc(CP.flags) and not CP.radarUnavailable
+  """An ARS510 platform the hook left with a radar. Radar-ACC cars outside ARS510_PLATFORMS keep the fork's interface,
+  whatever radar opendbc declares for them."""
+  return ars510_platform(CP) and not CP.radarUnavailable
 
 
 def hook_car_interface(car_interface):
@@ -185,14 +191,17 @@ def hook_car_interface(car_interface):
   if getattr(car_interface, "_ars510_hooked", False):
     return car_interface
   import inspect
-  get_params = car_interface.__dict__["_get_params"].__func__
+  get_params = inspect.getattr_static(car_interface, "_get_params")  # the fork's class, or a base class it inherits from
+  get_params = getattr(get_params, "__func__", get_params)
   sig = inspect.signature(get_params)
 
   def _get_params(*args, **kwargs):
     ret = get_params(*args, **kwargs)
     bound = sig.bind_partial(*args, **kwargs).arguments
-    if detect(ret, bound.get("fingerprint"), bound.get("car_fw")):
-      ret.radarUnavailable = False
+    # Set both ways: stock keeps radar-ACC Toyotas radarless, and opendbc with its own ARS510 radar
+    # (commaai/opendbc#3860) declares the radar without checking that its frames arrive.
+    if ars510_platform(ret):
+      ret.radarUnavailable = not detect(ret, bound.get("fingerprint"), bound.get("car_fw"))
     return ret
 
   fork_radar_interface = car_interface.RadarInterface
