@@ -1,5 +1,9 @@
 # ARS510 radar for openpilot
 
+> **Upstream pull request: [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)** (ready for review)
+> adds the `acc` parser to opendbc. Once merged, stock openpilot gets radar leads on the radar-ACC Toyotas without this repo's
+> installer. Follow it there for review comments and merge status.
+
 openpilot drives the radar-ACC Toyotas, the **RAV4 2022-25, C-HR 2021-22 and Yaris** ([supported cars](#supported-cars)),
 on camera alone, because their front radar, a **Continental ARS510**, speaks its own segmented object-list format, so
 stock openpilot takes its leads from the camera. This repo decodes that radar and plugs it into openpilot and its forks, so radard gets radar leads with
