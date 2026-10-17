@@ -19,7 +19,7 @@ flowchart LR
 
 Install instructions for each fork are in [`openpilot/README.md`](../openpilot/README.md).
 
-One installer serves every fork: it copies the decoder and appends a 4-line hook block to the end of
+One installer serves every fork: it copies the decoder and appends an 8-line hook block to the end of
 `opendbc/car/toyota/interface.py`, append-only, with the fork's own flags as they are.
 
 | fork | status |
@@ -39,15 +39,19 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
    fingerprints (`8821F0R01100`, `8821F0R03100`) are the ARS510 ([01](01_radar_bus.md#radar-firmware)). The hook also
    requires the radar's early bus-1 frames in the fingerprint (cycle header 0x190, target summaries 0x191 / 0x193, ACC target
    0x235 / 0x237 / 0x239). They start 0.14-1.0 s after the first CAN frame and were in the fingerprint window on all 74
-   recorded cold starts ([`radar_health.json`](../data/analysis/summaries/radar_health.json)), while the object list starts only ~5.9 s after power-up. Without them, the car keeps stock's
-   radarless setup with vision leads: a radar that is declared but never reports would leave radarState invalid, and
+   recorded cold starts ([`radar_health.json`](../data/analysis/summaries/radar_health.json)), while the object list starts only ~5.9 s after power-up. Without them, the car gets a
+   radarless setup with vision leads, also on an opendbc that declares the ARS510 itself ([commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)): a radar that is declared but never reports would leave radarState invalid, and
    openpilot would refuse to engage at all (`commIssue`). A fork whose hook passes no fingerprint gets the car model alone. The C-HR
    (`TOYOTA_CHR_TSS2`) and Yaris (`TOYOTA_YARIS`) are in `ARS510_PLATFORMS` for testing: their radars send the same
    frames ([01](01_radar_bus.md#c-hr-and-yaris)). The Yaris sends no 0xB4 wheel speed, so it runs `acc` whatever the
    profile.
-2. **Hand-over** (hook on `CarInterface.RadarInterface`, which card instantiates). A radar-ACC Toyota with radar
+2. **Hand-over** (hook on `CarInterface.RadarInterface`, which card instantiates). An `ARS510_PLATFORMS` car with radar
    available is built as `Ars510RadarInterface`; every other car gets the fork's own RadarInterface. card runs as
    shipped.
+3. **Fail-safe.** The appended block catches any error from the hook (a fork or opendbc change it no longer fits), logs
+   it and leaves Toyota as shipped. The installer never overwrites or removes a file the fork's git tracks: the acc DBC
+   goes in as `ars510_acc_target.dbc`, so opendbc's own `toyota_tss2_ars510.dbc` stays as shipped, and an install whose
+   file names the fork already ships stops before changing anything.
 3. **Decoding from raw frames.** The interface reads the raw `(address, data, src)` tuples card already passes. `acc`
    parses the ACC target frames 0x235 / 0x237 with opendbc's CANParser; `acc_summaries` decodes the same frames and the
    target summaries 0x190-0x194 by hand. The object-list profiles (`fused`, `raw`)
