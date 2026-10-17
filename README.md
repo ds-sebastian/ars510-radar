@@ -196,8 +196,8 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 - **AEB under openpilot longitudinal** relies on a radar CAN filter: the radar disable takes the car's AEB with it, and
   stock ACC keeps AEB. A relay of the radar's own decision and the one recording it needs are in
   [15](docs/15_aeb_pcs.md#aeb-on-an-unfiltered-radar-line).
-- **Community integration.** It installs on top of openpilot; `acc` is the candidate for an upstream PR
-  ([17](docs/17_upstream.md#towards-an-upstream-comma-interface)).
+- **Community integration.** It installs on top of openpilot; `acc` is open upstream as
+  [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860) (ready for review; [17](docs/17_upstream.md#towards-an-upstream-comma-interface)).
 
 ## How it fits into openpilot
 

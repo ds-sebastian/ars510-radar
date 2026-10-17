@@ -1,11 +1,12 @@
 # 17. Upstream proposals
 
 The two candidates for an upstream opendbc pull request, the evidence for each and what upstream review is likely to
-ask. Both are prepared as branches on a fork of opendbc, on top of opendbc master:
+ask. Both are prepared as branches on a fork of opendbc, on top of opendbc master. **`acc` is open upstream as
+[commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)** (ready for review); follow it there for review comments and merge status. `fused` stays a fork branch.
 
 | branch | profile | what it adds |
 |---|---|---|
-| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal) | the ACC target inline in the Toyota `radar_interface.py`, the DBC `toyota_tss2_ars510.dbc`, the radar DBC for the two RAV4 platforms in `values.py`, and two tests in `tests/test_toyota.py` |
+| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal, [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) | the ACC target inline in the Toyota `radar_interface.py`, the DBC `toyota_tss2_ars510.dbc`, the radar DBC for the radar-ACC platforms (RAV4 2022-25, C-HR, Yaris) in `values.py`, and two tests in `tests/test_toyota.py` |
 | [`ars510-fused`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-fused) | `fused`: every track, one Kalman speed filter per track | `car/toyota/ars510_radar.py`, its test, the same DBC, and the same routing and detection |
 
 `upstream/opendbc_ars510.patch` is the `ars510-acc` branch as one patch, and `upstream/toyota_tss2_ars510.dbc` is its
