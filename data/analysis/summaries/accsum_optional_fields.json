@@ -1,0 +1,40 @@
+{
+ "description": "acc_summaries' optional RadarPoint fields (aRel, yvRel, measured) on forks that carry them: replay of the profile file before and after the change on two owner drives with recorded summaries; drives anonymised.",
+ "drives": 2,
+ "reports": 46170,
+ "published_points_changed": 0,
+ "acc_point": {
+  "aRel_source": "0x235 REL_ACCEL",
+  "yvRel_source": "0x235 LAT_SPEED, unwrapped by the check byte",
+  "aRel_vs_dvRel_dt": {
+   "n": 42788,
+   "corr": 0.955,
+   "slope": 0.957
+  },
+  "lateral_0p5s_prediction_rms_m": {
+   "yvRel_zero": 0.166,
+   "with_yvRel": 0.137
+  },
+  "p95_m": {
+   "yvRel_zero": 0.34,
+   "with_yvRel": 0.281
+  }
+ },
+ "summary_cars": {
+  "yvRel_source": "least-squares slope of the last 8 laterals",
+  "aRel": "NaN",
+  "lateral_0p5s_prediction_rms_m": {
+   "yvRel_zero": 0.441,
+   "with_yvRel": 0.278
+  },
+  "p95_m": {
+   "yvRel_zero": 0.448,
+   "with_yvRel": 0.394
+  }
+ },
+ "code_lines": {
+  "before": 57,
+  "after": 64
+ },
+ "source": "research workspace SCR-1010"
+}

@@ -20,11 +20,14 @@ It checks:
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
   recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
 - for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
-  published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery.
+  published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery; on trees whose
+  RadarPoint has aRel / yvRel / measured, the ACC point's REL_ACCEL / LAT_SPEED, a recorded wrapped LAT_SPEED, and the
+  summary car's lateral slope.
 """
 from __future__ import annotations
 
 import argparse
+import math
 import sys
 import zlib
 from pathlib import Path
@@ -118,10 +121,10 @@ def check_acc_summaries_profile(RI, check) -> None:
     ts, acc_code = 1_000_000 + 60_000 * n, round((30.0 - 0.24 * k) / 0.025)
     other = (80.0 if far else 40.0) - 0.36 * k
     return [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00", 1),
-            (0x235, ((1 << 59) | (5 << 48) | (1056 << 29) | 7).to_bytes(8, "big"), 1),
+            (0x235, checked(0x235, ((1 << 59) | (5 << 48) | (108 << 40) | (1056 << 29) | (1064 << 8) | 7).to_bytes(8, "big")), 1),  # aRel +1, LAT_SPEED +0.5
             (0x237, checked(0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big")), 1),
             (0x191, bytes([182, 0, 0, 3 << 2, 0, 0, 0, 0]), 1), (0x192, (160 + (2 * acc_code) // 5).to_bytes(2, "big") + (2048).to_bytes(2, "big"), 1),
-            (0x193, bytes([182, 0, 0, 9 << 2, 0, 0, 0, 0]), 1), (0x194, round(other * 16 + 160).to_bytes(2, "big") + (2288).to_bytes(2, "big"), 1)]
+            (0x193, bytes([182, 0, 0, 9 << 2, 0, 0, 0, 0]), 1), (0x194, round(other * 16 + 160).to_bytes(2, "big") + (2288 + 2 * k).to_bytes(2, "big"), 1)]  # moving left 0.5 m/s
   t_ns, outs = 1_000_000_000, {False: [], True: []}
   for far in (False, True):
     for k in range(40):
@@ -135,6 +138,27 @@ def check_acc_summaries_profile(RI, check) -> None:
   ok = [sorted(p.trackId for p in o.points) == [7, 73] and abs(next(p for p in o.points if p.trackId == 73).vRel + 6.0) < 0.1 for o in near]
   check(bool(near) and all(ok), f"acc_summaries: the ACC target once plus the 40 m summary car with its slope speed ({sum(ok)}/{len(ok)})")
   check(all([p.trackId for p in o.points] == [7] for o in outs[True]), "acc_summaries: summary cars beyond 40 m are not published")
+  if all(hasattr(near[-1].points[0], f) for f in ("aRel", "yvRel", "measured")):  # forks that still carry the optional fields
+    acc_pt, car = next(p for p in near[-1].points if p.trackId == 7), next(p for p in near[-1].points if p.trackId == 73)
+    check(abs(acc_pt.aRel - 1.0) < 1e-6 and abs(acc_pt.yvRel - 0.5) < 1e-6 and acc_pt.measured,
+          "acc_summaries: ACC point carries the radar's REL_ACCEL (aRel) and LAT_SPEED (yvRel), measured")
+    check(math.isnan(car.aRel) and abs(car.yvRel - 0.5) < 0.02 and car.measured,
+          f"acc_summaries: summary car carries its lateral slope as yvRel ({car.yvRel:.3f} m/s) and aRel NaN")
+    from opendbc.car.toyota.ars510.support import acc_check
+    wrapped = bytes.fromhex("fd65 6783 abd8 8f12")  # recorded 0x235 of a crossing car beyond 12.8 m/s: LAT_SPEED wrapped
+    want = ((int.from_bytes(wrapped, "big") >> 8 & 0x7FF) - 1024) * 0.0125 + 25.6
+    base = cycle(200, 0, False)
+    got = None
+    for j in range(12):
+      t_ns += 10_000_000
+      frames = [(a, wrapped if a == 0x235 else d, s) for a, d, s in base] if j == 0 else []
+      out = RI.update([(t_ns, frames)])
+      if out is not None and out.points:
+        got = next((p for p in out.points if p.trackId == wrapped[7] & 0x3F), None) or got
+    check(acc_check(0x235, wrapped) == "wrapped" and got is not None and abs(got.yvRel - want) < 1e-6,
+          f"acc_summaries: a wrapped LAT_SPEED is unwrapped by the check byte ({want:.2f} m/s)")
+  else:
+    print("skip acc_summaries optional fields: this tree's RadarPoint has no aRel / yvRel / measured")
   silent = [o for o in (RI.update([(t_ns + i * 10_000_000, [])]) for i in range(1, 101)) if o is not None]
   t_ns += 100 * 10_000_000
   check(bool(silent) and silent[-1].errors.radarUnavailableTemporary and len(silent[-1].points) == 0,

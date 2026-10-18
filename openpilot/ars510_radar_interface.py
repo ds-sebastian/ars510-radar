@@ -77,7 +77,9 @@ class Ars510RadarInterface(RadarInterfaceBase):
     self.standalone = None
     profile = "acc" if str(CP.carFingerprint) in ACC_ONLY_PLATFORMS else PROFILE
     if isinstance(profile, str):  # a standalone file: a complete RadarInterface of its own (frames, cadence, staleness)
-      self.standalone = importlib.import_module(f"opendbc.car.toyota.{STANDALONE[profile]}").RadarInterface(CP, *args, **kwargs)
+      module = importlib.import_module(f"opendbc.car.toyota.{STANDALONE[profile]}")
+      self.standalone = module.RadarInterface(CP, *args, **kwargs)
+      self.standalone_fills_legacy = getattr(module, "FILLS_LEGACY_FIELDS", False)  # acc_summaries sets aRel / yvRel itself
     else:
       self.ars = UpstreamCandidate() if profile is None else Ars510NativeRadarInterface(replace(profile, include_metadata=False))
     self.start_s: float | None = None
@@ -106,7 +108,7 @@ class Ars510RadarInterface(RadarInterfaceBase):
   def _update(self, can_packets):
     if self.standalone is not None:
       ret = self.standalone.update(can_packets)
-      if ret is not None and ret.points and LEGACY_FIELDS:  # forks with the legacy fields: as for the upstream version
+      if ret is not None and ret.points and LEGACY_FIELDS and not self.standalone_fills_legacy:  # as for the upstream version
         ret.points = [_point({"trackId": p.trackId, "dRel": p.dRel, "yRel": p.yRel, "vRel": p.vRel, **ACC_LEGACY}) for p in ret.points]
       return ret
     self.frame += 1
