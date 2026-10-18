@@ -35,7 +35,7 @@
  "code_lines": {
   "before": 57,
   "with_optional_fields": 64,
-  "dense_rewrite_with_fault_flag": 61
+  "dense_with_fault_flag_160_columns": 63
  },
  "source": "research workspace SCR-1010"
 }
