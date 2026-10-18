@@ -67,10 +67,15 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
      filters it.
    - `aRel`: the radar's filtered over-ground acceleration ((`84|10` − 510.3) × 0.075 m/s²; ego-stopped estimates range 0.035-0.086 by drive set, so treat the scale as approximate)
      minus ego acceleration (from 0xB4). It is smoothed and lags vRel by about 0.5 s; while ego accelerates it still
-     carries part of ego's acceleration. No radard version we integrate reads it (openpilot, StarPilot and sunnypilot
-     take the lead acceleration from their own Kalman filter).
+     carries part of ego's acceleration. openpilot, StarPilot and sunnypilot do not read it (they take the lead acceleration from their own Kalman filter);
+     CarrotPilot does.
 
    - `measured`: false on records the radar marks as predicted (`107|1`), like the Tesla radar's `Meas`.
+
+   `acc_summaries` fills the same fields from the radar's ACC frames instead: `aRel` = the ACC target's `REL_ACCEL`, `yvRel`
+   = its `LAT_SPEED` (summary cars: their lateral slope, `aRel` NaN), `measured` true ([11](11_profiles_compared.md));
+   `acc`, the upstream file, leaves them NaN / NaN / true. CarrotPilot's radar code reads `aRel` and `yvRel` and skips
+   points whose `measured` is false.
 
    `aRel` and `yvRel` are NaN whenever the yaw rate or ego speed is stale. radard chooses leads from `dRel`, `yRel` and
    `vRel`; current openpilot reads only those three, and older radard versions also store `measured` as metadata.
