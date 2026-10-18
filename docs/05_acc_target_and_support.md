@@ -53,7 +53,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | target identity | 0x235 bits 0-5 (6 bits; numbers 32-63 in use on a C-HR 2021 radar, 0-31 on every recorded RAV4 target): the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` (idle sends 63) | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
 | relative lateral acceleration | 0x235 bits 19-26: `(code − 100) × 0.125` m/s² (nominal unit), left positive | ◐ | `LAT_ACCEL` |
-| tracker bytes | 0x237 bits 19-26 and 11-18: one maneuver quantity in two encodings; both rise while the target accelerates or brakes. `TRACKER_A` sits at about 35 while the target's over-ground acceleration stays within ±1 m/s², steps to about 46 between 1 and 2 m/s² in either direction, and does not depend on range (three cars). For a stopped target `TRACKER_B` = 2.5 × `TRACKER_A` within one code (94-95 % on three cars); for a moving target the factor is larger (3.7-4.3, growing with range) and `TRACKER_B` wraps past 255 | ◐ | `TRACKER_A`, `TRACKER_B` |
+| tracker bytes | 0x237 bits 19-26 and 11-18: one maneuver quantity in two encodings; both rise while the target accelerates or brakes. `TRACKER_A` sits at about 35 while the target's over-ground acceleration stays within ±1 m/s², steps to about 46 between 1 and 2 m/s² in either direction, and does not depend on range (three cars). For a stopped target `TRACKER_B` = 2.5 × `TRACKER_A` within one code (94-95 % on three cars); for a moving target the factor is larger (3.7-4.3, growing with range) and `TRACKER_B` wraps past 255. Its excess over 2.5 × `TRACKER_A` behaves like a track uncertainty: it rises about 1.5 codes per cycle while the target coasts outside the object list and decays after it returns, while `TRACKER_A` stays flat | ◐ | `TRACKER_A`, `TRACKER_B` |
 | check byte | byte 0 of 0x235 / 0x237 / 0x239: CRC-8 (polynomial 0x1D) over the frame's signals serialized as zero-padded integers; `support.acc_check` | ● | `CHECK_BYTE` |
 | target present | 0x235 byte-1 low nibble = 5 (1 = idle, bytes 2-7 `64 80 0B 24 00 FF`) and bits 5-7 = 0 (7 idle); 0x237 bit 10; 0x239 bit 35 and bits 46-47 = 1 (2 idle) | ● | `STATE` (0x235), `PRESENT` (0x237) |
 
@@ -328,9 +328,11 @@ non-idle samples, so recognise idle frames by the whole payload. `q10` is the lo
 | 46\|11 | `A195_EGO_TRAVEL_TO_TTC` | the ego's predicted travel up to the time to collision, `v·T + a·T²/2` with `T = range / closing speed`, clamped at 0; 0.05 m per code (residual 0.20 m against a 0.17 m rounding floor) |
 | 7\|16 | `A195_PATH_CURVATURE` | ego path curvature, left positive, about 1/133,000 per m per code around 32768 (R² 0.997 against yaw rate / speed) |
 
-0x196 byte 0 (signed) is a required deceleration of about 0.1 m/s² per code, close to the usual lead-moving / lead-stops
-formula with a 1-2 m margin (within one code on 92-98 % of active cycles, not exact; it relaxes while the driver brakes
-hard). **Bytes 4-7 are two lateral pairs, not time thresholds (◐ on the owner car, ○ beyond it):** byte 6 − byte 4 and byte 7 − byte 5
+0x196 byte 0 (signed) is a required deceleration, `floor(a_req / 0.095)` m/s² per code, from the 0x195 object: when the lead
+stops, a_req = −v_e² / (2 (r − 1.75 + v_l² / 2|a_l|)), otherwise a_l − vRel² / (2 (r − 1.75)), with an ego speed 0.15 s old
+and no ego-acceleration term. It is exact on 73-74 % of active cycles and within one code on 98 % (two cars; 61 / 92 % on
+fleet RAV4 logs); the remaining misses sit in the lead-moving branch, hard lead braking and very short times to collision.
+([`field_units_dynamics.json`](../data/analysis/summaries/field_units_dynamics.json)). **Bytes 4-7 are two lateral pairs, not time thresholds (◐ on the owner car, ○ beyond it):** byte 6 − byte 4 and byte 7 − byte 5
 behave like lateral distances from the object to the left and right edges of a corridor around the predicted ego path, about
 0.1 m per code, with the edges about 1.0-1.15 m either side of the path (R² 0.83 / 0.87 on the owner car). The fit does not
 transfer to the second car, and lateral-speed or time-to-collision alternatives fit comparably, so the edge values are not settled. Bytes

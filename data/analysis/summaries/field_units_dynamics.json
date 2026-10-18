@@ -1,0 +1,99 @@
+{
+ "description": "Field units and dynamics from the radar's own outputs and the car's gyro / odometry: the lateral unit with the lever arm fixed from vehicle geometry, the 0x196 required-deceleration formula, TRACKER_B while the ACC target coasts, and the filter dynamics of 84|10 / 96|10 / ACC REL_ACCEL. Owner car, issue #66 car and a third car; held-out logs where stated.",
+ "lateral_unit_rotation": {
+  "pairs": 6629,
+  "cars": 3,
+  "lever_arm_m": 3.55,
+  "codes_per_m": 66.3,
+  "ci95": [
+   65.74,
+   66.73
+  ],
+  "per_car": {
+   "owner": 67.08,
+   "second": 65.65,
+   "third": 67.23
+  },
+  "low_lateral_accel_codes_per_m": 67.15,
+  "robust_refit_codes_per_m": [
+   66.7,
+   67.1
+  ],
+  "unit_0p0142_would_need": 70.42,
+  "lever_arm_3p4_to_3p7_shift_codes_per_m": 0.4,
+  "acc_lateral_per_0x680_code": 1.5,
+  "authority": "physical through the gyro and the odometry-checked 0x680 range; assumes the lever arm, gyro scale and negligible sideslip"
+ },
+ "required_decel_0x196": {
+  "form": "floor(a_req / 0.095); a_req = -v_e^2 / (2 (r - 1.75 + v_l^2 / 2|a_l|)) when the lead stops, else a_l - vRel^2 / (2 (r - 1.75)); 0x195 range / speed / accel, ego speed 0.15 s old, no ego-acceleration term",
+  "exact": {
+   "owner": 0.728,
+   "second": 0.744,
+   "fleet_rav4": 0.611
+  },
+  "within_one_code": {
+   "owner": 0.986,
+   "second": 0.978,
+   "fleet_rav4": 0.919
+  },
+  "rows": {
+   "owner": 2074,
+   "second": 731,
+   "fleet_rav4": 36408
+  },
+  "unit_peak_m_s2": 0.095,
+  "open": "lead-moving branch 38 % exact in the fleet; |a_lead| > 3 m/s^2; TTC < 1.5 s"
+ },
+ "tracker_b": {
+  "coasting_outside_list_codes_per_cycle": 1.5,
+  "rise_after_14_cycles": 20,
+  "decay_after_reentry_15_cycles": {
+   "owner": -23,
+   "second": -10
+  },
+  "tracker_a": "flat",
+  "r2_from_published_quantities": {
+   "owner_heldout": 0.53,
+   "second": 0.64
+  }
+ },
+ "dynamics": {
+  "84|10": {
+   "model": "first-order low-pass of the track's own 64|10 acceleration",
+   "time_constant_s": [
+    0.9,
+    1.5
+   ],
+   "extra_delay_s": "< 0.02",
+   "dc_scale_m_s2_per_code": {
+    "spectral_owner": 0.073,
+    "spectral_second": 0.081,
+    "time_domain": [
+     0.035,
+     0.053
+    ]
+   },
+   "gain_1_2_hz_c_times_t": 0.085,
+   "over_ground": "parked objects +2-3 codes per m/s^2 of ego acceleration (a relative reading would give -12 to -20)",
+   "logs": "300 + 300 unseen rlogs"
+  },
+  "96|10": {
+   "scale_m_s2_per_code": [
+    0.045,
+    0.062
+   ],
+   "time_constant_s": [
+    1.0,
+    1.3
+   ],
+   "extra_delay_s": 0
+  },
+  "acc_REL_ACCEL": {
+   "dc_gain": [
+    1.0,
+    1.03
+   ],
+   "filter_s": "0.16 + 0.09 delay (0.5 in a second estimator)"
+  }
+ }
+}
