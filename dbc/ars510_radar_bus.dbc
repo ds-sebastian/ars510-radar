@@ -377,7 +377,7 @@ CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_OBJECT_RANGE "Range of one radar-tracker object while the event pair is active (0 when idle): floor(ACC distance code / 2) on the ACC car; otherwise another, mostly stationary object.";
 CM_ SG_ 406 A196_REQUIRED_DECEL "Required deceleration for the event object while active, about 0.1 m/s2 per code (approximate; close to the lead-moving / lead-stops formula with a 1-2 m margin); -1 when idle.";
 CM_ SG_ 406 A196_B1_RESERVED_ZERO7 "Always zero.";
-CM_ SG_ 406 A196_RADAR_FAULT "Radar fault: sets 0.3-0.4 s after the object list stops and clears with it; also set for the first cycle after power-up, so require two or more consecutive cycles (likely).";
+CM_ SG_ 406 A196_RADAR_FAULT "Radar fault: held while the radar declares itself blocked (car-bus 0x411 dust state; the object list keeps running) and after some object-list outages; also set for the single first cycle after power-up, so require two or more consecutive cycles (likely).";
 CM_ SG_ 406 A196_B2_B4_RESERVED_ZERO18 "Always zero.";
 CM_ SG_ 406 A196_FIELD1_CODE6 "Raw.";
 CM_ SG_ 406 A196_B5_RESERVED_ZERO2 "Always zero.";

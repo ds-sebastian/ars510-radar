@@ -160,7 +160,9 @@ openpilot's "PCS off" 0x411 (from 0.49 s after the radar's last one) showed only
 | openpilot stopped | malfunction | the car's own check reports it |
 
 "PCS on" also carries the radar's real alerts. By Toyota's DBC, 0x411 has a blocked-sensor bit (`PCS_DUST2`) and a fault state
-(`PCS_INDICATOR` 2); neither has appeared in 2,370 recorded segments, which is what the covered-radar test (T01) is for. When
+(`PCS_INDICATOR` 2). `PCS_DUST2` has not appeared on the owner cars, but comma's fleet logs hold it for whole minutes on four
+cars, with the radar's 0x196 fault flag held throughout ([05](05_acc_target_and_support.md#0x195--0x196-event-pair)); the covered-radar test (T01) is still what shows which state a
+blinded owner radar reaches. When
 its object-list output on bus 1 stops (on a second car, when the receiver stopped answering the radar's transfers),
 it sets 0x411 byte 0 to `0x48` (`PCS_INDICATOR` 1 plus bit 3) 2.0-2.2 s later for 4-21 s, not latched; `0x40` for the first frames after
 power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1

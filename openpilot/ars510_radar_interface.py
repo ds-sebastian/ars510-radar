@@ -30,6 +30,10 @@ Output cadence: one RadarData per completed record (~16.6 Hz, inside radard's 8-
 - Once records have arrived and STALE_S passes between two of them, a radarUnavailableTemporary RadarData is sent at 20 Hz
   until records resume, so radard sees that report in place of the last tracks.
 - A CRC-failed record is dropped; the staleness check covers sustained loss.
+- Every profile: while the radar's own fault flag (0x196 byte 1 bit 0) is set on two or more consecutive cycles, the
+  only report is radarUnavailableTemporary with no points, at 20 Hz. The radar holds it
+  through minutes in which it declares itself blocked (car-bus 0x411 dust), sometimes with no ACC target for a lead
+  that the object list still tracks (docs/05).
 """
 import importlib
 from dataclasses import replace
@@ -38,8 +42,9 @@ from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510 import BASE_CONFIG, FUSED_CONFIG, Ars510NativeRadarInterface
-from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, SUMMARY_ADDRS,
-                                                 TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
+from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, RADAR_FAULT_ADDR,
+                                                 SUMMARY_ADDRS, TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
+from opendbc.car.toyota.ars510.support import RadarFaultFlag
 
 # Decoder profile (docs/08): "acc" (default: the radar's ACC target alone as one point, ars510_acc_target.py, docs/17),
 # "fused" (FUSED_CONFIG: one Kalman speed filter fusing the object list and the ACC target by the radar's own
@@ -78,8 +83,27 @@ class Ars510RadarInterface(RadarInterfaceBase):
     self.start_s: float | None = None
     self.last_record_s: float | None = None
     self.warned = False
+    self.fault = RadarFaultFlag()
+    self.calls = 0
 
   def update(self, can_packets):
+    self.calls += 1
+    for _, frames in can_packets:
+      for address, dat, src in frames:
+        if address == RADAR_FAULT_ADDR and src == RADAR_BUS:
+          self.fault.update(dat)
+    return self._with_fault(self._update(can_packets))
+
+  def _with_fault(self, ret):
+    if not self.fault.active:
+      return ret
+    if self.calls % EMPTY_PERIOD != 0:  # one report per 5 updates (20 Hz), so radard's 8-24 Hz radarTracks check holds
+      return None
+    ret = structs.RadarData()
+    ret.errors.radarUnavailableTemporary = True
+    return ret
+
+  def _update(self, can_packets):
     if self.standalone is not None:
       ret = self.standalone.update(can_packets)
       if ret is not None and ret.points and LEGACY_FIELDS:  # forks with the legacy fields: as for the upstream version
