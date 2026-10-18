@@ -23,7 +23,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 | object list | **dRel** far range | median residual 3.7 m at 60-100 m and 5.1 m at 100-150 m against camera/model consensus; 5-8 % short of the radar's own ACC distance at 50-100 m |
 | object list | **dRel** record to record | walks by about 3% of range (see range walks below) |
 | object list | **yRel** side | correct on 97.9-99.3% of off-centre targets against the camera |
-| both | **lateral** scale | object list 0.015 m per code (66.7 codes/m); ACC target 0.01 m per code, 1.5 of its codes per object-list code (1.499-1.502 on five sets); gyro 69 [65, 74.5], lane peaks 62.8-67.3, camera 69-73 |
+| both | **lateral** scale | object list 0.015 m per code (66.7 codes/m); ACC target 0.01 m per code, 1.5 of its codes per object-list code (1.499-1.502 on five sets); gyro 66.3 [65.7, 66.7] with the lever arm from geometry, lane peaks 62.8-67.3, camera 69-73 |
 | object list | **velocity** zero and scale | nominal zero 510.5; fitted scales 0.150 / 0.149 / 0.153 m/s per code from native range slope with GPS ego speed |
 | object list | **vRel** vs camera | the lowest error of native vRel, a constant zero and range differencing at every range (table below) |
 | object list | **vRel**, stopped targets 5-30 m | RMS 0.54 m/s on settled tracks |
@@ -76,7 +76,9 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 
 - **Left positive, Cartesian.** Codes per metre stay constant across range, and ego-lane objects stay within 0.1-0.3 m of
   centre from 15 to 130 m on straight road (two calibration routes).
-- **Scale 0.015 m per code** (66.7 codes per metre, ◐). The object list, the target summaries (0x192 / 0x194) and 0x680
+- **Scale 0.015 m per code** (66.7 codes per metre, ●). With the radar's lever arm fixed from the car's geometry (3.55 m), 6,629
+  stationary 0x680 objects while ego turns give 66.3 codes per metre [65.7, 66.7] against the gyro on three cars; 0.0142 m
+  (70.4) is excluded, and a lever arm of 3.4-3.7 m moves the result by only 0.4 ([`field_units_dynamics.json`](../data/analysis/summaries/field_units_dynamics.json)). The object list, the target summaries (0x192 / 0x194) and 0x680
   share this unit; the ACC target's lateral and the lane-curve offsets of 0x85 are in centimetres.
 
 ![lateral unit evidence](img/analysis/lateral_unit_evidence.png)
@@ -85,7 +87,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
 |---|---|
 | ACC target lateral code (cm, zero 2000) against the summary's object-list code, same target, 344 k rows | 1.4998 / 1.5002 (other drives 1.499 / 1.502, original logs 1.5015), correlation 0.9999 |
 | crossing objects on straight road: lateral position change against the integrated lateral velocity (`74\|10`, 0.15 m/s per code) | 9.9-10.5 position codes per velocity code-second (1/64 m would give 9.6) |
-| stationary cars while ego turns at a steady yaw rate, against the gyro, 93 tracks | 69.4 codes per metre, interval 65.2-74.5 (other drives 68.3) |
+| stationary 0x680 objects while ego turns, against the gyro, lever arm fixed at 3.55 m, 6,629 pairs, three cars | 66.3 codes per metre, interval 65.7-66.7 (per car 65.7-67.2) |
+| stationary cars while ego turns at a steady yaw rate, against the gyro, lever arm fitted, 93 tracks | 69.4 codes per metre, interval 65.2-74.5 (other drives 68.3) |
 | 0x85 lane-cell offsets against the camera's lane width, 10,262 records | 0.0098 m per centimetre code |
 | adjacent-lane peaks at highway speed | 63.9 / 67.3 / 62.8 codes per metre if lanes are 3.66 m: lanes of 3.4-3.7 m at this scale |
 | camera outer box edges | 68.9 / 69.7 / 72.8 codes per metre |

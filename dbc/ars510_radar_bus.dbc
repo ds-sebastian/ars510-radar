@@ -101,7 +101,7 @@ BO_ 405 ARS510_A195_CANDIDATE: 8 RADAR
  SG_ A195_OBJECT_RANGE : 50|11@0+ (0.05,0) [0|102.35] "m" RADAR
 
 BO_ 406 ARS510_A196_CANDIDATE: 8 RADAR
- SG_ A196_REQUIRED_DECEL : 7|8@0- (0.1,0) [-12.8|12.7] "m/s^2" RADAR
+ SG_ A196_REQUIRED_DECEL : 7|8@0- (0.095,0) [-12.16|12.065] "m/s^2" RADAR
  SG_ A196_B1_RESERVED_ZERO7 : 15|7@0+ (1,0) [0|127] "raw" RADAR
  SG_ A196_RADAR_FAULT : 8|1@0+ (1,0) [0|1] "" RADAR
  SG_ A196_B2_B4_RESERVED_ZERO18 : 23|18@0+ (1,0) [0|262143] "raw" RADAR
@@ -375,7 +375,7 @@ CM_ SG_ 405 A195_B5_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_EGO_TRAVEL_TO_TTC "Ego predicted travel until the time to collision with the 0x195 object (v T + a T2 / 2, T = range / closing speed), clamped at 0.";
 CM_ SG_ 405 A195_B6_RESERVED_ZERO1 "Always zero.";
 CM_ SG_ 405 A195_OBJECT_RANGE "Range of one radar-tracker object while the event pair is active (0 when idle): floor(ACC distance code / 2) on the ACC car; otherwise another, mostly stationary object.";
-CM_ SG_ 406 A196_REQUIRED_DECEL "Required deceleration for the event object while active, about 0.1 m/s2 per code (approximate; close to the lead-moving / lead-stops formula with a 1-2 m margin); -1 when idle.";
+CM_ SG_ 406 A196_REQUIRED_DECEL "Required deceleration for the event object while active: floor(a_req / 0.095) of a lead-moving / lead-stops formula with a 1.75 m margin and an ego speed 0.15 s old; -1 when idle.";
 CM_ SG_ 406 A196_B1_RESERVED_ZERO7 "Always zero.";
 CM_ SG_ 406 A196_RADAR_FAULT "Radar fault: held while the radar declares itself blocked (car-bus 0x411 dust state; the object list keeps running) and after some object-list outages; also set for the single first cycle after power-up, so require two or more consecutive cycles (likely).";
 CM_ SG_ 406 A196_B2_B4_RESERVED_ZERO18 "Always zero.";

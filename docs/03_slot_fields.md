@@ -24,10 +24,10 @@ from this radar's own data.
 | bits | field | decode | conf. |
 |---|---|---|---|
 | `32\|12` | **dRel**, forward distance from the radar | `(code − 160) / 16` m | ● field/scale; ◐ physical zero |
-| `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ◐ scale ([06](06_accuracy.md#lateral-position)) |
+| `44\|12` | **yRel**, lateral, left positive | `(code − 2048) × 0.015` m (66.7 codes per metre); \|code − 2048\| ≥ 2000 is a sentinel | ● sign, ● scale ([06](06_accuracy.md#lateral-position)) |
 | `64\|10` | **vx over ground** | nominal `(code − 510.5) × 0.15` m/s; vRel = vx − v_ego | ● ground-speed interpretation; ◐ exact zero/scale |
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
-| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.075 m/s² with ego stopped (0.075 on launches of the first drive set; 0.035-0.086 on unseen drives of three cars, depending on the drives and on the estimator, against ACC acceleration or the track's own speed change); follows the track's own speed by about 0.3 s; while ego accelerates it also moves by about 0.4 of ego's acceleration | ◐ field; ◐ scale with ego stopped, ◐ ego term |
+| `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.075 m/s²: the track's own acceleration through a first-order filter with a 0.9-1.5 s time constant and no extra delay, so its gain depends on frequency (DC 0.035-0.08 by estimator, about 0.085 at 1-2 Hz; this is why single static fits gave 0.035-0.086); over ground: parked objects move by +2-3 codes per m/s² of ego acceleration | ◐ field and dynamics; ○ DC scale |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
 | `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
 
@@ -40,8 +40,9 @@ from this radar's own data.
   `vy = dy/dt + ω·x` and `ay = dvy/dt + ω·vx`. With that correction, `74|10` fits 0.142-0.145 m/s per code on
   three drive groups, and 0.147-0.155 against the gyro in turns (three partitions, 700 segments). `96|10` tracks lateral
   acceleration at r = 0.92 / 0.88 / 0.90 (development / confirmation /
-  further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration, at about 0.05 m/s² per code with a 0.5 s lag
-  ([`rotating_kinematics.json`](../data/analysis/summaries/rotating_kinematics.json)).
+  further drives), 0.84 / 0.78 / 0.83 after removing ego's own lateral acceleration, at about 0.05 m/s² per code (0.045-0.062 on two cars). The "0.5 s lag" is the phase of a first-order filter with a
+  1.0-1.3 s time constant and no extra delay, the same kind of filter as `84|10`
+  ([`rotating_kinematics.json`](../data/analysis/summaries/rotating_kinematics.json), [`field_units_dynamics.json`](../data/analysis/summaries/field_units_dynamics.json)).
 - **The heading output closely follows the clipped velocity angle.** It matches
   `floor(max(atan2(vy, vx), 0) × 64 / π)` on 97.4-98.3% of settled moving samples (99.4-99.7% within one code),
   with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads near 63. The heading also
