@@ -163,4 +163,9 @@ never did in 1.24 M target cycles ([05](05_acc_target_and_support.md#the-radars-
 frames came before the first `carState` on every route (by 0.1-1.6 s), so the integration's bus-1 check finds them. The `fused` decoder reads the object list on all three, but the Yaris
 sends no 0xB4 wheel-speed frame, so the filter has no ego speed on that car. The integration enables both
 platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, the Yaris with `acc` whatever the profile, and the upstream
-`acc` proposal includes them ([17](17_upstream.md)); drives in traffic on those cars are still to come.
+`acc` proposal includes them ([17](17_upstream.md)); drives in traffic on those cars are still to come. In comma's fleet logs
+(three C-HR cars, about an hour) the object list reads followed cars 1-7 m *farther* than the ACC target at 30-100 m, the
+opposite of the RAV4's far shortfall (○, one or two cars beyond 50 m). `acc` and `acc_summaries` use the ACC target's
+distance; for `fused` and `raw` on a C-HR, prefer `acc` until more logs exist. Across the RAV4 fleet the two firmwares
+(`8821F0R01100`, 70 cars; `8821F0R03100`, 167 cars) show the same in-path speed gain and excursion rates within their
+intervals ([`fleet_firmware_split.json`](../data/analysis/summaries/fleet_firmware_split.json)).

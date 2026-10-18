@@ -158,6 +158,7 @@ openpilot's "PCS off" 0x411 (from 0.49 s after the radar's last one) showed only
 | relay healthy (radar records arriving, openpilot running, panda in its AEB mode) | PCS on | as the radar's idle frame, `PCS_OFF` 0 |
 | any part unhealthy, or the relay unvalidated | PCS off | `PCS_OFF` 1, as upstream openpilot sends today |
 | openpilot stopped | malfunction | the car's own check reports it |
+| the radar flags itself blocked (0x196 fault flag on ≥ 2 consecutive cycles, or its own 0x411 carries a dust or fault state) | the radar's own alert | the radar's own 0x411 bytes, forwarded unchanged; openpilot already reports the radar temporarily unavailable ([08](08_openpilot_integration.md)) |
 
 "PCS on" also carries the radar's real alerts. By Toyota's DBC, 0x411 has a blocked-sensor bit (`PCS_DUST2`) and a fault state
 (`PCS_INDICATOR` 2). `PCS_DUST2` has not appeared on the owner cars, but comma's fleet logs hold it for whole minutes on four
@@ -165,7 +166,7 @@ cars, with the radar's 0x196 fault flag held throughout ([05](05_acc_target_and_
 blinded owner radar reaches. When
 its object-list output on bus 1 stops (on a second car, when the receiver stopped answering the radar's transfers),
 it sets 0x411 byte 0 to `0x48` (`PCS_INDICATOR` 1 plus bit 3) 2.0-2.2 s later for 4-21 s, not latched; `0x40` for the first frames after
-power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that sends the idle frame reports "all clear" whatever the radar's alerts say. The candidate bus-1
+power-up is the lamp check ([`stock_acc_unfiltered.json`](../data/analysis/summaries/stock_acc_unfiltered.json)); a relay that always sends the idle frame would report "all clear" whatever the radar's alerts say, which is why the table forwards them. The candidate bus-1
 signals for blockage and faults are listed in [17](17_upstream.md#what-radard-gets-from-other-radars); a drive
 with a covered or dirty radar shows which candidate reacts, and "PCS on" reports a blinded radar from that point.
 
