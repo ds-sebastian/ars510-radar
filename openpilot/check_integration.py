@@ -95,8 +95,9 @@ def check_acc_profile(RI, check) -> None:
   one = run(keys[:50], lambda i: 1 if i == 0 else 0)  # a single set cycle, as at power-up
   check(bool(one) and not any(o.errors.radarUnavailableTemporary for o in one), "acc: a single fault cycle (power-up) is ignored")
   held = run(keys[50:], lambda i: 1)
-  check(len(held) > 5 and all(o.errors.radarUnavailableTemporary and not o.points for o in held[2:]),
-        "acc: radarUnavailableTemporary and no points while the radar's 0x196 fault flag is held")
+  rate = len(held) / (len(keys[50:]) / 100)
+  check(len(held) > 5 and all(o.errors.radarUnavailableTemporary and not o.points for o in held[2:]) and 15 <= rate <= 24,
+        f"acc: radarUnavailableTemporary and no points while the radar's 0x196 fault flag is held, at {rate:.1f} Hz (radard: 8-24 Hz)")
   clear = run(sorted(steps)[160:220], lambda i: 0)
   check(bool(clear) and not clear[-1].errors.radarUnavailableTemporary and len(clear[-1].points) == 1, "acc: clears with the fault flag")
 
