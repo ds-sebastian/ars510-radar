@@ -20,8 +20,10 @@ FILES = sorted((REPO / "openpilot" / "standalone").glob("ars510_*.py"))
 
 @pytest.fixture(params=FILES, ids=lambda p: p.stem)
 def mod(request):
-  saved = {k: sys.modules.get(k) for k in ("opendbc", "opendbc.car", "opendbc.car.interfaces")}
-  sys.modules.update(_fake_opendbc())
+  saved = {k: sys.modules.get(k) for k in ("opendbc", "opendbc.car", "opendbc.car.structs", "opendbc.car.interfaces")}
+  fake = _fake_opendbc()
+  fake["opendbc.car.structs"] = fake["opendbc.car"].structs  # for `from opendbc.car.structs import RadarData`
+  sys.modules.update(fake)
   try:
     spec = importlib.util.spec_from_file_location(request.param.stem, request.param)
     m = importlib.util.module_from_spec(spec)
