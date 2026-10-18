@@ -50,6 +50,27 @@ def parse_0x192(data: bytes) -> Target192 | None:
 A191_SENTINEL = bytes.fromhex("FEFEFEFCFCFFFEFF")
 
 
+class RadarFaultFlag:
+    """0x196 byte 1 bit 0: the radar's own fault flag (docs/05).
+
+    Set on every cycle while the radar declares itself blocked (car-bus 0x411 dust / 0x48 state; the object list keeps
+    running), after some object-list outages, and on one cycle at power-up. MIN_CYCLES consecutive set cycles make it
+    active, which skips the power-up frame; the first clear cycle clears it."""
+
+    MIN_CYCLES = 2
+
+    def __init__(self) -> None:
+        self.run = 0
+
+    def update(self, data: bytes) -> None:
+        if len(data) >= 2:
+            self.run = self.run + 1 if data[1] & 1 else 0
+
+    @property
+    def active(self) -> bool:
+        return self.run >= self.MIN_CYCLES
+
+
 @dataclass(frozen=True)
 class CycleHeader:
     active_summaries: int  # 0-2: how many of the 0x191/0x192 and 0x193/0x194 pairs carry a target (0x191 fills first)

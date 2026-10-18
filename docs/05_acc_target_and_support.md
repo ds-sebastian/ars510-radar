@@ -336,14 +336,18 @@ behave like lateral distances from the object to the left and right edges of a c
 transfer to the second car, and lateral-speed or time-to-collision alternatives fit comparably, so the edge values are not settled. Bytes
 4 and 5 clip at 50 and bytes 6 / 7 reach 74-80, so the "62" seen before was byte 4's clip plus a gap; what bytes 4 / 5
 themselves measure is open. Bytes 1-3 stay 0 while active, except one bit:
-**0x196 byte 1 bit 0 is a radar fault flag (◐).** It sets 0.3-0.65 s after the object list stops (two outages on a second
-car, together with 0x198 byte 0 changing 0x10 → 0x90), about 1.5 s before the car-bus 0x411 fault code, and clears with it.
-The list stopped there because its receiver stopped answering the radar's first frames with flow control
-([01](01_radar_bus.md#who-sends-the-object-list)). The flag marks the onset of an outage (5.6 and 22.6 s of 150 s outages
-here), not a list that is absent from the start of a drive, and it comes no earlier than a 0.5 s staleness rule on the list
-itself. Its power-up frame is 0x196 byte 1 = 0xFF; read as 0x198 byte 0 bit 7 it has none. No false alarm in 37.9 h on three
-cars ([`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json),
-[`radar_health.json`](../data/analysis/summaries/radar_health.json)). The ACC target kept reporting through both outages. 0x195 is active on only
+**0x196 byte 1 bit 0 is the radar's own fault flag (◐).** It is held while the radar declares itself blocked: across comma's
+public fleet logs (127 radar-on hours, about 240 cars) it was set only in the six minutes on four cars whose car-bus 0x411 showed
+a blocked-sensor state (`PCS_DUST2` / `PCS_DUST`, or byte 0 = `0x48`), on 239-1,001 consecutive cycles, at 0-29 m/s. On the one
+recorded onset it sets 0.25 s before the 0x411 dust frame. The object list keeps running through these minutes, while the ACC
+target was missing for the whole minute in two of the three with a lead the list still tracked. It also sets 0.3-0.65 s after
+the object list stops on two outages of a second car (with 0x198 byte 0 changing 0x10 → 0x90, about 1.5 s before 0x411 = `0x48`),
+but not on a 6.2 s fleet list-only outage and not for a list absent from the start of a drive, so it is not a staleness
+detector. Its power-up frame is 0x196 byte 1 = 0xFF, a single cycle; read as 0x198 byte 0 bit 7 it has none. Two or more
+consecutive set cycles were never seen outside these states (0 in 127 fleet hours and 37.9 h on three cars), which is the
+rule the openpilot integration uses for `radarUnavailableTemporary` ([08](08_openpilot_integration.md)) ([`radar_blocked_fault.json`](../data/analysis/summaries/radar_blocked_fault.json),
+[`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json),
+[`radar_health.json`](../data/analysis/summaries/radar_health.json)). 0x195 is active on only
 0.5-0.6 % of moving cycles ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json)).
 The DBC keeps the remaining sub-fields as raw codes.
 

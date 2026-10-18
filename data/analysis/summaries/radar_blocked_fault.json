@@ -1,0 +1,18 @@
+{
+ "description": "The radar's own fault flag (0x196 byte 1 bit 0) across comma's public fleet logs of Toyota radar-ACC cars with bus 1 (RAV4 2022 / 2023, C-HR, Yaris): when it is set, for how long, and what the radar does meanwhile. Devices anonymised (F1-F4); exploratory, bus-output authority (what the radar publishes, not what it senses).",
+ "scope": {"segments_with_0x196": 7808, "radar_on_h": 127.2, "radar_on_moving_h": 108.0, "devices_approx": 240},
+ "blocked_minutes": {
+  "n": 6,
+  "devices": 4,
+  "car_bus_0x411_state": {"PCS_DUST2 (byte 5 = 0x02, PCS_INDICATOR 1)": 4, "PCS_DUST (byte 4 = 0x04, partial minute)": 1, "byte 0 = 0x48": 1},
+  "fault_flag_consecutive_cycles": {"min": 239, "median": 1000, "max": 1001},
+  "ego_speed_mps": [0, 29],
+  "object_list": "keeps running at the full record rate with valid CRC; long-lived tracks out to 170-246 m; no slot or header field separates the minutes from same-device controls",
+  "acc_target_with_an_in_path_lead": {"minutes": 3, "suppressed_whole_minute": 2},
+  "one_onset": {"flag_before_0x411_dust_s": 0.25, "flag_clears_after_0x411_s": 0.09}
+ },
+ "power_up": {"segments": 76, "consecutive_cycles": 1, "first_0x196_to_flag_s": {"min": 0.02, "median": 0.23, "max": 0.35}},
+ "outside_blocked_minutes_and_power_up": {"runs_ge_2_cycles": 0, "upper_95_per_h": 0.024},
+ "list_only_outage": {"duration_s": 6.24, "fault_flag": "clear"},
+ "rule": "flag set on >= 2 consecutive cycles: radarUnavailableTemporary; first clear cycle clears it; reaction 0.06 s after the radar raises it"
+}

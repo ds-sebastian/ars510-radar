@@ -17,8 +17,8 @@ It checks:
   - recovery when they resume.
 - for the `acc` profile instead: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
-  the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop, and
-  recovery.
+  the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
+  recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
 - for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
   published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery.
 """
@@ -78,6 +78,27 @@ def check_acc_profile(RI, check) -> None:
     if out is not None:
       rec.append(out)
   check(bool(rec) and not rec[-1].errors.canError and len(rec[-1].points) == 1, "acc: recovers when the target frames resume")
+
+  def run(keys, fault_bits):  # the radar's 0x196 event frame once per radar cycle, byte 1 bit 0 = its fault flag
+    nonlocal t_ns, n237
+    got = []
+    for i, k in enumerate(keys):
+      t_ns += 10_000_000
+      batch = [(a, ((n237 % 16) << 52 | (5000 + n237) * 60000 << 3).to_bytes(8, "big") if a == 0x239 else d, s) for a, d, s in steps[k]]
+      batch += [(0x196, bytes([0xFF, fault_bits(i), 0, 0, 0, 0, 0, 0]), 1) for a, _, _ in steps[k] if a == 0x239]
+      n237 += sum(1 for a, _, _ in batch if a == 0x239)
+      out = RI.update([(t_ns, batch)])
+      if out is not None:
+        got.append(out)
+    return got
+  keys = sorted(steps)[60:160]
+  one = run(keys[:50], lambda i: 1 if i == 0 else 0)  # a single set cycle, as at power-up
+  check(bool(one) and not any(o.errors.radarUnavailableTemporary for o in one), "acc: a single fault cycle (power-up) is ignored")
+  held = run(keys[50:], lambda i: 1)
+  check(len(held) > 5 and all(o.errors.radarUnavailableTemporary and not o.points for o in held[2:]),
+        "acc: radarUnavailableTemporary and no points while the radar's 0x196 fault flag is held")
+  clear = run(sorted(steps)[160:220], lambda i: 0)
+  check(bool(clear) and not clear[-1].errors.radarUnavailableTemporary and len(clear[-1].points) == 1, "acc: clears with the fault flag")
 
 
 def check_acc_summaries_profile(RI, check) -> None:
