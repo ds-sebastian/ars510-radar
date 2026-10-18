@@ -79,7 +79,7 @@ class Ars510RadarInterface(RadarInterfaceBase):
     if isinstance(profile, str):  # a standalone file: a complete RadarInterface of its own (frames, cadence, staleness)
       module = importlib.import_module(f"opendbc.car.toyota.{STANDALONE[profile]}")
       self.standalone = module.RadarInterface(CP, *args, **kwargs)
-      self.standalone_fills_legacy = getattr(module, "FILLS_LEGACY_FIELDS", False)  # acc_summaries sets aRel / yvRel itself
+      self.standalone_fills_legacy = hasattr(module, "LEGACY")  # acc_summaries sets aRel / yvRel / measured itself
     else:
       self.ars = UpstreamCandidate() if profile is None else Ars510NativeRadarInterface(replace(profile, include_metadata=False))
     self.start_s: float | None = None
