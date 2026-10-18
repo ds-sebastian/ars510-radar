@@ -117,8 +117,10 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   | C | .15304 | [.1508, .1550] |
 
   A and B contain .15. These fits rest on the 1/16 m range scale and the GPS ego speed, so an error in either moves
-  them too. Against the ACC target's distance slope, the object-list relative speed is 0.87 (IQR 0.77-0.96;
-  [05](05_acc_target_and_support.md#units-of-the-acc-target)). **The low one is the object list (◐):** while ego stands
+  them too. Against the ACC target's distance slope, the object-list relative speed of the ACC car is 0.87 (IQR 0.77-0.96;
+  [05](05_acc_target_and_support.md#units-of-the-acc-target)). This low gain sits on the in-path lead: other list tracks
+  integrate to 1.01-1.07 of their own range change at 3-20 m
+  ([`list_speed_gain_tracks.json`](../data/analysis/summaries/list_speed_gain_tracks.json)). **The low one is the object list (◐):** while ego stands
   still and the lead moves off, both range channels see the same motion (object-list range change 0.98-1.03 × the ACC
   distance change), the ACC speed integrates to 0.94-0.99 of it and the object-list speed to 0.80-0.86. The shortfall
   holds from 1 s to 10 s after a change, so it is a gain, not a slow catch-up; dividing it out does not help, because it
@@ -244,7 +246,7 @@ for the object-list range of the same car ([`acc_fields.json`](../data/analysis/
 | distance against the ACC distance, 30-50 / 50-70 / 70-80 / 80-100 m | median −1 / −3 / −4 / −7 m | 0 (reference); openpilot's vision lead within 1 % | [`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json) |
 | speed unit | 0.15 m/s per code (the profiles subtract 0xB4 on the vEgo scale) | 0.125 m/s per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
 | fast speed noise, owner / second car | 0.12 / 0.11 m/s | 0.025 / 0.027 m/s | [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json) |
-| speed against the range slope of the same car, 1,862 windows | 0.87 (IQR 0.77-0.96) | 0.99 (IQR 0.97-1.00) | [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json) |
+| speed against the range slope of the same car (the ACC car), 1,862 windows | 0.87 (IQR 0.77-0.96); other tracks 1.01-1.07 of their own range change at 3-20 m | 0.99 (IQR 0.97-1.00) | [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json) |
 | closer to the range slope in 62 tail episodes | 24 % (median error 2.5 m/s) | 76 % (1.2 m/s) | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json) |
 | error scale against the optical reference, 10-40 / 40-70 m | 0.55 / 1.07 m/s | ≤ 0.4 / 0.54 m/s | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json) |
 | cars covered | every tracked car, from age 60 in `raw` / `fused` | the one car the radar's ACC follows; present 99 % of radar-lead time at 15-80 m, 66 % at 80-200 m | [`road_v21.json`](../data/analysis/summaries/road_v21.json) |

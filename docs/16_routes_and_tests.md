@@ -19,7 +19,7 @@ of each need nothing beyond full logging.
 
 | # | Capture | Tests | What it settles |
 |---|---|---|---|
-| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has few engaged road hours, `acc_summaries` none (its evidence is replay). Stops behind a lead and far leads are the cases most missing |
+| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has about 1.6 engaged road hours, `acc_summaries` two short drives (5.2 engaged minutes); their main evidence is replay. Stops behind a lead and far leads are the cases most missing |
 | 2 | Stock-ACC drives through lead exits, lead switches and cut-ins | [T08](#t08-stock-acc-and-additional-target-reports) + [T14](#t14-follow-one-target-through-selection-changes) | Toyota's own controller acting on the same target: the reference for when radard should follow the ACC target at a cut-in (the ACC target switches before the camera model does) |
 | 3 | A second cooperative car, both cars with GNSS or another qualified motion reference | [T04](#t04-independent-lead-speed-and-acceleration) (+ T03, T07) | physical lead speed and acceleration: how good the summary cars' range-slope speed is, and whether the far-range shortfall matters |
 

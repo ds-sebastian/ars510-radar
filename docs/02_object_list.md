@@ -134,7 +134,9 @@ tracks fall in these bins; [summary](../data/analysis/summaries/stationary_listi
 with vRel ≈ −v_ego.*
 
 **For openpilot:** the radar backs up vision on leads it watched slow down and stop. A vehicle that was already stopped
-when it came into view (a stalled car, the tail of a queue that stopped out of range) is seen by vision.
+when it came into view (a stalled car, the tail of a queue that stopped out of range) rarely holds an object-list track
+once ego moves above 3 m/s (table above), so vision carries it there; the radar's ACC target can still select such a car
+([11](11_profiles_compared.md#why-acc-is-the-default)).
 
 ![where objects are reported](img/analysis/bev_density.png)
 

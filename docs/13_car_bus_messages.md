@@ -35,8 +35,8 @@ after each of 27 cold starts). Parked in P with an object 2.4-3.2 m straight ahe
 
 Byte 4 is the distance to the radar's ACC target in metres, and 0xFC marks an idle target. Byte 5 is the relative speed in km/h,
 signed, negative when closing. The other bytes are zero, including the DSU's RES / SET / CANCEL / MAIN button bits (0 on
-74,263 frames): no bus carries the raw cruise-button press on these cars, and the PCM's 0x1D2 `CRUISE_STATE` (9 / 10) shows the
-+ / − steps. Both fields match the ACC target (0x235 / 0x237,
+74,263 frames). No raw cruise-lever bit was found on buses 0-2 in a scan around 385 set-speed steps, 46 engagements and 67
+main toggles, only the PCM's consequences: its 0x1D2 `CRUISE_STATE` (9 / 10) shows the + / − steps. Both fields match the ACC target (0x235 / 0x237,
 [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237), 0.125 m/s and 0.025 m per code) on two owner drives and on a second car up to 37 m/s:
 
 | drive | distance: scale, r, MAD | speed: scale, r, MAD | frames |

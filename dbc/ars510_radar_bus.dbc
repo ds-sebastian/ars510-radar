@@ -54,7 +54,10 @@ BO_ 134 ARS510_ID85_RECORD_CYCLE_MARKER: 8 CAMERA
  SG_ A086_B7 : 56|8@1+ (1,0) [0|255] "raw" RADAR
 
 BO_ 256 ARS510_A100_CANDIDATE: 7 RADAR
- SG_ A100_STARTUP_WORD_BE16 : 7|16@0+ (1,0) [0|65535] "raw" RADAR
+ SG_ A100_B0_STARTUP6 : 7|6@0+ (1,0) [0|63] "raw" RADAR
+ SG_ A100_PCS_ALARM : 1|1@0+ (1,0) [0|1] "" RADAR
+ SG_ A100_B0_STARTUP1 : 0|1@0+ (1,0) [0|1] "raw" RADAR
+ SG_ A100_B1_STARTUP8 : 15|8@0+ (1,0) [0|255] "raw" RADAR
  SG_ A100_B2_B6_RESERVED_ZERO40 : 23|40@0+ (1,0) [0|1099511627775] "raw" RADAR
 
 BO_ 257 ARS510_A101_CANDIDATE: 6 CAMERA
@@ -317,8 +320,8 @@ CM_ BO_ 403 "Selected-target companion B (with 0x194); same layout as 0x191.";
 CM_ BO_ 404 "Selected-target summary B; same layout as 0x192.";
 CM_ BO_ 405 "Event frame, paired with 0x196: exact idle payload on 99.67% of frames; non-idle in a short-time-to-collision state (docs/05).";
 CM_ BO_ 406 "Event frame, paired with 0x195. Bytes 4-7 (FIELD1-4 with their neighbouring raw bits): byte 6 - byte 4 and byte 7 - byte 5 are the lateral distances from the event object to the left / right edge of a corridor about 1.0-1.15 m either side of the predicted ego path, about 0.1 m per code (likely on the owner car, not confirmed on a second car); bytes 4 / 5 clip at 50.";
-CM_ BO_ 407 "Startup phase: bit 8 sets once the radar is running and stays set.";
-CM_ BO_ 408 "Constant 0x10.";
+CM_ BO_ 407 "Camera-sent boot flag: bit 8 sets about 0.2 s after the first object record and stays set, also through object-list outages (the camera's acknowledgement of the first record, not live radar health).";
+CM_ BO_ 408 "Status byte: 0x10; 0x90 (bit 7) while 0x196 A196_RADAR_FAULT is set.";
 CM_ BO_ 514 "Counter frame: byte 1 high nibble counts mod 16; byte 0 is a check byte that depends only on the counter.";
 CM_ BO_ 528 "Copy of Toyota road-sign-assist data (speed-sign presence, speed-limit value, TSR switch).";
 CM_ BO_ 565 "The radar's ACC target, 50 Hz (content per 60 ms radar cycle): closing speed, relative acceleration, lateral speed and acceleration and the target ID. Position and in-path state are on 0x237.";
@@ -361,10 +364,10 @@ CM_ SG_ 1281 A501_B0_B3_OBSERVED_CONSTANT_BE32 "Constant 0xFFF0FFF0.";
 CM_ SG_ 1281 A501_B4_OBSERVED_CONSTANT8 "Constant 0x70.";
 CM_ SG_ 1281 A501_B6_OBSERVED_CONSTANT8 "Constant 0x00.";
 CM_ SG_ 384 A180_OBSERVED_CONSTANT_BE40 "Constant 0xCFC0000000.";
-CM_ SG_ 408 A198_OBSERVED_CONSTANT_BE8 "Constant 0x10.";
+CM_ SG_ 408 A198_OBSERVED_CONSTANT_BE8 "0x10 normally; 0x90 (bit 7 set) together with the 0x196 radar fault flag (two object-list outages on the second car).";
 CM_ SG_ 573 A23D_OBSERVED_CONSTANT_BE64 "Always zero.";
 CM_ SG_ 589 A24D_OBSERVED_CONSTANT_BE56 "00000000000056 normally; 00000000020058 in a rare second state.";
-CM_ SG_ 1280 A500_OBSERVED_CONSTANT_BE48 "Unit-specific constant (redacted here; compare your own).";
+CM_ SG_ 1280 A500_OBSERVED_CONSTANT_BE48 "One regular payload, identical on the three recorded cars (a few rare variants and a start-up body), so not a unit identifier.";
 CM_ SG_ 405 A195_PATH_CURVATURE "Ego path curvature, left positive, about 1/133,000 per m per code around 32768 (R2 0.997 against yaw rate / speed); 32766 when idle.";
 CM_ SG_ 405 A195_OBJECT_ACCEL "Over-ground acceleration of the 0x195 object, about 1/32 m/s2 per code (29-32 codes per m/s2 measured) around 512; 510 when idle. Its low 10 bits are the older 10-bit event code.";
 CM_ SG_ 405 A195_OBJECT_SPEED "Longitudinal over-ground speed of the 0x195 object (including the ego-rotation term), 1/16 m/s per code, zero code 0. Like the ACC target it matches carState about 0.15 s earlier.";
@@ -415,7 +418,10 @@ CM_ SG_ 134 A086_B4 "Always zero.";
 CM_ SG_ 134 A086_B5 "Always zero.";
 CM_ SG_ 134 A086_B6 "Always zero.";
 CM_ SG_ 134 A086_B7 "Always zero.";
-CM_ SG_ 256 A100_STARTUP_WORD_BE16 "0xFFFF in the first frame after power-up, zero afterwards. Byte 0 = 0x02 (bit 1) while the radar's PCS alarm is active (8 recorded alarms on 7 cars: U3 and comma's fleet logs).";
+CM_ SG_ 256 A100_B0_STARTUP6 "Byte 0 bits 2-7: all ones in the first frame after power-up (with bytes 0-1 = FF FF), zero afterwards.";
+CM_ SG_ 256 A100_PCS_ALARM "Pre-collision alarm (byte 0 = 0x02): 1 from the same CAN frame as the car-bus PCS alarm (0x283 PCSNOCHG, 0x411 FCW) until it ends; seen in 8 stock alarms on 7 cars (U3 and comma's fleet logs) and not otherwise apart from the power-up frame. Same as PCS_ALARM in the upstream DBC.";
+CM_ SG_ 256 A100_B0_STARTUP1 "Byte 0 bit 0: 1 only in the first frame after power-up, zero afterwards.";
+CM_ SG_ 256 A100_B1_STARTUP8 "0xFF in the first frame after power-up, zero afterwards.";
 CM_ SG_ 256 A100_B2_B6_RESERVED_ZERO40 "Always zero.";
 CM_ SG_ 257 A101_STARTUP_STATE8 "0x1D booting, 0x11 running (0x21 seen once, briefly).";
 CM_ SG_ 257 A101_B1_B5_RESERVED_ZERO40 "Always zero.";
@@ -448,7 +454,7 @@ CM_ SG_ 514 A202_COUNTER4 "Counter mod 16, +1 per frame.";
 CM_ SG_ 400 A190_TIMESTAMP_US "Radar cycle timestamp, microseconds (big-endian).";
 CM_ SG_ 400 A190_COUNTER_RESERVED0 "Always zero.";
 CM_ SG_ 400 A190_COUNTER4 "Cycle counter mod 16, +3 per cycle; use it to detect dropped cycles.";
-CM_ SG_ 407 A197_STARTUP_PHASE1 "0 while the radar starts up, 1 once running (stays 1 on the owner car and the Yaris; the 2022 RAV4 camera sets it for one frame or not at all).";
+CM_ SG_ 407 A197_STARTUP_PHASE1 "0 until about 0.2 s after the first object record, then 1 (stays 1 on the owner car and the Yaris, also through object-list outages; the 2022 RAV4 camera sets it for one frame or not at all). A boot flag, not live radar health.";
 CM_ SG_ 407 A197_B1_RESERVED1_7 "Always zero.";
 CM_ SG_ 400 A190_STATUS_0_4 "Byte 0 low nibble: summary count << 2 | 2 (values 2, 6, 10).";
 CM_ SG_ 400 A190_ACTIVE_SUMMARIES "Number of target summaries in this cycle (0-2): 0x191/0x192 fill first, then 0x193/0x194.";

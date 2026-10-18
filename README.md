@@ -83,11 +83,12 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
   lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
   waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)). `fused` keeps every radar car within 60 m and
-  has the most road drives behind it; `acc` has its first two ([08](docs/08_openpilot_integration.md#on-the-road)).
+  has the most road drives behind it; `acc` has a small road record (nine drives, 1.6 engaged hours) ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **`acc_summaries` adds the radar's two nearest other moving cars** within 40 m to `acc`, in 57 code lines. Over every
   replayed drive (23 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.04 s
   per hour), close cut-ins become radar-backed 0.09 s earlier, and it flips more (+26 per hour). The earlier 60 m limit
-  braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). No road drives yet.
+  braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). Two short road drives so far
+  ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **On some real slowdowns the radar sees the closing first** (curves, far leads); on others vision does.
 - **A car closing fast beyond 60 m** reaches the planner through the camera until the radar's ACC picks it, about 1 s
   later than with the object list ([12](docs/12_kalman_filter.md#far-cars-beyond-60-m)).
@@ -147,7 +148,7 @@ The code comes in two versions that drive identically:
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point (45 code lines and a DBC; the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
-| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from their range slope; 57 code lines) | the main alternative: brakes like `acc` over every replay, cut-ins radar-backed 0.09 s earlier; no road drives yet ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
+| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from their range slope; 57 code lines) | the main alternative: brakes like `acc` over every replay, cut-ins radar-backed 0.09 s earlier; two short road drives so far ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 | `fused` | `--profile fused` | one Kalman speed filter per track that weights the object list and the radar's ACC target by the radar's own uncertainty, and withholds most next-lane cars beyond 15 m | every radar car within 60 m, with the longest road record |
 | `raw` | `--profile raw` | the unfiltered radar decode, with the validity rules radard needs | research and comparison: speed excursions reach the planner |
 | `openpilot` | `--profile openpilot` | `fused` from the single upstream file; points with `trackId` / `dRel` / `yRel` / `vRel` only | driving exactly what is proposed for openpilot in all-tracks form |

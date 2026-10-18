@@ -35,14 +35,14 @@ segmented record on 0x80, and 0x191-0x194 carry two target summaries from the ra
 | 0x191 / 0x193 | 8 | 16.6 Hz | selected-target companions: score, age, track code, class template (width, height, length) | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
 | 0x192 / 0x194 | 4 | 16.6 Hz | target summaries: distance and lateral position of one internal-tracker target each | [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries) |
 | 0x195 / 0x196 | 8 | 16.6 Hz | paired event frames; exact idle payloads in 99.67% of recorded frames | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
-| 0x197 / 0x198 | 2 / 1 | 16.6 Hz | 0x197 bit 8 = radar running; 0x198 constant `10` | |
+| 0x197 / 0x198 | 2 / 1 | 16.6 Hz | 0x197 (camera-sent) bit 8 = the camera's boot acknowledgement of the first object record, set once and held, not live radar health ([below](#power-up)); 0x198 byte 0 `0x10`, `0x90` (bit 7) while 0x196's fault flag is set | [05](05_acc_target_and_support.md#0x195--0x196-event-pair) |
 | 0x202 | 5 | 16.6 Hz | counter + check byte | |
 | 0x210 | 7 | 5 Hz | copy of Toyota road-sign-assist data | |
 | **0x235 / 0x237** | 8 | 50 Hz | **radar ACC target** (fields ●, sender the radar ◐): closing speed, relative acceleration, distance, lateral position and speed, target ID, in-path state | [05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237) |
 | 0x239 / 0x23B / 0x23D | 8/3/8 | 50 Hz | ACC target companions: 0x239 = class, object-list flag, µs timestamp; 0x23B = width in cm + counter + CRC-8; 0x23D all zero | [05](05_acc_target_and_support.md#class-width-and-timestamp-0x239--0x23b) |
 | 0x240 / 0x241 / 0x244 / 0x245 / 0x248 | 8 | 16.6 Hz | camera-sent context frames with a rolling phase 1-7; 0x240/0x244 carry light-source records at night | [05](05_acc_target_and_support.md#0x240-0x248-context-frames) |
 | 0x24D / 0x24F | 7 / 1 | 1 Hz / 33 Hz | state frame; 0x24F bit 6 = radar running | |
-| 0x500 / 0x501 / 0x502 | 6/7/8 | slow | unit-specific constants (redacted in the DBC), status nibble, two slowly drifting codes | |
+| 0x500 / 0x501 / 0x502 | 6/7/8 | slow | 0x500 (camera-sent): one regular payload, identical on three cars; 0x501 (camera-sent): a stored, slowly learned 5-bit code (byte 5 bits 3-7) plus constants; 0x502 (radar-sent): two slowly drifting stored codes, bytes 2-3 behaving like an elevation-alignment estimate (◐), and a tail (bytes 4-7) that differs per car (redacted in the DBC) | |
 | 0x680 | 8 | 2 Hz | one tracked object: distance, lateral position, over-ground speed; mostly a stationary roadside object | [05](05_acc_target_and_support.md#0x680-single-object-stream) |
 
 Two clocks run on the link (◐, [`acc_sender_clock.json`](../data/analysis/summaries/acc_sender_clock.json), four drives): the **radar's**
@@ -109,7 +109,7 @@ continues with 20,518 records, 0 CRC failures and the ACC target at 50 Hz;
 | radar's response | | `68 01` (positive) 20 ms later |
 | bus 0 from the radar: 0x283, 0x343 (33 Hz), 0x344 (20 Hz), 0x33E, 0x365, 0x366 (5 Hz), 0x411, 0x494, 0x4FF (~1 Hz) | sent | silent |
 | bus 1: all 36 addresses, 0x80 / 0x85 records, ACC target 0x235 / 0x237 | sent | sent at full rate; 25,849 records, 0 CRC failures |
-| 0x101 / 0x197 / 0x24F running flags | running | running |
+| 0x101 / 0x197 boot flags, 0x24F running flag | set | set |
 
 So on this firmware the decoder works with the radar line unfiltered: the object list, the ACC target and the target summaries all
 continue through openpilot's radar disable, which makes it compatible with the `acc`, `acc_summaries` and `fused` profiles. The car-bus messages it switches

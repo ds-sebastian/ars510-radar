@@ -22,8 +22,10 @@ moments; `fused` runs one Kalman filter per track on the object list and the ACC
 - 80-87% of object-list excursions are false closings ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)); they ramp up over about 1 s.
 - Rare close in, common far out: radar and vision disagree by ≥ 2 m/s for 1% of radar-lead time at 0-20 m and 49%
   beyond 80 m ([below](#how-often-on-real-drives); object-list radar through radard, owner's early closed-loop drives).
-- Their size matches the speed-error code the radar reports (`240|7`, ◐); the radar's own ACC tracker follows the
-  same car smoothly.
+- Pooled over range, their size follows the speed-error code the radar reports (`240|7`, ◐): codes and errors both grow
+  with range. Within a range band the grade varies between drive sets, and against stopped cars as ground truth one
+  count is not the same speed error near and far ([below](#far-range-excursions-match-the-reported-velocity-error-scale)).
+  The radar's own ACC tracker follows the same car smoothly.
 - `fused` weights every reading by that uncertainty and leans on the radar's own ACC target.
 
 ## What an excursion looks like
@@ -88,7 +90,10 @@ Four closed-loop drives with the object-list radar feeding radard (owner's early
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
 - A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.3% observed vs 6.5%
   predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). A 1-3σ deviation lasts seconds.
-- `240|7` (◐) scales with the width of far errors, which is why `fused` uses it to weight readings.
+- `240|7` (◐) scales with the width of far errors when pooled over range, which is why `fused` uses it to weight readings.
+  Within a range band its grade depends on the drive set (rising on some, flat at 20-40 m on others), and against
+  stopped cars as ground truth its per-count step is larger near than far, so it is a range-wide weight, not one
+  calibrated σ.
 
 <details>
 <summary>Caveats and the residual error</summary>
