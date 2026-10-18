@@ -26,8 +26,8 @@ radar's car-bus messages reach the car on a path that bypasses the panda
 ([13](13_car_bus_messages.md#openpilot-longitudinal-filter-or-disable)), so panda cannot take over 0x343 alone: a CAN filter in
 the radar's line does that in hardware and keeps the radar's AEB, and a relay of the radar's bus-1 decision would be the
 software route ([below](#relaying-the-radars-decision--theoretical)). The route other cars use to keep stock ACC (with its
-AEB) under openpilot speed control, stepping the stock set speed with emulated cruise buttons, is closed here: the cruise
-lever never appears on CAN, only its effects ([13](13_car_bus_messages.md#0x365-lead-distance-and-relative-speed-)).
+AEB) under openpilot speed control, stepping the stock set speed with emulated cruise buttons, is closed here: no raw cruise-lever
+bit was found on buses 0-2 around 385 set-speed steps, 46 engagements and 67 main toggles, only its effects ([13](13_car_bus_messages.md#0x365-lead-distance-and-relative-speed-)).
 
 ## What the PCS frames can request
 
@@ -47,7 +47,7 @@ with the radar on, [`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)
 `PCSALM` (the alarms) and `PBATRGR`, the pre-collision brake-assist trigger (◐). `PBATRGR` came in 4 segments on 4 cars:
 twice inside an alarm once the driver braked, once 0.36 s before an alarm with no pedal pressed, and once on its own for
 1.9 s while the driver was braking hard behind a closing lead, with no alarm. No deceleration, pre-fill, autobrake or hold
-field and no 0x283 force was ever set, so whether a non-idle 0x344 alone brakes the car is untested.
+field and no 0x283 force was set in any of these frames, so whether a non-idle 0x344 alone brakes the car is untested.
 
 ## A recorded stock PCS alarm (U3)
 
@@ -95,7 +95,7 @@ outputs idle: it is the radar's threat state, and 0x100 marks the decision to wa
 [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json). comma's public fleet logs hold 7 more stock
 alarms (6 cars, all radar firmware 8821F0R03100). In each, 0x100 = 0x02 starts in the same CAN tick as 0x283 `PCSNOCHG` and
 0x411 FCW, with 0x344 `PCSALM` within 41 ms. The event pair led the alarm by 0.02-1.27 s in 6 of them; the seventh came
-during hard stock-ACC braking with the pair idle. Firmware 8821F0R01100 raised no alarm in 34.8 moving hours (0 of 75
+during hard stock-ACC braking with the pair idle. On firmware 8821F0R01100 no alarm was recorded in 34.8 moving hours (0 of 75
 comparable threat moments, P = 0.03 at the 03100 rate) with the same PCS sensitivity settings: a candidate (○) firmware
 difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)).
 
@@ -173,7 +173,7 @@ with a covered or dirty radar shows which candidate reacts, and "PCS on" reports
 |---|---|---|---|
 | idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), continuous | ● recorded (O5) |
 | alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the 0x100 flag of a disabled radar is a recording to make |
-| pre-fill, brake assist | none found (only the event pair was active) | 0x344 `PBATRGR` with 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill never seen | ◐ brake-assist trigger on the car bus |
+| pre-fill, brake assist | none found (only the event pair was active) | 0x344 `PBATRGR` with 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill not set in any recorded frame | ◐ brake-assist trigger on the car bus |
 | autonomous braking | to record | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence to record | ○ |
 
 What this means for a build today:

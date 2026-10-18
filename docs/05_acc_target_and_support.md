@@ -236,7 +236,7 @@ When a summary and the ACC target describe the same car, the summary range is th
 
 | bits (LE) | field |
 |---|---|
-| `1\|7` | score, 91-100: rises with the car's own over-ground speed, not ego's (mature tracks: 95 at 1-5 m/s, 98 at 5-10, 99 at 10-15, 100 above about 15 m/s; two cars), and a little with track maturity. It reads as a moving-vehicle confidence and is too coarse for a speed (98 spans 6-10 m/s); the summary frames carry no speed field ([`summary_score_speed.json`](../data/analysis/summaries/summary_score_speed.json)); 127 idle |
+| `1\|7` | score, 91-100: rises with the car's own over-ground speed, not ego's (mature tracks: 95 at 1-5 m/s, 98 at 5-10, 99 at 10-15, 100 above about 15 m/s; two cars), and a little with track maturity. It reads as a moving-vehicle confidence and is too coarse for a speed (98 spans 6-10 m/s); no bit-field of 0x191 / 0x193 tracked the summary car's speed in the search on two cars ([`summary_score_speed.json`](../data/analysis/summaries/summary_score_speed.json)); 127 idle |
 | `9\|7` | target age in cycles, saturates at 126 |
 | `26\|6` | pair-local target code; can move between pairs; every value 0-63 occurs in active frames. Not the ACC `TARGET_ID` (equal on 1-9 % of frames where both describe the same car), but kept when the car becomes the ACC target |
 | `17\|7` | 100 while a target is present |
@@ -482,4 +482,4 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
   between drives it follows openpilot's calibration pitch weakly (○).
   Counts and scope for these register readings are in
   [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json).
-- **0x180, 0x198, 0x23D:** constants.
+- **0x180, 0x23D:** constants. **0x198:** byte 0 `0x10`, and `0x90` (bit 7) while 0x196's fault flag is set ([above](#0x195--0x196-event-pair)).
