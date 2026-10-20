@@ -73,12 +73,12 @@ Scales and accuracy are in [06](06_accuracy.md).
 
 | bits | field | decode | conf. |
 |---|---|---|---|
-| `0\|2` | **state** | 0 deleted (exactly the age-0 rows: the track's last record, existence 0; tracks are born at age 1), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
+| `0\|2` | **state** | 0 deleted (the age-0 row: the track's last record, existence 0, shown only in some header timing phases, [02](02_object_list.md#an-objects-life); tracks are born at age 1), 1 measured, 2 coasting: predicted without a new measurement (speed unchanged on 66 % of its records against 36 %, smoother range; half of its spells end the track) | ◐ |
 | `2\|6` | **slot index** | 0-19 = this slot's position; 63 = unallocated | ● |
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
-| `16\|8` | **existence probability** | % (10-100); `20\|3` is its bits 4-6 (score // 16); `NativeObject.existence_pct` | ◐ |
+| `16\|8` | **existence probability** | % (10-100); `20\|3` is its bits 4-6 (score // 16); `NativeObject.existence_pct`. Never below 10 on a live track: the step that would cross 10 ends it | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
 | `107\|1` | **predicted record** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
