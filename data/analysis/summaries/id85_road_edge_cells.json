@@ -1,0 +1,11 @@
+{
+  "what": "0x85 cell c0 offset against the openpilot model's lane lines (prob > 0.5) and road edges (std < 1 m) at the nearest modelV2 frame (<= 0.06 s), left positive; nearest-curve share and median |error|",
+  "scope": "raw re-decode with this decoder: 40 owner segments, 32 second-car segments",
+  "cell5": {"right_outer_line_valid_share": {"owner": 0.037, "second_car": 0.025}, "nearest_right_road_edge": {"owner": 0.946, "second_car": 0.857}, "median_abs_err_m": {"owner": 0.26, "second_car": 0.44}, "median_offset_m": {"owner": -2.93, "second_car": -3.17}},
+  "cell0": {"left_outer_line_valid_share": {"owner": 0.248, "second_car": 0.104}, "nearest_left_road_edge": {"owner": 0.658, "second_car": 0.82}, "median_abs_err_m": {"owner": 0.31, "second_car": 0.32}, "median_offset_m": {"owner": 3.69, "second_car": 3.74}},
+  "cell1_left_outer_line": {"nearest": {"owner": 0.786, "second_car": 0.764}, "nearer_than_edge_when_both": {"owner": 0.97, "second_car": 0.927}},
+  "cell4_right_outer_line": {"nearer_than_edge_when_both": {"owner": 0.953, "second_car": 0.997}},
+  "both_line_and_edge_present": {"note": "outer line and road edge within ~1 m (median gap 0.6-1.4 m); cars split on which is nearer for cells 0 / 5", "cell0_outer_nearer": {"owner": 0.623, "second_car": 0.132}, "cell5_outer_nearer": {"owner": 0.757, "second_car": 0.325}},
+  "cells6_7": "mixed: outer lines when all model curves exist; otherwise right edge 26-42 %, left ego line 16-38 %",
+  "independent_check": {"what": "segments not in the first sample, own bit extraction (no shell85)", "segments": {"owner": 30, "second_car": 30}, "cell5_nearest_right_edge": {"owner": 0.958, "second_car": 0.95}, "cell0_nearest_left_edge": {"owner": 0.671, "second_car": 0.729}, "cell1_nearest_left_outer": {"owner": 0.735, "second_car": 0.856}}
+}
