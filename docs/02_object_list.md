@@ -59,7 +59,7 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 |---|---|---|---|
 | clock code | record bytes 1-4, little-endian | equals the 0x85 fine clock `// 100` in the same cycle | ● |
 | record counter | `int.from_bytes(record[5:7], "little") >> 1` | equals the 0x85 counter in the same cycle | ● |
-| timing offset | record bits 104-114 (bytes 13-14) | follows the record's arrival-time offset at 0.9-1.0 ms per count (record-to-record change r 0.98-0.99 on the three bundled drives, [`header_timing_offset.json`](../data/analysis/summaries/header_timing_offset.json)). It falls by exactly 0.28 counts per record and steps by 10: the number of 10 ms ticks before the record is sent, plus a phase that slides 0.28 ms per 60.28 ms cycle. Its 10-count band decides whether an ended slot shows its deletion row ([life, step 5](#an-objects-life)) | ◐ |
+| timing offset | record bits 104-114 (bytes 13-14) | follows the record's arrival-time offset at 0.9-1.0 ms per count (record-to-record change r 0.98-0.99 on the three bundled drives, [`header_timing_offset.json`](../data/analysis/summaries/header_timing_offset.json)). It falls by exactly 0.28 counts per record and steps by 10: the number of 10 ms ticks before the record is sent, plus a phase that slides 0.28 ms per 60.28 ms cycle. Its 10-count band decides how often a record repeats the previous geometry (below the table) and whether an ended slot shows its deletion row ([life, step 5](#an-objects-life)) | ◐ |
 | allocation count | `record[14] >> 3` | number of allocated slots: those whose index field equals their position, which are the slots with age ≥ 1; exact on all 1,309 bundled records ([`header_allocation_count.json`](../data/analysis/summaries/header_allocation_count.json)) | ● |
 | sequence counter | `record[8] >> 4` (low nibble 0) | a second 4-bit counter, +1 per record; its offset to the record counter is fixed within a drive segment (three cars) | ● |
 | constants | byte 0 = 0xE4; bytes 9-11 = 0xFF; bytes 7, 12, 15, 16 = 0x00 | unchanged on every record of 100 segments and of 49 logs from a third car | ● |
@@ -67,6 +67,19 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 Pairing 0x80 and 0x85 by clock and counter gives one 0x85 record per 0x80 record (99.97% of 0x80 records paired, each pair unique,
 [`prefix_alignment.json`](../data/analysis/summaries/prefix_alignment.json)); pairing by arrival time picks the neighbouring cycle 31-37% of the
 time. Pair by counter.
+
+**Records that repeat the previous geometry (●).** About one record in seven with traffic moving relative to the car
+repeats, for every slot, the geometry and association fields of the previous record: range, lateral, length, width,
+`272|5`, `224|7`, `232|7`, `200|7`, heading, `112|3` / `136|4` and lane `128|3` / `120|3`. Velocities, accelerations,
+`240|7`, `248|7`, `256|8`, existence, `115|5` and `184|8` are new and age steps by one, so a slot is built from two blocks.
+The whole record holds or none of it does (99.4-99.7 %), the next record catches up, and no bit marks it: a record is
+held when every moving slot's position equals the previous one. The rate follows the timing offset: 38-43 % of records
+at codes 42-51, 4-5 % at 52-61, 20-26 % at 62-71 and 1-3 % above (two cars,
+[`position_held_records.json`](../data/analysis/summaries/position_held_records.json)). Range differences across a held
+record are 0 and then double. `raw` publishes the stale position, `fused` moves its range 10 % toward it, and `acc` /
+`acc_summaries` read the ACC messages, which do not hold.
+
+![position-held records](img/analysis/position_held_records.png)
 
 ## Slots and track IDs
 

@@ -1223,12 +1223,40 @@ def acc_summaries_sweep():
          "Numbers: data/analysis/summaries/acc_summaries_profile.json.")
 
 
+def position_held_records():
+    """Records that repeat the previous geometry block, by header tick count, and which fields hold (position_held_records.json)."""
+    D = summary("position_held_records")
+    B = D["held_share_by_timing_offset_codes"]
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(12.5, 4.1), gridspec_kw={"width_ratios": [1, 1.5]})
+    bands = list(B["owner_corpus"])
+    x = np.arange(len(bands))
+    for i, (key, col, lab) in enumerate((("owner_corpus", S1, "owner, 672 segments"), ("owner_raw", S3, "owner, later drives (raw)"),
+                                         ("second_car_raw", S2, "second car (raw)"))):
+        a1.bar(x + (i - 1) * 0.26, [100 * B[key][b] for b in bands], 0.25, color=col, label=lab)
+    a1.set_xticks(x, [f"codes {b}" for b in bands])
+    a1.set_ylabel("records repeating the previous positions (%)")
+    a1.set_title("The header timing offset sets how often a record repeats")
+    a1.legend(loc="upper right")
+    F = D["fields_change_share_held_vs_fresh"]["owner_corpus"]
+    names = list(F)
+    y = np.arange(len(names))
+    a2.barh(y + 0.2, [100 * F[n][1] for n in names], 0.38, color=INK2, label="fresh records")
+    a2.barh(y - 0.2, [100 * F[n][0] for n in names], 0.38, color=S4, label="position-held records")
+    a2.set_yticks(y, names); a2.invert_yaxis()
+    a2.set_xlabel("records where the field changed from the previous record (%)")
+    a2.set_title("Geometry and association hold; kinematics and quality update")
+    a2.legend(loc="lower right")
+    fig.tight_layout()
+    save(fig, "position_held_records", "Slots moving relative to the car (more than 5 m/s or 1.5 m in 5 records), 10-80 m, age 30 or more. "
+         "Numbers: data/analysis/summaries/position_held_records.json.")
+
+
 NUMBERS: dict = {}
 FIGURES = {f.__name__: f for f in (record_raster, field_map, vground_vs_ego, standstill_codes, lateral_hist, bev_density, ground_contact,
                                    lateral_scale, lifetimes, slot_gantt, track_lifecycle, lane_weights, object_size, heading_field,
                                    age_convergence, vrel_hexbin, vrel_mse, range_walk, brake_events, fault_injection,
                                    event_code_context, initial_attribute_zeros, id85_direction_code_structure, lane_curve_cells, excursion_sigma_scale, video_truth_excursions, summary_owner_case,
-                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3, acc_function_tracker, acc_summaries_sweep)}
+                                   acc_frame_map, camera_association, lateral_unit_evidence, far_range_distance, tracker_range, target_366_coding, target_366_coverage, pcs_flag_0x344, pcs_activation_u3, acc_function_tracker, acc_summaries_sweep, position_held_records)}
 
 
 if __name__ == "__main__":
