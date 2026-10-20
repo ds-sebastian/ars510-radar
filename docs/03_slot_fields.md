@@ -29,7 +29,7 @@ from this radar's own data.
 | `74\|10` | **vy over ground**, left positive | nominal `(code − 510.5) × 0.15` m/s (fits 0.142-0.155) | ◐ |
 | `84\|10` | **ax over ground**, filtered | `(code − 510.3) ×` about 0.075 m/s²: the track's own acceleration through a first-order filter with a 0.9-1.5 s time constant and no extra delay, so its gain depends on frequency (DC 0.035-0.08 by estimator, about 0.085 at 1-2 Hz; this is why single static fits gave 0.035-0.086); over ground: parked objects move by +2-3 codes per m/s² of ego acceleration | ◐ field and dynamics; ○ DC scale |
 | `96\|10` | **ay over ground**, filtered | `(code − 511) × 0.05` m/s²; follows the kinematic value by ~0.5 s | ◐ |
-| `208\|6` | **coarse heading over ground**, left positive, clipped at 0 | observed code × approximately π/64 rad; closely follows the clipped velocity angle | ◐ meaning / exact scale |
+| `208\|6` | **coarse heading over ground**, left positive, clipped to 0-63 | `clip(floor(atan2(vy, vx) × 64/π), 0, 63)` of the radar's unquantized velocity: code × π/64 rad | ● formula |
 
 - **The velocity is over ground**: traffic sits on the ego-speed diagonal, parked objects on 0 and
   oncoming traffic on −v_ego.
@@ -45,9 +45,10 @@ from this radar's own data.
   ([`rotating_kinematics.json`](../data/analysis/summaries/rotating_kinematics.json), [`field_units_dynamics.json`](../data/analysis/summaries/field_units_dynamics.json)).
 - **The heading output closely follows the clipped velocity angle.** It matches
   `floor(max(atan2(vy, vx), 0) × 64 / π)` on 97.4-98.3% of settled moving samples (99.4-99.7% within one code),
-  with the best agreement at zero lag. Rightward headings read 0 and oncoming motion reads near 63. The heading also
-  updates on its own while both velocity codes hold (three checked cases), which suggests a separate state (◐);
-  the formula is an empirical match. Counts:
+  with the best agreement at zero lag. Rightward headings read 0; oncoming motion reads 60-63, or 0 when it drifts
+  slightly right (the angle is then just above −π and clips). Where the heading changes while both velocity codes
+  hold, the new code lies inside the angle range those codes allow (±0.075 m/s) on 80 % of cases: the radar computes
+  it from its unquantized velocity, so it adds only sub-code direction at code boundaries. Two cars ([`heading_quantization.json`](../data/analysis/summaries/heading_quantization.json)). Counts:
   [`heading_component_bins.json`](../data/analysis/summaries/heading_component_bins.json),
   [`velocity_heading.json`](../data/analysis/summaries/velocity_heading.json).
 

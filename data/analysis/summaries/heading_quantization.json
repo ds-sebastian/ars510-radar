@@ -1,0 +1,9 @@
+{
+  "what": "208|6 heading against h = clip(floor(atan2(vy, vx) * 64/pi), 0, 63) from the 64|10 / 74|10 over-ground velocity codes, and against the angle interval allowed by +-0.075 m/s quantization of those codes",
+  "owner_corpus": {"segments": 672, "live_rows_age_ge2": 1225011, "moving_rows_gt_1mps": 973372, "exact_moving": 0.889, "in_quant_interval_moving": 0.909,
+                   "alternatives_all_rows": {"floor": 0.803, "round": 0.734, "ceil": 0.478, "ego_relative_floor": 0.518},
+                   "changes_while_both_codes_hold": {"held_steps": 135713, "changes": 1251, "new_value_in_quant_interval": 0.803},
+                   "oncoming_moving_reads_0": 0.67},
+  "raw_redecode": {"owner_later": {"segments": 20, "moving_rows": 34566, "exact": 0.965, "in_quant_interval": 0.972},
+                   "second_car": {"segments": 30, "moving_rows": 43084, "exact": 0.915, "in_quant_interval": 0.925}}
+}
