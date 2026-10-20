@@ -59,7 +59,7 @@ FCE00000A0F07F00FFFDF71FFFA100F807000F0008000000000000000000000000000000
 |---|---|---|---|
 | clock code | record bytes 1-4, little-endian | equals the 0x85 fine clock `// 100` in the same cycle | ● |
 | record counter | `int.from_bytes(record[5:7], "little") >> 1` | equals the 0x85 counter in the same cycle | ● |
-| timing offset | record bits 104-114 (bytes 13-14) | follows the record's arrival-time offset at 0.9-1.0 ms per count (record-to-record change r 0.98-0.99 on the three bundled drives, [`header_timing_offset.json`](../data/analysis/summaries/header_timing_offset.json)) | ◐ |
+| timing offset | record bits 104-114 (bytes 13-14) | follows the record's arrival-time offset at 0.9-1.0 ms per count (record-to-record change r 0.98-0.99 on the three bundled drives, [`header_timing_offset.json`](../data/analysis/summaries/header_timing_offset.json)). It falls by exactly 0.28 counts per record and steps by 10: the number of 10 ms ticks before the record is sent, plus a phase that slides 0.28 ms per 60.28 ms cycle. Its 10-count band decides whether an ended slot shows its deletion row ([life, step 5](#an-objects-life)) | ◐ |
 | allocation count | `record[14] >> 3` | number of allocated slots: those whose index field equals their position, which are the slots with age ≥ 1; exact on all 1,309 bundled records ([`header_allocation_count.json`](../data/analysis/summaries/header_allocation_count.json)) | ● |
 | sequence counter | `record[8] >> 4` (low nibble 0) | a second 4-bit counter, +1 per record; its offset to the record counter is fixed within a drive segment (three cars) | ● |
 | constants | byte 0 = 0xE4; bytes 9-11 = 0xFF; bytes 7, 12, 15, 16 = 0x00 | unchanged on every record of 100 segments and of 49 logs from a third car | ● |
@@ -101,8 +101,13 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
    100 and can decline.
 4. **Coasting candidate.** State 2 is prediction-like: the score drops by exactly 20 or 1 per cycle (20 on about three quarters).
-5. **Deletion.** The allocation can return to state 1, with score recovery in some cases, or be freed near score 20:
-   age can go to 0 for one cycle with the previous geometry, or the slot returns directly to the idle template.
+5. **Deletion.** A track can recover (state 1, score rising) or end. A live track's score never drops below 10: from 10-29
+   it only steps −1 or +10, and the −20 step that would cross 10 ends the track instead (● on two cars, 93 % of ends; the
+   rest are tracks dropped within their first 4 cycles and rare abrupt ends). An ended slot either shows one deletion row
+   (age 0, state 0, score 0, previous geometry) or goes straight to the idle template. Which one depends on the record's
+   header timing offset, not on the track: the deletion row appears on 52-64 % of ends at offset codes 42-51, 6-8 % at
+   52-61, 32-56 % at 62-71 and 0-1 % above ([`deletion_row_timing.json`](../data/analysis/summaries/deletion_row_timing.json)).
+   Treat an idle slot in a received record as the end of the track.
 
 ![lifetimes](img/analysis/track_lifetimes.png)
 

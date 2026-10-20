@@ -1,0 +1,12 @@
+{
+  "what": "Track ends: does a retiring slot publish one age-0 / state-0 deletion row before going idle, or go idle directly? Delete share by the 10-count band of the header timing offset (record byte 13 & 127, band = (code - 2) // 10) of the record in which the slot leaves.",
+  "scope": "owner car, 672 drive segments, 22016 track ends (decoded slot corpus); raw re-decode with this decoder: 30 later owner segments, 40 second-car segments; firmware 8821F0R03100",
+  "track_features_vs_timing_auc": {"track_features": 0.61, "timing_band": 0.868, "both": 0.895, "cv": "grouped by segment, 5 folds"},
+  "same_track_state": {"exist_last_median": {"deleted": 20, "idle": 20}, "coasting_share_last": {"deleted": 0.35, "idle": 0.37}, "last_exist_step_minus20_share": {"deleted": 0.932, "idle": 0.927}},
+  "delete_share_by_band": {"owner_corpus": {"42-51": [0.634, 4809], "52-61": [0.056, 12250], "62-71": [0.319, 3908], "72-81": [0.012, 244]}, "owner_later_raw": {"42-51": [0.519, 156], "52-61": [0.057, 403], "62-71": [0.321, 193], "72-81": [0.0, 14]}, "second_car_raw": {"42-51": [0.637, 375], "52-61": [0.082, 534], "62-71": [0.556, 135], "72-81": [0.0, 16]}},
+  "within_segment": {"segments_with_both_bands": 413, "band_42_51_mean": 0.659, "band_52_61_mean": 0.057, "share_of_segments_higher_in_42_51": 0.99},
+  "previous_vs_vanishing_band": {"42-51 -> 52-61": 0.05, "52-61 -> 42-51": 0.71},
+  "units": "[delete share, ends]",
+  "retirement_rule": {"what": "existence 16|8 of a live track never < 10; from 10-29 a continuing track steps only -1 or +10; the -20 step that is commonest from 30-49 is replaced by the end", "live_rows_below_10": {"owner_corpus": 0, "owner_later_raw": 0, "second_car_raw": 0}, "minus20_steps_from_10_29": {"owner_corpus": [0, 10144], "owner_later_raw": [0, 496], "second_car_raw": [0, 531]}, "ends_from_existence_below_30": {"owner_corpus": 0.927, "owner_later_raw": 0.933, "second_car_raw": 0.944}, "other_ends_owner_corpus": {"newborn_dropped_by_age_4": 1362, "existence_30_89": 184, "mature_existence_ge_90": 102}},
+  "timing_offset_slope": {"what": "unwrapped record[13] & 127 per record (steps of about 10 removed)", "counts_per_record": {"owner_corpus_median": -0.28, "owner_corpus_p5_p95": [-0.2802, -0.2798], "owner_later_raw_min_max": [-0.2804, -0.2796], "second_car_raw_min_max": [-0.2802, -0.2799]}, "segments": {"owner_corpus": 662, "owner_later_raw": 20, "second_car_raw": 29}, "age_step_on_consecutive_records": {"plus1": 322026, "other": 0}}
+}
