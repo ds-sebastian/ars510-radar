@@ -1,0 +1,463 @@
+{
+ "description": "The opendbc PR's two profiles (acc, acc_summaries) against vision only (stock openpilot leads on this car), from existing open-loop replays through the pinned openpilot's unchanged radard and planner (no new replay). Unnecessary braking = request below the reference's by > 0.5 m/s2 for >= 0.3 s; missed = reference <= -1 while the profile > -0.5 for >= 0.3 s; confident moments, car moving. References: ORACLE = openpilot's planner on a hindsight lead built mostly from the ACC target (96.4 % of scored time, so it favours radar profiles); CAMREF = the same planner on a camera-only hindsight lead (modelV2 lead, RTS-smoothed; shares vision only's camera, so it favours vision only); AGREE = oracle moments where both references are confident and agree within 0.5 m/s2.",
+ "all_sets_oracle": {
+  "source": "acc_target_parser.json (vision only, acc) and acc_summaries_40m.json fast (acc_summaries, 40 m), 278 chunks, 16.91 moving h",
+  "recount_from_per_chunk_table": {
+   "vision only": {
+    "unnecessary_s": 89.25,
+    "missed_s": 30.76,
+    "moving_h": 16.91
+   },
+   "acc": {
+    "unnecessary_s": 19.22,
+    "missed_s": 17.45,
+    "moving_h": 16.91
+   }
+  }
+ },
+ "reference_check": {
+  "note": "311 chunks with scored time of the 313-chunk set (fast suite + second car's later drives), 73 routes, 18.84 moving h; acc_summaries ran in its 60 m form then (the 40 m form equals acc on more moments); route-block bootstrap 95 % CI",
+  "all": {
+   "chunks": 311,
+   "routes": 73,
+   "moving_h": 18.84,
+   "ORACLE": {
+    "confident_moving_h": 9.21,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 112.2,
+      "missed": 35.7
+     },
+     "acc": {
+      "unnecessary": 24.4,
+      "missed": 19.4
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 24.2,
+      "missed": 17.1
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 5.959,
+      "missed": 1.896
+     },
+     "acc": {
+      "unnecessary": 1.296,
+      "missed": 1.033
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 1.286,
+      "missed": 0.908
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": -4.663,
+      "ci95": [
+       -7.628,
+       -2.364
+      ]
+     },
+     "missed": {
+      "diff": -0.863,
+      "ci95": [
+       -1.563,
+       -0.295
+      ]
+     }
+    }
+   },
+   "AGREE": {
+    "confident_moving_h": 8.27,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 60.7,
+      "missed": 2.4
+     },
+     "acc": {
+      "unnecessary": 12.6,
+      "missed": 1.2
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 11.5,
+      "missed": 1.2
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 3.221,
+      "missed": 0.127
+     },
+     "acc": {
+      "unnecessary": 0.667,
+      "missed": 0.061
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 0.609,
+      "missed": 0.061
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": -2.554,
+      "ci95": [
+       -4.402,
+       -1.091
+      ]
+     },
+     "missed": {
+      "diff": -0.066,
+      "ci95": [
+       -0.134,
+       0.0
+      ]
+     }
+    }
+   },
+   "CAMREF": {
+    "confident_moving_h": 8.95,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 160.4,
+      "missed": 52.9
+     },
+     "acc": {
+      "unnecessary": 159.1,
+      "missed": 60.5
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 164.5,
+      "missed": 60.4
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 8.514,
+      "missed": 2.806
+     },
+     "acc": {
+      "unnecessary": 8.444,
+      "missed": 3.212
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 8.733,
+      "missed": 3.206
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": -0.07,
+      "ci95": [
+       -2.022,
+       2.013
+      ]
+     },
+     "missed": {
+      "diff": 0.406,
+      "ci95": [
+       -0.079,
+       0.915
+      ]
+     }
+    }
+   }
+  },
+  "without_28_saturated_sigma_drives": {
+   "chunks": 214,
+   "routes": 54,
+   "moving_h": 13.03,
+   "ORACLE": {
+    "confident_moving_h": 6.6,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 63.8,
+      "missed": 26.0
+     },
+     "acc": {
+      "unnecessary": 14.0,
+      "missed": 15.9
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 13.7,
+      "missed": 13.6
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 4.897,
+      "missed": 1.996
+     },
+     "acc": {
+      "unnecessary": 1.076,
+      "missed": 1.224
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 1.05,
+      "missed": 1.044
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": -3.82,
+      "ci95": [
+       -7.63,
+       -1.24
+      ]
+     },
+     "missed": {
+      "diff": -0.772,
+      "ci95": [
+       -1.797,
+       -0.042
+      ]
+     }
+    }
+   },
+   "AGREE": {
+    "confident_moving_h": 5.95,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 36.3,
+      "missed": 0.9
+     },
+     "acc": {
+      "unnecessary": 7.5,
+      "missed": 0.0
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 6.8,
+      "missed": 0.0
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 2.788,
+      "missed": 0.073
+     },
+     "acc": {
+      "unnecessary": 0.578,
+      "missed": 0.0
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 0.52,
+      "missed": 0.0
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": -2.21,
+      "ci95": [
+       -4.536,
+       -0.477
+      ]
+     },
+     "missed": {
+      "diff": -0.073,
+      "ci95": [
+       -0.169,
+       0.0
+      ]
+     }
+    }
+   },
+   "CAMREF": {
+    "confident_moving_h": 6.41,
+    "totals_s": {
+     "vision only": {
+      "unnecessary": 67.7,
+      "missed": 24.5
+     },
+     "acc": {
+      "unnecessary": 77.1,
+      "missed": 27.9
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 79.8,
+      "missed": 28.2
+     }
+    },
+    "per_moving_h": {
+     "vision only": {
+      "unnecessary": 5.198,
+      "missed": 1.881
+     },
+     "acc": {
+      "unnecessary": 5.916,
+      "missed": 2.142
+     },
+     "acc_summaries (60 m form)": {
+      "unnecessary": 6.126,
+      "missed": 2.168
+     }
+    },
+    "acc_minus_vision_per_moving_h": {
+     "unnecessary": {
+      "diff": 0.718,
+      "ci95": [
+       -1.309,
+       3.064
+      ]
+     },
+     "missed": {
+      "diff": 0.261,
+      "ci95": [
+       -0.266,
+       0.786
+      ]
+     }
+    }
+   }
+  }
+ },
+ "by_set": {
+  "ORACLE": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "confident_moving_h": 1.62,
+    "vision only": {
+     "unnecessary": 25.5,
+     "missed": 10.0
+    },
+    "acc": {
+     "unnecessary": 3.3,
+     "missed": 2.5
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 3.7,
+     "missed": 2.5
+    }
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "confident_moving_h": 4.0,
+    "vision only": {
+     "unnecessary": 7.2,
+     "missed": 10.3
+    },
+    "acc": {
+     "unnecessary": 6.0,
+     "missed": 10.8
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 5.6,
+     "missed": 8.4
+    }
+   },
+   "second car, held out from tuning": {
+    "moving_h": 6.19,
+    "confident_moving_h": 2.61,
+    "vision only": {
+     "unnecessary": 56.5,
+     "missed": 10.4
+    },
+    "acc": {
+     "unnecessary": 9.9,
+     "missed": 4.2
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 10.0,
+     "missed": 4.2
+    }
+   }
+  },
+  "AGREE": {
+   "27 replay drives": {
+    "moving_h": 4.18,
+    "confident_moving_h": 1.46,
+    "vision only": {
+     "unnecessary": 12.5,
+     "missed": 0.3
+    },
+    "acc": {
+     "unnecessary": 1.8,
+     "missed": 0.0
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 1.8,
+     "missed": 0.0
+    }
+   },
+   "owner road drives + 2 second-car drives": {
+    "moving_h": 6.07,
+    "confident_moving_h": 3.65,
+    "vision only": {
+     "unnecessary": 6.7,
+     "missed": 0.6
+    },
+    "acc": {
+     "unnecessary": 4.8,
+     "missed": 0.0
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 4.4,
+     "missed": 0.0
+    }
+   },
+   "second car, held out from tuning": {
+    "moving_h": 6.19,
+    "confident_moving_h": 2.28,
+    "vision only": {
+     "unnecessary": 28.4,
+     "missed": 1.5
+    },
+    "acc": {
+     "unnecessary": 3.5,
+     "missed": 1.2
+    },
+    "acc_summaries (60 m form)": {
+     "unnecessary": 3.1,
+     "missed": 1.2
+    }
+   }
+  }
+ },
+ "revealed_queue": {
+  "description": "Owner acc road drive (sunnypilot, Experimental mode): the lead (28 m) moved right and revealed a near-stopped car 56 m ahead. Logged leads, and a closed-loop replay of the device's planner from the same state with the driver's inputs removed and radar input acc, acc_summaries or none (vision only). Times relative to the ACC target's switch to the slow car. One event, exploratory (stop gaps good to about 1-2 m).",
+  "driver_brake_s": -0.05,
+  "acc_target_lead_speed_at_switch_mps": 2.08,
+  "camera_lead_speed_below_5_mps_after_s": 0.45,
+  "replay": {
+   "25 s window": {
+    "acc": {
+     "first_request_le_m1_s": 0.4,
+     "peak_decel_mps2": -3.26,
+     "min_gap_m": 3.8,
+     "min_time_gap_s": 1.63
+    },
+    "acc_summaries": {
+     "first_request_le_m1_s": 0.4,
+     "peak_decel_mps2": -3.25,
+     "min_gap_m": 3.8,
+     "min_time_gap_s": 1.63
+    },
+    "vision only": {
+     "first_request_le_m1_s": 0.85,
+     "peak_decel_mps2": -3.5,
+     "min_gap_m": 2.1,
+     "min_time_gap_s": 1.15
+    }
+   },
+   "loop closed 7.5 s before the press": {
+    "acc": {
+     "first_request_le_m1_s": 0.4,
+     "peak_decel_mps2": -3.26,
+     "min_gap_m": 3.8,
+     "min_time_gap_s": 1.76
+    },
+    "acc_summaries": {
+     "first_request_le_m1_s": 0.4,
+     "peak_decel_mps2": -3.25,
+     "min_gap_m": 3.8,
+     "min_time_gap_s": 1.76
+    },
+    "vision only": {
+     "first_request_le_m1_s": 0.85,
+     "peak_decel_mps2": -3.5,
+     "min_gap_m": -0.2,
+     "min_time_gap_s": 0.99
+    }
+   }
+  }
+ }
+}

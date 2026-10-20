@@ -205,6 +205,53 @@ The hard, mild and onset numbers are independent of the oracle, whose reference 
 target and leans toward this file on unnecessary and missed seconds. Numbers:
 [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json).
 
+### Against vision only (what the PR adds over today)
+
+On these cars openpilot runs vision only today. Replayed on the same 62 routes (16.9 moving h, two cars) through the
+unchanged radard and planner, `acc` and `acc_summaries` cut vision only's unnecessary braking from 89.2 to 19.2 / 19.1
+oracle seconds and its missed braking from 30.8 to 17.4 s:
+
+![acc and acc_summaries against vision only](img/analysis/upstream_vs_vision.png)
+
+The oracle builds its hindsight lead from the ACC target 96 % of the time, so it favours the radar. Three checks:
+
+![the same comparison against three references, by drive set, and judged by the driver](img/analysis/upstream_vs_vision_checks.png)
+
+- **Against other references** (73 routes, 18.8 moving h, route-bootstrap 95 % intervals). On the moments where the
+  oracle and a camera-only hindsight lead agree within 0.5 m/s² (8.3 confident h), vision only brakes unnecessarily
+  3.22 s per moving hour and `acc` 0.67: −2.55 s/h [−4.40, −1.09]. Without the 28 drives whose driving model saturates
+  the camera lead's uncertainty: −2.21 s/h [−4.54, −0.48]. Against the camera-only lead alone the two tie
+  (−0.07 s/h [−2.02, +2.01]); that reference shares vision only's camera, and on video the oracle was right in 6 of the
+  10 episodes where the two disagree, the camera reference in 2.
+- **By drive set.** The gain is largest on the 27 replay drives and the second car's drives (unnecessary + missed
+  braking 8.5 → 1.4 and 10.8 → 2.3 s per moving hour). On the owner's road set (sunnypilot drives plus two second-car drives) the three tie
+  (2.9 / 2.8 / 2.8 s per moving hour).
+- **Judged by the driver** (the 20 held-out routes of the 27 replay drives: 4.56 h, 167 brake presses, no hindsight lead): `acc` was already asking
+  ≤ −1 m/s² before 44.9 % of the driver's brake presses (vision only 40.1 %), starts braking 0.04 s earlier on average
+  (95 % CI −0.09 … +0.00), asks for no braking that only the radar wanted, and in 38 driver overrides its request was
+  closer to what the driver did 7 times and further 0 times ([11](11_profiles_compared.md#against-vision-only)).
+  `acc_summaries` gives the same numbers.
+
+One road moment, from an owner `acc` drive: the lead moves out and reveals a near-stopped car 56 m ahead. The ACC
+target reads the slow car's speed in the cycle it switches to it; the camera lead takes another 0.45 s to fall below
+5 m/s. Replayed from 7.5 s before the driver's brake press with the driver's inputs removed, `acc` asks for −1 m/s²
+0.45 s sooner than vision only, peaks at −3.3 m/s² and stops 3.8 m short; vision only peaks at −3.5 m/s² and reaches the
+slow car. This is one event in an open-loop camera replay (gaps good to about 1-2 m), a direction rather than a number.
+
+![a revealed slow car: logged leads and the replayed planner](img/analysis/upstream_revealed_queue.png)
+
+**Seeing it on a route.** Every radar-ACC car already logs these frames on bus 1, stock openpilot included; opendbc's
+test routes for the RAV4 2022 (hybrid), C-HR and Yaris carry them. In Cabana, load `toyota_tss2_ars510.dbc` and plot
+`ACC_TARGET_2.LONG_DIST` (0x237) against the camera's lead distance, and `ACC_TARGET_1.REL_SPEED` (0x235) for the
+closing speed; `ACC_TARGET_2.PRESENT` marks when the radar follows a car, and `ACC_TARGET_1.TARGET_ID` changes at a new
+target. The PR description names a public validation route driven with this interface.
+
+Numbers: [`upstream_case.json`](../data/analysis/summaries/upstream_case.json),
+[`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json),
+[`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json),
+[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json); event data
+[`revealed_queue_case.csv.gz`](../data/analysis/revealed_queue_case.csv.gz). Figures: `tools/make_upstream_figures.py`.
+
 ## What radard gets from other radars
 
 What other radars in openpilot send (signals in their DBCs), the ARS510 counterpart, and the data that would close each gap

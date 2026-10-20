@@ -78,6 +78,12 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 | lead flips between radar and vision, per hour | 0 | 302 | 325 | 332 |
 | 26 owner routes held out from every replay (2.56 moving h): unnecessary / missed braking | 40.1 s / 9.9 s | 7.7 s / 5.3 s | 7.7 s / 5.5 s | 11.4 s / 3.6 s |
 
+![acc and acc_summaries against vision only](docs/img/analysis/upstream_vs_vision.png)
+
+- **The hindsight lead favours the radar** (it is built mostly from the ACC target). Where it agrees with a camera-only
+  hindsight lead, vision only still brakes unnecessarily 3.22 s per moving hour against `acc`'s 0.67 (−2.55, 95 % CI
+  −4.40 … −1.09); against the camera-only lead alone they tie. The gain is largest on the second car and the 27
+  replay drives and smallest on the owner's road set ([17](docs/17_upstream.md#against-vision-only-what-the-pr-adds-over-today)).
 - **The radar's measured distance reaches radard** for about 83-87 % of the time a lead exists. Beyond 60 m (40 m for `acc_summaries`) all three
   profiles publish only the car the radar's own ACC follows, as Toyota's ACC uses it; other far cars come from the camera.
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
