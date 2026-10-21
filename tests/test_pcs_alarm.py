@@ -3,7 +3,7 @@ from pathlib import Path
 
 from ars510.support import pcs_alarm
 
-PATCH = Path(__file__).resolve().parents[1] / "upstream" / "opendbc_ars510_pcs.patch"
+PATCH = Path(__file__).resolve().parents[1] / "upstream" / "opendbc_ars510.patch"
 
 
 def test_pcs_alarm():

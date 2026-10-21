@@ -192,8 +192,8 @@ What this means for a build today:
   only with bytes 0-5 zero, so even this frame needs the relay's own panda rule.
 - **The installer forwards the alarm as `stockFcw`.** It reads 0x100 on bus 1 (the power-up `FF FF` frame ignored) and
   sets `carState.stockFcw`, as opendbc does from 0x411 with the radar enabled. The opendbc form, a radar-bus parser in
-  Toyota's carstate that doesn't require the message, is [`upstream/opendbc_ars510_pcs.patch`](../upstream/opendbc_ars510_pcs.patch),
-  a follow-up to [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860). It is read-only on the car bus, and with
+  Toyota's carstate that doesn't require the message, is part of [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)
+  ([`upstream/opendbc_ars510.patch`](../upstream/opendbc_ars510.patch)). It is read-only on the car bus, and with
   the radar disabled every drive now logs the alarm if it fires. openpilot's `stockFcw` event has no alert. Giving it
   one (`VisualAlert.fcw`) is an openpilot-side change, and the dash would follow: with the radar disabled, opendbc
   already sends the FCW in 0x411 whenever an alert carries `VisualAlert.fcw`.
