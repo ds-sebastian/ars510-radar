@@ -79,7 +79,8 @@ The hook wraps the fork's own Toyota `CarInterface` after it is defined:
   RadarInterface for every other car. Extra constructor arguments (sunnypilot's `CP_SP`) pass through, and forks
   whose RadarPoint still has `aRel` / `yvRel` / `measured` get those fields filled;
 - **the radar's PCS alarm** in `update`: the alarm bit on bus 1 (0x100) sets `carState.stockFcw`. openpilot logs it
-  but shows no alert for `stockFcw` ([docs/15](../docs/15_aeb_pcs.md#where-a-relay-stands-for-developers)).
+  but shows no alert for `stockFcw` ([docs/15](../docs/15_aeb_pcs.md#where-a-relay-stands-for-developers)). Upstream the
+  same lives in Toyota's carstate ([`upstream/opendbc_ars510_pcs.patch`](../upstream/opendbc_ars510_pcs.patch)).
 
 The install leaves `ToyotaFlags` as the fork defines it.
 

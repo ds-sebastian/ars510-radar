@@ -9,6 +9,8 @@ so the same install works on openpilot and its forks (sunnypilot, StarPilot, Car
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. ToyotaFlags stays as shipped, so fork flag bits stay free.
   - PCS alarm: the radar's alarm bit on bus 1 (0x100) sets carState.stockFcw, as 0x411 FCW does with the radar enabled.
+    Upstream this is two lines in Toyota's carstate (upstream/opendbc_ars510_pcs.patch); the hook does the same after the
+    fork's update, since the installer leaves the fork's carstate as shipped.
 Worth knowing (docs/07, docs/08, docs/12):
   - the object list's vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m, docs/07): `fused` filters them with the ACC target's speed, and the default `acc` publishes the ACC target alone;
   - the radar deletes most new stationary objects at age 5, more often the faster ego drives (7 % kept above 10 m/s),
@@ -244,7 +246,7 @@ def hook_car_interface(car_interface):
   def update(self, can_packets, *args, **kwargs):
     ret = fork_update(self, can_packets, *args, **kwargs)
     if is_ars510(self.CP):
-      # read from the raw frames, not a CANParser, so a quiet 0x100 can't mark CAN invalid
+      # as upstream/opendbc_ars510_pcs.patch, read from the raw frames so a quiet 0x100 can't mark CAN invalid
       for _, frames in can_packets:
         for address, dat, src in frames:
           if address == PCS_STATE_ADDR and src == RADAR_BUS:

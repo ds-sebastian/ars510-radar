@@ -10,7 +10,8 @@ ask. Both are prepared as branches on a fork of opendbc, on top of opendbc maste
 | [`ars510-fused`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-fused) | `fused`: every track, one Kalman speed filter per track | `car/toyota/ars510_radar.py`, its test, the same DBC, and the same routing and detection |
 
 `upstream/opendbc_ars510.patch` is the `ars510-acc` branch as one patch, and `upstream/toyota_tss2_ars510.dbc` is its
-DBC. [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) is the same logic as a standalone file, which the
+DBC. `upstream/opendbc_ars510_pcs.patch` is a follow-up on top of it (branch `ars510-pcs-fcw`): Toyota's carstate sets
+`stockFcw` from the radar's PCS alarm on the radar bus ([15](15_aeb_pcs.md#where-a-relay-stands-for-developers)). [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) is the same logic as a standalone file, which the
 installer's `acc` profile runs on forks; the `fused` branch carries `upstream/ars510_radar.py` unchanged. CI tests the
 standalone files and checks the patch against the DBC and the standalone logic.
 
