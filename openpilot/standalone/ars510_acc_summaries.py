@@ -2,8 +2,10 @@
 
 The radar's ACC target (0x235 / 0x237) is published as in `acc`. The target summaries add up to two more moving cars from
 the same tracker: range and lateral in 0x192 / 0x194, a pair code in 0x191 / 0x193 (trackId 64 + code). A summary within
-1 m / 0.5 m of the ACC point is that car and is skipped. vRel is the least-squares slope of the code's last 8 ranges
-over CAN time (the 8 must span less than 0.6 s). Summaries beyond 40 m are left out: radard cannot tell a neighbouring
+1 m / 0.5 m of the ACC point is that car and is skipped. vRel comes from a constant-velocity Kalman filter per code on the
+radar's own cycle clock (0x190), fed the middle of each 1/16 m range step (the summary range is the tracker range rounded
+down); without that clock it is the least-squares slope of the code's last 8 ranges over CAN time. A car is published once
+the code has 8 ranges within 0.6 s. Summaries beyond 40 m are left out: radard cannot tell a neighbouring
 lane from the camera's farther lead there (at 47-58 m it took such a car as the lead before the radar's ACC picked
 the real one). Evidence and replay numbers: docs/11 ("acc_summaries").
 Forks whose RadarPoint still has aRel / yvRel / measured get them filled: the ACC point's aRel is the target's own relative
@@ -21,6 +23,7 @@ from opendbc.car.interfaces import RadarInterfaceBase
 
 # JUMP_M: a range step this large between cycles is a glitch, a new car, or two cars sharing a pair code (codes are per slot)
 STALE_S, FAR_M, SLOPE_N, SLOPE_SPAN_S, JUMP_M, SUMMARY_ID = 0.5, 40.0, 8, 0.6, 5.0, 64  # summary trackIds: 64 + pair code
+KF_Q, KF_R, KF_GAP_S = 0.05, (1 / 16) ** 2 / 12, 0.3  # speed filter: accel noise density (m^2/s^3), range-step variance (m^2), restart gap (s)
 # 0x235 LAT_SPEED and 0x237 LAT_DIST are the low 11 / 12 bits of one-bit-wider values: beyond +12.8 m/s / +20.95 m they wrap
 # by 25.6 m/s / 40.96 m. The check byte (CRC-8 over the signals, linear: constant ^ one column per payload bit from byte 1
 # bit 7; docs/05) then leaves the remainder 0x9C / 0x14 instead of 0. Per address: (constant, wrap remainder, columns).
@@ -44,6 +47,18 @@ def slope(hist, k):  # least-squares slope of column k (1 range, 2 lateral) over
   return sum((h[0] - tm) * (h[k] - xm) for h in hist) / sum((h[0] - tm) ** 2 for h in hist)
 
 
+def kf_step(s, tr, d):  # s = [range, speed, P00, P01, P11, radar time, updates]; constant-velocity Kalman filter
+  if s is not None and tr == s[5]:  # re-sent cycle: nothing new
+    return s
+  if s is None or not 0 < tr - s[5] < KF_GAP_S:
+    return [d + 1 / 32, 0.0, KF_R, 0.0, 25.0, tr, 1]
+  x, v, p00, p01, p11, t0, n = s
+  dt = tr - t0
+  x, p00, p01, p11 = x + v * dt, p00 + 2 * dt * p01 + dt * dt * p11 + KF_Q * dt ** 3 / 3, p01 + dt * p11 + KF_Q * dt * dt / 2, p11 + KF_Q * dt
+  k0, k1, e = p00 / (p00 + KF_R), p01 / (p00 + KF_R), d + 1 / 32 - x
+  return [x + k0 * e, v + k1 * e, (1 - k0) * p00, (1 - k0) * p01, p11 - k1 * p01, tr, n + 1]
+
+
 def point(track_id, d, y, v, a=float("nan"), yv=float("nan")):
   return RadarData.RadarPoint(trackId=track_id, dRel=d, yRel=y, vRel=v, **{k: x for k, x in {"aRel": a, "yvRel": yv, "measured": True}.items() if k in LEGACY})
 
@@ -53,6 +68,7 @@ class RadarInterface(RadarInterfaceBase):
     super().__init__(CP, *args)
     self.acc = self.pos = self.last_t = None
     self.fault, self.ident, self.summaries, self.hist = 0, {}, {}, {}
+    self.kf, self.clock = {}, None  # per pair code filter state; (CAN time, radar time s, radar µs) of the last 0x190
 
   def update(self, can_packets):
     self.frame += 1
@@ -68,6 +84,9 @@ class RadarInterface(RadarInterfaceBase):
         elif address == 0x237 and len(dat) == 8:  # distance, lateral (left positive); bit 10 = target present
           self.last_t, self.pos = t, ((bits(dat, 39, 13) * 0.025, (bits(dat, 27, 12) - 2000) * 0.01 + 40.96 * wrapped(0x237, dat))
                                       if bits(dat, 10, 1) else None)
+        elif address == 0x190 and len(dat) >= 6 and dat[0] != 0xFF:  # cycle header: radar µs clock in bytes 2-5
+          us = int.from_bytes(dat[2:6], "big")
+          self.clock = (t, us * 1e-6 if self.clock is None else self.clock[1] + ((us - self.clock[2]) % (1 << 32)) * 1e-6, us)
         elif address == 0x196 and len(dat) >= 2:  # fault flag: every cycle while blocked; one cycle at power-up
           self.fault = self.fault + 1 if dat[1] & 1 else 0
         elif address in (0x191, 0x193) and len(dat) == 8:  # byte 0 >> 1: score (127 = no car), byte 3 >> 2: pair code
@@ -80,6 +99,8 @@ class RadarInterface(RadarInterfaceBase):
             hist = self.hist.setdefault(code, deque(maxlen=SLOPE_N))
             if hist and abs(d - hist[-1][1]) > JUMP_M:  # no car moves 5 m in one 60 ms cycle: restart rather than slope through it
               hist.clear()
+            tr = self.clock[1] if self.clock is not None and 0 <= t - self.clock[0] < 0.03 else None  # this cycle's radar time
+            self.kf[code] = kf_step(self.kf.get(code) if hist else None, tr, d) if tr is not None else None
             hist.append((t, d, y))
             self.summaries[address] = (code, d, y, t)
     if t is None or self.frame % 5 != 0:  # card calls update at 100 Hz: report at 20 Hz
@@ -92,6 +113,7 @@ class RadarInterface(RadarInterfaceBase):
     for code, d, y, ts in filter(None, self.summaries.values()):
       hist, is_acc = self.hist[code], self.pos is not None and abs(d - self.pos[0]) < 1.0 and abs(y - self.pos[1]) < 0.5
       if t - ts < STALE_S and d <= FAR_M and not is_acc and len(hist) == SLOPE_N and hist[-1][0] - hist[0][0] < SLOPE_SPAN_S:
-        points.append(point(SUMMARY_ID + code, d, y, slope(hist, 1), yv=slope(hist, 2)))
+        kf = self.kf.get(code)
+        points.append(point(SUMMARY_ID + code, d, y, kf[1] if kf and kf[6] >= 5 else slope(hist, 1), yv=slope(hist, 2)))
     ret.points = points  # assigned as a list: forks with capnp-backed structs (sunnypilot) take list assignment only
     return ret
