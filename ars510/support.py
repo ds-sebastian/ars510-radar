@@ -71,6 +71,12 @@ class RadarFaultFlag:
         return self.run >= self.MIN_CYCLES
 
 
+def pcs_alarm(data: bytes) -> bool:
+    """0x100 byte 0 bit 1: the radar's PCS alarm (FCW stage), set from the same CAN frame as the car-bus alarm in 8 alarms
+    and never otherwise (docs/15). The first frame after power-up is FF FF, which is not an alarm."""
+    return len(data) > 0 and data[0] != 0xFF and bool(data[0] & 0x02)
+
+
 @dataclass(frozen=True)
 class CycleHeader:
     active_summaries: int  # 0-2: how many of the 0x191/0x192 and 0x193/0x194 pairs carry a target (0x191 fills first)

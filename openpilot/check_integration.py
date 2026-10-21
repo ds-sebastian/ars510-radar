@@ -19,6 +19,7 @@ It checks:
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
   recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
+- every profile: the radar's PCS alarm (0x100) sets carState.stockFcw, not on the power-up frame.
 - for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
   published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery; on trees whose
   RadarPoint has aRel / yvRel / measured, the ACC point's REL_ACCEL / LAT_SPEED, a recorded wrapped LAT_SPEED, and the
@@ -172,6 +173,20 @@ def check_acc_summaries_profile(RI, check) -> None:
   check(bool(rec) and not rec[-1].errors.radarUnavailableTemporary and len(rec[-1].points) >= 1, "acc_summaries: recovers when the frames resume")
 
 
+def check_pcs_alarm(CarInterface, CP, extra, check) -> None:
+  """The radar's PCS alarm (bus-1 0x100) sets carState.stockFcw; the power-up FF FF frame does not."""
+  try:
+    CI = CarInterface(CP, *extra)
+    fcw = []
+    for i, byte0 in enumerate([0xFF, 0, 2, 2, 0]):
+      cs = CI.update([(int(i * 1e8), [(0x100, bytes([byte0, byte0 if byte0 == 0xFF else 0, 0, 0, 0, 0, 0]), 1)])])
+      fcw.append(bool((cs[0] if isinstance(cs, tuple) else cs).stockFcw))
+  except TypeError as e:  # a fork whose update takes more arguments (StarPilot toggles)
+    print(f"skip PCS alarm check: {e}")
+    return
+  check(fcw == [False, False, True, True, False], f"PCS alarm: stockFcw follows 0x100, power-up frame ignored (got {fcw})")
+
+
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("--opendbc", type=Path, default=None, help="opendbc checkout to import (default: whatever is importable)")
@@ -228,6 +243,7 @@ def main() -> int:
 
   # ---- RadarInterface on synthetic records ----
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
+  check_pcs_alarm(CarInterface, CP, extra, check)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
   if PROFILE in ("acc", "acc_summaries"):

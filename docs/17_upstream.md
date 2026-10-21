@@ -6,11 +6,12 @@ ask. Both are prepared as branches on a fork of opendbc, on top of opendbc maste
 
 | branch | profile | what it adds |
 |---|---|---|
-| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal, [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) | the ACC target inline in the Toyota `radar_interface.py`, the DBC `toyota_tss2_ars510.dbc`, the radar DBC for the radar-ACC platforms (RAV4 2022-25, C-HR, Yaris) in `values.py`, and two tests in `tests/test_toyota.py` |
+| [`ars510-acc`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-acc) | `acc`: the radar's ACC target alone (the proposal, [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) | the ACC target inline in the Toyota `radar_interface.py`, the DBC `toyota_tss2_ars510.dbc`, the radar DBC for the radar-ACC platforms (RAV4 2022-25, C-HR, Yaris) in `values.py`, and `stockFcw` from the radar's PCS alarm in `carstate.py` |
 | [`ars510-fused`](https://github.com/commaai/opendbc/compare/master...ds-sebastian:opendbc:ars510-fused) | `fused`: every track, one Kalman speed filter per track | `car/toyota/ars510_radar.py`, its test, the same DBC, and the same routing and detection |
 
 `upstream/opendbc_ars510.patch` is the `ars510-acc` branch as one patch, and `upstream/toyota_tss2_ars510.dbc` is its
-DBC. [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) is the same logic as a standalone file, which the
+DBC. It also has Toyota's carstate set `stockFcw` from the radar's PCS alarm on
+the radar bus ([15](15_aeb_pcs.md#where-a-relay-stands-for-developers)). [`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) is the same logic as a standalone file, which the
 installer's `acc` profile runs on forks; the `fused` branch carries `upstream/ars510_radar.py` unchanged. CI tests the
 standalone files and checks the patch against the DBC and the standalone logic.
 
@@ -56,10 +57,11 @@ commit:
   21-53 m to the side in turns and at junctions (14 of 320 wrapped cycles were published within 2 m of the path, at
   77-81 m). radard never took one as its lead in the recorded drives, and in the fast-suite replay the unwrap changes
   no planner tick ([`acc_lat_dist_wrap.json`](../data/analysis/summaries/acc_lat_dist_wrap.json)).
-- **Tests:** two in the existing `opendbc/car/toyota/tests/test_toyota.py`: every radar-ACC car gets the ARS510, and
-  50 Hz frames give one report per radar cycle (radard's frequency check is off in replay, so only this test guards it).
-  opendbc's generic tests cover the rest: `test_car_interfaces.py` runs every platform's `RadarInterface`, and
-  `test_models.py` replays each platform's test route through it, now including the RAV4 2022, C-HR and Yaris routes.
+- **Tests:** none of its own, like opendbc's other radar parser merges. opendbc's generic tests cover it:
+  `test_car_interfaces.py` runs every platform's `RadarInterface`, and `test_models.py` replays each platform's test route
+  through it and carstate, now including the RAV4 2022, C-HR and Yaris routes. The one-report-per-radar-cycle rate
+  (radard's frequency check is off in replay) and the PCS alarm are checked in this repo (`openpilot/check_integration.py`,
+  `tests/test_pcs_alarm.py`).
 
 smasher816 helped frame this approach (the ACC target inline in Toyota's `RadarInterface`, selected through the radar
 DBC) and reviewed it; the DBC field names follow his.

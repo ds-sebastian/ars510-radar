@@ -44,6 +44,7 @@ ACC_TARGET_VREL_ADDR = 0x235
 ACC_TARGET_POS_ADDR = 0x237
 SUMMARY_ADDRS = (0x192, 0x194)  # the radar's selected-target range summaries (docs/05)
 RADAR_FAULT_ADDR = 0x196  # event frame; byte 1 bit 0 = the radar's own fault / blocked flag (docs/05)
+PCS_STATE_ADDR = 0x100  # 10 Hz; byte 0 bit 1 = the radar's PCS alarm (FCW) stage, FF FF on the first frame after power-up (docs/15)
 
 # Radar cycle: one record every 60.28 ms (16.6 Hz): the record clocks advance 603 x 100 us (0x80 header) and
 # 60,280 x 1 us (0x85 prefix) per record and keep log time on both cars; arrival intervals jitter around a 59.9 ms median.

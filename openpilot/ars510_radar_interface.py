@@ -8,6 +8,9 @@ so the same install works on openpilot and its forks (sunnypilot, StarPilot, Car
     reach bus 1 during fingerprinting get radarUnavailable = False (stock keeps radar-ACC Toyotas radar-unavailable);
   - tracks: `CarInterface.RadarInterface` becomes a thin dispatcher that builds `Ars510RadarInterface` for such a car
     and the fork's own RadarInterface otherwise. ToyotaFlags stays as shipped, so fork flag bits stay free.
+  - PCS alarm: the radar's alarm bit on bus 1 (0x100) sets carState.stockFcw, as 0x411 FCW does with the radar enabled.
+    Upstream this is part of commaai/opendbc#3860, in Toyota's carstate (upstream/opendbc_ars510.patch); the hook does the same after the
+    fork's update, since the installer leaves the fork's carstate as shipped.
 Worth knowing (docs/07, docs/08, docs/12):
   - the object list's vRel has occasional 1-10 s excursions (mostly false closings beyond 40 m, docs/07): `fused` filters them with the ACC target's speed, and the default `acc` publishes the ACC target alone;
   - the radar deletes most new stationary objects at age 5, more often the faster ego drives (7 % kept above 10 m/s),
@@ -42,9 +45,9 @@ from opendbc.car import structs
 from opendbc.car.carlog import carlog
 from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510 import BASE_CONFIG, FUSED_CONFIG, Ars510NativeRadarInterface
-from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, RADAR_BUS, RADAR_FAULT_ADDR,
-                                                 SUMMARY_ADDRS, TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
-from opendbc.car.toyota.ars510.support import RadarFaultFlag
+from opendbc.car.toyota.ars510.constants import (ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, CAR_BUS, ID80_ADDR, PCS_STATE_ADDR, RADAR_BUS,
+                                                 RADAR_FAULT_ADDR, SUMMARY_ADDRS, TOYOTA_KINEMATICS_ADDR, TOYOTA_SPEED_ADDR)
+from opendbc.car.toyota.ars510.support import RadarFaultFlag, pcs_alarm
 
 # Decoder profile (docs/08): "acc" (default: the radar's ACC target alone as one point, ars510_acc_target.py, docs/17),
 # "fused" (FUSED_CONFIG: one Kalman speed filter fusing the object list and the ACC target by the radar's own
@@ -213,7 +216,7 @@ def is_ars510(CP) -> bool:
 
 
 def hook_car_interface(car_interface):
-  """Wrap a fork's Toyota CarInterface in place: detection in _get_params, dispatch in RadarInterface."""
+  """Wrap a fork's Toyota CarInterface in place: detection in _get_params, dispatch in RadarInterface, PCS alarm in update."""
   if getattr(car_interface, "_ars510_hooked", False):
     return car_interface
   import inspect
@@ -238,7 +241,22 @@ def hook_car_interface(car_interface):
         return Ars510RadarInterface(CP, *args, **kwargs)
       return fork_radar_interface(CP, *args, **kwargs)
 
+  fork_update = car_interface.update
+
+  def update(self, can_packets, *args, **kwargs):
+    ret = fork_update(self, can_packets, *args, **kwargs)
+    if is_ars510(self.CP):
+      # as the carstate in upstream/opendbc_ars510.patch, read from the raw frames so a quiet 0x100 can't mark CAN invalid
+      for _, frames in can_packets:
+        for address, dat, src in frames:
+          if address == PCS_STATE_ADDR and src == RADAR_BUS:
+            self.ars510_pcs_alarm = pcs_alarm(dat)
+      cs = ret[0] if isinstance(ret, tuple) else ret  # sunnypilot and StarPilot return (CarState, extra)
+      cs.stockFcw = cs.stockFcw or getattr(self, "ars510_pcs_alarm", False)
+    return ret
+
   car_interface._get_params = staticmethod(_get_params)
   car_interface.RadarInterface = RadarInterface
+  car_interface.update = update
   car_interface._ars510_hooked = True
   return car_interface
