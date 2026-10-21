@@ -89,7 +89,7 @@ Its speed follows the slope of its own distance (best lag −0.06 s, gain 1.00; 
 openpilot unfiltered. Every other car reaches the planner through the camera.
 
 **`acc_summaries`** adds up to two other moving cars from the same tracker (the target summaries, which hold its two nearest movers) within
-40 m, each with a speed from the slope of its last 8 ranges; a summary at the ACC car's position is not published twice
+40 m, each with a speed from a Kalman filter on its range; a summary at the ACC car's position is not published twice
 ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 **`fused`** keeps the whole object list and estimates each car's speed over ground with one small Kalman filter per track.

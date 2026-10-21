@@ -20,11 +20,11 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 | | `acc` (default) | `acc_summaries` | `fused` | `raw` |
 |---|---|---|---|---|
 | radar cars published | the one car the radar's ACC function follows | the ACC car plus up to two other moving cars from the summaries (the radar's two nearest movers), within 40 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
-| source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from the range slope | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
+| source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from a Kalman filter on their range | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
-| code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 63 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
-| tuned constants | protocol values only | 40 m limit, 8-range slope, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
+| code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 88 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| tuned constants | protocol values only | 40 m limit, speed-filter noise, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
 | first braking request vs vision only (95 % CI) | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) | −0.15 s (−0.26 … −0.05) |
@@ -170,12 +170,17 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 63 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 88 code lines,
 no DBC) publishes them next to the ACC target:
 - **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
-- **Identity and speed.** Every other summary is `trackId 64 + code` (its pair code). Its speed is the least-squares
-  slope of that code's last 8 ranges over CAN time, published once the 8 span less than 0.6 s, so a code that returns
-  after a gap does not mix old and new ranges.
+- **Identity.** Every other summary is `trackId 64 + code` (its pair code). It is published once its code has 8 ranges
+  within 0.6 s, so a code that returns after a gap does not mix old and new ranges.
+- **Speed.** A summary range is the tracker's range rounded down to 1/16 m. Each code gets a constant-velocity Kalman
+  filter, timed by the radar's own cycle clock (0x190) and fed the middle of each 1/16 m step; without that clock the
+  speed is the slope of the last 8 ranges over CAN time. Against the ACC target's own speed on the same car the filter
+  has 0.142 m/s RMS error where that slope had 0.166 (second car 0.157 against 0.170; 99th percentile 0.51 against
+  0.61 m/s), and it brakes the same in replay (23 moving h: hard, mild and missed unchanged, unnecessary 32.2 → 32.1 s;
+  [`accsum_summary_speed.json`](../data/analysis/summaries/accsum_summary_speed.json)).
 - **Optional point fields, for forks.** On forks whose RadarPoint still has `aRel` / `yvRel` / `measured`, the ACC point
   carries the radar's own `REL_ACCEL` as `aRel` and `LAT_SPEED` as `yvRel` (d(LAT_DIST)/dt in the car's frame, left
   positive; a wrapped value is restored from the frame's check byte); a summary car carries the slope of its last 8 laterals
@@ -234,8 +239,8 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
 | an all-tracks candidate for upstream, in one file | `openpilot` (`fused` in `upstream/ars510_radar.py`) |
 | research on the object list's own errors | `raw` |
 
-`acc` publishes the followed car; Toyota's own ACC follows that same car. `acc_summaries` adds the other
-moving cars among the two nearest movers the radar's tracker reports. `fused` keeps the radar's other cars, which
+`acc` publishes the followed car; Toyota's own ACC follows that same car. `acc_summaries` adds the radar
+tracker's two nearest moving cars when they are not that car. `fused` keeps the radar's other cars, which
 radard matches to the camera's lead through its distance and speed gates.
 
 ## How each profile works
