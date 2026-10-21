@@ -89,6 +89,7 @@ What sunnypilot, FrogPilot and StarPilot each do with a radar lead, and how the 
 | `acc`: the ACC frames stop | nothing returned | radarTracks stop → radarState invalid → `commIssue` (every fork and mode); in 38.4 replayed hours on three cars the ACC frames never stopped while the radar ran, list outages included, and `acc` raised no `canError` ([`radar_health.json`](../data/analysis/summaries/radar_health.json)) |
 | record with a bad CRC | dropped | the 0.5 s rule covers sustained loss |
 | the radar's own fault flag (0x196 byte 1 bit 0) set on ≥ 2 consecutive cycles, every profile | `radarUnavailableTemporary`, no points, at 20 Hz (in place of the profile's reports) | as above; the radar holds the flag while it declares itself blocked (0x411 dust), when its ACC target can be missing for a lead it still tracks; ≥ 2 cycles never seen otherwise in 127 fleet hours ([`radar_blocked_fault.json`](../data/analysis/summaries/radar_blocked_fault.json)) |
+| the radar's PCS alarm (0x100 byte 0 bit 1), every profile | `carState.stockFcw` while it is set; with the radar disabled (openpilot longitudinal) also the FCW in the 0x411 `PCS_HUD` opendbc sends to the dash | the car's dash shows its forward-collision warning again under openpilot longitudinal; openpilot logs `stockFcw` without an on-screen alert; nothing brakes ([15](15_aeb_pcs.md#where-a-relay-stands-for-developers)) |
 
 ### Built into a fork's opendbc (car-model routing)
 

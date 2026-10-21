@@ -71,6 +71,28 @@ class RadarFaultFlag:
         return self.run >= self.MIN_CYCLES
 
 
+class PcsAlarm:
+    """0x100 byte 0 bit 1: the radar's PCS alarm (the FCW stage, docs/15).
+
+    Set from the same CAN frame as the car-bus alarm (0x283 PCSNOCHG, 0x411 FCW) until it ends, in 8 stock alarms on 7
+    cars and never otherwise. The first frame after power-up is FF FF, which is ignored. The alarm drops when no 0x100
+    frame has arrived for STALE_S."""
+
+    STALE_S = 0.5
+
+    def __init__(self) -> None:
+        self.set = False
+        self.last_s: float | None = None
+
+    def update(self, t_s: float, data: bytes) -> None:
+        if len(data) >= 1:
+            self.set = data[0] != 0xFF and bool(data[0] & 0x02)
+            self.last_s = t_s
+
+    def active(self, now_s: float) -> bool:
+        return self.set and self.last_s is not None and now_s - self.last_s <= self.STALE_S
+
+
 @dataclass(frozen=True)
 class CycleHeader:
     active_summaries: int  # 0-2: how many of the 0x191/0x192 and 0x193/0x194 pairs carry a target (0x191 fills first)

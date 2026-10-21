@@ -175,7 +175,7 @@ with a covered or dirty radar shows which candidate reacts, and "PCS on" reports
 | relay stage | radar bus (input) | car bus (output) | status |
 |---|---|---|---|
 | idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), continuous | ● recorded (O5) |
-| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the 0x100 flag of a disabled radar is a recording to make |
+| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the installer forwards it as `stockFcw` and, with the radar disabled, as the dash FCW ([below](#where-a-relay-stands-for-developers)); the 0x100 flag of a disabled radar is a recording to make |
 | pre-fill, brake assist | none found (only the event pair was active) | 0x344 `PBATRGR` with 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill not set in any recorded frame | ◐ brake-assist trigger on the car bus |
 | autonomous braking | to record | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence to record | ○ |
 
@@ -190,9 +190,15 @@ What this means for a build today:
 - **0x283 has a low-speed state the relay must also carry.** In Park with a stationary object 2-3 m ahead the radar has sent
   `STATE` 4 with no force for 0.3-2.5 s (five times, three cars; its meaning is open). Upstream panda lets openpilot send 0x283
   only with bytes 0-5 zero, so even this frame needs the relay's own panda rule.
-- **A passive watcher is the safe first build.** Read 0x100 on bus 1 while the radar is disabled, log it, and raise
-  openpilot's existing FCW alert when it fires. It stays read-only on the car bus and tests the signal on
-  real drives.
+- **The installer forwards the alarm stage, warning only.** On every ARS510 platform and profile, the hook sets
+  `carState.stockFcw` while 0x100 byte 0 bit 1 is set (the power-up `FF FF` frame ignored; cleared 0.5 s after the last
+  0x100 frame, and read from the raw frames, so a quiet 0x100 never marks CAN invalid). With the radar disabled it also
+  sets the FCW in the 0x411 `PCS_HUD` frame opendbc already sends to the dash. Nothing brakes. openpilot logs
+  `stockFcw` and shows no alert for it on the comma screen (its event has none, because a stock system normally warns
+  on the dash itself); an on-screen alert needs an openpilot-side change. With the radar enabled Toyota's own PCS warns
+  and brakes, and opendbc already sets `stockFcw` from 0x411. Drives with the radar disabled now log the alarm whenever
+  it fires, which is the recording the open question below needs. Checked by `openpilot/check_integration.py` on
+  openpilot and sunnypilot, and once by hand on StarPilot.
 
 ## Open questions
 

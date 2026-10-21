@@ -19,6 +19,8 @@ It checks:
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
   recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
+- every profile: the radar's PCS alarm (0x100) sets carState.stockFcw (not on the power-up frame, cleared when the frames
+  stop), and with the radar disabled turns on the dash FCW in the 0x411 PCS_HUD opendbc sends.
 - for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
   published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery; on trees whose
   RadarPoint has aRel / yvRel / measured, the ACC point's REL_ACCEL / LAT_SPEED, a recorded wrapped LAT_SPEED, and the
@@ -172,6 +174,49 @@ def check_acc_summaries_profile(RI, check) -> None:
   check(bool(rec) and not rec[-1].errors.radarUnavailableTemporary and len(rec[-1].points) >= 1, "acc_summaries: recovers when the frames resume")
 
 
+def check_pcs_alarm(CarInterface, CP, extra, check) -> None:
+  """The radar's PCS alarm (bus-1 0x100 byte 0 bit 1) through the hooked CarInterface: carState.stockFcw while it is on
+  (not on the power-up FF FF frame, not after the frames stop), and with the radar disabled the dash FCW in the 0x411
+  PCS_HUD that opendbc sends."""
+  from opendbc.car import structs
+  from opendbc.car.toyota import toyotacan
+  from opendbc.car.toyota.values import ToyotaFlags
+
+  def run(byte0s, disable_radar):
+    CP2 = CP.copy() if hasattr(CP, "copy") else CP
+    if disable_radar:
+      CP2.flags = int(CP2.flags) | int(ToyotaFlags.DISABLE_RADAR)
+    CI = CarInterface(CP2, *extra)
+    fcw, huds = [], []
+    for i, b in enumerate(byte0s):
+      t = int(i * 1e7)  # card's 100 Hz; 0x100 every 10th update (10 Hz) when b is set
+      frames = [] if b is None else [(0x100, bytes([b, b if b == 0xFF else 0, 0, 0, 0, 0, 0]), 1)]
+      cs = CI.update([(t, frames)])
+      fcw.append(bool((cs[0] if isinstance(cs, tuple) else cs).stockFcw))
+      cc = structs.CarControl.new_message()
+      sp = getattr(structs, "CarControlSP", None)  # sunnypilot passes CarControlSP (capnp or dataclass)
+      cc_extra = () if sp is None else (sp.new_message() if hasattr(sp, "new_message") else sp(),)
+      _, sends = CI.apply(cc.as_reader(), *cc_extra, t)
+      huds += [(i, bytes(m[1])) for m in sends if m[0] == 0x411]
+    return fcw, huds, CI.CC.packer
+
+  boot_then_alarm = [0xFF] + [0] * 49 + [2] * 50 + [0] * 20 + [2] + [None] * 79
+  try:
+    fcw, huds, packer = run(boot_then_alarm, disable_radar=True)
+  except TypeError as e:  # a fork whose update / apply takes more arguments (StarPilot toggles)
+    print(f"skip PCS alarm check: {e}")
+    return
+  check(not any(fcw[:50]), "PCS alarm: the power-up FF FF frame and clear frames leave stockFcw False")
+  check(all(fcw[50:100]), "PCS alarm: stockFcw while 0x100 byte 0 = 0x02")
+  check(not any(fcw[100:120]) and not any(fcw[172:]), "PCS alarm: stockFcw clears with the bit, and 0.5 s after the frames stop")
+  on, off = bytes(toyotacan.create_fcw_command(packer, True)[1]), bytes(toyotacan.create_fcw_command(packer, False)[1])
+  check(any(50 <= i < 100 and d == on for i, d in huds) and not any(i < 50 and d == on for i, d in huds),
+        "PCS alarm, radar disabled: the dash FCW (0x411 PCS_HUD) is sent during the alarm only")
+  check(any(100 <= i < 120 and d == off for i, d in huds), "PCS alarm, radar disabled: the dash FCW clears with the alarm")
+  _, huds_on, _ = run([0] * 20 + [2] * 30, disable_radar=False)
+  check(not huds_on, "PCS alarm, radar enabled: opendbc sends no 0x411 (Toyota's PCS shows its own warning)")
+
+
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("--opendbc", type=Path, default=None, help="opendbc checkout to import (default: whatever is importable)")
@@ -228,6 +273,7 @@ def main() -> int:
 
   # ---- RadarInterface on synthetic records ----
   CP = params(CAR.TOYOTA_RAV4_TSS2_2022, ars_bus1)
+  check_pcs_alarm(CarInterface, CP, extra, check)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
   if PROFILE in ("acc", "acc_summaries"):
