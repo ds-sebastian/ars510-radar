@@ -8,7 +8,7 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 |---|---|---|
 | ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` and `acc_summaries`; `fused` as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
 | object list (0x80) | `raw` and `fused` | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
-| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets: the ACC car and the two nearest other moving cars (not a far-lead source) |
+| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets: its two nearest moving tracks, the ACC car among them when it is one of the two (not a far-lead source) |
 
 ## The radar's ACC target (0x235 / 0x237)
 
@@ -279,8 +279,20 @@ percentile 2.3-4.2 m/s) where a per-track slope has 0.25 m/s (0.95). Restart it 
 ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json), block
 `summary_slot_identity_and_slope`).
 
+**Which cars: the two nearest movers (◐, two cars, exploratory).** The two pairs hold the tracker's two nearest moving tracks by
+range (over-ground speed above about 2.5-3 m/s, the nearer one in 0x191 / 0x192), with a few cycles of incumbency. The ACC car is
+one of them only when it is among the two nearest. The rule "two nearest object-list movers by range" reproduces the radar's
+exact summary set on 90 % / 86 % of moving cycles (owner held-out drives / second car). "ACC target plus the nearest other car"
+reproduces 73 / 69 %, and "lowest time to collision" 65 / 55 %. Lateral or path bands do not improve on plain range order.
+List movers ranked first / second / third by range are covered 74 / 52-54 / 7-8 %, which is why the summaries hold about a
+third of the moving cars. Stopped cars never appear: the ACC car is in a summary 0 % of the time at ≤ 2 m/s over ground and
+91-99 % above 4 m/s. So a non-ACC summary is the nearest other mover, mostly in a neighbouring lane, not a ranked
+"next lead" candidate. Its lateral path does not announce the hand-over to the ACC target (a path offset under 1.5 m comes
+first on only 49-59 % of hand-overs), and no selection-based gate makes summaries beyond 40 m safe to publish
+([`summary_selection.json`](../data/analysis/summaries/summary_selection.json)).
+
 **Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
-target holds another track of the same internal tracker: up to two cars besides the lead, one on 32 % and two on 23 % of
+target holds another track of the same internal tracker: up to two cars besides the lead (when the lead is farther than both), one on 32 % and two on 23 % of
 moving cycles (second car), at least one on 57-65 % (19-25 % with no ACC target at all). It carries only
 moving vehicles going the same way (99.9 %; never stationary or oncoming), mostly in the next lanes (median lateral 3.8 m), at
 a median 34-50 m. Its range is as smooth as the ACC target's (0.022-0.024 m residual against 0.018 m quantization; the object

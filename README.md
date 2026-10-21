@@ -50,7 +50,7 @@ sudo reboot                                                          # required:
    fork and version, the `--check` output, and the time and description of each flagged moment. Keep route
    IDs, dongle IDs, VINs, GPS and identifying video private; say in the report if you can share logs privately.
 4. **Undo or switch at any time:** `install.py /data/openpilot --uninstall` (then reboot) restores the fork exactly;
-   `--profile acc_summaries` installs the main alternative (`acc` plus the radar's two nearest other cars),
+   `--profile acc_summaries` installs the main alternative (`acc` plus up to two other moving cars from the radar's summaries),
    `--profile fused` the all-tracks Kalman profile, `--profile raw` the unfiltered decode for comparison. Updating the fork resets `/data/openpilot`, so run
    the installer again after an update; without `--profile` it keeps the profile you had.
 
@@ -90,7 +90,7 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
   lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
   waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)). `fused` keeps every radar car within 60 m and
   has the most road drives behind it; `acc` has a small road record (nine drives, 1.6 engaged hours) ([08](docs/08_openpilot_integration.md#on-the-road)).
-- **`acc_summaries` adds the radar's two nearest other moving cars** within 40 m to `acc`, in 63 code lines. Over every
+- **`acc_summaries` adds up to two other moving cars from the radar's summaries** within 40 m to `acc`, in 63 code lines. Over every
   replayed drive (23 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.04 s
   per hour), close cut-ins become radar-backed 0.09 s earlier, and it flips more (+26 per hour). The earlier 60 m limit
   braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). Two short road drives so far
@@ -108,7 +108,7 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 ## `acc`, `acc_summaries` and `fused`
 
 The radar reports a speed-error code per object (`240|7`, ◐) and also sends its own, smoother tracker output for the
-car its ACC function follows (the ACC target) and short summaries of the two nearest other moving cars. The three
+car its ACC function follows (the ACC target) and short summaries of its two nearest moving tracks. The three
 profiles use these differently.
 
 | | `acc` (default) | `acc_summaries` | `fused` |

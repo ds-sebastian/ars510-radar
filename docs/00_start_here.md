@@ -8,7 +8,7 @@ Three install profiles turn the radar into openpilot radar points. The tour show
 
 | | `acc` (default, opendbc-compatible) | `acc_summaries` (the main alternative) | `fused` (every radar car) |
 |---|---|---|---|
-| publishes | the radar's ACC target (0x235 / 0x237) as one point | the ACC target plus the radar's two nearest other moving cars (summaries 0x191-0x194) within 40 m | every settled object-list track, with one Kalman speed filter per track |
+| publishes | the radar's ACC target (0x235 / 0x237) as one point | the ACC target plus up to two other moving cars from the radar's summaries (0x191-0x194: its two nearest movers) within 40 m | every settled object-list track, with one Kalman speed filter per track |
 | code | 45 code lines (68 in the file) reading 7 signals of three DBC messages (plus their rolling counters) | 63 code lines, no DBC | 187 code lines (the single-file openpilot version) |
 | other cars | from openpilot's camera match in radard | two from the radar, the rest from the camera | from the radar up to 60 m, from the camera beyond |
 | install | `install.py` (`--profile acc` to switch back) | `install.py --profile acc_summaries` | `install.py --profile fused` |
@@ -88,7 +88,7 @@ More: [05 ACC target](05_acc_target_and_support.md), [12](12_kalman_filter.md#ma
 Its speed follows the slope of its own distance (best lag −0.06 s, gain 1.00; `acc_target_parser.json`), so the point goes to
 openpilot unfiltered. Every other car reaches the planner through the camera.
 
-**`acc_summaries`** adds the radar's two nearest other moving cars from the same tracker (the target summaries) within
+**`acc_summaries`** adds up to two other moving cars from the same tracker (the target summaries, which hold its two nearest movers) within
 40 m, each with a speed from the slope of its last 8 ranges; a summary at the ACC car's position is not published twice
 ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 

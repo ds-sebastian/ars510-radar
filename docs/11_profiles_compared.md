@@ -19,7 +19,7 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 | | `acc` (default) | `acc_summaries` | `fused` | `raw` |
 |---|---|---|---|---|
-| radar cars published | the one car the radar's ACC function follows | the ACC car plus the radar's two nearest other moving cars (summaries), within 40 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
+| radar cars published | the one car the radar's ACC function follows | the ACC car plus up to two other moving cars from the summaries (the radar's two nearest movers), within 40 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
 | source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from the range slope | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
@@ -234,8 +234,8 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
 | an all-tracks candidate for upstream, in one file | `openpilot` (`fused` in `upstream/ars510_radar.py`) |
 | research on the object list's own errors | `raw` |
 
-`acc` publishes the followed car; Toyota's own ACC follows that same car. `acc_summaries` adds the two nearest other
-moving cars the radar's tracker reports. `fused` keeps the radar's other cars, which
+`acc` publishes the followed car; Toyota's own ACC follows that same car. `acc_summaries` adds the other
+moving cars among the two nearest movers the radar's tracker reports. `fused` keeps the radar's other cars, which
 radard matches to the camera's lead through its distance and speed gates.
 
 ## How each profile works
