@@ -279,17 +279,17 @@ percentile 2.3-4.2 m/s) where a per-track slope has 0.25 m/s (0.95). Restart it 
 ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json), block
 `summary_slot_identity_and_slope`).
 
-**Which cars: the two nearest movers (◐, two cars, exploratory).** The two pairs hold the tracker's two nearest moving tracks by
-range (over-ground speed above about 2.5-3 m/s, the nearer one in 0x191 / 0x192), with a few cycles of incumbency. The ACC car is
-one of them only when it is among the two nearest. The rule "two nearest object-list movers by range" reproduces the radar's
-exact summary set on 90 % / 86 % of moving cycles (owner held-out drives / second car). "ACC target plus the nearest other car"
-reproduces 73 / 69 %, and "lowest time to collision" 65 / 55 %. Lateral or path bands do not improve on plain range order.
-List movers ranked first / second / third by range are covered 74 / 52-54 / 7-8 %, which is why the summaries hold about a
-third of the moving cars. Stopped cars never appear: the ACC car is in a summary 0 % of the time at ≤ 2 m/s over ground and
-91-99 % above 4 m/s. So a non-ACC summary is the nearest other mover, mostly in a neighbouring lane, not a ranked
-"next lead" candidate. Its lateral path does not announce the hand-over to the ACC target (a path offset under 1.5 m comes
-first on only 49-59 % of hand-overs), and no selection-based gate makes summaries beyond 40 m safe to publish
-([`summary_selection.json`](../data/analysis/summaries/summary_selection.json)).
+**Which cars: the two nearest movers (◐, two cars, exploratory).** The two pairs hold the tracker's two nearest moving
+tracks by range, the nearer one in 0x191 / 0x192 ([`summary_selection.json`](../data/analysis/summaries/summary_selection.json)):
+- **Moving only.** Over-ground speed above about 2.5-3 m/s. A car at ≤ 2 m/s is never in a summary, so stopped cars never appear.
+- **The ACC car only when it is one of the two nearest.** Otherwise both pairs hold other cars.
+- **Plain range order.** "The two nearest object-list movers" reproduces the radar's exact choice on 90 % (owner, held-out
+  drives) and 86 % (second car) of moving cycles. "ACC target plus the nearest other car" reproduces 73 / 69 %, "lowest
+  time to collision" 65 / 55 %, and lateral or path bands do no better than range order.
+- **Why only a third of moving cars.** Two slots: the nearest, second and third list movers are covered 74, 52-54 and 7-8 % of the time.
+- **Not a "next lead" ranking.** A non-ACC summary is the nearest other mover, mostly in a neighbouring lane. Its lateral
+  path does not announce its hand-over to the ACC target (an offset under 1.5 m from the path comes first on only 49-59 %
+  of hand-overs), and no rule based on the selection makes summaries beyond 40 m safe to publish.
 
 **Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
 target holds another track of the same internal tracker: up to two cars besides the lead (when the lead is farther than both), one on 32 % and two on 23 % of

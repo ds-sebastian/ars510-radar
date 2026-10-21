@@ -129,7 +129,7 @@ def layers() -> None:
     # columns: acc, acc_summaries, fused, raw (the recommended order)
     acc_n, accs_n = acc_lines(), acc_lines("openpilot/standalone/ars510_acc_summaries.py")
     rows = [("ACC target (0x235 / 0x237) as a point", None, (1, 1, 0, 0)),
-            ("summary cars (0x191-0x194) within 40 m, range-slope speed", None, (0, 1, 0, 0)),
+            ("summary cars (0x191-0x194) within 40 m, filtered speed", None, (0, 1, 0, 0)),
             ("object list: validity, track IDs, ego subtraction", n(NativeTrackIdAssigner.update, I._fresh_ego_speed), (0, 0, 1, 1)),
             ("track-ID relink across short losses", n(I._relink), (0, 0, 0, 1)),
             ("saturation guard", n(I._guard), (0, 0, 0, 1)),
@@ -154,7 +154,7 @@ def layers() -> None:
     ax.text(0.5, top + 0.5, f"one file,\n{acc_n} lines in all", ha="center", va="center", fontsize=7.8, color="white", fontweight="bold")
     ax.add_patch(plt.Rectangle((0.08, top - 1 + 0.12), 0.84, 0.76, color="#efeee9", lw=0))
     ax.add_patch(plt.Rectangle((1.08, top - 1 + 0.12), 0.84, 1.76, color=ACCS, lw=0))
-    ax.text(1.5, top + 0.5 - 0.5, f"one file,\n{accs_n} lines in all\n(own ACC decode\nincluded)", ha="center", va="center",
+    ax.text(1.5, top + 0.5 - 0.5, f"one file,\n{accs_n} lines in all\n(includes its\nACC decode)", ha="center", va="center",
             fontsize=7.8, color="white", fontweight="bold")
     ax.text(4.1, top + 0.5 - 0.5, "acc / acc_summaries:\nwhole files, not added up", ha="left", va="center", fontsize=8.3, color=INK2)
     ax.text(4.1, top - 2 + 1.02, "fork build, per step:", ha="left", va="bottom", fontsize=8.0, color=INK2, style="italic")

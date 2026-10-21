@@ -293,7 +293,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 | GM | 71 | pass-through of the radar's targets |
 | Ford | 184 (272 lines in all) | clusters raw Delphi detections into tracks |
 | **ARS510 `acc` profile** ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py)) | 33 | the radar's ACC target as one point: target-present flags; pass-through |
-| **ARS510 `acc_summaries`** ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py)) | 81 | the ACC target plus up to two other moving cars from the radar's summaries within 40 m, speed from a Kalman filter on their range |
+| **ARS510 `acc_summaries`** ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py)) | 88 | the ACC target plus up to two other moving cars from the radar's summaries within 40 m, speed from a Kalman filter on their range |
 | **ARS510 openpilot version** ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)) | 187 | `fused` in one file; part by part [above](#parts-of-the-openpilot-file) |
 | … transport, CRC, slot decode, track IDs, ego speed, RadarInterface wrapper | 103 | a 742-byte record from 106 CAN frames, 20 slots of bit fields |
 | … ACC target decode and association | 27 | match the radar's own ACC target to one track |
