@@ -1,17 +1,100 @@
 {
   "description": "acc_summaries summary-car speed: constant-velocity Kalman filter on the radar's 0x190 cycle clock (process noise 0.05 m^2/s^3, measurement = middle of the 1/16 m range step) against the former least-squares slope of the last 8 ranges over CAN time. Accuracy on the ACC car's own summary, against the ACC target's REL_SPEED from the same tracker (radar-witness authority); replay on unchanged openpilot radard + planner.",
   "speed_error_acc_slot_mps": {
-    "owner_car": {"rows": 153712, "slope8_can_rms": 0.166, "slope8_can_p99": 0.606, "kf_radar_clock_rms": 0.142, "kf_radar_clock_p99": 0.511},
-    "second_car": {"rows": 29205, "slope8_can_rms": 0.170, "slope8_can_p99": 0.663, "kf_radar_clock_rms": 0.157, "kf_radar_clock_p99": 0.622},
-    "other_estimators_rms_owner_second": {"slope8_radar_clock": [0.152, 0.165], "interval_censored_kf": [0.140, 0.156]}
+    "owner_car": {
+      "rows": 153712,
+      "slope8_can_rms": 0.166,
+      "slope8_can_p99": 0.606,
+      "kf_radar_clock_rms": 0.142,
+      "kf_radar_clock_p99": 0.511
+    },
+    "second_car": {
+      "rows": 29205,
+      "slope8_can_rms": 0.17,
+      "slope8_can_p99": 0.663,
+      "kf_radar_clock_rms": 0.157,
+      "kf_radar_clock_p99": 0.622
+    },
+    "other_estimators_rms_owner_second": {
+      "slope8_radar_clock": [
+        0.152,
+        0.165
+      ],
+      "interval_censored_kf": [
+        0.14,
+        0.156
+      ]
+    }
   },
   "replay_vs_previous_acc_summaries": {
-    "moving_h": 23.03, "sets": ["new", "held-out", "confirmation", "fast suite"],
-    "hard": [14, 14], "mild": [46, 46], "unnecessary_s": [32.2, 32.1], "missed_s": [29.9, 29.9], "flips_per_h": [342, 341],
+    "moving_h": 23.03,
+    "sets": [
+      "new",
+      "held-out",
+      "confirmation",
+      "fast suite"
+    ],
+    "hard": [
+      14,
+      14
+    ],
+    "mild": [
+      46,
+      46
+    ],
+    "unnecessary_s": [
+      32.2,
+      32.1
+    ],
+    "missed_s": [
+      29.9,
+      29.9
+    ],
+    "flips_per_h": [
+      342,
+      341
+    ],
     "order": "previous, new",
-    "held_out_only": {"hard": [1, 1], "mild": [9, 9], "unnecessary_s": [7.7, 7.6]},
-    "close_cut_ins_radar_backed_vs_acc_s": [-0.086, -0.086]
+    "held_out_only": {
+      "hard": [
+        1,
+        1
+      ],
+      "mild": [
+        9,
+        9
+      ],
+      "unnecessary_s": [
+        7.7,
+        7.6
+      ]
+    },
+    "close_cut_ins_radar_backed_vs_acc_s": [
+      -0.086,
+      -0.086
+    ]
   },
-  "code_lines": {"previous": 63, "new": 88, "counting": "statements only (tests/test_openpilot_file_ledger.py code_lines)"},
-  "source": "workspace experiments SCR-1095..1097 and the compact filter replay QSP (ars510_accsum_quantized_speed_20261020)"
+  "code_lines": {
+    "previous": 63,
+    "new": 88,
+    "counting": "statements only (tests/test_openpilot_file_ledger.py code_lines)"
+  },
+  "source": "workspace experiments SCR-1095..1097 and the compact filter replay QSP (ars510_accsum_quantized_speed_20261020)",
+  "shipped_class_on_recorded_frames": {
+    "note": "the RadarInterface class itself fed the recorded 0x190-0x194 / 0x235 / 0x237 frames; speed of the summary that is the ACC car (published gating) against REL_SPEED",
+    "owner_car": {
+      "points": 193645,
+      "slope8_can_rms": 0.208,
+      "slope8_can_p99": 0.774,
+      "kf_rms": 0.161,
+      "kf_p99": 0.569
+    },
+    "second_car": {
+      "points": 34844,
+      "slope8_can_rms": 0.192,
+      "slope8_can_p99": 0.748,
+      "kf_rms": 0.165,
+      "kf_p99": 0.637
+    }
+  }
 }
