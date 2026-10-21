@@ -1,0 +1,18 @@
+{
+  "description": "Which cars the radar puts in the two target-summary pairs (0x191/0x192, 0x193/0x194): the two nearest moving tracker tracks by longitudinal range, the ACC car included only when it is one of them. Exploratory, two cars (owner car 7.3 moving h, second car 2.0 moving h); radar-witness authority (the radar's own outputs), object-list association derived (|dy| < 0.6 m, |dx| < 8 m).",
+  "rule": "two nearest object-list movers by range with over-ground speed above about 5 m/s, nearer one in slot 0 (99.999 %), a few cycles of incumbency",
+  "exact_set_agreement": {
+    "note": "share of clean moving cycles (every present summary matched to a list track) where the rule reproduces the radar's exact summary set; tuned on owner train drives only",
+    "two_nearest_movers_by_range": {"owner_train": 0.871, "owner_test": 0.897, "second_car": 0.864},
+    "two_nearest_by_euclidean_distance": {"owner_test": 0.881, "second_car": 0.860},
+    "acc_target_plus_nearest_other": {"owner_test": 0.735, "second_car": 0.693},
+    "lowest_ttc_two": {"owner_test": 0.651, "second_car": 0.550},
+    "clean_cycles": {"owner_train": 66000, "owner_test": 133000, "second_car": 39000}
+  },
+  "coverage_of_list_movers_by_range_rank": {"rank_1": [0.739, 0.740], "rank_2": [0.522, 0.537], "rank_3": [0.071, 0.083], "rank_4": [0.010, 0.004], "rank_5_plus": [0.001, 0.001], "order": "owner car, second car"},
+  "acc_car_excluded_but_farther_than_both": {"owner": 0.968, "second_car": 0.956, "note": "list-free: when two summaries are present and the moving ACC car is in neither"},
+  "acc_car_in_a_summary_by_over_ground_speed": {"le_2_mps": 0.0, "2_to_2.5": [0.01, 0.03], "2.5_to_3": [0.43, 0.53], "3_to_3.5": [0.71, 0.84], "above_4": [0.91, 0.99]},
+  "handover_to_acc": {"n": [246, 47], "path_offset_below_1.5_m_before_switch": [0.59, 0.49], "median_lead_s": 0.4, "camera_switch_first": [0.46, 0.27]},
+  "gate_beyond_40_m": {"note": "non-ACC summary rows with no ACC target, 40-60 m", "within_1_m_of_path": [0.014, 0.013], "of_those_neither_camera_lead_nor_acc_within_3_s": [0.39, 0.38]},
+  "source": "workspace experiment SCR-1080..1083 (ars510_summary_selection_rule_20261020)"
+}

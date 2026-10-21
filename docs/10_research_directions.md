@@ -6,7 +6,7 @@ recording procedures, physical references and hand-in checklists; begin with the
 long session.
 
 Three install profiles frame the questions. `acc` (the default) publishes the radar's ACC target alone; `acc_summaries`
-adds the radar's two nearest other moving cars within 60 m; `fused` publishes every settled track with one Kalman speed filter per track. A question says which profile it concerns when it concerns
+adds up to two other moving cars from the radar's summaries within 40 m; `fused` publishes every settled track with one Kalman speed filter per track. A question says which profile it concerns when it concerns
 one. The upstream proposals, the parts ledger and the evidence for the ACC target alone are in
 [17: Upstream proposals](17_upstream.md); the AEB / PCS questions are in [15: AEB and PCS](15_aeb_pcs.md#open-questions).
 

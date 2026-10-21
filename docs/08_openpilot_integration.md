@@ -2,7 +2,7 @@
 
 The integration turns the radar's output into openpilot radar tracks with openpilot itself running as shipped: a decoder plus
 one appended hook block in opendbc's Toyota port (detection and hand-over). radard, the planner and card run unchanged.
-The default `acc` profile publishes the radar's ACC target; `acc_summaries` adds the radar's two nearest other moving cars
+The default `acc` profile publishes the radar's ACC target; `acc_summaries` adds up to two other moving cars from the radar's summaries
 (target summaries) within 40 m; `fused` publishes the object list through a Kalman speed filter ([profiles](#profiles)).
 
 ```mermaid
