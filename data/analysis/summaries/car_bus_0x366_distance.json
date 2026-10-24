@@ -1,5 +1,5 @@
 {
- "what": "car-bus 0x366 distance code (25|7) against the ACC target distance when the 0x366 target number equals the ACC TARGET_ID",
+ "what": "car-bus 0x366 distance (25|7) and lateral (40|5) codes against the ACC target when the 0x366 target number equals the ACC TARGET_ID",
  "frames": {
   "owner": 240868,
   "second_car": 105565,
@@ -33,5 +33,27 @@
   "20-40": 0.9728,
   "40-60": 0.9737,
   "60-100": 0.9573
+ },
+ "lateral": {
+  "rule": "code = trunc(-acc_lateral_m / 0.32), right positive",
+  "reports": 366019,
+  "exact_share": {
+   "owner": 0.9909,
+   "second_car": 0.9892,
+   "fleet_ci": 0.9887,
+   "pooled": 0.9902
+  },
+  "unit_sharpness_pooled_exact": {
+   "0.3125": 0.9699,
+   "0.3175": 0.9861,
+   "0.32": 0.9902
+  },
+  "ols_m_per_code_biased_by_truncation": -0.3446
+ },
+ "speed": {
+  "best_simple_rule": "floor(vrel_kmh / 0.505) + 155",
+  "exact_share": 0.807,
+  "at_0.5_kmh": 0.797,
+  "note": "not exact: 0x366 is published about 90 ms after the ACC target"
  }
 }

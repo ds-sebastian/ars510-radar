@@ -338,12 +338,16 @@ class Target366:
     distance_code: int
     header_raw: int
     tail_raw: int
-    lateral_code: int = 15  # signed five bits at MSB-first 40|5; 15 is the no-target value
+    lateral_code: int = 15  # signed five bits at MSB-first 40|5, trunc(-lateral / 0.32 m); 15 is the no-target value
 
     @property
     def y_rel(self) -> float | None:
-        """Lateral offset in metres, left positive, -0.34 m per code; None for 15 (idle) and -16 (invalid, mostly beyond +-5 m)."""
-        return None if self.lateral_code in (15, -16) else -0.34 * self.lateral_code
+        """Lateral offset in metres, left positive; None for 15 (idle) and -16 (invalid, mostly beyond +-5 m).
+        The code is trunc(-lateral / 0.32 m) (toward zero), so this returns the bin centre (docs/13)."""
+        if self.lateral_code in (15, -16):
+            return None
+        c = self.lateral_code
+        return 0.0 if c == 0 else -0.32 * (c + (0.5 if c > 0 else -0.5))
 
     @property
     def v_rel(self) -> float | None:
