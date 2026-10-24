@@ -361,7 +361,8 @@ class Target366:
 
     @property
     def target_id(self) -> int:
-        """Byte 4 bits 7-3: the ACC target's TARGET_ID (equal on 98 % of reports; the rest are publication timing)."""
+        """Byte 4 bits 7-3: the low five bits of the ACC target's 6-bit TARGET_ID (equal on 98 % of reports; the rest are
+        publication timing); compare with TARGET_ID & 31 (IDs 32-37 occur on a C-HR radar)."""
         return self.tail_raw >> 19 & 31
 
     @property
