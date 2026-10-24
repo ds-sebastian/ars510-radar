@@ -432,7 +432,7 @@ CM_ SG_ 258 A102_B1_RESERVED4_5_ZERO2 "Always zero.";
 CM_ SG_ 258 A102_CONTEXT_BIT14 "Camera state that the radar copies into its car-bus 0x366 report (byte 0 bit 1) a few hundred ms later; rises with short headway at speed (likely a close-following state).";
 CM_ SG_ 258 A102_B1_RESERVED7_ZERO1 "Always zero.";
 CM_ SG_ 258 A102_B2_RESERVED_ZERO5 "Always zero.";
-CM_ SG_ 258 A102_CONTEXT_BIT21 "EPS lane-keeping unavailable (likely): set while car-bus 0x262 EPS_STATUS LKA_STATE is 3 (unavailable) or stays 0 (EPS not initialised), clear in standby, active and temporary-fault states; clears shortly after the EPS reaches standby. Camera status, not radar data.";
+CM_ SG_ 258 A102_CONTEXT_BIT21 "EPS lane-keeping unavailable (likely): set while car-bus 0x262 EPS_STATUS LKA_STATE is 3 (unavailable) or stays 0 (EPS not initialised), clear in standby, active and temporary-fault states; clears shortly after the EPS reaches standby. Also set through mid-drive LKA_STATE 3 minutes on the public fleet; rarely set with the EPS in standby (a power-up hold at standstill that clears on moving off; short blips). Camera status, not radar data.";
 CM_ SG_ 258 A102_B2_RESERVED6_7_ZERO2 "Always zero.";
 CM_ SG_ 259 A103_B0_RESERVED_ZERO8 "Always zero.";
 CM_ SG_ 259 A103_B1_RESERVED_ZERO8 "Always zero.";
