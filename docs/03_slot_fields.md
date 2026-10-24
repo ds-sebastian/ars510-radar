@@ -266,7 +266,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 
 | bits | field | behaviour | conf. |
 |---|---|---|---|
-| `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
+| `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall, against the ACC target). Against wheel odometry on stationary objects the range scatter is ≈ 0.4 m + 0.08-0.11 m per count (two cars), and it grades within fixed range bands ([summary](../data/analysis/summaries/range_sigma_odometry.json)) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
 | `232\|8` | σ yRel (≈ 0.10 m per count); eight bits: far young tracks reach 128-255, 255 saturated | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35, pooled over range; within a fixed range band the grade depends on the drives, from flat to clearly rising) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
 | `248\|7` | σ vy | grows with \|yRel\|, shrinks with age; linear and the same on both cars. Against stationary objects (true lateral speed 0) about 0.085 + 0.03 m/s per count; on moving leads, against the ACC target's lateral speed, up to about 0.09 per count; the earlier 0.37 m/s per count was far too wide | ◐ field and form; ◐ unit (stationary objects) |

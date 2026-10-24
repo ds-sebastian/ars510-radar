@@ -1,0 +1,64 @@
+{
+ "source": "ARS510 workspace SCR-1190 / 1191 (anonymised)",
+ "field": "0x80 slot 224|7",
+ "method": "stationary list objects while driving straight; per run fit x = a + b * odometry (offset and scale removed); residual RMS by code band; a lower bound on range error",
+ "owner_car": {
+  "runs": 328,
+  "drives": 32,
+  "rms_m_by_code": {
+   "2": 0.574,
+   "3": 0.634,
+   "5": 0.919,
+   "8": 1.304,
+   "11": 1.728,
+   "16": 2.279,
+   "24": 2.847,
+   "34": 3.009
+  },
+  "fit": {
+   "floor_m": 0.4,
+   "per_count_m": 0.108,
+   "ci90": [
+    0.1,
+    0.115
+   ]
+  },
+  "within_20_40m": {
+   "4": 0.884,
+   "6": 0.962,
+   "8": 1.3,
+   "11": 1.576,
+   "15": 2.07
+  }
+ },
+ "second_car": {
+  "runs": 44,
+  "logs": 29,
+  "rms_m_by_code": {
+   "2": 0.526,
+   "3": 0.59,
+   "6": 0.811,
+   "8": 1.015,
+   "11": 1.574,
+   "16": 1.728,
+   "23": 1.979,
+   "34": 2.246
+  },
+  "fit": {
+   "floor_m": 0.42,
+   "per_count_m": 0.079,
+   "ci90": [
+    0.06,
+    0.088
+   ]
+  },
+  "within_20_40m": {
+   "4": 0.784,
+   "6": 0.896,
+   "8": 1.005,
+   "11": 1.504,
+   "16": 1.742
+  }
+ },
+ "form": "sigma vs variance not decided (fit residuals equal)"
+}
