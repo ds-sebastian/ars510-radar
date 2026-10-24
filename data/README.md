@@ -96,3 +96,5 @@ Cabana DBC's slot layout from it.
 [`car_bus_0x33e_boundary.json`](analysis/summaries/car_bus_0x33e_boundary.json) supplies the code-7 idle/numeric-domain witness in docs/13: finite TTC and a live matching target at high reported positive acceleration. Saturation remains a candidate interpretation.
 
 [`slot_length_eight_bits.json`](analysis/summaries/slot_length_eight_bits.json) supplies the length-width evidence in docs/03: the length-code tail through 127 → 128 and the classes of codes ≥ 128 on the owner car and three other car groups.
+
+[`id85_countdown_units.json`](analysis/summaries/id85_countdown_units.json) supplies the 0x85 prefix count-down rates in docs/04: bytes 9 / 11 per metre driven and bytes 13 / 14 per second, by ego-speed band and log group.

@@ -1,0 +1,77 @@
+{
+ "source": "ARS510 workspace SCR-1179 (anonymised)",
+ "method": "per-record decrement of 0x85 prefix bytes vs openpilot vEgo and log time, inside running countdowns",
+ "distance_bytes_9_11": {
+  "codes_per_metre": {
+   "byte9": 10.36,
+   "byte11": 10.28
+  },
+  "by_speed_band_m_s": {
+   "3-10": [
+    10.55,
+    10.49
+   ],
+   "10-15": [
+    10.4,
+    10.34
+   ],
+   "15-20": [
+    10.48,
+    10.17
+   ],
+   "20-25": [
+    10.17,
+    10.24
+   ],
+   "25-40": [
+    9.8,
+    10.02
+   ]
+  },
+  "car_groups_codes_per_metre": {
+   "owner_car_log_groups": [
+    [
+     10.62,
+     10.47
+    ],
+    [
+     10.22,
+     10.44
+    ],
+    [
+     9.99,
+     10.05
+    ]
+   ],
+   "other_logs": [
+    10.01,
+    10.0
+   ],
+   "second_car_small_sample": [
+    11.03,
+    9.39
+   ]
+  },
+  "reading": "remaining distance, 0.1 m per code; start 200 = 20 m"
+ },
+ "time_bytes_13_14": {
+  "codes_per_second": {
+   "byte13": 25.2,
+   "byte14": 25.31
+  },
+  "range_over_bands_and_cars": [
+   24.7,
+   26.3
+  ],
+  "reading": "remaining time, 0.04 s per code; start 100 = 4 s, cleared at 50"
+ },
+ "steps": {
+  "owner_atlas": [
+   2481,
+   2602,
+   2924,
+   2946
+  ],
+  "raw_logs": 382
+ }
+}
