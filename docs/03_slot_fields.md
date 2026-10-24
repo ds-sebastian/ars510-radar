@@ -341,7 +341,7 @@ withholds it; in `fused` the speed filter's robust update absorbs it
 
 - **Bit 182: laterally moving pedestrian (◐).** Set on a few percent of pedestrian tracks, mostly pedestrian class (86-100 % on the owner and second car), never camera-associated, and held from record to record. With the car stopped, pedestrian rows that carry it have a clear lateral speed (`74|10` more than 5 codes from zero) on 77-80 % against 10-20 % without it, and sit farther to the side (median 8.2-8.7 m vs 3.4-5.2 m). On fleet logs it is less pedestrian-specific (55 %). The exact threshold is open ([summary](../data/analysis/summaries/slot_bit182_lateral_pedestrian.json)).
 - **Bit 106: predicted outside the field of view (◐).** Set only on predicted rows (`107|1`). Measured rows stay within about ±33° of azimuth near the car, narrowing to ±22-26° beyond 40 m. Predicted rows carry bit 106 on 6-10 % inside that edge and on 75-100 % just beyond it, on the owner car, the second car and fleet cars. Such a row's position is pure extrapolation ([summary](../data/analysis/summaries/slot_bit106_outside_fov.json)).
-- **Raw (listed by bit):** 13, 15, 63, 239. Bits 15 and 239 are mostly active near track birth.
+- **Raw (listed by bit):** 13. Bits 15, 63 and 239 are decoded above: the age-1 template flag and the most significant bits of length `56|8` and lateral σ `232|8`.
 - **Constant in the captured data:** 31, `94|2`, 108, `123|5`, 135, `143|5`, `160|3`, `166|2`, `178|3`, `192|8`, 207,
   `214|2`, `222|2`, 231, 247, 255, `277|11` (zero on all but a handful of rows).
 
