@@ -170,17 +170,21 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 88 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 83 code lines,
 no DBC) publishes them next to the ACC target:
 - **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
 - **Identity.** Every other summary is `trackId 64 + code` (its pair code). It is published once its code has 8 ranges
   within 0.6 s, so a code that returns after a gap does not mix old and new ranges.
 - **Speed.** A summary range is the tracker's range rounded down to 1/16 m. Each code gets a constant-velocity Kalman
-  filter, timed by the radar's own cycle clock (0x190) and fed the middle of each 1/16 m step; without that clock the
-  speed is the slope of the last 8 ranges over CAN time. Against the ACC target's own speed on the same car the filter
+  filter, timed by the radar's own cycle clock (0x190) and fed the middle of each 1/16 m step. It restarts with the car's
+  history (a new code or a 5 m range jump). Against the ACC target's own speed on the same car the filter
   has 0.142 m/s RMS error where that slope had 0.166 (second car 0.157 against 0.170; 99th percentile 0.51 against
   0.61 m/s), and it brakes the same in replay (23 moving h: hard, mild and missed unchanged, unnecessary 32.2 → 32.1 s;
-  [`accsum_summary_speed.json`](../data/analysis/summaries/accsum_summary_speed.json)).
+  [`accsum_summary_speed.json`](../data/analysis/summaries/accsum_summary_speed.json)). The filter needs few guards.
+  Dropping a cycle-time window, a slope fallback, a minimum update count, a duplicate-cycle check and a gap restart
+  leaves the braking identical (same totals on every measure; requests differ on 0.12 % of ticks, by at most
+  0.11 m/s²). The 5 m jump restart and the 8-ranges-in-0.6 s publication gate do carry weight
+  ([`accsum_guard_ablation.json`](../data/analysis/summaries/accsum_guard_ablation.json)).
 - **Optional point fields, for forks.** On forks whose RadarPoint still has `aRel` / `yvRel` / `measured`, the ACC point
   carries the radar's own `REL_ACCEL` as `aRel` and `LAT_SPEED` as `yvRel` (d(LAT_DIST)/dt in the car's frame, left
   positive; a wrapped value is restored from the frame's check byte); a summary car carries the slope of its last 8 laterals
@@ -193,7 +197,9 @@ no DBC) publishes them next to the ACC target:
 - **Within 40 m.** Beyond 40 m only the ACC target is published. Further out radard can take a summary car in the next
   lane as the camera's lead before the radar's ACC has picked the real one: on held-out owner routes it took cars at
   47-58 m, 10-14 m off the camera's lead range, once braking for the wrong car and once missing a slowing lead. Without
-  any limit it gave two hard spikes from cars 7 m to the side at 86-93 m.
+  any limit it gave two hard spikes from cars 7 m to the side at 86-93 m. The Kalman speed does not change this: without
+  the limit it adds one hard and nine mild episodes over 23 moving hours (mild +0.39 per hour [+0.14, +0.68]) and 128
+  more lead flips per hour ([`accsum_guard_ablation.json`](../data/analysis/summaries/accsum_guard_ablation.json)).
 
 Replayed against `acc` on the fast suite, both held-out sets and every captured drive no replay set had used (103 routes,
 23.0 moving hours; route-bootstrap 95 % CI of the difference per moving hour,
@@ -355,7 +361,7 @@ whose lead comes from the object list alone.
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
 | `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and a small road record (nine drives) |
-| `acc_summaries` | 63 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
+| `acc_summaries` | 83 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
 | `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 

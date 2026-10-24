@@ -129,13 +129,13 @@ def test_acc_summaries_restarts_the_speed_after_a_one_cycle_range_jump(mod):
 
 def test_acc_summaries_speed_follows_the_radar_clock_not_can_arrival(mod):
   """Summary speeds come from a filter timed by the radar's 0x190 cycle clock: CAN arrival jitter (here up to 20 ms per cycle)
-  leaves them exactly unchanged. Without 0x190 the 8-range slope over CAN time still gives the speed."""
+  leaves them exactly unchanged. Without 0x190 no summary car is published (the ACC point still is)."""
   if not hasattr(mod, "SUMMARY_ID"):
     pytest.skip("acc_summaries only")
   import random
 
   def speeds(jitter_ns, clock=True):
-    rng, ri, out_v = random.Random(7), mod.RadarInterface(None), []
+    rng, ri, out_v, n_acc = random.Random(7), mod.RadarInterface(None), [], 0
     for k in range(60):
       j = int(rng.uniform(0, jitter_ns))
       for nanos, frames in _cycle(k, 30.0 - 0.24 * k, [(3, None, 0.0), (9, 39.0 - 0.36 * k, 3.6)]):
@@ -144,11 +144,12 @@ def test_acc_summaries_speed_follows_the_radar_clock_not_can_arrival(mod):
         out = ri.update([(nanos + (0 if frames[0][0] == 0x190 else j), frames)])
         if out is not None and k > 20:
           out_v += [p.vRel for p in out.points if p.trackId >= mod.SUMMARY_ID]
-    return out_v
+          n_acc += sum(p.trackId < mod.SUMMARY_ID for p in out.points)
+    return out_v if clock else (out_v, n_acc)
 
   steady, jittered, no_clock = speeds(0), speeds(20e6), speeds(0, clock=False)
   assert steady and jittered == steady and max(abs(v + 6.0) for v in steady) < 0.15  # true speed -6 m/s
-  assert no_clock and max(abs(v + 6.0) for v in no_clock) < 0.15
+  assert no_clock[0] == [] and no_clock[1] > 0
 
 
 def test_acc_summaries_unwraps_a_wrapped_acc_lateral_distance(mod):
