@@ -60,5 +60,37 @@
    "16": 1.742
   }
  },
- "form": "sigma vs variance not decided (fit residuals equal)"
+ "form": "sigma (linear) favoured on the fleet: pooled and on 102 / 130 devices; within 20-40 m alone the two forms are close",
+ "fleet": {
+  "source": "comma public commaCarSegments radar-ACC Toyota logs (third-party; summary only)",
+  "runs": 3820,
+  "devices": 203,
+  "rms_m_by_code": {
+   "2": 0.512,
+   "3": 0.632,
+   "5": 0.905,
+   "8": 1.199,
+   "11": 1.616,
+   "16": 2.164,
+   "24": 2.911,
+   "35": 3.902
+  },
+  "fit": {
+   "floor_m": 0.342,
+   "per_count_m": 0.108
+  },
+  "form": {
+   "sigma_form_weighted_error_m": 0.061,
+   "variance_form_weighted_error_m": 0.321,
+   "devices_sigma_better": 102,
+   "devices_variance_better": 28
+  },
+  "per_device_slope_quantiles": {
+   "p10": 0.077,
+   "p25": 0.092,
+   "p50": 0.102,
+   "p75": 0.115,
+   "p90": 0.133
+  }
+ }
 }

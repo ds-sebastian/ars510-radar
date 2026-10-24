@@ -103,4 +103,4 @@ Cabana DBC's slot layout from it.
 
 [`slot_bit106_outside_fov.json`](analysis/summaries/slot_bit106_outside_fov.json) supplies the slot bit 106 numbers in docs/03: the measured-row azimuth edge by range and the bit-106 share among predicted rows by azimuth and range, three car groups.
 
-[`range_sigma_odometry.json`](analysis/summaries/range_sigma_odometry.json) supplies the `224|7` odometry numbers in docs/03: stationary-object range residual by code band, overall and within 20-40 m, on two cars.
+[`range_sigma_odometry.json`](analysis/summaries/range_sigma_odometry.json) supplies the `224|7` odometry numbers in docs/03: stationary-object range residual by code band on two cars and on about 200 public fleet cars, with the σ-vs-variance comparison.
