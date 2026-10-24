@@ -1,0 +1,34 @@
+{
+  "description": "acc_summaries guard ablation after the Kalman summary speed. Removed: the 30 ms cycle window, the slope fallback without a 0x190 clock, the 5-update minimum, the same-cycle duplicate check and the 0.3 s gap restart. Offline: every variant run on the same recorded CAN, published points compared with the previous file; ACC-car summary speed against the ACC target's REL_SPEED (same tracker, radar-witness authority). Replay: unchanged openpilot radard + planner on the fast suite, both held-out sets and the drives no replay set had used (103 routes), route-bootstrap 95 % CI per moving hour. Drives: owner car (512 segments) and second car (215 segments).",
+  "offline": {
+    "report_hours": {"owner_car": 6.75, "second_car": 2.38},
+    "identical_output": ["30 ms cycle window", "slope fallback", "5-update minimum"],
+    "all_five_removed": {
+      "published_points_added_or_removed": 0,
+      "speed_change_p99_mps": {"owner_car": 0.055, "second_car": 0.041},
+      "speed_change_max_mps": {"owner_car": 1.10, "second_car": 0.67},
+      "acc_slot_rms_mps_before_after": {"owner_car": [0.1965, 0.1960], "second_car": [0.1707, 0.1703]}
+    },
+    "guards_kept": {
+      "5 m jump restart": {"acc_slot_rms_mps_without": {"owner_car": 0.3696, "second_car": 1.4451}},
+      "8 ranges within 0.6 s": {"extra_points_per_h_without": {"owner_car": 212.9, "second_car": 382.3}, "acc_slot_rms_mps_without": {"owner_car": 0.2119, "second_car": 0.1829}}
+    }
+  },
+  "replay": {
+    "moving_h": 23.03,
+    "routes": 103,
+    "hard_mild_unnecessary_s_missed_s_flips_per_h": {
+      "acc": [14, 43, 31.8, 30.7, 315],
+      "acc_summaries_before": [14, 46, 32.1, 29.9, 341],
+      "acc_summaries_fewer_guards": [14, 46, 32.1, 29.9, 341],
+      "fewer_guards_without_40m_limit": [15, 55, 34.5, 29.4, 469]
+    },
+    "fewer_guards_vs_before_per_h": {"hard": 0, "mild": 0, "unnecessary_s": 0, "missed_s": 0},
+    "planner_request_ticks_differing": {"ticks": 2520688, "differing": 3150, "max_abs_mps2": 0.114},
+    "without_40m_limit_vs_with_per_h": {
+      "hard": [0.043, -0.10, 0.196], "mild": [0.391, 0.141, 0.678], "unnecessary_s": [0.104, -0.037, 0.293],
+      "missed_s": [-0.022, -0.286, 0.292], "flips": [128.1, 97.5, 162.7]
+    },
+    "close_cutins_vs_acc_s": {"events": 276, "fewer_guards": -0.086, "without_40m_limit": -0.091}
+  }
+}

@@ -191,7 +191,7 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | published radar lead − camera range, 20-70 m (`fused` 2.1, owner's car) | −1.1 / −0.9 m median, spread 1.2-1.6 m | `road_v21.json` |
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
-| code size | `acc` 45 code lines reading 7 DBC signals; `acc_summaries` 63 code lines; `fused` 187 code lines | `acc_target_parser.json`, `acc_summaries_profile.json`, `openpilot_file_parts.json` |
+| code size | `acc` 45 code lines reading 7 DBC signals; `acc_summaries` 83 code lines; `fused` 187 code lines | `acc_target_parser.json`, `acc_summaries_profile.json`, `openpilot_file_parts.json` |
 | every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
 | lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 325 | `acc_target_parser.json`, `acc_summaries_40m.json` |
 
