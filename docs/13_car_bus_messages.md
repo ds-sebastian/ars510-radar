@@ -76,7 +76,7 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 | bits | field | coding |
 |---|---|---|
 | `16\|9` | relative speed | signed 9 bits: `(s − 155) × 0.5 km/h` with `s = code` below 256 and `code − 512` from 256 |
-| `25\|7` | distance | ≈ 0.8 m per code (fit 0.79); 127 = idle target |
+| `25\|7` | distance | floor(range / 0.79 m), exact on about 97 % of reports against the ACC target on three car groups ([summary](../data/analysis/summaries/car_bus_0x366_distance.json)); 127 = idle target |
 | `40\|5` | lateral offset | signed, −0.34 m per code (right positive, ±5 m); 15 = idle target, −16 = invalid (mostly a target beyond ±5 m) |
 | `32\|5` | target number | the ACC target's `TARGET_ID` on 98 % of reports (the rest are publication timing); `Target366.target_id` |
 | `13\|1` | PCS alarm | set only during the radar's PCS alarm: 5 of 547,922 frames in every stored log, all inside the recorded alarm U3, with extra frames when it sets and clears ([15](15_aeb_pcs.md)); `Target366.pcs_alarm` |

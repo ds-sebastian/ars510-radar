@@ -352,8 +352,8 @@ class Target366:
 
     @property
     def d_rel(self) -> float:
-        """Approximate range in metres at the fitted 0.8 m per code (fit 0.79, docs/13)."""
-        return self.distance_code * .8
+        """Range in metres: the code is floor(range / 0.79 m), so this returns the bin centre (docs/13)."""
+        return (self.distance_code + .5) * .79
 
     @property
     def target_id(self) -> int:

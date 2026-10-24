@@ -8,7 +8,7 @@ def test_observed_closing_target():
     # A recorded target report: about 38 m, -20km/h in the accompanying 0x365.
     t = parse_0x366(bytes.fromhex("50003a30908200"))
     assert t.speed_code == 116 and t.distance_code == 48
-    assert t.d_rel == pytest.approx(38.4)
+    assert t.d_rel == pytest.approx(48.5 * .79)
     assert abs(t.v_rel - -20 / 3.6) <= .5 / 3.6
     assert t.header_raw == 0x5000 and t.tail_raw == 0x908200
 
@@ -32,7 +32,7 @@ def test_idle_word_is_not_a_numeric_target():
 def test_zero_payload_preserves_codes_without_inventing_a_sentinel():
     t = parse_0x366(bytes(7))
     assert t.speed_code == t.distance_code == 0
-    assert t.v_rel < 0 and t.d_rel == 0
+    assert t.v_rel < 0 and t.d_rel == pytest.approx(.5 * .79)
 
 
 @pytest.mark.parametrize("raw,code", [("5000fd0f188200", 506), ("5000dd5a187a00", 442),
@@ -41,7 +41,7 @@ def test_observed_high_codes_are_signed_closing_speeds(raw, code):
     # the report's own range closes at 20-28 m/s on these frames (oncoming cars): signed 9 bits, code - 512
     t = parse_0x366(bytes.fromhex(raw))
     assert t.speed_code == code and t.v_rel == pytest.approx((code - 512 - 155) * 5 / 36) and t.v_rel < -20
-    assert t.d_rel == pytest.approx((bytes.fromhex(raw)[3] & 127) * .8)
+    assert t.d_rel == pytest.approx(((bytes.fromhex(raw)[3] & 127) + .5) * .79)
     assert t.tail_raw == int(raw[8:], 16)
 
 
