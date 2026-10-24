@@ -440,7 +440,7 @@ CM_ SG_ 1282 A502_B0_CONST8 "Constant 0x19.";
 CM_ SG_ 1282 A502_SLOW_CODE0_B1 "Slow estimator code (0x69-0x92 seen), +/-1 steps: stored across power cycles, frozen at standstill, paused in turns; meaning open.";
 CM_ SG_ 1282 A502_SLOW_CODE1_BE16 "Slow estimator code (4308-4408 seen), big-endian: moves opposite to vehicle pitch (likely the elevation-alignment estimate, about 0.005-0.006 deg per code; docs/05).";
 CM_ SG_ 1282 A502_TAIL_CONST_BE32 "Unit-specific constant (redacted here).";
-CM_ SG_ 528 A210_RSA_SPEED_SIGN_PRESENT1 "Speed sign present (copy of Toyota RSA1.TSGN1 == 36).";
+CM_ SG_ 528 A210_RSA_SPEED_SIGN_PRESENT1 "Speed sign present: set for any speed-sign type in Toyota RSA1.TSGN1 (1, 32 or 36 seen), clear for 0.";
 CM_ SG_ 528 A210_B0_RESERVED1_7 "Always zero.";
 CM_ SG_ 528 A210_RSA_SPEED_LIMIT_VALUE8 "Speed-limit value (copy of Toyota RSA1.SPDVAL1; unit from RSA2.SPDUNT).";
 CM_ SG_ 528 A210_B2 "Raw.";
