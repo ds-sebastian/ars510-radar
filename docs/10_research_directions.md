@@ -36,7 +36,7 @@ one. The upstream proposals, the parts ledger and the evidence for the ACC targe
    controlled-site intervention, clear against covered, on matched target paths
    ([T09](16_routes_and_tests.md#t09-factory-camera-dependence)); selection, kinematics and function restriction are
    compared separately, and the cover stays on only while parked.
-4. **Physical units for the uncertainty fields.** *What error in m/s does one count of `240|7`, `232|7`, `224|7` and
+4. **Physical units for the uncertainty fields.** *What error in m/s does one count of `240|7`, `232|8`, `224|7` and
    `248|7` stand for?* They are scaled against the radar's ACC target, the radar's own estimate
    ([03](03_slot_fields.md#uncertainty-and-quality)), and `fused` weights the object-list speed by 0.045 m/s per count of
    `240|7`. *Data:* an independent reference (a second car with a GPS logger, or a known far target; T05) gives them

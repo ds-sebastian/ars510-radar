@@ -255,12 +255,14 @@ def test_expanded_raw_windows_preserve_every_slot_bit_without_overlap():
         assert sorted(covered) == list(range(288))
         assert fields["UNK_256_8"] == (256, 8)
         assert fields["UNK_264_8"] == (264, 8)
+        assert fields["UNK_232_8"] == (232, 8)  # lateral sigma: bit 239 is its MSB
+        assert fields["UNK_56_8"] == (56, 8)  # length: bit 63 is its MSB
         # Carries show as +1 inside the full uncertainty-code windows.
         for name, before, after in [("UNK_256_8", 31, 32), ("UNK_264_8", 15, 16)]:
             start, width = fields[name]
             mask = (1 << width) - 1
             assert (((after << start) >> start) & mask) - (((before << start) >> start) & mask) == 1
-        for start, width in [(15, 1), (63, 1), (136, 4), (140, 3), (163, 3), (166, 2), (182, 1), (190, 10), (239, 1), (277, 11)]:
+        for start, width in [(15, 1), (56, 8), (136, 4), (140, 3), (163, 3), (166, 2), (182, 1), (190, 10), (232, 8), (277, 11)]:
             assert fields[f"UNK_{start}_{width}"] == (start, width)
 
 

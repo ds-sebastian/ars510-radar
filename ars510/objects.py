@@ -91,13 +91,13 @@ MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward
 
 # Object length and width (docs/03). Both read 0 only in the age-1 initialization template, whose position
 # codes are placeholders (range code 160 = 0 m, lateral code 2047).
-LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
+LENGTH = NativeField("length", 56, 8, 0.0, 0.1, "m", "likely")  # 8 bits: bit 63 is the MSB (long trucks)
 WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 
 # Remaining uncertainty, class, size and score codes, passed through raw (docs/03). UNCERTAINTY_PER_COUNT: scales against the radar's own
 # ACC target (docs/03, uncertainty section), relative to that reference.
 UNC_RANGE_224 = NativeField("range_uncertainty_code", 224, 7, 0.0, 1.0, "code", "candidate")
-UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 7, 0.0, 1.0, "code", "likely")
+UNC_LATERAL_232 = NativeField("lateral_uncertainty_code", 232, 8, 0.0, 1.0, "code", "likely")  # 8 bits: bit 239 is its MSB
 UNC_VLAT_248 = NativeField("lateral_speed_uncertainty_code", 248, 7, 0.0, 1.0, "code", "candidate")
 UNC_AX_256 = NativeField("accel_uncertainty_code", 256, 8, 0.0, 1.0, "code", "candidate")
 UNC_AY_264 = NativeField("lateral_accel_uncertainty_code", 264, 8, 0.0, 1.0, "code", "candidate")
@@ -174,11 +174,11 @@ class NativeObject:
     camera_assoc: int | None = None  # 112|3: 0 radar only, non-zero while the camera has the vehicle
     class_confidence_pct: int | None = None  # 115|5 x 5: confidence of the assigned class, percent
     object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
-    length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
+    length_m: float | None = None  # 56|8 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
     height_code: int | None = None  # 272|5, coarse length code, about length / 0.555 m (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)
-    lateral_unc_code: int | None = None  # 232|7 (about 0.10 m per count)
+    lateral_unc_code: int | None = None  # 232|8 (about 0.10 m per count; far young tracks reach 128-255)
     vlat_unc_code: int | None = None  # 248|7 (about 0.085 + 0.03 m/s per count against stationary objects; the same form on both cars)
     accel_unc_code: int | None = None  # 256|8, sigma of 84|10: about 0.06-0.07 m/s^2 per count within 20 m (range-confounded beyond)
     lateral_accel_unc_code: int | None = None  # 264|8, follows the lateral speed scatter

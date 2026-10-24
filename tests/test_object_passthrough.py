@@ -33,3 +33,15 @@ def test_lane_crossing_code_120():
     for code in (0, 2, 3, 4, 5):
         slot = encode_slot(age_cycles=40, long_dist=640, lane_crossing_code=code)
         assert decode_native_slot(0, slot).lane_crossing_code == code
+
+
+def test_lateral_sigma_is_eight_bits():
+    """232|8: bit 239 is the MSB of the lateral sigma (far young tracks reach 128-255); it must not leak into 240|7."""
+    obj = decode_native_slot(0, encode_slot(age_cycles=2, long_dist=3000, lateral_uncertainty_code=190, vel_uncertainty_candidate=5))
+    assert obj.lateral_unc_code == 190 and obj.vel_unc_code == 5
+
+
+def test_length_is_eight_bits():
+    """56|8: bit 63 is the MSB of the length (long trucks reach 12.8-13.7 m); a 7-bit read would give 0.1-0.9 m."""
+    obj = decode_native_slot(0, encode_slot(age_cycles=30, long_dist=3000, length=133, width_minus_one=20))
+    assert abs(obj.length_m - 13.3) < 1e-9

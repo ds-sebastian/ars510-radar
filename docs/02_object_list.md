@@ -70,7 +70,7 @@ time. Pair by counter.
 
 **Records that repeat the previous geometry (●).** About one record in seven with traffic moving relative to the car
 repeats, for every slot, the geometry and association fields of the previous record: range, lateral, length, width,
-`272|5`, `224|7`, `232|7`, `200|7`, heading, `112|3` / `136|4` and lane `128|3` / `120|3`. Velocities, accelerations,
+`272|5`, `224|7`, `232|8`, `200|7`, heading, `112|3` / `136|4` and lane `128|3` / `120|3`. Velocities, accelerations,
 `240|7`, `248|7`, `256|8`, existence, `115|5` and `184|8` are new and age steps by one, so a slot is built from two blocks.
 The whole record holds or none of it does (99.4-99.7 %), the next record catches up, and no bit marks it: a record is
 held when every moving slot's position equals the previous one. The rate follows the timing offset: 38-43 % of records

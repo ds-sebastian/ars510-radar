@@ -1,0 +1,35 @@
+{
+ "source": "ARS510 workspace SCR-1188 (anonymised)",
+ "field": "0x80 slot length 56|8 (bit 63 = MSB)",
+ "owner_atlas": {
+  "rows": 1253081,
+  "rows_with_bit63": 17,
+  "codes_ge_100_tail": "continuous 100-126, none piled at 127; 129-134 only on a large vehicle (12.9-13.4 m)",
+  "codes_ge_128_by_class": {
+   "large_vehicle": 15,
+   "new_or_initialising": 1
+  }
+ },
+ "other_cars_raw": {
+  "logs": 323,
+  "codes_127_to_137_counts": {
+   "127": 9,
+   "128": 10,
+   "129": 9,
+   "130": 6,
+   "131": 2,
+   "132": 3,
+   "133": 4,
+   "134": 1,
+   "135": 1,
+   "136": 2,
+   "137": 1
+  },
+  "code_255": 3,
+  "codes_ge_128_by_class": {
+   "large_vehicle": 39,
+   "new_or_initialising": 3
+  }
+ },
+ "reading": "length = 56|8 x 0.1 m; a 7-bit read wraps long trucks to 0.0-0.9 m"
+}

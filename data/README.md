@@ -94,3 +94,5 @@ Cabana DBC's slot layout from it.
 [`car_bus_0x366_distance.json`](analysis/summaries/car_bus_0x366_distance.json) supplies the 0x366 distance and lateral rules in docs/13: floor(range / 0.79 m) and trunc(−lateral / 0.32 m) against the ACC target on three car groups, with the units' sharpness and the inexact speed fit.
 
 [`car_bus_0x33e_boundary.json`](analysis/summaries/car_bus_0x33e_boundary.json) supplies the code-7 idle/numeric-domain witness in docs/13: finite TTC and a live matching target at high reported positive acceleration. Saturation remains a candidate interpretation.
+
+[`slot_length_eight_bits.json`](analysis/summaries/slot_length_eight_bits.json) supplies the length-width evidence in docs/03: the length-code tail through 127 → 128 and the classes of codes ≥ 128 on the owner car and three other car groups.
