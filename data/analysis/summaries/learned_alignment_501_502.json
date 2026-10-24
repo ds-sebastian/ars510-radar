@@ -1,0 +1,21 @@
+{
+ "source": "comma public commaCarSegments radar-ACC Toyota logs (third-party; summary only)",
+ "segments": 7807,
+ "devices": 243,
+ "within_device": {
+  "devices": 172,
+  "spearman_501_vs_502byte1_median": 0.924,
+  "positive": 170,
+  "pooled_rho_after_device_medians": 0.864
+ },
+ "slope_502byte1_per_501code": {
+  "devices": 166,
+  "p10": 7.63,
+  "p25": 8.67,
+  "p50": 9.63,
+  "p75": 10.05,
+  "p90": 10.56
+ },
+ "across_devices_spearman": 0.24,
+ "502_word_bytes2_3_vs_501_within_device_median": -0.02
+}

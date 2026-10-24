@@ -492,12 +492,12 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
   at standstill and paused in turns. **The word in bytes 2-3 follows vehicle pitch (◐, inferred):** it moves opposite to openpilot's
   camera calibration pitch (per drive r −0.92 on the owner car, −0.39 on the second; every large step, 8 of 8, opposite a
   0.2-0.6° pitch step; about 0.005-0.006° per code if both see the same body pitch), so it reads as the radar's elevation
-  alignment estimate. Byte 1 shows no link to the azimuth of stationary objects (○) ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
+  alignment estimate. **Byte 1 moves with the camera's 0x501 learned code (● co-variation):** within each car, across its drives, the two rise and fall together (Spearman median 0.92 over 172 fleet cars, positive on 170) at about 9.6 byte-1 counts per 0x501 code, with a per-car offset, so byte 1 is a finer reading of the same learned alignment quantity. Byte 1 shows no link to the azimuth of stationary objects (○) ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 - **0x501 (● layout, ○ interpretation):** byte 5 bits 3-7 form one five-bit numerical code (`43|5@1+` in the DBC),
   including the carry from 15 to 16. Its low three bits are `100b` during active output and `000b` in the startup payload.
   The code is a learned value kept across drives: after power-up the camera sends 31, then 16 for about 7 s, then a value within one
   code of the previous drive's last (95-100 % of drives; equal on 66-71 %); it changes only while driving, in single steps. It is not a reach, rain, light, temperature or speed-mode signal;
-  between drives it follows openpilot's calibration pitch weakly (○).
+  between drives it follows openpilot's calibration pitch weakly (○). The radar's 0x502 byte 1 tracks it within every car (above) ([`learned_alignment_501_502.json`](../data/analysis/summaries/learned_alignment_501_502.json)).
   Counts and scope for these register readings are in
   [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json).
 - **0x180, 0x23D:** constants. **0x198:** byte 0 `0x10`, and `0x90` (bit 7) while 0x196's fault flag is set ([above](#0x195--0x196-event-pair)).

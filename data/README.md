@@ -104,3 +104,5 @@ Cabana DBC's slot layout from it.
 [`slot_bit106_outside_fov.json`](analysis/summaries/slot_bit106_outside_fov.json) supplies the slot bit 106 numbers in docs/03: the measured-row azimuth edge by range and the bit-106 share among predicted rows by azimuth and range, three car groups.
 
 [`range_sigma_odometry.json`](analysis/summaries/range_sigma_odometry.json) supplies the `224|7` odometry numbers in docs/03: stationary-object range residual by code band on two cars and on about 200 public fleet cars, with the σ-vs-variance comparison, plus the fleet `232|8` lateral and `240|7` speed scatter of the same stationary objects.
+
+[`learned_alignment_501_502.json`](analysis/summaries/learned_alignment_501_502.json) supplies the 0x501 / 0x502 co-variation in docs/05: within-car Spearman and slope of 0x502 byte 1 against the camera's 0x501 code over the public fleet.
