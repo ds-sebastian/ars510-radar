@@ -432,7 +432,7 @@ CM_ SG_ 258 A102_B1_RESERVED4_5_ZERO2 "Always zero.";
 CM_ SG_ 258 A102_CONTEXT_BIT14 "Event / context bit with several transitions per drive.";
 CM_ SG_ 258 A102_B1_RESERVED7_ZERO1 "Always zero.";
 CM_ SG_ 258 A102_B2_RESERVED_ZERO5 "Always zero.";
-CM_ SG_ 258 A102_CONTEXT_BIT21 "Context bit, set only during part of some drives.";
+CM_ SG_ 258 A102_CONTEXT_BIT21 "EPS lane-keeping unavailable (likely): set while car-bus 0x262 EPS_STATUS LKA_STATE is 3 (unavailable) or stays 0 (EPS not initialised), clear in standby, active and temporary-fault states; clears shortly after the EPS reaches standby. Camera status, not radar data.";
 CM_ SG_ 258 A102_B2_RESERVED6_7_ZERO2 "Always zero.";
 CM_ SG_ 259 A103_B0_RESERVED_ZERO8 "Always zero.";
 CM_ SG_ 259 A103_B1_RESERVED_ZERO8 "Always zero.";
