@@ -91,7 +91,7 @@ MOVE_STATE_NAMES = {0: "moving_away", 1: "not_clearly_moving", 2: "moving_toward
 
 # Object length and width (docs/03). Both read 0 only in the age-1 initialization template, whose position
 # codes are placeholders (range code 160 = 0 m, lateral code 2047).
-LENGTH = NativeField("length", 56, 7, 0.0, 0.1, "m", "likely")
+LENGTH = NativeField("length", 56, 8, 0.0, 0.1, "m", "likely")  # 8 bits: bit 63 is the MSB (long trucks)
 WIDTH = NativeField("width_minus_one", 216, 6, 0.0, 0.1, "m", "likely")
 
 # Remaining uncertainty, class, size and score codes, passed through raw (docs/03). UNCERTAINTY_PER_COUNT: scales against the radar's own
@@ -174,7 +174,7 @@ class NativeObject:
     camera_assoc: int | None = None  # 112|3: 0 radar only, non-zero while the camera has the vehicle
     class_confidence_pct: int | None = None  # 115|5 x 5: confidence of the assigned class, percent
     object_class: int | None = None  # 163|3: 1 unclassified, 2 car, 3 large vehicle, 4 pedestrian, 5 provisional, 6 two-wheeler
-    length_m: float | None = None  # 56|7 x 0.1 m (0 only in the age-1 template)
+    length_m: float | None = None  # 56|8 x 0.1 m (0 only in the age-1 template)
     width_m: float | None = None  # (216|6 + 1) x 0.1 m
     height_code: int | None = None  # 272|5, coarse length code, about length / 0.555 m (raw)
     range_unc_code: int | None = None  # 224|7 (about 0.23 m per count overall, 0.24 below 40 m)

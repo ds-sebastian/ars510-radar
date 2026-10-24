@@ -85,7 +85,7 @@ SIGNAL_COMMENTS = {
     "UNK_120_3": "Raw; non-zero on 0.2 % of rows (mature cars).",
     "UNK_131_4": "Dominant lane weight: the largest of the three lane weights or one less (99.6 % of rows with a nonzero weight).",
     "UNK_181_1": "Daylight latch: one of five sticky per-track latches by age mod 5 (a phase latches after an existence dip); set on a quarter of mature vehicle rows by day, 2 of 59,988 night rows.",
-    "UNK_56_7": "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.",
+    "UNK_56_8": "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).",
     "UNK_216_6": "Object width, about (code + 1) * 0.1 m: car ~1.8 m, large vehicle ~2.0 m, two-wheeler ~0.7 m, pedestrian ~0.5 m.",
     "UNK_272_5": "Coarse length code: about round(length / 0.555 m) for vehicles (within one code on 91 %); not a length for pedestrians / two-wheelers.",
     # slot: uncertainty and quality
@@ -127,7 +127,8 @@ def signal_comment(name: str) -> str:
 # list folds that survey field into the window before it. Readings are in SIGNAL_COMMENTS and docs/03.
 RAW_FIELD_CORRECTIONS = {
     15: [(15, 1)],
-    63: [(63, 1)],
+    56: [(56, 8)],  # length: 8 bits, bit 63 is the MSB (trucks reach 12.8-13.7 m)
+    63: [],
     136: [(136, 4), (140, 3)],
     111: [(111, 1), (112, 3)],
     115: [(115, 5), (120, 3)],

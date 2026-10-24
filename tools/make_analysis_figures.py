@@ -464,7 +464,7 @@ SLOT_FIELDS = [
     (0, 2, "state", LIFE, "likely"), (2, 6, "slot index", LIFE, "confirmed"), (8, 5, "startup", LIFE, "confirmed"),
     (13, 1, "", RAW, "raw"), (14, 1, "onc", LIFE, "confirmed"), (15, 1, "", RAW, "raw"), (16, 8, "exist %", LIFE, "likely"),
     (24, 7, "age", LIFE, "confirmed"), (31, 1, "", CONST, "const"), (32, 12, "dRel", KIN, "confirmed"),
-    (44, 12, "yRel", KIN, "likely"), (56, 7, "length", CLS, "likely"), (63, 1, "", RAW, "raw"),
+    (44, 12, "yRel", KIN, "likely"), (56, 8, "length", CLS, "likely"),
     (64, 10, "vx (ground)", KIN, "confirmed"), (74, 10, "vy (ground)", KIN, "likely"), (84, 10, "ax", KIN, "likely"),
     (94, 2, "", CONST, "const"), (96, 10, "ay", KIN, "likely"), (106, 1, "", RAW, "raw"), (107, 1, "pred", LIFE, "likely"),
     (108, 1, "", CONST, "const"), (109, 3, "motion", LIFE, "likely"), (112, 3, "cam", CAM, "likely"), (115, 5, "cls conf", CLS, "likely"),
@@ -770,7 +770,7 @@ def object_size():
         if len(q):
             a1.scatter(q.length + rng.uniform(-0.04, 0.04, len(q)), q.width + rng.uniform(-0.04, 0.04, len(q)), s=10, alpha=0.5,
                        color=col, lw=0, label=f"{lab} ({len(q)} tracks)")
-    a1.set_xlabel("56|7 x 0.1 m (length-like), per-track median")
+    a1.set_xlabel("56|8 x 0.1 m (length), per-track median")
     a1.set_ylabel("(216|6 + 1) x 0.1 m (width-like), per-track median")
     a1.set_title("Each class code has its own footprint")
     leg = a1.legend(fontsize=8, markerscale=2.5)
@@ -878,7 +878,7 @@ def initial_attribute_zeros():
     g = pd.DataFrame(info["example"]["samples"])
     fig, axes = plt.subplots(2, 3, figsize=(10.2, 5.4), sharex=True)
     fields = [("confidence_like", "Association confidence 136|4", S1),
-              ("length_code", "Length 56|7", S2),
+              ("length_code", "Length 56|8", S2),
               ("width_code", "Width 216|6", S3),
               ("height_full_code", "Full height-like byte 272|8", S4),
               ("range_code", "Forward position 32|12", S1),

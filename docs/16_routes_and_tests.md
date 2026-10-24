@@ -283,7 +283,7 @@ contribution comes from a professional facility test or access to the actual inp
 
 ## T10: class, scores and dimensions
 
-**Targets:** existence `16|8`, track confidence `184|8`, class `163|3` / confidence `115|5`, length `56|7` and its coarse code `272|5`, width `216|6`.
+**Targets:** existence `16|8`, track confidence `184|8`, class `163|3` / confidence `115|5`, length `56|8` and its coarse code `272|5`, width `216|6`.
 
 1. With ego parked, independently label pedestrians, ridden bicycles, people walking bicycles, bicycles standing
    alone, motorcycles, cars and large vehicles where available. Pilot three distinct encounters per relevant category.

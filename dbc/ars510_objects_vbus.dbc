@@ -19,8 +19,7 @@ BO_ 1792 ARS510_OBJ_00: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -82,8 +81,7 @@ BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -145,8 +143,7 @@ BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -208,8 +205,7 @@ BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -271,8 +267,7 @@ BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -334,8 +329,7 @@ BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -397,8 +391,7 @@ BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -460,8 +453,7 @@ BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -523,8 +515,7 @@ BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -586,8 +577,7 @@ BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -649,8 +639,7 @@ BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -712,8 +701,7 @@ BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -775,8 +763,7 @@ BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -838,8 +825,7 @@ BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -901,8 +887,7 @@ BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -964,8 +949,7 @@ BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -1027,8 +1011,7 @@ BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -1090,8 +1073,7 @@ BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -1153,8 +1135,7 @@ BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -1216,8 +1197,7 @@ BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ CONST_31_1 : 31|1@1+ (1,0) [0|1] "raw" XXX
  SG_ DREL : 32|12@1+ (0.0625,-10) [-10|245.9375] "m" XXX
  SG_ YREL_LEFT : 44|12@1+ (0.015,-30.72) [-30.72|30.705] "m" XXX
- SG_ UNK_56_7 : 56|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_63_1 : 63|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_56_8 : 56|8@1+ (1,0) [0|255] "raw" XXX
  SG_ VLONG_OVER_GROUND : 64|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ VLAT_OVER_GROUND_PROV : 74|10@1+ (0.15,-76.575) [-76.575|76.875] "m/s" XXX
  SG_ ALONG_LIKE_84 : 84|10@1+ (1,-511) [-511|512] "code" XXX
@@ -1790,8 +1770,7 @@ CM_ SG_ 1792 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1792 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1792 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1792 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1792 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1792 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1792 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1792 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1792 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1792 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -1852,8 +1831,7 @@ CM_ SG_ 1793 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1793 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1793 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1793 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1793 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1793 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1793 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1793 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1793 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1793 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -1914,8 +1892,7 @@ CM_ SG_ 1794 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1794 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1794 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1794 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1794 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1794 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1794 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1794 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1794 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1794 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -1976,8 +1953,7 @@ CM_ SG_ 1795 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1795 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1795 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1795 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1795 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1795 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1795 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1795 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1795 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1795 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2038,8 +2014,7 @@ CM_ SG_ 1796 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1796 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1796 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1796 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1796 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1796 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1796 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1796 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1796 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1796 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2100,8 +2075,7 @@ CM_ SG_ 1797 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1797 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1797 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1797 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1797 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1797 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1797 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1797 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1797 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1797 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2162,8 +2136,7 @@ CM_ SG_ 1798 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1798 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1798 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1798 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1798 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1798 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1798 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1798 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1798 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1798 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2224,8 +2197,7 @@ CM_ SG_ 1799 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1799 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1799 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1799 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1799 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1799 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1799 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1799 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1799 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1799 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2286,8 +2258,7 @@ CM_ SG_ 1800 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1800 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1800 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1800 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1800 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1800 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1800 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1800 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1800 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1800 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2348,8 +2319,7 @@ CM_ SG_ 1801 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1801 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1801 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1801 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1801 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1801 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1801 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1801 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1801 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1801 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2410,8 +2380,7 @@ CM_ SG_ 1802 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1802 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1802 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1802 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1802 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1802 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1802 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1802 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1802 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1802 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2472,8 +2441,7 @@ CM_ SG_ 1803 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1803 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1803 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1803 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1803 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1803 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1803 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1803 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1803 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1803 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2534,8 +2502,7 @@ CM_ SG_ 1804 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1804 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1804 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1804 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1804 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1804 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1804 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1804 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1804 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1804 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2596,8 +2563,7 @@ CM_ SG_ 1805 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1805 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1805 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1805 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1805 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1805 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1805 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1805 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1805 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1805 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2658,8 +2624,7 @@ CM_ SG_ 1806 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1806 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1806 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1806 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1806 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1806 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1806 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1806 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1806 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1806 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2720,8 +2685,7 @@ CM_ SG_ 1807 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1807 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1807 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1807 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1807 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1807 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1807 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1807 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1807 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1807 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2782,8 +2746,7 @@ CM_ SG_ 1808 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1808 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1808 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1808 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1808 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1808 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1808 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1808 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1808 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1808 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2844,8 +2807,7 @@ CM_ SG_ 1809 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1809 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1809 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1809 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1809 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1809 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1809 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1809 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1809 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1809 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2906,8 +2868,7 @@ CM_ SG_ 1810 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1810 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1810 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1810 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1810 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1810 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1810 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1810 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1810 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1810 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";
@@ -2968,8 +2929,7 @@ CM_ SG_ 1811 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 12
 CM_ SG_ 1811 CONST_31_1 "Constant in the captured data.";
 CM_ SG_ 1811 DREL "Distance forward of the radar, m: (code - 160) / 16. Add 1.52 m (openpilot's RADAR_TO_CAMERA) for a camera-referenced distance; radard compares radar dRel with the vision distance minus 1.52 m.";
 CM_ SG_ 1811 YREL_LEFT "Lateral offset, m, left positive: (code - 2048) * 0.015. |code - 2048| >= 2000 is a sentinel.";
-CM_ SG_ 1811 UNK_56_7 "Object length, about 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m.";
-CM_ SG_ 1811 UNK_63_1 "Raw, unnamed.";
+CM_ SG_ 1811 UNK_56_8 "Object length, 0.1 m per code: car ~4.9 m, large vehicle ~5.7 m, two-wheeler ~1.7 m, pedestrian ~0.4 m. Eight bits: long trucks reach 128-137 (12.8-13.7 m).";
 CM_ SG_ 1811 VLONG_OVER_GROUND "Longitudinal velocity over ground, m/s: (code - 510.5) * 0.15. vRel = this - ego speed. Code 1023 is a saturated reading.";
 CM_ SG_ 1811 VLAT_OVER_GROUND_PROV "Lateral velocity over ground, m/s, left positive: (code - 510.5) * about 0.142-0.155 (0.15 used).";
 CM_ SG_ 1811 ALONG_LIKE_84 "Longitudinal acceleration over ground, filtered: (code - 510.3) * about 0.04-0.09 m/s^2 with ego stopped (estimate depends on drives and estimator); follows the track's own speed by about 0.3 s; moves by about 0.4 of ego's acceleration.";

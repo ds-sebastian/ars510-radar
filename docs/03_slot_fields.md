@@ -186,7 +186,7 @@ Numbers: [`slot_camera_association.json`](../data/analysis/summaries/slot_camera
 | `140\|3` | class, second encoding | 0, 5, 7, 1, 3, 4 ↔ class 1, 2, 3, 4, 5, 6 (exact on 1,253,081 rows) | ● |
 | `115\|5` | **class confidence** | `code × 5` %: mostly 0 while the class is 1, 4-20 otherwise | ◐ |
 | `216\|6` | **width** | `(code + 1) × 0.1` m | ◐ |
-| `56\|7` | **length** | `code × 0.1` m | ◐ |
+| `56\|8` | **length** | `code × 0.1` m; eight bits (bit 63 is the MSB): long trucks reach codes 128-137 (12.8-13.7 m), continuous through 127 on every car ([summary](../data/analysis/summaries/slot_length_eight_bits.json)) | ◐ |
 | `272\|5` | **coarse length code** | ≈ length / 0.555 m (within one code of the rounded value on 91 %, exact on 66 %); changes with the length estimate, barely with range | ◐ |
 
 **Class confidence `115|5`.** Values are 0 and 4-20, so 20 is 100 %. It is 0 on 83 % of class-1 rows and
@@ -197,7 +197,7 @@ has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-
 `NativeObject.class_confidence_pct`. The three bits above it (`120|3`) are the lane-crossing code in the lane section below.
 
 **About a quarter of new objects start with an initialization template.** On 5,774 of 22,501 age-1 outputs,
-the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and on all 1,253,081 occupied rows
+the association confidence `136|4`, length `56|8`, width `216|6` and full byte `272|8` are all zero, and on all 1,253,081 occupied rows
 (700 segments) they are zero together. These rows always have motion code 5, class 1, state 1,
 range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
 The radar also flags these rows itself: slot bit 15 (`UNK_15_1`) is set exactly on the template rows and never otherwise.
@@ -256,7 +256,7 @@ coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`
 | existence probability | `existence_pct` | `16\|8` |
 | secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
 | class, class confidence | `object_class`, `class_confidence_pct` | `163\|3`, `115\|5` |
-| size | `length_m`, `width_m`, `height_code` (coarse length code; name kept for compatibility) | `56\|7`, `216\|6`, `272\|5` |
+| size | `length_m`, `width_m`, `height_code` (coarse length code; name kept for compatibility) | `56\|8`, `216\|6`, `272\|5` |
 | uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|8`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
 
 Relative speed is the over-ground speed minus ego speed. The ACC target's relative speed, acceleration and lateral speed are in
