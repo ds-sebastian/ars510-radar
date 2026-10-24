@@ -106,3 +106,5 @@ Cabana DBC's slot layout from it.
 [`range_sigma_odometry.json`](analysis/summaries/range_sigma_odometry.json) supplies the `224|7` odometry numbers in docs/03: stationary-object range residual by code band on two cars and on about 200 public fleet cars, with the σ-vs-variance comparison, plus the fleet `232|8` lateral and `240|7` speed scatter of the same stationary objects.
 
 [`learned_alignment_501_502.json`](analysis/summaries/learned_alignment_501_502.json) supplies the 0x501 / 0x502 co-variation in docs/05: within-car Spearman and slope of 0x502 byte 1 against the camera's 0x501 code over the public fleet.
+
+[`bit21_steer_assist_unavailable.json`](analysis/summaries/bit21_steer_assist_unavailable.json) supplies the fleet contingency behind the 0x102 `A102_CONTEXT_BIT21` comment in the radar-bus DBC: bit 21 by EPS `LTA_STATE` / `LKA_STATE`.

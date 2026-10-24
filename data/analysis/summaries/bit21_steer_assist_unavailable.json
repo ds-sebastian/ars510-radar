@@ -1,0 +1,40 @@
+{
+ "source": "comma public commaCarSegments radar-ACC Toyota logs (third-party; summary only)",
+ "segments": 7865,
+ "frames_0x102": 4700000,
+ "contingency": {
+  "LTA3_LKA3": {
+   "clear": 0,
+   "set": 3136
+  },
+  "LTA3_LKA1": {
+   "clear": 1,
+   "set": 237
+  },
+  "LTA1_LKA1": {
+   "clear": 2792730,
+   "set": 3
+  },
+  "LTA5_LKA1": {
+   "clear": 1255184,
+   "set": 0
+  },
+  "LTA1_LKA5": {
+   "clear": 620402,
+   "set": 0
+  },
+  "other_states": {
+   "clear": 3252,
+   "set": 2
+  },
+  "LTA0_LKA0": {
+   "clear": 170,
+   "set": 4
+  },
+  "eps_frame_silent_over_0p1s": {
+   "clear": 2195,
+   "set": 5865,
+   "note": "three devices with mid-drive EPS unavailability"
+  }
+ }
+}
