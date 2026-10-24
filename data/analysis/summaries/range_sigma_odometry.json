@@ -92,5 +92,42 @@
    "p75": 0.115,
    "p90": 0.133
   }
+ },
+ "fleet_232_240": {
+  "runs": 3820,
+  "devices": 203,
+  "lateral_232": {
+   "rms_m_by_code": {
+    "1": 0.194,
+    "2": 0.254,
+    "3": 0.299,
+    "4": 0.402,
+    "5": 0.451,
+    "8": 0.619
+   },
+   "fit": {
+    "floor_m": 0.132,
+    "per_count_m": 0.061
+   },
+   "per_device_slope_median": 0.057,
+   "note": "lateral about each run's mean; lower bound; form undecided (codes > 5 rare)"
+  },
+  "speed_240": {
+   "rms_ms_by_code": {
+    "4": 0.33,
+    "6": 0.329,
+    "10": 0.367,
+    "14": 0.404,
+    "19": 0.43,
+    "26": 0.436,
+    "36": 0.455,
+    "55": 0.501
+   },
+   "fit": {
+    "floor_ms": 0.323,
+    "per_count_ms": 0.004
+   },
+   "note": "over-ground speed about each run's mean (true speed 0)"
+  }
  }
 }
