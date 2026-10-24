@@ -170,7 +170,7 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 
 The target summaries (0x191-0x194, [05](05_acc_target_and_support.md#0x191-0x194-selected-target-summaries)) carry the two
 nearest moving vehicles of the same internal tracker that drives the ACC target. `acc_summaries`
-([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 83 code lines,
+([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 99 code lines,
 no DBC) publishes them next to the ACC target:
 - **The ACC car once.** A summary within 1 m / 0.5 m of the ACC point is that car and is not published again.
 - **Identity.** Every other summary is `trackId 64 + code` (its pair code). It is published once its code has 8 ranges
@@ -361,7 +361,7 @@ whose lead comes from the object list alone.
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
 | `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and a small road record (nine drives) |
-| `acc_summaries` | 83 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
+| `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
 | `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
 | `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
