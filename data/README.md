@@ -98,3 +98,5 @@ Cabana DBC's slot layout from it.
 [`slot_length_eight_bits.json`](analysis/summaries/slot_length_eight_bits.json) supplies the length-width evidence in docs/03: the length-code tail through 127 → 128 and the classes of codes ≥ 128 on the owner car and three other car groups.
 
 [`id85_countdown_units.json`](analysis/summaries/id85_countdown_units.json) supplies the 0x85 prefix count-down rates in docs/04: bytes 9 / 11 per metre driven and bytes 13 / 14 per second, by ego-speed band and log group.
+
+[`slot_bit182_lateral_pedestrian.json`](analysis/summaries/slot_bit182_lateral_pedestrian.json) supplies the slot bit 182 numbers in docs/03: pedestrian share and the lateral-speed / side contrast with the car stopped, owner and second car, plus the fleet pedestrian share.
