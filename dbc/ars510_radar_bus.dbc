@@ -348,7 +348,7 @@ CM_ BO_ 577 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0; default body."
 CM_ BO_ 580 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0. At night carries light-source records (two per frame, paired with 0x240); bytes 4 and 7 are always equal.";
 CM_ BO_ 581 "Context frame, 16.7 Hz, rolling phase 1-7 in byte 0; default body.";
 CM_ BO_ 584 "Startup / event context frame with the same rolling phase as 0x240-0x245.";
-CM_ BO_ 589 "State frame: 00 00 00 00 00 00 56 normally; 00 00 00 00 02 00 58 in a rare second state.";
+CM_ BO_ 589 "State frame: 00 00 00 00 00 00 56 normally. Byte 4 copies the camera's auto-high-beam status (0x414 C_AHB = 1, seen in heavy rain): 00 00 00 00 02 00 58.";
 CM_ BO_ 591 "Startup phase: bit 6 sets once the radar is running.";
 CM_ BO_ 1280 "Regular payload shared by the three recorded cars.";
 CM_ BO_ 1281 "Slow status frame: constants plus one five-bit code at bit 43; byte 5 low three bits are 4 during active output and 0 at startup.";
@@ -483,7 +483,7 @@ CM_ SG_ 584 A248_STARTUP_STATUS2 "Startup / status: 0 or 3.";
 CM_ SG_ 584 A248_MUX_PHASE_RESERVED0 "Always zero.";
 CM_ SG_ 584 A248_ROLLING_PHASE3 "Rolling phase 1-7 (0 at startup).";
 CM_ SG_ 584 A248_B1_RESERVED_ZERO8 "Always zero.";
-CM_ SG_ 584 A248_B2_STATE_BIT0 "State bit (startup transition on most drives).";
+CM_ SG_ 584 A248_B2_STATE_BIT0 "Camera daylight state: 1 while its auto-high-beam status (0x414 C_AHB) is 7; sets at start-up on daytime drives.";
 CM_ SG_ 584 A248_B2_UNKNOWN1_7 "Raw.";
 CM_ SG_ 584 A248_B3_B5_RESERVED_ZERO24 "Always zero.";
 CM_ SG_ 584 A248_B6_UNKNOWN_BIT0 "Raw.";
