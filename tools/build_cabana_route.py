@@ -90,7 +90,7 @@ SIGNAL_COMMENTS = {
     "UNK_272_5": "Coarse length code: about round(length / 0.555 m) for vehicles (within one code on 91 %); not a length for pedestrians / two-wheelers.",
     # slot: uncertainty and quality
     "UNK_224_7": "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.",
-    "UNK_232_7": "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.",
+    "UNK_232_8": "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).",
     "UNK_240_7": "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.",
     "UNK_248_7": "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.",
     "UNK_200_7": "Orientation uncertainty: about 3.1 * UNK_248_7 / speed (m/s) on moving objects; 63 for stopped objects, 127 sentinel. Keep all seven bits.",
@@ -99,8 +99,7 @@ SIGNAL_COMMENTS = {
     "UNK_183_7": "Bit 183: velocity re-initialisation latch (five sticky per-track latches by age mod 5); bits 184-189 are the low bits of a secondary score byte 184|8 (percent: 100 on 98 % of rows; lower mostly on young tracks, far lateral objects and stationary large vehicles / pedestrians).",
     "UNK_190_10": "Bits 190-191 = top of the secondary score byte 184|8; bits 192-199 are zero.",
     "UNK_168_10": "All ones or all zeros (768 / 832 rare): five sticky per-track latches by age mod 5; a phase latches on a cycle without a near-scan measurement, so most tracks born far out have it set from birth.",
-    "UNK_15_1": "Raw; mostly set on newborn zero-range rows.",
-    "UNK_239_1": "Raw; often set near track birth.",
+    "UNK_15_1": "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.",
     "UNK_277_11": "Raw; bit 277 rarely set on newborn tracks.",
     # record header
     "UNK_HDR8_5": "Part of the clock code in record bytes 1-4 (little-endian), which equals the 0x85 fine clock // 100.",
@@ -137,7 +136,8 @@ RAW_FIELD_CORRECTIONS = {
     165: [(166, 2)],
     182: [(182, 1)],
     190: [(190, 10)],
-    239: [(239, 1)],
+    232: [(232, 8)],  # sigma yRel: 8 bits, bit 239 is the MSB (far young tracks reach 128-255)
+    239: [],
     256: [(256, 8)],  # sigma ax candidate, 256|8 (31 -> 32 carries in the captured drives)
     261: [],
     264: [(264, 8)],  # sigma ay candidate, 264|8 (15 -> 16 carries in the captured drives)

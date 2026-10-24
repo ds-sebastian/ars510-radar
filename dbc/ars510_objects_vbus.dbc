@@ -61,8 +61,7 @@ BO_ 1792 ARS510_OBJ_00: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -125,8 +124,7 @@ BO_ 1793 ARS510_OBJ_01: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -189,8 +187,7 @@ BO_ 1794 ARS510_OBJ_02: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -253,8 +250,7 @@ BO_ 1795 ARS510_OBJ_03: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -317,8 +313,7 @@ BO_ 1796 ARS510_OBJ_04: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -381,8 +376,7 @@ BO_ 1797 ARS510_OBJ_05: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -445,8 +439,7 @@ BO_ 1798 ARS510_OBJ_06: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -509,8 +502,7 @@ BO_ 1799 ARS510_OBJ_07: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -573,8 +565,7 @@ BO_ 1800 ARS510_OBJ_08: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -637,8 +628,7 @@ BO_ 1801 ARS510_OBJ_09: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -701,8 +691,7 @@ BO_ 1802 ARS510_OBJ_10: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -765,8 +754,7 @@ BO_ 1803 ARS510_OBJ_11: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -829,8 +817,7 @@ BO_ 1804 ARS510_OBJ_12: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -893,8 +880,7 @@ BO_ 1805 ARS510_OBJ_13: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -957,8 +943,7 @@ BO_ 1806 ARS510_OBJ_14: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1021,8 +1006,7 @@ BO_ 1807 ARS510_OBJ_15: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1085,8 +1069,7 @@ BO_ 1808 ARS510_OBJ_16: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1149,8 +1132,7 @@ BO_ 1809 ARS510_OBJ_17: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1213,8 +1195,7 @@ BO_ 1810 ARS510_OBJ_18: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1277,8 +1258,7 @@ BO_ 1811 ARS510_OBJ_19: 48 RADAR
  SG_ CONST_222_2 : 222|2@1+ (1,0) [0|3] "raw" XXX
  SG_ UNK_224_7 : 224|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_231_1 : 231|1@1+ (1,0) [0|1] "raw" XXX
- SG_ UNK_232_7 : 232|7@1+ (1,0) [0|127] "raw" XXX
- SG_ UNK_239_1 : 239|1@1+ (1,0) [0|1] "raw" XXX
+ SG_ UNK_232_8 : 232|8@1+ (1,0) [0|255] "raw" XXX
  SG_ UNK_240_7 : 240|7@1+ (1,0) [0|127] "raw" XXX
  SG_ CONST_247_1 : 247|1@1+ (1,0) [0|1] "raw" XXX
  SG_ UNK_248_7 : 248|7@1+ (1,0) [0|127] "raw" XXX
@@ -1804,7 +1784,7 @@ CM_ SG_ 1792 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1792 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1792 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1792 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1792 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1792 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1792 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1792 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1792 CONST_31_1 "Constant in the captured data.";
@@ -1852,8 +1832,7 @@ CM_ SG_ 1792 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1792 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1792 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1792 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1792 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1792 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1792 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1792 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1792 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -1867,7 +1846,7 @@ CM_ SG_ 1793 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1793 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1793 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1793 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1793 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1793 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1793 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1793 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1793 CONST_31_1 "Constant in the captured data.";
@@ -1915,8 +1894,7 @@ CM_ SG_ 1793 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1793 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1793 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1793 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1793 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1793 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1793 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1793 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1793 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -1930,7 +1908,7 @@ CM_ SG_ 1794 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1794 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1794 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1794 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1794 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1794 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1794 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1794 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1794 CONST_31_1 "Constant in the captured data.";
@@ -1978,8 +1956,7 @@ CM_ SG_ 1794 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1794 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1794 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1794 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1794 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1794 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1794 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1794 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1794 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -1993,7 +1970,7 @@ CM_ SG_ 1795 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1795 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1795 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1795 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1795 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1795 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1795 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1795 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1795 CONST_31_1 "Constant in the captured data.";
@@ -2041,8 +2018,7 @@ CM_ SG_ 1795 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1795 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1795 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1795 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1795 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1795 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1795 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1795 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1795 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2056,7 +2032,7 @@ CM_ SG_ 1796 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1796 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1796 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1796 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1796 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1796 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1796 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1796 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1796 CONST_31_1 "Constant in the captured data.";
@@ -2104,8 +2080,7 @@ CM_ SG_ 1796 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1796 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1796 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1796 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1796 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1796 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1796 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1796 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1796 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2119,7 +2094,7 @@ CM_ SG_ 1797 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1797 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1797 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1797 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1797 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1797 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1797 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1797 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1797 CONST_31_1 "Constant in the captured data.";
@@ -2167,8 +2142,7 @@ CM_ SG_ 1797 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1797 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1797 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1797 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1797 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1797 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1797 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1797 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1797 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2182,7 +2156,7 @@ CM_ SG_ 1798 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1798 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1798 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1798 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1798 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1798 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1798 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1798 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1798 CONST_31_1 "Constant in the captured data.";
@@ -2230,8 +2204,7 @@ CM_ SG_ 1798 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1798 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1798 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1798 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1798 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1798 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1798 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1798 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1798 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2245,7 +2218,7 @@ CM_ SG_ 1799 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1799 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1799 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1799 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1799 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1799 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1799 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1799 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1799 CONST_31_1 "Constant in the captured data.";
@@ -2293,8 +2266,7 @@ CM_ SG_ 1799 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1799 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1799 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1799 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1799 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1799 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1799 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1799 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1799 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2308,7 +2280,7 @@ CM_ SG_ 1800 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1800 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1800 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1800 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1800 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1800 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1800 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1800 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1800 CONST_31_1 "Constant in the captured data.";
@@ -2356,8 +2328,7 @@ CM_ SG_ 1800 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1800 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1800 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1800 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1800 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1800 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1800 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1800 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1800 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2371,7 +2342,7 @@ CM_ SG_ 1801 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1801 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1801 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1801 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1801 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1801 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1801 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1801 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1801 CONST_31_1 "Constant in the captured data.";
@@ -2419,8 +2390,7 @@ CM_ SG_ 1801 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1801 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1801 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1801 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1801 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1801 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1801 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1801 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1801 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2434,7 +2404,7 @@ CM_ SG_ 1802 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1802 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1802 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1802 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1802 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1802 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1802 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1802 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1802 CONST_31_1 "Constant in the captured data.";
@@ -2482,8 +2452,7 @@ CM_ SG_ 1802 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1802 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1802 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1802 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1802 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1802 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1802 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1802 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1802 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2497,7 +2466,7 @@ CM_ SG_ 1803 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1803 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1803 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1803 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1803 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1803 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1803 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1803 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1803 CONST_31_1 "Constant in the captured data.";
@@ -2545,8 +2514,7 @@ CM_ SG_ 1803 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1803 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1803 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1803 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1803 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1803 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1803 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1803 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1803 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2560,7 +2528,7 @@ CM_ SG_ 1804 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1804 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1804 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1804 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1804 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1804 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1804 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1804 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1804 CONST_31_1 "Constant in the captured data.";
@@ -2608,8 +2576,7 @@ CM_ SG_ 1804 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1804 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1804 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1804 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1804 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1804 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1804 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1804 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1804 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2623,7 +2590,7 @@ CM_ SG_ 1805 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1805 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1805 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1805 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1805 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1805 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1805 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1805 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1805 CONST_31_1 "Constant in the captured data.";
@@ -2671,8 +2638,7 @@ CM_ SG_ 1805 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1805 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1805 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1805 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1805 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1805 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1805 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1805 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1805 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2686,7 +2652,7 @@ CM_ SG_ 1806 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1806 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1806 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1806 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1806 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1806 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1806 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1806 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1806 CONST_31_1 "Constant in the captured data.";
@@ -2734,8 +2700,7 @@ CM_ SG_ 1806 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1806 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1806 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1806 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1806 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1806 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1806 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1806 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1806 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2749,7 +2714,7 @@ CM_ SG_ 1807 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1807 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1807 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1807 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1807 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1807 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1807 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1807 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1807 CONST_31_1 "Constant in the captured data.";
@@ -2797,8 +2762,7 @@ CM_ SG_ 1807 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1807 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1807 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1807 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1807 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1807 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1807 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1807 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1807 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2812,7 +2776,7 @@ CM_ SG_ 1808 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1808 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1808 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1808 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1808 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1808 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1808 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1808 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1808 CONST_31_1 "Constant in the captured data.";
@@ -2860,8 +2824,7 @@ CM_ SG_ 1808 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1808 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1808 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1808 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1808 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1808 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1808 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1808 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1808 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2875,7 +2838,7 @@ CM_ SG_ 1809 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1809 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1809 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1809 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1809 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1809 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1809 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1809 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1809 CONST_31_1 "Constant in the captured data.";
@@ -2923,8 +2886,7 @@ CM_ SG_ 1809 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1809 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1809 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1809 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1809 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1809 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1809 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1809 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1809 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -2938,7 +2900,7 @@ CM_ SG_ 1810 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1810 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1810 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1810 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1810 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1810 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1810 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1810 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1810 CONST_31_1 "Constant in the captured data.";
@@ -2986,8 +2948,7 @@ CM_ SG_ 1810 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1810 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1810 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1810 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1810 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1810 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1810 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1810 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1810 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";
@@ -3001,7 +2962,7 @@ CM_ SG_ 1811 STATE_CODE "Track state: 0 deleted (the track's final age-0 record)
 CM_ SG_ 1811 SLOT_INDEX_CODE "Physical slot index 0-19; 63 when the slot is unallocated.";
 CM_ SG_ 1811 UNK_8_6 "Bits 8-12: startup code, min(30, floor(31 * (2/3)^max(age - 4, 0))) while the motion code is 5 (initializing). Bit 13: separate raw flag.";
 CM_ SG_ 1811 ONCOMING_FLAG "Oncoming-like internal motion state. Can persist after slowing and reset before the native allocation ends.";
-CM_ SG_ 1811 UNK_15_1 "Raw; mostly set on newborn zero-range rows.";
+CM_ SG_ 1811 UNK_15_1 "Placeholder flag: set exactly on the age-1 first output whose range, lateral and size codes are placeholders.";
 CM_ SG_ 1811 SCORE_CODE "Existence probability, percent (10-100): can decline in either state; drops by exactly 20 (or 1) per cycle in state 2 and may stay lowered after a return to state 1. Bits 20-22 are its bits 4-6 (score // 16). The slot is freed near 20.";
 CM_ SG_ 1811 AGE "Track age in radar cycles (60 ms): 1 at birth, saturates at 126; 0 = slot retiring. A restart is a new track. Converged from about 60.";
 CM_ SG_ 1811 CONST_31_1 "Constant in the captured data.";
@@ -3049,8 +3010,7 @@ CM_ SG_ 1811 UNK_216_6 "Object width, about (code + 1) * 0.1 m: car ~1.8 m, larg
 CM_ SG_ 1811 CONST_222_2 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_224_7 "Range standard deviation (sigma dRel), about 0.23 m per count (0.24 below 40 m; beyond 40 m a 4-8 m error floor dominates): grows with range, shrinks with track age.";
 CM_ SG_ 1811 CONST_231_1 "Constant in the captured data.";
-CM_ SG_ 1811 UNK_232_7 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age.";
-CM_ SG_ 1811 UNK_239_1 "Raw; often set near track birth.";
+CM_ SG_ 1811 UNK_232_8 "Lateral standard deviation (sigma yRel), about 0.10 m per count: grows with |yRel|, shrinks with age. Eight bits: far young tracks reach 128-255 (255 = saturated).";
 CM_ SG_ 1811 UNK_240_7 "Longitudinal velocity standard deviation (sigma vx), about 0.043-0.045 m/s per count against the ACC target: grows with range, higher during velocity excursions below 40 m. 127 accompanies saturated velocity.";
 CM_ SG_ 1811 CONST_247_1 "Constant in the captured data.";
 CM_ SG_ 1811 UNK_248_7 "Lateral velocity standard deviation (sigma vy), linear in the code: about 0.085 + 0.03 m/s per count against stationary objects, about 0.09 per count on moving leads.";

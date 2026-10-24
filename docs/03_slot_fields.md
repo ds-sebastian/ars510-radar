@@ -200,6 +200,7 @@ has fallen to 5 (25 %) on the record before and restarts at 15 (106 switches; 4-
 the association confidence `136|4`, length `56|7`, width `216|6` and full byte `272|8` are all zero, and on all 1,253,081 occupied rows
 (700 segments) they are zero together. These rows always have motion code 5, class 1, state 1,
 range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
+The radar also flags these rows itself: slot bit 15 (`UNK_15_1`) is set exactly on the template rows and never otherwise.
 All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so `raw` and
 `fused` withhold them. Counts are in
 [`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
@@ -256,7 +257,7 @@ coarse length code `272|5` spans 4-11. Counts are in [`class5_video_review.json`
 | secondary score (track-confidence percent) | `secondary_score_pct` | `184\|8` |
 | class, class confidence | `object_class`, `class_confidence_pct` | `163\|3`, `115\|5` |
 | size | `length_m`, `width_m`, `height_code` (coarse length code; name kept for compatibility) | `56\|7`, `216\|6`, `272\|5` |
-| uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|7`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
+| uncertainty codes | `range_unc_code`, `lateral_unc_code`, `vel_unc_code`, `vlat_unc_code`, `accel_unc_code`, `lateral_accel_unc_code`, `orientation_unc_code` | `224\|7`, `232\|8`, `240\|7`, `248\|7`, `256\|8`, `264\|8`, `200\|7` |
 
 Relative speed is the over-ground speed minus ego speed. The ACC target's relative speed, acceleration and lateral speed are in
 [05](05_acc_target_and_support.md); `UNCERTAINTY_PER_COUNT` holds the scales below.
@@ -266,7 +267,7 @@ Relative speed is the over-ground speed minus ego speed. The ACC target's relati
 | bits | field | behaviour | conf. |
 |---|---|---|---|
 | `224\|7` | σ dRel (≈ 0.24 m per count below 40 m, 0.23 overall) | grows with range (median code 3 below 20 m, 45 beyond 90 m on the bundled drives), shrinks with track age | ◐ field; ○ unit |
-| `232\|7` | σ yRel (≈ 0.10 m per count) | grows with \|yRel\|, shrinks with age | ◐ |
+| `232\|8` | σ yRel (≈ 0.10 m per count); eight bits: far young tracks reach 128-255, 255 saturated | grows with \|yRel\|, shrinks with age | ◐ |
 | `240\|7` | longitudinal velocity error scale (≈ 0.043-0.045 m/s per count against the ACC target at codes 15-35, pooled over range; within a fixed range band the grade depends on the drives, from flat to clearly rising) | grows with range, shrinks with age; higher when vRel disagrees with the camera (AUC 0.62 within range and age strata at 30-60 m, 0.70 pooled) and during velocity excursions below 40 m | ◐ |
 | `248\|7` | σ vy | grows with \|yRel\|, shrinks with age; linear and the same on both cars. Against stationary objects (true lateral speed 0) about 0.085 + 0.03 m/s per count; on moving leads, against the ACC target's lateral speed, up to about 0.09 per count; the earlier 0.37 m/s per count was far too wide | ◐ field and form; ◐ unit (stationary objects) |
 | `200\|7` | orientation uncertainty | ≈ 3.1 × `248\|7` / speed (m/s) on movers (interquartile 2.5-3.8); 63 for stopped objects, 127 sentinel | ◐ |
@@ -282,7 +283,7 @@ records never drops. The phase belongs to the track, not to a radar-wide counter
 event happened at some time on that phase; the record where a phase newly sets is the one that carries the event ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 
 - **Which error each sigma follows** (two drives, within range bins): `224|7` and `240|7` follow longitudinal errors
-  (range, speed against the ACC target, acceleration), `232|7` and `248|7` lateral ones (Spearman ≈ 0.4): the
+  (range, speed against the ACC target, acceleration), `232|8` and `248|7` lateral ones (Spearman ≈ 0.4): the
   Continental order distance-long, distance-lat, velocity-long, velocity-lat
   ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). `256|8` and `264|8` likely continue
   the same alternation for the two accelerations and `200|7` is the orientation term
@@ -294,18 +295,18 @@ event happened at some time on that phase; the record where a phase newly sets i
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The `fused` profile uses it this way
   (`speed_sigma_per_code = 0.045`).
 - **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
-  all ranges grows linearly with `224|7` (log-log slope 1.01; `232|7` 0.79), but within a fixed range band (beyond 15 m)
+  all ranges grows linearly with `224|7` (log-log slope 1.01; `232|8` 0.79), but within a fixed range band (beyond 15 m)
   it grows about as √code on both cars (0.51 / 0.59 on fresh drives), because code and error both grow with range
   ([`decode_round3.json`](../data/analysis/summaries/decode_round3.json)). Allowing each 5 m range band its own error floor,
-  a σ code fits better than a variance code for `240|7`, `248|7` and `232|7` on both cars: the √-like slope is what a σ code
+  a σ code fits better than a variance code for `240|7`, `248|7` and `232|8` on both cars: the √-like slope is what a σ code
   looks like on top of a floor. `224|7` stays open. The reference is the ACC target, which is not independent
   ([`bus1_transport.json`](../data/analysis/summaries/bus1_transport.json), block `uncertainty_form`).
 - **Units against the ACC target** (65 k mature object / ACC pairs on 483 segments; fit sd² = floor² + (k · code)²;
-  [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|7` 0.10 m (0.10-0.12 m in every
+  [summary](../data/analysis/summaries/uncertainty_code_units.json)): `240|7` 0.043 m/s per count, `232|8` 0.10 m (0.10-0.12 m in every
   range band), `224|7` 0.23 m (0.24 below 40 m; beyond, a 4-8 m error floor dominates), `248|7` 0.37 m/s in this joint fit, which overstates it: per-code spreads against stationary objects (about 0.03) and on moving leads (about 0.09) are in the table. Relative units: the
   reference is the radar's own estimate.
-- **Axis check from the codes' own jitter:** each code grows with the record-to-record jitter of its own quantity (`232|7` yRel, `248|7` and
-  `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). For `232|7` and `240|7` the
+- **Axis check from the codes' own jitter:** each code grows with the record-to-record jitter of its own quantity (`232|8` yRel, `248|7` and
+  `264|8` lateral speed, `256|8` the `84|10` acceleration, `240|7` speed below 25 m). For `232|8` and `240|7` the
   jitter is about a fifth of the ACC-referenced error per count, so these codes describe slowly varying tracker error.
 - **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95, 72 excursions,
   [`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)) with an AUC of 0.53-0.59 beyond 40 m, where 107 of the 179 excursions happen. Its size follows the error

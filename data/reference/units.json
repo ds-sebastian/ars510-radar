@@ -11,7 +11,7 @@
   },
   "uncertainty_codes": {
     "range_unc_code": {"bits": "224|7", "per_count": [0.23, 0.24], "unit": "m", "doc_text": "0.24 m per count below 40 m, 0.23 overall"},
-    "lateral_unc_code": {"bits": "232|7", "per_count": [0.10, 0.10], "unit": "m", "doc_text": "0.10 m per count"},
+    "lateral_unc_code": {"bits": "232|8", "per_count": [0.10, 0.10], "unit": "m", "doc_text": "0.10 m per count"},
     "vel_unc_code": {"bits": "240|7", "per_count": [0.043, 0.045], "unit": "m/s", "doc_text": "0.043-0.045 m/s per count"},
     "vlat_unc_code": {"bits": "248|7", "per_count": [0.03, 0.03], "offset": 0.085, "unit": "m/s", "doc_text": "0.085 + 0.03 m/s per count"},
     "accel_unc_code": {"bits": "256|8", "per_count": [0.06, 0.07], "unit": "m/s^2", "scope": "within 20 m; pooled slope range-confounded", "doc_text": "0.06-0.07 per code"}
