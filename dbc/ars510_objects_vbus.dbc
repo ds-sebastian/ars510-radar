@@ -3124,7 +3124,7 @@ CM_ SG_ 1856 CONST_HDR0_8 "Constant in the captured data.";
 CM_ SG_ 1856 UNK_HDR8_5 "Part of the clock code in record bytes 1-4 (little-endian), which equals the 0x85 fine clock // 100.";
 CM_ SG_ 1856 UNK_HDR13_4 "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).";
 CM_ SG_ 1856 UNK_HDR17_15 "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).";
-CM_ SG_ 1856 CONST_HDR32_1 "Constant in the captured data.";
+CM_ SG_ 1856 CONST_HDR32_1 "Bit 24 of the clock code in record bytes 1-4 (see UNK_HDR8_5): 0 until the clock passes 2^24 counts (about 28 min of radar uptime at 0.1 ms per count), then it toggles like the other clock bits.";
 CM_ SG_ 1856 UNK_HDR33_1 "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).";
 CM_ SG_ 1856 CONST_HDR34_7 "Constant in the captured data.";
 CM_ SG_ 1856 UNK_HDR41_15 "Record counter: record bytes 5-6 (little-endian) >> 1; equals the 0x85 counter of the same cycle.";
