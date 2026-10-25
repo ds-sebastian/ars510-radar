@@ -417,7 +417,10 @@ without a record on the second car, [`radar_health.json`](../data/analysis/summa
 radar has booted, not that it or its object list is healthy now. 0x101 and 0x197 are sent by the camera and follow the first
 0x80 record by 0.14 s and 0.20 s on 27 of 27 cold starts (spread 7 and 14 ms): they behave as the camera's acknowledgement of
 the first object record (◐). The camera's two differ between cars on opendbc's test routes: the C-HR camera sends 0x15 in
-0x101 once the radar runs, and the 2022 RAV4's (radar firmware 8821F0R01100) sets 0x197 bit 8 for one frame or not at all.
+0x101 once the radar runs, and the 2022 RAV4's (radar firmware 8821F0R01100) sets 0x197 bit 8 for one frame or not at all. 0x197 also has a
+"camera function temporarily unavailable" value, `00 06` (byte 1 bits 1-2 set, the boot bit cleared): on comma's public fleet it is held for
+whole minutes while the EPS reports steering assist unavailable, and otherwise appears as 0.1-1.5 s blips (19 segments, 7 cars, all 2023 RAV4)
+([`camera_status_fleet.json`](../data/analysis/summaries/camera_status_fleet.json)).
 The radar's own 0x24F bit 6 switches the same way on every car, so it is the one in the upstream DBC.
 
 ## 0x680: single-object stream
@@ -495,7 +498,7 @@ Numbers: [`object_stream_0x680.json`](../data/analysis/summaries/object_stream_0
   alignment estimate. **Byte 1 moves with the camera's 0x501 learned code (● co-variation):** within each car, across its drives, the two rise and fall together (Spearman median 0.92 over 172 fleet cars, positive on 170) at about 9.6 byte-1 counts per 0x501 code, with a per-car offset, so byte 1 is a finer reading of the same learned alignment quantity. Byte 1 shows no link to the azimuth of stationary objects (○) ([`latches_and_pitch_codes.json`](../data/analysis/summaries/latches_and_pitch_codes.json)).
 - **0x501 (● layout, ○ interpretation):** byte 5 bits 3-7 form one five-bit numerical code (`43|5@1+` in the DBC),
   including the carry from 15 to 16. Its low three bits are `100b` during active output and `000b` in the startup payload.
-  The code is a learned value kept across drives: after power-up the camera sends 31, then 16 for about 7 s, then a value within one
+  The code is a learned value kept across drives: after power-up the camera sends 31 for 0.5 s, then 16 for 5.5 s (a fixed timer: the learned value follows 6.0 s after the first 0x501 frame on 73 of 73 fleet power-ups), then a value within one
   code of the previous drive's last (95-100 % of drives; equal on 66-71 %); it changes only while driving, in single steps. It is not a reach, rain, light, temperature or speed-mode signal;
   between drives it follows openpilot's calibration pitch weakly (○). The radar's 0x502 byte 1 tracks it within every car (above) ([`learned_alignment_501_502.json`](../data/analysis/summaries/learned_alignment_501_502.json)).
   Counts and scope for these register readings are in

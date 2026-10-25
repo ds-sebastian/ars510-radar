@@ -108,3 +108,5 @@ Cabana DBC's slot layout from it.
 [`learned_alignment_501_502.json`](analysis/summaries/learned_alignment_501_502.json) supplies the 0x501 / 0x502 co-variation in docs/05: within-car Spearman and slope of 0x502 byte 1 against the camera's 0x501 code over the public fleet.
 
 [`bit21_steer_assist_unavailable.json`](analysis/summaries/bit21_steer_assist_unavailable.json) supplies the fleet contingency behind the 0x102 `A102_CONTEXT_BIT21` comment in the radar-bus DBC: bit 21 by EPS `LTA_STATE` / `LKA_STATE`.
+
+[`camera_status_fleet.json`](analysis/summaries/camera_status_fleet.json) supplies the fleet confirmations of camera status frames in docs/05 and the radar-bus DBC: 0x197 values, the 0x501 power-up schedule, 0x248 flag A and the low-speed AHB state.
