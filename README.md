@@ -203,6 +203,14 @@ filter with replay evidence for every part: [docs/12](docs/12_kalman_filter.md).
 - **Community integration.** It installs on top of openpilot; `acc` is open upstream as
   [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860) (ready for review; [17](docs/17_upstream.md#towards-an-upstream-comma-interface)).
 
+## Home Assistant
+
+[`home_assistant/`](home_assistant) puts the car into Home Assistant: a small process on the comma device decodes the
+Toyota body messages and the radar's car-bus messages ([13](docs/13_car_bus_messages.md)) from openpilot's CAN stream
+and publishes doors, lock, gear, speed, odometer, lights, cruise, blind spot, the pre-collision system (including
+whether the radar's AEB request reaches the car), FCW / PCS events, the radar's lead, the 12 V battery and GPS over
+MQTT discovery. It only reads, and leaves openpilot's files as they are.
+
 ## How it fits into openpilot
 
 ```mermaid
@@ -288,6 +296,7 @@ numbers and a glossary.
 | [`openpilot/`](openpilot) | installer, the RadarInterface wrapper, the on-PC self-check, an optional radard patch |
 | [`upstream/`](upstream) | the upstream proposal: `opendbc_ars510.patch` for opendbc master, with its DBC (`toyota_tss2_ars510.dbc`) and the ACC-target interface (`ars510_acc_target.py`); also `ars510_radar.py`, `fused` in one file, tested against the fork configuration on bundled CAN samples |
 | [`dbc/`](dbc) | DBCs for inspecting the radar in Cabana (the decoder works from raw frames) |
+| [`home_assistant/`](home_assistant) | a Home Assistant bridge on the comma device: doors, lock, gear, odometer, lights, the pre-collision system and the radar's lead over MQTT discovery |
 | [`tools/`](tools) | log decoder, Cabana exporter, openpilot replay harness, figure and statistics scripts |
 | [`data/`](data) | three CAN samples, an anonymised analysis dataset (3 drives, 88 min) and the summary JSONs behind every number in the docs |
 | [`docs/`](docs) | the documentation above |

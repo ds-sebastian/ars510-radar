@@ -21,6 +21,7 @@ Start with [README.md](README.md), then the doc for your area:
 | PCS / AEB: alarm, relay design, recording | `ars510/support.py` | `docs/15` |
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
+| Home Assistant bridge (MQTT discovery from the comma device) | `home_assistant/` | `home_assistant/README.md` |
 
 Parsing works from raw frames; `dbc/` is for Cabana.
 
