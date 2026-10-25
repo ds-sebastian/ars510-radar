@@ -19,7 +19,7 @@ of each need nothing beyond full logging.
 
 | # | Capture | Tests | What it settles |
 |---|---|---|---|
-| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has about 1.6 engaged road hours, `acc_summaries` two short drives (5.2 engaged minutes); their main evidence is replay. Stops behind a lead and far leads are the cases most missing |
+| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has about 2.5 engaged road hours over two cars (the owner's 1.6 h, a second driver's 0.9 h), `acc_summaries` about 30 engaged minutes; their main evidence is replay. Stops behind a lead and far leads are the cases most missing |
 | 2 | Stock-ACC drives through lead exits, lead switches and cut-ins | [T08](#t08-stock-acc-and-additional-target-reports) + [T14](#t14-follow-one-target-through-selection-changes) | Toyota's own controller acting on the same target: the reference for when radard should follow the ACC target at a cut-in (the ACC target switches before the camera model does) |
 | 3 | A second cooperative car, both cars with GNSS or another qualified motion reference | [T04](#t04-independent-lead-speed-and-acceleration) (+ T03, T07) | physical lead speed and acceleration: how good the summary cars' range-slope speed is, and whether the far-range shortfall matters |
 
@@ -69,7 +69,7 @@ maintainer helps establish that the requested signals and reference are present 
 Road captures record normal driving: short gaps, cut-ins, oncoming traffic and hard braking come from traffic as it
 occurs, and a passenger handles equipment and notes. Target placement, intentional occlusion and sensor-cover
 conditions use a parked ego or a controlled site. Remove covers before driving away, and keep the sensor clean so a
-fault reflects the condition under test. Record the actual installed profile (`acc`, `acc_summaries` or `fused`) and version; raw CAN
+fault reflects the condition under test. Record the actual installed profile (`acc` or `acc_summaries`) and version; raw CAN
 logging works with either.
 
 PCS/AEB is a professional test: Toyota advises leaving PCS testing to professionals
@@ -329,7 +329,7 @@ test: keep full logs of both buses and bookmark each moment you brake hard for s
 
 ## T13: fresh road and parser validation
 
-1. Record the actual installed version/profile (`acc`, `fused` or another) and the [install check](../openpilot/README.md). On the first normal drive,
+1. Record the actual installed version/profile (`acc`, `acc_summaries` or another) and the [install check](../openpilot/README.md). On the first normal drive,
    verify radar-backed leads and communication health from logs; installer success and road validation are separate steps.
 2. Keep fresh city/queue and highway/curve drives, ordinary night/wet conditions when encountered, lead-free
    periods and bookmarked unwanted braking, sticky/adjacent leads, far pickup, loss and recovery.

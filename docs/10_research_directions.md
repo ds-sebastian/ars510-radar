@@ -5,9 +5,11 @@ directly the answer improves the radar in openpilot. [16: Routes and tests](16_r
 recording procedures, physical references and hand-in checklists; begin with the smallest observable contrast before a
 long session.
 
-Three install profiles frame the questions. `acc` (the default) publishes the radar's ACC target alone; `acc_summaries`
-adds up to two other moving cars from the radar's summaries within 40 m; `fused` publishes every settled track with one Kalman speed filter per track. A question says which profile it concerns when it concerns
-one. The upstream proposals, the parts ledger and the evidence for the ACC target alone are in
+Two install profiles frame the questions: `acc` (the default) publishes the radar's ACC target alone, and `acc_summaries`
+adds up to two other moving cars from the radar's summaries within 40 m. The object list itself is not installable while
+its speed excursions reach the planner ([07](07_velocity_excursions.md)); the research `fused` filter, which publishes
+every settled track with one Kalman speed filter per track, is where an object-list profile would start
+([12](12_kalman_filter.md)). A question says which profile it concerns when it concerns one. The upstream proposals, the parts ledger and the evidence for the ACC target alone are in
 [17: Upstream proposals](17_upstream.md); the AEB / PCS questions are in [15: AEB and PCS](15_aeb_pcs.md#open-questions).
 
 ## For a better ride
@@ -61,8 +63,8 @@ one. The upstream proposals, the parts ledger and the evidence for the ACC targe
 7. **Lead acceleration in fork planners.** *Does a decaying extrapolation or an `aLeadTau` floor for radar leads remove the
    brake-then-accelerate swing?* StarPilot extrapolates `aLeadK` unchanged above 35 mph (read from its source, ○).
    *Data:* StarPilot replays with `tools/fork_lead` using each variant ([14](14_forks.md)).
-8. **Road miles with `acc`, `acc_summaries` and `fused`.** *Do the replay results hold in closed loop?* The replay results
-   ([11](11_profiles_compared.md)) cover 16.9 moving hours on two cars; `fused` has closed-loop road drives and `acc` its first two
+8. **Road miles with `acc` and `acc_summaries`.** *Do the replay results hold in closed loop?* The replay results
+   ([11](11_profiles_compared.md)) cover 16.9 moving hours on two cars; the earlier `fused` profile has closed-loop road drives and `acc` its first ones
    ([08](08_openpilot_integration.md#on-the-road)); more `acc` miles and the first `acc_summaries` drives are the next evidence. *Data:* drives
    with flagged moments, ideally from a second car, driver or radar firmware, with the installed profile recorded
    ([T13](16_routes_and_tests.md#t13-fresh-road-and-parser-validation)).
@@ -80,10 +82,10 @@ from the first:
   line" ([`acc_target_choice.json`](../data/analysis/summaries/acc_target_choice.json)). On two matched cut-ins on the
   fresh drives (n = 2, so the result is a hint), openpilot's model moved to the new lead first (1.5 s and ≥ 6 s
   earlier). `acc` hands the radar's choice to openpilot as one point and radard's camera match decides which lead the
-  planner follows; `fused` publishes every track and leaves the choice to openpilot's model, which sees lanes.
+  planner follows; an all-tracks profile (the research `fused`) would publish every track and leave the choice to openpilot's model, which sees lanes.
 - **The signal (Toyota's strength).** The radar's ACC speed is smooth and consistent with range during excursions,
-  and 0x235 also carries a filtered relative acceleration. All three use the speed (`acc` and `acc_summaries` publish it, `fused` takes it as a
-  measurement).
+  and 0x235 also carries a filtered relative acceleration. `acc` and `acc_summaries` publish that speed; the research `fused` filter takes it as a
+  measurement.
 - **The control law (◐, fitted on two cars).** While following, Toyota's 0x343 command is a linear law on its own ACC
   target: about 0.02 m/s² per metre of gap error, 0.25 m/s² per m/s of closing speed, and a time gap of about 1.1 s (1-bar
   setting, U1). The command trails the target through a short dead time (0.1 s), a slow first-order lag and a rate limit.
@@ -155,5 +157,5 @@ The goal: tell a velocity excursion from a real closing within about 1 s ([07](0
 
 - **Per-unit values.** Both RAV4 radar firmwares send the same bus ([01](01_radar_bus.md#radar-firmware)). *Do
   0x500 / 0x502 differ per unit?* *Data:* captures from further units.
-- **More closed-loop driving** with `acc` and `fused`, on a second car or with another driver
+- **More closed-loop driving** with `acc` and `acc_summaries`, on a second car or with another driver
   (question 8 above).

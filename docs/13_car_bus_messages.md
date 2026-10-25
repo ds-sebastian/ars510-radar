@@ -3,7 +3,7 @@
 On the RAV4 2022 / 2023 the ARS510 is also Toyota's driving-support ECU (`DS1` / "DSU" in the DBCs). It sends
 nine messages on the **car bus (bus 0)**, the same ones a TSS-P DSU sends. They carry the ACC command, the
 pre-collision (PCS / AEB) brake request and the PCS status on the dash. openpilot longitudinal either filters or switches off these
-messages, which decides whether the car keeps its automatic emergency braking. The profiles (`acc`, `fused`, `raw`) read the
+messages, which decides whether the car keeps its automatic emergency braking. The profiles (`acc`, `acc_summaries`) read the
 radar bus (bus 1) in every case; the car-bus messages below are independent of the profile. Numbers:
 [`radar_car_bus_messages.json`](../data/analysis/summaries/radar_car_bus_messages.json) and
 [`radar_disable_unfiltered.json`](../data/analysis/summaries/radar_disable_unfiltered.json).

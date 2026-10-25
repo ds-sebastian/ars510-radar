@@ -1,8 +1,8 @@
 # 01. The radar bus
 
 The ARS510 talks to the camera over a private CAN link, which the comma harness exposes as **bus 1** (`src == 1` in openpilot logs).
-The radar runs a **60.28 ms cycle (16.6 Hz)**: its record clocks advance 60.28 ms per record and keep the logger's time. The `raw` and `fused` decodes take ego speed from the car bus (bus 0, Toyota `SPEED` 0xB4);
-the `acc` profile reads the radar's ACC target (0x235 / 0x237), which carries its own closing speed.
+The radar runs a **60.28 ms cycle (16.6 Hz)**: its record clocks advance 60.28 ms per record and keep the logger's time. The object-list decode in `ars510/` (research, not installable) takes ego speed from the car bus (bus 0, Toyota `SPEED` 0xB4);
+the installable `acc` and `acc_summaries` profiles read the radar's ACC target (0x235 / 0x237), which carries its own closing speed.
 
 ```mermaid
 flowchart LR
@@ -112,13 +112,13 @@ continues with 20,518 records, 0 CRC failures and the ACC target at 50 Hz;
 | 0x101 / 0x197 boot flags, 0x24F running flag | set | set |
 
 So on this firmware the decoder works with the radar line unfiltered: the object list, the ACC target and the target summaries all
-continue through openpilot's radar disable, which makes it compatible with the `acc`, `acc_summaries` and `fused` profiles. The car-bus messages it switches
+continue through openpilot's radar disable, which makes it compatible with the `acc` and `acc_summaries` profiles. The car-bus messages it switches
 off, including the radar's PCS / AEB brake request, are described in [13](13_car_bus_messages.md).
 
 ## Ego speed
 
-The object-list velocities are **over ground**, so the `raw` and `fused` profiles subtract ego speed. Toyota 0xB4 reads 1.35 % below
-carState vEgo (the wheel-speed ego openpilot uses, within 0.1-0.4 % of GNSS); those profiles decode the radar speed at the nominal
+The object-list velocities are **over ground**, so the object-list decode (`raw` / `fused` configs in `ars510/`) subtracts ego speed. Toyota 0xB4 reads 1.35 % below
+carState vEgo (the wheel-speed ego openpilot uses, within 0.1-0.4 % of GNSS); that decode reads the radar speed at the nominal
 0.15 m/s per code and subtract 0xB4 / 0.9865 (`ego_speed_scale`, [06](06_accuracy.md#velocity)). The `acc` profile publishes the ACC target's closing speed (0.125 m/s per code,
 [05](05_acc_target_and_support.md#units-of-the-acc-target)), which is already relative to the car.
 
@@ -136,7 +136,7 @@ which fingerprints as 2022). Both are the ARS510 and send the same bus (●, [`r
 | radar cycle clock (0x239) | 15.4 / 15.8 changes per s | 16.5 per s |
 | ACC target state | 5 (target) on 68 % of the Hybrid minute; 1 (no target) on the whole ICE minute | 5 / 1 / 15 (start-up) |
 | `acc` interface | 15.5 / 15.8 reports per s; all 627 points equal the reference decoder | 17.0 reports per s; all 1,018 points equal |
-| `fused` object list | 783 points published on the Hybrid minute | the replay drives |
+| object-list decode (`fused` config) | 783 points published on the Hybrid minute | the replay drives |
 
 The integration therefore selects the parser by the car model: both firmwares carry the same messages, and the cycle
 clock stays inside radard's 8-24 Hz window on both.
@@ -160,12 +160,12 @@ offset, so the distance unit holds there too. Over the full routes every object 
 every first frame carries the 740 / 144-byte length with one flow-control frame, and every ACC check byte is valid once
 `TARGET_ID` is read as 6 bits: the C-HR 2021 radar numbers its tracks beyond 31 (32, 33 and 37 here), which the RAV4 radars
 never did in 1.24 M target cycles ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)). The radar's bus-1
-frames came before the first `carState` on every route (by 0.1-1.6 s), so the integration's bus-1 check finds them. The `fused` decoder reads the object list on all three, but the Yaris
-sends no 0xB4 wheel-speed frame, so the filter has no ego speed on that car. The integration enables both
-platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, the Yaris with `acc` whatever the profile, and the upstream
+frames came before the first `carState` on every route (by 0.1-1.6 s), so the integration's bus-1 check finds them. The object-list decode reads the object list on all three, but the Yaris
+sends no 0xB4 wheel-speed frame, so it has no ego speed on that car. The integration enables both
+platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, the Yaris with `acc` even when `acc_summaries` is installed, and the upstream
 `acc` proposal includes them ([17](17_upstream.md)); drives in traffic on those cars are still to come. In comma's fleet logs
 (three C-HR cars, about an hour) the object list reads followed cars 1-7 m *farther* than the ACC target at 30-100 m, the
 opposite of the RAV4's far shortfall (○, one or two cars beyond 50 m). `acc` and `acc_summaries` use the ACC target's
-distance; for `fused` and `raw` on a C-HR, prefer `acc` until more logs exist. Across the RAV4 fleet the two firmwares
+distance, so they are not affected. Across the RAV4 fleet the two firmwares
 (`8821F0R01100`, 70 cars; `8821F0R03100`, 167 cars) show the same in-path speed gain and excursion rates within their
 intervals ([`fleet_firmware_split.json`](../data/analysis/summaries/fleet_firmware_split.json)).

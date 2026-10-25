@@ -135,12 +135,11 @@ BASE_CONFIG = NativeInterfaceConfig(
     min_publish_age=60, relink_max_gap_s=3.5, ego_speed_scale=B4_TO_VEGO, drop_unresolved_vrel=True,
     drop_saturated_codes=True,
 )
-# The `fused` install profile (docs/12, docs/11; the default is `acc`): the base decode plus range fusion and one uncertainty-weighted speed
+# The `fused` object-list filter (docs/12; research, not installable while its speed excursions reach the planner): the base decode plus range fusion and one uncertainty-weighted speed
 # filter per track that fuses the object list and the radar's ACC target (matched by position, 0.4 x range scale; its
 # track takes the ACC distance as range; the ACC speed is weighted at 0.13 m/s, acc_sigma_mps). The track-ID relink and the saturation guard of the base decode are off:
 # with the filter on, the driving is the same with them on or off (docs/12). Beyond 15 m, tracks other than the ACC target's that sit
-# more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate"). The openpilot
-# version (upstream/ars510_radar.py) is this profile in one file.
+# more than 2.5 m from the yaw-predicted path are withheld (docs/12 "Path gate").
 FUSED_CONFIG = replace(BASE_CONFIG, range_fusion_gain=0.1, relink_max_gap_s=0.0, drop_saturated_codes=False,
                        fused_speed_filter=True, path_gate_m=2.5, acc_sigma_mps=0.13, far_acc_only_m=60.0,
                        path_gate_stationary_mps=0.5)

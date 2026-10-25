@@ -14,14 +14,13 @@ sudo reboot
 ```
 
 The fork is detected, the `acc` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. `--profile fused` installs the all-tracks Kalman profile and
-`--profile raw` the unfiltered decode for comparison ([docs/11](../docs/11_profiles_compared.md) compares them);
-`anchor` and `steady` install `fused`.
+version of this installer is replaced automatically. `--profile acc_summaries` installs the alternative for forks
+([docs/11](../docs/11_profiles_compared.md) compares them).
 
 Running the installer again without `--profile` keeps the profile already installed, so an update script can call it
 as is. It looks in the installed interface file, and when a fork update has removed the install, in the record this
 checkout keeps of its last install into the same path (`openpilot/.installed_profiles.json`, ignored by git). A first
-install gets `acc`. The installer prints one line with the active profile and why (`requested with --profile`,
+install gets `acc`, and so does a reinstall over a profile that is no longer installable. The installer prints one line with the active profile and why (`requested with --profile`,
 `kept from the existing install`, `kept from the last install into this path`, or `the default`), and a note when
 `--profile` changes it. `--check` shows what a plain re-run would install; `--uninstall` forgets the record.
 
@@ -40,25 +39,26 @@ while testing). The re-run reinstalls the profile you had.
 | profile | config |
 |---|---|
 | `acc` (default) | the radar's ACC target alone as one point, the upstream proposal, open as [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860) ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), opendbc's CANParser, 45 code lines): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([docs/17](../docs/17_upstream.md#towards-an-upstream-comma-interface)) |
-| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker ([`standalone/ars510_acc_summaries.py`](standalone/ars510_acc_summaries.py), 53 code lines): the target summaries 0x191-0x194 within 40 m, the ACC car published once, speed from each summary's range slope. The main alternative: braking as `acc` over all replays, cut-ins radar-backed earlier, two short road drives so far ([docs/11](../docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
-| `fused` | `FUSED_CONFIG`: the `raw` decode with range fusion, one Kalman speed filter fusing the object list and the ACC target (0x235) by the radar's own uncertainty, and a path gate; it drives exactly like the `openpilot` version. Every radar car within 60 m, with the longest road record ([docs/11](../docs/11_profiles_compared.md)) |
-| `openpilot` | the single-file version of `fused` ([`upstream/ars510_radar.py`](../upstream/ars510_radar.py)), installed as `opendbc/car/toyota/ars510_upstream.py`: one file in opendbc style with `fused`'s filter, points with `trackId` / `dRel` / `yRel` / `vRel` only (`upstream` is its older name) |
-| `raw` | `BASE_CONFIG`: the unfiltered radar decode with what radard needs, for research and comparison. Velocity excursions reach the planner (93 hard radar-only braking ticks on the held-out routes against 16 for `fused` and 14 for `acc` and `acc_summaries`); the installer prints a warning. `stock` and `default` are its older names |
+| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker ([`standalone/ars510_acc_summaries.py`](standalone/ars510_acc_summaries.py), 53 code lines): the target summaries 0x191-0x194 within 40 m, the ACC car published once, speed from a Kalman filter on each summary's range over the radar's clock. Aimed at forks: braking as `acc` over all replays, cut-ins radar-backed earlier, about 30 engaged road minutes so far ([docs/11](../docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 
-`shared_speed` and `shared_range` are alternatives that were tried and replayed worse than `acc`, `acc_summaries` and `fused` ([docs/17](../docs/17_upstream.md#the-acc-target-alone--candidate)); they stay installable for research. `colored` (removed) installs `fused`.
-
-Older names still work and print what they select: `anchor` / `steady` → `fused`, `stock` / `default` → `raw`,
-`upstream` → `openpilot`. `--profile default` selects `raw`; leave `--profile` out to install `acc` the first time
-and to keep the installed profile afterwards (`--profile acc` switches back to `acc`).
+The object-list profiles of earlier versions (`fused`, `openpilot`, `raw`, `shared_speed`, `shared_range`, and the older
+names `anchor`, `steady`, `colored`, `stock`, `default`, `upstream`) are not installable: they publish the object list's
+speeds, whose excursions (mostly false closings beyond 40 m, [docs/07](../docs/07_velocity_excursions.md)) reach the
+planner. On the second car's 38 latest held-out drives `fused` added 2.05 s of unnecessary braking per moving hour over
+`acc`, including a −3.31 m/s² request for a list track at 54 m whose closing speed read 23.7 m/s at a constant range
+([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). `--profile` with one of those names,
+or a reinstall over one, installs `acc` and prints a note; the files older versions installed for them
+(`ars510_upstream.py`, `ars510_shared_{speed,range}.py`) are removed. The object-list filter stays in `ars510/` as
+research code ([docs/12](../docs/12_kalman_filter.md)).
 
 ## What gets installed
 
 | file | installed as | what |
 |---|---|---|
-| `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged |
-| `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (raw CAN → RadarData) and the hook |
-| `../upstream/ars510_radar.py` | `opendbc/car/toyota/ars510_upstream.py` | the single-file `fused` (used by `--profile openpilot`) |
-| `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone (used by `--profile acc`) |
+| `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged (the interface uses its constants, PCS alarm and fault flag) |
+| `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (dispatch to the profile file, the radar's fault flag) and the hook |
+| `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone (`--profile acc`) |
+| `standalone/ars510_acc_summaries.py` | `opendbc/car/toyota/ars510_acc_summaries.py` | the ACC target plus the summary cars (`--profile acc_summaries`) |
 | `../upstream/toyota_tss2_ars510.dbc` | `opendbc/dbc/ars510_acc_target.dbc` | its DBC: the ACC target messages, under a name of its own so opendbc's `toyota_tss2_ars510.dbc` ([commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) stays as shipped |
 | 8-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)`; on any error it logs and leaves Toyota as shipped |
 
@@ -100,16 +100,16 @@ python openpilot/install.py /tmp/opendbc_ars510
 $OP/.venv/bin/python openpilot/check_integration.py --opendbc /tmp/opendbc_ars510
 ```
 
-`check_integration.py` runs synthetic records through the installed Toyota interface the way card does:
+`check_integration.py` runs radar frames through the installed Toyota interface the way card does:
 - detection: cold start by firmware, fallback by bus 1, other cars untouched;
-- RadarData points: units, sign, ego-speed subtraction, age gate;
-- radarless behaviour before the first record;
-- the timeout report and recovery when records stop and resume;
-- for `acc` and `acc_summaries`: synthetic ACC target (and summary) frames, the ACC car published once, summary cars
-  beyond 60 m left out, timeout and recovery.
+- the PCS alarm (0x100) as `stockFcw`;
+- `acc`: the bundled ACC-target sample, one point per radar cycle, units and sign, timeout and recovery, and
+  `radarUnavailableTemporary` while the radar's 0x196 fault flag is held;
+- `acc_summaries`: synthetic ACC target and summary frames, the ACC car published once, summary cars beyond 40 m left
+  out, timeout and recovery.
 
-It passes 21-22 checks on current openpilot, the openpilot 10b9e73 used for replays and sunnypilot v2026.002.002. To
-replay your own drives stock vs installed, see
+On the openpilot 10b9e73 used for replays it passes 20 checks with `acc` and 17 with `acc_summaries` (that tree has no
+optional RadarPoint fields). To replay your own drives stock vs installed, see
 [docs/09](../docs/09_tools_and_data.md#replay-your-drives-through-openpilot).
 
 ## Troubleshooting
@@ -120,7 +120,7 @@ replay your own drives stock vs installed, see
 | leads are still vision-only after installing | reboot (a full reboot reloads the Toyota modules); `--check` must show `hook … present`; the car must fingerprint as `TOYOTA_RAV4_TSS2_2022`, `TOYOTA_RAV4_TSS2_2023`, `TOYOTA_CHR_TSS2` or `TOYOTA_YARIS` (a radar-ACC Toyota) |
 | `radarUnavailable` true on a RAV4 2022 / 2023 with the hook present | `--check` must show `installed files: match this checkout`; an install from before the car-model detection needed the radar firmware in `carFw` or 0x80 / 0x85 on bus 1 during fingerprinting, and a car picked manually (CarrotPilot's car selection, `FINGERPRINT`) at a cold start has neither: `git pull`, install again, reboot |
 | radar leads disappeared after a fork update | the update reset `/data/openpilot`; run the installer again and reboot |
-| `radarUnavailableTemporary` alerts | the radar stopped sending its object list for more than 0.5 s; check the wiring / harness; openpilot longitudinal's radar disable keeps the object list running on `8821F0R03100` ([docs/01](../docs/01_radar_bus.md#openpilots-radar-disable)), so a log showing 0x80 stopping after the radar's `68 01` response points to other firmware or hardware in the radar line ([docs/08](../docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)) |
+| `radarUnavailableTemporary` alerts | the radar stopped sending its ACC-target frames for more than 0.5 s, or holds its own fault flag (0x196, a blocked radar); check the wiring / harness and the radar cover; openpilot longitudinal's radar disable keeps bus 1 running on `8821F0R03100` ([docs/01](../docs/01_radar_bus.md#openpilots-radar-disable)), so a log showing bus 1 stopping after the radar's `68 01` response points to other firmware or hardware in the radar line ([docs/08](../docs/08_openpilot_integration.md#checking-a-new-install-on-the-car)) |
 | the lead chevron sits on the hood when stopped close behind a car | a UI quirk: the chevron is drawn from the radar distance in the camera frame; driving uses the measured distance |
 | braking feels wrong | flag the moment with the bookmark button and open a [drive report](https://github.com/ds-sebastian/ars510-radar/issues/new?template=drive_report.yml); `--uninstall` returns to vision only |
 

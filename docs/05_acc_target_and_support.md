@@ -6,8 +6,8 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 | stream | read by | role |
 |---|---|---|
-| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` and `acc_summaries`; `fused` as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
-| object list (0x80) | `raw` and `fused` | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
+| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` and `acc_summaries`; the research `fused` filter as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
+| object list (0x80) | no installable profile (its speed excursions, [07](07_velocity_excursions.md)); the research `raw` / `fused` configs and the tools | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
 | target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets: its two nearest moving tracks, the ACC car among them when it is one of the two (not a far-lead source) |
 
 ## The radar's ACC target (0x235 / 0x237)
@@ -156,7 +156,7 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
   react to the same scene ([summary](../data/analysis/summaries/acc_camera_identifiability.json)). The camera
   also feeds the radar its lane curves (0x85); a drive with the camera covered tests the rest
   ([10](10_research_directions.md)). The interface uses the target as the radar's own ACC target: `acc` publishes it
-  alone, `fused` associates it with an object-list track by position.
+  alone, the research `fused` filter associates it with an object-list track by position.
 - **The radar acquires a moving target only within max(80 m, about 4 s × ego speed) (◐, owner car):** of 430 moving acquisitions the
   farthest are 78-80 m below 20 m/s, 100 m at 20-25, 111 m at 25-30 and 129 m at 30-40 m/s; 0.2 % lie beyond max(80 m, 4 s × vEgo).
   The limit is on acquisition, not on keeping a target: in-lane camera leads beyond 80 m are covered 78-90 % inside it and 32-53 %
@@ -168,7 +168,7 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
 
 *Phase of each message against the radar's 0x190, per minute of one drive. Logger timestamps come in ~10 ms USB batches, so camera drift appears as 10 ms steps.*
 
-**How good it is** (ACC target against the object list, same cars; `acc` publishes the first, `fused` weights both):
+**How good it is** (ACC target against the object list, same cars; `acc` publishes the first, the research `fused` filter weights both):
 
 | measure | ACC target | object list | source |
 |---|---|---|---|
@@ -182,8 +182,8 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
   no list is sent and takes no measurable range from the list ([above](#the-radars-acc-target-0x235--0x237)). The object
   list's own fields and their recent history explain only 37-43 % of its disagreement with the ACC target
   ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)). Neither result
-  identifies the tracker's inputs, and the second bounds only the tested models, not every estimator. The `fused`
-  profile therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
+  identifies the tracker's inputs, and the second bounds only the tested models, not every estimator. The research
+  `fused` filter therefore feeds the ACC target in as a speed measurement ([12](12_kalman_filter.md#the-model)).
 
 ### Class, width and timestamp (0x239 / 0x23B)
 
@@ -304,9 +304,10 @@ a median 0.7-1.3 s before ([`function_tracker_outputs.json`](../data/analysis/su
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
 layout). It returns `None` for a short payload or the exact whole-frame sentinel. `acc_summaries` publishes the non-ACC
-summaries within 40 m as radar points of their own, with a speed from the slope of their last 8 ranges
-([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)); `fused` and `acc` do not read them
-(`fused` 2.0-2.3 used them inside its filter: [12](12_kalman_filter.md#what-the-summaries-do)).
+summaries within 40 m as radar points of their own, with a speed from a constant-velocity Kalman filter on their ranges
+over the radar's 0x190 clock, published once a pair code has 8 ranges within 0.6 s
+([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)); `acc` does not read them
+(the `fused` filter 2.0-2.3 used them inside its filter: [12](12_kalman_filter.md#what-the-summaries-do)).
 
 ## 0x190: cycle header
 

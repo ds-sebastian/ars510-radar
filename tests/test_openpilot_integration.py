@@ -76,7 +76,7 @@ def test_check_reports_an_outdated_install(tmp_path: Path) -> None:
     toyota = root / "opendbc/car/toyota"
     run = installer(root, state)
 
-    run("--profile", "fused")
+    run("--profile", "acc_summaries")
     assert "installed files: match this checkout" in run("--check")
     old = toyota / "ars510_radar_interface.py"
     old.write_text(old.read_text().replace("def detect(", "def detect_old("))
@@ -94,50 +94,73 @@ def test_first_install_gets_the_default(tmp_path: Path) -> None:
 
 
 def test_reinstall_keeps_the_installed_profile(tmp_path: Path) -> None:
-    """The issue #66 case: an update script re-runs install.py without --profile on a fused install."""
+    """The issue #66 case: an update script re-runs install.py without --profile."""
     root, state = stub_opendbc(tmp_path)
     run = installer(root, state)
-    assert "note:" not in run("--profile", "fused")
+    assert "note:" not in run("--profile", "acc_summaries")
     out = run()
-    assert "profile: fused (kept from the existing install; pass --profile to change it)" in out
-    assert installed(root) == "fused"
-    assert "install.py without --profile installs: fused (kept from the existing install" in run("--check")
+    assert "profile: acc_summaries (kept from the existing install; pass --profile to change it)" in out
+    assert installed(root) == "acc_summaries"
+    assert "install.py without --profile installs: acc_summaries (kept from the existing install" in run("--check")
 
 
 def test_reinstall_after_a_fork_update_keeps_the_profile(tmp_path: Path) -> None:
     """A fork update resets the checkout (installed files and hook gone); the record in this checkout keeps the profile."""
     root, state = stub_opendbc(tmp_path)
     run = installer(root, state)
-    run("--profile", "raw")
+    run("--profile", "acc_summaries")
     shutil.rmtree(root)
     stub_opendbc(tmp_path)
     out = run()
-    assert "profile: raw (kept from the last install into this path, which a fork update removed" in out
-    assert installed(root) == "raw"
+    assert "profile: acc_summaries (kept from the last install into this path, which a fork update removed" in out
+    assert installed(root) == "acc_summaries"
 
 
 def test_explicit_profile_changes_it_with_a_note(tmp_path: Path) -> None:
     root, state = stub_opendbc(tmp_path)
     run = installer(root, state)
-    run("--profile", "fused")
+    run("--profile", "acc_summaries")
     out = run("--profile", "acc")
     assert "profile: acc (requested with --profile)" in out
-    assert "note: --profile changes the profile from fused to acc" in out
+    assert "note: --profile changes the profile from acc_summaries to acc" in out
     assert "kept from the existing install" in run() and installed(root) == "acc"
 
 
-def test_legacy_name_in_the_installed_file_is_kept_as_its_profile(tmp_path: Path) -> None:
+@pytest.mark.parametrize("name", ["fused", "openpilot", "raw", "shared_speed", "anchor", "upstream", "stock"])
+def test_a_removed_profile_name_installs_acc_with_a_note(tmp_path: Path, name: str) -> None:
     root, state = stub_opendbc(tmp_path)
+    out = installer(root, state)("--profile", name)
+    assert f"note: '{name}' is no longer installable" in out
+    assert installed(root) == "acc"
+
+
+def test_reinstall_over_an_object_list_install_replaces_it_with_acc(tmp_path: Path) -> None:
+    """An install from an older version (profile fused, its single-file and research files present) becomes acc."""
+    root, state = stub_opendbc(tmp_path)
+    toyota = root / "opendbc/car/toyota"
     run = installer(root, state)
-    run("--profile", "fused")
-    iface = root / "opendbc/car/toyota/ars510_radar_interface.py"
-    iface.write_text(iface.read_text().replace('PROFILES["fused"]', 'PROFILES["anchor"]'))
-    assert "profile: fused (kept from the existing install" in run()
+    run()
+    iface = toyota / "ars510_radar_interface.py"
+    iface.write_text(iface.read_text().replace('PROFILE = PROFILES["acc"]', 'PROFILE = PROFILES["fused"]'))
+    for f in ("ars510_upstream.py", "ars510_shared_speed.py", "ars510_shared_range.py"):
+        (toyota / f).write_text("# older install\n")
+    assert "(no longer installable; install.py replaces it with acc)" in run("--check")
+    out = run()
+    assert "profile: acc (replaces the installed 'fused', which is no longer installable" in out
+    assert installed(root) == "acc"
+    assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
+
+
+def test_a_recorded_object_list_profile_is_replaced_with_acc(tmp_path: Path) -> None:
+    root, state = stub_opendbc(tmp_path)
+    state.write_text('{"%s": "raw"}\n' % root)
+    assert "replaces the installed 'raw'" in installer(root, state)()
+    assert installed(root) == "acc"
 
 
 def test_uninstall_forgets_the_profile(tmp_path: Path) -> None:
     root, state = stub_opendbc(tmp_path)
     run = installer(root, state)
-    run("--profile", "fused")
+    run("--profile", "acc_summaries")
     run("--uninstall")
     assert "profile: acc (the default; no earlier install found)" in run()

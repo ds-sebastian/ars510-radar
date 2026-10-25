@@ -1,10 +1,12 @@
-# 11. Profiles compared: `acc`, `acc_summaries` and `fused` against vision only
+# 11. Profiles compared: `acc`, `acc_summaries` and the object-list filter against vision only
 
-Three profiles carry the driving recommendation. **`acc`** (the install default, and the opendbc-compatible form)
-publishes the radar's ACC target as one radar point. **`acc_summaries`** (the main alternative) adds up to two more
-cars from the radar's own tracker within 40 m. **`fused`** publishes every radar car through one Kalman speed filter per
-track. `raw` (the unfiltered decode) is the reference all three are measured against, and vision only (stock openpilot on
-this car) is the baseline.
+The installer offers two profiles. **`acc`** (the default, and the opendbc-compatible form) publishes the radar's ACC
+target as one radar point. **`acc_summaries`** (for forks) adds up to two more cars from the radar's own tracker within
+40 m. Both publish only the radar's tracker outputs. Two object-list decodes are compared here as research references:
+**`fused`** (every radar car through one Kalman speed filter per track, [12](12_kalman_filter.md)) and **`raw`** (the
+unfiltered decode). Neither is installable: the object list's speeds have excursions, mostly false closings beyond 40 m
+([07](07_velocity_excursions.md)), that still reach the planner through `fused` (see the second car's latest drives
+below). Vision only (stock openpilot on this car) is the baseline.
 This page sets them side by side: how each works, replay numbers on the same drives, driving pros and cons, assumptions,
 and how the code compares with openpilot's other radar interfaces.
 
@@ -17,26 +19,27 @@ Numbers: [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_visi
 
 ## At a glance
 
-| | `acc` (default) | `acc_summaries` | `fused` | `raw` |
+| | `acc` (default) | `acc_summaries` | `fused` (research) | `raw` (research) |
 |---|---|---|---|---|
 | radar cars published | the one car the radar's ACC function follows | the ACC car plus up to two other moving cars from the summaries (the radar's two nearest movers), within 40 m | every radar car (60 m and closer); beyond 60 m only the car the ACC target follows | every radar car |
 | source | ACC target frames 0x235 / 0x237 | ACC target + target summaries 0x191-0x194, speed from a Kalman filter on their range | object list 0x80 + ACC target, one Kalman speed filter per track | object list 0x80 |
 | range of the followed car | ACC distance, 0.025 m per code | ACC distance (summary range, 1/16 m, for the others) | ACC distance (object-list range for other tracks) | object-list range |
 | other cars | camera, through radard's usual vision match | two radar cars and camera | radar and camera | radar and camera |
-| code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 88 code lines, no DBC | 187 code lines in the openpilot file ([17](17_upstream.md#parts-of-the-openpilot-file)) | fork build: relink and saturation guard on the shared decode |
+| code | 45 code lines reading 7 DBC signals ([17](17_upstream.md#the-acc-target-alone--candidate)) | 99 code lines, no DBC | `FUSED_CONFIG` in the `ars510` package ([12](12_kalman_filter.md)) | `BASE_CONFIG` in the `ars510` package |
 | tuned constants | protocol values only | 40 m limit, speed-filter noise, ACC match 1 m / 0.5 m | sigma scale, young-track factor, process noise, clamp, readiness, path gate, far rule, ACC weight ([12](12_kalman_filter.md#the-model)) | protocol values only |
 | hard radar-only braking ticks, 20 held-out routes, moving | 14 | 14 | 16 | 93 |
 | braking only the radar asked for, per hour (driver on the gas) | 0 (0) | 0 (0) | 0 (0) | 1.75 (0.66) |
 | first braking request vs vision only (95 % CI) | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) | −0.15 s (−0.26 … −0.05) |
-| install | `install.py /data/openpilot` (`--profile acc` to switch back) | `--profile acc_summaries` | `--profile fused` | `--profile raw` |
-| use | everyday driving; the upstream (opendbc) proposal | the main alternative: earlier radar backing on cut-ins, still small | every radar car, road-tested | research |
+| install | `install.py /data/openpilot` (`--profile acc` to switch back) | `--profile acc_summaries` | not installable | not installable |
+| use | everyday driving; the upstream (opendbc) proposal | forks: earlier radar backing on cut-ins, still small | research on the object list (tools, replay) | research on the object list's own errors |
 
-Alternatives that were tried (`shared_speed`, `shared_range` and other filter variants) are summarised in
-[12](12_kalman_filter.md#kalman-variants-tested) and [17](17_upstream.md#the-acc-target-alone--candidate). The legacy names `anchor` and `steady` select `fused`.
+Other object-list filters that were tried (`shared_speed`, `shared_range` and further variants) are summarised in
+[12](12_kalman_filter.md#kalman-variants-tested) and [17](17_upstream.md#the-acc-target-alone--candidate). Asking the
+installer for `fused`, `raw` or any older object-list profile name, or reinstalling over one, installs `acc` and says so.
 
 ## Head to head
 
-The three profiles replayed through the unchanged openpilot card → radard → planner on every drive set, with the hindsight-lead
+The profiles replayed through the unchanged openpilot card → radard → planner on every drive set, with the hindsight-lead
 oracle ([`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json)) as the judge of unnecessary and
 missed braking seconds. Hard = request ≤ −2 m/s² while vision only asks ≥ −0.5; mild = ≤ −1 while vision ≥ −0.3 (episodes);
 onset = first request ≤ −0.5 m/s² relative to vision (negative = earlier).
@@ -171,8 +174,7 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
 - **Small and auditable.** 45 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
-- **Replay evidence on 21.45 moving hours.** `fused` also has road drives (sunnypilot and a second driver's car,
-  [08](08_openpilot_integration.md#on-the-road)). `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
+- **Replay evidence on 21.45 moving hours.** `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
   openpilot longitudinal, and a second driver's 26 drives, 0.92 h): with the camera's lead within 80 m, radard's lead was radar-backed 98.5-98.9 % of the engaged
   time, and the first two drives stopped at openpilot's designed gap.
 
@@ -250,14 +252,12 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
 | situation | profile |
 |---|---|
 | everyday driving, the upstream (opendbc) proposal | `acc` |
-| radar backing for close cut-ins and the nearest other cars, in a small file | `acc_summaries` |
-| every radar car within 60 m, with the longest road record | `fused` |
-| an all-tracks candidate for upstream, in one file | `openpilot` (`fused` in `upstream/ars510_radar.py`) |
-| research on the object list's own errors | `raw` |
+| radar backing for close cut-ins and the nearest other cars, in a small file (forks) | `acc_summaries` |
+| research on the object list (every radar car, its speed errors) | `fused` / `raw` in the `ars510` package, through `tools/` ([09](09_tools_and_data.md)) |
 
 `acc` publishes the followed car; Toyota's own ACC follows that same car. `acc_summaries` adds the radar
-tracker's two nearest moving cars when they are not that car. `fused` keeps the radar's other cars, which
-radard matches to the camera's lead through its distance and speed gates.
+tracker's two nearest moving cars when they are not that car. Every other car comes from the camera until an
+object-list filter keeps the list's speed excursions away from the planner.
 
 ## How each profile works
 
@@ -266,7 +266,7 @@ radard matches to the camera's lead through its distance and speed gates.
 *Each row is one processing step; coloured cells are the steps a profile runs. Line counts are code lines of the
 fork build (`ars510/`). `acc` and `acc_summaries` are each one whole file: `acc_summaries`' 63 lines include its own ACC target decode, so they
 are not added to `acc`'s 45;
-the object-list steps belong to `raw` and `fused`.*
+the object-list steps belong to the research decodes `raw` and `fused`.*
 
 - **`acc`** publishes the radar's ACC target: the one car the radar's own ACC function follows, already chosen,
   converged and in path, with its fine distance (0.025 m), lateral position and closing speed. Toyota's ACC uses
@@ -277,7 +277,7 @@ the object-list steps belong to `raw` and `fused`.*
   other moving cars within 40 m: range and lateral position at 1/16 m and 0.015 m, `trackId` 64 + the summary's pair code,
   and a speed from the least-squares slope of that code's last 8 ranges. A summary within 1 m / 0.5 m of the ACC point
   is the ACC car and is skipped. Details [above](#acc_summaries-acc-plus-the-summary-cars).
-- **`fused`** adds range fusion and **one Kalman filter per track** on the lead's over-ground speed
+- **`fused`** (research) adds range fusion and **one Kalman filter per track** on the lead's over-ground speed
   ([12](12_kalman_filter.md#the-model)). It uses the scalar Kalman equations with a process-noise scale of 1.5 m/s²
   (a lead-acceleration bound). Each reading updates it in turn, weighted by its model variance: object-list speed has
   σ = 0.045 m/s × max(`240|7`, 1), multiplied by 1.8 through age 60 and tapered to 1 at age 100. The matched ACC target
@@ -285,7 +285,7 @@ the object-list steps belong to `raw` and `fused`.*
   robust Kalman update), and a track is first published once its modeled speed standard deviation is at most 0.75 m/s
   (and age at least 60), which is a readiness measure for publication. radard then runs its own Kalman filter on the
   lead; `fused` feeds it one speed per track that combines what the radar knows.
-- **`raw`** publishes the object list as decoded: tracks from age 60 (≈ 3.6 s, once range and speed have converged),
+- **`raw`** (research) publishes the object list as decoded: tracks from age 60 (≈ 3.6 s, once range and speed have converged),
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
   withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
 
@@ -372,8 +372,8 @@ whose lead comes from the object list alone.
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
 | `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and a small road record (nine drives) |
 | `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
-| `fused` | every radar car within 60 m; closest to vision in feel, radar-only braking gone, as early as vision on average; sunnypilot road drives and a second driver's car | the head start over vision is small on average; 187 code lines with tuned gates; a track is published 3.6 s after it appears |
-| `raw` | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
+| `fused` (research, not installable) | every radar car within 60 m; closest to vision in feel on the development drives, as early as vision on average | list-speed excursions still pass the filter on held-out drives (a −3.31 m/s² request for a false 23.7 m/s closing at 54 m on the second car); more unnecessary braking than `acc` on every held-out set pooled; tuned gates; a track is published 3.6 s after it appears |
+| `raw` (research, not installable) | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
 ## Assumptions and limits
 
@@ -389,7 +389,7 @@ whose lead comes from the object list alone.
   driver-controlled time; 4 further drives; 3 owner sunnypilot drives) used during development, plus 8 fresh drives, 26
   held-out owner routes and the second car's routes. In the driver-brake table, at most 7 brake presses separate
   the columns in each row.
-- **Versions.** `fused` rows are release 2.6.0 (far rule, stationary path gate, ACC target weight 0.13 m/s, summaries
+- **Versions.** `fused` rows are the filter as last installable, release 2.6.0 (2.6.x on the second car's latest drives) (far rule, stationary path gate, ACC target weight 0.13 m/s, summaries
   off). `acc_summaries` rows are the public `openpilot/standalone/ars510_acc_summaries.py` with its 40 m limit and summary-glitch guards ([`summary_all_ones_glitch.json`](../data/analysis/summaries/summary_all_ones_glitch.json)). `acc` rows are the public `upstream/ars510_acc_target.py` replayed through the same harness; the replayed
   file is a hand-decoded version that publishes the same points as the current DBC file (45 code lines) on
   all 11,028 bundled reports; the file's lateral-wrap unwrap changes no planner tick in the replay

@@ -92,7 +92,7 @@ of the time ([`score16_outcomes.json`](../data/analysis/summaries/score16_outcom
 returns and a lower one on 24 %. The byte behaves as an
 **existence probability in percent**, the quantity the Tesla Model 3's Continental radar sends as `ProbExist`
 ([`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)). It reaches 100 % at about age 21 (p90 30), well before
-range and velocity converge, which is why `raw` and `fused` keep the age-60 publication gate.
+range and velocity converge, which is why the object-list configs (`raw`, `fused`) keep the age-60 publication gate.
 
 **Predicted records `107|1`.** Set on 45% of the last five records of a track's life against 2.6% elsewhere, with lower
 range noise while set (median 0.19 vs 0.41 m from the track's own trend) and lower existence (median 80 vs 100): the record behaves as a
@@ -201,8 +201,8 @@ the association confidence `136|4`, length `56|8`, width `216|6` and full byte `
 (700 segments) they are zero together. These rows always have motion code 5, class 1, state 1,
 range code 160 (0 m) and lateral code 2047: the position is a placeholder, while the velocity codes already vary.
 The radar also flags these rows itself: slot bit 15 (`UNK_15_1`) is set exactly on the template rows and never otherwise.
-All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so `raw` and
-`fused` withhold them. Counts are in
+All four attributes are nonzero from age 2. The decoder marks template rows `geometry_valid = False`, so the object-list
+configs (`raw`, `fused`) withhold them. Counts are in
 [`initial_attribute_zeros.json`](../data/analysis/summaries/initial_attribute_zeros.json).
 
 ![Joint initial attribute and position codes](img/analysis/initial_attribute_zeros.png)
@@ -292,7 +292,7 @@ event happened at some time on that phase; the record where a phase newly sets i
   speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
   reproduces the share of far-range excursions (5.3 % observed against 6.5 % predicted on the corpus, 7.7 % against 5.5 % on fresh drives;
   [07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
-  [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The `fused` profile uses it this way
+  [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The research `fused` filter uses it this way
   (`speed_sigma_per_code = 0.045`).
 - **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
   all ranges grows linearly with `224|7` (log-log slope 1.01; `232|8` 0.79), but within a fixed range band (beyond 15 m)
@@ -310,7 +310,7 @@ event happened at some time on that phase; the record where a phase newly sets i
   jitter is about a fifth of the ACC-referenced error per count, so these codes describe slowly varying tracker error.
 - **`240|7` grades the width of the error:** it separates excursion records below 40 m (AUC 0.95, 72 excursions,
   [`continental_field_map.json`](../data/analysis/summaries/continental_field_map.json)) with an AUC of 0.53-0.59 beyond 40 m, where 107 of the 179 excursions happen. Its size follows the error
-  width ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)), so it serves as a per-reading weight in `fused`.
+  width ([07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale)), so it serves as a per-reading weight in the `fused` filter.
 - **Optical check:** against the camera reference (40-80 m) the disagreement grows at 0.049 m/s per count (R² 0.81
   over code deciles), which includes the camera's own error
   ([summary](../data/analysis/summaries/video_truth.json)).
@@ -318,7 +318,7 @@ event happened at some time on that phase; the record where a phase newly sets i
 **Reference scope.** The units above measure the disagreement between two estimates of the same target:
 `Var(eNative − eACC) = Var(eNative) + Var(eACC) − 2 Cov(eNative, eACC)`. An error both estimates share cancels in it; a
 reference with its own known error, such as a second car that logs its speed, gives the physical error per count
-([10](10_research_directions.md#for-a-better-ride)). In `fused` the codes set an empirical weight per reading, which the
+([10](10_research_directions.md#for-a-better-ride)). In the `fused` filter the codes set an empirical weight per reading, which the
 replays justify ([12](12_kalman_filter.md#what-each-part-is-worth)).
 
 **`168|10`** is 1023 or 0 (768 and 832 on 0.4 % of rows). A track keeps one pattern for life: on in k of every 5 cycles, with the
@@ -328,9 +328,9 @@ field likely records how the track was first detected (the far scan)
 ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) comes with `240|7` = 127 on all 35 bundled rows. It appears in
-runs of 1-6 records on mature tracks at 34–97 m (9 events, 33 rows in the 700-segment corpus) and can decay over a few records (bundled drive B: 1023, 1016, 1004, 992, 981). `raw`
-withholds it; in `fused` the speed filter's robust update absorbs it
-([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)); the `acc` profile reads the ACC target only.
+runs of 1-6 records on mature tracks at 34–97 m (9 events, 33 rows in the 700-segment corpus) and can decay over a few records (bundled drive B: 1023, 1016, 1004, 992, 981). The `raw`
+config withholds it; in the `fused` filter the robust update absorbs it
+([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)); the installable `acc` and `acc_summaries` profiles read only the radar's tracker outputs.
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 

@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from ars510.support import ACC_CHECK
-from test_upstream_candidate import _fake_opendbc
+from opendbc_stub import fake_opendbc
 
 REPO = Path(__file__).resolve().parents[1]
 FILES = sorted((REPO / "openpilot" / "standalone").glob("ars510_*.py"))
@@ -21,7 +21,7 @@ FILES = sorted((REPO / "openpilot" / "standalone").glob("ars510_*.py"))
 @pytest.fixture(params=FILES, ids=lambda p: p.stem)
 def mod(request):
   saved = {k: sys.modules.get(k) for k in ("opendbc", "opendbc.car", "opendbc.car.structs", "opendbc.car.interfaces")}
-  fake = _fake_opendbc()
+  fake = fake_opendbc()
   fake["opendbc.car.structs"] = fake["opendbc.car"].structs  # for `from opendbc.car.structs import RadarData`
   sys.modules.update(fake)
   try:
