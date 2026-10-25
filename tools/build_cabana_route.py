@@ -106,6 +106,7 @@ SIGNAL_COMMENTS = {
     "UNK_HDR13_4": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
     "UNK_HDR17_15": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
     "UNK_HDR33_1": "Part of the clock code in record bytes 1-4 (see UNK_HDR8_5).",
+    "CONST_HDR32_1": "Bit 24 of the clock code in record bytes 1-4 (see UNK_HDR8_5): 0 until the clock passes 2^24 counts (about 28 min of radar uptime at 0.1 ms per count), then it toggles like the other clock bits.",
     "UNK_HDR41_15": "Record counter: record bytes 5-6 (little-endian) >> 1; equals the 0x85 counter of the same cycle.",
     "UNK_HDR104_3": "Timing-offset candidate (104|11 region): its change tracks the record's arrival-time offset at about 1 ms per count.",
     "UNK_HDR107_4": "Timing-offset candidate (see UNK_HDR104_3).",
