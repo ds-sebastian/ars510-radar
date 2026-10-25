@@ -518,7 +518,7 @@ CM_ SG_ 401 A191_PAIR_DESCRIPTOR1_CODE7 "Class template height-like size, m: 1.5
 CM_ SG_ 401 A191_PAIR_DESCRIPTOR2_CODE8 "Class template length, m: 4.5 car, 12.0 truck; rare other values from 2.0.";
 CM_ SG_ 402 A192_WORD0_RESERVED_ZERO3 "Always zero.";
 CM_ SG_ 402 A192_PAIR_RANGE_CODE13 "Distance of one internal-tracker target: (code - 160) / 16 m, the object list encoding.";
-CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "Always zero.";
+CM_ SG_ 402 A192_WORD1_RESERVED_ZERO3 "Zero, except bit 21 = 1 on five frames of one drive while the lateral field held a far-right target near its floor (-30.7 to -23.8 m): possibly a range marker or extension of the lateral field.";
 CM_ SG_ 402 A192_PAIR_FIELD1_CODE13 "Lateral position of the same target: (code - 2048) * 0.015 m, left positive; keep all 13 bits.";
 CM_ SG_ 403 A193_B0_RESERVED0 "Always zero.";
 CM_ SG_ 403 A193_PAIR_SCORE_CODE7 "Target score: 91-100 while active, rising with the target's own over-ground speed (100 above about 15 m/s) and slightly with track maturity: a moving-vehicle confidence, not a speed; 127 in the sentinel.";
