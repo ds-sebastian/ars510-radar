@@ -432,7 +432,7 @@ CM_ SG_ 258 A102_B1_RESERVED4_5_ZERO2 "Always zero.";
 CM_ SG_ 258 A102_CONTEXT_BIT14 "Camera state that the radar copies into its car-bus 0x366 report (byte 0 bit 1) a few hundred ms later; rises with short headway at speed (likely a close-following state).";
 CM_ SG_ 258 A102_B1_RESERVED7_ZERO1 "Always zero.";
 CM_ SG_ 258 A102_B2_RESERVED_ZERO5 "Always zero.";
-CM_ SG_ 258 A102_CONTEXT_BIT21 "EPS steering assist unavailable (likely): set while car-bus 0x262 EPS_STATUS LKA_STATE is 3 or LTA_STATE is 3 / 8 (also mid-drive), or LKA_STATE stays 0 (EPS not initialised); clear in standby, active and temporary-fault states; follows the EPS within 0.05-0.2 s. Camera status, not radar data.";
+CM_ SG_ 258 A102_CONTEXT_BIT21 "EPS steering assist unavailable: set while car-bus 0x262 EPS_STATUS LTA_STATE is 3 / 8 or LKA_STATE is 3, while the EPS is not yet initialised (LKA_STATE 0) or stops sending 0x262; clear in every other state (comma public fleet: 3,373 of 3,374 LTA_STATE-3 frames set, 5 transition frames in 4.67 M others). Follows the EPS within 0.05-0.2 s. Camera status, not radar data.";
 CM_ SG_ 258 A102_B2_RESERVED6_7_ZERO2 "Always zero.";
 CM_ SG_ 259 A103_B0_RESERVED_ZERO8 "Always zero.";
 CM_ SG_ 259 A103_B1_RESERVED_ZERO8 "Always zero.";
