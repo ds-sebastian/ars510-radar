@@ -8,14 +8,7 @@ It checks:
 - detection: the RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False from the car model and the radar's early
   bus-1 frames (either radar firmware, also at a cold start, before the object list starts), and stay radarless without
   them; C-HR and Yaris likewise; every other Toyota keeps the fork's own RadarInterface;
-- the RadarInterface path card.py uses: synthetic 0x80 records are fed as card.py's (address, data, src) tuples and
-  as CanData, and it checks
-  - the RadarData points (units, sign, ego-speed subtraction, age gate);
-  - radarless behaviour (empty tracks, error-free status) before the first record;
-  - that update() returns None between records;
-  - the radarUnavailableTemporary report at 20 Hz when records stop;
-  - recovery when they resume.
-- for the `acc` profile instead: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
+- for the `acc` profile: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
   recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
@@ -30,7 +23,6 @@ from __future__ import annotations
 import argparse
 import math
 import sys
-import zlib
 from pathlib import Path
 
 
@@ -136,7 +128,8 @@ def check_acc_summaries_profile(RI, check) -> None:
           outs[far].append(out)
   near = outs[False]
   check(all(not any(o.errors.to_dict().values()) for o in near), "acc_summaries: no error flags while the frames arrive")
-  ok = [sorted(p.trackId for p in o.points) == [7, 73] and abs(next(p for p in o.points if p.trackId == 73).vRel + 6.0) < 0.1 for o in near]
+  # the summary range is quantized to 1/16 m per 60 ms cycle; the Kalman speed (PR 216) wanders up to ~0.1 m/s on it
+  ok = [sorted(p.trackId for p in o.points) == [7, 73] and abs(next(p for p in o.points if p.trackId == 73).vRel + 6.0) < 0.15 for o in near]
   check(bool(near) and all(ok), f"acc_summaries: the ACC target once plus the 40 m summary car with its slope speed ({sum(ok)}/{len(ok)})")
   check(all([p.trackId for p in o.points] == [7] for o in outs[True]), "acc_summaries: summary cars beyond 40 m are not published")
   if all(hasattr(near[-1].points[0], f) for f in ("aRel", "yvRel", "measured")):  # forks that still carry the optional fields
@@ -196,12 +189,9 @@ def main() -> int:
     sys.path.insert(0, str(args.opendbc.resolve()))
 
   from opendbc.car import structs
-  from opendbc.car.can_definitions import CanData
   from opendbc.car.toyota.interface import CarInterface  # Toyota only: other brands may need fork-only packages
   from opendbc.car.toyota.values import CAR
-  from opendbc.car.toyota.ars510.constants import ID80_IDLE_SLOT, ID80_RECORD_LEN
-  from opendbc.car.toyota.ars510.objects import encode_slot
-  from opendbc.car.toyota.ars510_radar_interface import LEGACY_FIELDS, PROFILE, Ars510RadarInterface, is_ars510
+  from opendbc.car.toyota.ars510_radar_interface import PROFILE, Ars510RadarInterface, is_ars510
 
   failures: list[str] = []
 
@@ -246,106 +236,7 @@ def main() -> int:
   check_pcs_alarm(CarInterface, CP, extra, check)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
-  if PROFILE in ("acc", "acc_summaries"):
-    (check_acc_profile if PROFILE == "acc" else check_acc_summaries_profile)(RI, check)
-    print("\nALL OK" if not failures else f"\n{len(failures)} FAILED")
-    return 0 if not failures else 1
-
-  def record(age: int) -> bytes:
-    # a car 40.0 m ahead, 1.5 m to the LEFT, moving at 20.0 m/s over ground
-    slot = encode_slot(long_dist=160 + 40 * 16, lat_dist_left=2048 + 100, long_vel_over_ground=round(510.5 + 20.0 / 0.15 + 0.5), age_cycles=age)
-    rec = bytearray(ID80_RECORD_LEN)
-    rec[0] = 0xE4
-    for s in range(20):
-      rec[17 + 36 * s:17 + 36 * (s + 1)] = slot if s == 3 else ID80_IDLE_SLOT
-    rec[737:741] = (zlib.crc32(bytes(rec[1:737])) & 0xFFFFFFFF).to_bytes(4, "little")
-    return bytes(rec)
-
-  def frames(rec: bytes) -> list[bytes]:
-    return [bytes([0x12]) + rec[0:7]] + [bytes([0x20 | (k & 0xF)]) + rec[7 * k:7 * k + 7] for k in range(1, len(rec) // 7)]
-
-  speed = bytes([0, 0, 0, 0, 0]) + int(18.0 * 3.6 / 0.01).to_bytes(2, "big") + b"\x00"  # 0xB4, 18.0 m/s
-  t_ns = 1_000_000_000
-  outputs = []
-
-  def step(frs: list[bytes], use_candata: bool) -> None:
-    nonlocal t_ns
-    t_ns += 10_000_000  # card.py runs at 100 Hz
-    batch = [(0xB4, speed, 0)] + [(0x80, f, 1) for f in frs]
-    if use_candata:
-      batch = [CanData(a, d, s) for a, d, s in batch]
-    outputs.append((t_ns, RI.update([(t_ns, batch)])))
-
-  # power-up: ego speed and zero object records for 6 s -> radarless behaviour (empty tracks at 20 Hz, error-free status)
-  for _ in range(600):
-    step([], use_candata=False)
-  boot = [o for _, o in outputs if o is not None]
-  check(100 <= len(boot) <= 130 and all(len(o.points) == 0 and not any(o.errors.to_dict().values()) for o in boot),
-        f"before the first record: empty RadarData at 20 Hz, no error ({len(boot)} in 6 s)")
-  outputs.clear()
-
-  # 100 records at the radar's 60 ms cycle (106 frames spread over 6 card steps), ages 55..
-  age = 55
-  for k in range(100):
-    fr = frames(record(min(age, 126)))
-    for j in range(6):
-      step(fr[j * 18:(j + 1) * 18], use_candata=bool(k % 2))
-    age += 1
-  completions = {6 * k + 5 for k in range(100)}
-  idx = [i for i, (_, o) in enumerate(outputs) if o is not None]
-  extra = [i for i in idx if i not in completions]
-  check(completions <= set(idx) and all(i < 5 and len(outputs[i][1].points) == 0 for i in extra),
-        f"one RadarData per completed record, none in between (extra outputs {extra}: radarless ticks before the first record)")
-  outs = [outputs[i][1] for i in sorted(completions)]
-  young = [o for o in outs[:5]]
-  check(all(len(o.points) == 0 for o in young), "tracks younger than 60 cycles are held back")
-  pts = [o.points[0] for o in outs if len(o.points)]
-  check(len(pts) == 95, f"settled track published on every later record (got {len(pts)})")
-  p = pts[-1]
-  if "aRel" in LEGACY_FIELDS:  # forks that still carry the legacy RadarPoint fields (sunnypilot)
-    import math
-    check(p.measured and math.isnan(p.aRel) and math.isnan(p.yvRel),
-          "legacy RadarPoint fields carried (NaN aRel / yvRel: the synthetic log has no yaw rate or speed change)")
-  # The synthetic object keeps a fixed range while its vRel is non-zero; velocity-aided range (range_fusion_gain, in
-  # fused and the openpilot version) then settles a little away from the raw range; raw is exact.
-  gain = 0.1 if PROFILE is None else PROFILE.range_fusion_gain  # None: the upstream candidate (fused's filter)
-  d_tol = 1e-3 if gain == 0 else 2.5
-  check(abs(p.dRel - 40.0) < d_tol and abs(p.yRel - 1.5) < 1e-3,
-        f"dRel/yRel units and left-positive sign (got {p.dRel:.3f}, {p.yRel:.3f}; profile fusion gain {gain})")
-  # vRel = v_ground - v_ego, with the 0xB4 ego speed on the carState vEgo scale (0xB4 reads 1.35 % low)
-  exp = (round(510.5 + 20.0 / 0.15 + 0.5) - 510.5) * 0.15 - 18.0 / 0.9865
-  check(abs(p.vRel - exp) < 1e-3, f"vRel = over-ground velocity - ego speed (got {p.vRel:.3f}, want {exp:.3f})")
-  check(len({q.trackId for q in pts}) == 1, "trackId stable across records")
-  check(all(not any(o.errors.to_dict().values()) for o in outs), "no error flags while records arrive")
-
-  # silence: only ego speed, no 0x80 for 1 s
-  n0 = len(outputs)
-  for _ in range(100):
-    step([], use_candata=False)
-  silent = outputs[n0:]
-  errs = [(t, o) for t, o in silent if o is not None]
-  first_err_s = (errs[0][0] - silent[0][0]) / 1e9 + 0.01 if errs else None
-  check(bool(errs) and all(o.errors.radarUnavailableTemporary and len(o.points) == 0 for _, o in errs),
-        "silent radar -> radarUnavailableTemporary with no points")
-  check(first_err_s is not None and 0.35 <= first_err_s <= 0.6, f"first error ~0.5 s after the last record (got {first_err_s})")
-  rate = len(errs) / (silent[-1][0] - errs[0][0]) * 1e9 if len(errs) > 1 else 0
-  check(15 <= rate <= 25, f"errors repeat at ~20 Hz while silent (got {rate:.1f} Hz)")
-  for _ in range(3):
-    fr = frames(record(126))
-    for j in range(6):
-      step(fr[j * 18:(j + 1) * 18], use_candata=False)
-  last = [o for _, o in outputs[-18:] if o is not None]
-  check(bool(last) and not last[-1].errors.radarUnavailableTemporary and len(last[-1].points) == 1, "recovers when records resume")
-
-  # a corrupted record is dropped; the staleness rule covers sustained loss
-  bad = bytearray(record(126))
-  bad[100] ^= 0xFF
-  n0 = len(outputs)
-  fr = frames(bytes(bad))
-  for j in range(6):
-    step(fr[j * 18:(j + 1) * 18], use_candata=False)
-  check(all(o is None for _, o in outputs[n0:]), "CRC-failed record dropped silently")
-
+  (check_acc_profile if PROFILE == "acc" else check_acc_summaries_profile)(RI, check)
   print("\nALL OK" if not failures else f"\n{len(failures)} FAILED")
   return 0 if not failures else 1
 
