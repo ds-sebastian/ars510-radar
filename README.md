@@ -89,7 +89,7 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 - **`acc` and `fused` ask for the same braking** on 99.8 % of moving time. `acc` flips between a radar and a vision
   lead less often (−30 per hour, 95 % CI −44 … −16; −21 without drives whose camera model saturates its lead uncertainty) and publishes a newly seen stationary vehicle at once, where `fused`
   waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)). `fused` keeps every radar car within 60 m and
-  has the most road drives behind it; `acc` has a small road record (nine drives, 1.6 engaged hours) ([08](docs/08_openpilot_integration.md#on-the-road)).
+  has the most road drives behind it; `acc` has a small road record (the owner's nine drives, 1.6 engaged hours, and a second driver's 26 drives, 0.9 engaged hours) ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **`acc_summaries` adds up to two other moving cars from the radar's summaries** within 40 m to `acc`, in 99 code lines. Over every
   replayed drive (23 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.04 s
   per hour), close cut-ins become radar-backed 0.09 s earlier, and it flips more (+26 per hour). The earlier 60 m limit
@@ -101,7 +101,9 @@ against a hindsight lead ([11](docs/11_profiles_compared.md)). `acc` (default), 
 - **Second car.** Replayed on a second car held out of all tuning (6.19 moving h) all three profiles start braking within 0.05 s of
   vision's onset with far less unnecessary braking (vision 56.5 s; `acc` 9.9 s, `acc_summaries` 10.2 s, `fused` 15.5 s;
   [11](docs/11_profiles_compared.md#head-to-head)), and the radar's speed noise matches the owner's unit
-  ([06](docs/06_accuracy.md#velocity)).
+  ([06](docs/06_accuracy.md#velocity)). On its 38 latest drives (6.26 moving h) `acc` and `acc_summaries` cut vision's
+  70.3 s of unnecessary braking to 4.0 / 4.9 s with every radar-only episode a real closing; `fused` reached 16.8 s,
+  including one hard brake for a list track's false closing speed ([`second_car_batch3.json`](data/analysis/summaries/second_car_batch3.json)).
 - **On the road** (`fused` 2.1.0: 7.4 h on the owner's car and a second driver's 2025 RAV4 Hybrid) the braking matched
   the replays ([08](docs/08_openpilot_integration.md#on-the-road)).
 

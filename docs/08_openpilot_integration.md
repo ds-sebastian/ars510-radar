@@ -256,6 +256,13 @@ Road drives so far ran `fused` 2.1.0, `acc`, `acc_summaries` (two short drives) 
   handles, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm
   brake (2.8 m/s²) came from a car first detected at 66 m whose object-list range read 15-20 m short until it settled;
   `fused` 2.6's ACC match answers that moment with −1.47 m/s² ([12](12_kalman_filter.md#path-gate)).
+- **A second driver's 2025 RAV4 Hybrid with `acc`** (sunnypilot, the installer's `acc` file from 2.6.1, 26 drives, 55 min
+  with openpilot longitudinal, as logged; [`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)): radard had a lead 72 % of the engaged time, radar-backed 94 % of it,
+  and its radar lead was the ACC target 99.99 % of the time both existed. 26 of 27 braking episodes (≤ −1 m/s²) had a
+  radar lead the camera agreed with; the other was a set-speed catch-up with no lead. Behind a stopped car the ACC target
+  was present for all 435 engaged seconds. The one bookmark (a far lead braking on an on-ramp merge, followed at
+  2.5-2.8 s) was a real slowdown: replayed, the radar profiles ask −1.2 m/s², the hindsight-optimal request, and vision only
+  −0.8.
 - **A second driver's 2025 RAV4 Hybrid** (sunnypilot, `fused` 2.1.0, [issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)):
   similar numbers to the owner's car. Radar and camera disagree on closing speed by more than 3 m/s for 1.7% of the
   lead time (owner: 1.8%), 7.0% beyond 70 m (owner: 8.2%), and the ACC target is present 99 / 95 / 66% of the

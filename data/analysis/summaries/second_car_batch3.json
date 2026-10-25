@@ -1,0 +1,251 @@
+{
+ "description": "Second car (a second driver's 2025 RAV4 Hybrid, radar firmware 8821F0R03100), 38 further drives held out of all tuning (2026-10-13..25): open-loop replay through unchanged openpilot with vision only and this repo's acc / acc_summaries / fused at main c3e5e8f (installed with openpilot/install.py), scored with the docs/11 definitions against the hindsight oracle; plus the driver's own drives on acc 2.6.1 as logged (not replayed). Replay authority and logged road behaviour; no video, no physical reference.",
+ "replay": {
+  "moving_hours": 6.26,
+  "routes": 38,
+  "segments": 670,
+  "totals": {
+   "vision only": {
+    "moving_h": 6.26,
+    "hard": 0,
+    "mild": 0,
+    "unnecessary_s": 70.3,
+    "missed_s": 12.9,
+    "flips_per_h": 0.0,
+    "onset_vs_vision_s": 0.0
+   },
+   "acc": {
+    "moving_h": 6.26,
+    "hard": 1,
+    "mild": 8,
+    "unnecessary_s": 4.0,
+    "missed_s": 4.5,
+    "flips_per_h": 304.0,
+    "onset_vs_vision_s": 0.116
+   },
+   "acc_summaries": {
+    "moving_h": 6.26,
+    "hard": 1,
+    "mild": 8,
+    "unnecessary_s": 4.9,
+    "missed_s": 4.5,
+    "flips_per_h": 331.0,
+    "onset_vs_vision_s": 0.114
+   },
+   "fused": {
+    "moving_h": 6.26,
+    "hard": 2,
+    "mild": 15,
+    "unnecessary_s": 16.8,
+    "missed_s": 4.8,
+    "flips_per_h": 332.0,
+    "onset_vs_vision_s": 0.085
+   }
+  },
+  "radar_only_episodes": {
+   "acc": {
+    "total": 9,
+    "hard": 1,
+    "oracle_confirmed": 9,
+    "driver_braked": 7
+   },
+   "acc_summaries": {
+    "total": 9,
+    "hard": 1,
+    "oracle_confirmed": 9,
+    "driver_braked": 7
+   },
+   "fused": {
+    "total": 17,
+    "hard": 2,
+    "oracle_confirmed": 11,
+    "driver_braked": 13
+   }
+  },
+  "difference_to_acc_per_moving_hour_ci95": {
+   "acc_summaries": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "routes": 36
+    },
+    "mild": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "routes": 36
+    },
+    "unnecessary_s": {
+     "per_h": 0.136,
+     "ci95": [
+      0.0,
+      0.393
+     ],
+     "routes": 36
+    },
+    "missed_s": {
+     "per_h": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "routes": 36
+    },
+    "flips": {
+     "per_h": 27.018,
+     "ci95": [
+      16.3,
+      40.924
+     ],
+     "routes": 36
+    }
+   },
+   "fused": {
+    "hard": {
+     "per_h": 0.16,
+     "ci95": [
+      0.0,
+      0.525
+     ],
+     "routes": 36
+    },
+    "mild": {
+     "per_h": 1.119,
+     "ci95": [
+      0.196,
+      2.019
+     ],
+     "routes": 36
+    },
+    "unnecessary_s": {
+     "per_h": 2.046,
+     "ci95": [
+      0.51,
+      3.852
+     ],
+     "routes": 36
+    },
+    "missed_s": {
+     "per_h": 0.04,
+     "ci95": [
+      0.0,
+      0.133
+     ],
+     "routes": 36
+    },
+    "flips": {
+     "per_h": 28.137,
+     "ci95": [
+      0.667,
+      52.503
+     ],
+     "routes": 36
+    }
+   }
+  },
+  "fused_false_hard_brake": "fused published an object-list track at 54 m with a closing speed of 23.7 m/s while its range held still (53.7 -> 55.0 m over 2.6 s) and asked -3.31 m/s2 at 30 m/s; acc stayed on the ACC target at 66 m (-0.5), as did vision and the oracle; Toyota's engaged ACC asked -0.3 to -0.6",
+  "pooled_never_tuned": {
+   "moving_hours": 12.72,
+   "sets": "owner held-out routes, two earlier untouched second-car sets and this batch",
+   "acc_minus_fused_per_moving_hour_ci95": {
+    "hard": {
+     "per_h": 0.0,
+     "ci95": [
+      -0.219,
+      0.235
+     ],
+     "routes": 80
+    },
+    "mild": {
+     "per_h": -0.393,
+     "ci95": [
+      -0.945,
+      0.188
+     ],
+     "routes": 80
+    },
+    "unnecessary_s": {
+     "per_h": -1.373,
+     "ci95": [
+      -2.39,
+      -0.444
+     ],
+     "routes": 80
+    },
+    "missed_s": {
+     "per_h": 0.067,
+     "ci95": [
+      -0.136,
+      0.37
+     ],
+     "routes": 80
+    },
+    "flips": {
+     "per_h": -8.414,
+     "ci95": [
+      -28.066,
+      11.727
+     ],
+     "routes": 80
+    }
+   }
+  }
+ },
+ "stock_acc_reference": {
+  "note": "Toyota's own ACCEL_CMD while its ACC drove (reference, not truth); open loop",
+  "scoreable_s": 2346.0,
+  "vision": {
+   "bias": -0.139,
+   "rms": 0.332,
+   "r": 0.709,
+   "jerk_p99": 0.678,
+   "lead_is_acc_target_share": 0.881
+  },
+  "acc": {
+   "bias": -0.08,
+   "rms": 0.297,
+   "r": 0.791,
+   "jerk_p99": 0.864,
+   "lead_is_acc_target_share": 0.972
+  },
+  "acc_summaries": {
+   "bias": -0.08,
+   "rms": 0.297,
+   "r": 0.79,
+   "jerk_p99": 0.894,
+   "lead_is_acc_target_share": 0.972
+  },
+  "fused": {
+   "bias": -0.081,
+   "rms": 0.312,
+   "r": 0.77,
+   "jerk_p99": 0.945,
+   "lead_is_acc_target_share": 0.96
+  }
+ },
+ "road_acc_2_6_1": {
+  "note": "the driver's 26 drives on acc 2.6.1 (sunnypilot), as logged",
+  "engaged_moving_min": 55.3,
+  "lead_share_engaged": 0.72,
+  "radar_backed_share_of_lead": 0.94,
+  "radar_lead_is_acc_target": 0.9999,
+  "both_s": 2547.4,
+  "brake_episodes": 27,
+  "brake_radar": 26.0,
+  "brake_radar_cam_agrees": 26,
+  "standstill_close_lead_s": {
+   "engaged": 435.2,
+   "unengaged": 5217.5
+  },
+  "acc_present_standstill": {
+   "engaged": 1.0,
+   "unengaged": 0.917
+  },
+  "drives": 26
+ }
+}
