@@ -17,7 +17,8 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_acc():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["acc"]') == 1
-  assert 'PROFILES = {"fused": FUSED_CONFIG, "openpilot": None, "raw": BASE_CONFIG, **{k: k for k in STANDALONE}}' in src
+  assert 'PROFILES = {k: k for k in STANDALONE}' in src and 'STANDALONE = {"acc": "ars510_acc_target", "acc_summaries": "ars510_acc_summaries"}' in src
+  assert "FUSED_CONFIG" not in src and "BASE_CONFIG" not in src  # no object-list profile reaches openpilot
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
 
@@ -48,38 +49,24 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510" / "interface.py").exists()
   assert not (tmp_path / "opendbc_repo" / "opendbc" / "dbc" / "ars510_radar_bus.dbc").exists()  # old Cabana copy removed
   assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()  # the default
-  for name, installed in (("anchor", "fused"), ("steady", "fused"), ("colored", "fused"), ("stock", "raw"), ("default", "raw"),
-                          ("upstream", "openpilot")):  # older names
+  for name in ("fused", "openpilot", "raw", "shared_speed", "shared_range", "anchor", "steady", "colored", "stock", "default",
+               "upstream"):  # the object-list profiles and their older names: acc, with a note
     r = _install(tmp_path, "--profile", name)
-    assert r.returncode == 0 and ("removed" in r.stdout) == (installed == "fused")
-    assert f"'{name}' is an alias for '{installed}'" in r.stdout
-    assert "the recommended default is 'acc'" in r.stdout
-    assert f'PROFILE = PROFILES["{installed}"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert _install(tmp_path, "--profile", "openpilot").returncode == 0
-  assert 'PROFILE = PROFILES["openpilot"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert (toyota / "ars510_upstream.py").read_text() == (REPO / "upstream" / "ars510_radar.py").read_text()
-  assert _install(tmp_path, "--profile", "acc").returncode == 0
-  assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()
+    assert r.returncode == 0 and f"'{name}' is no longer installable" in r.stdout
+    assert 'PROFILE = PROFILES["acc"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
   acc_target = (REPO / "upstream" / "ars510_acc_target.py").read_text()  # parses the DBC under the installer's own name
   assert (toyota / "ars510_acc_target.py").read_text() == acc_target.replace('RADAR_DBC = "toyota_tss2_ars510"', 'RADAR_DBC = "ars510_acc_target"')
   assert (toyota.parents[1] / "dbc" / "ars510_acc_target.dbc").read_text() == (REPO / "upstream" / "toyota_tss2_ars510.dbc").read_text()
   assert not (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").exists()
-  for name in ("shared_speed", "shared_range"):  # research profiles: installed with a warning
-    r = _install(tmp_path, "--profile", name)
-    assert r.returncode == 0 and "research profile" in r.stdout
-    assert f'PROFILE = PROFILES["{name}"]' in (toyota / "ars510_radar_interface.py").read_text()
-    assert (toyota / f"ars510_{name}.py").read_text() == (REPO / "openpilot" / "standalone" / f"ars510_{name}.py").read_text()
   assert _install(tmp_path, "--profile", "acc_summaries").returncode == 0
   assert 'PROFILE = PROFILES["acc_summaries"]' in (toyota / "ars510_radar_interface.py").read_text()
   assert (toyota / "ars510_acc_summaries.py").read_text() == (REPO / "openpilot" / "standalone" / "ars510_acc_summaries.py").read_text()
-  r = _install(tmp_path, "--profile", "raw")
-  assert r.returncode == 0 and "warning" in r.stdout
-  assert 'PROFILE = PROFILES["raw"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert "profile: raw" in _install(tmp_path, "--check").stdout
+  assert "profile: acc_summaries" in _install(tmp_path, "--check").stdout
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
-  assert not any((toyota / f).exists() for f in ("ars510_upstream.py", "ars510_acc_target.py", "ars510_acc_summaries.py", "ars510_shared_speed.py", "ars510_shared_range.py"))
+  assert not any((toyota / f).exists() for f in ("ars510_acc_target.py", "ars510_acc_summaries.py"))
   assert not (toyota.parents[1] / "dbc" / "ars510_acc_target.dbc").exists()
 
 
@@ -127,9 +114,9 @@ def test_installer_updates_a_fork_that_commits_the_install(tmp_path):
   _git(root, "init")
   _git(root, "add", ".")
   _git(root, "commit", "-m", "fork with the install committed")
-  r = _install(tmp_path, "--profile", "fused")
+  r = _install(tmp_path, "--profile", "acc_summaries")
   assert r.returncode == 0, r.stderr
-  assert 'PROFILE = PROFILES["fused"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert 'PROFILE = PROFILES["acc_summaries"]' in (toyota / "ars510_radar_interface.py").read_text()
 
 
 def test_hook_keeps_toyota_importable_when_it_fails():

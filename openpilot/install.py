@@ -2,44 +2,35 @@
 """Install (or remove) the ARS510 radar-track integration into openpilot or any fork.
 
     python openpilot/install.py /data/openpilot                     # install (acc profile, the default), then reboot
-    python openpilot/install.py /data/openpilot --profile raw       # the unfiltered decode, for comparison
+    python openpilot/install.py /data/openpilot --profile acc_summaries   # acc plus the two target-summary cars
     python openpilot/install.py /data/openpilot                     # reinstall / update: keeps the installed profile
     python openpilot/install.py /data/openpilot --check             # report the state only
     python openpilot/install.py /data/openpilot --uninstall         # remove everything this installer added
 
 The path may be the openpilot checkout or its opendbc_repo. The same install works on openpilot, sunnypilot,
 StarPilot, CarrotPilot and other forks: the installer adds new files and one marked block to the fork. The installer
-  - copies the decoder package to        opendbc/car/toyota/ars510/
+  - copies the decoder package to        opendbc/car/toyota/ars510/ (constants, PCS alarm, fault flag)
   - copies the radar interface to        opendbc/car/toyota/ars510_radar_interface.py (profile line set)
-  - copies the openpilot version to      opendbc/car/toyota/ars510_upstream.py (used by --profile openpilot)
-  - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by --profile acc)
+  - copies the ACC-target file to        opendbc/car/toyota/ars510_acc_target.py (used by both profiles)
     and its DBC to                       opendbc/dbc/ars510_acc_target.dbc (a name of its own: opendbc's
     toyota_tss2_ars510.dbc, once commaai/opendbc#3860 is merged, stays opendbc's and as shipped)
   - copies the acc_summaries file to    opendbc/car/toyota/ars510_acc_summaries.py (--profile acc_summaries)
-  - copies two research files to         opendbc/car/toyota/ars510_shared_{speed,range}.py (--profile shared_speed / shared_range)
   - appends one marked block to the end of opendbc/car/toyota/interface.py, which wraps the fork's own
     CarInterface: ARS510 detection in _get_params and dispatch in RadarInterface (see ars510_radar_interface.py)
-An install made with an older, patch-based version of this installer is removed first. Files the fork's git tracks
+An install made with an older, patch-based version of this installer is removed first, and so are the files older
+versions installed for the object-list profiles (ars510_upstream.py, ars510_shared_{speed,range}.py). Files the fork's git tracks
 are never overwritten or removed: an install whose file names the fork already ships stops before changing anything.
 
 Profiles (docs/08 has the details and replay numbers):
   acc       (default, opendbc-compatible) the radar's ACC target alone as one point (upstream/ars510_acc_target.py with
             toyota_tss2_ars510.dbc): the car Toyota's own ACC follows; every other car comes from the camera. It
-            publishes a target as soon as the radar picks it; fused holds new tracks back for 60 cycles (docs/11)
+            publishes a target as soon as the radar picks it (docs/11)
   acc_summaries  acc plus up to two more cars from the radar's own tracker (the target summaries 0x191-0x194, within
-            40 m, speed from their range slope); the main alternative: radar-backed cut-ins slightly earlier,
-            braking as acc in replay (docs/11)
-  fused     FUSED_CONFIG: the radar decode + range fusion + one Kalman speed filter per track that weights
-            the object list and the radar's ACC target by their own uncertainty, with a path gate (= the openpilot version); every radar car within 60 m
-  raw       BASE_CONFIG: the unfiltered radar decode with only what radard
-            needs to run. Velocity excursions reach the planner unfiltered; for research and comparison only
-  openpilot fused in one file (upstream/ars510_radar.py, opendbc style), driving identically, points with trackId /
-            dRel / yRel / vRel only. The all-tracks upstream alternative; the proposal is acc
-  Also tried, set aside (installable for research; docs/17): shared_speed / shared_range (every object and the ACC
-  target through one gate-free Kalman model)
+            40 m); for forks: radar-backed cut-ins slightly earlier, braking as acc in replay (docs/11)
 
-Legacy names are aliases: anchor/steady/colored select fused, upstream selects openpilot,
-and stock/default select raw. Every alias prints its selection.
+The object-list profiles (fused, openpilot, raw, shared_speed, shared_range, and their older names) are not installable:
+the object list's speeds have excursions, mostly false closings beyond 40 m, that reach the planner (docs/07). Asking for
+one, or reinstalling over one, installs acc and says so.
 
 Without --profile, a reinstall keeps the profile installed before: the one in the installed interface file, or, when a
 fork update has removed the install, the one this checkout last installed into the same path (recorded in
@@ -63,8 +54,12 @@ DEFAULT_PROFILE = "acc"
 STATE = Path(os.environ.get("ARS510_INSTALL_STATE", HERE / ".installed_profiles.json"))
 LEGACY_PATCHES = sorted((HERE / "legacy").glob("*.patch"))
 PROFILE_LINE = 'PROFILE = PROFILES["acc"]'
-PROFILE_NAMES = ("acc", "acc_summaries", "fused", "openpilot", "raw", "shared_speed", "shared_range")
-LEGACY_NAMES = {"anchor": "fused", "steady": "fused", "colored": "fused", "stock": "raw", "default": "raw", "upstream": "openpilot"}
+PROFILE_NAMES = ("acc", "acc_summaries")
+# Object-list profiles of older versions (and their older names): asked for, or found installed, they install acc.
+REMOVED_PROFILES = ("fused", "openpilot", "raw", "shared_speed", "shared_range", "anchor", "steady", "colored", "stock",
+                    "default", "upstream")
+REMOVED_NOTE = ("note: '{}' is no longer installable (object-list speed excursions reach the planner, docs/07); "
+                "installing acc")
 DBCS = ("ars510_radar_bus.dbc", "ars510_objects_vbus.dbc")  # repo dbc/ serves Cabana on a PC and stays in the repo
 # The acc DBC is upstream's toyota_tss2_ars510.dbc, installed under its own name so the acc profiles keep parsing with
 # this checkout's signals whatever opendbc ships under the upstream name. Older installs copied it to the upstream name.
@@ -96,11 +91,14 @@ def find_opendbc(path: Path) -> Path | None:
   return None
 
 
+# Files older versions installed for the object-list profiles: removed on install and uninstall.
+OLD_FILES = ("ars510_upstream.py", "ars510_shared_speed.py", "ars510_shared_range.py")
+
+
 def targets(root: Path) -> dict[str, Path]:
   toyota = root / "opendbc" / "car" / "toyota"
   return {"package": toyota / "ars510", "interface": toyota / "ars510_radar_interface.py",
-          "upstream": toyota / "ars510_upstream.py", "acc_target": toyota / "ars510_acc_target.py",
-          "shared_speed": toyota / "ars510_shared_speed.py", "shared_range": toyota / "ars510_shared_range.py",
+          "acc_target": toyota / "ars510_acc_target.py",
           "acc_summaries": toyota / "ars510_acc_summaries.py",
           "acc_dbc": root / "opendbc" / "dbc" / "ars510_acc_target.dbc"}
 
@@ -135,6 +133,14 @@ def old_dbcs(root: Path) -> list[Path]:
   return [p for p in old if p.exists()]
 
 
+def old_files(root: Path) -> list[Path]:
+  """Object-list profile files an older version of this installer copied in, unless the fork's git tracks them."""
+  toyota = root / "opendbc" / "car" / "toyota"
+  found = [toyota / f for f in OLD_FILES if (toyota / f).exists()]
+  keep = tracked(root, found)
+  return [p for p in found if p not in keep]
+
+
 def conflicts(root: Path, t: dict[str, Path], text: str) -> list[Path]:
   """Targets the fork's git tracks, which an install would overwrite. A fork that commits this install (the hook block
   in its committed interface.py) owns copies of these files and gets them updated."""
@@ -167,9 +173,7 @@ def legacy_patch(root: Path) -> Path | None:
 def sources() -> dict[str, Path]:
   """What each target is copied from (the interface file differs from its source only by the profile line)."""
   return {"package": REPO / "ars510", "interface": HERE / "ars510_radar_interface.py",
-          "upstream": REPO / "upstream" / "ars510_radar.py", "acc_target": REPO / "upstream" / "ars510_acc_target.py",
-          "shared_speed": HERE / "standalone" / "ars510_shared_speed.py",
-          "shared_range": HERE / "standalone" / "ars510_shared_range.py",
+          "acc_target": REPO / "upstream" / "ars510_acc_target.py",
           "acc_summaries": HERE / "standalone" / "ars510_acc_summaries.py",
           "acc_dbc": REPO / "upstream" / "toyota_tss2_ars510.dbc"}
 
@@ -200,12 +204,12 @@ def stale(t: dict[str, Path]) -> list[str]:
 
 
 def installed_profile(t: dict[str, Path]) -> str | None:
-  """The profile set in the installed interface file (legacy names mapped), or None without a readable install."""
+  """The profile set in the installed interface file (a removed object-list profile included), or None without a
+  readable install."""
   if not t["interface"].exists():
     return None
   txt = t["interface"].read_text()
-  prof = next((k for k in PROFILE_NAMES + tuple(LEGACY_NAMES) if f'PROFILE = PROFILES["{k}"]' in txt), None)
-  return LEGACY_NAMES.get(prof, prof)
+  return next((k for k in PROFILE_NAMES + REMOVED_PROFILES if f'PROFILE = PROFILES["{k}"]' in txt), None)
 
 
 def read_state() -> dict[str, str]:
@@ -237,8 +241,11 @@ def choose_profile(requested: str | None, t: dict[str, Path], root: Path) -> tup
   this checkout's record of the last install into this path, or the default."""
   current = installed_profile(t)
   recorded = read_state().get(str(root))
-  recorded = recorded if recorded in PROFILE_NAMES else None
+  recorded = recorded if recorded in PROFILE_NAMES + REMOVED_PROFILES else None
   previous = current or recorded
+  if requested is None and previous in REMOVED_PROFILES:
+    return DEFAULT_PROFILE, (f"profile: {DEFAULT_PROFILE} (replaces the installed '{previous}', which is no longer installable: "
+                             "object-list speed excursions reach the planner, docs/07)")
   if requested is not None:
     line = f"profile: {requested} (requested with --profile)"
     if previous is not None and previous != requested:
@@ -262,20 +269,17 @@ def remove_hook(text: str) -> str:
 def main() -> int:
   ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
   ap.add_argument("openpilot", type=Path, help="openpilot (or fork) checkout, or its opendbc_repo")
-  ap.add_argument("--profile", choices=PROFILE_NAMES + tuple(LEGACY_NAMES),
+  ap.add_argument("--profile", choices=PROFILE_NAMES + REMOVED_PROFILES,
                   metavar="{" + ",".join(PROFILE_NAMES) + "}",
-                  help="default: the installed profile on a reinstall, acc on a first install; legacy aliases also accepted")
+                  help="default: the installed profile on a reinstall, acc on a first install; removed profile names install acc")
   ap.add_argument("--flavor", help=argparse.SUPPRESS)  # accepted for old instructions; ignored
   g = ap.add_mutually_exclusive_group()
   g.add_argument("--check", action="store_true")
   g.add_argument("--uninstall", action="store_true")
   args = ap.parse_args()
-  if args.profile in LEGACY_NAMES:
-    new = LEGACY_NAMES[args.profile]
-    retired = {"anchor": "the tuned profile was removed; ", "steady": "the tuned profile was removed; ",
-               "colored": "the colored-noise profile was removed; "}.get(args.profile, "")
-    print(f"note: {retired}'{args.profile}' is an alias for '{new}'; the recommended default is '{DEFAULT_PROFILE}'")
-    args.profile = new
+  if args.profile in REMOVED_PROFILES:
+    print(REMOVED_NOTE.format(args.profile))
+    args.profile = DEFAULT_PROFILE
   root = find_opendbc(args.openpilot)
   if root is None:
     print(f"expected opendbc/car/toyota/interface.py under {args.openpilot} (or its opendbc_repo)", file=sys.stderr)
@@ -296,12 +300,12 @@ def main() -> int:
     print(f"older patch-based install: {legacy.name if legacy else 'none'}")
     if t["interface"].exists():
       txt = t["interface"].read_text()
-      prof = next((k for k in PROFILE_NAMES + tuple(LEGACY_NAMES) if f'PROFILE = PROFILES["{k}"]' in txt), "other")
-      print(f"profile: {prof}")
+      prof = next((k for k in PROFILE_NAMES + REMOVED_PROFILES if f'PROFILE = PROFILES["{k}"]' in txt), "other")
+      print(f"profile: {prof}" + (" (no longer installable; install.py replaces it with acc)" if prof in REMOVED_PROFILES else ""))
     print("install.py without --profile installs: " + choose_profile(None, t, root)[1].removeprefix("profile: "))
     for name, p in t.items():
       print(f"{name}: {'present' if p.exists() else 'to be installed'} ({p})")
-    for p in old_dbcs(root):
+    for p in old_dbcs(root) + old_files(root):
       print(f"leftover from an older install (removed on the next install): {p}")
     if fork_dbc_owned(root):
       print(f"opendbc ships {FORK_DBC} (left as shipped; the acc profiles parse ars510_acc_target.dbc)")
@@ -317,7 +321,7 @@ def main() -> int:
     print(f"could not remove the older install ({legacy.name}); the checkout stays as it was", file=sys.stderr)
     return 1
   text = remove_hook(interface_py.read_text())
-  for p in old_dbcs(root):
+  for p in old_dbcs(root) + old_files(root):
     p.unlink()
 
   if args.uninstall:
@@ -344,13 +348,11 @@ def main() -> int:
   if t["package"].exists():
     shutil.rmtree(t["package"])
   shutil.copytree(REPO / "ars510", t["package"], ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-  shutil.copyfile(REPO / "upstream" / "ars510_radar.py", t["upstream"])
   acc_target = (REPO / "upstream" / "ars510_acc_target.py").read_text()
   assert acc_target.count(ACC_DBC_LINE) == 1
   t["acc_target"].write_text(acc_target.replace(ACC_DBC_LINE, ACC_DBC_INSTALLED))
   shutil.copyfile(REPO / "upstream" / "toyota_tss2_ars510.dbc", t["acc_dbc"])
-  for name in ("acc_summaries", "shared_speed", "shared_range"):
-    shutil.copyfile(HERE / "standalone" / f"ars510_{name}.py", t[name])
+  shutil.copyfile(HERE / "standalone" / "ars510_acc_summaries.py", t["acc_summaries"])
   src = (HERE / "ars510_radar_interface.py").read_text()
   assert src.count(PROFILE_LINE) == 1
   t["interface"].write_text(src.replace(PROFILE_LINE, f'PROFILE = PROFILES["{args.profile}"]'))
@@ -358,13 +360,6 @@ def main() -> int:
   record_profile(root, args.profile)
   print(f"installed into {root} ({args.profile} profile" + (f"; replaced the older {legacy.name}" if legacy else "") +
         "). Reboot the device to activate.")
-  if args.profile in ("shared_speed", "shared_range"):
-    print("warning: a research profile. The object list's slow, correlated errors reach the planner: replays ask for hard\n"
-          "radar-only braking 7-21 times as often as fused (docs/17). Keep to research use.")
-  if args.profile == "raw":
-    print("warning: the raw profile publishes the unfiltered radar decode. Velocity excursions (false closings beyond 40 m)\n"
-          "reach the planner unfiltered: 93 hard radar-only braking ticks on the held-out replay routes against 16 for fused and\n"
-          "14 for acc (docs/11). Use it for research and comparison; --profile acc installs the default.")
   return 0
 
 

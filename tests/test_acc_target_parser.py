@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from ars510.support import acc_check, parse_acc_target
-from test_upstream_candidate import _fake_opendbc
+from opendbc_stub import fake_opendbc
 
 REPO = Path(__file__).resolve().parents[1]
 DBC_FILE = REPO / "upstream" / "toyota_tss2_ars510.dbc"
@@ -72,7 +72,7 @@ class FakeCANParser:
 def mod():
   names = ("opendbc", "opendbc.can", "opendbc.car", "opendbc.car.structs", "opendbc.car.interfaces")
   saved = {k: sys.modules.get(k) for k in names}
-  fake = _fake_opendbc()
+  fake = fake_opendbc()
   fake["opendbc.car.structs"] = fake["opendbc.car"].structs
   fake["opendbc.can"] = types.SimpleNamespace(CANParser=FakeCANParser)
   sys.modules.update(fake)
