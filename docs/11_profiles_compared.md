@@ -41,7 +41,8 @@ oracle ([`oracle_reference.json`](../data/analysis/summaries/oracle_reference.js
 missed braking seconds. Hard = request ≤ −2 m/s² while vision only asks ≥ −0.5; mild = ≤ −1 while vision ≥ −0.3 (episodes);
 onset = first request ≤ −0.5 m/s² relative to vision (negative = earlier).
 Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) and
-`fast_suite_by_set` in [`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json).
+`fast_suite_by_set` in [`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json); the second car's
+38 further drives: [`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json) (not part of "all sets").
 
 | drive set (moving h) | profile | unnecessary braking s | missed braking s | lead flips per h | hard / mild episodes | onset vs vision |
 |---|---|---|---|---|---|---|
@@ -57,6 +58,10 @@ Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summ
 | | `acc` | 9.9 | 4.2 | 384 | 0 / 8 | +0.022 s |
 | | `acc_summaries` | 9.8 | 4.2 | 410 | 0 / 9 | +0.028 s |
 | | `fused` | 15.5 | 5.1 | 413 | 0 / 12 | +0.044 s |
+| second car, 38 further drives held out (6.26; main c3e5e8f) | vision only | 70.3 | 12.9 | 0 | 0 / 0 | 0 |
+| | `acc` | 4.0 | 4.5 | 304 | 1 / 8 | +0.116 s |
+| | `acc_summaries` | 4.9 | 4.5 | 331 | 1 / 8 | +0.114 s |
+| | `fused` | 16.8 | 4.8 | 332 | 2 / 15 | +0.085 s |
 | fresh owner drives (0.47) | vision only | 0.0 | 0.0 | 0 | 0 / 0 | 0 |
 | | `acc` | 0.0 | 0.0 | 386 | 0 / 0 | +0.004 s |
 | | `acc_summaries` | 0.0 | 0.0 | 398 | 0 / 0 | +0.004 s |
@@ -147,7 +152,12 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 ## Why `acc` is the default
 
 - **Equal braking, fewer lead flips, less unnecessary braking on held-out drives** (tables above), with the same
-  standing under a camera-only reference.
+  standing under a camera-only reference. Over every set held out of all tuning (12.72 moving h: owner routes and three
+  second-car sets) `acc` has 1.37 s less unnecessary braking per moving hour than `fused` (95 % CI 0.44 … 2.39) with
+  the same hard episodes (3 / 3). On the second car's 38 latest drives all 9 of `acc`'s radar-only episodes were real
+  closings, while `fused` added 6 the hindsight lead does not confirm, among them a −3.31 m/s² request at 30 m/s for an
+  object-list track at 54 m whose closing speed read 23.7 m/s while its range held still (a speed excursion,
+  [07](07_velocity_excursions.md)); `acc` stayed on the ACC target 12 m beyond it ([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)).
 - **No slower launches.** When a stopped lead pulls away, the ACC target reports it moving (+0.5 m/s) a median 0.11 s
   before the camera lead and 0.20 s before the object list (168 departures, two cars), and Toyota's own ACC releases at
   that same +0.5 m/s. A slow green-light launch is the planner's, not the radar's
@@ -162,8 +172,8 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 - **Small and auditable.** 45 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
 - **Replay evidence on 21.45 moving hours.** `fused` also has road drives (sunnypilot and a second driver's car,
-  [08](08_openpilot_integration.md#on-the-road)). `acc` has a small road record on sunnypilot (nine drives, 1.62 h with
-  openpilot longitudinal): with the camera's lead within 80 m, radard's lead was radar-backed 98.5-98.9 % of the engaged
+  [08](08_openpilot_integration.md#on-the-road)). `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
+  openpilot longitudinal, and a second driver's 26 drives, 0.92 h): with the camera's lead within 80 m, radard's lead was radar-backed 98.5-98.9 % of the engaged
   time, and the first two drives stopped at openpilot's designed gap.
 
 ## `acc_summaries`: `acc` plus the summary cars
