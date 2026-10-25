@@ -2,14 +2,20 @@
 
 The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
 ([07](07_velocity_excursions.md)). Their size follows the radar's `240|7` code, a per-reading error width (◐). The
-`fused` profile (`install.py --profile fused`, current version 2.6) handles them with **one Kalman filter per track** on
-the lead's speed over ground. Every reading is weighted by its own uncertainty: the object list and the radar's ACC
-target. radard then runs its usual filter on what this one publishes. `fused` is the all-tracks alternative to the
-default `acc` profile, which publishes the radar's ACC target alone ([11](11_profiles_compared.md)).
+`fused` filter (version 2.6) handles them with **one Kalman filter per track** on the lead's speed over ground. Every
+reading is weighted by its own uncertainty: the object list and the radar's ACC target. radard then runs its usual
+filter on what this one publishes.
 
-Code: `Ars510NativeRadarInterface._fused_speed` in [`ars510/interface.py`](../ars510/interface.py) (fork build), and
-the same filter in [`upstream/ars510_radar.py`](../upstream/ars510_radar.py) (the openpilot version: 187 code lines, 227
-lines in all; the installer's single-file `fused`). Numbers:
+**Status: research, not installable.** The filter removes most excursions but not all, and the ones that pass reach the
+planner. On the second car's 38 latest held-out drives (6.26 moving h) it added 2.05 s of unnecessary braking per moving
+hour over `acc` (95 % CI 0.51-3.85), including a −3.31 m/s² request at 30 m/s for an object-list track at 54 m whose
+closing speed read 23.7 m/s while its range held still; `acc` stayed on the ACC target 12 m farther on
+([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). So the installer offers only `acc`
+(default) and `acc_summaries`, which publish the radar's own tracker outputs ([11](11_profiles_compared.md)). This page
+keeps the filter's design, ablations and numbers as the starting point for solving the excursions.
+
+Code: `Ars510NativeRadarInterface._fused_speed` and `FUSED_CONFIG` in [`ars510/interface.py`](../ars510/interface.py); the
+replay and decode tools run it (`tools/decode_log.py --profile fused`, `tools/openpilot_replay/replay_radard.py`). Numbers:
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json) and the JSONs named in each section.
 
 ## fused and acc side by side
@@ -65,14 +71,14 @@ held out of all tuning):
 
 ## Versions the numbers were measured on
 
-Each replay number below names its `fused` version. 2.6 is the current profile and the openpilot version.
+Each replay number below names its `fused` version. 2.6 is the last one, the version the counterexample above ran on.
 
 | version | what it is |
 |---|---|
 | 2.0 | speed filter with the ACC target (σ 0.5 m/s) and the summaries, range fusion, track-ID relink, 0.25 × ACC match scale; the ablations and combinations |
 | 2.1 | ACC distance as the followed car's range; trackers matched by position |
 | 2.3 | path gate beyond 15 m (2.5 m); ACC match scale 0.4 × |
-| 2.4 | 2.3 with the summaries and the relink removed: the openpilot version of 2.4 |
+| 2.4 | 2.3 with the summaries and the relink removed |
 | 2.5 | 2.4 with the ACC target at σ 0.3 m/s |
 | 2.6 | 2.5 with the far rule (beyond 60 m only the ACC target's track), the stationary path gate and ACC σ 0.13 m/s |
 
@@ -96,7 +102,7 @@ publish      vRel = v − v_ego                 first publication once √P ≤ 
 
 The ACC target's units are checked against the absolute `0x680` range ([05](05_acc_target_and_support.md#units-of-the-acc-target)).
 
-`fused` 2.6 constants in one place (`FUSED_CONFIG` and the openpilot file agree): σ 0.045 m/s per `240|7` count, young-track
+`fused` 2.6 constants in one place (`FUSED_CONFIG`): σ 0.045 m/s per `240|7` count, young-track
 factor 1.8 below age 100, lead acceleration 1.5 m/s², clamp 3 σ, ACC σ 0.13 m/s, publication at √P ≤ 0.75 m/s and age 60,
 range gain 0.1, ACC match scale max(12 m, 0.4 x), path gate 2.5 m beyond 15 m, far rule beyond 60 m, stationary gate
 below 0.5 m/s within 1.5 m.
@@ -265,8 +271,8 @@ second car's hard false brake. In the late-brake case above, the first radar lea
 request −1.47 instead of −2.36 m/s² (vision −1.61); 2.4 asks the same as 2.3 in that moment. Driver brakes anticipated at
 −1 m/s² go from 43.7 to 41.9 % with the path gate and 0.4 x match, and to 41.3 % with the summaries dropped in 2.4. Both constants sit in a flat region: an ACC
 match scale of 0.33 or 0.5 x and a gate of 2.0 or 3.0 m keep the held-out hard ticks at 30 on 2.3 (target episodes 2-3) and
-stay within 0.3 s of the chosen values against the hindsight-lead oracle below. The openpilot file's parts and
-their line costs are in [17](17_upstream.md#parts-of-the-openpilot-file).
+stay within 0.3 s of the chosen values against the hindsight-lead oracle below. The filter's parts and their line costs
+are in [`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json).
 Numbers: [`lead_choice_guards.json`](../data/analysis/summaries/lead_choice_guards.json).
 
 ### Stationary objects close in
@@ -402,10 +408,8 @@ in combination on the same 27 drives. A version drives the same as `fused` when 
   braking on a far lead (+9 and +6 unjustified ticks).
 
 The smallest version with the same driving is 2.0 with the summaries and the relink removed. With 2.3's path gate and wider
-ACC match, and 2.6's far rule and stationary gate added, that is today's `fused`. The openpilot version
-([`upstream/ars510_radar.py`](../upstream/ars510_radar.py); its parts and line
-costs are in [17](17_upstream.md#parts-of-the-openpilot-file)) is the same filter in one file, and a test
-keeps the two equal point for point (`tests/test_upstream_candidate.py`; combinations in
+ACC match, and 2.6's far rule and stationary gate added, that is `fused` 2.6 (its parts and line costs in
+[`openpilot_file_parts.json`](../data/analysis/summaries/openpilot_file_parts.json); combinations in
 [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)).
 
 The rule fixed before these results also required zero target episodes on the owner drives; the version with the
@@ -464,7 +468,7 @@ better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead o
 bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and 7 mild requests each
 ([`driving_claim_sources.json`](../data/analysis/summaries/driving_claim_sources.json)); against the
 oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` leaves
-them out from 2.4 on, and the fork's `fused` build and the openpilot version drive identically. The summary cars are now
+them out from 2.4 on. The summary cars are now
 published as points of their own by `acc_summaries` ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 ### The ACC target's weight

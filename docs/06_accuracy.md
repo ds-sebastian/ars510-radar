@@ -1,7 +1,7 @@
 # 06. Accuracy: how well the object fields match the world
 
-The radar publishes two streams of numbers: the **object list** (0x80; `raw` and `fused` read it) and the **ACC target**
-(0x235 / 0x237; `acc` reads it alone, `fused` weights it into its speed filter). Sections below say which stream a number
+The radar publishes two streams of numbers: the **object list** (0x80; read by the research `raw` / `fused` configs in `ars510/`, not by any installable profile) and the
+**ACC target** (0x235 / 0x237; `acc` and `acc_summaries` publish it, the `fused` filter weights it into its speed estimate). Sections below say which stream a number
 belongs to; the [side-by-side table](#object-list-and-acc-target-side-by-side) puts them next to each other.
 
 Three drives carry the object-list measurements: **A** (development, 24 min decoded, mixed), **B** (held out, 40 min city,
@@ -60,7 +60,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   [`register_structure_and_reference_scope.json`](../data/analysis/summaries/register_structure_and_reference_scope.json)). These are differential comparisons on selected
   stopped cars, with the radar's 0.15 s output age, not an absolute range-zero calibration. They point to the object list, not
   the ACC distance, as the short one, and vision is not a far-range reference. The ACC distance is therefore the better far range
-  for that car: `acc` publishes it, `fused` publishes it
+  for that car: `acc` publishes it, and the `fused` filter uses it
   as the followed car's range (object-list range for the other tracks), and any position gate between the object list and
   the radar's own trackers needs room for this difference
   ([`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json)). The 2 Hz object stream 0x680, close to
@@ -129,8 +129,8 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   holds from 1 s to 10 s after a change, so it is a gain, not a slow catch-up; dividing it out does not help, because it
   also scales the noise ([`round2_readings.json`](../data/analysis/summaries/round2_readings.json)).
 - **Ego reference.** Toyota 0xB4 reads 1.35 % below carState vEgo on the owner car (0.987 and 0.991 on two more cars),
-  constant over speed, and 1.0-1.4 % below GNSS; carState vEgo is within 0.1-0.4 % of GNSS. The `raw` and `fused`
-  object-list profiles decode the radar's ground speed at the nominal 0.15 m/s per code and subtract 0xB4 / 0.9865
+  constant over speed, and 1.0-1.4 % below GNSS; carState vEgo is within 0.1-0.4 % of GNSS. The object-list decode (`raw` / `fused`
+  configs) reads the radar's ground speed at the nominal 0.15 m/s per code and subtract 0xB4 / 0.9865
   (`ego_speed_scale`), so the subtracted ego is on the scale of the vEgo that radard adds back. Earlier releases instead
   read the radar speed at an empirical 0.149 m/s per code against unscaled 0xB4, which compensates the same deficit in steady
   following. The two forms drive the same in replay (`fused`: hard 8 and mild 27 episodes either way, unnecessary braking
@@ -173,7 +173,7 @@ often wet or at night, hilly) and **C** (held out, 24 min highway). The referenc
   requests into firmer ones ([`event_pair_fields.json`](../data/analysis/summaries/event_pair_fields.json),
   [`timing_launch_health.json`](../data/analysis/summaries/timing_launch_health.json)).
 - **A second radar unit behaves the same (◐).** On a second car with the same firmware (153 min of ACC-target runs),
-  the noise numbers that set `fused`'s σ values match the owner car's:
+  the noise numbers that set the `fused` filter's σ values match the owner car's:
 
   | | second unit | owner car |
   |---|---|---|
@@ -225,7 +225,7 @@ The radar's velocity was right; its range walked. radard's 25% distance gate rej
 
 So from record to record velocity is the object list's steady channel and range the jittery one; over seconds at range,
 velocity has the excursions of [07](07_velocity_excursions.md). Velocity-aided range (`range_fusion_gain = 0.1`, `fused`)
-cuts the walks by about a third ([08](08_openpilot_integration.md#profiles)). Differentiating range to get velocity gives 3.5-27× the mean squared error
+cuts the walks by about a third ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)). Differentiating range to get velocity gives 3.5-27× the mean squared error
 of the native velocity field. The ACC target's 0.025 m distance (`acc`) has a cycle-to-cycle jitter of 0.04 m against 0.94 m
 for the object-list range of the same car ([`acc_fields.json`](../data/analysis/summaries/acc_fields.json), 46,251 cycles).
 
@@ -234,22 +234,23 @@ for the object-list range of the same car ([`acc_fields.json`](../data/analysis/
 - **Within the radar:** each track ID lives in one slot.
 - **Against the camera** (within 60 m, tracks with a long camera chain): the radar track keeps one camera identity for
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
-- **Re-link:** `raw` re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
-  its filter state across short losses; with `fused`'s speed filter the replays brake the same with the re-link on or off (lead-source switches 1,770 vs 1,772,
-  [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), so `fused` runs with it off. `acc` takes the radar's target ID as the track ID.
+- **Re-link:** the `raw` config re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
+  its filter state across short losses; with the `fused` speed filter the replays brake the same with the re-link on or off (lead-source switches 1,770 vs 1,772,
+  [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), so `fused` runs with it off. `acc` and `acc_summaries` take the radar's target ID as the track ID.
 
 ## Object list and ACC target side by side
 
-`raw` and `fused` start from the object list; `acc` publishes the ACC target; `fused` also feeds the ACC target into its filter.
+The research `raw` / `fused` configs start from the object list and `fused` also feeds the ACC target into its filter; the
+installable `acc` and `acc_summaries` publish the ACC target (and the summaries) and never the object list.
 
 | measure | object list | ACC target | source |
 |---|---|---|---|
 | distance unit | 0.0625 m per code | 0.025 m per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
 | distance jitter per cycle, same car | 0.94 m | 0.04 m | [`acc_fields.json`](../data/analysis/summaries/acc_fields.json) |
 | distance against the ACC distance, 30-50 / 50-70 / 70-80 / 80-100 m | median −1 / −3 / −4 / −7 m | 0 (reference); openpilot's vision lead within 1 % | [`far_range_distance.json`](../data/analysis/summaries/far_range_distance.json) |
-| speed unit | 0.15 m/s per code (the profiles subtract 0xB4 on the vEgo scale) | 0.125 m/s per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
+| speed unit | 0.15 m/s per code (the object-list decode subtracts 0xB4 on the vEgo scale) | 0.125 m/s per code | [05](05_acc_target_and_support.md#units-of-the-acc-target) |
 | fast speed noise, owner / second car | 0.12 / 0.11 m/s | 0.025 / 0.027 m/s | [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json) |
 | speed against the range slope of the same car (the ACC car), 1,862 windows | 0.87 (IQR 0.77-0.96); other tracks 1.01-1.07 of their own range change at 3-20 m | 0.99 (IQR 0.97-1.00) | [`acc_summary_units.json`](../data/analysis/summaries/acc_summary_units.json) |
 | closer to the range slope in 62 tail episodes | 24 % (median error 2.5 m/s) | 76 % (1.2 m/s) | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json) |
 | error scale against the optical reference, 10-40 / 40-70 m | 0.55 / 1.07 m/s | ≤ 0.4 / 0.54 m/s | [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json) |
-| cars covered | every tracked car, from age 60 in `raw` / `fused` | the one car the radar's ACC follows; present 99 % of radar-lead time at 15-80 m, 66 % at 80-200 m | [`road_v21.json`](../data/analysis/summaries/road_v21.json) |
+| cars covered | every tracked car, from age 60 in the `raw` / `fused` configs | the one car the radar's ACC follows; present 99 % of radar-lead time at 15-80 m, 66 % at 80-200 m | [`road_v21.json`](../data/analysis/summaries/road_v21.json) |

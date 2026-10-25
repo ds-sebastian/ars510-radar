@@ -36,7 +36,7 @@ body:
     id: profile
     attributes:
       label: Profile
-      options: [acc (default), acc_summaries, fused, openpilot (single-file version), raw, an experimental profile (name it below), an older install (anchor / steady), not sure]
+      options: [acc (default), acc_summaries, an older install (fused / openpilot / raw / anchor / steady), an experimental profile (name it below), not sure]
   - type: input
     id: driving
     attributes:

@@ -76,8 +76,8 @@ The whole record holds or none of it does (99.4-99.7 %), the next record catches
 held when every moving slot's position equals the previous one. The rate follows the timing offset: 38-43 % of records
 at codes 42-51, 4-5 % at 52-61, 20-26 % at 62-71 and 1-3 % above (two cars,
 [`position_held_records.json`](../data/analysis/summaries/position_held_records.json)). Range differences across a held
-record are 0 and then double. `raw` publishes the stale position, `fused` moves its range 10 % toward it, and `acc` /
-`acc_summaries` read the ACC messages, which do not hold.
+record are 0 and then double. The object-list decode's `raw` config passes the stale position on and `fused` moves its range 10 % toward it; the
+installable `acc` / `acc_summaries` read the ACC messages, which do not hold.
 
 ![position-held records](img/analysis/position_held_records.png)
 
@@ -92,7 +92,8 @@ The decoder builds `trackId` from **slot + continuous age run** (`ars510/tracks.
 - a slot quiet for more than 0.3 s → new ID;
 - a new occupant of a reused slot gets a new ID, and each ID lives in one slot.
 
-The `raw` profile (`BASE_CONFIG`) also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near
+The decoder's `raw` config (`BASE_CONFIG`; with `fused`, research configs in `ars510/`, not installable because the
+object list's speed excursions reach the planner, [07](07_velocity_excursions.md)) also re-links an ID when the radar re-initialises a car it lost for up to 3.5 s near
 its predicted position, so radard keeps its per-track filter. `fused` leaves the relink off: on 27 drives its replays give the same braking
 counts, with 1,770 lead switches with the relink off and 1,772 with it on ([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)).
 The `acc` profile uses the radar's own target ID.
@@ -109,7 +110,7 @@ A slot's life, as the fields show it ([03](03_slot_fields.md) has every field):
 
 1. **Birth.** Age 1, motion code 5 (initializing), class 1 (new). The startup code `8|5` counts down
    30, 30, 30, 30, 20, 13, 9, 6, 4, 2, 1, 1, 0 while the motion code stays 5.
-2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). `raw` and `fused` publish from age 60; `acc` publishes
+2. **Settling.** Range and velocity converge over the first ~60 cycles (3.6 s). the object-list configs publish from age 60; `acc` publishes
    the target the radar's tracker selects.
 3. **Tracked.** Age saturates at 126. State `0|2` is commonly 1 (update-like); the score `16|8` commonly sits at
    100 and can decline.
@@ -173,7 +174,7 @@ Tracks younger than about 50-60 cycles carry range and velocity that are still c
 
 ![age convergence](img/analysis/age_convergence.png)
 
-Hence `raw` and `fused` publish from age 60 (`min_publish_age = 60`), and radard uses vision for a new car's first ~3.6 s. The `acc` profile
+Hence the object-list configs publish from age 60 (`min_publish_age = 60`), and radard uses vision for a new car's first ~3.6 s. The `acc` profile
 publishes the radar's ACC target, a converged track the radar's tracker has selected
 ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)).
 
@@ -185,8 +186,8 @@ from ars510.objects import decode_native_slot
 o = decode_native_slot(3, record[17 + 36 * 3 : 17 + 36 * 4])   # slot 3
 o.d_rel, o.y_rel, o.v_long_ground, o.age, o.movement_code, o.raw_weights148
 vrel_native = o.v_long_ground - v_ego                         # nominal velocity; matched ego reference
-vrel_b4 = o.v_long_ground - v_ego_b4 / 0.9865                   # raw and fused profiles; Toyota 0xB4 on the vEgo scale
+vrel_b4 = o.v_long_ground - v_ego_b4 / 0.9865                   # raw and fused configs; Toyota 0xB4 on the vEgo scale
 ```
 
-Toyota 0xB4 reads 1.35 % below carState vEgo, so the profiles scale it before subtracting it (`ego_speed_scale`; the
-openpilot file does it where it reads 0xB4). The nominal decode and the ego reference are in [06](06_accuracy.md#velocity).
+Toyota 0xB4 reads 1.35 % below carState vEgo, so the object-list decode scales it before subtracting it
+(`ego_speed_scale`). The nominal decode and the ego reference are in [06](06_accuracy.md#velocity).

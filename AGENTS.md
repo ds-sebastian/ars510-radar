@@ -17,7 +17,7 @@ Start with [README.md](README.md), then the doc for your area:
 | ACC target, support messages, car-bus 0x366 | `ars510/support.py` | `docs/05`, `docs/13` |
 | openpilot-facing interface, profiles, filters | `ars510/interface.py` | `docs/08`, `docs/11`, `docs/12` |
 | what each fork does with the radar lead | `tools/fork_lead/` | `docs/14` |
-| upstream opendbc proposals (`acc`, `fused`), parts ledger | `upstream/` | `docs/17` |
+| upstream opendbc proposal (`acc`) | `upstream/` | `docs/17` |
 | PCS / AEB: alarm, relay design, recording | `ars510/support.py` | `docs/15` |
 | install into openpilot / forks | `openpilot/install.py`, `openpilot/ars510_radar_interface.py` | `openpilot/README.md` |
 | replay harness, Cabana, figures | `tools/` | `docs/09` |
@@ -42,12 +42,13 @@ ruff check upstream/                # the openpilot file follows opendbc's ruff 
 - **Privacy.** Route IDs, dongle IDs, VINs, GPS, device IPs, local paths and identifying video stay out of commits and pastes.
   Drives are anonymous (A/B/C, D1-D4, E, O1-O5, U1-U3) with relative times. `tools/check_privacy.py` enforces the patterns.
 - **Decoder semantics** change only with a test and the matching doc row. Keep `ars510/` dependency-free.
-- **Driving behaviour** (anything that changes a profile's output, above all the default `acc` and `FUSED_CONFIG`) needs an
+- **Driving behaviour** (anything that changes a profile's output, above all the default `acc`) needs an
   openpilot replay against the current profile with the gates in `docs/09`, the vision-only comparison in `docs/11`,
   a review of the moments that change, and numbers in the PR. Tune on other drives than the one that motivated the change.
-- **The openpilot file** (`upstream/ars510_radar.py`) is meant for upstream, where every line has to be defended. A PR
-  that adds or removes lines there updates its row in the parts ledger (`docs/17`, "Parts of the openpilot file", and
-  `data/analysis/summaries/openpilot_file_parts.json`): code lines, evidence, what removing it costs, upstream status.
+- **Object-list profiles** (`fused`, `raw` and the like) are not installable while the object list's speed excursions
+  reach the planner (`docs/07`); `FUSED_CONFIG` in `ars510/` is research code. Making one installable again needs the
+  driving-behaviour evidence above on held-out drives, with no added radar-only braking against `acc`.
+- **The upstream file** (`upstream/ars510_acc_target.py`) is meant for opendbc, where every line has to be defended.
 - **Installer** stays fork-agnostic: append-only hook in `toyota/interface.py`, fork files left as they are, the fork's
   existing `ToyotaFlags` bits. Run `openpilot/check_integration.py` against every fork available.
 - **Docs** state the current state only (● / ◐ / ○), rewritten in place; numbers come from

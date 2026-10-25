@@ -4,8 +4,9 @@ The installer works on every fork ([08](08_openpilot_integration.md)), but a for
 a radar lead. This page reads the radard and MPC lead handling of sunnypilot, FrogPilot and StarPilot, runs their own
 code on four recorded drives (two cars) and on synthetic cases, and says what the ARS510 changes on each.
 
-Profiles: the run feeds each fork the points of `raw` (the unfiltered decode), `fused` (all tracks, version 2.6.0) and
-`acc` (the radar's ACC target alone, the default install). The radar's ACC target is also the **reference** the added
+Profiles: the run feeds each fork the points of `acc` (the radar's ACC target alone, the default install) and, as
+research references that are not installable, `raw` (the unfiltered object-list decode) and `fused` (all tracks through
+the object-list filter, version 2.6.0; [12](12_kalman_filter.md)). The radar's ACC target is also the **reference** the added
 demand of the other two is measured against, so `acc` shows 0 added demand by construction and its own rows are the
 reference rows.
 
@@ -100,10 +101,12 @@ percentile +0.79, at least 1.0 in 17 of 225 runs); with `raw` +0.66 (+1.79, 208 
 
 ## What the evidence supports
 
-- On any fork, install the default `acc`, the main alternative `acc_summaries`, or `fused`. `acc` publishes only the radar's ACC target, the reference of this
-  comparison, so the fork's lead speed is the ACC target's speed. `fused` 2.6.0 cuts the braking demand
-  the radar's speed errors add about ninety-fold on sunnypilot (128 → 1.4 events per hour against the radar's own tracker), and the
-  benefit grows with how much of the radar's speed the fork uses.
+- On any fork, install the default `acc` or `acc_summaries` (the two installable profiles). `acc` publishes only the
+  radar's ACC target, the reference of this comparison, so the fork's lead speed is the ACC target's speed. The
+  object-list filter `fused` cuts the braking demand the radar's speed errors add about ninety-fold on sunnypilot
+  (128 → 1.4 events per hour against the radar's own tracker) but does not remove it, and on held-out drives it still
+  passed a false closing to the planner ([11](11_profiles_compared.md)); the more of the radar's speed a fork uses, the
+  more such an error costs.
 - A fork that uses the radar's speed and acceleration (sunnypilot, FrogPilot with Human Following off) gets most from the
   radar and is the most sensitive to what the radar gets wrong. A fork that anchors on the vision model (FrogPilot's
   default, StarPilot's first path) is smooth because the radar contributes less: range, and the lead's speed now.

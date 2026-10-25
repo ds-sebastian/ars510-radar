@@ -28,8 +28,7 @@ The confirmed radar firmware is `8821F0R03100` at 0x750 / 0x0f on the Toyota ARS
 `8821F0R01100` is listed in openpilot fingerprints; for it, detection relies on seeing both 0x80 and 0x85 on bus 1 at
 fingerprinting (a warm restart), and one capture adds it to the firmware list. See [firmware validation](docs/10_research_directions.md#for-the-integration).
 Install with [`openpilot/README.md`](openpilot/README.md). The installer supports openpilot and forks. The `acc` profile
-(the radar's ACC target alone) is the default; `--profile fused` installs the all-tracks alternative and `--profile raw` the
-unfiltered decode for comparison. Re-running the installer without `--profile` keeps the installed profile. Then:
+(the radar's ACC target alone) is the default; `--profile acc_summaries` adds the two target-summary cars. Re-running the installer without `--profile` keeps the installed profile. Then:
 
 1. Reboot, drive, and press the bookmark (flag) button whenever braking feels wrong or a lead seems stuck.
 2. Open a **Drive report** issue. Give the fork and version, the installed profile, `install.py --check` output, road type, and for each
@@ -48,7 +47,7 @@ PCS/AEB event collection follows the [professional/passive specification](docs/1
 
 - **Decoder** (`ars510/`): field changes need a test (a synthetic slot in `tests/` or a bundled sample in
   `data/sample/`) and the matching row in `docs/03` (or `docs/02`, `docs/04`, `docs/05`).
-- **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `acc` and `fused`):
+- **Driving behaviour** (anything that changes the RadarPoints a profile publishes, above all the default `acc` and `acc_summaries`):
   state the expected effect before running it, replay it through openpilot against the current profile with the gates
   in [docs/09](docs/09_tools_and_data.md#developing-and-testing-a-change) and the vision-only comparison in
   [docs/11](docs/11_profiles_compared.md#against-vision-only), and put the numbers in the PR. Review the moments that

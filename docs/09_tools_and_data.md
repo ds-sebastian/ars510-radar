@@ -4,10 +4,10 @@
 
 | tool | what it does |
 |---|---|
-| [`tools/decode_log.py`](../tools/decode_log.py) | rlog / qlog / CAN CSV → one CSV row per published object-list point (`raw`, `fused` or `all-tracks`) |
+| [`tools/decode_log.py`](../tools/decode_log.py) | rlog / qlog / CAN CSV → one CSV row per object-list point under a research decode config (`raw`, `fused` or `all-tracks`; none is installable) |
 | [`tools/build_cabana_route.py`](../tools/build_cabana_route.py) | appends reassembled objects to your rlogs on a virtual bus, for Cabana; `--dbc-only` regenerates `dbc/ars510_objects_vbus.dbc` |
 | [`tools/openpilot_replay/process_replay_ars510.py`](../tools/openpilot_replay/process_replay_ars510.py) | openpilot's own process_replay (card → radard → plannerd), stock vs installed integration |
-| [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several object-list profiles (`all-tracks`, `raw`, `fused`, `fused_no_trackers`) side by side |
+| [`tools/openpilot_replay/replay_radard.py`](../tools/openpilot_replay/replay_radard.py) | radard + planner only, several research object-list decodes (`all-tracks`, `raw`, `fused`, `fused_no_trackers`) side by side |
 | [`tools/fork_lead/`](../tools/fork_lead) | runs a fork's own radard and MPC lead handling on your drives: `prepare_route.py`, `fork_replay.py`, `fork_report.py`, `fork_synth.py` ([below](#compare-forks)) |
 | [`tools/check_structure.py`](../tools/check_structure.py) | CRC, slot-index and allocation-count checks on the bundled samples |
 | [`tools/make_profile_figures.py`](../tools/make_profile_figures.py) | runs the profiles on the bundled samples: the examples in [12](12_kalman_filter.md); a template for plotting your own idea |
@@ -58,17 +58,17 @@ show the radar's own ACC target.
 ```bash
 OP=/path/to/openpilot
 cp -r $OP/opendbc_repo /tmp/opendbc_acc && python openpilot/install.py /tmp/opendbc_acc                      # acc, the default
-cp -r $OP/opendbc_repo /tmp/opendbc_fused && python openpilot/install.py /tmp/opendbc_fused --profile fused  # the all-tracks alternative
+cp -r $OP/opendbc_repo /tmp/opendbc_accsum && python openpilot/install.py /tmp/opendbc_accsum --profile acc_summaries
 PY=$OP/.venv/bin/python
 PYTHONPATH=$OP $PY tools/openpilot_replay/build_long_mpc_shadow.py --openpilot $OP --out op_shadow   # once, as an alternative to the scons build
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc $OP/opendbc_repo --mpc-shadow op_shadow \
     --label vision --out pr --save-logs pr/logs route--0/rlog route--1/rlog
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_acc --mpc-shadow op_shadow \
     --label acc --out pr --save-logs pr/logs route--0/rlog route--1/rlog
-$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_fused --mpc-shadow op_shadow \
-    --label fused --out pr --save-logs pr/logs route--0/rlog route--1/rlog
+$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_accsum --mpc-shadow op_shadow \
+    --label acc_summaries --out pr --save-logs pr/logs route--0/rlog route--1/rlog
 $PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision acc      # each compare takes two labels
-$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision fused
+$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision acc_summaries
 ```
 
 The comparison lists detection, radarTracks rate and gaps, radar-matched leads, FCW and braking episodes that only one
@@ -83,8 +83,9 @@ To **plot**, open a saved `rlog.zst` in PlotJuggler: `longitudinalPlan.aTarget`,
 acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on `PATH`
 when clip rendering reports a `-vsync` error.
 
-Here `vision` is unmodified openpilot (vision-only leads on this car), `acc` the default install and `fused` the all-tracks
-install; another profile goes into its own opendbc copy (`install.py /tmp/opendbc_raw --profile raw`).
+Here `vision` is unmodified openpilot (vision-only leads on this car), `acc` the default install and `acc_summaries` the
+other installable profile, each in its own opendbc copy. The object-list decodes (`raw`, `fused`) are not installable;
+replay them with `tools/openpilot_replay/replay_radard.py` (radard and planner only) for research.
 
 ### Compare forks
 
@@ -118,7 +119,7 @@ until the last.
 3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
    Tune on other drives than the one that motivated it.
 4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the profile you change
-   (`acc` or `fused`) and with your variant, and report the gates used throughout [12](12_kalman_filter.md):
+   (`acc` or `acc_summaries`; an object-list variant against the research `fused` filter) and with your variant, and report the gates used throughout [12](12_kalman_filter.md):
 
    | gate | meaning |
    |---|---|

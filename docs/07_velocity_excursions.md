@@ -2,12 +2,14 @@
 
 The object list's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for 1-10 s while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
-Through `raw` that shows up in openpilot as extra jitter in the plan and as braking requests only the radar makes
-(1.75 per hour). `acc` (the default) publishes the radar's ACC target, whose speed stays smooth through the same
-moments; `fused` runs one Kalman filter per track on the object list and the ACC target ([12](12_kalman_filter.md);
-[11](11_profiles_compared.md#why-acc-is-the-default)).
+Published unfiltered (the `raw` config) it shows up in openpilot as extra jitter in the plan and as braking requests only
+the radar makes (1.75 per hour). This is why the installer offers only `acc` (the default) and `acc_summaries`: they
+publish the radar's own tracker outputs (the ACC target and the target summaries), whose speed stays smooth through the
+same moments, and never the object list. The `fused` Kalman filter on the object list and the ACC target
+([12](12_kalman_filter.md)) removes most excursions but not all, so it stays research code until they are solved
+([11](11_profiles_compared.md#why-acc-is-the-default)).
 
-| profile | what reaches radard | hard radar-only braking ticks, 20 held-out routes | radar-only braking per hour |
+| decode (installable: `acc` only) | what reaches radard | hard radar-only braking ticks, 20 held-out routes | radar-only braking per hour |
 |---|---|---|---|
 | `raw` | object-list speed | 93 | 1.75 |
 | `fused` (2.0, object-list filter alone) | Kalman-filtered object-list speed | 48 | 0.88 |
@@ -26,7 +28,8 @@ moments; `fused` runs one Kalman filter per track on the object list and the ACC
   with range. Within a range band the grade varies between drive sets, and against stopped cars as ground truth one
   count is not the same speed error near and far ([below](#far-range-excursions-match-the-reported-velocity-error-scale)).
   The radar's own ACC tracker follows the same car smoothly.
-- `fused` weights every reading by that uncertainty and leans on the radar's own ACC target.
+- The research `fused` filter weights every reading by that uncertainty and leans on the radar's own ACC target; on
+  held-out drives some excursions still get through ([12](12_kalman_filter.md)).
 
 ## What an excursion looks like
 
@@ -90,7 +93,7 @@ Four closed-loop drives with the object-list radar feeding radard (owner's early
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
 - A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.3% observed vs 6.5%
   predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). A 1-3σ deviation lasts seconds.
-- `240|7` (◐) scales with the width of far errors when pooled over range, which is why `fused` uses it to weight readings.
+- `240|7` (◐) scales with the width of far errors when pooled over range, which is why the `fused` filter uses it to weight readings.
   Within a range band its grade depends on the drive set (rising on some, flat at 20-40 m on others), and against
   stopped cars as ground truth its per-count step is larger near than far, so it is a range-wide weight, not one
   calibrated σ.
@@ -138,10 +141,12 @@ rougher than vision; around radar/vision disagreements (20% of the time) +0.032,
 
 ## How it is filtered
 
-`fused` handles excursions with one Kalman filter per track that weights the object list and the radar's
-ACC target by their own uncertainty. The model, every constant, what each part contributes and
-the variants tested are in [12 Kalman speed filter](12_kalman_filter.md). `acc` (the default) reads the ACC target
-alone: the ACC target's speed is the speed radard sees ([11](11_profiles_compared.md#why-acc-is-the-default)).
+The installable profiles avoid the object list entirely: `acc` (the default) publishes the ACC target alone, and
+`acc_summaries` adds the two target-summary cars within 40 m, so the speed radard sees comes from the radar's own
+tracker ([11](11_profiles_compared.md#why-acc-is-the-default)). The research `fused` filter handles excursions with one
+Kalman filter per track that weights the object list and the radar's ACC target by their own uncertainty; it removes
+most but not all of them. The model, every constant, what each part contributes, the variants tested and the case that
+still gets through are in [12 Kalman speed filter](12_kalman_filter.md).
 
 ## Radar-internal signals that move with an excursion
 
