@@ -359,7 +359,7 @@ CM_ SG_ 514 A202_B1_RESERVED_ZERO4 "Zero, apart from the rare all-ones (FF ...) 
 CM_ SG_ 514 A202_B2_B4_OBSERVED_CONSTANT_BE24 "Constant 0x036D80, apart from the rare all-ones (FF ...) frames.";
 CM_ SG_ 591 A24F_B0_RESERVED_ZERO6 "Always zero.";
 CM_ SG_ 591 A24F_STARTUP_PHASE1 "0 while the radar starts up, 1 once running (stays 1).";
-CM_ SG_ 591 A24F_B0_RESERVED_ZERO1 "0 on the RAV4s and the C-HRs; 1 throughout on the Yaris (a per-vehicle variant).";
+CM_ SG_ 591 A24F_B0_RESERVED_ZERO1 "0 on the RAV4s and the C-HRs. On the Yaris it switches with A24F_STARTUP_PHASE1: 0 at boot, 1 once running (byte 0 goes 0x00 -> 0xC0), a second running flag on that radar.";
 CM_ SG_ 1281 A501_B0_B3_OBSERVED_CONSTANT_BE32 "Constant 0xFFF0FFF0.";
 CM_ SG_ 1281 A501_B4_OBSERVED_CONSTANT8 "Constant 0x70; 0xFF in the power-up frame.";
 CM_ SG_ 1281 A501_B6_OBSERVED_CONSTANT8 "Constant 0x00.";
