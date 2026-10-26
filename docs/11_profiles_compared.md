@@ -120,13 +120,13 @@ What the table shows:
 
 On the 26 held-out owner routes `acc` minus `fused` per moving hour (route-bootstrap 95 % CI, 19 routes) is −1.45 s of
 unnecessary braking (−2.79 … −0.26) and −22 lead flips (−36.5 … −3.3); the differences in hard (+0.39,
-0.0 … +1.24), mild and missed braking include zero. Pooling every drive held out of development, including a second
-car's 12 later drives that no tuning touched (6.46 moving h, 2.0 h above 20 m/s), `acc` has 14.0 against 18.6 s of unnecessary braking
-(−0.72 s per hour, −1.65 … +0.15): fewer, but the interval now includes zero. On those 12 drives alone the two tie on every
+0.0 … +1.24), mild and missed braking include zero. Pooling every set held out of all tuning (owner routes and the
+second car's 12 + 12 + 38 later drives, 12.72 moving h), `acc` has 18.0 against 35.4 s of unnecessary braking
+(−1.37 s per hour, −2.39 … −0.44) with 3 hard episodes each. On the 12 second-car drives of the earlier batch alone the two tie on every
 measure (hard 1 against 1, the same real closing; mild 5 against 4; unnecessary 5.2 against 5.7 s; onset vs vision −0.002 against
 +0.007 s), and both follow Toyota's own command about equally (RMS 0.309 against 0.313 m/s², vision 0.345;
-[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (94 routes, 21.45 moving h) the
-unnecessary-braking difference is −0.31 s per hour (−0.72 … +0.06) and the flip difference −22 per hour (−35.9 … −7.4).
+[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (142 routes, 29.63 moving h: the fast suite and every held-out set) the
+unnecessary-braking difference is −0.65 s per hour (−1.22 … −0.21) and the flip difference −21 per hour (−31.6 … −7.8).
 
 **`acc_summaries` on these drives.** On the 26 owner routes it brakes like `acc` (per moving hour, `acc_summaries` minus
 `acc`): unnecessary equal, missed +0.08 s (0 … +0.26), hard and mild identical. On the 13 routes one more mild request
@@ -174,7 +174,7 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
 - **Small and auditable.** 45 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
-- **Replay evidence on 21.45 moving hours.** `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
+- **Replay evidence on 29.63 moving hours.** `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
   openpilot longitudinal, and a second driver's 26 drives, 0.92 h): with the camera's lead within 80 m, radard's lead was radar-backed 98.5-98.9 % of the engaged
   time, and the first two drives stopped at openpilot's designed gap.
 
@@ -241,9 +241,9 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
   cars only while an ACC target exists loses the cut-in gain, so the profile keeps one range limit.
 - **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
   the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
-  default; `acc_summaries` is the recommended alternative. Its road record is two short StarPilot drives (5.2 min
-  with openpilot longitudinal; radar-backed 97 % of the engaged time with the camera's lead within 80 m, a summary car as
-  radard's lead on 0.13-0.22 % of moving time; [08](08_openpilot_integration.md#on-the-road)).
+  default; `acc_summaries` is the recommended alternative. Its road record is 11 StarPilot drives (about 54 min
+  with openpilot longitudinal; on the first two, radar-backed 97 % of the engaged time with the camera's lead within 80 m, a summary car as
+  radard's lead on 0.13-0.22 % of moving time; every hard request on the later nine drives followed a real slowing lead; [08](08_openpilot_integration.md#on-the-road)).
 
 ![acc_summaries against the range limit](img/analysis/acc_summaries_sweep.png)
 

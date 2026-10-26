@@ -98,7 +98,7 @@ for comparison:
 - **`acc_summaries` adds up to two other moving cars from the radar's summaries** within 40 m to `acc`, in 99 code lines. Over every
   replayed drive (23 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.04 s
   per hour), close cut-ins become radar-backed 0.09 s earlier, and it flips more (+26 per hour). The earlier 60 m limit
-  braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). About 30 engaged road
+  braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). About 54 engaged road
   minutes so far ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **On some real slowdowns the radar sees the closing first** (curves, far leads); on others vision does.
 - **A far car closing fast** reaches the planner through the camera until the radar's ACC picks it, about 1 s later
@@ -153,7 +153,7 @@ matching and variants tested: [docs/12](docs/12_kalman_filter.md); the profiles 
 | profile | install | what it does | use it for |
 |---|---|---|---|
 | **`acc`** (default) | `install.py /data/openpilot` | the radar's ACC target as one point ([`upstream/ars510_acc_target.py`](upstream/ars510_acc_target.py), 45 code lines and a [DBC](upstream/toyota_tss2_ars510.dbc); the car Toyota's own ACC follows); every other car from the camera; the upstream proposal | everyday driving ([docs/11](docs/11_profiles_compared.md#why-acc-is-the-default)) |
-| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from a Kalman filter on their range; 99 code lines) | forks: brakes like `acc` over every replay, cut-ins radar-backed 0.09 s earlier; about 30 engaged road minutes so far ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
+| `acc_summaries` | `--profile acc_summaries` | `acc` plus up to two more cars from the radar's own tracker (the target summaries within 40 m, speed from a Kalman filter on their range; 99 code lines) | forks: brakes like `acc` over every replay, cut-ins radar-backed 0.09 s earlier; about 54 engaged road minutes so far ([docs/11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
 
 The object-list profiles of earlier versions (`fused`, its single-file form `openpilot`, `raw`, `shared_speed`,
 `shared_range`, and older names such as `anchor` / `steady`) are not installable while the object list's speed
