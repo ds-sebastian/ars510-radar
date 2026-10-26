@@ -1,0 +1,28 @@
+{
+  "description": "What reaches the car from the radar on openpilot-longitudinal setups whose radar line is filtered (radar left enabled): counts from raw CAN, recounted once from the raw logs; exploratory, no preregistration. Firmware 8821F0R03100 throughout.",
+  "segments": 2420,
+  "setups_segments": {"owner_sunnypilot": 1016, "owner_starpilot": 219, "second_car_sunnypilot": 1185},
+  "recorded_hours": 39.3,
+  "moving_hours": 25.7,
+  "moving_hours_openpilot_long_engaged": 12.85,
+  "hand_over": {
+    "openpilot_replaces_only": "0x343",
+    "segments_with_no_radar_0x343_after_1_s": 2418,
+    "radar_frames_still_arriving": ["0x344", "0x283", "0x411", "0x365", "0x366", "0x33E", "0x494", "0x4FF"],
+    "openpilot_sends_these": 0
+  },
+  "car_reaction": {
+    "bit13_set_frames": 1254,
+    "frames": 2950000,
+    "bit13_set_share_filtered": [0.0002, 0.0008],
+    "bit13_set_share_radar_disabled": 1.0,
+    "radar_disabled_frames": 266000
+  },
+  "not_observed_in_scope": {
+    "pcs_alarm_or_braking_field": 0,
+    "alarm_precondition_moments": [7, 10],
+    "expected_alarms_from_radar_on_rate": [0.95, 1.7],
+    "probability_of_zero_seen": [0.15, 0.37]
+  },
+  "source": "workspace experiment SCR-1390..1399"
+}

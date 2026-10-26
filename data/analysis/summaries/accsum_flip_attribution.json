@@ -1,0 +1,27 @@
+{
+  "description": "Which radard branch makes the extra lead flips of acc_summaries against acc, rebuilt at every replayed tick from the logged model leads and published points with radard's own helpers. Replay authority; 393 chunks, 23.03 moving hours (owner car, second car, fast suite); the shipped 40 m profile versus acc. Not a recommendation: the shipped profile is unchanged.",
+  "extra_flips": 830,
+  "flips_per_moving_hour": {"acc": 315, "acc_summaries": 341, "difference": 26.2, "difference_ci95": [18.4, 35.4]},
+  "branch": {
+    "vision_to_track_match": 830,
+    "low_speed_override": 1,
+    "model_lead_probability_at_or_below_0_5": 0
+  },
+  "classes": {
+    "summary_car_matched_where_acc_has_no_point": {"flips": 419, "share": 0.505, "per_hour": 18.2},
+    "summary_car_outscores_acc_point_then_fails_sanity_gate": {"flips": 242, "share": 0.292, "per_hour": 10.5},
+    "acc_point_present_on_vision_summary_car_passes": {"flips": 91, "share": 0.110, "per_hour": 4.0},
+    "other": {"flips": 78, "share": 0.093, "per_hour": 3.3}
+  },
+  "distance_gate_flips_in_class_1": {"flips": 316, "median_gap_over_tolerance": 1.11},
+  "summary_car_closest_to_acc_point_m": 0.9,
+  "tested_output_variants": {
+    "note": "same chunks, same harness; hard braking 14 in every variant; difference columns are against acc_summaries per moving hour",
+    "acc_summaries": {"flips_vs_acc": 26.2, "cut_in_gain_s": -0.086, "extra_flips": 830},
+    "summary_cars_only_without_acc_target": {"flips": -13.0, "flips_ci95": [-21.2, -7.0], "cut_in_gain_s": -0.055, "extra_flips": 471},
+    "summary_cars_only_inside_radar_path_corridor": {"flips": -9.7, "flips_ci95": [-17.1, -3.8], "cut_in_gain_s": -0.086, "missed_s_per_h": 0.043, "extra_flips": 534},
+    "corridor_or_no_acc_target": {"flips": -7.2, "flips_ci95": [-14.3, -2.4], "cut_in_gain_s": -0.086, "missed_s_per_h": 0.004, "extra_flips": 645}
+  },
+  "summary_exits_explaining_flips": {"upper_bound_per_hour": 2.1, "share_of_summary_id_extras": 0.09},
+  "source": "workspace experiments SCR-1320..1323, SCR-1340..1344, SCR-1370..1379"
+}

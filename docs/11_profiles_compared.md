@@ -237,8 +237,19 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
   offline (0.18 against 0.21 m/s RMS against the ACC speed).
 - **Choice of 40 m.** On the design drives every limit from 40 to 80 m brakes alike and the limit mainly trades lead flips
   against how early a camera lead becomes radar-backed; the held-out drives place the mismatches beyond 40 m. Also leaving
-  out cars beyond the ACC car does not brake better (unnecessary +0.02 s per hour, flips −4), and publishing the summary
-  cars only while an ACC target exists loses the cut-in gain, so the profile keeps one range limit.
+  out cars beyond the ACC car does not brake better (unnecessary +0.02 s per hour, flips −4), so the profile keeps one range limit.
+- **Where the extra flips come from.** Rebuilding radard's lead decision at every replayed tick (393 chunks, 23.0 moving h) puts all 830
+  extra flips in its vision-to-track match; the low-speed override and the model-lead probability are not involved. 50.5 % (18 per hour) are a
+  summary car matched where `acc` has no radar point, and the car is inside radard's distance window while the gap to the model lead is under
+  max(25 % of its range, 5 m) and drops out when the gap crosses it; 29 % (10 per hour) are a summary car that out-scores the ACC point in radard's
+  likelihood and then fails the sanity gate, 11 % an ACC point on vision while a summary car passes. The competing cars are different cars
+  from the ACC car (closest 0.9 m), and radard reads only each point's range, lateral and speed, so publishing order or error cannot change the match.
+  Short display drops of a summary car explain at most 2 per hour of the 26
+  ([`accsum_flip_attribution.json`](../data/analysis/summaries/accsum_flip_attribution.json)). Two output variants were replayed on the same
+  chunks with hard braking unchanged (14 episodes): summary cars published only while the radar has no ACC target cut the flips by 13 per hour
+  and keep 0.055 s of the 0.086 s cut-in gain; summary cars published only inside the radar's own ACC corridor (path radius from 0x33E, within 2.5 m) cut them by 9.7 per hour,
+  keep the whole gain, and add 0.04 s of missed braking per hour (zero in one variant that also publishes while no ACC target exists, +0.004 s).
+  The shipped profile is unchanged.
 - **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
   the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
   default; `acc_summaries` is the recommended alternative. Its road record is 11 StarPilot drives (about 54 min

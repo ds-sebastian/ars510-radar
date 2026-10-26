@@ -29,6 +29,16 @@ software route ([below](#relaying-the-radars-decision--theoretical)). The route 
 AEB) under openpilot speed control, stepping the stock set speed with emulated cruise buttons, is closed here: no raw cruise-lever
 bit was found on buses 0-2 around 385 set-speed steps, 46 engagements and 67 main toggles, only its effects ([13](13_car_bus_messages.md#0x365-lead-distance-and-relative-speed-)).
 
+**On filtered setups the radar's PCS output reaches the car (◐, observed counts).** On 2,420 segments of openpilot
+longitudinal with the radar line filtered (owner car on two forks and the second car, 39 h of car-bus time, 12.9 moving h engaged, firmware
+`8821F0R03100`), openpilot sends only 0x343. After the hand-over the radar's own 0x343 is gone (2,418 of 2,420 segments), while its 0x344, 0x283, 0x411,
+0x365, 0x366 and 0x33E keep arriving at their normal rates and openpilot sends none of them. The car accepts the stream: 0x320 bit 13 is set on
+0.02-0.08 % of 2.95 M frames, against all 266,000 frames of the radar-disabled segments. So stock PCS is not removed on these setups and no
+relay is needed there. Stock PCS acting is not shown: no alarm (0x344 `PCSALM` / `PBATRGR`, 0x411 FCW, 0x366 bit 13, 0x33E bit 48) and
+no braking field in 0x283 / 0x344 was observed in these segments, which hold 7 alarm-precondition moments against about 1-2 expected from the
+radar-on rate (probability of none 0.15-0.37), so the drives neither support nor exclude a hidden suppression. Braking on a filtered setup stays unobserved
+([`pcs_filtered_setups.json`](../data/analysis/summaries/pcs_filtered_setups.json)).
+
 ## What the PCS frames can request
 
 Panda passes 0x344 and 0x366 with any content and checks only 0x343 (`ACCEL_CMD` range) and 0x283 (bytes 0-5 zero). The brake

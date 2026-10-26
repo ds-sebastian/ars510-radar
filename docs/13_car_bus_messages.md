@@ -178,6 +178,10 @@ radar-ACC path ignores the wheel button, and sunnypilot's `SDSU` read (source sn
 with the radar on (second car, stock ACC) it is the radar's own 0x343 `DISTANCE` pulse (5 of 5 presses, the PCM follows 20-40 ms
 later), and with the radar switched off over UDS no frame in 26 segments changed with a press (◐: no press is known on that drive).
 
+**What the car sees on a filtered setup (◐).** In 2,420 filtered openpilot-longitudinal segments the radar's 0x344, 0x283, 0x411, 0x365, 0x366 and
+0x33E keep arriving after openpilot takes over 0x343, and bit 13 of 0x320 stays clear except around the hand-over
+([15](15_aeb_pcs.md#aeb-on-an-unfiltered-radar-line), [`pcs_filtered_setups.json`](../data/analysis/summaries/pcs_filtered_setups.json)).
+
 **0x320 bit 13 = "0x344 stopped" (●).** 0x320 (`VSC1S07`) is the gateway's brake-system status to the
 driving-support ECU. Its bit 13 (byte 1 bit 5; Toyota name `P2BRXMK`) sets about 0.15 s after the radar's 0x344
 (`ACC1F01`) stops and clears on the next 0x320 frame (20 Hz) once 0x344 is back. The presence of 0x344 alone clears it (table below): bit 13 stays clear with 0x344 present whether its `PCSOPR` bit

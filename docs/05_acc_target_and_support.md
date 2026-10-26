@@ -22,6 +22,17 @@ The stream is a distinct output of the radar's tracker: it reports on 58,553 of 
 list is empty (mostly stopped within 6.4 m; 1,443 of them above 3 m/s ego speed; 13 drives,
 [`acc_target_availability.json`](../data/analysis/summaries/acc_target_availability.json)).
 
+**Which car becomes the target (◐, two cars, held-out sets).** The radar's ACC list track lies inside a corridor around the
+radar's own path (the path radius in 0x33E byte 5, [13](13_car_bus_messages.md)) on 88-97 % of new acquisitions: within 2.5 m of the path on
+0.95 / 0.97 / 0.94 / 0.88 (owner car and three second-car sets; 0.95-0.98 within 3 m), against 0.84-0.94
+for a path computed from the vehicle's yaw rate and 0.79-0.80 for the raw lateral offset. It is the nearest corridor candidate on only 72-84 %, and a rule
+"smallest path offset inside 2.5 m, kept while inside 3 m" names the radar's ACC list track on 97 % of linked cycles (nearest mover without a corridor: 38-40 %).
+Range alone does not rank candidates (the chosen one is the nearer in AUC 0.52-0.54). The radar's `IN_PATH` level is not an instantaneous corridor test (AUC 0.64-0.73), and
+whether a target exists at all is decided on the tracker side (the corridor rule proposes one on 31 % of cycles where the radar publishes none). The half-width and the choice among corridor
+candidates need an acquisition-rich recording ([`acc_corridor.json`](../data/analysis/summaries/acc_corridor.json)).
+
+![ACC target containment by path definition](img/analysis/acc_corridor.png)
+
 **Where the target comes from (◐, exploratory, two cars).** The ACC target is not a smoothed object from the 0x80 list. It is
 the output of the radar's own internal tracker. When one of the 0x192 / 0x194 summaries below is on the ACC car (70-74 % of
 moving ACC-target cycles; the first pair only on 39-53 %), it shows the same track state:
@@ -286,17 +297,42 @@ percentile 2.3-4.2 m/s) where a per-track slope has 0.25 m/s (0.95). Restart it 
 ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json), block
 `summary_slot_identity_and_slope`).
 
-**Which cars: the two nearest movers (◐, two cars, exploratory).** The two pairs hold the tracker's two nearest moving
-tracks by range, the nearer one in 0x191 / 0x192 ([`summary_selection.json`](../data/analysis/summaries/summary_selection.json)):
-- **Moving only.** Over-ground speed above about 2.5-3 m/s. A car at ≤ 2 m/s is never in a summary, so stopped cars never appear.
-- **The ACC car only when it is one of the two nearest.** Otherwise both pairs hold other cars.
-- **Plain range order.** "The two nearest object-list movers" reproduces the radar's exact choice on 90 % (owner, held-out
-  drives) and 86 % (second car) of moving cycles. "ACC target plus the nearest other car" reproduces 73 / 69 %, "lowest
-  time to collision" 65 / 55 %, and lateral or path bands do no better than range order.
-- **Why only a third of moving cars.** Two slots: the nearest, second and third list movers are covered 74, 52-54 and 7-8 % of the time.
-- **Not a "next lead" ranking.** A non-ACC summary is the nearest other mover, mostly in a neighbouring lane. Its lateral
-  path does not announce its hand-over to the ACC target (an offset under 1.5 m from the path comes first on only 49-59 %
+**Which cars: range order, with eligibility decided by the tracker (◐, two cars, held-out sets).** The two pairs hold two of
+the tracker's moving tracks; the nearer one is in 0x191 / 0x192 (slot 0 is nearer in 99.9 % of 812,000 two-summary cycles,
+and the two cars' lateral signs agree on only 58-62 %, so slot order is range order, not left / right or lane
+([`summary_tracker_selection.json`](../data/analysis/summaries/summary_tracker_selection.json)):
+
+![Which key ranks the summary pair, and who replaces whom](img/analysis/summary_selection.png)
+
+- **Ranking is by longitudinal range (◐).** Among eligible rivals in the same cycle the displayed car is the nearer in
+  0.96-0.97 of 94-109 k pairs per held-out set; every key without a range term scores 0.41-0.76 (|lateral| 0.51-0.52,
+  time to collision 0.74-0.76, closing speed 0.57-0.59, over-ground speed 0.41-0.43, list length 0.57-0.61), and adding a
+  lateral term to range lowers it (range + 5 |path offset| 0.89). On the cycles where the displayed set changes, range
+  order reproduces the radar's exact set on 83-85 % (second car), ahead of corridor-first (70-71 %), TTC-first (62-65 %) and
+  one-per-side (56-58 %).
+- **Moving only.** Over-ground speed above about 2.5-3 m/s; a car at ≤ 2 m/s is never in a summary, so stopped cars never appear.
+  The list's `mot == 0`, over-ground speed above 3 m/s and class 2 / 3 mark most members, but they are co-symptoms of the
+  tracker's decision, not a gate: at the entry cycle the pair `8|5 == 30` and `109|3 == 0` holds for 54-70 % of entrants
+  against 25-30 % of non-members.
+- **A displayed car keeps its place (persistence).** On the 95 % of cycles on which the displayed set does not change, "retain
+  the car while its list track exists" reproduces it, and the exact-set agreement of retention plus entry by those fields
+  is 95-98 % when the previous set is given; on the cycles where the set changes the same rule is worst (68-74 %). Entry is
+  decided on the tracker side first: 86-91 % of entrants are mature tracker tracks (age ≥ 60) at their first display.
+  Applied free-running to every list object, the stateless "two nearest movers" rule reproduces the published pair on
+  86-89 % of cycles on the held-out second-car sets, a sticky free-running version only 64 %, so the
+  radar's persistence cannot be emulated from the list.
+- **Who leaves.** A car that leaves a full pair at less than 10 m is the nearest of the three and is passing alongside
+  (the newcomer is farther in 99 %); beyond 40 m the newcomer is farther in only 35-36 %. At ≤ 40 m a non-ACC summary car
+  leaves 177-295 times per moving hour, and 35 % of those are back as the same pair code within 1 s with the tracker's own
+  age continuing (99.5 % within one cycle): a display drop, not a track loss. During such a gap both slots still carry
+  cars (89 %) and the 0x190 count stays 2.
+- **Not a "next lead" ranking.** A non-ACC summary is the nearest other eligible mover, mostly in a neighbouring lane. Its
+  lateral path does not announce its hand-over to the ACC target (an offset under 1.5 m from the path comes first on only 49-59 %
   of hand-overs), and no rule based on the selection makes summaries beyond 40 m safe to publish.
+- **Tracker tracks the list never shows.** Of the moving vehicles 0x680 reports that are neither the ACC car nor a summary
+  car (7-8 % of its non-idle frames above 5 m/s), only 13-15 % link to an object-list track. This is not list capacity
+  (the 0x80 list holds at most 10 of its 20 slots) or timing. Selector 0 / 1 frames link on 2-4 %, selector 3 frames on 65-69 %. A list-based
+  profile cannot see the selector 0 / 1 tracks.
 
 **Summaries that are not the ACC target are further tracker-quality cars (◐, two cars, exploratory).** Each slot that does not hold the ACC
 target holds another track of the same internal tracker: up to two cars besides the lead (when the lead is farther than both), one on 32 % and two on 23 % of
