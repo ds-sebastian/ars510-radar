@@ -1,0 +1,164 @@
+{
+ "source": "comma public fleet logs of radar-ACC Toyota cars, owner and second-car logs, drive U3; bus 1 and car bus. 9 PCS events (7 fleet alarms, U3, one fleet brake-assist trigger without an alarm); radar-published states, not physical threat truth",
+ "moving_h": {
+  "all": 146.7,
+  "fleet": 113.9,
+  "owner_and_other_store": 26.3,
+  "second_car_new": 6.45
+ },
+ "stages": {
+  "bus1_stages": "event pair 0x195 / 0x196 opens, then 0x100 byte 0 = 0x02; no pre-fill, brake-request or autobrake stage steps at any event",
+  "alarms_with_timing": 8,
+  "pair_opens_before_0x100_median_s": -0.99,
+  "pair_opens_before_0x100_s": [
+   -0.77,
+   -0.91,
+   -0.99,
+   -1.07,
+   -1.07,
+   -1.27,
+   -0.02
+  ],
+  "pair_idle_alarms": 1,
+  "required_decel_le_-1.8_range_s": [
+   -0.77,
+   0.04
+  ],
+  "ttc195_le_2.5_range_s": [
+   -0.61,
+   0.03
+  ],
+  "ttc195_le_2.5_alarms": "5 of 8",
+  "pbatrgr_events": 4,
+  "pbatrgr_from_0x100_onset_s": [
+   -0.36,
+   0.24,
+   0.36
+  ],
+  "pbatrgr_without_alarm": 1,
+  "pbatrgr_echo_0x366_b1_bit0": {
+   "segments_set": 4,
+   "segments_total": 7808,
+   "other_0x366_frames_set": 0,
+   "other_0x366_frames": 2310000,
+   "same_frame_as_0x344_bit": true
+  },
+  "pbatrgr_bus1_counterpart": "not observed in 4 events (bit-level search incl. reassembled 0x80 / 0x85 records)"
+ },
+ "0x100_specificity": {
+  "values_seen": [
+   "0x00",
+   "0x02",
+   "0xFF at power-up"
+  ],
+  "events": 8,
+  "moving_h": 146.7,
+  "rate_per_h": {
+   "value": 0.0545,
+   "ci95": [
+    0.0235,
+    0.1075
+   ]
+  },
+  "alarm_without_hard_brake_per_h": {
+   "value": 0.0136,
+   "ci95": [
+    0.0017,
+    0.0493
+   ]
+  },
+  "alarms_followed_by_hard_brake": {
+   "count": "6 of 8",
+   "clopper_pearson_95": [
+    0.35,
+    0.97
+   ]
+  },
+  "nonthreat_driver_hard_brakes": 156,
+  "alarms_in_nonthreat_hard_brakes": 0,
+  "upper95_rate": 0.023,
+  "frames_scanned": {
+   "raw_store": 1870000,
+   "fleet": 4680000
+  }
+ },
+ "recall_threat_relevant_driver_hard_brakes": {
+  "n": 27,
+  "definition": "ACC target time to collision <= 4 s at the pedal",
+  "0x100": {
+   "value": 0.148,
+   "ci95": [
+    0.042,
+    0.337
+   ]
+  },
+  "0x100_before_pedal": {
+   "value": 0.111,
+   "ci95": [
+    0.024,
+    0.292
+   ]
+  },
+  "pair_active_before_pedal": {
+   "value": 0.852,
+   "ci95": [
+    0.663,
+    0.958
+   ]
+  },
+  "decel_le_-1.8": {
+   "value": 0.704,
+   "ci95": [
+    0.498,
+    0.862
+   ]
+  },
+  "ttc195_le_2.5": {
+   "value": 0.259,
+   "ci95": [
+    0.111,
+    0.463
+   ]
+  },
+  "threat_grade": {
+   "value": 0.074,
+   "ci95": [
+    0.009,
+    0.243
+   ]
+  },
+  "pair_lead_median_s": 0.44,
+  "pair_lead_iqr_s": [
+   0.22499999999999998,
+   0.915
+  ]
+ },
+ "pair_precision": {
+  "pair_onsets_per_h": 15.8,
+  "pair_followed_by_hard_brake": {
+   "value": 0.062,
+   "ci95": [
+    0.052,
+    0.073
+   ]
+  },
+  "threat_grade_onsets_per_h": 2.4,
+  "threat_grade_followed_by_hard_brake": {
+   "value": 0.163,
+   "ci95": [
+    0.125,
+    0.207
+   ]
+  }
+ },
+ "disabled_radar": {
+  "segments": 164,
+  "moving_h": 3.14,
+  "0x100_frames": "continue at 10 Hz, value 0 throughout",
+  "pair_onsets": 81,
+  "alarm_precondition_moments": 0,
+  "alarm_precondition_moments_radar_on": 23,
+  "radar_on_moments_alarmed": 6,
+  "note": "no moment met the precondition (ACC target, no pedal, TTC <= 2.75 s, closing >= 4 m/s), so 0x100 under the disable is untested"
+ }
+}

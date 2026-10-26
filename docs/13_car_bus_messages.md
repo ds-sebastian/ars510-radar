@@ -80,6 +80,7 @@ Fields count MSB-first from the first payload bit; `ars510.support.parse_0x366` 
 | `40\|5` | lateral offset | signed trunc(−lateral / 0.32 m), i.e. right positive and truncated toward zero, exact on about 99 % against the ACC target ([summary](../data/analysis/summaries/car_bus_0x366_distance.json)); 15 = idle target, −16 = invalid (mostly a target beyond ±5 m) |
 | `32\|5` | target number | the ACC target's `TARGET_ID` on 98 % of reports (the rest are publication timing); `Target366.target_id` |
 | `13\|1` | PCS alarm | set only during the radar's PCS alarm: 5 of 547,922 frames in every stored log, all inside the recorded alarm U3, with extra frames when it sets and clears ([15](15_aeb_pcs.md)); `Target366.pcs_alarm` |
+| `15\|1` | brake-assist trigger echo (◐) | byte 1 bit 0: set in exactly the 4 segments with the 0x344 `PBATRGR` trigger, in the same frame as that bit, and in none of 2.31 M other frames ([15](15_aeb_pcs.md), [`radar_threat_stages.json`](../data/analysis/summaries/radar_threat_stages.json)); an observed correlation in 4 events, the meaning is inferred |
 
 The leaked `DS11D71` layout (14-bit distance at 0.01 m, 11-bit speed at 0.025 m/s, request bits in bytes 0 and 2) does not
 match this radar's frame at any start bit; only its roles recur here: target number, lateral position at bit 40 and an alarm request

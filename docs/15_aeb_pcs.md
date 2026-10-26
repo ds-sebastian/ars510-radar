@@ -45,7 +45,7 @@ actuate, so AEB or relay work treats them as commands, not status
 In our 297,076 0x344 frames and in comma's public fleet logs of radar-ACC cars (7,865 one-minute segments, 108 moving hours
 with the radar on, [`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)) the only non-zero fields are `PCSOPR`,
 `PCSALM` (the alarms) and `PBATRGR`, the pre-collision brake-assist trigger (◐). `PBATRGR` came in 4 segments on 4 cars:
-twice inside an alarm once the driver braked, once 0.36 s before an alarm with no pedal pressed, and once on its own for
+twice inside an alarm once the driver braked (0.24 s and 0.36 s after the 0x100 onset), once 0.36 s before an alarm with no pedal pressed, and once on its own for
 1.9 s while the driver was braking hard behind a closing lead, with no alarm. No deceleration, pre-fill, autobrake or hold
 field and no 0x283 force was set in any of these frames, so whether a non-idle 0x344 alone brakes the car is untested.
 
@@ -94,8 +94,10 @@ other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair f
 outputs idle: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
 [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json). comma's public fleet logs hold 7 more stock
 alarms (6 cars, all radar firmware 8821F0R03100). In each, 0x100 = 0x02 starts in the same CAN tick as 0x283 `PCSNOCHG` and
-0x411 FCW, with 0x344 `PCSALM` within 41 ms. The event pair led the alarm by 0.02-1.27 s in 6 of them; the seventh came
-during hard stock-ACC braking with the pair idle. On firmware 8821F0R01100 no alarm was recorded in 34.8 moving hours (0 of 75
+0x411 FCW, with 0x344 `PCSALM` within 41 ms. The event pair opens a median 0.99 s before the 0x100 onset (0.77-1.27 s in 6 of the 8
+alarms, 0.02 s in one); the alarm during hard stock-ACC braking came with the pair idle. The pair's required deceleration reaches
+−1.8 m/s² between 0.77 s before and 0.04 s after the onset, and its time to collision reaches 2.5 s between 0.61 s before and 0.03 s after (5 of 8)
+([`radar_threat_stages.json`](../data/analysis/summaries/radar_threat_stages.json)). On firmware 8821F0R01100 no alarm was recorded in 34.8 moving hours (0 of 75
 comparable threat moments, P = 0.03 at the 03100 rate) with the same PCS sensitivity settings: a candidate (○) firmware
 difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)).
 
@@ -104,6 +106,19 @@ difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/f
 it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
 [`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). In the fleet logs it sets 20 ms after
 the 0x100 onset in all 7 alarms and stays clear in the brake-assist event without an alarm.
+
+**0x366 byte 1 bit 0 echoes the brake-assist trigger `PBATRGR` (◐).** It is set in exactly the 4 segments where 0x344 `PBATRGR` is set,
+in the same frame as the 0x344 bit, and in none of 2.31 M other 0x366 frames ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-)).
+The trigger is the only brake-side stage recorded, and it is a car-bus stage only: no bit on bus 1 steps with it in these 4 events
+(a bit-level search of the radar-bus frames and the reassembled 0x80 / 0x85 records, against control slots from the same segments). The radar's
+threat judgement is visible on bus 1 as two stages, the event pair opening and then 0x100 = 0x02; no pre-fill, brake-request or autobrake stage steps at any
+recorded event ([`radar_threat_stages.json`](../data/analysis/summaries/radar_threat_stages.json)).
+
+**The 0x100 flag is specific but not sensitive (◐).** Across 146.7 moving hours of stored and fleet logs it came in 8 events, 0.054 /h
+(95 % interval 0.024-0.108), and in none of 156 driver hard brakes that were not threat-related. Of the 27 threat-relevant driver hard
+brakes (the ACC target at a time to collision of 4 s or less at the pedal) it came before or with the pedal in 3 and within 0.05 s of it in 4,
+a median 0.07 s from the pedal; the event pair was active before 23 of them (median lead 0.44 s), but the pair opens 15.8 times per hour and only
+6 % of its onsets are followed by a hard brake. A relay can forward the 0x100 byte as a warning; it does not carry the radar's brake decision.
 
 **0x33E byte 6 bit 7 marks PCS activity (◐).** It is set in this alarm (5 of 696,137 frames), next to the radar's own time to
 collision of the target: 2.19 s just before the alarm and 2.08 s in the frame that announces it, so this alarm started at a
@@ -123,7 +138,9 @@ active, U2 and opendbc's C-HR Hybrid "radar disabled" route on another radar fir
   firing**, at 250-330 active frames per moving hour, with required decelerations down to −2.8 m/s².
 
 So its PCS logic keeps running with only its output to the car cut. Whether its alarm stage (0x100) still fires there is not
-recorded: the one comparable moment, at a time to collision of 2.2 s, lasted 0.06 s. A relay would
+recorded: the one comparable moment, at a time to collision of 2.2 s, lasted 0.06 s, and the disabled drives hold no moment that meets the
+alarm's precondition (an ACC target, no pedal, a time to collision of 2.75 s or less, closing at 4 m/s or more; 0 in 3.1 disabled moving hours, against
+23 such moments with the radar on, 6 of them alarmed), so 0x100 staying at 0 there says nothing about it. A relay would
 reconnect that output through openpilot, so Toyota's own tuned decision logic still decides when to brake.
 
 How it would work:
@@ -176,7 +193,7 @@ with a covered or dirty radar shows which candidate reacts, and "PCS on" reports
 |---|---|---|---|
 | idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), continuous | ● recorded (O5) |
 | alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the installer forwards it as `stockFcw`; the 0x100 flag of a disabled radar is a recording to make |
-| pre-fill, brake assist | none found (only the event pair was active) | 0x344 `PBATRGR` with 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill not set in any recorded frame | ◐ brake-assist trigger on the car bus |
+| pre-fill, brake assist | none found: no bus-1 bit steps with `PBATRGR` (4 events); only the event pair was active | 0x344 `PBATRGR`, echoed in 0x366 byte 1 bit 0 and 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill not set in any recorded frame | ◐ brake-assist trigger on the car bus only |
 | autonomous braking | to record | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence to record | ○ |
 
 What this means for a build today:
