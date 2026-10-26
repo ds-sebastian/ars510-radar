@@ -99,7 +99,7 @@ compares `acc`, `acc_summaries` and the object-list filter on the same drives.
 | profile | what it is | when to use |
 |---|---|---|
 | **`acc`** (default) | the radar's ACC target alone as one point ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), 45 code lines, opendbc's CANParser; the upstream proposal): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([17](17_upstream.md#the-acc-target-alone--candidate)) | everyday driving and the opendbc-compatible upstream proposal: less unnecessary braking than the object-list filter over every held-out set and fewer lead flips ([11](11_profiles_compared.md#why-acc-is-the-default)) |
-| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker: the target summaries 0x191-0x194 within 40 m, with the ACC car published once and a speed from a Kalman filter on each summary's range ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 99 code lines) | forks: braking as `acc` over every replay, held-out drives included; radar-backed cut-ins 0.09 s earlier, more lead flips; about 30 engaged road minutes so far ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars), [on the road](#on-the-road)) |
+| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker: the target summaries 0x191-0x194 within 40 m, with the ACC car published once and a speed from a Kalman filter on each summary's range ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py), 99 code lines) | forks: braking as `acc` over every replay, held-out drives included; radar-backed cut-ins 0.09 s earlier, more lead flips; about 54 engaged road minutes so far ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars), [on the road](#on-the-road)) |
 
 Both hand the whole update to their standalone file (its own reporting cadence and error report; `acc` also needs its
 DBC, which the installer copies to `opendbc/dbc/`), with the legacy point fields for forks that carry them.
@@ -189,7 +189,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 
 ## On the road
 
-Road drives so far ran `acc` (two cars), `acc_summaries` (about 30 engaged minutes) and, while it was installable, the
+Road drives so far ran `acc` (two cars), `acc_summaries` (about 54 engaged minutes) and, while it was installable, the
 object-list profile `fused` 2.1.0 and earlier tuned profiles. The road record of `acc` and `acc_summaries` is still small;
 their main evidence is the replay in [11](11_profiles_compared.md).
 
@@ -207,7 +207,10 @@ their main evidence is the replay in [11](11_profiles_compared.md).
   [`acc_road_drives.json`](../data/analysis/summaries/acc_road_drives.json)): one stop-and-go cycle, a stopped queue with a
   launch, a hard lead stop and two following stretches. With the camera's lead within 80 m it was radar-backed 97 % of
   the engaged time. A summary car was radard's lead on 0.13-0.22 % of moving time and never while openpilot controlled
-  speed; logged stops ended 5.0 and 6.1 m behind the lead.
+  speed; logged stops ended 5.0 and 6.1 m behind the lead. Nine later drives (about 49 min with openpilot longitudinal)
+  had 18 hard requests (7 at ≤ −2 m/s² on the first four, 11 at ≤ −1.5 m/s² on the last five); each followed a real lead that
+  slowed or stopped, and the radar's lead acceleration was no harsher than the same lead's range-differenced acceleration
+  (median 0.78 m/s² milder in the 11).
 
 - **sunnypilot with `fused` 2.1.0** (9 drives, 7.4 h, 4.4 h with openpilot longitudinal; the logged radar tracks match
   a re-decode with 2.1.0 exactly). Every engaged brake request of 1.5 m/s² or more (26) had the camera or the radar's

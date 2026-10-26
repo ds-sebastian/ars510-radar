@@ -247,5 +247,140 @@
    "unengaged": 0.917
   },
   "drives": 26
+ },
+ "pooled_never_tuned": {
+  "description": "acc vs fused 2.6 over every set held out of all tuning (owner routes, second car batches 1-3), frozen scorers, route-block bootstrap",
+  "moving_h": 12.72,
+  "routes": 80,
+  "acc": {
+   "moving_h": 12.72,
+   "hard": 3,
+   "mild": 23,
+   "unnecessary_s": 18.0,
+   "missed_s": 11.8,
+   "flips_per_h": 323.0,
+   "closings": 508,
+   "onset_vs_vision_s": 0.047
+  },
+  "fused": {
+   "moving_h": 12.72,
+   "hard": 3,
+   "mild": 28,
+   "unnecessary_s": 35.4,
+   "missed_s": 10.9,
+   "flips_per_h": 331.0,
+   "closings": 508,
+   "onset_vs_vision_s": 0.038
+  },
+  "acc_minus_fused_per_moving_h": {
+   "hard": {
+    "per_h": 0.0,
+    "ci95": [
+     -0.219,
+     0.235
+    ],
+    "routes": 80
+   },
+   "mild": {
+    "per_h": -0.393,
+    "ci95": [
+     -0.945,
+     0.188
+    ],
+    "routes": 80
+   },
+   "unnecessary_s": {
+    "per_h": -1.373,
+    "ci95": [
+     -2.39,
+     -0.444
+    ],
+    "routes": 80
+   },
+   "missed_s": {
+    "per_h": 0.067,
+    "ci95": [
+     -0.136,
+     0.37
+    ],
+    "routes": 80
+   },
+   "flips": {
+    "per_h": -8.414,
+    "ci95": [
+     -28.066,
+     11.727
+    ],
+    "routes": 80
+   }
+  }
+ },
+ "pooled_every_drive": {
+  "description": "acc vs fused 2.6 over the fast suite plus every held-out set, tick-level independent rescoring",
+  "moving_h": 29.63,
+  "routes": 142,
+  "unn": {
+   "N1": 38.1,
+   "fused_2_6": 57.5,
+   "diff_per_moving_h": -0.65,
+   "ci95": [
+    -1.22,
+    -0.21
+   ]
+  },
+  "mis": {
+   "N1": 29.4,
+   "fused_2_6": 27.6,
+   "diff_per_moving_h": 0.06,
+   "ci95": [
+    -0.11,
+    0.28
+   ]
+  },
+  "hard": {
+   "N1": 16.0,
+   "fused_2_6": 11.0,
+   "diff_per_moving_h": 0.17,
+   "ci95": [
+    -0.22,
+    0.64
+   ]
+  },
+  "mild": {
+   "N1": 53.0,
+   "fused_2_6": 55.0,
+   "diff_per_moving_h": -0.07,
+   "ci95": [
+    -0.68,
+    0.58
+   ]
+  },
+  "hard_moving": {
+   "N1": 7.0,
+   "fused_2_6": 11.0,
+   "diff_per_moving_h": -0.13,
+   "ci95": [
+    -0.37,
+    0.06
+   ]
+  },
+  "mild_moving": {
+   "N1": 44.0,
+   "fused_2_6": 55.0,
+   "diff_per_moving_h": -0.37,
+   "ci95": [
+    -0.81,
+    0.07
+   ]
+  },
+  "flips": {
+   "N1": 9211.0,
+   "fused_2_6": 9819.0,
+   "diff_per_moving_h": -20.52,
+   "ci95": [
+    -31.6,
+    -7.76
+   ]
+  }
  }
 }

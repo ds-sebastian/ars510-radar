@@ -4,12 +4,104 @@
  "hours": 1.4,
  "acc_points": "1 point whenever 0x239 reports a target; matches the decoded ACC range on 98 % of ticks",
  "radar_backed_share_of_engaged_lead_time": 0.95,
- "radar_backed_share_when_camera_lead_within_80_m": [0.994, 0.984],
- "engaged_stops_gap_m": {"acc_drive_1": [5.0, 6.2], "acc_drive_1_stops": 4, "acc_drive_2": [3.9, 4.9], "acc_drive_2_stops": 3, "fused_2_1": [3.3, 4.3], "fused_2_1_stops": 7},
- "creeping_to_stopped_lead_mean_lead_speed_mps": {"acc": -0.03, "acc_share_above_0p3": 0.07, "fused_2_1": 0.23, "fused_2_1_share_above_0p3": 0.28},
+ "radar_backed_share_when_camera_lead_within_80_m": [
+  0.994,
+  0.984
+ ],
+ "engaged_stops_gap_m": {
+  "acc_drive_1": [
+   5.0,
+   6.2
+  ],
+  "acc_drive_1_stops": 4,
+  "acc_drive_2": [
+   3.9,
+   4.9
+  ],
+  "acc_drive_2_stops": 3,
+  "fused_2_1": [
+   3.3,
+   4.3
+  ],
+  "fused_2_1_stops": 7
+ },
+ "creeping_to_stopped_lead_mean_lead_speed_mps": {
+  "acc": -0.03,
+  "acc_share_above_0p3": 0.07,
+  "fused_2_1": 0.23,
+  "fused_2_1_share_above_0p3": 0.28
+ },
  "stop_distance_note": "with a lead speed near zero the planner holds openpilot's designed stop distance (STOP_DISTANCE 6 m); fused's small positive low-speed lead speed let the MPC creep closer",
- "camera_only_share_of_engaged_lead_time_beyond_80_m": {"acc_drive_1": 0.57, "acc_drive_2": 0.19, "fused_2_1": 0.08},
- "acc_target_acquired_m": [80, 126],
- "acc_all_drives": {"fork": "sunnypilot", "drives": 9, "moving_hours": 2.74, "engaged_hours": 1.62, "radar_backed_share_when_camera_lead_within_80_m_by_batch": {"first_two_drives": 0.989, "next_five_drives": 0.985, "two_long_drives": 0.987}, "radar_backed_share_of_engaged_lead_time_by_batch": {"first_two_drives": 0.945, "next_five_drives": 0.911, "two_long_drives": [0.907, 0.924]}, "published_point_is_acc_target_share_later_seven_drives": 0.999, "note": "moving and engaged hours summed over the three batches (1.23 + 0.66 + 0.85 moving h; 0.95 + 0.13 + 0.54 engaged h); every engaged hard request in the later seven drives (9) followed a real slowing lead that was radar-backed"},
- "acc_summaries_first_drives": {"fork": "StarPilot", "drives": 2, "minutes": [12.3, 9.7], "openpilot_longitudinal_minutes": [0.9, 4.3], "radar_backed_share_when_camera_lead_within_80_m": [0.971, 0.973], "summary_car_as_lead_one_share_of_moving_time": [0.0013, 0.0022], "summary_car_as_lead_one_while_openpilot_longitudinal": 0, "logged_stop_gaps_m": [6.1, 5.0], "events": "one stop-and-go cycle, one stopped-queue approach with a launch, one hard lead stop, two following stretches"}
+ "camera_only_share_of_engaged_lead_time_beyond_80_m": {
+  "acc_drive_1": 0.57,
+  "acc_drive_2": 0.19,
+  "fused_2_1": 0.08
+ },
+ "acc_target_acquired_m": [
+  80,
+  126
+ ],
+ "acc_all_drives": {
+  "fork": "sunnypilot",
+  "drives": 9,
+  "moving_hours": 2.74,
+  "engaged_hours": 1.62,
+  "radar_backed_share_when_camera_lead_within_80_m_by_batch": {
+   "first_two_drives": 0.989,
+   "next_five_drives": 0.985,
+   "two_long_drives": 0.987
+  },
+  "radar_backed_share_of_engaged_lead_time_by_batch": {
+   "first_two_drives": 0.945,
+   "next_five_drives": 0.911,
+   "two_long_drives": [
+    0.907,
+    0.924
+   ]
+  },
+  "published_point_is_acc_target_share_later_seven_drives": 0.999,
+  "note": "moving and engaged hours summed over the three batches (1.23 + 0.66 + 0.85 moving h; 0.95 + 0.13 + 0.54 engaged h); every engaged hard request in the later seven drives (9) followed a real slowing lead that was radar-backed"
+ },
+ "acc_summaries_first_drives": {
+  "fork": "StarPilot",
+  "drives": 2,
+  "minutes": [
+   12.3,
+   9.7
+  ],
+  "openpilot_longitudinal_minutes": [
+   0.9,
+   4.3
+  ],
+  "radar_backed_share_when_camera_lead_within_80_m": [
+   0.971,
+   0.973
+  ],
+  "summary_car_as_lead_one_share_of_moving_time": [
+   0.0013,
+   0.0022
+  ],
+  "summary_car_as_lead_one_while_openpilot_longitudinal": 0,
+  "logged_stop_gaps_m": [
+   6.1,
+   5.0
+  ],
+  "events": "one stop-and-go cycle, one stopped-queue approach with a launch, one hard lead stop, two following stretches"
+ },
+ "acc_summaries_later_drives": {
+  "fork": "StarPilot",
+  "drives": 9,
+  "openpilot_longitudinal_minutes": [
+   25.1,
+   23.6
+  ],
+  "hard_requests": {
+   "first_four_drives_le_minus_2": 7,
+   "last_five_drives_le_minus_1p5": 11
+  },
+  "all_hard_requests_followed_real_slowing_lead": true,
+  "radar_lead_accel_milder_than_range_differenced_median_mps2": 0.78,
+  "note": "owner drives, exploratory; the first four drives had openpilot longitudinal on two of them; thresholds differ between the two batches"
+ },
+ "acc_summaries_total_engaged_minutes": 53.9
 }

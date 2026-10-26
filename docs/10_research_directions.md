@@ -64,8 +64,8 @@ every settled track with one Kalman speed filter per track, is where an object-l
    brake-then-accelerate swing?* StarPilot extrapolates `aLeadK` unchanged above 35 mph (read from its source, ○).
    *Data:* StarPilot replays with `tools/fork_lead` using each variant ([14](14_forks.md)).
 8. **Road miles with `acc` and `acc_summaries`.** *Do the replay results hold in closed loop?* The replay results
-   ([11](11_profiles_compared.md)) cover 16.9 moving hours on two cars; the earlier `fused` profile has closed-loop road drives and `acc` its first ones
-   ([08](08_openpilot_integration.md#on-the-road)); more `acc` miles and the first `acc_summaries` drives are the next evidence. *Data:* drives
+   ([11](11_profiles_compared.md)) cover 29.6 moving hours on two cars; the earlier `fused` profile has closed-loop road drives and `acc` its first ones
+   ([08](08_openpilot_integration.md#on-the-road)); more `acc` and `acc_summaries` miles, on a second car and radar firmware above all, are the next evidence. *Data:* drives
    with flagged moments, ideally from a second car, driver or radar firmware, with the installed profile recorded
    ([T13](16_routes_and_tests.md#t13-fresh-road-and-parser-validation)).
 
