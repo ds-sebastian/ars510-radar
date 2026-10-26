@@ -1,0 +1,135 @@
+{
+ "source": "second car (one radar firmware 8821F0R03100), 38 routes of never-tuned drives (674 one-minute segments, 629 with decodable object-list rows); the ACC target is a dependent witness of the object list, so agreement is consistency, not calibration",
+ "false_closings": {
+  "false_share_of_acc_witnessed_onsets_ge_20m": {
+   "value": 0.765,
+   "ci95": [
+    0.7,
+    0.83
+   ],
+   "false": 130,
+   "real": 40
+  },
+  "earlier_second_car_recomputed": 0.717,
+  "false_share_beyond_40m": 0.746
+ },
+ "onsets_per_settled_track_h": {
+  "20-40 m": 97,
+  "40-60 m": 129,
+  "60-80 m": 243,
+  "80-110 m": 406,
+  "110-150 m": 430,
+  "ratio_80_110_over_20_40": 4.2
+ },
+ "depth_median_m_s": {
+  "value": -4.35,
+  "iqr": [
+   -6.75,
+   -3.45
+  ],
+  "spearman_with_range": -0.13
+ },
+ "duration_s": {
+  "p10": 0.3,
+  "median": 1.03,
+  "p90": 4.8,
+  "share_between_0.3_and_10_s": 0.885
+ },
+ "far_closing_offset_m_s": {
+  "40-60 m": {
+   "value": -0.26,
+   "ci95": [
+    -0.39,
+    -0.17
+   ]
+  },
+  "30-60 m": {
+   "value": -0.21,
+   "ci95": [
+    -0.26,
+    -0.16
+   ]
+  }
+ },
+ "sigma_240_7_pooled_m_s_per_count": {
+  "value": 0.0407,
+  "ci95": [
+   0.0346,
+   0.0427
+  ],
+  "earlier_second_car_recomputed": 0.0388
+ },
+ "inpath_lead_gain_vs_acc_speed": {
+  "batch3_intercept_fit_by_range": {
+   "10-20 m": 0.912,
+   "20-40 m": 0.905,
+   "40-60 m": 0.92
+  },
+  "batch3_through_origin_by_range": {
+   "10-20 m": 0.856,
+   "20-40 m": 0.863,
+   "40-60 m": 0.881
+  },
+  "other_tracks_vs_lead_3_20m": {
+   "other_tracks": 0.989,
+   "lead": 0.866,
+   "difference": 0.123
+  },
+  "other_tracks_vs_lead_20_40m": {
+   "other_tracks": 0.955,
+   "lead": 0.917,
+   "difference": 0.038
+  },
+  "reading": "about 0.86-0.95 depending on estimator and drive set; no consistent near / far step"
+ },
+ "acc_selection_contrast": {
+  "matched_supports": 58,
+  "routes": 46,
+  "gain_selected": 0.8,
+  "gain_unselected": 0.85,
+  "pooled_difference_selected_minus_unselected": {
+   "value": -0.042,
+   "route_block_bootstrap_ci95": [
+    -0.188,
+    0.1
+   ]
+  },
+  "by_range": {
+   "5-20 m": {
+    "value": -0.037,
+    "ci95": [
+     -0.209,
+     0.126
+    ],
+    "n": 38
+   },
+   "20-40 m": {
+    "value": -0.051,
+    "ci95": [
+     -0.295,
+     0.155
+    ],
+    "n": 20
+   }
+  },
+  "by_car": {
+   "owner": {
+    "value": -0.134,
+    "ci95": [
+     -0.318,
+     0.042
+    ],
+    "n": 25
+   },
+   "second_car": {
+    "value": 0.065,
+    "ci95": [
+     -0.172,
+     0.295
+    ],
+    "n": 30
+   }
+  },
+  "reading": "a step as large as the attenuation itself (CI excludes -0.19 and below) is not observed at ACC acquisition or release; effects of -0.04 to -0.19 or +0.10 are not excluded"
+ }
+}

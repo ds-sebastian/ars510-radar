@@ -140,7 +140,7 @@ update   K = P⁻ / (P⁻ + σ²),  v = v⁻ + K · clamp(z − v⁻, ±3√(P�
 
 *During an object-list excursion the object list (grey) dives to −6 m/s; each of its readings moves the estimate by
 about 2 %, each ACC target reading by about half, so the estimate (green) stays with the radar's tracker. radard then
-runs its usual filter on top.* The object list's speed sometimes drifts into a false closing for 1-10 s at range while the
+runs its usual filter on top.* The object list's speed sometimes drifts into a false closing at range for about a second (90 % under 5 s) while the
 radar's own ACC distance and the camera hold steady ([07](docs/07_velocity_excursions.md)); `acc` takes its speed from
 the ACC target, `fused` from the filter, which still passes some excursions (on the second car's latest drives a
 false 23.7 m/s closing at 54 m became a −3.31 m/s² request). The followed car is published at the radar's ACC distance, which agrees with the
@@ -189,7 +189,7 @@ assumptions and a comparison with openpilot's other radar interfaces: [docs/11](
   ([01](docs/01_radar_bus.md#radar-firmware)). The integration therefore selects the parser by the car model.
   The C-HR and Yaris radars send the same frames on opendbc's test routes; the integration enables them for testing,
   but no drive in traffic has been checked yet ([01](docs/01_radar_bus.md#c-hr-and-yaris)).
-- **Far range.** The object list's speed sometimes reads a far car closing several m/s faster than it is, for 1-10 s
+- **Far range.** The object list's speed sometimes reads a far car closing several m/s faster than it is, for about a second (90 % under 5 s)
   ([07](docs/07_velocity_excursions.md)), which is why no object-list profile is installable. The ACC target is present
   for 99 % of radar-lead time at 15-80 m and 66 % beyond 80 m ([08](docs/08_openpilot_integration.md#on-the-road)); the
   camera supplies the other far cars.
