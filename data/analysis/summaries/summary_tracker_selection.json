@@ -1,0 +1,72 @@
+{
+  "description": "How the radar's tracker chooses the cars in the two target-summary pairs (0x191-0x194): ranking by longitudinal range, persistence of a displayed car, what leaves and returns. Derived from the radar's own published state with the object list linked to summary runs by association; radar-witness authority (no physical reference). Sets: owner car, second car set 1 (discovery), second car sets 2 and 3 (held out, rules frozen first).",
+  "sets": {
+    "owner": "owner car, 560 segments with summaries",
+    "second_1": "second car, discovery set",
+    "second_2": "second car, held out (408 segments with summaries)",
+    "second_3": "second car, held out (743 segments)"
+  },
+  "slot_order": {
+    "note": "share of two-summary cycles in which slot 0 (0x191 / 0x192) is the nearer car; lateral signs of the two cars agree on 58-62 % of cycles",
+    "slot0_nearer": [0.9991, 0.9994],
+    "cycles_all_sets": 812000,
+    "lateral_sign_agreement": [0.58, 0.62]
+  },
+  "rival_pairs": {
+    "note": "strictly eligible rivals in the same cycle (displayed D versus non-displayed R); share of pairs in which the displayed car has the smaller key",
+    "keys": ["range", "range + 5 |y_path|", "TTC (closing only)", "list length", "closing speed", "|y|", "|y_path|", "over-ground speed"],
+    "second_2": [0.965, 0.895, 0.737, 0.571, 0.573, 0.518, 0.509, 0.427],
+    "second_3": [0.961, 0.893, 0.755, 0.607, 0.588, 0.522, 0.514, 0.412],
+    "owner": [0.964, 0.913, 0.716, 0.586, 0.545, 0.465, 0.466, 0.455],
+    "pairs": {"owner": 98930, "second_1": 28643, "second_2": 94194, "second_3": 108590}
+  },
+  "exact_set_on_change_cycles": {
+    "note": "cycles on which the displayed set changes (entries and exits); stateless rule, two places",
+    "range_order": {"owner": 0.879, "second_1": 0.830, "second_2": 0.845, "second_3": 0.829},
+    "corridor_first": {"owner": 0.793, "second_1": 0.720, "second_2": 0.701, "second_3": 0.708},
+    "ttc_first": {"owner": 0.770, "second_1": 0.622, "second_2": 0.620, "second_3": 0.648},
+    "one_per_side": {"owner": 0.671, "second_1": 0.533, "second_2": 0.578, "second_3": 0.557}
+  },
+  "displacement_by_leaver_range": {
+    "note": "a car leaves a full pair and a newcomer takes the place; share in which the newcomer is farther than the leaver, by the leaver's last range (all four sets pooled)",
+    "bands_m": ["< 10", "10-20", "20-40", "40-80", "> 80"],
+    "events": [1879, 895, 1898, 2452, 2113],
+    "newcomer_farther": [0.990, 0.755, 0.419, 0.361, 0.345],
+    "leaver_below_10_m": "the leaver is the nearest of the three cars (median exit range 3.8-4.5 m, 14 % at negative range) and the next car in line refills the slot"
+  },
+  "persistence": {
+    "teacher_forced_exact_set": {"owner": 0.977, "second_1": 0.973, "second_2": 0.975, "second_3": 0.946},
+    "unchanged_cycles_share": 0.95,
+    "exact_on_change_cycles_retention_then_entry_rule": {"owner": 0.74, "second_2": 0.70, "second_3": 0.68},
+    "entrants_that_were_mature_tracker_tracks": [0.86, 0.91],
+    "list_gate_holds_at_entry": {"owner": 0.54, "second_2": 0.70, "second_3": 0.61},
+    "list_gate_holds_for_non_members": [0.25, 0.30],
+    "free_running_stateless_pair_exact": {"second_2": 0.891, "second_3": 0.858},
+    "free_running_sticky_pair_exact": {"second_2": 0.646, "second_3": 0.637}
+  },
+  "exits": {
+    "note": "exits of a pair code from the displayed pair at ego > 1 m/s; 26.1 moving h on the owner car and three second-car groups",
+    "exits_all_ranges": 17129,
+    "exits_within_40_m": 7300,
+    "non_acc_exits_within_40_m": 6394,
+    "per_moving_hour_second_car": [260, 295],
+    "per_moving_hour_owner": 177,
+    "back_within_1_s_share": 0.35,
+    "both_slots_carry_cars_in_short_gaps": 0.89,
+    "header_count_stays_2_in_short_gaps": 0.895,
+    "returns": 2178,
+    "age_continues_within_1_cycle": 0.995,
+    "exit_time_field_predicting_return_auc": [0.44, 0.64]
+  },
+  "tracker_tracks_without_list_counterpart": {
+    "note": "0x680 object frames above 5 m/s of moving vehicles that are neither the ACC car nor a summary car",
+    "share_of_non_idle_frames_that_are_such_moving_tracks": [0.068, 0.084],
+    "linked_to_a_list_track": [0.13, 0.15],
+    "selector_0_or_1_linked": [0.023, 0.042],
+    "selector_3_linked": [0.65, 0.69],
+    "list_slots_occupied_at_most": 10,
+    "list_slots_total": 20,
+    "records_with_9_or_more_occupied": [0.0001, 0.00016]
+  },
+  "source": "workspace experiments SCR-1290..1292, 1320..1323, 1330..1332, 1350..1359, 1380..1389, 1400..1409"
+}

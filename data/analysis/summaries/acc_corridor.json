@@ -1,0 +1,33 @@
+{
+  "description": "Which list track becomes the radar's ACC target: the target lies in a corridor around the radar's own path (0x33E byte 5), not simply the nearest car. Events are new ACC acquisitions with a linked list track and a valid radar path. Derived; radar-witness authority (the radar's own choice, not a physical reference). Sets as in summary_tracker_selection.json.",
+  "acquisition_events": {"owner": 192, "second_1": 57, "second_2": 261, "second_3": 333},
+  "candidates_per_event": [2.5, 3.0],
+  "containment_2_5_m": {
+    "note": "share of acquisitions whose target lies within 2.5 m of the path (3.0 m in brackets in the source)",
+    "radar_path": {"owner": 0.953, "second_1": 0.965, "second_2": 0.935, "second_3": 0.883},
+    "yaw_rate_path": {"owner": 0.938, "second_1": 0.842, "second_2": 0.897, "second_3": 0.868},
+    "raw_lateral": {"owner": 0.797, "second_1": 0.789, "second_2": 0.789, "second_3": 0.787}
+  },
+  "containment_3_0_m": {
+    "radar_path": {"owner": 0.964, "second_1": 0.982, "second_2": 0.962, "second_3": 0.946},
+    "yaw_rate_path": {"owner": 0.953, "second_1": 0.895, "second_2": 0.943, "second_3": 0.934},
+    "raw_lateral": {"owner": 0.844, "second_1": 0.895, "second_2": 0.870, "second_3": 0.862}
+  },
+  "nearest_corridor_candidate_is_target": {"owner": 0.839, "second_1": 0.754, "second_2": 0.720, "second_3": 0.727},
+  "range_alone_auc_chosen_is_nearer": [0.52, 0.54],
+  "corridor_rule_free_running": {
+    "note": "smallest |y_path| inside 2.5 m, kept while inside 3 m; share of cycles with a linked ACC list track on which it names the radar's track",
+    "second_2": 0.975,
+    "second_3": 0.974,
+    "with_two_or_more_candidates": [0.893, 0.902],
+    "nearest_mover_without_corridor": [0.38, 0.40],
+    "proposes_a_target_when_radar_has_none": [0.31, 0.32]
+  },
+  "in_path_level": {
+    "note": "the radar's IN_PATH level is not an instantaneous corridor test",
+    "auc_level5_vs_2_to_4": [0.64, 0.73],
+    "level5_share_at_path_offset_above_4_m": [0.49, 0.73],
+    "median_path_offset_at_level_change_m": [0.3, 0.5]
+  },
+  "source": "workspace experiments SCR-1291, SCR-1350..1359"
+}
