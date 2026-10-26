@@ -106,7 +106,7 @@ DBC, which the installer copies to `opendbc/dbc/`), with the legacy point fields
 
 **Object-list profiles are not installable.** `fused` (the object list through one Kalman speed filter per track,
 [12](12_kalman_filter.md)), its single-file form `openpilot`, the unfiltered `raw` and the research models
-`shared_speed` / `shared_range` publish the object list's speeds, whose 1-10 s excursions (mostly false closings beyond
+`shared_speed` / `shared_range` publish the object list's speeds, whose excursions (about 1 s, 90 % under 5 s; mostly false closings beyond
 40 m, [07](07_velocity_excursions.md)) still reach the planner. On the second car's 38 latest held-out drives `fused`
 braked unnecessarily 2.05 s per moving hour more than `acc` (95 % CI 0.51 … 3.85), including a −3.31 m/s² request for a
 list track at 54 m whose closing speed read 23.7 m/s at a constant range

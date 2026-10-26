@@ -287,7 +287,7 @@ the object-list steps belong to the research decodes `raw` and `fused`.*
   lead; `fused` feeds it one speed per track that combines what the radar knows.
 - **`raw`** (research) publishes the object list as decoded: tracks from age 60 (≈ 3.6 s, once range and speed have converged),
   the radar's own track IDs re-linked across short gaps, speed relative to the ego car, and the invalid velocity code
-  withheld. Velocity excursions (1-10 s false closings beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
+  withheld. Velocity excursions (false closings of about a second, 90 % under 5 s, beyond 40 m, [07](07_velocity_excursions.md)) reach the planner.
 
 ![fused: weights and publication](img/analysis/fused_how_it_works.png)
 

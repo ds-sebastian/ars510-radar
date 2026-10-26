@@ -1,6 +1,6 @@
 # 12. The Kalman speed filter
 
-The object list's speed has slow, correlated errors at range: false closings of 1-10 s beyond about 40 m
+The object list's speed has slow, correlated errors at range: false closings beyond about 40 m lasting about a second (90 % under 5 s)
 ([07](07_velocity_excursions.md)). Their size follows the radar's `240|7` code, a per-reading error width (◐). The
 `fused` filter (version 2.6) handles them with **one Kalman filter per track** on the lead's speed over ground. Every
 reading is weighted by its own uncertainty: the object list and the radar's ACC target. radard then runs its usual

@@ -1,7 +1,7 @@
 # 07. Velocity excursions (the false-closing issue)
 
 The object list's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
-velocity sometimes **drifts for 1-10 s while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
+velocity sometimes **drifts for about a second (median 1 s, 90 % under 5 s) while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
 Published unfiltered (the `raw` config) it shows up in openpilot as extra jitter in the plan and as braking requests only
 the radar makes (1.75 per hour). This is why the installer offers only `acc` (the default) and `acc_summaries`: they
 publish the radar's own tracker outputs (the ACC target and the target summaries), whose speed stays smooth through the
@@ -21,7 +21,7 @@ same moments, and never the object list. The `fused` Kalman filter on the object
 
 **In short**
 
-- 80-87% of object-list excursions are false closings ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)); they ramp up over about 1 s.
+- 80-87% of object-list excursions are false closings ([`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)); they ramp up over about 1 s and last a median 1.0 s (90th percentile 4.8 s) on a second car's never-tuned drives ([`excursion_batch3_confirmations.json`](../data/analysis/summaries/excursion_batch3_confirmations.json)).
 - Rare close in, common far out: radar and vision disagree by ≥ 2 m/s for 1% of radar-lead time at 0-20 m and 49%
   beyond 80 m ([below](#how-often-on-real-drives); object-list radar through radard, owner's early closed-loop drives).
 - Pooled over range, their size follows the speed-error code the radar reports (`240|7`, ◐): codes and errors both grow

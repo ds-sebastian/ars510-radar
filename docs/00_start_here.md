@@ -57,7 +57,7 @@ from 0.6 m to 4-6 m at range (`road_v21.json`).
 and radar-camera closing-speed disagreement (> 3 m/s) on the owner's car and a second driver's 2025 RAV4 Hybrid
 ([issue #66](https://github.com/ds-sebastian/ars510-radar/issues/66)), which give similar numbers.* More: [06 Accuracy](06_accuracy.md).
 
-The object list's speed has **excursions**: for 1-10 s a far car seems to close fast while the radar's ACC distance and the camera hold steady.
+The object list's speed has **excursions**: for a few seconds (median about 1 s, 90 % under 5 s) a far car seems to close fast while the radar's ACC distance and the camera hold steady.
 80-87 % of them are false closings. They are rare close in and common far out: on the owner's first closed-loop drives
 (0.31 h of radar lead) radar and vision differ by ≥ 2 m/s for 1 % of radar-lead time at 0-20 m and 49 % beyond 80 m
 (`jitter_problem_figures.json`). The radar's uncertainty code grows with the width of the speed error at that range and age, and
@@ -222,7 +222,7 @@ hour against 255 for the rest. The other causes are the ACC target going idle (4
 | **track** | one object followed over time (slot + age counting up); openpilot's `trackId` |
 | **dRel / yRel / vRel** | distance ahead, lateral position (left positive), relative speed (negative = closing) |
 | **uncertainty `240\|7`** | the radar's own speed-error code per object; `fused` weights the speed by it |
-| **excursion** | a 1-10 s stretch where the object list's speed is wrong, mostly a false closing on a far car |
+| **excursion** | a stretch of about 1-5 s (median 1 s) where the object list's speed is wrong, mostly a false closing on a far car |
 | **ACC target** | the car the radar's own ACC function follows (0x235 / 0x237): smooth distance and speed |
 | **summaries** | the radar's selected-target ranges (0x192 / 0x194), a second tracker output; published as extra points by `acc_summaries`, unused by `fused` and `acc` |
 | **radard** | openpilot's process that turns radar points and the camera's lead into the lead the planner follows |
