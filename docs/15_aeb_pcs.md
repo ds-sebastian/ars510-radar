@@ -52,7 +52,7 @@ actuate, so AEB or relay work treats them as commands, not status
 | 0x283 `DS11F01` (33 Hz) | `FORCE` (2 N), `STATE` (3 = braking), `BRAKE_STATUS`, `PCSABK2`, `PBRTRGR2` | 0 → 0; `PCSNOCHG` 0 → 1; `STATE` 4 for 0.3-2.5 s in Park ([13](13_car_bus_messages.md)) | bytes 0-5 zero |
 | 0x366 `DS11D71` (5 Hz) | the reference DBC's alarm / autobrake / pre-brake request bits; on this radar those positions carry its target fields, and the PCS alarm is bit 13 | alarm bit 0 → 1 | any content |
 
-In our 297,076 0x344 frames and in comma's public fleet logs of radar-ACC cars (7,865 one-minute segments, 108 moving hours
+In our 3.38 M 0x344 frames (2,902 stored RAV4 logs) and in comma's public fleet logs of radar-ACC cars (7,865 one-minute segments, 108 moving hours
 with the radar on, [`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)) the only non-zero fields are `PCSOPR`,
 `PCSALM` (the alarms) and `PBATRGR`, the pre-collision brake-assist trigger (◐). `PBATRGR` came in 4 segments on 4 cars:
 twice inside an alarm once the driver braked (0.24 s and 0.36 s after the 0x100 onset), once 0.36 s before an alarm with no pedal pressed, and once on its own for
@@ -99,7 +99,7 @@ inflatable's empty object-list position is consistent with a weak reflection at 
 | 57.18 | event pair back to idle | |
 
 **0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (●, 8 alarms on 7 cars).** It starts and ends with the car-bus
-alarm, and in every stored log (1,597 rlogs, 936,440 0x100 frames, three cars) it occurs in exactly these 9 frames. The
+alarm, and in every stored log of the owner, second and other cars (2,982 rlogs with bus 1, 1.74 M 0x100 frames) it occurs in exactly these 9 frames. The
 other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair fires in many drives with the PCS
 outputs idle: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
 [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json). comma's public fleet logs hold 7 more stock
@@ -112,7 +112,7 @@ comparable threat moments, P = 0.03 at the 03100 rate) with the same PCS sensiti
 difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)).
 
 **On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (●, 8 alarms).** It is set in 5 of
-547,922 0x366 frames in every stored log, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
+853,674 0x366 frames in every stored log of the owner, second and other cars, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
 it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
 [`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). In the fleet logs it sets 20 ms after
 the 0x100 onset in all 7 alarms and stays clear in the brake-assist event without an alarm.

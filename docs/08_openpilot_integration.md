@@ -208,7 +208,7 @@ their main evidence is the replay in [11](11_profiles_compared.md).
   launch, a hard lead stop and two following stretches. With the camera's lead within 80 m it was radar-backed 97 % of
   the engaged time. A summary car was radard's lead on 0.13-0.22 % of moving time and never while openpilot controlled
   speed; logged stops ended 5.0 and 6.1 m behind the lead. Nine later drives (about 49 min with openpilot longitudinal)
-  had 18 hard requests (7 at ≤ −2 m/s² on the first four, 11 at ≤ −1.5 m/s² on the last five); each followed a real lead that
+  kept the camera's lead within 80 m radar-backed 98.4 % of the engaged time (96-99.7 % per drive) and had 18 hard requests (7 at ≤ −2 m/s² on the first four, 11 at ≤ −1.5 m/s² on the last five); each followed a real lead that
   slowed or stopped, and the radar's lead acceleration was no harsher than the same lead's range-differenced acceleration
   (median 0.78 m/s² milder in the 11).
 

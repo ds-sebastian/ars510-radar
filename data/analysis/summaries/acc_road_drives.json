@@ -100,6 +100,15 @@
    "last_five_drives_le_minus_1p5": 11
   },
   "all_hard_requests_followed_real_slowing_lead": true,
+  "radar_backed_share_when_camera_lead_within_80_m": 0.984,
+  "radar_backed_share_when_camera_lead_within_80_m_per_engaged_drive": [
+   0.972,
+   0.986,
+   0.957,
+   0.992,
+   0.965,
+   0.997
+  ],
   "radar_lead_accel_milder_than_range_differenced_median_mps2": 0.78,
   "note": "owner drives, exploratory; the first four drives had openpilot longitudinal on two of them; thresholds differ between the two batches"
  },

@@ -160,15 +160,16 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
 - **Filter-free:** the ACC target's speed follows the slope of its own distance (best lag −0.06 s, gain 1.00), and its
   fast noise (0.027 m/s on the second car, 0.025 on the owner's;
   [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json)) is a fifth of its 0.125 m/s code step, so a filter would add delay.
-- **On drives held out from development and tuning** (44 routes of both cars, 6.46 moving h) it brakes unnecessarily no more
-  than 2.6: 14.0 against 18.6 oracle seconds (−0.72 s per moving hour, route bootstrap −1.65…+0.15). Hard and mild
-  radar-only braking are equal, and braking starts at least as early on real closings (vs vision).
+- **On drives held out from development and tuning** (80 routes of both cars, 12.72 moving h) it brakes unnecessarily less
+  than 2.6: 18.0 against 35.4 oracle seconds (−1.37 s per moving hour, route bootstrap −2.39…−0.44). Hard episodes tie
+  (3 and 3) and mild ones are 23 against 28 (−0.39 per hour, −0.95…+0.19); braking starts 0.047 s after vision only on
+  real closings (2.6: 0.038 s).
 - **Close cut-ins** (the lead jumps at least 5 m closer to within 35 m; 450 in all drives): the radar's ACC target moves
   to the cut-in car after a median 0.2 s (0.3 s for a faster car). On the 120 where that car is faster than ego, `acc` and 2.6 differ by at most 0.3 m/s² (braking below −0.5 m/s² in 28 against 27, below −1 in 14 against 14; vision only 29 / 14).
-- **Over every drive** (94 routes, 21.45 moving h; it carries protocol values only, while 2.6 was tuned on most of them) it has
-  fewer lead flips (−22 per moving hour, −36…−7). While moving it has 5 hard and 31 mild radar-only episodes against 8 and 36,
-  28.4 against 35.0 s of unnecessary and 22.9 against 20.3 s of missed braking; the route-bootstrap intervals of those four
-  differences include zero.
+- **Over every drive** (142 routes, 29.63 moving h; it carries protocol values only, while 2.6 was tuned on most of them) it has
+  fewer lead flips (−21 per moving hour, −32…−8). While moving it has 7 hard and 44 mild radar-only episodes against 11 and 55,
+  38.1 against 57.5 s of unnecessary and 29.4 against 27.6 s of missed braking; the route-bootstrap intervals of the hard,
+  mild and missed differences include zero, the unnecessary one (−0.65 s per hour, −1.22…−0.21) does not.
 - **On 26 owner routes held out from every replay** (2.56 moving h):
   - unnecessary braking 7.7 against 2.6's 11.4 s, and lead flips 323 against 345 per hour (both route-bootstrap CIs
     exclude zero);

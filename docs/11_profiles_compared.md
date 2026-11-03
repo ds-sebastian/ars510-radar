@@ -253,8 +253,8 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
 - **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
   the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
   default; `acc_summaries` is the recommended alternative. Its road record is 11 StarPilot drives (about 54 min
-  with openpilot longitudinal; on the first two, radar-backed 97 % of the engaged time with the camera's lead within 80 m, a summary car as
-  radard's lead on 0.13-0.22 % of moving time; every hard request on the later nine drives followed a real slowing lead; [08](08_openpilot_integration.md#on-the-road)).
+  with openpilot longitudinal; radar-backed 97-98 % of the engaged time with the camera's lead within 80 m (97 % on the first two drives, 98.4 % on the later nine), a summary car as
+  radard's lead on 0.13-0.22 % of moving time on the first two; every hard request on the later nine drives followed a real slowing lead; [08](08_openpilot_integration.md#on-the-road)).
 
 ![acc_summaries against the range limit](img/analysis/acc_summaries_sweep.png)
 
@@ -381,8 +381,8 @@ whose lead comes from the object list alone.
 | profile | pros | cons |
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
-| `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and a small road record (nine drives) |
-| `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
+| `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 29.63 moving hours and a small road record (nine drives) |
+| `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); a small road record (about 54 engaged minutes on 11 StarPilot drives) |
 | `fused` (research, not installable) | every radar car within 60 m; closest to vision in feel on the development drives, as early as vision on average | list-speed excursions still pass the filter on held-out drives (a −3.31 m/s² request for a false 23.7 m/s closing at 54 m on the second car); more unnecessary braking than `acc` on every held-out set pooled; tuned gates; a track is published 3.6 s after it appears |
 | `raw` (research, not installable) | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 

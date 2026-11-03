@@ -79,14 +79,14 @@
   "0x411": "FCW (byte 0 bit 4) and byte 3 = 0x03"
  },
  "store_scan_0x100": {
-  "rlogs": 1597,
-  "frames": 936440,
+  "rlogs": 2982,
+  "frames": 1739435,
   "byte0_0x02_frames": 9,
   "byte0_0x02_routes": 1,
   "other_nonzero": {
-   "ff ff 00 00 00 00 00": 46
+   "ff ff 00 00 00 00 00": 102
   },
-  "note": "three cars, every stored rlog; the FFFF frames are the first frame after power-up"
+  "note": "every stored rlog with bus 1 of the owner, second-car and other-tester cars (comma fleet logs excluded; they hold 133 more 0x02 frames in 7 segments); the FFFF frames are the first frame after power-up"
  },
  "timeline_50ms": [
   {

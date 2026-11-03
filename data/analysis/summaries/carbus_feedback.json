@@ -89,7 +89,9 @@
    "0x365",
    "0x411"
   ],
-  "0x344_frames": 297076,
+  "0x344_frames": 3380662,
+  "0x344_logs": 2902,
+  "0x344_scope": "stored RAV4 and unfingerprinted rlogs of the owner, second-car and other-tester cars (comma fleet logs excluded); payload set seen: idle and the one U3 alarm payload",
   "0x344_nonzero_fields_ever": [
    "PCSALM (U3)",
    "PCSOPR"
