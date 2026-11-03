@@ -78,7 +78,7 @@ Scales and accuracy are in [06](06_accuracy.md).
 | `8\|5` | **startup code** | `min(30, floor(31 × (2/3)^max(age − 4, 0)))` while the motion code is 5 | ● |
 | `13\|1` | flag next to the startup code | set on almost every sample; toggles independently of `8\|5` | raw |
 | `14\|1` | **oncoming-like state** | 0/1; can persist after slowing and reset before a native allocation ends | ● structure, ◐ meaning |
-| `16\|8` | **existence probability** | % (10-100); `20\|3` is its bits 4-6 (score // 16); `NativeObject.existence_pct`. Never below 10 on a live track: the step that would cross 10 ends it | ◐ |
+| `16\|8` | **existence probability** | % (10-100); `20\|3` is its bits 4-6 (score // 16); `NativeObject.existence_pct`. Never below 10 on a live track: the step that would cross 10 ends it. Falls toward the beam edge: 12-17 points lower at azimuth ≥ 9° than within 2° at 60-130 m ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)) | ◐ |
 | `24\|7` | **age** | radar cycles: 1 at birth, saturates at 126, 0 = slot retiring | ● |
 | `107\|1` | **predicted record** | set on 45% of a track's last five records vs 2.6% elsewhere; clear on all 144 tested velocity excursions; `NativeObject.predicted`, published as `measured = False` | ◐ |
 | `109\|3` | **motion code** | see table below | ◐ |
@@ -173,6 +173,13 @@ radar over another link):
 - **At night**, when the camera switches to light-source records ([05](05_acc_target_and_support.md#0x240-0x248-context-frames)),
   the share rises with range: non-zero on 69 % at 5-40 m and on 85 % at 50-80 m (67 % and 99.6 % on a second set of drives).
 - The position stays continuous when the state changes (median lateral change 0.03 m, as on any other record).
+- **At night the published range and lateral sigma move with the state** on the same track at unchanged range (◐): `224|7` falls 4.2 counts [3.7, 4.8] when the camera association starts
+  (negative on 98 % of 123 events) and rises 2.5 [1.8, 3.0] when it ends (positive on 91 % of 98), more at longer range; `232|8` falls 0.5 and rises 0.3. `240|7`, in the record's other update block, shows no clear step (−1.2 [−2.9, +0.3], −0.4 [−1.0, +0.3]).
+  No `224|7` step was seen by day at about 41 m (118 events).
+- **The real range scatter moves the same way.** Against wheel odometry on stationary vehicles at equal range, fast range scatter with association is 0.66 [0.59, 0.78] of that without it at night on the owner's car and the second car, and 0.80 [0.68, 0.97] on 42 fleet cars, with `224|7` at 0.74 and 0.81. By day below 50 m there is no reduction: 1.11 [1.03, 1.19] and 1.02 [0.96, 1.09], `224|7` 1.08 and 1.03. This compares different objects and covers fast scatter only, so it does not give the range bias or the camera's weight ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)).
+
+  ![Night steps of the range and speed sigma codes when the camera association starts or ends](img/analysis/camera_assoc_sigma.png)
+
 - `181|1` is set on 24.5 % of mature vehicle rows (classes 2 and 3) by day and on 2 of 59,988 at night (31.4 % and 0 of 12,136 on the second
   set; 29.8 % and 0 of 8,188 decoded from original logs), and more often at long range (22 % at 10-40 m, 43 % at 80-120 m).
 
@@ -290,10 +297,11 @@ event happened at some time on that phase; the record where a phase newly sets i
   ([`slot_camera_association.json`](../data/analysis/summaries/slot_camera_association.json)).
 - **`240|7` as a speed standard deviation** (`NativeObject.vel_unc_code`): RMS of native vRel minus the ACC target's
   speed is 0.04-0.05 m/s per count at codes 15-35 (700-segment corpus and fresh drives), and σ = 0.045 × code
-  reproduces the share of far-range excursions (5.3 % observed against 6.5 % predicted on the corpus, 7.7 % against 5.5 % on fresh drives;
+  gives the right size for the share of far-range excursions on some sets (5.3 % observed against 6.5 % predicted on the corpus, 7.7 % against 5.5 % on fresh drives; 2.4 × too high on the owner's latest drives, [`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json);
   [07](07_velocity_excursions.md#far-range-excursions-match-the-reported-velocity-error-scale),
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json), claim 5). The research `fused` filter uses it this way
   (`speed_sigma_per_code = 0.045`).
+- **`240|7` follows range much more than target or geometry:** range alone explains 91 % of the log-code variance on routes held out of the fit, no other field adds more than one point on its own, and all together reach 95 %. A large vehicle reads 0.98 of a car at equal range on both held-out sets (0.977 [0.959, 1.019] on the second car; 0.984 [0.814, 1.032] on the owner's drives, too wide to decide). It is not flat with azimuth: 1.09-1.20 at azimuth ≥ 9° against within 2°. Inside one radar it also reads 4.1 counts [3.5, 4.8] higher at night, and `224|7` 2.5 lower, on 92 fleet cars seen in both; excursion onsets do not follow (rate ratio 1.07 [0.92, 1.24]). So its rise with range is not evidence of a signal-strength effect ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)).
 - **σ- or variance-like (○):** against the ACC target, with each track's slow bias removed, the error spread pooled over
   all ranges grows linearly with `224|7` (log-log slope 1.01; `232|8` 0.79), but within a fixed range band (beyond 15 m)
   it grows about as √code on both cars (0.51 / 0.59 on fresh drives), because code and error both grow with range
