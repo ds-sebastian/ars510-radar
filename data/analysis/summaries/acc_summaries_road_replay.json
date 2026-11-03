@@ -1,0 +1,73 @@
+{
+ "scope": "frozen replay test of the shipped acc_summaries against acc on the owner's latest drives: never tuned on, 10 routes, 5.45 moving h, 3.18 h above 20 m/s; as driven these drives ran a research fused build; open loop, one car; oracle = hindsight reference from the same radar and camera",
+ "clauses": {
+  "hard_per_moving_h": {
+   "diff": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ],
+   "limit": "CI high <= 0.5"
+  },
+  "mild_per_moving_h": {
+   "diff": 0.184,
+   "ci": [
+    0.0,
+    0.724
+   ],
+   "limit": "CI high <= 1.0"
+  },
+  "unnecessary_s_per_moving_h": {
+   "diff": -0.23,
+   "ci": [
+    -0.754,
+    0.017
+   ],
+   "limit": "CI high <= 1.0"
+  },
+  "missed_s_per_moving_h": {
+   "diff": 0.0,
+   "ci": [
+    0.0,
+    0.0
+   ],
+   "limit": "CI high <= 1.0"
+  },
+  "onset_vs_vision_s": {
+   "value": -0.123,
+   "ci": [
+    -0.215,
+    -0.033
+   ],
+   "closings": 104,
+   "limit": "CI high <= 0.05"
+  },
+  "new_hard_on_side_summary": 0
+ },
+ "reported": {
+  "flips_per_h": {
+   "diff": 2.204,
+   "ci": [
+    -5.259,
+    10.719
+   ]
+  },
+  "summary_lead_share_of_moving_lead_ticks": 0.0081,
+  "cut_in_pairs": {
+   "pairs": 31,
+   "mean_dt": -0.003,
+   "median": 0.0
+  },
+  "episode_counts_acc_summaries_vs_acc": {
+   "hard": [
+    3,
+    3
+   ],
+   "mild": [
+    5,
+    4
+   ]
+  }
+ },
+ "not_assessed": "owner-reported braking with the profile installed: these drives did not have it installed"
+}
