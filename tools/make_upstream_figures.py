@@ -33,7 +33,7 @@ COL = {"vision only": VIS, "acc": S4, "acc_summaries": S5}
 TICK = {"vision only": "vision\nonly", "acc": "acc\n(default)", "acc_summaries": "acc_summaries"}
 GROUPS = (("27 replay drives", "27 replay\ndrives"), ("owner held-out and fresh drives", "owner held-out\n+ fresh"),
           ("owner road drives + 2 second-car drives", "owner road\nset"), ("second car, earlier drives", "second car\nearlier"),
-          ("second car, latest batch", "second car\nlatest batch"))
+          ("second car, latest batch", "second car\nlatest batch"), ("owner latest drives (ran fused as driven)", "owner latest\n(ran fused)"))
 
 
 def j(name: str) -> dict:
@@ -64,8 +64,9 @@ def vs_vision() -> None:
   fig.text(0.01, 0.015, f"Open-loop replays of {routes} routes ({h:.1f} moving h, 2 cars) through openpilot's unchanged radard and planner.\n"
            "Unnecessary: braked > 0.5 m/s² harder than openpilot's planner on a hindsight lead. Missed: stayed above −0.5 m/s²\n"
            "while it asked ≤ −1. The hindsight lead is built mostly from the radar's ACC target, so it favours the radar;\n"
-           "upstream_vs_vision_checks.png repeats the comparison against references that do not.", fontsize=7.4, color=INK2, va="bottom")
-  fig.tight_layout(rect=(0, 0.17, 1, 1)); fig.savefig(OUT / "upstream_vs_vision.png", dpi=130); plt.close(fig)
+           "upstream_vs_vision_checks.png repeats the comparison against references that do not. The latest owner drives\n"
+           "were recorded with `fused` running; like the others they are replayed open loop.", fontsize=7.4, color=INK2, va="bottom")
+  fig.tight_layout(rect=(0, 0.22, 1, 1)); fig.savefig(OUT / "upstream_vs_vision.png", dpi=130); plt.close(fig)
 
 
 def checks() -> None:
@@ -73,7 +74,7 @@ def checks() -> None:
   C = j("upstream_case.json"); R = C["reference_check"]["all"]
   G = pool()["by_group"]
   P = j("profiles_vs_vision.json")
-  fig, axs = plt.subplots(1, 3, figsize=(15.5, 4.8), gridspec_kw={"width_ratios": [1.1, 1.7, 0.85]})
+  fig, axs = plt.subplots(1, 3, figsize=(16.5, 4.9), gridspec_kw={"width_ratios": [1.05, 1.95, 0.8]})
 
   ax = axs[0]
   refs = (("ORACLE", "hindsight lead\n(mostly ACC target)"), ("AGREE", "moments where\nboth references agree"), ("CAMREF", "camera-only\nhindsight lead"))

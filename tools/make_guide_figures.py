@@ -269,7 +269,8 @@ def acc_target_parser() -> None:
   by a faster car (acc_target_parser.json, the 62-route set those replays were scored on)."""
   J = json.loads((SUM / "acc_target_parser.json").read_text()); F, C = J["file_size"], J["close_cut_ins"]["faster_car"]
   RJ = json.loads((SUM / "replay_every_drive.json").read_text()); P = RJ["pools"]["every_replayed_drive"]; R = P["all"]
-  B = json.loads((SUM / "second_car_batch3.json").read_text()); E, H = B["pooled_every_drive"], B["pooled_never_tuned"]
+  N = RJ["pools"]["never_tuned"]; H = dict(N["all"]); H["diff"] = N["differences"]["acc minus fused"]["unnecessary_s"]
+  FL = P["differences"]["acc minus fused"]["flips"]
   vlab = {"vision only": "vision only", "2.6": "fused", "ACC target only": "acc"}
   col = {"vision only": VIS, "2.6": V23, "ACC target only": S4}
   fig, axs = plt.subplots(2, 4, figsize=(13, 6.6)); axs = axs.ravel()
@@ -296,23 +297,23 @@ def acc_target_parser() -> None:
   axs[3].bar([0, 1], fl, 0.6, color=[col["2.6"], col["ACC target only"]])
   for i, yi in enumerate(fl):
     axs[3].text(i, yi + 5, f"{yi:.0f}", ha="center", fontsize=8, color=INK)
-  lo, hi = E["flips"]["ci95"]
+  lo, hi = FL["ci95"]
   axs[3].set_xticks([0, 1], ["2.6", "ACC target\nonly"]); axs[3].set_ylabel("per moving h")
   axs[3].set_title("lead flips", loc="left", fontsize=10)
-  axs[3].text(0.5, max(fl) * 0.45, f"{E['flips']['diff_per_moving_h']:+.0f} /h\n[{lo:+.0f}, {hi:+.0f}]", ha="center", fontsize=8, color=INK2)
+  axs[3].text(0.5, max(fl) * 0.45, f"{FL['per_h']:+.0f} /h\n[{lo:+.0f}, {hi:+.0f}]", ha="center", fontsize=8, color=INK2)
   for ax, m, t in ((axs[4], "unnecessary_s", "unnecessary braking (oracle)"), (axs[5], "missed_s", "missed braking (oracle)")):
     vs = ["vision only", "2.6", "ACC target only"]; y = [R[vlab[v]][m] for v in vs]
     ax.bar(range(3), y, 0.6, color=[col[v] for v in vs])
     for i, yi in enumerate(y):
       ax.text(i, yi + max(y) * 0.012, f"{yi:g}", ha="center", fontsize=8, color=INK)
     ax.set_xticks(range(3), ["vision\nonly", "2.6", "ACC target\nonly"]); ax.set_ylabel("s"); ax.set_title(t, loc="left", fontsize=10)
-  un = [H["fused"]["unnecessary_s"], H["acc"]["unnecessary_s"]]; lo, hi = H["acc_minus_fused_per_moving_h"]["unnecessary_s"]["ci95"]
+  un = [H["fused"]["unnecessary_s"], H["acc"]["unnecessary_s"]]; lo, hi = H["diff"]["ci95"]
   axs[6].bar([0, 1], un, 0.6, color=[col["2.6"], col["ACC target only"]])
   for i, yi in enumerate(un):
     axs[6].text(i, yi + 0.3, f"{yi:g}", ha="center", fontsize=8, color=INK)
   axs[6].set_xticks([0, 1], ["2.6", "ACC target\nonly"]); axs[6].set_ylabel("s")
-  axs[6].set_title(f"unnecessary braking, drives held out\nof all tuning ({H['routes']} routes, {H['moving_h']:.1f} moving h)", loc="left", fontsize=10)
-  axs[6].text(1, max(un) * 0.62, f"{H['acc_minus_fused_per_moving_h']['unnecessary_s']['per_h']:+.2f} s/h\n[{lo:+.2f}, {hi:+.2f}]", ha="center", fontsize=8, color=INK2)
+  axs[6].set_title(f"unnecessary braking, drives held out\nof all tuning ({H['acc']['routes']} routes, {H['acc']['moving_h']:.1f} moving h)", loc="left", fontsize=10)
+  axs[6].text(1, max(un) * 0.74, f"{H['diff']['per_h']:+.2f} s/h\n[{lo:+.2f}, {hi:+.2f}]", ha="center", fontsize=8, color=INK2)
   vs = ["vision only", "2.6", "ACC target only"]
   for k, (thr, dx) in enumerate((("brake_below_minus_0_5", -0.2), ("brake_below_minus_1", 0.2))):
     y = [C[v][thr] for v in vs]
