@@ -81,6 +81,7 @@ Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summ
 
 What the table shows:
 
+- **`acc_summaries` passed a frozen replay test on the owner's latest drives,** against limits set before they were scored: hard episodes 0 more per moving hour [0, 0], mild +0.18 [0, +0.72], unnecessary braking −0.23 s/h [−0.75, +0.02], missed 0 [0, 0], onset against vision −0.12 s [−0.22, −0.03], no new hard episode; 5.45 moving h. Summary cars were radard's lead on only 0.8 % of moving lead time, so this says the profile adds no braking here, not that its summaries help. The drives ran a research build of `fused`, so whether the owner notices unexpected braking with `acc_summaries` installed is still untested ([`acc_summaries_road_replay.json`](../data/analysis/summaries/acc_summaries_road_replay.json)).
 - **`acc_summaries` brakes like `acc` and flips more.** Over the first four sets it has 19.1 s of unnecessary and 17.4 s of missed
   braking (`acc` 19.2 / 17.4), the same 13 hard episodes as `acc`, one more mild episode, and 325 lead flips per hour
   against `acc`'s 302 (the summary cars give radard more radar points to switch between).
