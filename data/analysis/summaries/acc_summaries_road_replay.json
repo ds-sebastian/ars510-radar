@@ -57,6 +57,16 @@
    "pairs": 31,
    "mean_dt": -0.003,
    "median": 0.0
+  },
+  "episode_counts_acc_summaries_vs_acc": {
+   "hard": [
+    3,
+    3
+   ],
+   "mild": [
+    5,
+    4
+   ]
   }
  },
  "not_assessed": "owner-reported braking with the profile installed: these drives did not have it installed"
