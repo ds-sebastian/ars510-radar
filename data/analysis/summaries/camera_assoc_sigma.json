@@ -1,0 +1,434 @@
+{
+ "scope": "owner and second car, bus 1 logs; same track, age >= 20, moving, association state stable 15 records each side, range change between the sides < 1.5 m; steps in code counts; bootstrap over routes",
+ "bands": [
+  {
+   "state": "day",
+   "kind": "loss",
+   "range_m": "30-50",
+   "events": 67,
+   "routes": 39,
+   "range_sigma": {
+    "step": -0.01,
+    "ci": [
+     -0.31,
+     0.35
+    ]
+   },
+   "lateral_sigma": {
+    "step": 0.09,
+    "ci": [
+     -0.0,
+     0.21
+    ]
+   },
+   "speed_sigma": {
+    "step": 1.52,
+    "ci": [
+     0.95,
+     2.1
+    ]
+   }
+  },
+  {
+   "state": "day",
+   "kind": "onset",
+   "range_m": "30-50",
+   "events": 51,
+   "routes": 32,
+   "range_sigma": {
+    "step": 0.55,
+    "ci": [
+     -0.33,
+     1.58
+    ]
+   },
+   "lateral_sigma": {
+    "step": 0.06,
+    "ci": [
+     -0.08,
+     0.17
+    ]
+   },
+   "speed_sigma": {
+    "step": -0.46,
+    "ci": [
+     -2.03,
+     1.08
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "loss",
+   "range_m": "30-50",
+   "events": 40,
+   "routes": 19,
+   "range_sigma": {
+    "step": 1.07,
+    "ci": [
+     0.44,
+     1.59
+    ]
+   },
+   "lateral_sigma": {
+    "step": 0.19,
+    "ci": [
+     -0.0,
+     0.33
+    ]
+   },
+   "speed_sigma": {
+    "step": -0.47,
+    "ci": [
+     -1.49,
+     0.55
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "loss",
+   "range_m": "50-80",
+   "events": 35,
+   "routes": 18,
+   "range_sigma": {
+    "step": 2.74,
+    "ci": [
+     2.06,
+     3.38
+    ]
+   },
+   "lateral_sigma": {
+    "step": 0.26,
+    "ci": [
+     0.17,
+     0.35
+    ]
+   },
+   "speed_sigma": {
+    "step": -0.48,
+    "ci": [
+     -1.4,
+     0.25
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "loss",
+   "range_m": "80-130",
+   "events": 23,
+   "routes": 12,
+   "range_sigma": {
+    "step": 4.4,
+    "ci": [
+     2.13,
+     6.38
+    ]
+   },
+   "lateral_sigma": {
+    "step": 0.47,
+    "ci": [
+     0.19,
+     0.71
+    ]
+   },
+   "speed_sigma": {
+    "step": -0.05,
+    "ci": [
+     -1.52,
+     1.48
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "onset",
+   "range_m": "30-50",
+   "events": 62,
+   "routes": 23,
+   "range_sigma": {
+    "step": -2.65,
+    "ci": [
+     -3.21,
+     -2.08
+    ]
+   },
+   "lateral_sigma": {
+    "step": -0.57,
+    "ci": [
+     -0.66,
+     -0.47
+    ]
+   },
+   "speed_sigma": {
+    "step": -1.1,
+    "ci": [
+     -2.89,
+     0.56
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "onset",
+   "range_m": "50-80",
+   "events": 37,
+   "routes": 16,
+   "range_sigma": {
+    "step": -4.85,
+    "ci": [
+     -5.56,
+     -4.22
+    ]
+   },
+   "lateral_sigma": {
+    "step": -0.45,
+    "ci": [
+     -0.59,
+     -0.32
+    ]
+   },
+   "speed_sigma": {
+    "step": -0.21,
+    "ci": [
+     -1.79,
+     1.04
+    ]
+   }
+  },
+  {
+   "state": "night",
+   "kind": "onset",
+   "range_m": "80-130",
+   "events": 24,
+   "routes": 16,
+   "range_sigma": {
+    "step": -7.26,
+    "ci": [
+     -9.4,
+     -5.33
+    ]
+   },
+   "lateral_sigma": {
+    "step": -0.47,
+    "ci": [
+     -0.77,
+     -0.27
+    ]
+   },
+   "speed_sigma": {
+    "step": -2.83,
+    "ci": [
+     -8.71,
+     2.01
+    ]
+   }
+  }
+ ],
+ "all_30_130m": {
+  "day_loss": {
+   "events": 67,
+   "routes": 39,
+   "x": 40.9,
+   "s224": {
+    "step": -0.01,
+    "ci": [
+     -0.31,
+     0.35
+    ]
+   },
+   "s232": {
+    "step": 0.09,
+    "ci": [
+     -0.01,
+     0.22
+    ]
+   },
+   "s240": {
+    "step": 1.52,
+    "ci": [
+     0.98,
+     2.14
+    ]
+   }
+  },
+  "day_onset": {
+   "events": 51,
+   "routes": 32,
+   "x": 40.9,
+   "s224": {
+    "step": 0.55,
+    "ci": [
+     -0.37,
+     1.54
+    ]
+   },
+   "s232": {
+    "step": 0.06,
+    "ci": [
+     -0.09,
+     0.17
+    ]
+   },
+   "s240": {
+    "step": -0.46,
+    "ci": [
+     -2.04,
+     1.18
+    ]
+   }
+  },
+  "night_loss": {
+   "events": 98,
+   "routes": 25,
+   "x": 60.5,
+   "s224": {
+    "step": 2.45,
+    "ci": [
+     1.82,
+     2.99
+    ]
+   },
+   "s232": {
+    "step": 0.28,
+    "ci": [
+     0.18,
+     0.38
+    ]
+   },
+   "s240": {
+    "step": -0.38,
+    "ci": [
+     -1.0,
+     0.32
+    ]
+   }
+  },
+  "night_onset": {
+   "events": 123,
+   "routes": 25,
+   "x": 57.5,
+   "s224": {
+    "step": -4.21,
+    "ci": [
+     -4.76,
+     -3.68
+    ]
+   },
+   "s232": {
+    "step": -0.52,
+    "ci": [
+     -0.59,
+     -0.44
+    ]
+   },
+   "s240": {
+    "step": -1.17,
+    "ci": [
+     -2.92,
+     0.3
+    ]
+   }
+  }
+ },
+ "night_share_range_sigma_moves": {
+  "onset_negative": 0.976,
+  "loss_positive": 0.908
+ },
+ "existence_drop_az9_vs_az2_60_130m_points": {
+  "sp5": {
+   "points": 17.52,
+   "ci": [
+    12.11,
+    23.63
+   ]
+  },
+  "b3": {
+   "points": 11.97,
+   "ci": [
+    10.31,
+    13.69
+   ]
+  }
+ },
+ "night_minus_day_within_device_fleet": {
+  "devices": 92,
+  "speed_sigma": {
+   "step": 4.09,
+   "ci": [
+    3.5,
+    4.77
+   ]
+  },
+  "range_sigma": {
+   "step": -2.45,
+   "ci": [
+    -3.09,
+    -1.96
+   ]
+  },
+  "excursion_onset_rate_ratio": {
+   "rr": 1.07,
+   "ci": [
+    0.92,
+    1.24
+   ]
+  }
+ },
+ "speed_sigma_range_only_r2": 0.914,
+ "authority": "published codes only; no physical range or speed reference; does not measure the camera weight",
+ "speed_sigma_far_incidence": {
+  "definition": "share of ACC-matched records at 40-110 m with list minus ACC speed below -2.5 m/s (9-record median), standardised to one range and ego-speed mix; predicted = Gaussian with sigma 0.045 per count; ACC target is a dependent witness",
+  "cohorts": {
+   "owner, earlier held-out routes": {
+    "routes": 20,
+    "rows": 15321,
+    "raw": 0.0228,
+    "standardised": 0.0304,
+    "ci": [
+     0.01,
+     0.0477
+    ],
+    "s240": 24.7
+   },
+   "owner's latest drives": {
+    "routes": 8,
+    "rows": 54299,
+    "raw": 0.0162,
+    "standardised": 0.0173,
+    "ci": [
+     0.0079,
+     0.0334
+    ],
+    "s240": 26.5
+   },
+   "second car's latest batch": {
+    "routes": 31,
+    "rows": 32573,
+    "raw": 0.0621,
+    "standardised": 0.0597,
+    "ci": [
+     0.0358,
+     0.0845
+    ],
+    "s240": 29.0
+   },
+   "second car, earlier held-out routes": {
+    "routes": 23,
+    "rows": 6237,
+    "raw": 0.0436,
+    "standardised": 0.037,
+    "ci": [
+     0.0172,
+     0.0665
+    ],
+    "s240": 30.1
+   }
+  },
+  "predicted_over_observed": {
+   "owner's latest drives": 2.418,
+   "second car's latest batch": 0.824
+  }
+ }
+}

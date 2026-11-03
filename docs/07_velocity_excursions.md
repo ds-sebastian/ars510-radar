@@ -91,8 +91,8 @@ Four closed-loop drives with the object-list radar feeding radard (owner's early
   ([03](03_slot_fields.md#kinematics)): RMS ≈ 0.04-0.06 m/s per count (≈ 0.8 m/s at code 15, 1.2-1.3 m/s at code 30;
   [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)).
   Codes grow with range, so far tracks carry a 1-3 m/s error scale.
-- A Gaussian with σ = 0.045 × code predicts the share of far records inside an excursion (5.3% observed vs 6.5%
-  predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)). A 1-3σ deviation lasts seconds.
+- A Gaussian with σ = 0.045 × code gives the right size for the share of far records inside an excursion on some sets (5.3% observed vs 6.5%
+  predicted; 7.7% vs 5.5% on fresh drives; [`acc_unit_recompute.json`](../data/analysis/summaries/acc_unit_recompute.json)), not on every one: predicted / observed is 0.82 on the second car's latest batch and 2.4 on the owner's latest drives (1.6% vs 3.9%), at similar codes. Between routes the share runs from 0 to about 4% ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)). A 1-3σ deviation lasts seconds.
 - `240|7` (◐) scales with the width of far errors when pooled over range, which is why the `fused` filter uses it to weight readings.
   Within a range band its grade depends on the drive set (rising on some, flat at 20-40 m on others), and against
   stopped cars as ground truth its per-count step is larger near than far, so it is a range-wide weight, not one
