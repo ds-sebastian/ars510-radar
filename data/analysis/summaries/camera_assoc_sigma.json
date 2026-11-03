@@ -377,7 +377,7 @@
   }
  },
  "speed_sigma_range_only_r2": 0.914,
- "authority": "published codes only; no physical range or speed reference; does not measure the camera weight",
+ "authority": "sigma steps: published codes; scatter: range plus wheel odometry on stationary vehicle-class objects, fast scatter only, not bias; different objects compared at equal range; does not measure the camera weight",
  "speed_sigma_far_incidence": {
   "definition": "share of ACC-matched records at 40-110 m with list minus ACC speed below -2.5 m/s (9-record median), standardised to one range and ego-speed mix; predicted = Gaussian with sigma 0.045 per count; ACC target is a dependent witness",
   "cohorts": {
@@ -429,6 +429,83 @@
   "predicted_over_observed": {
    "owner's latest drives": 2.418,
    "second car's latest batch": 0.824
+  }
+ },
+ "range_scatter_vs_odometry_stationary_vehicles": {
+  "definition": "residual RMS of range + wheel odometry about a line over 1 s windows, associated / not associated, 10 m bins, median ratio weighted by windows; ego > 3 m/s, |over-ground speed| < 1 m/s",
+  "night": {
+   "owner_second_car": {
+    "scatter": {
+     "ratio": 0.66,
+     "ci": [
+      0.587,
+      0.778
+     ]
+    },
+    "range_sigma": {
+     "ratio": 0.74,
+     "ci": [
+      0.646,
+      0.941
+     ]
+    },
+    "windows": 299
+   },
+   "fleet": {
+    "scatter": {
+     "ratio": 0.796,
+     "ci": [
+      0.681,
+      0.968
+     ]
+    },
+    "range_sigma": {
+     "ratio": 0.811,
+     "ci": [
+      0.74,
+      0.958
+     ]
+    },
+    "windows": 250,
+    "devices": 42
+   }
+  },
+  "day_below_50m": {
+   "owner_second_car": {
+    "scatter": {
+     "ratio": 1.107,
+     "ci": [
+      1.029,
+      1.19
+     ]
+    },
+    "range_sigma": {
+     "ratio": 1.082,
+     "ci": [
+      1.016,
+      1.155
+     ]
+    },
+    "windows": 1399
+   },
+   "fleet": {
+    "scatter": {
+     "ratio": 1.021,
+     "ci": [
+      0.956,
+      1.093
+     ]
+    },
+    "range_sigma": {
+     "ratio": 1.031,
+     "ci": [
+      0.975,
+      1.098
+     ]
+    },
+    "windows": 1930,
+    "devices": 178
+   }
   }
  }
 }

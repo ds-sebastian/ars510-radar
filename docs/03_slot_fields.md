@@ -175,8 +175,8 @@ radar over another link):
 - The position stays continuous when the state changes (median lateral change 0.03 m, as on any other record).
 - **At night the published range and lateral sigma move with the state** on the same track at unchanged range (◐): `224|7` falls 4.2 counts [3.7, 4.8] when the camera association starts
   (negative on 98 % of 123 events) and rises 2.5 [1.8, 3.0] when it ends (positive on 91 % of 98), more at longer range; `232|8` falls 0.5 and rises 0.3. `240|7`, in the record's other update block, shows no clear step (−1.2 [−2.9, +0.3], −0.4 [−1.0, +0.3]).
-  No `224|7` step was seen by day at about 41 m (118 events). These are the radar's stated uncertainties on two cars, so they do not by themselves show that range gets more accurate or how much weight the camera has
-  ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)).
+  No `224|7` step was seen by day at about 41 m (118 events).
+- **The real range scatter moves the same way.** Against wheel odometry on stationary vehicles at equal range, fast range scatter with association is 0.66 [0.59, 0.78] of that without it at night on the owner's car and the second car, and 0.80 [0.68, 0.97] on 42 fleet cars, with `224|7` at 0.74 and 0.81. By day below 50 m there is no reduction: 1.11 [1.03, 1.19] and 1.02 [0.96, 1.09], `224|7` 1.08 and 1.03. This compares different objects and covers fast scatter only, so it does not give the range bias or the camera's weight ([`camera_assoc_sigma.json`](../data/analysis/summaries/camera_assoc_sigma.json)).
 
   ![Night steps of the range and speed sigma codes when the camera association starts or ends](img/analysis/camera_assoc_sigma.png)
 

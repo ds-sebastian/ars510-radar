@@ -49,7 +49,7 @@ def main() -> None:
     axes[0].set_ylabel("code counts, after minus before"); axes[0].legend(loc="upper left")
     n = sum(r["events"] for r in rows)
     fig.text(0.01, 0.01, f"Night, {n} events on the owner's car and the second car: same track, range unchanged within 1.5 m. Bars: 95 % interval over routes.\n"
-             "Published codes only: this shows the radar's stated uncertainty moving, not a measured accuracy gain.", fontsize=8, color=INK2, ha="left", va="bottom")
+             "Published codes on moving tracks; docs/03 gives the matching scatter against wheel odometry on stationary vehicles.", fontsize=8, color=INK2, ha="left", va="bottom")
     fig.tight_layout(rect=(0, 0.11, 1, 1))
     fig.savefig(OUT / "camera_assoc_sigma.png", dpi=130)
 
