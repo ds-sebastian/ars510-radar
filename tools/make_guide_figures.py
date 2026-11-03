@@ -264,10 +264,14 @@ def far_rule() -> None:
 
 
 def acc_target_parser() -> None:
-  """The ACC target alone against 2.6, from acc_target_parser.json: file size; braking over every drive set; lead flips
-  over every drive; unnecessary braking on drives held out from fitting; close cut-ins by a faster car."""
-  J = json.loads((SUM / "acc_target_parser.json").read_text()); F, A = J["file_size"], J["by_version_and_set"]
-  M = J["hard_and_mild_moving_vs_standstill"]; ALL = "all sets"; E, H, C = J["every_drive"], J["drives_not_used_for_development_pooled"], J["close_cut_ins"]["faster_car"]
+  """The ACC target alone against 2.6: file size; braking, flips and oracle seconds over every replayed drive
+  (replay_every_drive.json); unnecessary braking on the drives held out of all tuning (second_car_batch3.json); close cut-ins
+  by a faster car (acc_target_parser.json, the 62-route set those replays were scored on)."""
+  J = json.loads((SUM / "acc_target_parser.json").read_text()); F, C = J["file_size"], J["close_cut_ins"]["faster_car"]
+  RJ = json.loads((SUM / "replay_every_drive.json").read_text()); P = RJ["pools"]["every_replayed_drive"]; R = P["all"]
+  N = RJ["pools"]["never_tuned"]; H = dict(N["all"]); H["diff"] = N["differences"]["acc minus fused"]["unnecessary_s"]
+  FL = P["differences"]["acc minus fused"]["flips"]
+  vlab = {"vision only": "vision only", "2.6": "fused", "ACC target only": "acc"}
   col = {"vision only": VIS, "2.6": V23, "ACC target only": S4}
   fig, axs = plt.subplots(2, 4, figsize=(13, 6.6)); axs = axs.ravel()
   ms = ["code_lines", "constants", "state_attributes", "conditions"]; x = np.arange(len(ms))
@@ -278,37 +282,38 @@ def acc_target_parser() -> None:
   axs[0].set_xticks(x, ["code\nlines", "constants", "state", "conditions"]); axs[0].legend(fontsize=8)
   axs[0].set_title("openpilot file", loc="left", fontsize=10)
   for ax, kind in zip(axs[1:3], ("hard", "mild")):
+    top = 0
     for i, v in enumerate(("2.6", "ACC target only")):
-      mv, st = M[v][kind]["moving"], M[v][kind]["standstill"]
+      r = R[vlab[v]]; mv = r[kind + "_moving"]; st = r[kind] - mv; top = max(top, r[kind])
       ax.bar(i, mv, 0.6, color=col[v])
       if st:
         ax.bar(i, st, 0.6, bottom=mv, color="white", edgecolor=col[v], hatch="////")
       ax.text(i, mv + st + 0.5, f"{mv}" + (f" + {st}" if st else ""), ha="center", fontsize=8, color=INK)
-    ax.set_xticks([0, 1], ["2.6", "ACC target\nonly"]); ax.set_ylim(0, max(M[v][kind]["moving"] + M[v][kind]["standstill"] for v in M if v != "note") * 1.3)
-    ax.set_title(f"{kind} radar-only episodes, all sets", loc="left", fontsize=10)
-  axs[1].text(1.35, M["ACC target only"]["hard"]["moving"] + 2, "hatched:\nholds at\nstandstill", fontsize=7, color=INK2, va="bottom")
+    ax.set_xticks([0, 1], ["2.6", "ACC target\nonly"]); ax.set_ylim(0, top * 1.3)
+    ax.set_title(f"{kind} radar-only episodes", loc="left", fontsize=10)
+  axs[1].text(1.35, R["acc"]["hard_moving"] + 1, "hatched:\nholds at\nstandstill", fontsize=7, color=INK2, va="bottom")
   axs[1].set_xlim(-0.5, 2.1)
-  fl = [E["flips"]["fused_2_6"] / E["moving_h"], E["flips"]["N1"] / E["moving_h"]]
+  fl = [R["fused"]["flips_per_h"], R["acc"]["flips_per_h"]]
   axs[3].bar([0, 1], fl, 0.6, color=[col["2.6"], col["ACC target only"]])
   for i, yi in enumerate(fl):
     axs[3].text(i, yi + 5, f"{yi:.0f}", ha="center", fontsize=8, color=INK)
-  lo, hi = E["flips"]["ci95"]
+  lo, hi = FL["ci95"]
   axs[3].set_xticks([0, 1], ["2.6", "ACC target\nonly"]); axs[3].set_ylabel("per moving h")
-  axs[3].set_title(f"lead flips, every drive ({E['routes']} routes)", loc="left", fontsize=10)
-  axs[3].text(0.5, max(fl) * 0.45, f"{E['flips']['diff_per_moving_h']:+.0f} /h\n[{lo:+.0f}, {hi:+.0f}]", ha="center", fontsize=8, color=INK2)
-  for ax, m, t in ((axs[4], "unnecessary_s", "unnecessary braking, all sets"), (axs[5], "missed_s", "missed braking, all sets")):
-    vs = ["vision only", "2.6", "ACC target only"]; y = [A[v][ALL][m] for v in vs]
+  axs[3].set_title("lead flips", loc="left", fontsize=10)
+  axs[3].text(0.5, max(fl) * 0.45, f"{FL['per_h']:+.0f} /h\n[{lo:+.0f}, {hi:+.0f}]", ha="center", fontsize=8, color=INK2)
+  for ax, m, t in ((axs[4], "unnecessary_s", "unnecessary braking (oracle)"), (axs[5], "missed_s", "missed braking (oracle)")):
+    vs = ["vision only", "2.6", "ACC target only"]; y = [R[vlab[v]][m] for v in vs]
     ax.bar(range(3), y, 0.6, color=[col[v] for v in vs])
     for i, yi in enumerate(y):
-      ax.text(i, yi + 1, f"{yi:g}", ha="center", fontsize=8, color=INK)
-    ax.set_xticks(range(3), ["vision\nonly", "2.6", "ACC target\nonly"]); ax.set_ylabel("oracle s"); ax.set_title(t, loc="left", fontsize=10)
-  un = [H["unn"]["fused_2_6"], H["unn"]["N1"]]; lo, hi = H["unn"]["ci95"]
+      ax.text(i, yi + max(y) * 0.012, f"{yi:g}", ha="center", fontsize=8, color=INK)
+    ax.set_xticks(range(3), ["vision\nonly", "2.6", "ACC target\nonly"]); ax.set_ylabel("s"); ax.set_title(t, loc="left", fontsize=10)
+  un = [H["fused"]["unnecessary_s"], H["acc"]["unnecessary_s"]]; lo, hi = H["diff"]["ci95"]
   axs[6].bar([0, 1], un, 0.6, color=[col["2.6"], col["ACC target only"]])
   for i, yi in enumerate(un):
     axs[6].text(i, yi + 0.3, f"{yi:g}", ha="center", fontsize=8, color=INK)
-  axs[6].set_xticks([0, 1], ["2.6", "ACC target\nonly"]); axs[6].set_ylabel("oracle s")
-  axs[6].set_title(f"unnecessary braking, never-fitted\ndrives ({H['routes']} routes, {H['moving_h']:.1f} moving h)", loc="left", fontsize=10)
-  axs[6].text(0.5, max(un) * 0.45, f"{H['unn']['diff_per_moving_h']:+.2f} s/h\n[{lo:+.2f}, {hi:+.2f}]", ha="center", fontsize=8, color=INK2)
+  axs[6].set_xticks([0, 1], ["2.6", "ACC target\nonly"]); axs[6].set_ylabel("s")
+  axs[6].set_title(f"unnecessary braking, drives held out\nof all tuning ({H['acc']['routes']} routes, {H['acc']['moving_h']:.1f} moving h)", loc="left", fontsize=10)
+  axs[6].text(1, max(un) * 0.74, f"{H['diff']['per_h']:+.2f} s/h\n[{lo:+.2f}, {hi:+.2f}]", ha="center", fontsize=8, color=INK2)
   vs = ["vision only", "2.6", "ACC target only"]
   for k, (thr, dx) in enumerate((("brake_below_minus_0_5", -0.2), ("brake_below_minus_1", 0.2))):
     y = [C[v][thr] for v in vs]
@@ -316,13 +321,13 @@ def acc_target_parser() -> None:
     for i, yi in enumerate(y):
       axs[7].text(i + dx, yi + 0.5, yi, ha="center", fontsize=7.5, color=INK)
   axs[7].set_xticks(range(3), ["vision\nonly", "2.6", "ACC target\nonly"]); axs[7].set_ylabel("cut-ins")
-  axs[7].set_title(f"{C['n']} close cut-ins by a faster car:\nbraking below -0.5 / -1 m/s²", loc="left", fontsize=10)
+  axs[7].set_title(f"{C['n']} close cut-ins, faster car\n(62-route set): braking < -0.5 / -1", loc="left", fontsize=10)
   for ax in axs:
     ax.yaxis.grid(True, color=GRID); ax.set_axisbelow(True)
-  d = J["disagreement"]["share_of_moving_time_differing_by_more_than_0.3_mps2"]
-  fig.suptitle(f"All sets = {A['ACC target only'][ALL]['moving_h']:.1f} moving h of replays; the two files ask for different accelerations (> 0.3 m/s²) on {d * 100:.2f} % of it. "
-               "Brackets: route-bootstrap 95 % interval of the difference.", x=0.01, ha="left", fontsize=9, color=INK2)
-  fig.tight_layout(); fig.savefig(OUT / "guide_acc_target_parser.png", dpi=130); plt.close(fig)
+  d = RJ["acc_vs_fused_request_disagreement"]["share"]
+  fig.suptitle(f"Hard, mild, flips, unnecessary and missed: replays of every drive ({R['acc']['routes']} routes, {R['acc']['moving_h']:.1f} moving h). The two files ask for different\n"
+               f"accelerations (> 0.3 m/s²) on {d * 100:.2f} % of moving time. Brackets: route-bootstrap 95 % interval of the difference.", x=0.01, ha="left", fontsize=9, color=INK2)
+  fig.tight_layout(rect=(0, 0, 1, 0.94)); fig.savefig(OUT / "guide_acc_target_parser.png", dpi=130); plt.close(fig)
 
 
 if __name__ == "__main__":

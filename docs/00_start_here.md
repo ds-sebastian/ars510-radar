@@ -176,7 +176,7 @@ below. Its reference range comes mostly from the ACC target, which can favour de
 |---|---|---|---|---|---|
 | owner road drives and a second car's two drives (7.65 h) | 10.2 / 10.3 | 3.3 / 8.2 | 6.0 / 10.8 | 6.0 / 10.8 | `oracle_reference.json` |
 | 27 replay drives (6.72 h) | 31.9 / 10.0 | 2.2 / 3.1 | 3.3 / 2.5 | 3.3 / 2.5 | `oracle_reference.json` |
-| every drive set incl. the second car's 8.8 h (16.9 moving h) | 89.2 / 30.8 | 21.0 / 16.4 | 19.2 / 17.4 | 19.1 / 17.4 | `acc_target_parser.json`, `acc_summaries_40m.json` |
+| every drive replayed with all four (140 routes, 33.15 moving h) | 217.0 / 65.1 | 54.8 / 30.2 | 36.1 / 34.2 | 36.0 / 34.4 | `replay_every_drive.json` |
 | 26 held-out owner routes (2.56 moving h) | 40.1 / 9.9 | 11.4 / 3.6 | 7.7 / 5.3 | 7.7 / 5.5 | `acc_target_parser.json`, `acc_summaries_40m.json` |
 
 ![against the oracle](img/analysis/guide_oracle.png)
@@ -192,10 +192,10 @@ More: [11 Profiles compared](11_profiles_compared.md), [08](08_openpilot_integra
 | ACC target present (lead 15-40 / 40-80 / 80-200 m) | 99 / 99 / 66 % | `road_v21.json` |
 | owner road drives with `fused` 2.1 (5.8 moving h, replayed) | 0 hard radar-only episodes; braking starts 0.4-1.2 s before vision (the recorded motion was driven under `fused`, which favours it) | `road_v21.json` |
 | code size | `acc` 45 code lines reading 7 DBC signals; `acc_summaries` 99 code lines | `acc_target_parser.json`, `acc_summaries_profile.json` |
-| every drive set (16.9 moving h, 62 routes): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.21 % of moving time | `acc_target_parser.json` |
-| lead flips per moving hour, every drive set | `fused` 332, `acc` 302, `acc_summaries` 325 | `acc_target_parser.json`, `acc_summaries_40m.json` |
+| every drive (152 routes, 35.08 moving h): requests differing by > 0.3 m/s² | `acc` vs `fused` on 0.26 % of moving time | `replay_every_drive.json` |
+| lead flips per moving hour, 140 routes | `fused` 325, `acc` 301, `acc_summaries` 324 | `replay_every_drive.json` |
 
-A flip is radard switching between a radar-backed and a vision-only lead. About 80 % of `acc`'s flips (241 per moving hour) are radard's
+A flip is radard switching between a radar-backed and a vision-only lead. On the 62 routes of the first four sets about 80 % of `acc`'s flips (241 per moving hour) are radard's
 distance check (radar within the larger of 25 % and 5 m of the camera lead) failing and recovering. On 70 % of those the ACC target is
 within 1 m laterally of the camera lead, so most likely the same car whose camera range strayed just past the gate (median 1.1 × its width). Drives whose camera model reports a saturated distance uncertainty flip 393 times per
 hour against 255 for the rest. The other causes are the ACC target going idle (42), the low-speed rule (3) and other switches (16);

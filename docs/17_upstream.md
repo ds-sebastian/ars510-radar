@@ -88,9 +88,10 @@ What upstream review is likely to ask, from recent openpilot / opendbc radar PRs
 
 The all-tracks file that was tried as an upstream candidate, `fused` in one opendbc-style file (187 code lines), is no
 longer shipped: on held-out drives its speed filter still passes list-speed excursions to the planner (a −3.31 m/s²
-request at 30 m/s for a list track at 54 m whose closing speed read 23.7 m/s at constant range, and 1.37 s/h more
+request at 30 m/s for a list track at 54 m whose closing speed read 23.7 m/s at constant range, and 0.96 s/h more
 unnecessary braking than `acc` pooled over every held-out set;
-[`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). The same filter stays in the `ars510`
+[`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json) for the request,
+[`replay_every_drive.json`](../data/analysis/summaries/replay_every_drive.json) for the pool). The same filter stays in the `ars510`
 package as `FUSED_CONFIG` for research ([12](12_kalman_filter.md)). The record of what each of its parts bought on the
 27 replay drives (code lines counted as statements only; the `acc` file has 45 counted the same way):
 
@@ -141,7 +142,7 @@ range (below), so the radar's decision carries consistent speed and range.
 
 ![the ACC target alone against 2.6](img/analysis/guide_acc_target_parser.png)
 
-Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and planner):
+Replayed over the first four drive sets (16.9 moving h, 62 routes, unchanged radard and planner):
 - **Braking.** It asks for something different from 2.6 (> 0.3 m/s²) on 0.21 % of moving time. Every route-bootstrap
   difference to 2.6 includes zero: hard, mild, oracle unnecessary and missed braking.
 - **Lead stability and onset.** Lead flips are lower (302 against 332 per hour). Braking starts 0.017 s before vision
@@ -160,15 +161,17 @@ Replayed over every drive set (16.9 moving h, 62 routes, unchanged radard and pl
 - **Filter-free:** the ACC target's speed follows the slope of its own distance (best lag −0.06 s, gain 1.00), and its
   fast noise (0.027 m/s on the second car, 0.025 on the owner's;
   [`second_unit_noise.json`](../data/analysis/summaries/second_unit_noise.json)) is a fifth of its 0.125 m/s code step, so a filter would add delay.
-- **On drives held out from development and tuning** (44 routes of both cars, 6.46 moving h) it brakes unnecessarily no more
-  than 2.6: 14.0 against 18.6 oracle seconds (−0.72 s per moving hour, route bootstrap −1.65…+0.15). Hard and mild
-  radar-only braking are equal, and braking starts at least as early on real closings (vs vision).
+- **On drives held out from development and tuning** (90 routes of both cars, 18.16 moving h, including the owner's latest drives) it brakes unnecessarily less
+  than 2.6: 22.0 against 39.5 oracle seconds (−0.96 s per moving hour, route bootstrap −1.86…−0.27). Hard episodes are 6 against 4
+  (+0.11 per hour, −0.09…+0.33) and mild ones 27 against 33 (−0.33 per hour, −0.79…+0.12); braking starts 0.017 s after vision only on
+  real closings (2.6: 0.016 s). Lead flips differ by −13.9 per hour (−29.1…+2.7).
 - **Close cut-ins** (the lead jumps at least 5 m closer to within 35 m; 450 in all drives): the radar's ACC target moves
   to the cut-in car after a median 0.2 s (0.3 s for a faster car). On the 120 where that car is faster than ego, `acc` and 2.6 differ by at most 0.3 m/s² (braking below −0.5 m/s² in 28 against 27, below −1 in 14 against 14; vision only 29 / 14).
-- **Over every drive** (94 routes, 21.45 moving h; it carries protocol values only, while 2.6 was tuned on most of them) it has
-  fewer lead flips (−22 per moving hour, −36…−7). While moving it has 5 hard and 31 mild radar-only episodes against 8 and 36,
-  28.4 against 35.0 s of unnecessary and 22.9 against 20.3 s of missed braking; the route-bootstrap intervals of those four
-  differences include zero.
+- **Over every drive** (152 routes, 35.08 moving h; it carries protocol values only, while 2.6 was tuned on most of them) it has
+  fewer lead flips (−21.5 per moving hour, −32.4…−10.1). It has 19 hard radar-only episodes (10 while moving, 9 at standstill) against 12, and 57 mild
+  (48 + 9) against 60; 41.3 against 60.5 s of unnecessary and 36.2 against 32.7 s of missed braking. The route-bootstrap intervals of the hard, mild and
+  missed differences include zero; the unnecessary one (−0.55 s per hour, −1.03…−0.13) does not
+  ([`replay_every_drive.json`](../data/analysis/summaries/replay_every_drive.json)).
 - **On 26 owner routes held out from every replay** (2.56 moving h):
   - unnecessary braking 7.7 against 2.6's 11.4 s, and lead flips 323 against 345 per hour (both route-bootstrap CIs
     exclude zero);
@@ -193,9 +196,9 @@ target and leans toward this file on unnecessary and missed seconds. Numbers:
 
 ### Against vision only (what the PR adds over today)
 
-On these cars openpilot runs vision only today. Replayed on the same 62 routes (16.9 moving h, two cars) through the
-unchanged radard and planner, `acc` and `acc_summaries` cut vision only's unnecessary braking from 89.2 to 19.2 / 19.1
-oracle seconds and its missed braking from 30.8 to 17.4 s:
+On these cars openpilot runs vision only today. Replayed on every drive that has all three
+(140 routes, 33.15 moving h, two cars) through the unchanged radard and planner, `acc` and `acc_summaries` cut vision only's unnecessary braking from 217.0 to 36.1 / 36.0
+oracle seconds and its missed braking from 65.1 to 34.2 / 34.4 s:
 
 ![acc and acc_summaries against vision only](img/analysis/upstream_vs_vision.png)
 
@@ -209,9 +212,10 @@ The oracle builds its hindsight lead from the ACC target 96 % of the time, so it
   the camera lead's uncertainty: −2.21 s/h [−4.54, −0.48]. Against the camera-only lead alone the two tie
   (−0.07 s/h [−2.02, +2.01]); that reference shares vision only's camera, and on video the oracle was right in 6 of the
   10 episodes where the two disagree, the camera reference in 2.
-- **By drive set.** The gain is largest on the 27 replay drives and the second car's drives (unnecessary + missed
-  braking 8.5 → 1.4 and 10.8 → 2.3 s per moving hour). On the owner's road set (sunnypilot drives plus two second-car drives) the three tie
-  (2.9 / 2.8 / 2.8 s per moving hour).
+- **By drive set** (unnecessary + missed braking, seconds per moving hour, vision only → `acc` / `acc_summaries`). The gain is largest on the 27 replay
+  drives (8.5 → 1.4 / 1.4), the owner's held-out and fresh drives (15.8 → 4.4 / 4.5) and the second car's drives (earlier 8.3 → 1.8 / 1.8, latest batch
+  13.3 → 1.4 / 1.5); on the owner's latest drives it is 5.3 → 2.0 / 1.8. On the owner's road set (sunnypilot drives plus two second-car drives) the three tie
+  (2.9 / 2.8 / 2.8).
 - **Judged by the driver** (the 20 held-out routes of the 27 replay drives: 4.56 h, 167 brake presses, no hindsight lead): `acc` was already asking
   ≤ −1 m/s² before 44.9 % of the driver's brake presses (vision only 40.1 %), starts braking 0.04 s earlier on average
   (95 % CI −0.09 … +0.00), asks for no braking that only the radar wanted, and in 38 driver overrides its request was

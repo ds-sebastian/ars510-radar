@@ -45,7 +45,8 @@ missed braking seconds. Hard = request ≤ −2 m/s² while vision only asks ≥
 onset = first request ≤ −0.5 m/s² relative to vision (negative = earlier).
 Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summaries/acc_target_parser.json) and
 `fast_suite_by_set` in [`acc_summaries_40m.json`](../data/analysis/summaries/acc_summaries_40m.json); the second car's
-38 further drives: [`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json) (not part of "all sets").
+38 further drives: [`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json) and the owner's latest drives: [`replay_every_drive.json`](../data/analysis/summaries/replay_every_drive.json)
+(neither is part of the first four sets).
 
 | drive set (moving h) | profile | unnecessary braking s | missed braking s | lead flips per h | hard / mild episodes | onset vs vision |
 |---|---|---|---|---|---|---|
@@ -65,25 +66,29 @@ Source: `by_version_and_set` in [`acc_target_parser.json`](../data/analysis/summ
 | | `acc` | 4.0 | 4.5 | 304 | 1 / 8 | +0.116 s |
 | | `acc_summaries` | 4.9 | 4.5 | 331 | 1 / 8 | +0.114 s |
 | | `fused` | 16.8 | 4.8 | 332 | 2 / 15 | +0.085 s |
+| owner's latest drives, 10 routes (5.45; ran `fused` as driven, never tuned on) | vision only | 17.4 | 11.6 | 0 | 0 / 0 | 0 |
+| | `acc` | 4.0 | 7.0 | 223 | 3 / 4 | −0.131 s |
+| | `acc_summaries` | 2.8 | 7.0 | 225 | 3 / 5 | −0.123 s |
+| | `fused` | 4.1 | 5.3 | 250 | 1 / 5 | −0.092 s |
 | fresh owner drives (0.47) | vision only | 0.0 | 0.0 | 0 | 0 / 0 | 0 |
 | | `acc` | 0.0 | 0.0 | 386 | 0 / 0 | +0.004 s |
 | | `acc_summaries` | 0.0 | 0.0 | 398 | 0 / 0 | +0.004 s |
 | | `fused` | 0.0 | 0.0 | 347 | 0 / 1 | +0.004 s |
-| **all sets (16.91)** | vision only | 89.2 | 30.8 | 0 | 0 / 0 | 0 |
+| **first four sets (16.91; 62 routes)** | vision only | 89.2 | 30.8 | 0 | 0 / 0 | 0 |
 | | **`acc`** | 19.2 | 17.4 | **302** | 13 / 30 | −0.017 s |
 | | **`acc_summaries`** | **19.1** | 17.4 | 325 | 13 / 32 | −0.015 s |
 | | **`fused`** | 21.0 | **16.4** | 332 | 8 / 27 | −0.010 s |
 
 What the table shows:
 
-- **`acc_summaries` brakes like `acc` and flips more.** Over all sets it has 19.1 s of unnecessary and 17.4 s of missed
+- **`acc_summaries` brakes like `acc` and flips more.** Over the first four sets it has 19.1 s of unnecessary and 17.4 s of missed
   braking (`acc` 19.2 / 17.4), the same 13 hard episodes as `acc`, one more mild episode, and 325 lead flips per hour
   against `acc`'s 302 (the summary cars give radard more radar points to switch between).
-- **`acc` and `fused` ask for nearly the same braking.** Over all sets they differ by more than 0.3 m/s² on 0.21 % of
+- **`acc` and `fused` ask for nearly the same braking.** Over the first four sets they differ by more than 0.3 m/s² on 0.21 % of
   moving time, and where they differ `acc` is the closer to the oracle in 79 % of the time (95 % CI 73 … 85 %).
   Both cut vision only's unnecessary braking by 76-78 % (89.2 s → 19.2-21.0 s) and its missed braking by 43-47 %
   (30.8 s → 16.4-17.4 s).
-- **`acc` flips between a radar and a vision lead less often** (302 against 332 per hour; route-bootstrap difference
+- **`acc` flips between a radar and a vision lead less often** (302 against 332 per hour over the first four sets; route-bootstrap difference
   −29.6 per hour, 95 % CI −43.8 … −15.6 over 62 routes). The other differences over the 62 routes include zero: hard
   +0.30 per hour (−0.33 … +1.11), mild +0.18 (−0.75 … +1.21), unnecessary −0.10 s (−0.55 … +0.31), missed +0.06 s
   (−0.19 … +0.34). Part of the flip edge comes from 28 drives whose camera driving model (some sunnypilot community models)
@@ -120,13 +125,14 @@ What the table shows:
 
 On the 26 held-out owner routes `acc` minus `fused` per moving hour (route-bootstrap 95 % CI, 19 routes) is −1.45 s of
 unnecessary braking (−2.79 … −0.26) and −22 lead flips (−36.5 … −3.3); the differences in hard (+0.39,
-0.0 … +1.24), mild and missed braking include zero. Pooling every set held out of all tuning (owner routes and the
-second car's 12 + 12 + 38 later drives, 12.72 moving h), `acc` has 18.0 against 35.4 s of unnecessary braking
-(−1.37 s per hour, −2.39 … −0.44) with 3 hard episodes each. On the 12 second-car drives of the earlier batch alone the two tie on every
+0.0 … +1.24), mild and missed braking include zero. Pooling every set held out of all tuning (owner routes, the owner's latest drives and
+the second car's 12 + 12 + 38 later drives; 90 routes, 18.16 moving h), `acc` has 22.0 against 39.5 s of unnecessary braking
+(−0.96 s per hour, −1.86 … −0.27), 6 hard episodes against 4 (+0.11 per hour, −0.09 … +0.33) and 27 mild against 33 (−0.33, −0.79 … +0.12). On the 12 second-car drives of the earlier batch alone the two tie on every
 measure (hard 1 against 1, the same real closing; mild 5 against 4; unnecessary 5.2 against 5.7 s; onset vs vision −0.002 against
 +0.007 s), and both follow Toyota's own command about equally (RMS 0.309 against 0.313 m/s², vision 0.345;
-[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (142 routes, 29.63 moving h: the fast suite and every held-out set) the
-unnecessary-braking difference is −0.65 s per hour (−1.22 … −0.21) and the flip difference −21 per hour (−31.6 … −7.8).
+[`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json)). Over every drive (152 routes, 35.08 moving h: the fast suite and every held-out set,
+[`replay_every_drive.json`](../data/analysis/summaries/replay_every_drive.json)) the unnecessary-braking difference is −0.55 s per hour (−1.03 … −0.13), hard 19 against 12 (+0.20 per hour,
+−0.14 … +0.64; 9 of the 19 at standstill) and the flip difference −21.5 per hour (−32.4 … −10.1).
 
 **`acc_summaries` on these drives.** On the 26 owner routes it brakes like `acc` (per moving hour, `acc_summaries` minus
 `acc`): unnecessary equal, missed +0.08 s (0 … +0.26), hard and mild identical. On the 13 routes one more mild request
@@ -154,10 +160,10 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
 
 ## Why `acc` is the default
 
-- **Equal braking, fewer lead flips, less unnecessary braking on held-out drives** (tables above), with the same
-  standing under a camera-only reference. Over every set held out of all tuning (12.72 moving h: owner routes and three
-  second-car sets) `acc` has 1.37 s less unnecessary braking per moving hour than `fused` (95 % CI 0.44 … 2.39) with
-  the same hard episodes (3 / 3). On the second car's 38 latest drives all 9 of `acc`'s radar-only episodes were real
+- **Similar hard braking, fewer lead flips over every drive, less unnecessary braking on held-out drives** (tables above), with the same
+  standing under a camera-only reference. Over every set held out of all tuning (18.16 moving h: owner routes, the owner's latest drives and three
+  second-car sets) `acc` has 0.96 s less unnecessary braking per moving hour than `fused` (95 % CI 0.27 … 1.86) with
+  6 hard episodes against 4 (the difference includes zero). On the second car's 38 latest drives all 9 of `acc`'s radar-only episodes were real
   closings, while `fused` added 6 the hindsight lead does not confirm, among them a −3.31 m/s² request at 30 m/s for an
   object-list track at 54 m whose closing speed read 23.7 m/s while its range held still (a speed excursion,
   [07](07_velocity_excursions.md)); `acc` stayed on the ACC target 12 m beyond it ([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)).
@@ -174,7 +180,7 @@ routes): radard took a summary car at 47-58 m as its lead before the radar's ACC
   [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json), `replay_open_loop`).
 - **Small and auditable.** 45 code lines reading 7 DBC signals, protocol values only: it passes on the radar's own
   decision, the one Toyota's ACC acts on.
-- **Replay evidence on 29.63 moving hours.** `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
+- **Replay evidence on 35.08 moving hours.** `acc` has a small road record on sunnypilot (the owner's nine drives, 1.62 h with
   openpilot longitudinal, and a second driver's 26 drives, 0.92 h): with the camera's lead within 80 m, radard's lead was radar-backed 98.5-98.9 % of the engaged
   time, and the first two drives stopped at openpilot's designed gap.
 
@@ -253,8 +259,8 @@ Replayed against `acc` on the fast suite, both held-out sets and every captured 
 - **Remaining mild requests.** They come from a car the camera also leads on, sweeping across the frame in a bend after
   the radar's ACC function released it; its range slope then reads 2-3 m/s more closing than the camera. `acc` stays the
   default; `acc_summaries` is the recommended alternative. Its road record is 11 StarPilot drives (about 54 min
-  with openpilot longitudinal; on the first two, radar-backed 97 % of the engaged time with the camera's lead within 80 m, a summary car as
-  radard's lead on 0.13-0.22 % of moving time; every hard request on the later nine drives followed a real slowing lead; [08](08_openpilot_integration.md#on-the-road)).
+  with openpilot longitudinal; radar-backed 97-98 % of the engaged time with the camera's lead within 80 m (97 % on the first two drives, 98.4 % on the later nine), a summary car as
+  radard's lead on 0.13-0.22 % of moving time on the first two; every hard request on the later nine drives followed a real slowing lead; [08](08_openpilot_integration.md#on-the-road)).
 
 ![acc_summaries against the range limit](img/analysis/acc_summaries_sweep.png)
 
@@ -381,8 +387,8 @@ whose lead comes from the object list alone.
 | profile | pros | cons |
 |---|---|---|
 | vision only | smooth; braking follows the camera alone | camera distance at range; closings through curves or far away are seen later than the radar sees them |
-| `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 21.45 moving hours and a small road record (nine drives) |
-| `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); two short road drives so far |
+| `acc` | a DBC and 45 code lines, protocol values only; uses the radar the way Toyota's ACC does; lowest jerk and fewest flips in replay; slightly earlier than vision; new stationary vehicles published at once | one radar car; a fast closing beyond 60 m reaches the planner through the camera until the radar picks the car (about 1 s later on one owner drive, 0.8 s on another; `fused` publishes only the ACC target there too); close cut-ins are picked after a median 0.2 s and brake as with `fused`; holds at standstill behind close objects that the camera leaves out of its lead list; replay evidence on 35.08 moving hours and a small road record (nine drives) |
+| `acc_summaries` | 99 code lines, no DBC; braking as `acc` on every drive set, held-out drives included; radar backing 0.09 s earlier on close cut-ins | more lead flips (+26 per hour); a small road record (about 54 engaged minutes on 11 StarPilot drives) |
 | `fused` (research, not installable) | every radar car within 60 m; closest to vision in feel on the development drives, as early as vision on average | list-speed excursions still pass the filter on held-out drives (a −3.31 m/s² request for a false 23.7 m/s closing at 54 m on the second car); more unnecessary braking than `acc` on every held-out set pooled; tuned gates; a track is published 3.6 s after it appears |
 | `raw` (research, not installable) | earliest reaction to real slowdowns (−0.15 s vs vision) | the most radar-only braking (1.75 per hour, over a third with the driver on the gas): occasional sharp brakes on false closings beyond 40 m |
 
