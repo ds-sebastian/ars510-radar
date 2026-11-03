@@ -74,9 +74,9 @@ for comparison:
 | first braking request vs vision, mean (95 % CI) | — | −0.04 s (−0.09 … +0.00) | −0.04 s (−0.09 … +0.00) | −0.01 s (−0.06 … +0.03) |
 | brake presses already answered with ≤ −1 m/s² (167) | 40.1 % | 44.9 % | 44.9 % | 44.9 % |
 | braking only the radar asked for, per hour | 0 | 0 | 0 | 0 |
-| unnecessary braking against the hindsight lead, all drives (16.9 moving h) | 89.2 s | 19.2 s | 19.1 s | 21.0 s |
-| missed braking against the hindsight lead, all drives | 30.8 s | 17.4 s | 17.4 s | 16.4 s |
-| lead flips between radar and vision, per hour | 0 | 302 | 325 | 332 |
+| unnecessary braking against the hindsight lead, 140 routes (33.15 moving h) | 217.0 s | 36.1 s | 36.0 s | 54.8 s |
+| missed braking against the hindsight lead, 140 routes | 65.1 s | 34.2 s | 34.4 s | 30.2 s |
+| lead flips between radar and vision, per hour, 140 routes | 0 | 301 | 324 | 325 |
 | 26 owner routes held out from every replay (2.56 moving h): unnecessary / missed braking | 40.1 s / 9.9 s | 7.7 s / 5.3 s | 7.7 s / 5.5 s | 11.4 s / 3.6 s |
 
 ![acc and acc_summaries against vision only](docs/img/analysis/upstream_vs_vision.png)
@@ -88,16 +88,17 @@ for comparison:
 - **The radar's measured distance reaches radard** for about 85-86 % of the time a lead exists. Beyond 40 m
   `acc_summaries` publishes only the car the radar's own ACC follows, as `acc` does at every range; other cars come from
   the camera.
-- **`acc` brakes less unnecessarily than the object-list filter.** Over every set held out of tuning (12.72 moving h)
-  `acc` has 1.37 s less unnecessary braking per moving hour than `fused` (95 % CI 0.44 … 2.39) with the same hard
-  episodes; it flips between a radar and a vision lead less often (−30 per hour, 95 % CI −44 … −16) and publishes a
+- **`acc` brakes less unnecessarily than the object-list filter.** Over every set held out of tuning (90 routes, 18.16 moving h)
+  `acc` has 0.96 s less unnecessary braking per moving hour than `fused` (95 % CI 0.27 … 1.86) and 6 hard episodes against 4
+  (the difference includes zero); over every drive (152 routes, 35.08 moving h) it flips between a radar and a vision lead less often
+  (−21 per hour, 95 % CI −32 … −10; held-out drives alone −14, −29 … +3) and publishes a
   newly seen stationary vehicle at once, where `fused` waits 3.6 s ([11](docs/11_profiles_compared.md#why-acc-is-the-default)).
   `fused` lets object-list speed excursions through (below), so the installer offers only `acc` and `acc_summaries`.
   `acc` has a small road record (the owner's nine drives, 1.6 engaged hours, and a second driver's 26 drives, 0.9 engaged
   hours) ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **`acc_summaries` adds up to two other moving cars from the radar's summaries** within 40 m to `acc`, in 99 code lines. Over every
-  replayed drive (23 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.04 s
-  per hour), close cut-ins become radar-backed 0.09 s earlier, and it flips more (+26 per hour). The earlier 60 m limit
+  drive replayed with both profiles (140 routes, 33.15 moving h) it brakes like `acc` (the same hard episodes, unnecessary and missed braking within 0.01 s
+  per hour, mild episodes +0.12 per hour), and it flips more (+23 per hour, 95 % CI +17 … +31); on the 276 close cut-ins of the 23-hour design set it becomes radar-backed 0.09 s earlier. The earlier 60 m limit
   braked slightly more than `acc` on held-out drives; 40 m removes that ([11](docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)). About 54 engaged road
   minutes so far ([08](docs/08_openpilot_integration.md#on-the-road)).
 - **On some real slowdowns the radar sees the closing first** (curves, far leads); on others vision does.

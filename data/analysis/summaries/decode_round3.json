@@ -1756,8 +1756,8 @@
    }
   },
   "pcs_alarm_byte6": {
-   "logs": 2932,
-   "frames": 853694,
+   "logs": 3367,
+   "frames": 982897,
    "set": 5,
    "all_in": "U3 alarm (relative 56.17-56.89 s)",
    "scope": "every stored rlog of the owner, second-car and other-tester cars that carries 0x33E (comma fleet logs excluded)",

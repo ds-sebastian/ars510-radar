@@ -112,5 +112,18 @@
   "radar_lead_accel_milder_than_range_differenced_median_mps2": 0.78,
   "note": "owner drives, exploratory; the first four drives had openpilot longitudinal on two of them; thresholds differ between the two batches"
  },
- "acc_summaries_total_engaged_minutes": 53.9
+ "acc_summaries_total_engaged_minutes": 53.9,
+ "fused_latest_owner_drives": {
+  "fork": "StarPilot (device-adapted fused research build; not offered by the installer)",
+  "drives": 12,
+  "drives_with_engaged_time": 8,
+  "moving_hours": 5.94,
+  "engaged_hours": 3.25,
+  "lead_share_of_engaged_moving_time": 0.682,
+  "radar_backed_share_of_engaged_lead": 0.91,
+  "radar_backed_share_when_camera_lead_within_80_m": 0.982,
+  "radar_backed_share_when_camera_lead_within_80_m_above_15_mps": 0.981,
+  "pcs_events": 0,
+  "note": "as driven, owner drives, exploratory; engaged = enabled and longActive, moving = vEgo > 1 m/s"
+ }
 }

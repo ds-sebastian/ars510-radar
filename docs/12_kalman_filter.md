@@ -141,7 +141,7 @@ present, it dominates at every range but the closest.
 
 ![the filter on one track](img/analysis/kalman_trace.png)
 
-*Bundled drive E (`fused` 2.6). Top: the object-list readings (grey) dive to −5.9 m/s at 18 s while the ACC target stays
+*Bundled drive E (`fused` 2.6). Top: the object-list readings (grey) dive to −6.1 m/s at 18 s while the ACC target stays
 near −0.9; the estimate follows the ACC target. Bottom: the gain on each reading. Each object-list reading moves the
 estimate by about 2%, each ACC target reading by about half (0.48). The dotted line is the object-list σ from `240|7`.*
 
@@ -153,7 +153,7 @@ target. Right: a new track's speed std against age; the 0.75 m/s line is the pub
 ![profiles on the bundled samples](img/analysis/profile_comparison.png)
 
 *`raw` and `fused` on the bundled excursions: on drive E `fused` (green) follows the radar's ACC target (which is what
-`acc` publishes); on drive A, where the object list carries the lead alone, `fused` dips to −2.7 m/s where the object list reads −6.4.*
+`acc` publishes); on drive A, where the object list carries the lead alone, `fused` dips to −3.0 m/s where the object list reads −6.6.*
 
 **What `P` means.** The model assumes independent readings, while the ACC target and the object list are both
 estimates from the same radar, with persistent errors. So `√P` is a readiness measure in m/s: it sets the gain and the

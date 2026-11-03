@@ -190,7 +190,7 @@ vision (E4 with a range walk); E2 is a velocity excursion.*
 ## On the road
 
 Road drives so far ran `acc` (two cars), `acc_summaries` (about 54 engaged minutes) and, while it was installable, the
-object-list profile `fused` 2.1.0 and earlier tuned profiles. The road record of `acc` and `acc_summaries` is still small;
+object-list profile `fused` (2.1.0, and a device-adapted research build on the owner's latest drives) and earlier tuned profiles. The road record of `acc` and `acc_summaries` is still small;
 their main evidence is the replay in [11](11_profiles_compared.md).
 
 - **sunnypilot with `acc`** (9 drives, 2.74 moving hours, 1.62 h with openpilot longitudinal, the upstream `acc` file;
@@ -221,6 +221,11 @@ their main evidence is the replay in [11](11_profiles_compared.md).
   handles, and in a work-zone lane shift the right car's radar speed read 3.5 m/s too much closing. One late, firm
   brake (2.8 m/s²) came from a car first detected at 66 m whose object-list range read 15-20 m short until it settled;
   `fused` 2.6's ACC match answers that moment with −1.47 m/s² ([12](12_kalman_filter.md#path-gate)).
+- **The owner's latest drives with a device-adapted `fused`** (StarPilot, 12 drives, 5.9 moving hours, 3.25 engaged hours; a research build that
+  the installer does not offer, which installs only `acc` and `acc_summaries`; [`acc_road_drives.json`](../data/analysis/summaries/acc_road_drives.json)):
+  radard had a lead for 68 % of the engaged moving time and it was radar-backed for 91 % of that; with the camera's lead within 80 m it was radar-backed
+  98.2 % of the engaged time (98.1 % above 15 m/s). No PCS event was recorded on these drives. This is a record of `fused`; the replay results for `acc`
+  and `acc_summaries` on the same drives are in [11](11_profiles_compared.md).
 - **A second driver's 2025 RAV4 Hybrid with `acc`** (sunnypilot, the installer's `acc` file from 2.6.1, 26 drives, 55 min
   with openpilot longitudinal, as logged; [`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)): radard had a lead 72 % of the engaged time, radar-backed 94 % of it,
   and its radar lead was the ACC target 99.99 % of the time both existed. 26 of 27 braking episodes (≤ −1 m/s²) had a

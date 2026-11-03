@@ -16,8 +16,8 @@
   0.38
  ],
  "pcs_alarm_13_1": {
-  "logs": 2932,
-  "frames": 853674,
+  "logs": 3367,
+  "frames": 982875,
   "set": 5,
   "all_inside": "U3 alarm 56.17-56.93 s (relative), extra frames on set and clear",
   "scope": "every stored rlog of the owner, second-car and other-tester cars that carries 0x366 (comma fleet logs excluded)"

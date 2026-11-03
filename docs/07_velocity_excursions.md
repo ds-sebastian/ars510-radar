@@ -36,7 +36,7 @@ same moments, and never the object list. The `fused` Kalman filter on the object
 ![excursion sample](img/vrel_excursion_sample.png)
 
 *Bundled sample `highway_vrel_excursion_25s.csv.gz` (object list): a lead at 45-54 m whose range keeps opening; its
-over-ground speed falls 33.3 → 24.8 m/s over 1.7 s (vRel to −6.4 m/s) and is back at about 30 m/s 0.5 s after the minimum.*
+over-ground speed falls 33.3 → 24.8 m/s over 1.7 s (vRel to −6.4 m/s as drawn here, without the interface's ego alignment; −6.6 m/s with it, as in [12](12_kalman_filter.md)) and is back at about 30 m/s 0.5 s after the minimum.*
 
 ![false closing sequence](img/shots/excursion_false_closing_sequence.jpg)
 
