@@ -3,9 +3,11 @@
 
     python tools/make_upstream_figures.py      # writes docs/img/analysis/upstream_*.png
 
-upstream_vs_vision.png: oracle unnecessary / missed braking over every drive set (acc_target_parser.json,
-acc_summaries_40m.json). upstream_vs_vision_checks.png: the same comparison against three references, by drive set, and
-judged by the driver (upstream_case.json, acc_target_parser.json, acc_summaries_40m.json, profiles_vs_vision.json).
+upstream_vs_vision.png: oracle unnecessary / missed braking over every replayed drive (replay_every_drive.json, the pool where
+vision only, acc and acc_summaries all exist). upstream_vs_vision_checks.png: the same comparison against three references,
+by drive group (replay_every_drive.json), and judged by the driver (upstream_case.json, profiles_vs_vision.json).
+replay_every_drive.json is rebuilt from the replay tick files in the research workspace; adding replayed drives re-runs that
+scorer and then this script.
 upstream_revealed_queue.png: one road moment, logged leads and a closed-loop replay (analysis/revealed_queue_case.csv.gz).
 """
 from __future__ import annotations
@@ -29,36 +31,37 @@ SUM = REPO / "data" / "analysis" / "summaries"
 VIS = "#7a5fb0"
 COL = {"vision only": VIS, "acc": S4, "acc_summaries": S5}
 TICK = {"vision only": "vision\nonly", "acc": "acc\n(default)", "acc_summaries": "acc_summaries"}
-SETS = (("27 replay drives", "27 replay\ndrives", "suite"), ("owner road drives + 2 second-car drives", "owner road\nset", "road"),
-        ("second car (issue #66 tester, never tuned on)", "second car\n(never tuned on)", "second"))
+GROUPS = (("27 replay drives", "27 replay\ndrives"), ("owner held-out and fresh drives", "owner held-out\n+ fresh"),
+          ("owner road drives + 2 second-car drives", "owner road\nset"), ("second car, earlier drives", "second car\nearlier"),
+          ("second car, latest batch", "second car\nlatest batch"))
 
 
 def j(name: str) -> dict:
   return json.loads((SUM / name).read_text())
 
 
-def all_sets() -> dict:
-  """Oracle seconds over every drive set: vision only and acc from acc_target_parser.json, acc_summaries (40 m) from acc_summaries_40m.json."""
-  A, S = j("acc_target_parser.json")["by_version_and_set"], j("acc_summaries_40m.json")["by_set"]["fast"]["acc_summaries 40 m (published)"]
-  return {"vision only": A["vision only"]["all sets"], "acc": A["ACC target only"]["all sets"], "acc_summaries": S}
+def pool() -> dict:
+  """Replays of every drive where vision only, acc and acc_summaries (40 m) were all run: totals per label and per drive group."""
+  return j("replay_every_drive.json")["pools"]["common_three_labels"]
 
 
-def _bars(ax, names, vals, fmt="{:g}", pad=0.012):
+def _bars(ax, names, vals, fmt="{:g}", pad=0.012, sub=None):
   top = max(vals)
   for i, (n, v) in enumerate(zip(names, vals)):
     ax.bar(i, v, 0.62, color=COL[n])
-    ax.text(i, v + top * pad, fmt.format(v), ha="center", va="bottom", fontsize=9, color=INK)
+    ax.text(i, v + top * pad, fmt.format(v) + (f"\n{sub[i]}" if sub else ""), ha="center", va="bottom", fontsize=9, color=INK, linespacing=1.15)
   ax.set_xticks(range(len(names)), [TICK[n] for n in names]); ax.grid(axis="x", visible=False)
   ax.set_ylim(0, top * 1.12)
 
 
 def vs_vision() -> None:
   """The headline: unnecessary and missed braking seconds against the hindsight oracle, every drive set."""
-  V = all_sets(); names = list(V); h = V["acc"]["moving_h"]
-  fig, axs = plt.subplots(1, 2, figsize=(8.2, 4.3))
+  V = pool()["all"]; names = list(COL); h, routes = V["acc"]["moving_h"], V["acc"]["routes"]
+  fig, axs = plt.subplots(1, 2, figsize=(8.2, 4.6))
   for ax, m, t in ((axs[0], "unnecessary_s", "unnecessary braking (oracle)"), (axs[1], "missed_s", "missed braking (oracle)")):
-    _bars(ax, names, [round(V[n][m], 1) for n in names]); ax.set_ylabel("s"); ax.set_title(t, loc="left")
-  fig.text(0.01, 0.015, f"Open-loop replays of 62 routes ({h:.1f} moving h, 2 cars) through openpilot's unchanged radard and planner.\n"
+    _bars(ax, names, [round(V[n][m], 1) for n in names], sub=[f"{V[n][m] / h:.1f} s/h" for n in names])
+    ax.set_ylabel("s"); ax.set_title(t, loc="left"); ax.set_ylim(0, max(V[n][m] for n in names) * 1.2)
+  fig.text(0.01, 0.015, f"Open-loop replays of {routes} routes ({h:.1f} moving h, 2 cars) through openpilot's unchanged radard and planner.\n"
            "Unnecessary: braked > 0.5 m/s² harder than openpilot's planner on a hindsight lead. Missed: stayed above −0.5 m/s²\n"
            "while it asked ≤ −1. The hindsight lead is built mostly from the radar's ACC target, so it favours the radar;\n"
            "upstream_vs_vision_checks.png repeats the comparison against references that do not.", fontsize=7.4, color=INK2, va="bottom")
@@ -68,9 +71,9 @@ def vs_vision() -> None:
 def checks() -> None:
   """Three checks on the headline: the reference, the drive set, and the driver."""
   C = j("upstream_case.json"); R = C["reference_check"]["all"]
-  A, S = j("acc_target_parser.json")["by_version_and_set"], j("acc_summaries_40m.json")["fast_suite_by_set"]
+  G = pool()["by_group"]
   P = j("profiles_vs_vision.json")
-  fig, axs = plt.subplots(1, 3, figsize=(14, 4.6), gridspec_kw={"width_ratios": [1.15, 1.25, 0.9]})
+  fig, axs = plt.subplots(1, 3, figsize=(15.5, 4.8), gridspec_kw={"width_ratios": [1.1, 1.7, 0.85]})
 
   ax = axs[0]
   refs = (("ORACLE", "hindsight lead\n(mostly ACC target)"), ("AGREE", "moments where\nboth references agree"), ("CAMREF", "camera-only\nhindsight lead"))
@@ -88,16 +91,13 @@ def checks() -> None:
   ax.set_ylabel("unnecessary braking, s per moving hour")
   ax.set_title(f"Against three references ({R['routes']} routes, {R['moving_h']:.1f} moving h)", loc="left")
 
-  ax = axs[1]; x = np.arange(len(SETS)); w = 0.26
+  ax = axs[1]; x = np.arange(len(GROUPS)); w = 0.27
   for k, n in enumerate(("vision only", "acc", "acc_summaries")):
-    y = []
-    for name, _, key in SETS:
-      r = A["vision only" if n == "vision only" else "ACC target only"][name] if n != "acc_summaries" else S[key]["acc_summaries 40 m (published)"]
-      y.append((r["unnecessary_s"] + r["missed_s"]) / r["moving_h"])
+    y = [(G[name][n]["unnecessary_s"] + G[name][n]["missed_s"]) / G[name][n]["moving_h"] for name, _ in GROUPS]
     ax.bar(x + (k - 1) * w, y, w * 0.94, color=COL[n], label=n)
     for xi, yi in zip(x + (k - 1) * w, y):
       ax.text(xi, yi + 0.15, f"{yi:.1f}", ha="center", fontsize=7.5, color=INK)
-  ax.set_xticks(x, [f"{t}\n({A['ACC target only'][n]['moving_h']:.1f} moving h)" for n, t, _ in SETS])
+  ax.set_xticks(x, [f"{t}\n({G[name]['acc']['moving_h']:.1f} h, {G[name]['acc']['routes']} routes)" for name, t in GROUPS], fontsize=8)
   ax.set_ylabel("unnecessary + missed braking (oracle), s per moving hour"); ax.grid(axis="x", visible=False); ax.legend(loc="upper left")
   ax.set_title("By drive set", loc="left")
 

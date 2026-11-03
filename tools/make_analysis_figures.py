@@ -985,25 +985,36 @@ def lane_curve_cells():
 
 
 def excursion_sigma_scale():
-    """Native-minus-ACC velocity error against the reported 240|7 code, and observed vs Gaussian-predicted excursion incidence."""
+    """Native-minus-ACC velocity error against the reported 240|7 code, and observed vs Gaussian-predicted excursion incidence:
+    the development + held-out corpus (excursion_sigma_scale.json) with the later cohorts (excursion_sigma_cohorts.json)."""
     info = summary("excursion_sigma_scale")
-    fig, (a, b) = plt.subplots(1, 2, figsize=(10.5, 4.3))
-    for key, col, lab in (("corpus_700_segments", S1, "development + held-out drives"),):
-        r = info[key]["rms_by_code"]
-        x = [v["code"] for v in r.values() if v["n"] >= 70]; y = [v["rms"] for v in r.values() if v["n"] >= 70]
-        a.plot(x, y, marker="o", color=col, label=lab)
+    coh = summary("excursion_sigma_cohorts")["cohorts"]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(11.5, 4.5))
+    r = info["corpus_700_segments"]["rms_by_code"]
+    x = [v["code"] for v in r.values() if v["n"] >= 70]; y = [v["rms"] for v in r.values() if v["n"] >= 70]
+    a.plot(x, y, marker="o", color=S1, label="development + held-out drives (210 k records)", zorder=3)
+    style = {"owner held-out drives": (INK2, "s", 1.2), "second car, held out earlier": (S5, "^", 1.2), "second car, latest batch": ("#7a5fb0", "D", 1.6)}
+    for name, (col, mk, lw) in style.items():
+        c = coh[name]["rms_by_code"]
+        xs = [v["code"] for v in c.values()]; ys = [v["rms"] for v in c.values()]
+        a.plot(xs, ys, marker=mk, ms=4.5, lw=lw, color=col, alpha=0.9, label=f"{name} ({coh[name]['routes']} routes)")
     xx = np.linspace(5, 100, 50); a.plot(xx, 0.045 * xx, color=INK, ls="--", lw=1, label="0.045 m/s × code")
-    a.set_xlabel("240|7 code (mean in bin)"); a.set_ylabel("RMS of native vRel − ACC speed (m/s)"); a.set_title("Velocity error follows the reported uncertainty"); a.legend()
+    a.set_xlabel("240|7 code (mean in bin)"); a.set_ylabel("RMS of native vRel − ACC speed (m/s)"); a.set_title("Velocity error follows the reported uncertainty"); a.legend(fontsize=7.5, loc="upper left")
     cells = info["corpus_700_segments"]["incidence_cells"]
     for (k, v), c in zip(cells.items(), [S1, S1, S1, S1, S2, S2, S2, S2, S3, S3, S3, S3, S4, S4, S4, S4]):
         b.scatter(v["pred"] * 100, v["obs"] * 100, color=c, s=28)
+    cb = {"(40, 55]": S1, "(55, 70]": S2, "(70, 85]": S3, "(85, 110]": S4}
+    for k, v in coh["second car, latest batch"]["incidence_cells"].items():
+        b.scatter(v["pred"] * 100, v["obs"] * 100, facecolor="none", edgecolor=cb[k.split("|")[0]], marker="D", s=30, lw=1.4)
     b.plot([0, 25], [0, 25], color=INK, ls=":", lw=1)
     for lab, c in (("40–55 m", S1), ("55–70 m", S2), ("70–85 m", S3), ("85–110 m", S4)): b.scatter([], [], color=c, label=lab)
-    b.set_xlabel("predicted excursion rate (%), Gaussian σ = 0.045 × code"); b.set_ylabel("observed rate (%)"); b.set_title("Excursion incidence per range band and code quartile"); b.legend(loc="upper left")
+    b.scatter([], [], facecolor="none", edgecolor=INK2, marker="D", s=30, lw=1.4, label="second car, latest batch")
+    b.set_xlabel("predicted excursion rate (%), Gaussian σ = 0.045 × code"); b.set_ylabel("observed rate (%)"); b.set_title("Excursion incidence per range band and code quartile"); b.legend(loc="upper left", fontsize=8)
     fig.tight_layout()
-    save(fig, "excursion_sigma_scale", "Matched to the radar's own ACC target (210 k development/held-out records, ACC speed at 0.125 m/s per code). Excursion = 9-record median of native − ACC below −2.5 m/s. "
-         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian. "
-         "Fresh-drive incidence at the same unit: acc_unit_recompute.json.")
+    save(fig, "excursion_sigma_scale", "Matched to the radar's own ACC target, ACC speed at 0.125 m/s per code. Excursion = 9-record median of native − ACC below −2.5 m/s. "
+         "Filled circles: 210 k development / held-out records. Other cohorts: ACC match of the later held-out tables, age ≥ 30 (the second car's latest batch was not used to characterise the excursions); "
+         "its highest-code quartile of each range band sits above the diagonal (more excursions than the Gaussian predicts). "
+         "ACC reference error (about 0.6 m/s) is included in the RMS; kurtosis beyond 2.5σ exceeds Gaussian. Fresh-drive incidence at the same unit: acc_unit_recompute.json.")
 
 
 def video_truth_excursions():
