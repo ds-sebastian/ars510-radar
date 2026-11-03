@@ -429,7 +429,11 @@
   "predicted_over_observed": {
    "owner's latest drives": 2.418,
    "second car's latest batch": 0.824
-  }
+  },
+  "route_share_range_owner_latest": [
+   0.0,
+   0.044
+  ]
  },
  "range_scatter_vs_odometry_stationary_vehicles": {
   "definition": "residual RMS of range + wheel odometry about a line over 1 s windows, associated / not associated, 10 m bins, median ratio weighted by windows; ego > 3 m/s, |over-ground speed| < 1 m/s",
@@ -505,6 +509,46 @@
     },
     "windows": 1930,
     "devices": 178
+   }
+  }
+ },
+ "speed_sigma_heldout_r2": {
+  "target": "log 240|7, on routes held out of the fit",
+  "range_only": 0.914,
+  "largest_gain_from_one_other_field": 0.01,
+  "all_fields": 0.949
+ },
+ "speed_sigma_size_azimuth_heldout": {
+  "owner's latest drives": {
+   "large_vs_car": {
+    "ratio": 0.984,
+    "ci": [
+     0.814,
+     1.032
+    ]
+   },
+   "azimuth_9deg_vs_0_2deg": {
+    "ratio": 1.196,
+    "ci": [
+     1.055,
+     1.306
+    ]
+   }
+  },
+  "second car's latest batch": {
+   "large_vs_car": {
+    "ratio": 0.977,
+    "ci": [
+     0.959,
+     1.019
+    ]
+   },
+   "azimuth_9deg_vs_0_2deg": {
+    "ratio": 1.093,
+    "ci": [
+     1.041,
+     1.138
+    ]
    }
   }
  }
