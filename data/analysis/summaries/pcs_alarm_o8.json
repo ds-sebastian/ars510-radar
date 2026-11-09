@@ -1,0 +1,70 @@
+{
+ "description": "O8: owner RAV4 (radar firmware 8821F0R03100, filtered radar line), stock PCS alarm during manual driving at 9.7 m/s on a residential street: gas held, cruise off, no ACC target. Clock: seconds in the one-minute segment.",
+ "firmware": "8821F0R03100",
+ "speed_mps": 9.7,
+ "gas_pressed": true,
+ "brake_pressed": false,
+ "cruise_on": false,
+ "acc_target": false,
+ "edges_s": {
+  "bus1_0x100_set": 8.198,
+  "bus1_0x100_clear": 8.711,
+  "car_0x283_set": 8.198,
+  "car_0x283_clear": 8.741,
+  "car_0x411_set": 8.198,
+  "car_0x411_clear": 8.721,
+  "car_0x344_pcsalm_set": 8.217,
+  "car_0x344_pcsalm_clear": 8.711,
+  "car_0x366_alarm_first_frame": 8.22,
+  "event_pair_first_active": 8.23,
+  "event_pair_last_active": 8.35
+ },
+ "car_0x366_set_frame": {
+  "hex": "50 04 2b 1e c8 2a 00",
+  "distance_code": 30,
+  "speed_code": 86,
+  "lateral_code": 5,
+  "relative_speed_mps": -9.58,
+  "range_m": [
+   23.7,
+   24.5
+  ],
+  "lateral_m": [
+   -1.92,
+   -1.6
+  ]
+ },
+ "car_0x33e_ttc_s": 2.45,
+ "event_pair": {
+  "range_m": [
+   24.9,
+   23.65
+  ],
+  "object_speed_mps": 0.0,
+  "required_decel_mps2": [
+   -2.2,
+   -2.3
+  ],
+  "ttc_s": [
+   2.56,
+   2.42
+  ]
+ },
+ "object_list_at_alarm": {
+  "slot_2_parked_suv": {
+   "range_m": 21.38,
+   "lateral_m": -1.6,
+   "over_ground_mps": 2.62,
+   "ttc_s": 3.08,
+   "lateral_from_steered_path_m": -0.91
+  },
+  "slot_1_parked_sedan": {
+   "range_m": 8.81,
+   "lateral_m": 2.58,
+   "over_ground_mps": 0.82,
+   "ttc_s": 0.99
+  }
+ },
+ "reading": "The alarm's object is the stationary SUV, not the nearer sedan; the 0x366 and event-pair range is 3-4 m longer than the list's at that moment (not resolved). Steering passed -2 deg at the alarm moving from right to left. One event.",
+ "source": "camera checked on the owner's qcamera; frames decoded from the rlog; not bundled"
+}

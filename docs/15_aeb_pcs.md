@@ -98,12 +98,12 @@ inflatable's empty object-list position is consistent with a weak reflection at 
 | 56.913-56.922 | 0x100 → 0 | 0x411, 0x283, 0x344 back to idle |
 | 57.18 | event pair back to idle | |
 
-**0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (●, 8 alarms on 7 cars).** It starts and ends with the car-bus
-alarm, and in every stored log of the owner, second and other cars (3,417 rlogs with bus 1, 2.00 M 0x100 frames) it occurs in exactly these 9 frames. The
+**0x100 byte 0 = 0x02 is the radar's PCS alarm flag on bus 1 (●, 9 alarms on 8 cars).** It starts and ends with the car-bus
+alarm, and in every stored log of the owner, second and other cars (3,417 rlogs with bus 1, 2.00 M 0x100 frames) it occurs in these 9 frames and in O8 below. The
 other non-zero 0x100 is the `FF FF` first frame after power-up. The event pair fires in many drives with the PCS
 outputs idle: it is the radar's threat state, and 0x100 marks the decision to warn. Numbers:
 [`pcs_activation_u3.json`](../data/analysis/summaries/pcs_activation_u3.json). comma's public fleet logs hold 7 more stock
-alarms (6 cars, all radar firmware 8821F0R03100). In each, 0x100 = 0x02 starts in the same CAN tick as 0x283 `PCSNOCHG` and
+alarms (6 cars); all 9 alarms are on radar firmware 8821F0R03100. In each, 0x100 = 0x02 starts in the same CAN tick as 0x283 `PCSNOCHG` and
 0x411 FCW, with 0x344 `PCSALM` within 41 ms. The event pair opens a median 0.99 s before the 0x100 onset (0.77-1.27 s in 6 of the 8
 alarms, 0.02 s in one); the alarm during hard stock-ACC braking came with the pair idle. The pair's required deceleration reaches
 −1.8 m/s² between 0.77 s before and 0.04 s after the onset, and its time to collision reaches 2.5 s between 0.61 s before and 0.03 s after (5 of 8)
@@ -111,8 +111,10 @@ alarms, 0.02 s in one); the alarm during hard stock-ACC braking came with the pa
 comparable threat moments, P = 0.03 at the 03100 rate) with the same PCS sensitivity settings: a candidate (○) firmware
 difference in alarm sensitivity ([`fleet_pcs.json`](../data/analysis/summaries/fleet_pcs.json)).
 
-**On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (●, 8 alarms).** It is set in 5 of
-982,875 0x366 frames in every stored log of the owner, second and other cars, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
+**An alarm can fire with no ACC target and the gas held (O8, ● frames, one event).** Driving by hand at 9.7 m/s on a residential street with no lane lines, on the owner's car with its radar line filtered, cruise off: 0x100, 0x283 and 0x411 set in one CAN tick, 0x344 `PCSALM` 19 ms later, clear after 0.51 s; no brake stage, and the installer's `stockFcw` follows it. There was no ACC target for seconds around it. The event pair opened only 0.03 s after the onset, for 3 frames. The 0x366 frame that sets the alarm and the pair report one stationary object at 24-25 m, a time to collision of about 2.5 s and about −1.8 m lateral: a parked SUV on the right, while the driver steered right around a parked sedan. The alarm cleared as the wheel came back. The nearer sedan (9 m, 2.6 m left, time to collision 1 s) was not the object. So the usual pattern below, an ACC target with no pedal, is not a necessary condition ([`pcs_alarm_o8.json`](../data/analysis/summaries/pcs_alarm_o8.json)).
+
+**On the car bus the radar's 0x366 target report carries the same alarm in byte 1 bit 2 (●, 9 alarms).** In U3 it is set in 5 of
+982,875 0x366 frames in the stored logs of the owner, second and other cars at the time of that scan, all inside this alarm (56.17-56.93 s), and the radar sends an extra frame when
 it sets and when it clears; the report holds the alarm's target (id 6, the pickup) throughout ([13](13_car_bus_messages.md#0x366-target-report-the-acc-target-and-other-states-),
 [`car_bus_0x366_fields.json`](../data/analysis/summaries/car_bus_0x366_fields.json)). In the fleet logs it sets 20 ms after
 the 0x100 onset in all 7 alarms and stays clear in the brake-assist event without an alarm.
@@ -150,7 +152,7 @@ active, U2 and opendbc's C-HR Hybrid "radar disabled" route on another radar fir
 So its PCS logic keeps running with only its output to the car cut. Whether its alarm stage (0x100) still fires there is not
 recorded: the one comparable moment, at a time to collision of 2.2 s, lasted 0.06 s, and the disabled drives hold no moment that meets the
 alarm's precondition (an ACC target, no pedal, a time to collision of 2.75 s or less, closing at 4 m/s or more; 0 in 3.1 disabled moving hours, against
-23 such moments with the radar on, 6 of them alarmed), so 0x100 staying at 0 there says nothing about it. A relay would
+23 such moments with the radar on, 6 of them alarmed; O8 alarmed outside it), so 0x100 staying at 0 there says nothing about it. A relay would
 reconnect that output through openpilot, so Toyota's own tuned decision logic still decides when to brake.
 
 How it would work:
@@ -202,7 +204,7 @@ with a covered or dirty radar shows which candidate reacts, and "PCS on" reports
 | relay stage | radar bus (input) | car bus (output) | status |
 |---|---|---|---|
 | idle link | records arriving | idle 0x283 (33 Hz) and 0x344 (20 Hz), continuous | ● recorded (O5) |
-| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 8 alarms (U3 and 7 in the fleet logs); the installer forwards it as `stockFcw`; the 0x100 flag of a disabled radar is a recording to make |
+| alarm / FCW | 0x100 byte 0 = 0x02 (radar enabled) | 0x283 `PCSNOCHG`, 0x344 `PCSALM`, 0x411 FCW | ● 9 alarms (U3, O8 and 7 in the fleet logs); the installer forwards it as `stockFcw`; the 0x100 flag of a disabled radar is a recording to make |
 | pre-fill, brake assist | none found: no bus-1 bit steps with `PBATRGR` (4 events); only the event pair was active | 0x344 `PBATRGR`, echoed in 0x366 byte 1 bit 0 and 0x33E byte 6 bit 7 (fleet, 4 events); pre-fill not set in any recorded frame | ◐ brake-assist trigger on the car bus only |
 | autonomous braking | to record | 0x283 `FORCE` / `STATE` 3, 0x344 `DSS1GDRV`: values and sequence to record | ○ |
 
