@@ -139,6 +139,30 @@ the bit clear the car brakes on regeneration and engine drag alone. The radar se
 [10](10_research_directions.md#learn-from-toyotas-own-longitudinal-control)
 ([`stock_acc_law.json`](../data/analysis/summaries/stock_acc_law.json), [`radar_car_bus_messages.json`](../data/analysis/summaries/radar_car_bus_messages.json)).
 
+### The camera's 0x412 on the dash: LTA icon and follow-up dots (● / ◐)
+
+0x412 `LKAS_HUD` (Toyota `DS12F03`) comes from the front camera, not the radar, but it draws part of the same driving display.
+openpilot replaces it with its own whenever it controls steering. Two fields matter for the dash
+([`lta_follow_up_display.json`](../data/analysis/summaries/lta_follow_up_display.json)):
+
+| field | reading | |
+|---|---|---|
+| `LKAS_STATUS` (7\|2) | 2 = LTA (lane centering) indicator green, 1 = white / grey; the camera sends 2 while its lane centering runs, openpilot always sends 1 | ● on the dash |
+| byte 4 bit 6 (start bit 38, unnamed in opendbc) | **LTA follow-up cruising display**: the three dots on the distance bars under the lead car, shown when lane centering steers along the vehicle ahead (the Toyota quick-reference guide's "follow-up cruising display") | ● with `BARRIERS` 0 and `LKAS_STATUS` 2, ◐ alone |
+
+- **Camera side.** In 74 logs with the camera's lane centering active (four cars), the camera set bit 38 in 21 episodes, always with
+  a lead (906 of 906 samples, 0 of 509 without one), always with `LKAS_STATUS` 2 and `BARRIERS` (1|2) 0, and never in lane-line
+  mode (`BARRIERS` 1). It is more frequent with weak lane lines: 205 of 304 lead samples with the weaker line's probability below
+  0.2, against 224 of 1,162 above 0.8.
+- **Why openpilot drives never show the dots.** The camera keeps setting the bit while openpilot steers, but openpilot blocks the
+  camera's 0x412 and sends its own, with `LKAS_STATUS` 1, `BARRIERS` 1 and bit 38 = 0.
+- **Dash check.** With openpilot sending bit 38 + `BARRIERS` 0 + `LKAS_STATUS` 2 while steering behind a lead, the dash showed the
+  lead car, the distance bars with the three dots and the green LTA icon. Parked, the same frame turned the LTA icon green but
+  drew no dots, because the cruise display with the bars only appears once cruise is set. Whether bit 38 alone is enough is not
+  separated yet.
+
+![Dash with openpilot sending the follow-up state: lead car, distance bars with three dots, green LTA icon](img/shots/dash_follow_up_dots.jpg)
+
 ## openpilot longitudinal: filter or disable
 
 The radar's car-bus link runs to the gateway, which relays it onto the car bus. The comma harness sits at the camera,
