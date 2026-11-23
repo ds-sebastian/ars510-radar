@@ -95,7 +95,7 @@ Cabana DBC's slot layout from it.
 
 [`car_bus_0x33e_boundary.json`](analysis/summaries/car_bus_0x33e_boundary.json) supplies the code-7 idle/numeric-domain witness in docs/13: finite TTC and a live matching target at high reported positive acceleration. Saturation remains a candidate interpretation.
 
-[`lta_follow_up_display.json`](analysis/summaries/lta_follow_up_display.json) supplies the camera 0x412 `LKAS_HUD` readings in docs/13: bit 38 as the LTA follow-up cruising display (camera-side counts on four cars and the owner's dash checks) and `LKAS_STATUS` 2 as the green LTA indicator.
+[`lta_follow_up_display.json`](analysis/summaries/lta_follow_up_display.json) supplies the camera 0x412 `LKAS_HUD` readings in docs/13: bit 38 as the LTA follow-up cruising display (camera-side counts on four cars and the owner's dash checks with bit 38 set and cleared), `LKAS_STATUS` 2 as the green LTA indicator and `BARRIERS` 0 as the lane-line highlight off.
 
 [`slot_length_eight_bits.json`](analysis/summaries/slot_length_eight_bits.json) supplies the length-width evidence in docs/03: the length-code tail through 127 → 128 and the classes of codes ≥ 128 on the owner car and three other car groups.
 

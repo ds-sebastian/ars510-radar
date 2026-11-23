@@ -12,15 +12,35 @@
     "bit38_rows_with_barriers_nonzero": 0,
     "barriers_1_rows_without_bit38": 1758,
     "median_min_lane_line_prob_bit38": 0.48,
-    "median_min_lane_line_prob_no_bit38": 0.90,
-    "lead_rows_min_lane_prob_below_0_2": {"bit38": 205, "total": 304},
-    "lead_rows_min_lane_prob_above_0_8": {"bit38": 224, "total": 1162},
+    "median_min_lane_line_prob_no_bit38": 0.9,
+    "lead_rows_min_lane_prob_below_0_2": {
+      "bit38": 205,
+      "total": 304
+    },
+    "lead_rows_min_lane_prob_above_0_8": {
+      "bit38": 224,
+      "total": 1162
+    },
     "openpilot_steering_during_bit38": "yes on every owner bit-38 frame; openpilot's own 0x412 then carried LKAS_STATUS 1, BARRIERS 1, bit 38 = 0"
   },
   "dash_tests": [
-    {"setup": "parked, openpilot onroad not engaged, 0x412 = 80 04 0c 00 40 2c 00 02 (LKAS_STATUS 2, BARRIERS 0, bit 38)", "dash": "LTA indicator green, no cruise display, no dots"},
-    {"setup": "parked, 0x412 = 40 04 0c 00 40 2c 00 02 (LKAS_STATUS 1, bit 38)", "dash": "LTA indicator white / grey, no dots"},
-    {"setup": "driving, cruise set behind a lead, openpilot steering, bit 38 + BARRIERS 0 + LKAS_STATUS 2", "dash": "lead car icon, distance bars with the three follow-up dots, green LTA indicator"}
+    {
+      "setup": "parked, openpilot onroad not engaged, 0x412 = 80 04 0c 00 40 2c 00 02 (LKAS_STATUS 2, BARRIERS 0, bit 38)",
+      "dash": "LTA indicator green, no cruise display, no dots"
+    },
+    {
+      "setup": "parked, 0x412 = 40 04 0c 00 40 2c 00 02 (LKAS_STATUS 1, bit 38)",
+      "dash": "LTA indicator white / grey, no dots"
+    },
+    {
+      "setup": "driving, cruise set behind a lead, openpilot steering, bit 38 + BARRIERS 0 + LKAS_STATUS 2 (mode 3)",
+      "dash": "lead car icon, distance bars with the three follow-up dots, green LTA indicator"
+    },
+    {
+      "setup": "driving, cruise set behind leads, openpilot steering, BARRIERS 0 + LKAS_STATUS 2 with bit 38 clear (mode 7); log: 1,642 frames of 94 04/14 0c 00 00 2c 00 02 with steering and a lead, about 5.5 min",
+      "dash": "green LTA indicator, no dots, lane-line highlight off"
+    }
   ],
-  "not_separated": "whether bit 38 alone draws the dots or BARRIERS 0 / LKAS_STATUS 2 are also needed"
+  "not_separated": "whether bit 38 draws the dots with LKAS_STATUS 1 and BARRIERS 1 (not tested)",
+  "verdict": "bit 38 draws the follow-up dots (set: dots; cleared with everything else equal: none). BARRIERS 0 turns the lane-line highlight off. LKAS_STATUS 2 turns the LTA indicator green."
 }
