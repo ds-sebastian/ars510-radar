@@ -165,7 +165,9 @@ openpilot replaces it with its own whenever it controls steering. Three fields m
   So bit 38 draws the dots, and `BARRIERS` 0 removes the lane-line highlight. Not tested: bit 38 with `LKAS_STATUS` 1 and
   `BARRIERS` 1. Parked, the dots cannot show at all: the cruise display with the bars only appears once cruise is set.
 
-![Dash with openpilot sending the follow-up state: lead car, distance bars with three dots, green LTA icon](img/shots/dash_follow_up_dots.jpg)
+| bit 38 set | bit 38 clear |
+|---|---|
+| ![Bit 38 set: lead car, distance bars with three dots, green LTA icon](img/shots/dash_follow_up_dots.jpg) | ![Bit 38 clear: lead car, distance bars without dots, plain lane lines, green LTA icon](img/shots/dash_follow_up_no_dots.jpg) |
 
 ## openpilot longitudinal: filter or disable
 
