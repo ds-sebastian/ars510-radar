@@ -242,6 +242,24 @@ Numbers: [`upstream_case.json`](../data/analysis/summaries/upstream_case.json),
 [`profiles_vs_vision.json`](../data/analysis/summaries/profiles_vs_vision.json); event data
 [`revealed_queue_case.csv.gz`](../data/analysis/revealed_queue_case.csv.gz). Figures: `tools/make_upstream_figures.py`.
 
+## Proposal: Toyota dash LTA icon and follow-up dots
+
+A separate, radar-independent proposal for opendbc's Toyota port, from the 0x412 `LKAS_HUD` readings in
+[13](13_car_bus_messages.md#the-cameras-0x412-on-the-dash-lta-icon-and-follow-up-dots-).
+[`upstream/opendbc_lta_follow_up.patch`](../upstream/opendbc_lta_follow_up.patch) applies to opendbc master (`c55bd39e`) and
+changes three files:
+
+- `_toyota_2017.dbc`: names start bit 38 `LTA_FOLLOW_UP` and comments `LKAS_STATUS` and `BARRIERS`.
+- `toyotacan.py`: `create_ui_command` sends `LKAS_STATUS` 2 while engaged (green LTA icon instead of white), and with
+  `follow_up` it sets `LTA_FOLLOW_UP` and clears `BARRIERS`, the combination the camera sends with the dots.
+- `carcontroller.py`: `follow_up` = lateral active, a lead (`hud_control.leadVisible`) and at least one lane line not visible,
+  held 1 s so the display does not flicker. The camera shows the dots mostly when lane lines are weak; openpilot's model has
+  no separate follow-the-lead mode, so this condition approximates the stock behaviour for the display only.
+
+Frames it sends (checked with opendbc's packer): engaged with both lines `95 04 0c 00 00 2c 38 02`, follow-up
+`a4 04 0c 00 40 2c 38 02`, matching the camera's own lane-line and follow-up frames. opendbc's Toyota and DBC tests and ruff pass
+on it. The same change runs on the owner's car (StarPilot); a road drive with it is still to be checked.
+
 ## What radard gets from other radars
 
 What other radars in openpilot send (signals in their DBCs), the ARS510 counterpart, and the data that would close each gap
