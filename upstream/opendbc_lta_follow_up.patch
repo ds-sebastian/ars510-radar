@@ -1,0 +1,81 @@
+diff --git a/opendbc/car/toyota/carcontroller.py b/opendbc/car/toyota/carcontroller.py
+index 8216a4f8..143a8281 100644
+--- a/opendbc/car/toyota/carcontroller.py
++++ b/opendbc/car/toyota/carcontroller.py
+@@ -53,6 +53,7 @@ class CarController(CarControllerBase):
+     self.last_torque = 0
+     self.last_angle = 0
+     self.alert_active = False
++    self.follow_up_frame = -1000  # last frame the LTA follow-up display condition held
+     self.standstill_req = False
+     self.permit_braking = True
+     self.steer_rate_counter = 0
+@@ -286,10 +287,17 @@ class CarController(CarControllerBase):
+         # forcing the pcm to disengage causes a bad fault sound so play a good sound instead
+         send_ui = True
+ 
++      # LTA follow-up display (dots on the distance bars): steering with a lead while a lane line is weak, held 1 s
++      follow_up_lead = CC.latActive and hud_control.leadVisible
++      if follow_up_lead and not (hud_control.leftLaneVisible and hud_control.rightLaneVisible):
++        self.follow_up_frame = self.frame
++      follow_up = follow_up_lead and self.frame - self.follow_up_frame < 100
++
+       if self.frame % 20 == 0 or send_ui:
+         can_sends.append(toyotacan.create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, hud_control.leftLaneVisible,
+                                                      hud_control.rightLaneVisible, hud_control.leftLaneDepart,
+-                                                     hud_control.rightLaneDepart, CC.enabled, CS.lkas_hud))
++                                                     hud_control.rightLaneDepart, CC.enabled, CS.lkas_hud,
++                                                     follow_up=follow_up))
+ 
+       if (self.frame % 100 == 0 or send_ui) and self.CP.flags & ToyotaFlags.DISABLE_RADAR.value:
+         can_sends.append(toyotacan.create_fcw_command(self.packer, fcw_alert))
+diff --git a/opendbc/car/toyota/toyotacan.py b/opendbc/car/toyota/toyotacan.py
+index b8878514..1beba444 100644
+--- a/opendbc/car/toyota/toyotacan.py
++++ b/opendbc/car/toyota/toyotacan.py
+@@ -110,18 +110,20 @@ def create_fcw_command(packer, fcw):
+   return packer.make_can_msg("PCS_HUD", 0, values)
+ 
+ 
+-def create_ui_command(packer, steer, chime, left_line, right_line, left_lane_depart, right_lane_depart, enabled, stock_lkas_hud):
++def create_ui_command(packer, steer, chime, left_line, right_line, left_lane_depart, right_lane_depart, enabled, stock_lkas_hud,
++                      follow_up=False):
+   values = {
+     "TWO_BEEPS": chime,
+     "LDA_ALERT": steer,
+     "RIGHT_LINE": 3 if right_lane_depart else 1 if right_line else 2,
+     "LEFT_LINE": 3 if left_lane_depart else 1 if left_line else 2,
+-    "BARRIERS": 1 if enabled else 0,
++    "BARRIERS": 1 if enabled and not follow_up else 0,
++    "LTA_FOLLOW_UP": 1 if follow_up else 0,
+ 
+     # static signals
+     "SET_ME_X02": 2,
+     "SET_ME_X01": 1,
+-    "LKAS_STATUS": 1,
++    "LKAS_STATUS": 2 if enabled else 1,
+     "REPEATED_BEEPS": 0,
+     "LANE_SWAY_FLD": 7,
+     "LANE_SWAY_BUZZER": 0,
+diff --git a/opendbc/dbc/generator/toyota/_toyota_2017.dbc b/opendbc/dbc/generator/toyota/_toyota_2017.dbc
+index b338304c..27513205 100644
+--- a/opendbc/dbc/generator/toyota/_toyota_2017.dbc
++++ b/opendbc/dbc/generator/toyota/_toyota_2017.dbc
+@@ -279,6 +279,7 @@ BO_ 1042 LKAS_HUD: 8 DSU
+  SG_ LDA_MESSAGES : 23|3@0+ (1,0) [0|1] "" XXX
+  SG_ LDA_ON_MESSAGE : 31|2@0+ (1,0) [0|3] "" XXX
+  SG_ REPEATED_BEEPS : 32|1@0+ (1,0) [0|1] "" XXX
++ SG_ LTA_FOLLOW_UP : 38|1@0+ (1,0) [0|1] "" XXX
+  SG_ LANE_SWAY_TOGGLE : 43|1@0+ (1,0) [0|1] "" XXX
+  SG_ LANE_SWAY_SENSITIVITY : 45|2@0+ (1,0) [0|3] "" XXX
+  SG_ TAKE_CONTROL : 46|1@0+ (1,0) [0|1] "" XXX
+@@ -492,6 +493,9 @@ CM_ SG_ 1042 LDW_EXIST "Unclear what this is, it's usually set to 0";
+ CM_ SG_ 1042 LDA_SENSITIVITY "LDA Sensitivity";
+ CM_ SG_ 1042 LDA_ON_MESSAGE "Display LDA Turned ON message";
+ CM_ SG_ 1042 REPEATED_BEEPS "LDA audible warning";
++CM_ SG_ 1042 LTA_FOLLOW_UP "LTA follow-up cruising display: dots on the distance bars while lane centering follows the lead vehicle. The camera sets it with a lead, LKAS_STATUS 2 and BARRIERS 0";
++CM_ SG_ 1042 LKAS_STATUS "1 = LTA indicator white, 2 = green (lane centering active)";
++CM_ SG_ 1042 BARRIERS "1 = lane lines highlighted on the dash, 0 = not highlighted";
+ CM_ SG_ 1042 LDA_UNAVAILABLE_QUIET "LDA toggles and sensitivity settings are greyed out if set to 1";
+ CM_ SG_ 1042 LDA_MESSAGES "Various LDA Messages";
+ CM_ SG_ 1042 LDA_FRONT_CAMERA_BLOCKED "originally LDAFCVB, LDA related settings are greyed out if set to 1";
