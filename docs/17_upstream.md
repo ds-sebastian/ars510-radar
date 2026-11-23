@@ -244,21 +244,35 @@ Numbers: [`upstream_case.json`](../data/analysis/summaries/upstream_case.json),
 
 ## Proposal: Toyota dash LTA icon and follow-up dots
 
-A separate, radar-independent proposal for opendbc's Toyota port, from the 0x412 `LKAS_HUD` readings in
-[13](13_car_bus_messages.md#the-cameras-0x412-on-the-dash-lta-icon-and-follow-up-dots-).
-[`upstream/opendbc_lta_follow_up.patch`](../upstream/opendbc_lta_follow_up.patch) applies to opendbc master (`c55bd39e`) and
-changes three files:
+A separate, radar-independent proposal from the 0x412 `LKAS_HUD` readings in
+[13](13_car_bus_messages.md#the-cameras-0x412-on-the-dash-lta-icon-and-follow-up-dots-). openpilot steers with one learned
+model that always uses lane lines, road edges and the lead together, with no separate lane or follow-the-lead mode. So each
+dash element shows something openpilot actually knows instead of copying the camera's states:
 
-- `_toyota_2017.dbc`: names start bit 38 `LTA_FOLLOW_UP` and comments `LKAS_STATUS` and `BARRIERS`.
-- `toyotacan.py`: `create_ui_command` sends `LKAS_STATUS` 2 while engaged (green LTA icon instead of white), and with
-  `follow_up` it sets `LTA_FOLLOW_UP` and clears `BARRIERS`, the combination the camera sends with the dots.
-- `carcontroller.py`: `follow_up` = lateral active, a lead (`hud_control.leadVisible`) and at least one lane line not visible,
-  held 1 s so the display does not flicker. The camera shows the dots mostly when lane lines are weak; openpilot's model has
-  no separate follow-the-lead mode, so this condition approximates the stock behaviour for the display only.
+| dash element | stock camera | openpilot |
+|---|---|---|
+| LTA icon (`LKAS_STATUS`) | green while lane centering runs | green (2) while openpilot steers, white (1) otherwise |
+| lane lines (`LEFT_LINE` / `RIGHT_LINE`) | lines the camera sees | lines the driving model sees (lane-line probability with 0.55 on / 0.40 off hysteresis) |
+| lane-line highlight (`BARRIERS`) | on while steering by the lines | on while steering, off while the dots show |
+| three dots (`LTA_FOLLOW_UP`) | steering along the vehicle ahead | steering with a lead while the model sees at most one lane line (held 1 s) |
 
-Frames it sends (checked with opendbc's packer): engaged with both lines `95 04 0c 00 00 2c 38 02`, follow-up
-`a4 04 0c 00 40 2c 38 02`, matching the camera's own lane-line and follow-up frames. opendbc's Toyota and DBC tests and ruff pass
-on it. The same change runs on the owner's car (StarPilot); a road drive with it is still to be checked.
+Two patches:
+
+- [`upstream/opendbc_lta_follow_up.patch`](../upstream/opendbc_lta_follow_up.patch), for opendbc master (`c55bd39e`):
+  the DBC names start bit 38 `LTA_FOLLOW_UP` and comments `LKAS_STATUS` / `BARRIERS`; `create_ui_command` sends the icon,
+  highlight and dots as in the table; `carcontroller.py` computes `follow_up` from `latActive`, `hud_control.leadVisible`
+  and the two lane-visibility flags. opendbc's Toyota and DBC tests and ruff pass on it. Packer frames: steering with both
+  lines `95 04 0c 00 00 2c 38 02`, follow-up `a4 04 0c 00 40 2c 38 02`, the camera's own lane-line and follow-up frames.
+- **The lane-visibility flags have to be real.** Upstream openpilot hard-codes `hudControl.leftLaneVisible` /
+  `rightLaneVisible` to True in `controlsd.py`, so with the opendbc patch alone the icon turns green but the dots never show
+  (checked on a 20 min drive: both flags True throughout, while the model rated a line below 0.5 on 44 % of samples).
+  [`upstream/starpilot_toyota_lane_visibility.patch`](../upstream/starpilot_toyota_lane_visibility.patch) fills them from the
+  model on Toyota by reusing StarPilot's existing lane-line hysteresis (written for one Subaru). Upstream openpilot would
+  need the same few lines in `controlsd.py`.
+
+Replayed on that drive, the rule shows: steering with both lines 51 % of the time, a line missing 18 %, the dots 16 %, not
+steering 14 % ([`lta_follow_up_display.json`](../data/analysis/summaries/lta_follow_up_display.json)). Both patches run on
+the owner's car (StarPilot); a road drive with the lane-visibility patch is still to be checked.
 
 ## What radard gets from other radars
 

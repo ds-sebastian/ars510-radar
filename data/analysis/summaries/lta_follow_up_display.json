@@ -42,5 +42,18 @@
     }
   ],
   "not_separated": "whether bit 38 draws the dots with LKAS_STATUS 1 and BARRIERS 1 (not tested)",
-  "verdict": "bit 38 draws the follow-up dots (set: dots; cleared with everything else equal: none). BARRIERS 0 turns the lane-line highlight off. LKAS_STATUS 2 turns the LTA indicator green."
+  "verdict": "bit 38 draws the follow-up dots (set: dots; cleared with everything else equal: none). BARRIERS 0 turns the lane-line highlight off. LKAS_STATUS 2 turns the LTA indicator green.",
+  "openpilot_mapping_drive": {
+    "description": "20 min owner drive with the opendbc patch only (lane visibility from hudControl): what openpilot reported and what the rule would show with model-based lane visibility (StarPilot hysteresis replayed on modelV2 laneLineProbs).",
+    "hud_lane_flags_true_share": 1.0,
+    "model_at_least_one_line_below_0_5_share": 0.44,
+    "lta_follow_up_frames_sent": 0,
+    "lkas_status_2_frames_sent": 5283,
+    "replayed_rule_share_of_time": {
+      "steering_both_lines": 0.511,
+      "steering_line_missing": 0.182,
+      "steering_lead_weak_line_dots": 0.163,
+      "not_steering": 0.144
+    }
+  }
 }
