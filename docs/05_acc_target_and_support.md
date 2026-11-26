@@ -6,9 +6,9 @@ matching [`dbc/ars510_radar_bus.dbc`](../dbc/ars510_radar_bus.dbc) and `ars510.s
 
 | stream | read by | role |
 |---|---|---|
-| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc` and `acc_summaries`; the research `fused` filter as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
+| ACC target (0x235 / 0x237, companions 0x239 / 0x23B) | `acc`; the research `fused` filter as a speed reading (σ 0.13 m/s) and as the followed car's range | the one car the radar's ACC logic follows: 0.025 m distance, 0.125 m/s closing speed |
 | object list (0x80) | no installable profile (its speed excursions, [07](07_velocity_excursions.md)); the research `raw` / `fused` configs and the tools | every tracked car, 0.0625 m range, 0.15 m/s over-ground speed ([03](03_slot_fields.md)) |
-| target summaries (0x191-0x194), 0x680 | `acc_summaries` (extra points); analysis | positions of the radar's internal tracker targets: its two nearest moving tracks, the ACC car among them when it is one of the two (not a far-lead source) |
+| target summaries (0x191-0x194), 0x680 | no installable profile (the `acc_summaries` variant, not installable, publishes them as extra points); analysis | positions of the radar's internal tracker targets: its two nearest moving tracks, the ACC car among them when it is one of the two (not a far-lead source) |
 
 ## The radar's ACC target (0x235 / 0x237)
 
@@ -59,7 +59,7 @@ moving ACC-target cycles; the first pair only on 39-53 %), it shows the same tra
 | closing speed | 0x235 bits 29-39: `(code − 1024) × 0.125` m/s, negative = closing | ● | `REL_SPEED` |
 | relative acceleration | 0x235 byte 2: `(code − 100) × 0.125` m/s², positive = opening | ● | `REL_ACCEL` |
 | distance | 0x237 bits 39-51: `code × 0.025` m | ● | `LONG_DIST` |
-| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when); on the right it stops at −20.00 m. Wraps occur about 8 cycles per hour, on targets 25-80 m out and 21-53 m to the left while ego turns or waits at a junction; the radar marks some of them in-path, but the camera has no lead there, so radard never used them in the logs; `acc` and `acc_summaries` add the 40.96 m back ([check bytes](#check-bytes)) | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
+| lateral position | 0x237 bits 27-38 (12 bits): `(code − 2000) × 0.01` m, left positive; 1.5 codes = one 0.015 m object-list code. Above +20.95 m the field wraps (the check byte says when); on the right it stops at −20.00 m. Wraps occur about 8 cycles per hour, on targets 25-80 m out and 21-53 m to the left while ego turns or waits at a junction; the radar marks some of them in-path, but the camera has no lead there, so radard never used them in the logs; `acc` adds the 40.96 m back ([check bytes](#check-bytes)) | ● layout and ratio, ◐ absolute unit | `LAT_DIST` |
 | lateral speed | 0x235 bits 8-18: `(code − 1024) × 0.0125` m/s, left positive, **relative in the rotating ego frame**: stationary targets read about −1.1 to −1.2 × yaw rate × distance, and the lateral position changes by 0.98-1.00 × this speed. Crossing traffic beyond 12.8 m/s wraps the field | ● unit consistency, ◐ frame | `LAT_SPEED` |
 | target identity | 0x235 bits 0-5 (6 bits; numbers 32-63 in use on a C-HR 2021 radar, 0-31 on every recorded RAV4 target): the radar tracker's own track number. It stays the same while the radar follows one target and also when the target is dropped and picked up again (56 of 56 returns to the same track; a different track gets a different number in 23 of 23). 31 is an ordinary number (2-3 % of active cycles); read idle from `STATE` (idle sends 63) | ◐ | `TARGET_ID` |
 | in-path state | 0x237 bit 8 confirmed, bit 7 candidate, bits 4-6 level 5 / 4 / 3 / 2 | ◐ | `IN_PATH`, `IN_PATH_CANDIDATE`, `IN_PATH_LEVEL` |
@@ -106,8 +106,8 @@ sum of byte 7's top three columns, [`ci_platforms.json`](../data/analysis/summar
 Lateral speed (0x235) and lateral position (0x237) are one bit wider inside the radar than on the bus. When that bit
 is set the CAN field wraps, and the check byte differs by that bit's CRC term (0x9C and 0x14): `acc_check` returns
 `"wrapped"`, and the lateral speed is continuous with its neighbours only when 2048 codes are added
-([`acc_check_bytes.json`](../data/analysis/summaries/acc_check_bytes.json)). The `acc` and `acc_summaries` profiles
-read the 0x237 check byte this way and publish a wrapped lateral position with the 40.96 m added back.
+([`acc_check_bytes.json`](../data/analysis/summaries/acc_check_bytes.json)). The `acc` profile
+reads the 0x237 check byte this way and publishes a wrapped lateral position with the 40.96 m added back.
 
 ### Units of the ACC target
 
@@ -179,7 +179,7 @@ while the ACC target holds −0.75 to −0.9 m/s until about 18.7 s (`highway_ac
   farthest are 78-80 m below 20 m/s, 100 m at 20-25, 111 m at 25-30 and 129 m at 30-40 m/s; 0.2 % lie beyond max(80 m, 4 s × vEgo).
   The limit is on acquisition, not on keeping a target: in-lane camera leads beyond 80 m are covered 78-90 % inside it and 32-53 %
   outside it (targets taken nearer and kept as they pull away). Below 20 m/s a lead beyond 80 m is the ACC target only if it was
-  acquired nearer; otherwise only vision supplies it (`acc_summaries` publishes summaries within 40 m). With cruise off the same limit
+  acquired nearer; otherwise only vision supplies it. With cruise off the same limit
   holds (1 of 277 acquisitions beyond it, 0 of 153 with cruise engaged) ([summary](../data/analysis/summaries/acc_horizon_and_flips.json)).
 
 ![sender clock](img/analysis/acc_sender_clock.png)
@@ -273,7 +273,7 @@ position separates (0.68-0.75)
 [Aggregate evidence](../data/analysis/summaries/selected_target_descriptors.json),
 [`acc_target_frames.json`](../data/analysis/summaries/acc_target_frames.json).
 
-**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`; the radar also sends `FF FF FF FF` for a single cycle inside a live track, 7 of about 756 k summary frames on two cars; the top three bits of each 16-bit word are 0 on every valid frame, so `parse_0x192` and `acc_summaries` skip any word with one of them set, which catches that glitch):
+**0x192 / 0x194** (4 bytes, sentinel `00 FF 00 FF`; the radar also sends `FF FF FF FF` for a single cycle inside a live track, 7 of about 756 k summary frames on two cars; the top three bits of each 16-bit word are 0 on every valid frame, so `parse_0x192` and the `acc_summaries` variant (not installable) skip any word with one of them set, which catches that glitch):
 
 | bytes | field |
 |---|---|
@@ -347,7 +347,7 @@ when it swaps slots. Limits: it covers about a third of the moving cars the obje
 a median 0.7-1.3 s before ([`function_tracker_outputs.json`](../data/analysis/summaries/function_tracker_outputs.json)).
 
 `parse_0x192()` returns the raw codes plus `Target192.d_rel` and `Target192.y_rel` in metres (0x194 has the same
-layout). It returns `None` for a short payload or the exact whole-frame sentinel. `acc_summaries` publishes the non-ACC
+layout). It returns `None` for a short payload or the exact whole-frame sentinel. The `acc_summaries` variant (not installable) publishes the non-ACC
 summaries within 40 m as radar points of their own, with a speed from a constant-velocity Kalman filter on their ranges
 over the radar's 0x190 clock, published once a pair code has 8 ranges within 0.6 s
 ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)); `acc` does not read them

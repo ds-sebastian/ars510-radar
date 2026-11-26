@@ -3,11 +3,11 @@
 The object list's velocity is its steadiest channel from record to record ([06](06_accuracy.md)), with one systematic flaw: on a settled track the
 velocity sometimes **drifts for about a second (median 1 s, 90 % under 5 s) while the radar's ACC distance and the camera hold steady**, mostly as a **false closing beyond 40 m**.
 Published unfiltered (the `raw` config) it shows up in openpilot as extra jitter in the plan and as braking requests only
-the radar makes (1.75 per hour). This is why the installer offers only `acc` (the default) and `acc_summaries`: they
-publish the radar's own tracker outputs (the ACC target and the target summaries), whose speed stays smooth through the
-same moments, and never the object list. The `fused` Kalman filter on the object list and the ACC target
+the radar makes (1.75 per hour). This is why the installer offers only `acc`: it
+publishes the radar's own tracker output (the ACC target), whose speed stays smooth through the same moments, and never
+the object list. The `fused` Kalman filter on the object list and the ACC target
 ([12](12_kalman_filter.md)) removes most excursions but not all, so it stays research code until they are solved
-([11](11_profiles_compared.md#why-acc-is-the-default)).
+([11](11_profiles_compared.md#why-acc-is-the-profile)).
 
 | decode (installable: `acc` only) | what reaches radard | hard radar-only braking ticks, 20 held-out routes | radar-only braking per hour |
 |---|---|---|---|
@@ -141,9 +141,8 @@ rougher than vision; around radar/vision disagreements (20% of the time) +0.032,
 
 ## How it is filtered
 
-The installable profiles avoid the object list entirely: `acc` (the default) publishes the ACC target alone, and
-`acc_summaries` adds the two target-summary cars within 40 m, so the speed radard sees comes from the radar's own
-tracker ([11](11_profiles_compared.md#why-acc-is-the-default)). The research `fused` filter handles excursions with one
+The installable profile avoids the object list entirely: `acc` publishes the ACC target alone, so the speed radard
+sees comes from the radar's own tracker ([11](11_profiles_compared.md#why-acc-is-the-profile)). The research `fused` filter handles excursions with one
 Kalman filter per track that weights the object list and the radar's ACC target by their own uncertainty; it removes
 most but not all of them. The model, every constant, what each part contributes, the variants tested and the case that
 still gets through are in [12 Kalman speed filter](12_kalman_filter.md).

@@ -10,8 +10,8 @@ filter on what this one publishes.
 planner. On the second car's 38 latest held-out drives (6.26 moving h) it added 2.05 s of unnecessary braking per moving
 hour over `acc` (95 % CI 0.51-3.85), including a −3.31 m/s² request at 30 m/s for an object-list track at 54 m whose
 closing speed read 23.7 m/s while its range held still; `acc` stayed on the ACC target 12 m farther on
-([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). So the installer offers only `acc`
-(default) and `acc_summaries`, which publish the radar's own tracker outputs ([11](11_profiles_compared.md)). This page
+([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). So the installer offers only `acc`,
+which publishes the radar's own tracker output, the ACC target ([11](11_profiles_compared.md)). This page
 keeps the filter's design, ablations and numbers as the starting point for solving the excursions.
 
 Code: `Ars510NativeRadarInterface._fused_speed` and `FUSED_CONFIG` in [`ars510/interface.py`](../ars510/interface.py); the
@@ -340,6 +340,8 @@ drops a lead the camera still follows (a lead turning out of the lane).
 
 ![against the oracle](img/analysis/guide_oracle.png)
 
+*In the figure `acc (default)` is `acc`, the one profile; the bars 2.1-2.6 are `fused` releases and `acc_summaries` is a variant, none of them installable.*
+
 Unnecessary braking (> 0.5 m/s² harder than the oracle, ≥ 0.3 s) and missed braking, by `fused` version and for `acc`
 ([`oracle_reference.json`](../data/analysis/summaries/oracle_reference.json)):
 
@@ -468,8 +470,8 @@ better: 7.1 s of unnecessary braking instead of 8.1 s and 3.0 s missed instead o
 bookmarks (within 0.03 m/s² on the other 4), with 0 hard radar-only braking and 7 mild requests each
 ([`driving_claim_sources.json`](../data/analysis/summaries/driving_claim_sources.json)); against the
 oracle (owner and second car, 7.65 h) 5.4 against 4.9 s unnecessary and 7.2 against 9.5 s missed. So `fused` leaves
-them out from 2.4 on. The summary cars are now
-published as points of their own by `acc_summaries` ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
+them out from 2.4 on. The `acc_summaries`
+variant (not installable) publishes the summary cars as points of their own instead ([11](11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)).
 
 ### The ACC target's weight
 

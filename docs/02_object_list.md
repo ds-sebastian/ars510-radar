@@ -77,7 +77,7 @@ held when every moving slot's position equals the previous one. The rate follows
 at codes 42-51, 4-5 % at 52-61, 20-26 % at 62-71 and 1-3 % above (two cars,
 [`position_held_records.json`](../data/analysis/summaries/position_held_records.json)). Range differences across a held
 record are 0 and then double. The object-list decode's `raw` config passes the stale position on and `fused` moves its range 10 % toward it; the
-installable `acc` / `acc_summaries` read the ACC messages, which do not hold.
+installable `acc` profile reads the ACC messages, which do not hold.
 
 ![position-held records](img/analysis/position_held_records.png)
 
@@ -155,7 +155,7 @@ with vRel ≈ −v_ego.*
 **For openpilot:** the radar backs up vision on leads it watched slow down and stop. A vehicle that was already stopped
 when it came into view (a stalled car, the tail of a queue that stopped out of range) rarely holds an object-list track
 once ego moves above 3 m/s (table above), so vision carries it there; the radar's ACC target can still select such a car
-([11](11_profiles_compared.md#why-acc-is-the-default)).
+([11](11_profiles_compared.md#why-acc-is-the-profile)).
 
 ![where objects are reported](img/analysis/bev_density.png)
 

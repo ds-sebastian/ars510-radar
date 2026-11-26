@@ -338,7 +338,7 @@ field likely records how the track was first detected (the far scan)
 A saturated velocity (`64|10` = 1023, about +77 m/s over ground) comes with `240|7` = 127 on all 35 bundled rows. It appears in
 runs of 1-6 records on mature tracks at 34–97 m (9 events, 33 rows in the 700-segment corpus) and can decay over a few records (bundled drive B: 1023, 1016, 1004, 992, 981). The `raw`
 config withholds it; in the `fused` filter the robust update absorbs it
-([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)); the installable `acc` and `acc_summaries` profiles read only the radar's tracker outputs.
+([12](12_kalman_filter.md#what-runs-before-and-around-the-filter)); the installable `acc` profile reads only the radar's ACC target.
 
 ![saturated velocity](img/shots/night_dying_track_excursion.jpg)
 

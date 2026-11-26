@@ -57,18 +57,14 @@ show the radar's own ACC target.
 
 ```bash
 OP=/path/to/openpilot
-cp -r $OP/opendbc_repo /tmp/opendbc_acc && python openpilot/install.py /tmp/opendbc_acc                      # acc, the default
-cp -r $OP/opendbc_repo /tmp/opendbc_accsum && python openpilot/install.py /tmp/opendbc_accsum --profile acc_summaries
+cp -r $OP/opendbc_repo /tmp/opendbc_acc && python openpilot/install.py /tmp/opendbc_acc                      # acc, the profile
 PY=$OP/.venv/bin/python
 PYTHONPATH=$OP $PY tools/openpilot_replay/build_long_mpc_shadow.py --openpilot $OP --out op_shadow   # once, as an alternative to the scons build
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc $OP/opendbc_repo --mpc-shadow op_shadow \
     --label vision --out pr --save-logs pr/logs route--0/rlog route--1/rlog
 $PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_acc --mpc-shadow op_shadow \
     --label acc --out pr --save-logs pr/logs route--0/rlog route--1/rlog
-$PY tools/openpilot_replay/process_replay_ars510.py run --openpilot $OP --opendbc /tmp/opendbc_accsum --mpc-shadow op_shadow \
-    --label acc_summaries --out pr --save-logs pr/logs route--0/rlog route--1/rlog
 $PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision acc      # each compare takes two labels
-$PY tools/openpilot_replay/process_replay_ars510.py compare --out pr vision acc_summaries
 ```
 
 The comparison lists detection, radarTracks rate and gaps, radar-matched leads, FCW and braking episodes that only one
@@ -83,8 +79,8 @@ To **plot**, open a saved `rlog.zst` in PlotJuggler: `longitudinalPlan.aTarget`,
 acceleration. With ffmpeg 8+, put [`tools/openpilot_replay/ffmpeg`](../tools/openpilot_replay/ffmpeg) first on `PATH`
 when clip rendering reports a `-vsync` error.
 
-Here `vision` is unmodified openpilot (vision-only leads on this car), `acc` the default install and `acc_summaries` the
-other installable profile, each in its own opendbc copy. The object-list decodes (`raw`, `fused`) are not installable;
+Here `vision` is unmodified openpilot (vision-only leads on this car) and `acc` the installed profile in its own opendbc
+copy. The object-list decodes (`raw`, `fused`) are not installable;
 replay them with `tools/openpilot_replay/replay_radard.py` (radard and planner only) for research.
 
 ### Compare forks
@@ -119,7 +115,7 @@ until the last.
 3. **Say what you expect before replaying.** Write down which events it should change and which it must leave alone.
    Tune on other drives than the one that motivated it.
 4. **Replay against the driver.** Run openpilot's card → radard → planner on held-out drives with the profile you change
-   (`acc` or `acc_summaries`; an object-list variant against the research `fused` filter) and with your variant, and report the gates used throughout [12](12_kalman_filter.md):
+   (`acc`; an object-list variant against the research `fused` filter) and with your variant, and report the gates used throughout [12](12_kalman_filter.md):
 
    | gate | meaning |
    |---|---|

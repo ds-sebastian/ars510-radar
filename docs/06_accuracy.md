@@ -1,7 +1,7 @@
 # 06. Accuracy: how well the object fields match the world
 
 The radar publishes two streams of numbers: the **object list** (0x80; read by the research `raw` / `fused` configs in `ars510/`, not by any installable profile) and the
-**ACC target** (0x235 / 0x237; `acc` and `acc_summaries` publish it, the `fused` filter weights it into its speed estimate). Sections below say which stream a number
+**ACC target** (0x235 / 0x237; the `acc` profile publishes it, the `fused` filter weights it into its speed estimate). Sections below say which stream a number
 belongs to; the [side-by-side table](#object-list-and-acc-target-side-by-side) puts them next to each other.
 
 Three drives carry the object-list measurements: **A** (development, 24 min decoded, mixed), **B** (held out, 40 min city,
@@ -236,12 +236,12 @@ for the object-list range of the same car ([`acc_fields.json`](../data/analysis/
   at least 95% of its life on A 21 / 21, B 28 / 36 and C 28 / 30 tracks.
 - **Re-link:** the `raw` config re-links a track the radar re-initialises within 3.5 s near its predicted position, so radard keeps
   its filter state across short losses; with the `fused` speed filter the replays brake the same with the re-link on or off (lead-source switches 1,770 vs 1,772,
-  [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), so `fused` runs with it off. `acc` and `acc_summaries` take the radar's target ID as the track ID.
+  [`fused_filter.json`](../data/analysis/summaries/fused_filter.json)), so `fused` runs with it off. `acc` takes the radar's target ID as the track ID.
 
 ## Object list and ACC target side by side
 
 The research `raw` / `fused` configs start from the object list and `fused` also feeds the ACC target into its filter; the
-installable `acc` and `acc_summaries` publish the ACC target (and the summaries) and never the object list.
+installable `acc` profile publishes the ACC target and never the object list.
 
 | measure | object list | ACC target | source |
 |---|---|---|---|
