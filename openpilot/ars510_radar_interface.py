@@ -1,5 +1,5 @@
-"""openpilot radar tracks from the Toyota / Continental ARS510: the radar's ACC target (`acc`, default), optionally with
-the two target-summary cars (`acc_summaries`).
+"""openpilot radar tracks from the Toyota / Continental ARS510: the radar's ACC target as one point (`acc`, the parser of
+commaai/opendbc#3860).
 
 Installed by `openpilot/install.py` as `opendbc/car/toyota/ars510_radar_interface.py`, together with the `ars510`
 package as `opendbc/car/toyota/ars510/` (its constants and support code: the PCS alarm, the radar's fault flag). The
@@ -13,11 +13,10 @@ and its forks (sunnypilot, StarPilot, CarrotPilot, FrogPilot-style trees):
   - PCS alarm: the radar's alarm bit on bus 1 (0x100) sets carState.stockFcw, as 0x411 FCW does with the radar enabled.
     Upstream this is part of commaai/opendbc#3860, in Toyota's carstate (upstream/opendbc_ars510.patch); the hook does the same after the
     fork's update, since the installer leaves the fork's carstate as shipped.
-Both profiles publish only the radar's own tracker outputs (ACC target, target summaries). The raw object list (0x80)
-is not published: its speeds have 1-10 s excursions, mostly false closings beyond 40 m (docs/07), that no filter has
+It publishes only the radar's own ACC target. The raw object list (0x80) is not published: its speeds have 1-10 s excursions, mostly false closings beyond 40 m (docs/07), that no filter has
 yet removed reliably (docs/12).
 
-Every profile: while the radar's own fault flag (0x196 byte 1 bit 0) is set on two or more consecutive cycles, the only
+While the radar's own fault flag (0x196 byte 1 bit 0) is set on two or more consecutive cycles, the only
 report is radarUnavailableTemporary with no points, at 20 Hz. The radar holds it through minutes in which it declares
 itself blocked (car-bus 0x411 dust), sometimes with no ACC target for a lead that the object list still tracks (docs/05).
 """
@@ -28,12 +27,11 @@ from opendbc.car.interfaces import RadarInterfaceBase
 from opendbc.car.toyota.ars510.constants import ACC_TARGET_POS_ADDR, ACC_TARGET_VREL_ADDR, PCS_STATE_ADDR, RADAR_BUS, RADAR_FAULT_ADDR
 from opendbc.car.toyota.ars510.support import RadarFaultFlag, pcs_alarm
 
-STANDALONE = {"acc": "ars510_acc_target", "acc_summaries": "ars510_acc_summaries"}
+STANDALONE = {"acc": "ars510_acc_target"}
 PROFILES = {k: k for k in STANDALONE}
 PROFILE = PROFILES["acc"]
 
 ARS510_PLATFORMS = {"TOYOTA_RAV4_TSS2_2022", "TOYOTA_RAV4_TSS2_2023", "TOYOTA_CHR_TSS2", "TOYOTA_YARIS"}
-ACC_ONLY_PLATFORMS = {"TOYOTA_YARIS"}
 
 EMPTY_PERIOD = 5  # while the fault flag holds, report every 5th update (card calls update at 100 Hz -> 20 Hz)
 
@@ -41,10 +39,8 @@ EMPTY_PERIOD = 5  # while the fault flag holds, report every 5th update (card ca
 class Ars510RadarInterface(RadarInterfaceBase):
   def __init__(self, CP, *args, **kwargs):  # forks add arguments (sunnypilot: CP_SP)
     super().__init__(CP, *args, **kwargs)
-    profile = "acc" if str(CP.carFingerprint) in ACC_ONLY_PLATFORMS else PROFILE
-    module = importlib.import_module(f"opendbc.car.toyota.{STANDALONE[profile]}")
+    module = importlib.import_module(f"opendbc.car.toyota.{STANDALONE[PROFILE]}")
     self.standalone = module.RadarInterface(CP, *args, **kwargs)  # a complete RadarInterface (frames, cadence, staleness)
-    self.standalone_fills_legacy = hasattr(module, "LEGACY")  # acc_summaries sets aRel / yvRel / measured itself
     self.fault = RadarFaultFlag()
     self.calls = 0
 
@@ -67,7 +63,7 @@ class Ars510RadarInterface(RadarInterfaceBase):
 
   def _update(self, can_packets):
     ret = self.standalone.update(can_packets)
-    if ret is not None and ret.points and LEGACY_FIELDS and not self.standalone_fills_legacy:
+    if ret is not None and ret.points and LEGACY_FIELDS:
       ret.points = [_point({"trackId": p.trackId, "dRel": p.dRel, "yRel": p.yRel, "vRel": p.vRel, **ACC_LEGACY}) for p in ret.points]
     return ret
 
