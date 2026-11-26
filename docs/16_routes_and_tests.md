@@ -4,22 +4,22 @@ This guide describes the captures that improve the ARS510 decode and its openpil
 smallest session that separates your question; one route can cover several tests. Session lengths and repeat
 counts below are planning suggestions; a field or profile passes validation through the checks at the end of this page.
 
-**For most testers, start with the first item under each goal below:** engaged drives with `acc` or `acc_summaries`
+**For most testers, start with the first item under each goal below:** engaged drives with `acc`
 installed (T13), and, on an unfiltered radar line, openpilot longitudinal drives with both buses logged. Parked
 diagnostics (T01/T02) run with a maintainer-assisted read-only acquisition setup. Physical calibration comes from
 measured target geometry (T03) or independently logged motion of both cars (T04).
 
 ### Priorities
 
-Two goals set the order: better `acc` / `acc_summaries` behaviour on the road, and keeping AEB under openpilot
+Two goals set the order: better `acc` behaviour on the road, and keeping AEB under openpilot
 longitudinal ([15](15_aeb_pcs.md)). Each list starts with what settles the most per hour of effort; the first two items
 of each need nothing beyond full logging.
 
-**Goal 1: `acc` and `acc_summaries`**
+**Goal 1: `acc`**
 
 | # | Capture | Tests | What it settles |
 |---|---|---|---|
-| 1 | Engaged drives with `acc` or `acc_summaries` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the profile and version | [T13](#t13-fresh-road-and-parser-validation) | the road record of both profiles: `acc` has about 2.5 engaged road hours over two cars (the owner's 1.6 h, a second driver's 0.9 h), `acc_summaries` about 54 engaged minutes on 11 StarPilot drives of the owner's car; their main evidence is replay. Stops behind a lead and far leads are the cases most missing |
+| 1 | Engaged drives with `acc` installed: stop-and-go traffic, highway with far leads, ordinary cut-ins. Bookmark unwanted, late or jerky braking and lead switches; name the version | [T13](#t13-fresh-road-and-parser-validation) | the road record of `acc`: about 2.5 engaged road hours over two cars (the owner's 1.6 h, a second driver's 0.9 h); its main evidence is replay. Stops behind a lead and far leads are the cases most missing |
 | 2 | Stock-ACC drives through lead exits, lead switches and cut-ins | [T08](#t08-stock-acc-and-additional-target-reports) + [T14](#t14-follow-one-target-through-selection-changes) | Toyota's own controller acting on the same target: the reference for when radard should follow the ACC target at a cut-in (the ACC target switches before the camera model does) |
 | 3 | A second cooperative car, both cars with GNSS or another qualified motion reference | [T04](#t04-independent-lead-speed-and-acceleration) (+ T03, T07) | physical lead speed and acceleration: how good the summary cars' range-slope speed is, and whether the far-range shortfall matters |
 
@@ -31,9 +31,9 @@ of each need nothing beyond full logging.
 | 2 | A professional PCS facility | [T12](#t12-pcs-and-event-reports) | the braking stages and the alarm with the radar disabled, against a validated soft target, with the actuator response |
 | 3 | Any PCS warning or braking on a car that keeps stock PCS (stock, or openpilot behind a radar-line filter), both buses logged | [T12](#t12-pcs-and-event-reports), natural events only | the braking-stage frames a relay needs; recorded so far are the alarm and the brake-assist trigger only |
 
-**Also useful for both goals.** Any ordinary drive with full rlogs, stock or with any profile: every profile replays on
-the same CAN, so three moving hours per car, one of them above 20 m/s, give a profile comparison. Drives from another
-radar-ACC model or radar firmware (C-HR, Yaris, other RAV4 radar firmware; T08 + T13) show whether the profiles transfer.
+**Also useful for both goals.** Any ordinary drive with full rlogs, stock or with any install: `acc` and the research variants replay on
+the same CAN, so three moving hours per car, one of them above 20 m/s, give a comparison. Drives from another
+radar-ACC model or radar firmware (C-HR, Yaris, other RAV4 radar firmware; T08 + T13) show whether `acc` and the decode transfer.
 
 **Decode work, not needed for these goals:** T01 / T02 (startup, status and radar-reported ego speed with the maintainer's
 read-only diagnostic kit; while parked, also press each cruise control a few times, as no frame is known to carry the
@@ -69,8 +69,8 @@ maintainer helps establish that the requested signals and reference are present 
 Road captures record normal driving: short gaps, cut-ins, oncoming traffic and hard braking come from traffic as it
 occurs, and a passenger handles equipment and notes. Target placement, intentional occlusion and sensor-cover
 conditions use a parked ego or a controlled site. Remove covers before driving away, and keep the sensor clean so a
-fault reflects the condition under test. Record the actual installed profile (`acc` or `acc_summaries`) and version; raw CAN
-logging works with either.
+fault reflects the condition under test. Record the installed version (and the profile, `acc`, as `install.py --check` reports it); raw CAN
+logging works with any install.
 
 PCS/AEB is a professional test: Toyota advises leaving PCS testing to professionals
 ([RAV4 quick-reference guide, PCS section](https://assets.sia.toyota.com/publications/en/om-s/OM19V1QRG/pdf/OM19V1QRG.pdf)).
@@ -329,13 +329,13 @@ test: keep full logs of both buses and bookmark each moment you brake hard for s
 
 ## T13: fresh road and parser validation
 
-1. Record the actual installed version/profile (`acc`, `acc_summaries` or another) and the [install check](../openpilot/README.md). On the first normal drive,
+1. Record the actual installed version/profile (`acc`, or another build) and the [install check](../openpilot/README.md). On the first normal drive,
    verify radar-backed leads and communication health from logs; installer success and road validation are separate steps.
 2. Keep fresh city/queue and highway/curve drives, ordinary night/wet conditions when encountered, lead-free
    periods and bookmarked unwanted braking, sticky/adjacent leads, far pickup, loss and recovery.
 3. Assign discovery/confirmation roles before reviewing error results. Freeze proposed behavior/gates before
    confirmation; previously tuned routes count as tuning data. Keep consumers unchanged for comparisons.
-   For the next `acc_summaries` comparison, the collection target is at least three moving hours, including one
+   For the next replay comparison of `acc` against vision only, the collection target is at least three moving hours, including one
    hour above 20 m/s where normal traffic and posted limits permit, with city/queue coverage too. Contributions
    can be combined; send shorter useful drives as well. Any installed profile can supply the original CAN for
    an offline comparison. Let the maintainer reserve confirmation drives before inspecting errors.

@@ -197,14 +197,18 @@ target and leans toward this file on unnecessary and missed seconds. Numbers:
 ### Against vision only (what the PR adds over today)
 
 On these cars openpilot runs vision only today. Replayed on every drive that has all three
-(140 routes, 33.15 moving h, two cars) through the unchanged radard and planner, `acc` and `acc_summaries` cut vision only's unnecessary braking from 217.0 to 36.1 / 36.0
+(140 routes, 33.15 moving h, two cars) through the unchanged radard and planner, `acc` and the `acc_summaries` variant (not installable) cut vision only's unnecessary braking from 217.0 to 36.1 / 36.0
 oracle seconds and its missed braking from 65.1 to 34.2 / 34.4 s:
 
-![acc and acc_summaries against vision only](img/analysis/upstream_vs_vision.png)
+![acc against vision only, with the acc_summaries variant (not installable)](img/analysis/upstream_vs_vision.png)
+
+*In the figure `acc (default)` is `acc`, the one profile; `acc_summaries` is a variant that is not installable.*
 
 The oracle builds its hindsight lead from the ACC target 96 % of the time, so it favours the radar. Three checks:
 
 ![the same comparison against three references, by drive set, and judged by the driver](img/analysis/upstream_vs_vision_checks.png)
+
+*In the figure `acc (default)` is `acc`, the one profile; `acc_summaries` is a variant that is not installable.*
 
 - **Against other references** (73 routes, 18.8 moving h, route-bootstrap 95 % intervals). On the moments where the
   oracle and a camera-only hindsight lead agree within 0.5 m/s² (8.3 confident h), vision only brakes unnecessarily
@@ -212,7 +216,7 @@ The oracle builds its hindsight lead from the ACC target 96 % of the time, so it
   the camera lead's uncertainty: −2.21 s/h [−4.54, −0.48]. Against the camera-only lead alone the two tie
   (−0.07 s/h [−2.02, +2.01]); that reference shares vision only's camera, and on video the oracle was right in 6 of the
   10 episodes where the two disagree, the camera reference in 2.
-- **By drive set** (unnecessary + missed braking, seconds per moving hour, vision only → `acc` / `acc_summaries`). The gain is largest on the 27 replay
+- **By drive set** (unnecessary + missed braking, seconds per moving hour, vision only → `acc` / `acc_summaries`, not installable). The gain is largest on the 27 replay
   drives (8.5 → 1.4 / 1.4), the owner's held-out and fresh drives (15.8 → 4.4 / 4.5) and the second car's drives (earlier 8.3 → 1.8 / 1.8, latest batch
   13.3 → 1.4 / 1.5); on the owner's latest drives it is 5.3 → 2.0 / 1.8. On the owner's road set (sunnypilot drives plus two second-car drives) the three tie
   (2.9 / 2.8 / 2.8).
@@ -220,7 +224,7 @@ The oracle builds its hindsight lead from the ACC target 96 % of the time, so it
   ≤ −1 m/s² before 44.9 % of the driver's brake presses (vision only 40.1 %), starts braking 0.04 s earlier on average
   (95 % CI −0.09 … +0.00), asks for no braking that only the radar wanted, and in 38 driver overrides its request was
   closer to what the driver did 7 times and further 0 times ([11](11_profiles_compared.md#against-vision-only)).
-  `acc_summaries` gives the same numbers.
+  The `acc_summaries` variant (not installable) gives the same numbers.
 
 One road moment, from an owner `acc` drive: the lead moves out and reveals a near-stopped car 56 m ahead. The ACC
 target reads the slow car's speed in the cycle it switches to it; the camera lead takes another 0.45 s to fall below
@@ -313,7 +317,7 @@ The closest relative in openpilot is the Tesla Model 3's Continental radar (`tes
 | GM | 71 | pass-through of the radar's targets |
 | Ford | 184 (272 lines in all) | clusters raw Delphi detections into tracks |
 | **ARS510 `acc` profile** ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py)) | 33 | the radar's ACC target as one point: target-present flags; pass-through |
-| **ARS510 `acc_summaries`** ([`openpilot/standalone/ars510_acc_summaries.py`](../openpilot/standalone/ars510_acc_summaries.py)) | 99 | the ACC target plus up to two other moving cars from the radar's summaries within 40 m, speed from a Kalman filter on their range |
+| ARS510 `acc_summaries` (variant, not installable) | 99 | the ACC target plus up to two other moving cars from the radar's summaries within 40 m, speed from a Kalman filter on their range |
 | ARS510 all-tracks file (`fused`, not shipped) | 187 | the object list through one Kalman speed filter per track; part by part [above](#parts-of-the-openpilot-file) |
 
 - The other interfaces, except Ford's, pass the radar's tracks through with validity and lifecycle checks and leave

@@ -2,7 +2,7 @@
 
 The ARS510 talks to the camera over a private CAN link, which the comma harness exposes as **bus 1** (`src == 1` in openpilot logs).
 The radar runs a **60.28 ms cycle (16.6 Hz)**: its record clocks advance 60.28 ms per record and keep the logger's time. The object-list decode in `ars510/` (research, not installable) takes ego speed from the car bus (bus 0, Toyota `SPEED` 0xB4);
-the installable `acc` and `acc_summaries` profiles read the radar's ACC target (0x235 / 0x237), which carries its own closing speed.
+the installable `acc` profile reads the radar's ACC target (0x235 / 0x237), which carries its own closing speed.
 
 ```mermaid
 flowchart LR
@@ -112,7 +112,7 @@ continues with 20,518 records, 0 CRC failures and the ACC target at 50 Hz;
 | 0x101 / 0x197 boot flags, 0x24F running flag | set | set |
 
 So on this firmware the decoder works with the radar line unfiltered: the object list, the ACC target and the target summaries all
-continue through openpilot's radar disable, which makes it compatible with the `acc` and `acc_summaries` profiles. The car-bus messages it switches
+continue through openpilot's radar disable, which makes it compatible with the `acc` profile. The car-bus messages it switches
 off, including the radar's PCS / AEB brake request, are described in [13](13_car_bus_messages.md).
 
 ## Ego speed
@@ -162,10 +162,10 @@ every first frame carries the 740 / 144-byte length with one flow-control frame,
 never did in 1.24 M target cycles ([05](05_acc_target_and_support.md#the-radars-acc-target-0x235--0x237)). The radar's bus-1
 frames came before the first `carState` on every route (by 0.1-1.6 s), so the integration's bus-1 check finds them. The object-list decode reads the object list on all three, but the Yaris
 sends no 0xB4 wheel-speed frame, so it has no ego speed on that car. The integration enables both
-platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, the Yaris with `acc` even when `acc_summaries` is installed, and the upstream
+platforms (`TOYOTA_CHR_TSS2`, `TOYOTA_YARIS`) for testing, and the upstream
 `acc` proposal includes them ([17](17_upstream.md)); drives in traffic on those cars are still to come. In comma's fleet logs
 (three C-HR cars, about an hour) the object list reads followed cars 1-7 m *farther* than the ACC target at 30-100 m, the
-opposite of the RAV4's far shortfall (○, one or two cars beyond 50 m). `acc` and `acc_summaries` use the ACC target's
-distance, so they are not affected. Across the RAV4 fleet the two firmwares
+opposite of the RAV4's far shortfall (○, one or two cars beyond 50 m). `acc` uses the ACC target's
+distance, so it is not affected. Across the RAV4 fleet the two firmwares
 (`8821F0R01100`, 70 cars; `8821F0R03100`, 167 cars) show the same in-path speed gain and excursion rates within their
 intervals ([`fleet_firmware_split.json`](../data/analysis/summaries/fleet_firmware_split.json)).

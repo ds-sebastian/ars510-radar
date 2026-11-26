@@ -17,7 +17,7 @@ REPO = Path(__file__).resolve().parents[1]
 def test_wrapper_has_one_switchable_profile_line_defaulting_to_acc():
   src = (REPO / "openpilot" / "ars510_radar_interface.py").read_text()
   assert src.count('PROFILE = PROFILES["acc"]') == 1
-  assert 'PROFILES = {k: k for k in STANDALONE}' in src and 'STANDALONE = {"acc": "ars510_acc_target", "acc_summaries": "ars510_acc_summaries"}' in src
+  assert 'PROFILES = {k: k for k in STANDALONE}' in src and 'STANDALONE = {"acc": "ars510_acc_target"}' in src
   assert "FUSED_CONFIG" not in src and "BASE_CONFIG" not in src  # no object-list profile reaches openpilot
   assert "def hook_car_interface(" in src and "ToyotaFlags.ARS510_RADAR" not in src
 
@@ -59,10 +59,8 @@ def test_installer_appends_one_hook_block_and_uninstalls_cleanly(tmp_path):
   assert (toyota / "ars510_acc_target.py").read_text() == acc_target.replace('RADAR_DBC = "toyota_tss2_ars510"', 'RADAR_DBC = "ars510_acc_target"')
   assert (toyota.parents[1] / "dbc" / "ars510_acc_target.dbc").read_text() == (REPO / "upstream" / "toyota_tss2_ars510.dbc").read_text()
   assert not (toyota.parents[1] / "dbc" / "toyota_tss2_ars510.dbc").exists()
-  assert _install(tmp_path, "--profile", "acc_summaries").returncode == 0
-  assert 'PROFILE = PROFILES["acc_summaries"]' in (toyota / "ars510_radar_interface.py").read_text()
-  assert (toyota / "ars510_acc_summaries.py").read_text() == (REPO / "openpilot" / "standalone" / "ars510_acc_summaries.py").read_text()
-  assert "profile: acc_summaries" in _install(tmp_path, "--check").stdout
+  assert not (toyota / "ars510_acc_summaries.py").exists()
+  assert "profile: acc" in _install(tmp_path, "--check").stdout
   assert _install(tmp_path, "--uninstall").returncode == 0
   assert (toyota / "interface.py").read_text() == original
   assert not (toyota / "ars510").exists() and not (toyota / "ars510_radar_interface.py").exists()
@@ -82,7 +80,7 @@ def test_installer_leaves_opendbcs_own_ars510_dbc(tmp_path):
   dbc.write_text("opendbc's own")
   r = _install(tmp_path, "--check")
   assert "opendbc ships toyota_tss2_ars510.dbc" in r.stdout and "leftover" not in r.stdout
-  for args in ((), ("--profile", "acc_summaries"), ("--uninstall",)):
+  for args in ((), ("--profile", "acc"), ("--uninstall",)):
     assert _install(tmp_path, *args).returncode == 0
     assert dbc.read_text() == "opendbc's own"
 
@@ -114,9 +112,11 @@ def test_installer_updates_a_fork_that_commits_the_install(tmp_path):
   _git(root, "init")
   _git(root, "add", ".")
   _git(root, "commit", "-m", "fork with the install committed")
-  r = _install(tmp_path, "--profile", "acc_summaries")
+  (toyota / "ars510_acc_target.py").write_text("an older committed copy\n")
+  _git(root, "commit", "-am", "older copy")
+  r = _install(tmp_path)
   assert r.returncode == 0, r.stderr
-  assert 'PROFILE = PROFILES["acc_summaries"]' in (toyota / "ars510_radar_interface.py").read_text()
+  assert (toyota / "ars510_acc_target.py").read_text() != "an older committed copy\n"
 
 
 def test_hook_keeps_toyota_importable_when_it_fails():

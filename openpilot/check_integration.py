@@ -8,20 +8,15 @@ It checks:
 - detection: the RAV4 2022 / 2023 radar-ACC platforms get radarUnavailable=False from the car model and the radar's early
   bus-1 frames (either radar firmware, also at a cold start, before the object list starts), and stay radarless without
   them; C-HR and Yaris likewise; every other Toyota keeps the fork's own RadarInterface;
-- for the `acc` profile: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
+- the `acc` profile: the bundled ACC-target sample (data/sample/highway_acc_anchor_24s.csv.gz) is fed at
   card.py's 100 Hz with the radar's cycle clock (0x239) added, and it checks one output per radar cycle (~16.6 Hz),
   the one point against ars510.support.parse_acc_target (id, units, sign), no output when the target frames stop,
   recovery, and radarUnavailableTemporary while the radar's 0x196 fault flag is held (a single power-up cycle ignored).
 - every profile: the radar's PCS alarm (0x100) sets carState.stockFcw, not on the power-up frame.
-- for the `acc_summaries` profile: synthetic radar cycles (0x190 clock, ACC target, two summaries) checking the ACC car
-  published once, a summary car with its range-slope speed, nothing beyond 40 m, staleness and recovery; on trees whose
-  RadarPoint has aRel / yvRel / measured, the ACC point's REL_ACCEL / LAT_SPEED, a recorded wrapped LAT_SPEED, and the
-  summary car's lateral slope.
 """
 from __future__ import annotations
 
 import argparse
-import math
 import sys
 from pathlib import Path
 
@@ -98,74 +93,6 @@ def check_acc_profile(RI, check) -> None:
   check(bool(clear) and not clear[-1].errors.radarUnavailableTemporary and len(clear[-1].points) == 1, "acc: clears with the fault flag")
 
 
-def check_acc_summaries_profile(RI, check) -> None:
-  """`acc_summaries`: the ACC target plus the target-summary cars within 40 m. Synthetic radar cycles (0x190 clock, ACC
-  target at 30 m, summary 1 on the ACC car, summary 2 a car at 40 m closing at 6 m/s, then one at 80 m) are fed at
-  card.py's 100 Hz: the ACC car once, the 40 m car with its slope speed, nothing beyond 40 m, staleness and recovery."""
-  from opendbc.car.toyota.ars510.support import ACC_CHECK
-
-  def checked(address, frame):  # byte 0 = the radar's check byte, as on every recorded frame (the profile reads it)
-    crc = ACC_CHECK[address][0]
-    for i, col in enumerate(ACC_CHECK[address][2]):
-      crc ^= col if frame[1 + i // 8] >> (7 - i % 8) & 1 else 0
-    return bytes([crc]) + frame[1:]
-
-  def cycle(n, k, far):  # n: radar cycle number (clock), k: cycle within the run (geometry)
-    ts, acc_code = 1_000_000 + 60_000 * n, round((30.0 - 0.24 * k) / 0.025)
-    other = (80.0 if far else 40.0) - 0.36 * k
-    return [(0x190, bytes([0x0A, 0]) + ts.to_bytes(4, "big") + b"\x00", 1),
-            (0x235, checked(0x235, ((1 << 59) | (5 << 48) | (108 << 40) | (1056 << 29) | (1064 << 8) | 7).to_bytes(8, "big")), 1),  # aRel +1, LAT_SPEED +0.5
-            (0x237, checked(0x237, ((acc_code << 39) | (2000 << 27) | (1 << 10)).to_bytes(8, "big")), 1),
-            (0x191, bytes([182, 0, 0, 3 << 2, 0, 0, 0, 0]), 1), (0x192, (160 + (2 * acc_code) // 5).to_bytes(2, "big") + (2048).to_bytes(2, "big"), 1),
-            (0x193, bytes([182, 0, 0, 9 << 2, 0, 0, 0, 0]), 1), (0x194, round(other * 16 + 160).to_bytes(2, "big") + (2288 + 2 * k).to_bytes(2, "big"), 1)]  # moving left 0.5 m/s
-  t_ns, outs = 1_000_000_000, {False: [], True: []}
-  for far in (False, True):
-    for k in range(40):
-      for j in range(6):  # one radar cycle per six card steps
-        t_ns += 10_000_000
-        out = RI.update([(t_ns, cycle(k + (100 if far else 0), k, far) if j == 0 else [])])
-        if out is not None and k >= 10:
-          outs[far].append(out)
-  near = outs[False]
-  check(all(not any(o.errors.to_dict().values()) for o in near), "acc_summaries: no error flags while the frames arrive")
-  # the summary range is quantized to 1/16 m per 60 ms cycle; the Kalman speed (PR 216) wanders up to ~0.1 m/s on it
-  ok = [sorted(p.trackId for p in o.points) == [7, 73] and abs(next(p for p in o.points if p.trackId == 73).vRel + 6.0) < 0.15 for o in near]
-  check(bool(near) and all(ok), f"acc_summaries: the ACC target once plus the 40 m summary car with its slope speed ({sum(ok)}/{len(ok)})")
-  check(all([p.trackId for p in o.points] == [7] for o in outs[True]), "acc_summaries: summary cars beyond 40 m are not published")
-  if all(hasattr(near[-1].points[0], f) for f in ("aRel", "yvRel", "measured")):  # forks that still carry the optional fields
-    acc_pt, car = next(p for p in near[-1].points if p.trackId == 7), next(p for p in near[-1].points if p.trackId == 73)
-    check(abs(acc_pt.aRel - 1.0) < 1e-6 and abs(acc_pt.yvRel - 0.5) < 1e-6 and acc_pt.measured,
-          "acc_summaries: ACC point carries the radar's REL_ACCEL (aRel) and LAT_SPEED (yvRel), measured")
-    check(math.isnan(car.aRel) and abs(car.yvRel - 0.5) < 0.02 and car.measured,
-          f"acc_summaries: summary car carries its lateral slope as yvRel ({car.yvRel:.3f} m/s) and aRel NaN")
-    from opendbc.car.toyota.ars510.support import acc_check
-    wrapped = bytes.fromhex("fd65 6783 abd8 8f12")  # recorded 0x235 of a crossing car beyond 12.8 m/s: LAT_SPEED wrapped
-    want = ((int.from_bytes(wrapped, "big") >> 8 & 0x7FF) - 1024) * 0.0125 + 25.6
-    base = cycle(200, 0, False)
-    got = None
-    for j in range(12):
-      t_ns += 10_000_000
-      frames = [(a, wrapped if a == 0x235 else d, s) for a, d, s in base] if j == 0 else []
-      out = RI.update([(t_ns, frames)])
-      if out is not None and out.points:
-        got = next((p for p in out.points if p.trackId == wrapped[7] & 0x3F), None) or got
-    check(acc_check(0x235, wrapped) == "wrapped" and got is not None and abs(got.yvRel - want) < 1e-6,
-          f"acc_summaries: a wrapped LAT_SPEED is unwrapped by the check byte ({want:.2f} m/s)")
-  else:
-    print("skip acc_summaries optional fields: this tree's RadarPoint has no aRel / yvRel / measured")
-  silent = [o for o in (RI.update([(t_ns + i * 10_000_000, [])]) for i in range(1, 101)) if o is not None]
-  t_ns += 100 * 10_000_000
-  check(bool(silent) and silent[-1].errors.radarUnavailableTemporary and len(silent[-1].points) == 0,
-        "acc_summaries: silent radar -> radarUnavailableTemporary with no points")
-  rec = []
-  for k in range(12):
-    for j in range(6):
-      t_ns += 10_000_000
-      out = RI.update([(t_ns, cycle(300 + k, k, False) if j == 0 else [])])
-      rec += [out] if out is not None else []
-  check(bool(rec) and not rec[-1].errors.radarUnavailableTemporary and len(rec[-1].points) >= 1, "acc_summaries: recovers when the frames resume")
-
-
 def check_pcs_alarm(CarInterface, CP, extra, check) -> None:
   """The radar's PCS alarm (bus-1 0x100) sets carState.stockFcw; the power-up FF FF frame does not."""
   try:
@@ -191,7 +118,7 @@ def main() -> int:
   from opendbc.car import structs
   from opendbc.car.toyota.interface import CarInterface  # Toyota only: other brands may need fork-only packages
   from opendbc.car.toyota.values import CAR
-  from opendbc.car.toyota.ars510_radar_interface import PROFILE, Ars510RadarInterface, is_ars510
+  from opendbc.car.toyota.ars510_radar_interface import Ars510RadarInterface, is_ars510
 
   failures: list[str] = []
 
@@ -225,7 +152,7 @@ def main() -> int:
     RIc = CarInterface.RadarInterface(CP, *extra)
     check(is_ars510(CP) and isinstance(RIc, Ars510RadarInterface), f"{name}: ARS510 from the car model (testing)")
     if name == "TOYOTA_YARIS":
-      check(RIc.standalone is not None, "TOYOTA_YARIS runs the acc parser whatever the profile (no 0xB4 wheel speed)")
+      check(RIc.standalone is not None, "TOYOTA_YARIS runs the acc parser")
   CP = params(CAR.TOYOTA_RAV4_TSS2, ars_bus1)
   RI0 = CarInterface.RadarInterface(CP, *extra)
   check(not is_ars510(CP) and not isinstance(RI0, Ars510RadarInterface),
@@ -236,7 +163,7 @@ def main() -> int:
   check_pcs_alarm(CarInterface, CP, extra, check)
   RI = CarInterface.RadarInterface(CP, *extra)
   check(isinstance(RI, Ars510RadarInterface), "Toyota RadarInterface builds Ars510RadarInterface for an ARS510 car")
-  (check_acc_profile if PROFILE == "acc" else check_acc_summaries_profile)(RI, check)
+  check_acc_profile(RI, check)
   print("\nALL OK" if not failures else f"\n{len(failures)} FAILED")
   return 0 if not failures else 1
 

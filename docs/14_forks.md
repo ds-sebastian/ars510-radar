@@ -30,7 +30,7 @@ fork's source, ◐ from the replay and synthetic runs below, which use a proxy f
   filters it reacts to a radar speed error about 60% as much as sunnypilot; on the drives with `raw` it added about as much (115 against 128 events per hour of ≥ 1 m/s², 338
   against 323 of ≥ 0.5).
 - On sunnypilot, FrogPilot with Human Following off and StarPilot, `fused` removes most of what `raw` adds (≥ 1 m/s²
-  events 128 → 1.4 and 115 → 7 per hour); on FrogPilot's default path both profiles add little (12.5 and 2.1 events per hour
+  events 128 → 1.4 and 115 → 7 per hour); on FrogPilot's default path both configurations add little (12.5 and 2.1 events per hour
   against vision only). `fused` takes its speed from the radar's ACC target where the radar follows a car ([12](12_kalman_filter.md)),
   and `acc` publishes that target alone.
 
@@ -101,7 +101,7 @@ percentile +0.79, at least 1.0 in 17 of 225 runs); with `raw` +0.66 (+1.79, 208 
 
 ## What the evidence supports
 
-- On any fork, install the default `acc` or `acc_summaries` (the two installable profiles). `acc` publishes only the
+- On any fork, install `acc`, the installable profile. It publishes only the
   radar's ACC target, the reference of this comparison, so the fork's lead speed is the ACC target's speed. The
   object-list filter `fused` cuts the braking demand the radar's speed errors add about ninety-fold on sunnypilot
   (128 → 1.4 events per hour against the radar's own tracker) but does not remove it, and on held-out drives it still

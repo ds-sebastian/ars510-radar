@@ -14,15 +14,12 @@ sudo reboot
 ```
 
 The fork is detected, the `acc` profile is installed, and an install made with an older patch-based
-version of this installer is replaced automatically. `--profile acc_summaries` installs the alternative for forks
-([docs/11](../docs/11_profiles_compared.md) compares them).
+version of this installer is replaced automatically. `acc` is the only profile
+([docs/11](../docs/11_profiles_compared.md) compares it with vision only and with variants that are not installable).
 
-Running the installer again without `--profile` keeps the profile already installed, so an update script can call it
-as is. It looks in the installed interface file, and when a fork update has removed the install, in the record this
-checkout keeps of its last install into the same path (`openpilot/.installed_profiles.json`, ignored by git). A first
-install gets `acc`, and so does a reinstall over a profile that is no longer installable. The installer prints one line with the active profile and why (`requested with --profile`,
-`kept from the existing install`, `kept from the last install into this path`, or `the default`), and a note when
-`--profile` changes it. `--check` shows what a plain re-run would install; `--uninstall` forgets the record.
+Running the installer again installs `acc` again, so an update script can call it as is. The installer prints one line
+with the profile and why, and a note when it replaces a profile that is not installable (below). `--check` shows what a
+plain re-run would install.
 
 **Reboot after installing.** The manager pre-imports its Python processes, so a new ignition cycle alone keeps the old
 Toyota modules. On the first drive after the reboot, `radarUnavailable` is false and leads are radar-backed.
@@ -30,26 +27,30 @@ Toyota modules. On the first drive after the reboot, `radarUnavailable` is false
 ```bash
 python /data/ars510-radar/openpilot/install.py /data/openpilot --check        # report state (read-only), incl. whether the install matches this checkout
 python /data/ars510-radar/openpilot/install.py /data/openpilot --uninstall    # remove everything it added
-cd /data/ars510-radar && git pull && python openpilot/install.py /data/openpilot   # update (keeps the profile), then reboot
+cd /data/ars510-radar && git pull && python openpilot/install.py /data/openpilot   # update, then reboot
 ```
 
 A fork update resets `/data/openpilot`: run the installer again after updating (and turn off automatic updates
-while testing). The re-run reinstalls the profile you had.
+while testing).
 
 | profile | config |
 |---|---|
-| `acc` (default) | the radar's ACC target alone as one point, the upstream proposal, open as [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860) ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), opendbc's CANParser, 45 code lines): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([docs/17](../docs/17_upstream.md#towards-an-upstream-comma-interface)) |
-| `acc_summaries` | `acc` plus up to two more cars from the radar's own tracker ([`standalone/ars510_acc_summaries.py`](standalone/ars510_acc_summaries.py), 53 code lines): the target summaries 0x191-0x194 within 40 m, the ACC car published once, speed from a Kalman filter on each summary's range over the radar's clock. Aimed at forks: braking as `acc` over all replays, cut-ins radar-backed earlier, about 54 engaged road minutes so far ([docs/11](../docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars)) |
+| `acc` | the radar's ACC target alone as one point, the upstream proposal, open as [commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860) ([`upstream/ars510_acc_target.py`](../upstream/ars510_acc_target.py) with [`toyota_tss2_ars510.dbc`](../upstream/toyota_tss2_ars510.dbc), opendbc's CANParser, 45 code lines): the car Toyota's own ACC follows, published as soon as the radar picks it; every other car comes from the camera ([docs/17](../docs/17_upstream.md#towards-an-upstream-comma-interface)) |
 
-The object-list profiles of earlier versions (`fused`, `openpilot`, `raw`, `shared_speed`, `shared_range`, and the older
-names `anchor`, `steady`, `colored`, `stock`, `default`, `upstream`) are not installable: they publish the object list's
-speeds, whose excursions (mostly false closings beyond 40 m, [docs/07](../docs/07_velocity_excursions.md)) reach the
+These profile names are not installable; `--profile` with one of them, or a reinstall over one, installs `acc` and
+prints a note:
+- `acc_summaries` (`acc` plus up to two cars from the radar's target summaries within 40 m): in replay it brakes like
+  `acc` and flips between radar and vision leads more often
+  ([docs/11](../docs/11_profiles_compared.md#acc_summaries-acc-plus-the-summary-cars));
+- the object-list profiles (`fused`, `openpilot`, `raw`, `shared_speed`, `shared_range`, and the older names `anchor`,
+  `steady`, `colored`, `stock`, `default`, `upstream`): they publish the object list's speeds, whose excursions (mostly false closings beyond 40 m, [docs/07](../docs/07_velocity_excursions.md)) reach the
 planner. On the second car's 38 latest held-out drives `fused` added 2.05 s of unnecessary braking per moving hour over
 `acc`, including a −3.31 m/s² request for a list track at 54 m whose closing speed read 23.7 m/s at a constant range
-([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)). `--profile` with one of those names,
-or a reinstall over one, installs `acc` and prints a note; the files older versions installed for them
-(`ars510_upstream.py`, `ars510_shared_{speed,range}.py`) are removed. The object-list filter stays in `ars510/` as
-research code ([docs/12](../docs/12_kalman_filter.md)).
+([`second_car_batch3.json`](../data/analysis/summaries/second_car_batch3.json)).
+
+The install removes the files older versions installed for these profiles (`ars510_acc_summaries.py`,
+`ars510_upstream.py`, `ars510_shared_{speed,range}.py`) unless the fork's git tracks them. The object-list filter stays
+in `ars510/` as research code ([docs/12](../docs/12_kalman_filter.md)).
 
 ## What gets installed
 
@@ -57,13 +58,12 @@ research code ([docs/12](../docs/12_kalman_filter.md)).
 |---|---|---|
 | `../ars510/` | `opendbc/car/toyota/ars510/` | the decoder package, unchanged (the interface uses its constants, PCS alarm and fault flag) |
 | `ars510_radar_interface.py` | `opendbc/car/toyota/ars510_radar_interface.py` | `Ars510RadarInterface` (dispatch to the profile file, the radar's fault flag) and the hook |
-| `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone (`--profile acc`) |
-| `standalone/ars510_acc_summaries.py` | `opendbc/car/toyota/ars510_acc_summaries.py` | the ACC target plus the summary cars (`--profile acc_summaries`) |
+| `../upstream/ars510_acc_target.py` | `opendbc/car/toyota/ars510_acc_target.py` | the ACC target alone, the `acc` profile |
 | `../upstream/toyota_tss2_ars510.dbc` | `opendbc/dbc/ars510_acc_target.dbc` | its DBC: the ACC target messages, under a name of its own so opendbc's `toyota_tss2_ars510.dbc` ([commaai/opendbc#3860](https://github.com/commaai/opendbc/pull/3860)) stays as shipped |
 | 8-line block | end of `opendbc/car/toyota/interface.py` | `CarInterface = hook_car_interface(CarInterface)`; on any error it logs and leaves Toyota as shipped |
 
 The DBCs in [`../dbc/`](../dbc) are for inspecting the radar in Cabana on a PC; the decoder reassembles the 106-frame
-record in Python. The only DBC installed on the device is `ars510_acc_target.dbc`, which the `acc` profiles parse.
+record in Python. The only DBC installed on the device is `ars510_acc_target.dbc`, which the `acc` profile parses.
 The installer never overwrites or removes a file the fork's git tracks; if the fork ships a file under one of the
 names above, the install stops before changing anything (`--check` lists it).
 
@@ -74,7 +74,7 @@ The hook wraps the fork's own Toyota `CarInterface` after it is defined:
   without them the car is radarless with vision leads instead of a radar that never reports, also when opendbc
   declares the radar itself;
   the C-HR and Yaris are enabled for testing (same radar frames, [docs/01](../docs/01_radar_bus.md#c-hr-and-yaris)), the
-  Yaris always with `acc` because it sends no 0xB4 wheel speed;
+  Yaris sends no 0xB4 wheel speed, which `acc` does not need;
 - **tracks** through `CarInterface.RadarInterface`: `Ars510RadarInterface` for that car, the fork's own
   RadarInterface for every other car. Extra constructor arguments (sunnypilot's `CP_SP`) pass through, and forks
   whose RadarPoint still has `aRel` / `yvRel` / `measured` get those fields filled;
@@ -104,12 +104,9 @@ $OP/.venv/bin/python openpilot/check_integration.py --opendbc /tmp/opendbc_ars51
 - detection: cold start by firmware, fallback by bus 1, other cars untouched;
 - the PCS alarm (0x100) as `stockFcw`;
 - `acc`: the bundled ACC-target sample, one point per radar cycle, units and sign, timeout and recovery, and
-  `radarUnavailableTemporary` while the radar's 0x196 fault flag is held;
-- `acc_summaries`: synthetic ACC target and summary frames, the ACC car published once, summary cars beyond 40 m left
-  out, timeout and recovery.
+  `radarUnavailableTemporary` while the radar's 0x196 fault flag is held.
 
-On the openpilot 10b9e73 used for replays it passes 20 checks with `acc` and 17 with `acc_summaries` (that tree has no
-optional RadarPoint fields). To replay your own drives stock vs installed, see
+On the openpilot 10b9e73 used for replays it passes 20 checks. To replay your own drives stock vs installed, see
 [docs/09](../docs/09_tools_and_data.md#replay-your-drives-through-openpilot).
 
 ## Troubleshooting
